@@ -8,7 +8,12 @@ public class MessageState {
     private long lastUpdateLinkId = -1;
 
     private long firstItemId = -1;
+
     private boolean isFirstMessage = false;
+
+    private boolean isFirstLoadNewMessage = true;
+    private boolean isFirstLoadOldMessage = true;
+    private boolean loadHistory = true;
 
     public long getLastUpdateLinkId() {
         return lastUpdateLinkId;
@@ -30,7 +35,31 @@ public class MessageState {
         return isFirstMessage;
     }
 
-    public void setFirstMessage(boolean isFirstMessage) {
+    public void setIsFirstMessage(boolean isFirstMessage) {
         this.isFirstMessage = isFirstMessage;
+    }
+
+    public boolean isFirstLoadNewMessage() {
+        return isFirstLoadNewMessage;
+    }
+
+    public void setIsFirstLoadNewMessage(boolean isFirstLoadNewMessage) {
+        this.isFirstLoadNewMessage = isFirstLoadNewMessage;
+    }
+
+    public void setLoadHistory(boolean loadHistory) {
+        this.loadHistory = loadHistory;
+    }
+
+    public boolean loadHistory() {
+        return loadHistory;
+    }
+
+    public boolean isFirstLoadOldMessage() {
+        return isFirstLoadOldMessage;
+    }
+
+    public void setIsFirstLoadOldMessage(boolean isFirstLoadOldMessage) {
+        this.isFirstLoadOldMessage = isFirstLoadOldMessage;
     }
 }

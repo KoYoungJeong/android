@@ -264,7 +264,7 @@
             android:textSize="14sp" />
 
         <ImageView
-            android:id="@+id/img_go_to_latest"
+            android:id="@+id/iv_go_to_latest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"

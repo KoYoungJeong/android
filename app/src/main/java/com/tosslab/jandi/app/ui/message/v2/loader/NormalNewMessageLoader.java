@@ -6,16 +6,15 @@ import android.util.Log;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
-import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.exception.ExceptionData;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
-import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Presenter;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
-import com.tosslab.jandi.app.utils.DateComparatorUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.UiThread;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,7 +23,6 @@ import java.util.List;
 
 import retrofit.RetrofitError;
 import rx.Observable;
-import rx.Subscriber;
 import rx.functions.Func0;
 
 /**
@@ -35,7 +33,8 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
 
     public static final String TAG = NormalNewMessageLoader.class.getSimpleName();
     MessageListModel messageListModel;
-    MessageListPresenter messageListPresenter;
+    MessageListV2Presenter.View view;
+    MessageListV2Presenter presenter;
     private MessageState messageState;
     private boolean firstLoad = true;
     private boolean historyLoad = true;
@@ -45,8 +44,12 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         this.messageListModel = messageListModel;
     }
 
-    public void setMessageListPresenter(MessageListPresenter messageListPresenter) {
-        this.messageListPresenter = messageListPresenter;
+    public void setView(MessageListV2Presenter.View view) {
+        this.view = view;
+    }
+
+    public void setPresenter(MessageListV2Presenter presenter) {
+        this.presenter = presenter;
     }
 
     public void setMessageState(MessageState messageState) {
@@ -101,12 +104,10 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
 
             if (newMessage == null || newMessage.isEmpty()) {
                 // 메세지가 없다면 종료시킴
-                messageListPresenter.showEmptyViewIfNeed();
+                showEmptyViewIfNeed();
 
                 if (firstLoad) {
-                    messageListPresenter.setUpLastReadLinkIdIfPosition();
-                    messageListPresenter.moveLastReadLink();
-                    messageListPresenter.justRefresh();
+                    view.notifyDataSetChanged();
                     firstLoad = false;
                 }
                 return;
@@ -118,13 +119,11 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
             Collections.sort(messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
             long lastLinkId = newMessage.get(newMessage.size() - 1).id;
             messageState.setLastUpdateLinkId(lastLinkId);
-            messageListModel.upsertMyMarker(messageListPresenter.getRoomId(), lastLinkId);
+//            messageListModel.upsertMyMarker(presenter.getRoomId(), lastLinkId);
             updateMarker(roomId);
 
-            messageListPresenter.setUpNewMessage(messages, messageListModel.getMyId(), moveToLinkId);
             firstLoad = false;
 
-            messageListPresenter.showEmptyViewIfNeed();
         } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -132,59 +131,82 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         }
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void showEmptyViewIfNeed() {
+//        int originItemCount = presenter.getItemCount();
+//        int itemCountWithoutEvent = getItemCountWithoutEvent();
+//        int eventCount = originItemCount - itemCountWithoutEvent;
+//        if (itemCountWithoutEvent > 0 || eventCount > 1) {
+//            // create 이벤트외에 다른 이벤트가 생성된 경우
+//            view.showEmptyView(false);
+//        } else {
+//            // 아예 메세지가 없거나 create 이벤트 외에는 생성된 이벤트가 없는 경우
+//            view.showEmptyView(true);
+//        }
+    }
+
+    public int getItemCountWithoutEvent() {
+//        int itemCount = presenter.getItemCount();
+//        for (int idx = itemCount - 1; idx >= 0; --idx) {
+//            if (presenter.getItemViewType(idx) == BodyViewHolder.Type.Event.ordinal()) {
+//                itemCount--;
+//            }
+//        }
+//        return itemCount;
+        return 0;
+    }
+
     private List<ResMessages.Link> getResUpdateMessages(final long linkId) {
         List<ResMessages.Link> messages = new ArrayList<>();
-
-        Observable.create(new Observable.OnSubscribe<ResMessages>() {
-            @Override
-            public void call(Subscriber<? super ResMessages> subscriber) {
-
-                // 300 개씩 요청함
-                messageListPresenter.setMoreNewFromAdapter(false);
-
-                ResMessages afterMarkerMessage = null;
-                try {
-                    afterMarkerMessage = messageListModel.getAfterMarkerMessage(linkId, MessageManipulator.MAX_OF_MESSAGES);
-                    int messageCount = afterMarkerMessage.records.size();
-                    boolean isEndOfRequest = messageCount < MessageManipulator.MAX_OF_MESSAGES;
-                    if (isEndOfRequest) {
-                        ResMessages.Link lastItem;
-                        if (messageCount == 0) {
-                            // 기존 리스트에서 마지막 링크 정보 가져옴
-                            lastItem = messageListPresenter.getLastItemWithoutDummy();
-                        } else {
-                            lastItem = afterMarkerMessage.records.get(messageCount - 1);
-                            // 새로 불러온 정보에서 마지막 링크 정보 가져옴
-                        }
-                        if (lastItem != null) {
-                            historyLoad = !DateComparatorUtil.isBefore30Days(lastItem.time);
-                        } else {
-                            // 알 수 없는 경우에도 히스토리 로드 하지 않기
-                            historyLoad = false;
-                        }
-                        messageListPresenter.setNewNoMoreLoading();
-                    } else {
-                        messageListPresenter.setMoreNewFromAdapter(true);
-                        messageListPresenter.setNewLoadingComplete();
-                    }
-                } catch (RetrofitError retrofitError) {
-                    retrofitError.printStackTrace();
-                    messageListPresenter.setMoreNewFromAdapter(true);
-                    messageListPresenter.setNewLoadingComplete();
-                }
-
-                subscriber.onNext(afterMarkerMessage);
-                subscriber.onCompleted();
-            }
-        }).collect(() -> messages,
-                (resUpdateMessages, o) -> messages.addAll(o.records))
-                .subscribe(resUpdateMessages -> {
-                }, Throwable::printStackTrace);
+//
+//        Observable.create(new Observable.OnSubscribe<ResMessages>() {
+//            @Override
+//            public void call(Subscriber<? super ResMessages> subscriber) {
+//
+//                // 300 개씩 요청함
+//                ResMessages afterMarkerMessage = null;
+//
+//                try {
+//                    afterMarkerMessage = messageListModel.getAfterMarkerMessage(linkId, MessageManipulator.MAX_OF_MESSAGES);
+//                    int messageCount = afterMarkerMessage.records.size();
+//                    boolean isEndOfRequest = messageCount < MessageManipulator.MAX_OF_MESSAGES;
+//                    if (isEndOfRequest) {
+//                        ResMessages.Link lastItem;
+//                        if (messageCount == 0) {
+//                            // 기존 리스트에서 마지막 링크 정보 가져옴
+//                            lastItem = presenter.getLastItemWithoutDummy();
+//                        } else {
+//                            lastItem = afterMarkerMessage.records.get(messageCount - 1);
+//                            // 새로 불러온 정보에서 마지막 링크 정보 가져옴
+//                        }
+//                        if (lastItem != null) {
+//                            historyLoad = !DateComparatorUtil.isBefore30Days(lastItem.time);
+//                        } else {
+//                            // 알 수 없는 경우에도 히스토리 로드 하지 않기
+//                            historyLoad = false;
+//                        }
+//                        presenter.setNewNoMoreLoading();
+//                    } else {
+//                        presenter.setMoreNewFromAdapter(true);
+//                        presenter.setNewLoadingComplete();
+//                    }
+//                } catch (RetrofitError retrofitError) {
+//                    retrofitError.printStackTrace();
+//                    presenter.setMoreNewFromAdapter(true);
+//                    presenter.setNewLoadingComplete();
+//                }
+//
+//                subscriber.onNext(afterMarkerMessage);
+//                subscriber.onCompleted();
+//            }
+//        }).collect(() -> messages,
+//                (resUpdateMessages, o) -> messages.addAll(o.records))
+//                .subscribe(resUpdateMessages -> {
+//                }, Throwable::printStackTrace);
         return messages;
     }
 
     private void saveToDatabase(long roomId, List<ResMessages.Link> messages) {
-
         if (!cacheMode) {
             return;
         }
@@ -227,7 +249,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
             return;
         }
         try {
-            messageListModel.updateMarker(messageState.getLastUpdateLinkId());
+            messageListModel.updateLastLinkId(messageState.getLastUpdateLinkId());
             messageListModel.updateMarkerInfo(AccountRepository.getRepository().getSelectedTeamId(), roomId);
         } catch (RetrofitError e) {
             e.printStackTrace();

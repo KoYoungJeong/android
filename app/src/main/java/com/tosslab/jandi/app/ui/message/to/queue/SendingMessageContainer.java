@@ -5,11 +5,11 @@ import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 /**
  * Created by Steve SeongUg Jung on 15. 3. 5..
  */
-public class SendingMessageQueue implements MessageQueue {
+public class SendingMessageContainer implements MessageContainer<SendingMessage> {
 
     private final SendingMessage sendingMessage;
 
-    public SendingMessageQueue(SendingMessage sendingMessage) {
+    public SendingMessageContainer(SendingMessage sendingMessage) {
         this.sendingMessage = sendingMessage;
     }
 
@@ -19,7 +19,7 @@ public class SendingMessageQueue implements MessageQueue {
     }
 
     @Override
-    public Object getData() {
+    public SendingMessage getData() {
         return sendingMessage;
     }
 

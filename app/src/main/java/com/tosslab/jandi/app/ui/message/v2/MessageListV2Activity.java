@@ -35,12 +35,11 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
     @Extra
     boolean isFromSearch = false;
     @Extra
-    long lastMarker = -1;
+    long lastReadLinkId = -1;
     @Extra
     long roomId;
     @Extra
     long firstCursorLinkId = -1;
-
 
     private OnBackPressedListener onBackPressedListener;
     private OnKeyPressListener onKeyPressListener;
@@ -71,15 +70,14 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
 
         if (messageListFragment == null) {
             if (!isFromSearch) {
-
-                messageListFragment = MessageListFragment_.builder()
+                messageListFragment = MessageListV2Fragment_.builder()
                         .entityId(entityId)
                         .roomId(roomId)
                         .entityType(entityType)
                         .isFavorite(isFavorite)
                         .isFromPush(isFromPush)
                         .teamId(teamId)
-                        .lastMarker(lastMarker)
+                        .lastReadLinkId(lastReadLinkId)
                         .firstCursorLinkId(firstCursorLinkId)
                         .build();
             } else {
@@ -89,13 +87,12 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
                         .entityType(entityType)
                         .isFavorite(isFavorite)
                         .teamId(teamId)
-                        .lastMarker(lastMarker)
+                        .lastMarker(lastReadLinkId)
                         .build();
             }
+
             getSupportFragmentManager().beginTransaction()
-                    .add(android.R.id.content,
-                            messageListFragment,
-                            TAG_LIST)
+                    .add(android.R.id.content, messageListFragment, TAG_LIST)
                     .commit();
         }
 
@@ -144,4 +141,5 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
     public interface OnKeyPressListener {
         boolean onKey(int keyCode, KeyEvent event);
     }
+
 }

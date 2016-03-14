@@ -45,7 +45,6 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
                 oldMessage = messageListModel.getBeforeMarkerMessage(linkId);
             }
 
-
             if (oldMessage.records == null || oldMessage.records.isEmpty()) {
                 view.dismissLoadingView();
                 return oldMessage;
@@ -54,7 +53,7 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
             long firstLinkId = oldMessage.records.get(0).id;
             messageState.setFirstItemId(firstLinkId);
             boolean isFirstMessage = oldMessage.firstLinkId == firstLinkId;
-            messageState.setFirstMessage(isFirstMessage);
+            messageState.setIsFirstMessage(isFirstMessage);
             long lastLinkId = oldMessage.records.get(oldMessage.records.size() - 1).id;
 
             Collections.sort(oldMessage.records, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
@@ -67,7 +66,6 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
                 // if has no first item...
                 messageState.setLastUpdateLinkId(lastLinkId);
             }
-
 
             view.updateMarkerMessage(linkId, oldMessage, noFirstLoad,
                     isFirstMessage, latestVisibleMessageId, firstVisibleItemTop);
@@ -87,4 +85,5 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
     public void setView(MessageSearchListPresenter.View view) {
         this.view = view;
     }
+
 }

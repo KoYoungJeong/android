@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
+import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
@@ -20,6 +21,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
@@ -126,12 +128,18 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
             ResMessages.FileMessage feedbackFileMessage = link.feedback;
 
             Resources resources = tvFileName.getResources();
+            vFileImageRound.setVisibility(View.GONE);
             if (TextUtils.equals(link.feedback.status, "archived")) {
                 tvFileOwner.setVisibility(View.GONE);
 
                 tvFileName.setText(R.string.jandi_deleted_file);
                 tvFileName.setTextColor(resources.getColor(R.color.jandi_text_light));
-                ivFileImage.setVisibility(View.VISIBLE);
+
+                ImageLoader.newBuilder()
+                        .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                        .load(R.drawable.file_icon_deleted)
+                        .into(ivFileImage);
+
                 ivFileImage.setOnClickListener(null);
             } else {
                 Spanned fileOwner = Html.fromHtml(

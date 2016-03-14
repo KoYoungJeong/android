@@ -49,7 +49,7 @@ public interface MessageSearchListPresenter {
 
     void unregistStarredMessage(long teamId, long messageId);
 
-    void onTeamLeave(int teamId, int memberId);
+    void onTeamLeave(long teamId, long memberId);
 
     void onRequestOldMessage();
 

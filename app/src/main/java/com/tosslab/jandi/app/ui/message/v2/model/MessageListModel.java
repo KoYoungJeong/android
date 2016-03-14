@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.v2.model;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -55,7 +56,6 @@ import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -65,6 +65,7 @@ import java.io.File;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -72,6 +73,7 @@ import java.util.concurrent.ExecutionException;
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 import rx.Observable;
+import rx.functions.Func0;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -86,6 +88,9 @@ public class MessageListModel {
     @RootContext
     AppCompatActivity activity;
 
+    public boolean isTopic(FormattedEntity entity) {
+        return entity != EntityManager.UNKNOWN_USER_ENTITY && !entity.isUser();
+    }
 
     public void setEntityInfo(int entityType, long entityId) {
         messageManipulator.initEntity(entityType, entityId);
@@ -153,18 +158,19 @@ public class MessageListModel {
                 .build(item);
     }
 
-    public long initRoomId() {
+    public long getRoomId() {
         try {
             ResMessages oldMessage = getOldMessage(-1, 1);
             return oldMessage.entityId;
         } catch (RetrofitError e) {
             e.printStackTrace();
         }
-
-
         return -1;
     }
 
+    public void setRoomId(long roomId) {
+        messageManipulator.setRoomId(roomId);
+    }
 
     public long sendMessage(long localId, String message, List<MentionObject> mentions) {
 
@@ -250,8 +256,8 @@ public class MessageListModel {
         return requestFuture.get();
     }
 
-    public void updateMarker(long lastUpdateLinkId) throws RetrofitError {
-        messageManipulator.setMarker(lastUpdateLinkId);
+    public void updateLastLinkId(long lastUpdateLinkId) throws RetrofitError {
+        messageManipulator.setLastReadLinkId(lastUpdateLinkId);
     }
 
     public void saveTempMessage(long roomId, String sendEditText) {
@@ -372,7 +378,6 @@ public class MessageListModel {
         return messageManipulator.getBeforeMarkerMessage(linkId);
     }
 
-
     public ResMessages getAfterMarkerMessage(long linkId) throws RetrofitError {
         return messageManipulator.getAfterMarkerMessage(linkId);
     }
@@ -381,9 +386,7 @@ public class MessageListModel {
         return messageManipulator.getAfterMarkerMessage(linkId, count);
     }
 
-    @Background
     public void updateMarkerInfo(long teamId, long roomId) {
-
         if (teamId <= 0 || roomId <= 0) {
             return;
         }
@@ -395,7 +398,6 @@ public class MessageListModel {
         } catch (RetrofitError e) {
             e.printStackTrace();
         }
-
     }
 
     public void upsertMyMarker(long roomId, long lastLinkId) {
@@ -514,6 +516,14 @@ public class MessageListModel {
         return ReadyMessageRepository.getRepository().getReadyMessage(roomId).getText();
     }
 
+    public ResMessages.Link getLastLinkMessage(long roomId) {
+        return MessageRepository.getRepository().getLastMessage(roomId);
+    }
+
+    public void clearLinks(long teamId, long roomId) {
+        MessageRepository.getRepository().clearLinks(teamId, roomId);
+    }
+
     public void upsertMessages(ResMessages messages) {
         Observable.from(messages.records)
                 .subscribe(link -> {
@@ -522,10 +532,6 @@ public class MessageListModel {
 
         MessageRepository.getRepository().upsertMessages(messages.records);
 
-    }
-
-    public void setRoomId(long roomId) {
-        messageManipulator.setRoomId(roomId);
     }
 
     public long getLastReadLinkId(long roomId, long entityId) {
@@ -553,10 +559,36 @@ public class MessageListModel {
         return lastLinkId;
     }
 
+    @Nullable
+    public List<ResMessages.Link> loadOldMessages(long roomId, long linkId,
+                                                  boolean firstLoad,
+                                                  int offset) {
+
+        List<ResMessages.Link> oldMessages;
+        if (firstLoad) {
+            // 처음 로드면 현재 링크 ~ 이전 20개 로드
+            oldMessages =
+                    MessageRepository.getRepository().getOldMessages(roomId, linkId + 1, offset);
+        } else {
+            // 처음 로드 아니면 현재 링크 - 1 ~ 이전 itemCount 로드
+            oldMessages =
+                    MessageRepository.getRepository().getOldMessages(roomId, linkId, offset);
+        }
+
+        return oldMessages;
+    }
+
+    public void sortByTime(List<ResMessages.Link> records) {
+        Collections.sort(records, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
+    }
+
+    public void deleteCompletedSendingMessage(long roomId) {
+        SendMessageRepository.getRepository().deleteCompletedMessageOfRoom(roomId);
+    }
+
     public long getMyId() {
         return EntityManager.getInstance().getMe().getId();
     }
-
 
     public boolean isTeamOwner() {
         return EntityManager.getInstance().getMe().isTeamOwner();
@@ -564,6 +596,41 @@ public class MessageListModel {
 
     public boolean isCurrentTeam(long teamId) {
         return AccountRepository.getRepository().getSelectedTeamId() == teamId;
+    }
+
+    public void upsertMessages(long roomId, List<ResMessages.Link> messages) {
+        Observable.from(messages)
+                .doOnNext(link -> link.roomId = roomId)
+                .doOnNext(link -> {
+                    // event 가 아니고 삭제된 파일/코멘트/메세지만 처리
+                    if (!TextUtils.equals(link.status, "event")
+                            && TextUtils.equals(link.status, "archived")) {
+                        if (!(link.message instanceof ResMessages.FileMessage)) {
+                            MessageRepository.getRepository().deleteMessage(link.messageId);
+                        } else {
+                            MessageRepository.getRepository()
+                                    .upsertFileMessage((ResMessages.FileMessage) link.message);
+                        }
+                    }
+                })
+                .filter(link -> {
+                    // 이벤트와 삭제된 메세지는 처리 됐으므로..
+                    return TextUtils.equals(link.status, "event")
+                            || !TextUtils.equals(link.status, "archived");
+                })
+                .collect((Func0<List<ResMessages.Link>>) ArrayList::new, List::add)
+                .subscribe(links -> {
+
+                    List<Long> messageIds = new ArrayList<>();
+                    for (ResMessages.Link link : links) {
+                        messageIds.add(link.messageId);
+                    }
+
+                    // sending 메세지 삭제
+                    SendMessageRepository.getRepository().deleteCompletedMessages(messageIds);
+
+                    MessageRepository.getRepository().upsertMessages(links);
+                });
     }
 
     public AnalyticsValue.Screen getScreen(long entityId) {
