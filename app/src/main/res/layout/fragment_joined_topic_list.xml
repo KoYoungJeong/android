@@ -10,6 +10,7 @@
         android:layout_height="match_parent"
         android:background="@color/white"
         android:clipToPadding="false"
+        android:overScrollMode="never"
         android:paddingTop="40dp"
         android:scrollbars="vertical"
         android:smoothScrollbar="true"/>
@@ -17,14 +18,13 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="#FFF5F5F5"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp">
+        android:background="#FFF5F5F5">
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
             android:layout_toLeftOf="@+id/vg_main_topic_order_title"
             android:background="@color/jandi_entities_divider"/>
 
@@ -59,6 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
             android:layout_toRightOf="@+id/vg_main_topic_order_title"
             android:background="@color/jandi_entities_divider"/>
 

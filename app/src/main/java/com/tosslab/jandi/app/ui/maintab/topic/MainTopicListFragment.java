@@ -254,15 +254,10 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
     @Click(R.id.vg_main_topic_order_title)
     void onOrderTitleClick() {
-        new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_280)
-                .setItems(R.array.jandi_topic_sort, (dialog, which) -> {
-                    boolean currentFolder = isCurrentFolder();
-                    boolean selectFolder = which == 0;
-                    changeTopicSort(currentFolder, selectFolder);
-                })
-                .create()
-                .show();
+        boolean currentFolder = isCurrentFolder();
+        changeTopicSort(currentFolder, !currentFolder);
     }
+
     private boolean isCurrentFolder() {
         RecyclerView.Adapter adapter = lvMainTopic.getAdapter();
         return !(adapter instanceof UpdatedTopicAdapter);
