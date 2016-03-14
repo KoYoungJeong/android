@@ -56,7 +56,6 @@ public class MessageRepository {
                 return null;
             });
 
-
             return true;
         } catch (SQLException e) {
             e.printStackTrace();

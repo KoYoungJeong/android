@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.local.orm.domain;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.tosslab.jandi.app.local.orm.persister.DateConverter;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
 import java.util.Date;
@@ -17,7 +18,7 @@ public class RecentSticker {
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private ResMessages.StickerContent stickerContent;
-    @DatabaseField
+    @DatabaseField(persisterClass = DateConverter.class)
     private Date lastDate;
 
 
