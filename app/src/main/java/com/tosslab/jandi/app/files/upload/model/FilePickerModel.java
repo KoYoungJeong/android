@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.builder.Builders;
 import com.koushikdutta.ion.future.ResponseFuture;
 import com.tosslab.jandi.app.JandiApplication;
@@ -20,9 +19,7 @@ import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
-import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.profile.defaultimage.ProfileImageSelectorActivity_;
@@ -41,7 +38,6 @@ import org.androidannotations.annotations.EBean;
 import org.json.JSONException;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
@@ -201,45 +197,6 @@ public class FilePickerModel {
                 .asJsonObject();
 
         progressDialog.setOnCancelListener(dialog -> requestFuture.cancel());
-
-        return requestFuture.get();
-
-    }
-
-    public JsonObject uploadFile(Context context,
-                                 String realFilePath,
-                                 boolean isPublicTopic,
-                                 String title, long entityId,
-                                 String comment, List<MentionObject> mentions,
-                                 ProgressCallback progressCallback) throws ExecutionException, InterruptedException {
-        File uploadFile = new File(realFilePath);
-        String requestURL = JandiConstantsForFlavors.SERVICE_FILE_UPLOAD_URL + "inner-api/file";
-        String permissionCode = (isPublicTopic) ? "744" : "740";
-        Builders.Any.M ionBuilder
-                = Ion
-                .with(context)
-                .load(requestURL)
-                .uploadProgress(progressCallback)
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
-                .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
-                .setMultipartParameter("title", title)
-                .setMultipartParameter("share", String.valueOf(entityId))
-                .setMultipartParameter("permission", permissionCode)
-                .setMultipartParameter("teamId", String.valueOf(AccountRepository.getRepository().getSelectedTeamInfo().getTeamId()));
-
-        // Comment가 함께 등록될 경우 추가
-        if (comment != null && !comment.isEmpty()) {
-            ionBuilder.setMultipartParameter("comment", comment);
-            try {
-                ionBuilder.setMultipartParameter("mentions", JacksonMapper.getInstance().getObjectMapper().writeValueAsString(mentions));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        ResponseFuture<JsonObject> requestFuture = ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
-                .asJsonObject();
 
         return requestFuture.get();
 

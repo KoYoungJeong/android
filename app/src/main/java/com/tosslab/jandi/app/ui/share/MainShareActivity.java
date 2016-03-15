@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.share.model.MainShareModel;
+import com.tosslab.jandi.app.ui.share.multi.MultiShareFragment;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -78,6 +79,10 @@ public class MainShareActivity extends BaseAppCompatActivity {
 
     }
 
+    private void setUpMultiUploadFragment(Intent intent) {
+
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Permissions.getResult()
@@ -108,7 +113,11 @@ public class MainShareActivity extends BaseAppCompatActivity {
                     .text(mainShareModel.handleSendText(intent)).build();
             fragment = textShareFragment;
             share = textShareFragment;
-
+        } else if (intentType == IntentType.Multiple) {
+            MultiShareFragment multiShareFragment = MultiShareFragment
+                    .create(mainShareModel.handleSendImages(intent));
+            fragment = multiShareFragment;
+            share = multiShareFragment;
         } else {
             ImageShareFragment imageShareFragment = ImageShareFragment_.builder()
                     .uriString(mainShareModel.handleSendImage(intent).toString())
@@ -165,7 +174,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
     }
 
     public enum IntentType {
-        Image, Text, Etc
+        Image, Text, Multiple, Etc
     }
 
     public interface Share {

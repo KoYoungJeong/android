@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
@@ -90,6 +91,7 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
                 ResultMentionsVO mentionInfoObject = mentionControlViewModel.getMentionInfoObject(fileUploadVO.getComment());
 
                 fileUploadDTO = new FileUploadDTO();
+                fileUploadDTO.setTeamId(EntityManager.getInstance().getTeamId());
                 fileUploadDTO.setMentions(mentionInfoObject.getMentions());
                 fileUploadDTO.setComment(mentionInfoObject.getMessage());
                 fileUploadDTO.setFilePath(fileUploadVO.getFilePath());
@@ -97,6 +99,7 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
                 fileUploadDTO.setEntity(fileUploadVO.getEntity());
             } else {
                 fileUploadDTO = new FileUploadDTO(fileUploadVO);
+                fileUploadDTO.setTeamId(EntityManager.getInstance().getTeamId());
                 fileUploadDTO.setMentions(new ArrayList<>());
             }
 
