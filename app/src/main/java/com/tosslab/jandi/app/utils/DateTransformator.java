@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.JandiApplication;
 
 import org.codehaus.jackson.map.util.ISO8601DateFormat;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,19 +17,16 @@ import java.util.Locale;
  */
 public class DateTransformator {
     public static final long PARSE_FAIL = -1;
-    public static final String FORMAT_DEFAULT_KOREA = "MM/dd/yyyy, hh:mm a";
-    public static final String FORMAT_DEFAULT_USA = "MM/dd/yyyy, a hh:mm";
-    public static final String FORMAT_YYYYMMDD_HHMM_A_KOREA = "yyyy/MM/dd hh:mm a";
-    public static final String FORMAT_YYYYMMDD_HHMM_A_USA = "yyyy/MM/dd a hh:mm";
-    private static final String FORMAT_MM_DD_YYYY_EEE = "MM/dd/yyyy, EEE";
-    private static final String FOMAT_H_MM_KOREA = "a h:mm";
-    private static final String FORMAT_H_MM_USA = "h:mm a";
 
     public static String getTimeString(Date date) {
-        if (isKoreaStyle()) {
-            return getTimeString(date, FORMAT_DEFAULT_KOREA);
-        } else {
-            return getTimeString(date, FORMAT_DEFAULT_USA);
+        Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
+        switch (locale.getLanguage()) {
+            case "ko":
+            case "zh":
+                return getTimeString(date, "yyyy/MM/dd a hh:mm");
+            case "ja":
+            default:
+                return getTimeString(date, "MM/dd/yyyy hh:mm a");
         }
     }
 
@@ -37,7 +35,6 @@ public class DateTransformator {
     }
 
     public static long getTimeFromISO(String date) {
-
         if (TextUtils.isEmpty(date)) {
             return PARSE_FAIL;
         }
@@ -57,11 +54,7 @@ public class DateTransformator {
         try {
             ISO8601DateFormat isoFormat = new ISO8601DateFormat();
             Date formatDate = isoFormat.parse(date);
-            if (isKoreaStyle()) {
-                date = getTimeString(formatDate, FORMAT_YYYYMMDD_HHMM_A_KOREA);
-            } else {
-                date = getTimeString(formatDate, FORMAT_YYYYMMDD_HHMM_A_USA);
-            }
+            date = getTimeString(formatDate);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -69,23 +62,35 @@ public class DateTransformator {
     }
 
     public static String getTimeStringForDivider(long dateTime) {
-        return getTimeString(new Date(dateTime), FORMAT_MM_DD_YYYY_EEE);
+        Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
+        DateFormat dateFormat = null;
+        switch (locale.getLanguage()) {
+            case "ko":
+                dateFormat = new SimpleDateFormat("yyyy년 MM월 dd일 (EEE)");
+                break;
+            case "zh":
+                dateFormat = new SimpleDateFormat("yyyy年 MM月 dd日 EEE");
+                break;
+            case "ja":
+                dateFormat = new SimpleDateFormat("yyyy年 MM月 dd日 (EEE)");
+                break;
+            default:
+                dateFormat = new SimpleDateFormat("EEE MMM dd, yyyy");
+                break;
+        }
+        return dateFormat.format(dateTime);
     }
 
     public static String getTimeStringForSimple(Date date) {
-        if (isKoreaStyle()) {
-            return getTimeString(date, FOMAT_H_MM_KOREA);
-        } else {
-            return getTimeString(date, FORMAT_H_MM_USA);
-        }
-
-    }
-
-    private static boolean isKoreaStyle() {
         Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
-
-        String langCode = locale.getLanguage();
-        return TextUtils.equals(langCode, Locale.KOREA.getLanguage())
-                || TextUtils.equals(langCode, Locale.JAPAN.getLanguage());
+        switch (locale.getLanguage()) {
+            case "ko":
+            case "zh":
+                return getTimeString(date, "a h:mm");
+            case "ja":
+            default:
+                return getTimeString(date, "h:mm a");
+        }
     }
+
 }

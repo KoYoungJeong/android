@@ -89,7 +89,7 @@ public class StarMentionListPresentor {
                         .roomId(starMentionVO.getRoomType() != JandiConstants.TYPE_DIRECT_MESSAGE ?
                                 starMentionVO.getRoomId() : -1)
                         .isFromSearch(true)
-                        .lastMarker(starMentionVO.getLinkId())
+                        .lastReadLinkId(starMentionVO.getLinkId())
                         .start();
             } else {
                 ColoredToast.show(fragment.getString(R.string.jandi_starmention_no_longer_in_topic));

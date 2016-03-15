@@ -117,22 +117,22 @@ public class SocketRoomMarkerEvent {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Marker {
 
-        private int memberId;
-        private int lastLinkId;
+        private long memberId;
+        private long lastLinkId;
 
-        public int getMemberId() {
+        public long getMemberId() {
             return memberId;
         }
 
-        public void setMemberId(int memberId) {
+        public void setMemberId(long memberId) {
             this.memberId = memberId;
         }
 
-        public int getLastLinkId() {
+        public long getLastLinkId() {
             return lastLinkId;
         }
 
-        public void setLastLinkId(int lastLinkId) {
+        public void setLastLinkId(long lastLinkId) {
             this.lastLinkId = lastLinkId;
         }
     }

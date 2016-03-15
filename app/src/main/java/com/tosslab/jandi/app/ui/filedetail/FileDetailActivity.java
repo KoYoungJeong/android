@@ -72,8 +72,8 @@ import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity_;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity_;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
-import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
@@ -517,7 +517,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         adapter.notifyDataSetChanged();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread(delay = 100)
     @Override
     public void scrollToLastComment() {
         if (adapter.getItemCount() <= 0) {
@@ -914,7 +914,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         ProgressDialog progressDialog = new ProgressDialog(FileDetailActivity.this);
         progressDialog.setMax(100);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setCancelable(false);
+        progressDialog.setCancelable(true);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setOnCancelListener(dialog -> {
+            fileDetailPresenter.cancelCurrentDownloading();
+        });
         progressDialog.setMessage("Downloading " + fileMessage.content.title);
         progressDialog.show();
 
@@ -1017,8 +1021,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void deliverResultToMessageList() {
         Intent data = new Intent();
-        data.putExtra(MessageListFragment.EXTRA_FILE_DELETE, true);
-        data.putExtra(MessageListFragment.EXTRA_FILE_ID, fileId);
+        data.putExtra(MessageListV2Fragment.EXTRA_FILE_DELETE, true);
+        data.putExtra(MessageListV2Fragment.EXTRA_FILE_ID, fileId);
         setResult(RESULT_OK, data);
         finish();
     }
@@ -1300,6 +1304,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             super.onBackPressed();
         }
     }
+
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @OptionsItem(android.R.id.home)

@@ -163,7 +163,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
                 .roomId(roomId)
                 .isFavorite(isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .lastMarker(lastLinkId)
+                .lastReadLinkId(lastLinkId)
                 .start();
     }
 

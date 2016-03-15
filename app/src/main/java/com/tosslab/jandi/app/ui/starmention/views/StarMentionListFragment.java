@@ -22,7 +22,7 @@ import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldStarMentionedEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
-import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.adapter.StarMentionListAdapter;
 import com.tosslab.jandi.app.ui.starmention.presentor.StarMentionListPresentor;
@@ -231,8 +231,8 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
 
     @OnActivityResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH)
     void onFileDetailResult(Intent data) {
-        if (data != null && data.getBooleanExtra(MessageListFragment.EXTRA_FILE_DELETE, false)) {
-            int fileId = data.getIntExtra(MessageListFragment.EXTRA_FILE_ID, -1);
+        if (data != null && data.getBooleanExtra(MessageListV2Fragment.EXTRA_FILE_DELETE, false)) {
+            int fileId = data.getIntExtra(MessageListV2Fragment.EXTRA_FILE_ID, -1);
             if (fileId != -1) {
                 if (starMentionListAdapter.deleteMessage(fileId)) {
                     starMentionListAdapter.notifyDataSetChanged();

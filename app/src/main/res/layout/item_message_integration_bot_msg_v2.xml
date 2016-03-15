@@ -111,6 +111,18 @@
             android:layout_alignRight="@+id/vg_message_sub_menu"
             android:layout_below="@+id/vg_message_sub_menu" />
 -->
+        <RelativeLayout
+            android:id="@+id/vg_linkpreview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/tv_message_content"
+            android:layout_below="@+id/tv_message_content"
+            android:layout_marginRight="14dp"
+            android:layout_marginTop="10dp">
+
+            <include layout="@layout/item_message_layout_linkpreview_v2" />
+        </RelativeLayout>
+
     </RelativeLayout>
 
     <include

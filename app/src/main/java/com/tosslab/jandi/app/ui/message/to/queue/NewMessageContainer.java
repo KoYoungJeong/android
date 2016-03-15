@@ -5,14 +5,13 @@ import com.tosslab.jandi.app.ui.message.to.MessageState;
 /**
  * Created by Steve SeongUg Jung on 15. 3. 5..
  */
-public class NewMessageQueue implements MessageQueue {
+public class NewMessageContainer implements MessageContainer<MessageState> {
 
     private final MessageState messageState;
-
-    public NewMessageQueue(MessageState messageState) {
+    private boolean cacheMode = true;
+    public NewMessageContainer(MessageState messageState) {
         this.messageState = messageState;
     }
-
 
     @Override
     public LoadType getQueueType() {
@@ -20,8 +19,15 @@ public class NewMessageQueue implements MessageQueue {
     }
 
     @Override
-    public Object getData() {
+    public MessageState getData() {
         return messageState;
     }
 
+    public boolean isCacheMode() {
+        return cacheMode;
+    }
+
+    public void setCacheMode(boolean cacheMode) {
+        this.cacheMode = cacheMode;
+    }
 }

@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.ui.fileexplorer.to.FileItem;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -55,7 +56,7 @@ public class FileExplorerModel {
             int leftDirectory = lhs.isDirectory() ? 1 : 0;
             int rightDirectory = rhs.isDirectory() ? 1 : 0;
             if (leftDirectory - rightDirectory == 0) {
-                return lhs.getName().compareToIgnoreCase(rhs.getName());
+                return StringCompareUtil.compare(lhs.getName(), rhs.getName());
             } else {
                 return rightDirectory - leftDirectory;
             }

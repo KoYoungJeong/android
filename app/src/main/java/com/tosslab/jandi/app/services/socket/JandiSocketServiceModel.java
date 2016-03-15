@@ -353,7 +353,7 @@ public class JandiSocketServiceModel {
                 return;
             }
 
-            int messageId = socketLinkPreviewMessageEvent.getMessage().getId();
+            long messageId = socketLinkPreviewMessageEvent.getMessage().getId();
 
             if (updateLinkPreview(teamId, messageId)) {
                 postEvent(new LinkPreviewUpdateEvent(messageId));
@@ -380,7 +380,7 @@ public class JandiSocketServiceModel {
                 return;
             }
 
-            int messageId = data.getMessageId();
+            long messageId = data.getMessageId();
 
             ResMessages.TextMessage textMessage =
                     MessageRepository.getRepository().getTextMessage(messageId);
@@ -394,7 +394,7 @@ public class JandiSocketServiceModel {
         }
     }
 
-    private boolean updateLinkPreview(int teamId, int messageId) {
+    private boolean updateLinkPreview(int teamId, long messageId) {
         ResMessages.OriginalMessage message =
                 RequestApiManager.getInstance().getMessage(teamId, messageId);
 
@@ -459,7 +459,7 @@ public class JandiSocketServiceModel {
         markerSubscribe = markerPublishSubject.throttleWithTimeout(500, TimeUnit.MILLISECONDS)
                 .onBackpressureBuffer()
                 .filter(event -> {
-                    int markingUserId = event.getMarker().getMemberId();
+                    long markingUserId = event.getMarker().getMemberId();
                     return Observable.from(AccountRepository.getRepository().getAccountTeams())
                             .filter(userTeam -> userTeam.getMemberId() == markingUserId)
                             .map(userTeam1 -> true)

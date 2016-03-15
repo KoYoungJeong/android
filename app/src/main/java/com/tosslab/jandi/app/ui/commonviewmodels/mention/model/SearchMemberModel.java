@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel_;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import org.androidannotations.annotations.EBean;
 
@@ -141,7 +142,7 @@ public class SearchMemberModel {
             } else if (rhs.isBot()) {
                 return 1;
             } else {
-                return lhs.getName().compareToIgnoreCase(rhs.getName());
+                return StringCompareUtil.compare(lhs.getName(), rhs.getName());
             }
         };
     }

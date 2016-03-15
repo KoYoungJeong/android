@@ -55,7 +55,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_FILE_SHARE_INFO = 9;
     private static final int DATABASE_VERSION_DOWNLOAD_INFO = 10;
     private static final int DATABASE_VERSION_ADD_INTEGRATION = 11;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_ADD_INTEGRATION;
+    private static final int DATABASE_VERSION_MODIFY_DATE_TYPE = 12;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_MODIFY_DATE_TYPE;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -205,7 +206,20 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         dao.executeRawNoArgs("ALTER TABLE `message_text_content` ADD COLUMN connectType VARCHAR;");
                         dao.executeRawNoArgs("ALTER TABLE `message_text_content` ADD COLUMN connectColor VARCHAR;");
                         createTable(connectionSource, ResMessages.ConnectInfo.class);
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_MODIFY_DATE_TYPE, () -> {
+                        dropTable(connectionSource, RecentSticker.class);
+                        createTable(connectionSource, RecentSticker.class);
+
+                        dropTable(connectionSource, ResFolder.class);
+                        createTable(connectionSource, ResFolder.class);
+
+                        dropTable(connectionSource, UploadedFileInfo.class);
+                        createTable(connectionSource, UploadedFileInfo.class);
+
+                        MessageRepository.getRepository().deleteAllLink();
                     }));
+
 
             Observable.from(upgradeCheckers)
                     .subscribe(upgradeChecker -> upgradeChecker.run(oldVersion));

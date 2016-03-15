@@ -3,11 +3,11 @@ package com.tosslab.jandi.app.ui.message.to.queue;
 /**
  * Created by tonyjs on 15. 6. 17..
  */
-public class UpdateLinkPreviewMessageQueue implements MessageQueue {
+public class UpdateLinkPreviewMessageContainer implements MessageContainer<Long> {
 
-    private int messageId;
+    private long messageId;
 
-    public UpdateLinkPreviewMessageQueue(int messageId) {
+    public UpdateLinkPreviewMessageContainer(long messageId) {
         this.messageId = messageId;
     }
 
@@ -17,7 +17,7 @@ public class UpdateLinkPreviewMessageQueue implements MessageQueue {
     }
 
     @Override
-    public Integer getData() {
+    public Long getData() {
         return messageId;
     }
 }

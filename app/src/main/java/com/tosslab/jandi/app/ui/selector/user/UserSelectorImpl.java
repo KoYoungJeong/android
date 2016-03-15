@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.selector.room.adapter.RoomRecyclerAdapter;
 import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,7 +120,7 @@ public class UserSelectorImpl implements UserSelector {
                 .filter(formattedEntity -> !TextUtils.equals(formattedEntity.getUser().status, "enabled"))
                 .map(ExpandRoomData::newRoomData)
                 .toSortedList((lhs, rhs) -> {
-                    return lhs.getName().compareToIgnoreCase(rhs.getName());
+                    return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                 });
 
     }
@@ -137,7 +138,7 @@ public class UserSelectorImpl implements UserSelector {
                     } else if (rhs.getEntityId() == myId) {
                         return 1;
                     } else {
-                        return lhs.getName().compareToIgnoreCase(rhs.getName());
+                        return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                     }
                 });
 

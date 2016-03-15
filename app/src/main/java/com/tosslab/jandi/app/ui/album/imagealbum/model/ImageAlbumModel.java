@@ -264,7 +264,7 @@ public class ImageAlbumModel {
         return buckerId == ImageAlbumFragment.BUCKET_ALL_IMAGE_ALBUM;
     }
 
-    public List<ImagePicture> getAllPhotoList(Context context, int fromIndexId) {
+    public List<ImagePicture> getAllPhotoList(Context context, int fromImageId) {
         // which image properties are we querying
         String[] projection = {
                 MediaStore.Images.ImageColumns._ID,
@@ -281,9 +281,9 @@ public class ImageAlbumModel {
 
         String selection = null;
         String[] selectionArgs = null;
-        if (fromIndexId > 0) {
+        if (fromImageId > 0) {
             selection = String.format("%s < ?", MediaStore.Images.ImageColumns._ID);
-            selectionArgs = new String[]{String.valueOf(fromIndexId)};
+            selectionArgs = new String[]{String.valueOf(fromImageId)};
         }
 
         ContentResolver contentResolver = context.getContentResolver();

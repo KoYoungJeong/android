@@ -5,6 +5,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
+import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
@@ -21,29 +23,131 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHo
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
-public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyViewHolder> {
+public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyViewHolder> implements MessageListHeaderAdapter.MessageItemDate {
 
     Context context;
-
     long lastMarker = -1;
     AnimState markerAnimState = AnimState.Idle;
     boolean moreFromNew;
     MoreState oldMoreState;
     MoreState newMoreState;
-
-    MessageListAdapter.OnItemClickListener onItemClickListener;
-    MessageListAdapter.OnItemLongClickListener onItemLongClickListener;
-
+    MessageListSearchAdapter.OnItemClickListener onItemClickListener;
+    MessageListSearchAdapter.OnItemLongClickListener onItemLongClickListener;
     long teamId;
     long roomId = -1;
     long entityId;
     long lastReadLinkId = -1;
-
     List<ResMessages.Link> links;
+
+    public MessageListSearchAdapter(Context context) {
+        this.context = context;
+        this.links = new ArrayList<>();
+        oldMoreState = MoreState.Idle;
+        setHasStableIds(true);
+    }
+
+    public void addAll(int position, List<ResMessages.Link> messages) {
+        // delete dummy message by same messageId
+        for (int idx = messages.size() - 1; idx >= 0; --idx) {
+            int dummyMessagePosition = getDummyMessagePositionByMessageId(messages.get(idx).messageId);
+            if (dummyMessagePosition >= 0) {
+                links.remove(dummyMessagePosition);
+            } else {
+                break;
+            }
+        }
+
+        for (int idx = links.size() - 1; idx >= 0; idx--) {
+            ResMessages.Link link = links.get(idx);
+            if (link instanceof DummyMessageLink) {
+                DummyMessageLink dummyLink = (DummyMessageLink) link;
+                if (TextUtils.equals(dummyLink.getStatus(), SendMessage.Status.COMPLETE.name())) {
+                    links.remove(idx);
+                }
+            } else {
+                break;
+            }
+        }
+
+        int size = messages.size();
+        ResMessages.Link link;
+
+        for (int idx = size - 1; idx >= 0; --idx) {
+            link = messages.get(idx);
+
+            if (TextUtils.equals(link.status, "created") || TextUtils.equals(link.status, "shared") || TextUtils.equals(link.status, "event")) {
+            } else if (TextUtils.equals(link.status, "edited")) {
+                int searchedPosition = indexByMessageId(link.messageId);
+                if (searchedPosition >= 0) {
+                    links.set(searchedPosition, link);
+                }
+                messages.remove(link);
+            } else if (TextUtils.equals(link.status, "archived")) {
+                int searchedPosition = indexByMessageId(link.messageId);
+                // if file type
+                if (TextUtils.equals(link.message.contentType, "file")) {
+                    if (searchedPosition >= 0) {
+                        ResMessages.Link originLink = links.get(searchedPosition);
+                        originLink.message = link.message;
+                        originLink.status = "archived";
+                        messages.remove(link);
+                    }
+                    // if cannot find same object, will be add to list.
+                } else {
+                    if (searchedPosition >= 0) {
+                        links.remove(searchedPosition);
+                    }
+                    messages.remove(link);
+                }
+            } else {
+                messages.remove(link);
+            }
+        }
+
+        links.addAll(Math.min(position, links.size() - getDummyMessageCount()), messages);
+    }
+
+    public void clear() {
+        links.clear();
+    }
+
+    private int getDummyMessagePositionByMessageId(long messageId) {
+
+        int size = getItemCount();
+
+        for (int idx = size - 1; idx >= 0; --idx) {
+            ResMessages.Link link = getItem(idx);
+
+            if (link instanceof DummyMessageLink) {
+                DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
+                if (dummyMessageLink.getMessageId() == messageId) {
+                    return idx;
+                }
+            } else {
+                return -1;
+            }
+        }
+        return -1;
+
+    }
+
+    public void remove(int position) {
+        links.remove(position);
+    }
+
+    public boolean isEndOfLoad() {
+        return newMoreState == MoreState.Nope;
+    }
+
+    @Override
+    public Date getItemDate(int position) {
+        return getItem(position).time;
+    }
 
     @Override
     public RecyclerBodyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -67,7 +171,7 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
         }
 
         if (item.id == lastMarker) {
-            if (markerAnimState == MessageCursorListAdapter.AnimState.Idle) {
+            if (markerAnimState == MessageListSearchAdapter.AnimState.Idle) {
                 final View view = viewHolder.itemView;
                 Integer colorFrom = context.getResources().getColor(R.color.jandi_transparent_white_1f);
                 Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_1f);
@@ -80,11 +184,11 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
                 colorAnimation.addListener(new SimpleEndAnimatorListener() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        markerAnimState = MessageCursorListAdapter.AnimState.End;
+                        markerAnimState = MessageListSearchAdapter.AnimState.End;
                     }
                 });
                 colorAnimation.start();
-                markerAnimState = MessageCursorListAdapter.AnimState.Loading;
+                markerAnimState = MessageListSearchAdapter.AnimState.Loading;
             }
         }
 
@@ -94,23 +198,31 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
             bodyViewHolder.setLastReadViewVisible(0, -1);
         }
 
-        if (position <= getItemCount() / 10 && oldMoreState == MessageCursorListAdapter.MoreState.Idle) {
-            oldMoreState = MessageCursorListAdapter.MoreState.Loading;
-            EventBus.getDefault().post(new RefreshOldMessageEvent());
-        } else if (moreFromNew && position == getItemCount() - 1 && newMoreState == MessageCursorListAdapter.MoreState.Idle) {
-            newMoreState = MessageCursorListAdapter.MoreState.Loading;
-            EventBus.getDefault().post(new RefreshNewMessageEvent());
+        if (position <= getItemCount() / 10 && oldMoreState == MessageListSearchAdapter.MoreState.Idle) {
+            oldMoreState = MessageListSearchAdapter.MoreState.Loading;
+            synchronized (this) {
+                if (oldMoreState != MessageListSearchAdapter.MoreState.Idle) {
+                    EventBus.getDefault().post(new RefreshOldMessageEvent());
+                }
+            }
+        } else if (moreFromNew && position == getItemCount() - 1 && newMoreState == MessageListSearchAdapter.MoreState.Idle) {
+            newMoreState = MessageListSearchAdapter.MoreState.Loading;
+            synchronized (this) {
+                if (oldMoreState != MessageListSearchAdapter.MoreState.Idle) {
+                    EventBus.getDefault().post(new RefreshNewMessageEvent());
+                }
+            }
         }
 
         bodyViewHolder.setOnItemClickListener(v -> {
             if (onItemClickListener != null) {
-                onItemClickListener.onItemClick(MessageAdapter.this, position);
+                onItemClickListener.onItemClick(MessageListSearchAdapter.this, position);
             }
         });
 
         bodyViewHolder.setOnItemLongClickListener(v -> {
             if (onItemLongClickListener != null) {
-                return onItemLongClickListener.onItemLongClick(MessageAdapter.this, position);
+                return onItemLongClickListener.onItemLongClick(MessageListSearchAdapter.this, position);
             }
             return false;
         });
@@ -137,7 +249,6 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
         return links.get(position);
     }
 
-    public abstract void addAll(int position, List<ResMessages.Link> messages);
 
     public void setOldLoadingComplete() {
         oldMoreState = MoreState.Idle;
@@ -166,7 +277,6 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
         return -1;
     }
 
-    public abstract void clear();
 
     public List<Integer> indexByFeedbackId(long messageId) {
 
@@ -208,7 +318,6 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
         return -1;
     }
 
-    public abstract void remove(int position);
 
     public void setMarker(long lastMarker) {
         this.lastMarker = lastMarker;
@@ -302,5 +411,4 @@ public abstract class MessageAdapter extends RecyclerView.Adapter<RecyclerBodyVi
     public interface OnItemLongClickListener {
         boolean onItemLongClick(RecyclerView.Adapter adapter, int position);
     }
-
 }

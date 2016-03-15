@@ -33,6 +33,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
@@ -51,6 +52,8 @@ public class FileDetailPresenter {
     private View view;
     private PublishSubject<Pair<Long, Boolean>> initializePublishSubject;
     private PublishSubject<FileStarredInfo> starredStatePublishSubject;
+
+    private Future<File> currentDownloadingFile;
 
     public void setView(View view) {
         this.view = view;
@@ -96,9 +99,10 @@ public class FileDetailPresenter {
             fileDetail = fileDetailModel.getFileDetailFromServer(fileId);
         } catch (RetrofitError e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
+            view.showUnexpectedErrorToast();
+            view.finish();
+            return;
         }
-
-        view.clearFileDetailAndComments();
 
         if (fileDetail == null || fileDetail.messageCount <= 0) {
             view.showUnexpectedErrorToast();
@@ -114,6 +118,8 @@ public class FileDetailPresenter {
             view.finish();
             return;
         }
+
+        view.clearFileDetailAndComments();
 
         // 파일의 상세정보는 API 로 부터 받아온 리스트의 마지막에 있다.
         int fileDetailPosition = messages.size() - 1;
@@ -298,22 +304,33 @@ public class FileDetailPresenter {
         String downloadUrl = fileDetailModel.getDownloadUrl(fileMessage.content.fileUrl);
         final String mimeType = fileMessage.content.type;
 
-        fileDetailModel.downloadFile(downloadUrl, downloadFilePath, (downloaded, total) -> {
-            progressDialog.setProgress((int) (downloaded * 100 / total));
-        }, (e, result) -> {
-            progressDialog.dismiss();
+        currentDownloadingFile =
+                fileDetailModel.downloadFile(downloadUrl, downloadFilePath,
+                        (downloaded, total) -> progressDialog.setProgress((int) (downloaded * 100 / total)),
+                        (e, result) -> {
+                            progressDialog.dismiss();
+                            if (currentDownloadingFile.isCancelled()) {
+                                currentDownloadingFile = null;
+                                return;
+                            }
+                            currentDownloadingFile = null;
+                            if (e == null && result != null) {
+                                if (type == FileManageType.EXPORT) {
+                                    view.startExportedFileViewerActivity(result, mimeType);
+                                } else if (type == FileManageType.OPEN) {
+                                    String fileType = fileDetailModel.getFileType(result, mimeType);
+                                    view.startDownloadedFileViewerActivity(result, fileType);
+                                }
+                            } else {
+                                view.showUnexpectedErrorToast();
+                            }
+                        });
+    }
 
-            if (e == null && result != null) {
-                if (type == FileManageType.EXPORT) {
-                    view.startExportedFileViewerActivity(result, mimeType);
-                } else if (type == FileManageType.OPEN) {
-                    String fileType = fileDetailModel.getFileType(result, mimeType);
-                    view.startDownloadedFileViewerActivity(result, fileType);
-                }
-            } else {
-                view.showUnexpectedErrorToast();
-            }
-        });
+    public void cancelCurrentDownloading() {
+        if (currentDownloadingFile != null) {
+            currentDownloadingFile.cancel(true);
+        }
     }
 
     @Background

@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.ui.share.views.domain.ExpandRoomData;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import org.androidannotations.annotations.EBean;
 
@@ -136,7 +137,7 @@ public class ShareSelectModel {
         return Observable.from(getFormattedUsersWithoutMe())
                 .filter(formattedEntity -> TextUtils.equals(formattedEntity.getUser().status, "enabled"))
                 .toSortedList((lhs, rhs) -> {
-                    return lhs.getName().compareToIgnoreCase(rhs.getName());
+                    return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                 });
     }
 
@@ -171,13 +172,13 @@ public class ShareSelectModel {
         for (ResFolder folder : topicFolders) {
             Collections.sort(topicDataMap.get(folder.id), (lhs, rhs) -> {
                 if (lhs.isStarred() && rhs.isStarred()) {
-                    return lhs.getName().compareToIgnoreCase(rhs.getName());
+                    return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                 } else if (lhs.isStarred()) {
                     return -1;
                 } else if (rhs.isStarred()) {
                     return 1;
                 } else {
-                    return lhs.getName().compareToIgnoreCase(rhs.getName());
+                    return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                 }
             });
         }
@@ -227,13 +228,13 @@ public class ShareSelectModel {
         observable.toSortedList((lhs, rhs) -> {
 
             if (lhs.isStarred && rhs.isStarred) {
-                return lhs.getName().compareToIgnoreCase(rhs.getName());
+                return StringCompareUtil.compare(lhs.getName(), rhs.getName());
             } else if (lhs.isStarred) {
                 return -1;
             } else if (rhs.isStarred) {
                 return 1;
             } else {
-                return lhs.getName().compareToIgnoreCase(rhs.getName());
+                return StringCompareUtil.compare(lhs.getName(), rhs.getName());
             }
 
         }).subscribe(topics -> {
@@ -285,7 +286,7 @@ public class ShareSelectModel {
     private List<FormattedEntity> sortFormattedEntityList(Collection<FormattedEntity> naiveEntities) {
         List<FormattedEntity> sortedEntities = new ArrayList<>(naiveEntities);
         Collections.sort(sortedEntities, (formattedEntity, formattedEntity2) ->
-                formattedEntity.getName().compareToIgnoreCase(formattedEntity2.getName()));
+                StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName()));
 
         return sortedEntities;
     }

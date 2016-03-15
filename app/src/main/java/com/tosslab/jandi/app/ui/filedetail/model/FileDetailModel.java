@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.file.FileUtil;
@@ -48,10 +49,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import retrofit.RetrofitError;
 import rx.Observable;
-import rx.functions.Func2;
 
 @EBean
 public class FileDetailModel {
@@ -161,11 +162,9 @@ public class FileDetailModel {
                 .filter(formattedEntity -> formattedEntity.getId() != entityManager.getMe().getId())
                 .toSortedList((formattedEntity, formattedEntity2) -> {
                     if (formattedEntity.isUser() && formattedEntity2.isUser()) {
-                        return formattedEntity.getName()
-                                .compareToIgnoreCase(formattedEntity2.getName());
+                        return  StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
                     } else if (!formattedEntity.isUser() && !formattedEntity2.isUser()) {
-                        return formattedEntity.getName()
-                                .compareToIgnoreCase(formattedEntity2.getName());
+                        return  StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
                     } else {
                         if (formattedEntity.isUser()) {
                             return 1;
@@ -355,8 +354,8 @@ public class FileDetailModel {
                 externalCode);
     }
 
-    public void downloadFile(String downloadUrl, String downloadPath, ProgressCallback progressCallback, FutureCallback<File> callback) {
-        Ion.with(JandiApplication.getContext())
+    public Future<File> downloadFile(String downloadUrl, String downloadPath, ProgressCallback progressCallback, FutureCallback<File> callback) {
+        return Ion.with(JandiApplication.getContext())
                 .load(downloadUrl)
                 .progressHandler(progressCallback)
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(JandiApplication.getContext()))

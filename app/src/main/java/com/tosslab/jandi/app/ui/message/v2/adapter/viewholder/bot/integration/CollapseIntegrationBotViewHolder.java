@@ -11,11 +11,12 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.UnreadCountUtil;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.util.IntegrationBotUtil;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
@@ -29,6 +30,8 @@ public class CollapseIntegrationBotViewHolder implements BodyViewHolder {
     private LinearLayout vgConnectInfo;
     private View vLastRead;
 
+    private LinkPreviewViewModel linkPreviewViewModel;
+
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_message_item);
@@ -37,7 +40,8 @@ public class CollapseIntegrationBotViewHolder implements BodyViewHolder {
         vgConnectInfo = ((LinearLayout) rootView.findViewById(R.id.vg_message_sub_menu));
         vLastRead = rootView.findViewById(R.id.vg_message_last_read);
 
-
+        linkPreviewViewModel = new LinkPreviewViewModel(rootView.getContext());
+        linkPreviewViewModel.initView(rootView);
     }
 
     @Override
@@ -95,6 +99,8 @@ public class CollapseIntegrationBotViewHolder implements BodyViewHolder {
         tvMessage.setText(builder);
 
         IntegrationBotUtil.setIntegrationSubUI(textMessage.content, vConnectLine, vgConnectInfo);
+
+        linkPreviewViewModel.bindData(link);
 
     }
 

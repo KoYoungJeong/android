@@ -1,28 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+      xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_main_search"
         android:icon="@drawable/actionbar_icon_search"
         android:orderInCategory="100"
         android:title="@string/jandi_action_search"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/action_main_topic_order"
-        android:icon="@drawable/actionbar_icon_sorting"
-        android:orderInCategory="100"
-        android:title="@string/jandi_sort_folder"
-        app:showAsAction="always">
-        <menu>
-            <item
-                android:id="@+id/action_main_topic_order_folder"
-                android:title="@string/jandi_sort_folder" />
-            <item
-                android:id="@+id/action_main_topic_order_updated"
-                android:title="@string/jandi_sort_updated" />
-        </menu>
-
-    </item>
+        app:showAsAction="always"/>
 
 </menu>

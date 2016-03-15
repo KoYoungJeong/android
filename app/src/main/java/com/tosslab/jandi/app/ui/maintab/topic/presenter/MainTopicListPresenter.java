@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.model.TopicFolderSettingModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
@@ -286,7 +287,26 @@ public class MainTopicListPresenter {
 
     }
 
+    public void onInitViewList() {
+        int lastTopicOrderType = JandiPreference.getLastTopicOrderType();
+        if (lastTopicOrderType == 0) {
+            view.changeTopicSort(false, true);
+        } else {
+            view.changeTopicSort(true, false);
+        }
+    }
+
+    public void updateLastTopicOrderType(boolean changeToFolder) {
+        if (changeToFolder) {
+            JandiPreference.setLastTopicOrderType(0);
+        } else {
+            JandiPreference.setLastTopicOrderType(1);
+        }
+    }
+
     public interface View {
+        void changeTopicSort(boolean currentFolder, boolean changeToFolder);
+
         void setUpdatedItems(List<Topic> topics);
 
         void showList(TopicFolderListDataProvider topicFolderListDataProvider);

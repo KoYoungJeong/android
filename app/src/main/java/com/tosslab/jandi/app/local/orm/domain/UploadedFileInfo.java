@@ -6,7 +6,6 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "uploaded_file_info")
 public class UploadedFileInfo {
-
     @DatabaseField(id = true)
     private long messageId;
     @DatabaseField(defaultValue = "")

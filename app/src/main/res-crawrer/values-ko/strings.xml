@@ -387,7 +387,7 @@
 	<string name="jandi_sdcard_storage">"SD 카드"</string>
 	<string name="jandi_sdcard_storage_mounted">"SD 카드가 인식되었습니다"</string>
 	<string name="jandi_sdcard_storage_unmounted">"SD 카드가 해제되었습니다"</string>
-	<string name="jandi_search_ing">"<![CDATA[<b><font color=#404040>%s</font></b>]]>검색 중..."</string>
+	<string name="jandi_search_ing">"<![CDATA[<b><font color=#404040>%s</font></b>]]> 검색 중..."</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>에 대한 <b><font color=#404040>%2$d</font></b>개의 검색 결과가 있습니다.]]>"</string>
 	<string name="jandi_select_character">"캐릭터 선택하기"</string>
 	<string name="jandi_select_direct_messages">"대화 시작하기"</string>

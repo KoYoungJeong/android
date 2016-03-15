@@ -3,10 +3,10 @@ package com.tosslab.jandi.app.ui.message.to.queue;
 /**
  * Created by Steve SeongUg Jung on 15. 3. 5..
  */
-public interface MessageQueue {
+public interface MessageContainer<T> {
 
-    public LoadType getQueueType();
+    LoadType getQueueType();
 
-    public Object getData();
+    T getData();
 
 }

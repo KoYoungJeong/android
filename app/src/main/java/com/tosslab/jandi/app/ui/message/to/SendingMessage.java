@@ -36,14 +36,6 @@ public class SendingMessage {
         return localId;
     }
 
-//    public int getMessageId() {
-//        return messageId;
-//    }
-//
-//    public void setMessageId(int messageId) {
-//        this.messageId = messageId;
-//    }
-
     public String getMessage() {
         return message;
     }

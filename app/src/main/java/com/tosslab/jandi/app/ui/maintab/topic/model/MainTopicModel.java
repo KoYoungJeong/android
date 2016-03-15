@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
@@ -87,15 +88,14 @@ public class MainTopicModel {
                         .build());
 
         observable.toSortedList((lhs, rhs) -> {
-
             if (lhs.isStarred() && rhs.isStarred()) {
-                return lhs.getName().compareToIgnoreCase(rhs.getName());
+                return StringCompareUtil.compare(lhs.getName(), rhs.getName());
             } else if (lhs.isStarred()) {
                 return -1;
             } else if (rhs.isStarred()) {
                 return 1;
             } else {
-                return lhs.getName().compareToIgnoreCase(rhs.getName());
+                return StringCompareUtil.compare(lhs.getName(), rhs.getName());
             }
 
         }).subscribe(topics -> {
@@ -177,13 +177,14 @@ public class MainTopicModel {
 
             Collections.sort(topicItemDatas, (lhs, rhs) -> {
                 if (lhs.isStarred() && rhs.isStarred()) {
-                    return lhs.getName().compareToIgnoreCase(rhs.getName());
+                    return StringCompareUtil.compare(lhs.getName(), rhs.getName());
+
                 } else if (lhs.isStarred()) {
                     return -1;
                 } else if (rhs.isStarred()) {
                     return 1;
                 } else {
-                    return lhs.getName().compareToIgnoreCase(rhs.getName());
+                    return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                 }
             });
 
@@ -303,7 +304,9 @@ public class MainTopicModel {
                 .doOnNext(topic -> {
                     EntityManager.getInstance().getEntityById(topic.getEntityId()).setTopicGlobalLastLinkId(event.getLinkId());
                 })
-                .subscribe(topic -> {}, t -> {});
+                .subscribe(topic -> {
+                }, t -> {
+                });
     }
 
     public boolean isFolderSame(List<ResFolder> folders1, List<ResFolder> folders2) {
@@ -398,15 +401,14 @@ public class MainTopicModel {
                         return 0;
                     }
                 });
-
-
     }
 
     public int getUnreadCount() {
         final int[] unreadCount = {0};
         EntityManager entityManager = EntityManager.getInstance();
         Observable.merge(Observable.from(entityManager.getJoinedChannels()), Observable.from(entityManager.getGroups()))
-                .subscribe(entity -> unreadCount[0] += entity.alarmCount, t -> {});
+                .subscribe(entity -> unreadCount[0] += entity.alarmCount, t -> {
+                });
 
         return unreadCount[0];
     }
@@ -414,4 +416,5 @@ public class MainTopicModel {
     public long findFolderId(long entityId) {
         return TopicFolderRepository.getRepository().getFolderOfTopic(entityId).folderId;
     }
+
 }

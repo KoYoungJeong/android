@@ -38,6 +38,7 @@ public class DownloadService extends IntentService implements DownloadController
     private Handler uiHandler;
     // 노티피케이션을 자주 업데이트 하는 경우 시스템 렉이 엄청 걸림. 초단위로 보여주기 위한 마지막 타임스탬프
     private long lastNotificationTime;
+
     private BroadcastReceiver networkChangeBroadcastReceiver = new BroadcastReceiver() {
         private boolean isRegister = true;
         private boolean isHandled = false;
@@ -72,6 +73,7 @@ public class DownloadService extends IntentService implements DownloadController
             }
         }
     };
+
     private boolean isRedeliveried;
 
     public DownloadService() {
