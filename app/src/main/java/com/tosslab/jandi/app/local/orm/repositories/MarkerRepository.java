@@ -52,14 +52,21 @@ public class MarkerRepository {
             DeleteBuilder<ResRoomInfo.MarkerInfo, ?> deleteBuilder = markerInfoDao.deleteBuilder();
             deleteBuilder.where().eq("roomId", roomInfo.getId());
             deleteBuilder.delete();
-            for (ResRoomInfo.MarkerInfo markerInfo : roomInfo.getMarkers()) {
-                markerInfo.setRoom(roomInfo);
-                markerInfoDao.createOrUpdate(markerInfo);
-            }
+
+            markerInfoDao.callBatchTasks(() -> {
+                for (ResRoomInfo.MarkerInfo markerInfo : roomInfo.getMarkers()) {
+                    markerInfo.setRoom(roomInfo);
+                    markerInfoDao.create(markerInfo);
+                }
+                return null;
+            });
 
             return true;
 
         } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         } finally {

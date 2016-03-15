@@ -225,6 +225,10 @@ public class AnalyticsValue {
         SignOut,
         KickMember,
         ShowProfilePicture,
-        DirectMessage, TurnOffPasscode, TurnOnPasscode, ChangePasscode, Call
+        DirectMessage, TurnOffPasscode, TurnOnPasscode, ChangePasscode, ChangeTopicOrder, Call
+    }
+
+    public enum Label {
+        Folder, UpdateDate
     }
 }
