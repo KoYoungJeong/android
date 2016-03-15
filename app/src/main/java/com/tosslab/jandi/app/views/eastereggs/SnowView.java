@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.R;
 /**
  * Created by tonyjs on 15. 11. 30..
  */
+@Deprecated /** 이스터에그, 또 사용될지 몰라서.. **/
 public class SnowView extends View {
     public static final String TAG = SnowView.class.getSimpleName();
 
