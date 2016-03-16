@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.share;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
@@ -9,6 +10,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.inputmethod.InputMethodManager;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
@@ -76,10 +79,6 @@ public class MainShareActivity extends BaseAppCompatActivity {
                     .check();
         }
 
-
-    }
-
-    private void setUpMultiUploadFragment(Intent intent) {
 
     }
 
@@ -159,6 +158,17 @@ public class MainShareActivity extends BaseAppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                    .hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+        }
+
+        return super.dispatchTouchEvent(ev);
     }
 
     void setupActionbar() {

@@ -1,14 +1,20 @@
 package com.tosslab.jandi.app.services.upload;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.builder.Builders;
 import com.koushikdutta.ion.future.ResponseFuture;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.FileUploadProgressEvent;
 import com.tosslab.jandi.app.events.files.FileUploadStartEvent;
@@ -28,11 +34,13 @@ import java.io.IOException;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -41,85 +49,47 @@ import rx.subjects.PublishSubject;
  */
 public class FileUploadManager {
 
+    public static final String EXTRA_STOP_ID = "stop_id";
+    private static final String EXTRA_STOP = "stop";
     private static FileUploadManager manager;
-    private final PublishSubject<FileUploadDTO> objectPublishSubject;
+    private PublishSubject<FileUploadDTO> objectPublishSubject;
+    private ResponseFuture<JsonObject> lastRequest;
     private List<FileUploadDTO> fileUploadDTOList;
-    private Context context;
     private int notificationId = 100;
+    private NotificationCompat.Builder notificationBuilder;
+    private Subscription subscription;
 
-    private FileUploadManager(Context context) {
-        this.context = context.getApplicationContext();
+    private FileUploadManager() {
+        Context context = JandiApplication.getContext();
         fileUploadDTOList = new CopyOnWriteArrayList<>();
 
+        notificationBuilder = new NotificationCompat.Builder(context);
+        notificationBuilder
+                .setWhen(System.currentTimeMillis())
+                .setOngoing(true)
+                .setTicker("잔디로 파일 업로드")
+                .setContentTitle("잔디로 파일 업로드")
+                .setContentText(JandiApplication.getContext().getString(R.string.app_name))
+                .setCategory(NotificationCompat.CATEGORY_PROGRESS)
+                .setSmallIcon(android.R.drawable.stat_sys_upload);
+
         objectPublishSubject = PublishSubject.create();
-        objectPublishSubject.onBackpressureBuffer()
-                .observeOn(Schedulers.io())
-                .subscribe(fileUploadDTO -> {
-                    int progress;
-                    fileUploadDTO.setUploadState(FileUploadDTO.UploadState.PROGRESS);
-                    EventBus.getDefault().post(new FileUploadStartEvent(fileUploadDTO.getEntity()));
-                    FilePickerModel filePickerModel = FilePickerModel_.getInstance_(context);
-
-                    boolean isPublicTopic = filePickerModel.isPublicEntity(fileUploadDTO.getEntity());
-
-                    try {
-                        JsonObject result = uploadFile(FileUploadManager.this.context,
-                                fileUploadDTO.getFilePath(),
-                                isPublicTopic, fileUploadDTO.getFileName(),
-                                fileUploadDTO.getTeamId(),
-                                fileUploadDTO.getEntity(),
-                                fileUploadDTO.getComment(),
-                                fileUploadDTO.getMentions(),
-                                (downloaded, total) -> {
-                                    FileUploadProgressEvent event = new FileUploadProgressEvent(fileUploadDTO.getEntity(), (int) (downloaded * 100 / total));
-                                    EventBus.getDefault().post(event);
-                                });
-
-                        if (result.get("code") == null) {
-                            try {
-                                ResUploadedFile resUploadedFile = JacksonMapper.getInstance().getObjectMapper().readValue(result
-                                        .toString(), ResUploadedFile.class);
-                                UploadedFileInfo fileInfo = new UploadedFileInfo();
-                                fileInfo.setMessageId(resUploadedFile.getMessageId());
-                                fileInfo.setLocalPath(fileUploadDTO.getFilePath());
-                                UploadedFileInfoRepository.getRepository().insertFileInfo(fileInfo);
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            fileUploadDTO.setUploadState(FileUploadDTO.UploadState.SUCCESS);
-                            fileUploadDTOList.remove(fileUploadDTO);
-                        } else {
-                            fileUploadDTO.setUploadState(FileUploadDTO.UploadState.FAIL);
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-
-                        fileUploadDTO.setUploadState(FileUploadDTO.UploadState.FAIL);
-                    }
-                    EventBus.getDefault().post(new FileUploadFinishEvent(fileUploadDTO));
-
-                    boolean finishAll = isFinishAll();
-                    resetAllIfFinishedAll(finishAll);
-                    decreaseNotificationCount(finishAll);
-
-                }, Throwable::printStackTrace);
+        initSubscription(context);
     }
 
-    public static FileUploadManager getInstance(Context context) {
+    public static FileUploadManager getInstance() {
         if (manager == null) {
-            manager = new FileUploadManager(context);
+            manager = new FileUploadManager();
         }
         return manager;
     }
 
-    private static JsonObject uploadFile(Context context,
-                                         String realFilePath,
-                                         boolean isPublicTopic,
-                                         String title, long teamId, long entityId,
-                                         String comment, List<MentionObject> mentions,
-                                         ProgressCallback progressCallback) throws ExecutionException, InterruptedException {
+    private static ResponseFuture<JsonObject> uploadFile(Context context,
+                                                         String realFilePath,
+                                                         boolean isPublicTopic,
+                                                         String title, long teamId, long entityId,
+                                                         String comment, List<MentionObject> mentions,
+                                                         ProgressCallback progressCallback) throws ExecutionException, InterruptedException {
         File uploadFile = new File(realFilePath);
         String requestURL = JandiConstantsForFlavors.SERVICE_FILE_UPLOAD_URL + "inner-api/file";
         String permissionCode = (isPublicTopic) ? "744" : "740";
@@ -146,16 +116,124 @@ public class FileUploadManager {
             }
         }
 
-        ResponseFuture<JsonObject> requestFuture = ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
+        return ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
                 .asJsonObject();
-
-        return requestFuture.get();
 
     }
 
-    private void decreaseNotificationCount(boolean finishAll) {
+    private void initSubscription(Context context) {
+        subscription = objectPublishSubject.onBackpressureBuffer()
+                .observeOn(Schedulers.io())
+                .subscribe(fileUploadDTO -> {
+
+                    notificationBuilder.setProgress(100, 0, false)
+                            .setAutoCancel(false)
+                            .setContentTitle(String.format("업로드 중 %d/%d", (fileUploadDTOList.indexOf(fileUploadDTO) + 1), fileUploadDTOList.size()))
+                            .setContentIntent(getPendingActivities(context, fileUploadDTO))
+                            .setSmallIcon(android.R.drawable.stat_sys_upload);
+                    updateNotificationBuilder();
+                    showNotification(context);
+
+                    final int[] progress = {0, 0};
+                    fileUploadDTO.setUploadState(FileUploadDTO.UploadState.PROGRESS);
+                    EventBus.getDefault().post(new FileUploadStartEvent(fileUploadDTO.getEntity()));
+                    FilePickerModel filePickerModel = FilePickerModel_.getInstance_(context);
+
+                    boolean isPublicTopic = filePickerModel.isPublicEntity(fileUploadDTO.getEntity());
+
+                    try {
+                        ResponseFuture<JsonObject> uploadFuture = uploadFile(JandiApplication.getContext(),
+                                fileUploadDTO.getFilePath(),
+                                isPublicTopic, fileUploadDTO.getFileName(),
+                                fileUploadDTO.getTeamId(),
+                                fileUploadDTO.getEntity(),
+                                fileUploadDTO.getComment(),
+                                fileUploadDTO.getMentions(),
+                                (downloaded, total) -> {
+                                    progress[1] = (int) (downloaded * 100 / total);
+                                    FileUploadProgressEvent event = new FileUploadProgressEvent(fileUploadDTO.getEntity(), (int) (downloaded * 100 / total));
+                                    EventBus.getDefault().post(event);
+                                    if (progress[0] != progress[1]) {
+                                        progress[0] = progress[1];
+                                        notificationBuilder.setContentTitle(String.format("업로드 중 %d/%d", (fileUploadDTOList.indexOf(fileUploadDTO) + 1), fileUploadDTOList.size()))
+                                                .setContentText(JandiApplication.getContext().getString(R.string.app_name));
+                                        notificationBuilder.setProgress(100, progress[0], false);
+                                        showNotification(context);
+                                    }
+                                });
+                        lastRequest = uploadFuture;
+                        JsonObject result = uploadFuture.get();
+
+                        if (result.get("code") == null) {
+                            try {
+                                ResUploadedFile resUploadedFile = JacksonMapper.getInstance().getObjectMapper().readValue(result
+                                        .toString(), ResUploadedFile.class);
+                                UploadedFileInfo fileInfo = new UploadedFileInfo();
+                                fileInfo.setMessageId(resUploadedFile.getMessageId());
+                                fileInfo.setLocalPath(fileUploadDTO.getFilePath());
+                                UploadedFileInfoRepository.getRepository().insertFileInfo(fileInfo);
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            fileUploadDTO.setUploadState(FileUploadDTO.UploadState.SUCCESS);
+                        } else {
+                            fileUploadDTO.setUploadState(FileUploadDTO.UploadState.FAIL);
+                        }
+                    } catch (CancellationException | InterruptedException e) {
+                        // do nothing.
+                    } catch (Exception e) {
+                        fileUploadDTO.setUploadState(FileUploadDTO.UploadState.FAIL);
+                    }
+                    EventBus.getDefault().post(new FileUploadFinishEvent(fileUploadDTO));
+
+                    boolean finishAll = isFinishAll();
+
+                    if (!finishAll) {
+                        notificationBuilder.setProgress(100, 100, false);
+                        showNotification(context);
+                    } else {
+                        notificationBuilder.mActions.clear();
+                        notificationBuilder
+                                .setContentTitle("업로드 완료")
+                                .setContentText("메세지 확인하기")
+                                .setSmallIcon(android.R.drawable.stat_sys_upload_done)
+                                .setAutoCancel(true)
+                                .setOngoing(false);
+                        showNotification(context);
+                    }
+
+                    resetAllIfFinishedAll(finishAll);
+                    increaseNotificationCount(finishAll);
+
+                }, Throwable::printStackTrace);
+    }
+
+    private PendingIntent getPendingActivities(Context context, FileUploadDTO fileUploadDTO) {
+        return PendingIntent.getActivity(
+                context,
+                1021,
+                UploadNotificationActivity.getIntent(context, fileUploadDTO.getTeamId(), fileUploadDTO.getEntity()),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private void showNotification(Context context) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(notificationId, notificationBuilder.build());
+    }
+
+    private void updateNotificationBuilder() {
+        Intent intent = new Intent(JandiApplication.getContext(), UploadStopBroadcastReceiver.class);
+        intent.putExtra(EXTRA_STOP, true);
+        intent.putExtra(EXTRA_STOP_ID, notificationId);
+        PendingIntent actionCancelIntent = PendingIntent.getBroadcast(JandiApplication.getContext(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationBuilder.mActions.clear();
+        notificationBuilder.addAction(android.R.drawable.ic_menu_close_clear_cancel, JandiApplication.getContext().getString(R.string.jandi_cancel), actionCancelIntent);
+    }
+
+    private void increaseNotificationCount(boolean finishAll) {
         if (finishAll) {
-            --notificationId;
+            ++notificationId;
         }
     }
 
@@ -166,18 +244,17 @@ public class FileUploadManager {
     }
 
     private boolean isFinishAll() {
-        boolean isFinishAll;
         for (FileUploadDTO fileUploadDTO : fileUploadDTOList) {
             if (fileUploadDTO.getUploadState() != FileUploadDTO.UploadState.SUCCESS) {
-                isFinishAll = false;
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public void add(FileUploadDTO fileUploadDTO) {
         fileUploadDTOList.add(fileUploadDTO);
+
         objectPublishSubject.onNext(fileUploadDTO);
     }
 
@@ -212,5 +289,28 @@ public class FileUploadManager {
 
 
         return list;
+    }
+
+    public void cancelAll() {
+
+        if (subscription != null) {
+            subscription.unsubscribe();
+        }
+
+        initSubscription(JandiApplication.getContext());
+
+        Observable.from(fileUploadDTOList)
+                .subscribe(fileUploadDTO -> {
+                    if (fileUploadDTO.getUploadState() != FileUploadDTO.UploadState.SUCCESS) {
+                        fileUploadDTO.setUploadState(FileUploadDTO.UploadState.SUCCESS);
+                        EventBus.getDefault().post(new FileUploadFinishEvent(fileUploadDTO));
+                    }
+                }, t -> {});
+
+        fileUploadDTOList.clear();
+        if (lastRequest != null && !lastRequest.isDone() && !lastRequest.isCancelled()) {
+            lastRequest.cancel(true);
+        }
+
     }
 }

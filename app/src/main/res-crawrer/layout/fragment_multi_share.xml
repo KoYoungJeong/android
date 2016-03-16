@@ -10,7 +10,7 @@
         android:orientation="vertical"
         android:weightSum="2">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/vg_multi_share_file_icon"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -23,7 +23,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/iv_multi_share_previous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:padding="5dp"
+                android:src="@drawable/upload_arrow_left" />
+
+            <ImageView
+                android:id="@+id/iv_multi_share_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="5dp"
+                android:src="@drawable/upload_arrow_right" />
+
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/vg_multi_share_content"

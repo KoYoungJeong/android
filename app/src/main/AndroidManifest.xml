@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.tosslab.jandi.app"
+<manifest
+    package="com.tosslab.jandi.app"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -52,6 +53,11 @@
             android:name=".ui.login.IntroMainActivity_"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateAlwaysHidden|adjustUnspecified" />
+
+        <activity
+            android:name=".services.upload.UploadNotificationActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/JandiTheme.PushIntro" />
 
         <activity
             android:name=".ui.account.AccountHomeActivity_"
@@ -221,7 +227,6 @@
         <activity
             android:name=".push.PushInterfaceActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-
             android:theme="@style/JandiTheme.PushIntro" />
 
         <activity
@@ -358,6 +363,7 @@
                 <action android:name="com.tosslab.jandi.app.services.SOCKET_SERVICE_RESTART" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".services.upload.UploadStopBroadcastReceiver" />
 
         <receiver android:name=".dummy.JandiDummyReceiver">
             <intent-filter>

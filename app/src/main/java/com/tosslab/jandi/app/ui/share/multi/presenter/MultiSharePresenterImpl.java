@@ -148,7 +148,16 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
             FileUploadDTO object = new FileUploadDTO(item.getData(), getFileName(item.getData()), shareTarget.getRoomId(), stringListPair.first);
             object.setTeamId(shareTarget.getTeamId());
             object.setMentions(stringListPair.second);
-            FileUploadManager.getInstance(JandiApplication.getContext()).add(object);
+            FileUploadManager.getInstance().add(object);
         }
+
+        view.moveRoom(shareTarget.getTeamId(), shareTarget.getRoomId());
+    }
+
+    @Override
+    public void onFilePageChanged(int position) {
+        ShareData item = sharesDataModel.getItem(position);
+        String fileName = getFileName(item.getData());
+        view.setFileTitle(fileName);
     }
 }

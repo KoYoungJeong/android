@@ -56,7 +56,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
     @Extra(PushInterfaceActivity.EXTRA_TEAM_ID)
     long teamId;
     @Extra(PushInterfaceActivity.EXTRA_ROOM_TYPE)
-    String roomType;
+    String roomType = "";
 
     @Bean
     JandiInterfaceModel jandiInterfaceModel;

@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.file.upload.preview.presenter;
 
 import android.app.Activity;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
@@ -82,7 +81,7 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
 
     @Override
     public void onMultiFileUpload(MentionControlViewModel mentionControlViewModel) {
-        FileUploadManager instance = FileUploadManager.getInstance(JandiApplication.getContext());
+        FileUploadManager instance = FileUploadManager.getInstance();
 
         for (FileUploadVO fileUploadVO : fileUploadVOs) {
             FileUploadDTO fileUploadDTO;

@@ -20,6 +20,8 @@ public interface MultiSharePresenter {
 
     void startShare(List<Pair<String, List<MentionObject>>> mentionInfos);
 
+    void onFilePageChanged(int position);
+
     interface View {
 
         void callRoomSelector(long teamId);
@@ -36,5 +38,7 @@ public interface MultiSharePresenter {
 
 
         void setFileTitle(String fileName);
+
+        void moveRoom(long teamId, long roomId);
     }
 }

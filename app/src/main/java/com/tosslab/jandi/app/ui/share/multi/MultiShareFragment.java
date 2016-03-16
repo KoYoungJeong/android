@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -18,6 +19,7 @@ import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.services.upload.UploadNotificationActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
@@ -64,6 +66,12 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @Bind(R.id.vg_multi_share_file_icon)
     View vgFileStatus;
+
+    @Bind(R.id.iv_multi_share_previous)
+    ImageView ivPreviousScroll;
+
+    @Bind(R.id.iv_multi_share_next)
+    ImageView ivNextScroll;
 
     @Bind(R.id.tv_multi_share_image_title)
     TextView tvTitle;
@@ -136,6 +144,33 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         comments.set(lastPageIndex, etComment.getText().toString());
         setCommentText(comments.get(position));
         lastPageIndex = position;
+        multiSharePresenter.onFilePageChanged(position);
+
+        setUpScrollButton(position, adapter.getCount());
+    }
+
+    private void setUpScrollButton(int position, int count) {
+        if (position == 0) {
+            ivPreviousScroll.setVisibility(View.GONE);
+        } else {
+            ivPreviousScroll.setVisibility(View.VISIBLE);
+        }
+
+        if (position == count - 1) {
+            ivNextScroll.setVisibility(View.GONE);
+        } else {
+            ivNextScroll.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @OnClick(value = {R.id.iv_multi_share_previous, R.id.iv_multi_share_next})
+    void onScrollButtonClick(View view) {
+        if (view.getId() == R.id.iv_multi_share_previous) {
+            vpShare.setCurrentItem(vpShare.getCurrentItem() -1);
+        } else {
+            vpShare.setCurrentItem(vpShare.getCurrentItem() +1);
+
+        }
     }
 
     @OnClick(R.id.vg_multi_share_team)
@@ -163,7 +198,14 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @Override
     public void updateFiles() {
+        int size = adapter.getCount();
+        for (int idx = 0; idx < size; idx++) {
+            comments.add("");
+        }
+
         vpShare.setAdapter(adapter);
+
+        setUpScrollButton(0, size);
     }
 
     @Override
@@ -210,6 +252,14 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     }
 
     @Override
+    public void moveRoom(long teamId, long roomId) {
+
+        UploadNotificationActivity.startActivity(getActivity(), teamId, roomId);
+
+        getActivity().finish();
+    }
+
+    @Override
     public void startShare() {
         comments.set(lastPageIndex, etComment.getText().toString());
 
@@ -225,6 +275,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
                 .subscribe();
 
         multiSharePresenter.startShare(mentionInfos);
+
     }
 
     public void onEvent(ShareSelectTeamEvent event) {
