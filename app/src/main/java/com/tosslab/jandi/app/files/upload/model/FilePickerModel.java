@@ -122,6 +122,12 @@ public class FilePickerModel {
         activity.startActivityForResult(intent, ModifyProfileActivity.REQUEST_CHARACTER);
     }
 
+    public void openCharacterActivityForActivityResult(Fragment fragment, Uri fileUri) {
+        Intent intent = new Intent(fragment.getContext(), ProfileImageSelectorActivity_.class);
+        intent.putExtra("profile_image_file_uri", fileUri);
+        fragment.startActivityForResult(intent, ModifyProfileActivity.REQUEST_CHARACTER);
+    }
+
     public void openAlbumForActivityResult(Fragment fragment) {
         Intent intent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);

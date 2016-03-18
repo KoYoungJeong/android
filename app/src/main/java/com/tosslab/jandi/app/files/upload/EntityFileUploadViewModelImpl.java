@@ -96,6 +96,32 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
     }
 
     @Override
+    public void selectFileSelector(int type, Fragment fragment) {
+        switch (type) {
+            case TYPE_UPLOAD_GALLERY:
+                ImageAlbumActivity_.intent(fragment).startForResult(TYPE_UPLOAD_GALLERY);
+                break;
+            case TYPE_UPLOAD_TAKE_PHOTO:
+
+                try {
+                    File directory = new File(FileUtil.getDownloadPath());
+                    filePath = File.createTempFile("camera", ".jpg", directory);
+                    filePickerModel.openCameraForActivityResult(fragment, Uri.fromFile(filePath));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case TYPE_UPLOAD_EXPLORER:
+                filePickerModel.openExplorerForActivityResult(fragment);
+                break;
+            default:
+                break;
+
+        }
+    }
+
+
+    @Override
     public List<String> getFilePath(Context context, int requestCode, Intent intent) {
         ArrayList<String> filePaths = new ArrayList<>();
         switch (requestCode) {

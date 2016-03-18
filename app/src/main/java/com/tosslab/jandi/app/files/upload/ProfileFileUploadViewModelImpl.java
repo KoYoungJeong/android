@@ -1,12 +1,12 @@
 package com.tosslab.jandi.app.files.upload;
 
 import android.app.Activity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
@@ -86,6 +86,37 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
                 }
                 break;
 
+        }
+    }
+
+    @Override
+    public void selectFileSelector(int requestCode, Fragment fragment) {
+        switch (requestCode) {
+            case ModifyProfileActivity.REQUEST_CROP:
+                ImageAlbumActivity_.intent(fragment)
+                        .mode(ImageAlbumActivity.EXTRA_MODE_CROP_PICK)
+                        .startForResult(requestCode);
+                break;
+            case FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO:
+                try {
+                    File directory = new File(FileUtil.getDownloadPath());
+                    file = File.createTempFile("camera", ".jpg", directory);
+                    FilePickerModel_.getInstance_(JandiApplication.getContext())
+                            .openCameraForActivityResult(fragment, Uri.fromFile(file));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case ModifyProfileActivity.REQUEST_CHARACTER:
+                try {
+                    File directory = new File(FileUtil.getCacheDir("character"));
+                    file = File.createTempFile("character", ".png", directory);
+                    FilePickerModel_.getInstance_(JandiApplication.getContext())
+                            .openCharacterActivityForActivityResult(fragment, Uri.fromFile(file));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
     }
 

@@ -18,8 +18,8 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.image.ImageInfo;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
-import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
 import com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -230,18 +230,20 @@ public class ImageFileViewHolder extends FileViewHolder {
 
         if (roomId > 0) {
             CarouselViewerActivity_.intent(context)
+                    .mode(CarouselViewerActivity.CAROUSEL_MODE)
                     .roomId(roomId)
                     .startLinkId(fileMessageId)
                     .start();
         } else {
             String thumbUrl = ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.THUMB);
-            PhotoViewActivity_
-                    .intent(context)
-                    .thumbUrl(thumbUrl)
-                    .extensions(content.ext)
-                    .originalUrl(content.fileUrl)
-                    .imageName(content.name)
+            CarouselViewerActivity_.intent(context)
+                    .mode(CarouselViewerActivity.SINGLE_IMAGE_MODE)
+                    .imageExt(content.ext)
+                    .imageOriginUrl(content.fileUrl)
+                    .imageThumbUrl(thumbUrl)
                     .imageType(content.type)
+                    .imageName(content.name)
+                    .imageSize(content.size)
                     .start();
         }
 

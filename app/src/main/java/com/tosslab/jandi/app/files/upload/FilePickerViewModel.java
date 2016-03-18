@@ -21,6 +21,8 @@ public interface FilePickerViewModel {
 
     void selectFileSelector(int type, Activity activity);
 
+    void selectFileSelector(int requestCode, Fragment fragment);
+
     List<String> getFilePath(Context context, int requestCode, Intent intent);
 
     void startUpload(Activity activity, String title, long entityId, String realFilePath, String comment);
