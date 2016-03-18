@@ -344,6 +344,10 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_disabled_members" />
 
+        <activity
+            android:name=".ui.profile.insert.SetProfileActivity_"
+            android:screenOrientation="portrait" />
+
         <service android:name=".services.socket.JandiSocketService" />
 
         <receiver

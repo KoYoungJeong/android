@@ -73,7 +73,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     public static final int REQUEST_CROP = 11;
 
     @Bean(ModifyProfilePresenterImpl.class)
-    ModifyProfilePresenter memberProfilePresenter;
+    ModifyProfilePresenter modifyProfilePresenter;
 
     @ViewById(R.id.profile_photo)
     SimpleDraweeView ivProfilePhoto;
@@ -105,7 +105,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     @AfterInject
     void initObject() {
-        memberProfilePresenter.setView(this);
+        modifyProfilePresenter.setView(this);
     }
 
     @AfterViews
@@ -120,7 +120,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
         setupActionBar();
 
-        memberProfilePresenter.onRequestProfile();
+        modifyProfilePresenter.onRequestProfile();
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.EditProfile);
     }
@@ -239,7 +239,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     @Click(R.id.profile_user_email)
     void editEmail(View view) {
         if (NetworkCheckUtil.isConnected()) {
-            memberProfilePresenter.onEditEmailClick(getEmail());
+            modifyProfilePresenter.onEditEmailClick(getEmail());
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Email);
         }
     }
@@ -263,7 +263,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-
         Permissions.getResult()
                 .addRequestCode(REQ_STORAGE_PERMISSION)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::getPicture)
@@ -273,13 +272,12 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     public void onEvent(MemberEmailChangeEvent event) {
         if (NetworkCheckUtil.isConnected()) {
             updateEmailTextColor(event.getEmail());
-            memberProfilePresenter.onUploadEmail(event.getEmail());
+            modifyProfilePresenter.onUploadEmail(event.getEmail());
         }
     }
 
     public void onEvent(ProfileChangeEvent event) {
-        memberProfilePresenter.onProfileChange(event.getMember());
-
+        modifyProfilePresenter.onProfileChange(event.getMember());
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -292,8 +290,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     }
 
     public void onEvent(ConfirmModifyProfileEvent event) {
-
-
         if (!NetworkCheckUtil.isConnected()) {
             showCheckNetworkDialog();
             return;
@@ -301,7 +297,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
         updateProfileTextColor(event.actionType, event.inputMessage);
         if (event.actionType == EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME) {
-            memberProfilePresenter.updateProfileName(event.inputMessage);
+            modifyProfilePresenter.updateProfileName(event.inputMessage);
         } else {
             ReqUpdateProfile reqUpdateProfile = getUpdateProfile();
             switch (event.actionType) {
@@ -318,8 +314,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
                     reqUpdateProfile.position = event.inputMessage;
                     break;
             }
-
-            memberProfilePresenter.onUpdateProfileExtraInfo(reqUpdateProfile);
+            modifyProfilePresenter.onUpdateProfileExtraInfo(reqUpdateProfile);
         }
     }
 
@@ -342,7 +337,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
         String filePath = output.getPath();
         if (!TextUtils.isEmpty(filePath)) {
-            memberProfilePresenter.onStartUpload(ModifyProfileActivity.this, filePath);
+            modifyProfilePresenter.onStartUpload(ModifyProfileActivity.this, filePath);
         }
     }
 
@@ -357,10 +352,10 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
             return;
         }
 
-        if (memberProfilePresenter.getFilePath() != null) {
-            memberProfilePresenter.onStartUpload(ModifyProfileActivity.this, memberProfilePresenter.getFilePath().getPath());
+        if (modifyProfilePresenter.getFilePath() != null) {
+            modifyProfilePresenter.onStartUpload(ModifyProfileActivity.this, modifyProfilePresenter.getFilePath().getPath());
         } else {
-            memberProfilePresenter.onStartUpload(ModifyProfileActivity.this, photoFile.getPath());
+            modifyProfilePresenter.onStartUpload(ModifyProfileActivity.this, photoFile.getPath());
         }
     }
 
@@ -375,10 +370,10 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
             return;
         }
 
-        if (memberProfilePresenter.getFilePath() != null) {
-            memberProfilePresenter.onStartUpload(ModifyProfileActivity.this, memberProfilePresenter.getFilePath().getPath());
+        if (modifyProfilePresenter.getFilePath() != null) {
+            modifyProfilePresenter.onStartUpload(ModifyProfileActivity.this, modifyProfilePresenter.getFilePath().getPath());
         } else {
-            memberProfilePresenter.onStartUpload(ModifyProfileActivity.this, photoFile.getPath());
+            modifyProfilePresenter.onStartUpload(ModifyProfileActivity.this, photoFile.getPath());
         }
     }
 
@@ -393,7 +388,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showProgressWheel() {
-
         dismissProgressWheel();
         if (progressWheel == null) {
             progressWheel = new ProgressWheel(ModifyProfileActivity.this);
@@ -425,6 +419,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
         // 이메일
         tvProfileUserEmail.setText(user.u_email);
+
         // 폰넘버
         String strPhone = (user.u_extraData.phoneNumber);
         if (!TextUtils.isEmpty(strPhone)) {
@@ -554,7 +549,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     public void updateProfileFailed() {
         ColoredToast.showError(JandiApplication.getContext()
                 .getString(R.string.err_profile_update));
-
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -622,16 +616,16 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         tvTitle.setText(this.getResources().getString(R.string.jandi_member_profile_edit));
 
         view.findViewById(R.id.tv_from_galary).setOnClickListener(v -> {
-            memberProfilePresenter.onRequestCropImage(ModifyProfileActivity.this);
+            modifyProfilePresenter.onRequestCropImage(ModifyProfileActivity.this);
             profileChoosedialog.dismiss();
 
         });
         view.findViewById(R.id.tv_from_camera).setOnClickListener(v -> {
-            memberProfilePresenter.onRequestCamera(ModifyProfileActivity.this);
+            modifyProfilePresenter.onRequestCamera(ModifyProfileActivity.this);
             profileChoosedialog.dismiss();
         });
         view.findViewById(R.id.tv_from_character).setOnClickListener(v -> {
-            memberProfilePresenter.onRequestCharacter(ModifyProfileActivity.this);
+            modifyProfilePresenter.onRequestCharacter(ModifyProfileActivity.this);
             profileChoosedialog.dismiss();
         });
 
@@ -648,8 +642,8 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (memberProfilePresenter.getFilePath() != null) {
-            outState.putSerializable(EXTRA_NEW_PHOTO_FILE, memberProfilePresenter.getFilePath());
+        if (modifyProfilePresenter.getFilePath() != null) {
+            outState.putSerializable(EXTRA_NEW_PHOTO_FILE, modifyProfilePresenter.getFilePath());
         }
     }
 

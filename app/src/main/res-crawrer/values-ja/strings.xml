@@ -110,6 +110,7 @@
 	<string name="jandi_bot_role">"僕はJANDIの利用中必ず必要なメッセージや、JANDIコネクトのメッセージをお送りします。"</string>
 	<string name="jandi_bot_status">"こんにちは、ミスターJと言います。"</string>
 	<string name="jandi_browse_other_topics">"未参加のトピック一覧"</string>
+	<string name="jandi_browse_team">"チームに移動"</string>
 	<string name="jandi_cancel">"戻る"</string>
 	<string name="jandi_canceled">"キャンセルされました"</string>
 	<string name="jandi_cannot_connect_service_try_again">"JANDIに接続できません。後で再起動してください。"</string>
@@ -320,6 +321,7 @@
 	<string name="jandi_need_to_assign_topic_owner">"あなたはこのトピックの管理者です。
 トピックメニューからトピックの管理者を変更してから退出できます。"</string>
 	<string name="jandi_new_team_name">"新しいチーム名"</string>
+	<string name="jandi_next">"次へ"</string>
 	<string name="jandi_no_invite_email">"招待したいメンバーのメールアドレスを入力してください"</string>
 	<string name="jandi_no_long_team_member">"%sさんはもうこのチームのメンバーではありません"</string>
 	<string name="jandi_no_message_in_topic_dm">"メッセージを書いて会話を始めましょう"</string>
@@ -360,6 +362,8 @@
 	<string name="jandi_profile_division_hint">"部署"</string>
 	<string name="jandi_profile_edit">"編集"</string>
 	<string name="jandi_profile_email">"メールアドレス"</string>
+	<string name="jandi_profile_extra_introduce">"他のメンバー達が分かるように \n 追加情報を設定してください。"</string>
+	<string name="jandi_profile_main_introduce">"%sで使用する \n お名前とプロフィール写真を \n 設定してください。"</string>
 	<string name="jandi_profile_optional">"(任意)"</string>
 	<string name="jandi_profile_phone_number">"携帯番号"</string>
 	<string name="jandi_profile_phone_number_hint">"電話番号"</string>
@@ -370,6 +374,7 @@
 	<string name="jandi_profile_status_message">"今日の気分"</string>
 	<string name="jandi_profile_update">"変更する"</string>
 	<string name="jandi_profile_update_succeed">"プロフィールは正常に更新されました"</string>
+	<string name="jandi_profile_welcome">"はじめまして！"</string>
 	<string name="jandi_push_no_preview">"プレビューなし"</string>
 	<string name="jandi_push_preview_all_message">"全メッセージ"</string>
 	<string name="jandi_push_preview_public_only">"公開トピックのみ"</string>
@@ -432,7 +437,7 @@
 	<string name="jandi_signup_title">"新規登録"</string>
 	<string name="jandi_signup_verification_code">"認証コードを送信しました。\n入力してアカウントを認証してください"</string>
 	<string name="jandi_signup_verify_title">"コードの認証"</string>
-	<string name="jandi_sort_folder">"フォルダー"</string>
+	<string name="jandi_sort_folder">"フォルダー順 "</string>
 	<string name="jandi_sort_updated">"アップデート順"</string>
 	<string name="jandi_sounds">"音声"</string>
 	<string name="jandi_sounds_air_pop">"バブル"</string>

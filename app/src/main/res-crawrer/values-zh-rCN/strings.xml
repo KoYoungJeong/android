@@ -110,6 +110,7 @@
 	<string name="jandi_bot_role">"身为JANDI最强使者，肩负传递JANDI Connect和平台信息通知的任务，绝对使命必达！"</string>
 	<string name="jandi_bot_status">"你好，我是Mr.J！"</string>
 	<string name="jandi_browse_other_topics">"浏览其他议题"</string>
+	<string name="jandi_browse_team">"浏览团队"</string>
 	<string name="jandi_cancel">"取消"</string>
 	<string name="jandi_canceled">"取消了"</string>
 	<string name="jandi_cannot_connect_service_try_again">"非常抱歉！ JANDI暂时无法运作，先喝杯茶稍后再试！"</string>
@@ -319,6 +320,7 @@
 	<string name="jandi_name_in_jandi">"账号名称"</string>
 	<string name="jandi_need_to_assign_topic_owner">"你为此议题的管理员，请于离开议题前，先将管理权限转移给其他成员"</string>
 	<string name="jandi_new_team_name">"新团队名称"</string>
+	<string name="jandi_next">"下一步"</string>
 	<string name="jandi_no_invite_email">"请提供您想邀请的团队成员的电子邮件地址"</string>
 	<string name="jandi_no_long_team_member">"%s 不再是此团队的成员"</string>
 	<string name="jandi_no_message_in_topic_dm">"输入信息以开始对话"</string>
@@ -359,6 +361,8 @@
 	<string name="jandi_profile_division_hint">"部门"</string>
 	<string name="jandi_profile_edit">"编辑"</string>
 	<string name="jandi_profile_email">"电子邮件"</string>
+	<string name="jandi_profile_extra_introduce">"请填写其他信息 \n 让成员更了解你"</string>
+	<string name="jandi_profile_main_introduce">"请设定在 \n %s团队 \n 显示的姓名和头像"</string>
 	<string name="jandi_profile_optional">"非必要"</string>
 	<string name="jandi_profile_phone_number">"手机号码"</string>
 	<string name="jandi_profile_phone_number_hint">"电话号码"</string>
@@ -369,12 +373,13 @@
 	<string name="jandi_profile_status_message">"状态"</string>
 	<string name="jandi_profile_update">"更新"</string>
 	<string name="jandi_profile_update_succeed">"简介已更新"</string>
+	<string name="jandi_profile_welcome">"你好！"</string>
 	<string name="jandi_push_no_preview">"无预览"</string>
 	<string name="jandi_push_preview_all_message">"所有信息"</string>
 	<string name="jandi_push_preview_public_only">"仅限公开议题"</string>
 	<string name="jandi_question_team_create">"您的团队还未使用JANDI吗？"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"你确认要删除这个电子邮件地址？"</string>
-	<string name="jandi_reorder_from_long_press">"拖拉文件夹更改排列顺序"</string>
+	<string name="jandi_reorder_from_long_press">"초대 메일을 다시 전송했습니다."</string>
 	<string name="jandi_retry">"请再试一次"</string>
 	<string name="jandi_retry_voice_search">"没有接收清楚您刚才说的，麻烦再说一次"</string>
 	<string name="jandi_save">"储存"</string>
@@ -431,7 +436,7 @@
 	<string name="jandi_signup_title">"注册"</string>
 	<string name="jandi_signup_verification_code">"我们寄送了一组密码至你的电子邮箱\n请在此处输入密码进行帐户验证"</string>
 	<string name="jandi_signup_verify_title">"验证码认证"</string>
-	<string name="jandi_sort_folder">"文件夹"</string>
+	<string name="jandi_sort_folder">"依文件夹排序"</string>
 	<string name="jandi_sort_updated">"依更新时间排序"</string>
 	<string name="jandi_sounds">"声音"</string>
 	<string name="jandi_sounds_air_pop">"爆米花"</string>
