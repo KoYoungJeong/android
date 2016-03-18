@@ -38,8 +38,8 @@ public class SetProfileActivity extends BaseAppCompatActivity
 
     @AfterViews
     void init() {
-        pageNationNomal = getResources().getDrawable(R.drawable.pagenation_normal, null);
-        pageNationFocus = getResources().getDrawable(R.drawable.pagenation_focus, null);
+        pageNationNomal = getResources().getDrawable(R.drawable.pagenation_normal);
+        pageNationFocus = getResources().getDrawable(R.drawable.pagenation_focus);
         setUpView();
     }
 
