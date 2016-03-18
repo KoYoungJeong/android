@@ -110,6 +110,7 @@
 	<string name="jandi_bot_role">"저는 잔디 사용에 꼭 필요한 메시지나,\n잔디 Connect 메시지를 전달합니다."</string>
 	<string name="jandi_bot_status">"안녕하세요? Mr.J입니다. "</string>
 	<string name="jandi_browse_other_topics">"참여하지 않은 토픽 목록 보기"</string>
+	<string name="jandi_browse_team">"팀으로 가기"</string>
 	<string name="jandi_cancel">"취소"</string>
 	<string name="jandi_canceled">"취소됨"</string>
 	<string name="jandi_cannot_connect_service_try_again">"일시적으로 서비스 접속이 되지 않습니다. 잠시 후 다시 시도해주세요."</string>
@@ -321,6 +322,7 @@
 토픽 상세정보 > 토픽 관리자 변경하기 에서
 관리자를 변경한 후 나갈 수 있습니다."</string>
 	<string name="jandi_new_team_name">"새로운 팀 이름"</string>
+	<string name="jandi_next">"다음"</string>
 	<string name="jandi_no_invite_email">"팀에 초대를 원하는 멤버들의 이메일 주소를 입력해주세요"</string>
 	<string name="jandi_no_long_team_member">"%s님은 더 이상 팀 멤버가 아닙니다."</string>
 	<string name="jandi_no_message_in_topic_dm">"아직 메세지가 없습니다.메세지를 입력하셔서 대화를 시작해보세요."</string>
@@ -361,6 +363,8 @@
 	<string name="jandi_profile_division_hint">"부서명"</string>
 	<string name="jandi_profile_edit">"편집"</string>
 	<string name="jandi_profile_email">"이메일"</string>
+	<string name="jandi_profile_extra_introduce">"다른 멤버들이 볼 수 있도록\n 추가 정보를 설정해주세요"</string>
+	<string name="jandi_profile_main_introduce">"%s 에서 사용하실 \n 이름과 프로필 사진을 \n 설정해주세요."</string>
 	<string name="jandi_profile_optional">"(선택 사항)"</string>
 	<string name="jandi_profile_phone_number">"전화번호"</string>
 	<string name="jandi_profile_phone_number_hint">"전화번호"</string>
@@ -371,6 +375,7 @@
 	<string name="jandi_profile_status_message">"상태"</string>
 	<string name="jandi_profile_update">"완료"</string>
 	<string name="jandi_profile_update_succeed">"프로필이 수정되었습니다"</string>
+	<string name="jandi_profile_welcome">"반갑습니다!"</string>
 	<string name="jandi_push_no_preview">"미리보기 하지 않음"</string>
 	<string name="jandi_push_preview_all_message">"모든 메시지"</string>
 	<string name="jandi_push_preview_public_only">"공개 토픽만"</string>
@@ -430,12 +435,12 @@
 	<string name="jandi_signup_invalidate_code">"인증번호를 잘못 입력하셨습니다. (%d/5)\n다시 시도해주세요."</string>
 	<string name="jandi_signup_required">"필수"</string>
 	<string name="jandi_signup_resend_email">"<![CDATA[이메일을 받지 못하셨나요? <font color=#00a4e6><u>재전송</u></font>]]>"</string>
-	<string name="jandi_signup_send_new_verification_code">"%s로 새로운 인증번호를 발송해드렸습니다. 확인 후 아래 빈 칸에 입력해주시기 바랍니다."</string>
+	<string name="jandi_signup_send_new_verification_code">"%s로 새로운 인증번호를 발송해드렸습니다. 확인 후 빈 칸에 입력해주시기 바랍니다."</string>
 	<string name="jandi_signup_title">"가입하기"</string>
 	<string name="jandi_signup_verification_code">"인증번호 이메일을 발송했습니다.\n받으신 인증번호를 입력해주세요."</string>
 	<string name="jandi_signup_verify_title">"인증번호 확인"</string>
-	<string name="jandi_sort_folder">"폴더"</string>
-	<string name="jandi_sort_updated">"업데이트 순"</string>
+	<string name="jandi_sort_folder">"폴더로 보기"</string>
+	<string name="jandi_sort_updated">"최신 메시지 순으로 보기"</string>
 	<string name="jandi_sounds">"소리"</string>
 	<string name="jandi_sounds_air_pop">"버블팝"</string>
 	<string name="jandi_sounds_arise">"기타 이중음"</string>
@@ -485,6 +490,7 @@
 	<string name="jandi_team_switch">"팀 전환하기"</string>
 	<string name="jandi_term_of_service">"이용 약관"</string>
 	<string name="jandi_this_is_disabled_user_explain">"차단된 멤버입니다. 궁금하신 사항은 팀 관리자에게 문의하세요."</string>
+	<string name="jandi_this_member_is_pending_to_join">"팀에 초대중인 멤버입니다."</string>
 	<string name="jandi_title_activity_file_explorer">"파일 탐색기"</string>
 	<string name="jandi_title_cdp_to_be_shared">"공유할 대화방을 선택하세요"</string>
 	<string name="jandi_title_cdp_to_be_unshared">"공유를 해제할 대화방을 선택하세요"</string>

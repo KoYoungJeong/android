@@ -110,6 +110,7 @@
 	<string name="jandi_bot_role">"I deliver messages from JANDI Connect and essential notifications from our customer experience team"</string>
 	<string name="jandi_bot_status">"Hello. I'm Mr. J."</string>
 	<string name="jandi_browse_other_topics">"Browse other topics"</string>
+	<string name="jandi_browse_team">"Browse team "</string>
 	<string name="jandi_cancel">"Cancel"</string>
 	<string name="jandi_canceled">"Canceled"</string>
 	<string name="jandi_cannot_connect_service_try_again">"JANDI appears to be currently unavailable. Please try again soon. Sorry for any inconvenience!"</string>
@@ -319,6 +320,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
 	<string name="jandi_need_to_assign_topic_owner">" "</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>
+	<string name="jandi_next">"Next"</string>
 	<string name="jandi_no_invite_email">"Provide the email addresses of the team members you want to invite"</string>
 	<string name="jandi_no_long_team_member">"%s is no longer a team member."</string>
 	<string name="jandi_no_message_in_topic_dm">"Enter a message to start the conversation."</string>
@@ -359,6 +361,8 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_profile_division_hint">"Department"</string>
 	<string name="jandi_profile_edit">"Edit"</string>
 	<string name="jandi_profile_email">"Email"</string>
+	<string name="jandi_profile_extra_introduce">"Please set additional informations \n for other members"</string>
+	<string name="jandi_profile_main_introduce">"Please set your profile \n you want to use \n in %s"</string>
 	<string name="jandi_profile_optional">"(Optional)"</string>
 	<string name="jandi_profile_phone_number">"Mobile #"</string>
 	<string name="jandi_profile_phone_number_hint">"Number"</string>
@@ -369,6 +373,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_profile_status_message">"Status"</string>
 	<string name="jandi_profile_update">"Update"</string>
 	<string name="jandi_profile_update_succeed">"Profile has been updated"</string>
+	<string name="jandi_profile_welcome">"Welcome!"</string>
 	<string name="jandi_push_no_preview">"No preview"</string>
 	<string name="jandi_push_preview_all_message">"All messages"</string>
 	<string name="jandi_push_preview_public_only">"Public topics only"</string>
@@ -431,7 +436,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_signup_title">"Sign Up"</string>
 	<string name="jandi_signup_verification_code">"We sent a code to your inbox.\nEnter it here to verify your account."</string>
 	<string name="jandi_signup_verify_title">"Code Verification"</string>
-	<string name="jandi_sort_folder">"Folder"</string>
+	<string name="jandi_sort_folder">"Sort by folder"</string>
 	<string name="jandi_sort_updated">"Sort by updated date"</string>
 	<string name="jandi_sounds">"Sounds"</string>
 	<string name="jandi_sounds_air_pop">"Pop"</string>
@@ -482,6 +487,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_team_switch">"Switch Teams"</string>
 	<string name="jandi_term_of_service">"Terms of Service"</string>
 	<string name="jandi_this_is_disabled_user_explain">"This member has been temporarily disabled. Please contact the team administrator for more information."</string>
+	<string name="jandi_this_member_is_pending_to_join">"This member is pending to join."</string>
 	<string name="jandi_title_activity_file_explorer">"File Explore"</string>
 	<string name="jandi_title_cdp_to_be_shared">"Select where to share in"</string>
 	<string name="jandi_title_cdp_to_be_unshared">"Select where to unshare from"</string>
