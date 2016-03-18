@@ -258,8 +258,7 @@ public class MessageListV2Fragment extends Fragment implements
     View vgMessageInput;
     @ViewById(R.id.vg_messages_go_to_latest)
     View vgMoveToLatest;
-    @ViewById(R.id.vg_messages_disable_alert)
-    View vDisabledUser;
+
     @ViewById(R.id.layout_messages_empty)
     LinearLayout vgEmptyLayout;
     @ViewById(R.id.layout_messages_loading)
@@ -286,6 +285,13 @@ public class MessageListV2Fragment extends Fragment implements
     ViewGroup vgOptionSpace;
     @ViewById(R.id.vg_easteregg_snow)
     FrameLayout vgEasterEggSnow;
+
+    @ViewById(R.id.vg_messages_member_status_alert)
+    View vgMemberStatusAlert;
+    @ViewById(R.id.iv_messages_member_status_alert)
+    ImageView ivMemberStatusAlert;
+    @ViewById(R.id.tv_messages_member_status_alert)
+    TextView tvMemberStatusAlert;
 
     private OfflineLayer offlineLayer;
 
@@ -791,8 +797,20 @@ public class MessageListV2Fragment extends Fragment implements
     @Override
     public void showDisabledUserLayer() {
         vgMessageInput.setVisibility(View.GONE);
-        vDisabledUser.setVisibility(View.VISIBLE);
+        vgMemberStatusAlert.setVisibility(View.VISIBLE);
+        vgMemberStatusAlert.setBackgroundColor(getResources().getColor(R.color.jandi_disabled_user_background));
+        ivMemberStatusAlert.setImageResource(R.drawable.icon_disabled_members_bar);
+        tvMemberStatusAlert.setText(R.string.jandi_disabled_user);
         setPreviewVisible(false);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showInactivedUserLayer() {
+        vgMemberStatusAlert.setVisibility(View.VISIBLE);
+        vgMemberStatusAlert.setBackgroundColor(Color.BLACK);
+        ivMemberStatusAlert.setImageResource(R.drawable.bar_icon_info);
+        tvMemberStatusAlert.setText(R.string.jandi_this_member_is_pending_to_join);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

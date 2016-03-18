@@ -93,7 +93,7 @@ public class MemberProfileLoader implements ProfileLoader {
 
     @Override
     public boolean isEnabled(FormattedEntity member) {
-        return TextUtils.equals(member.getUser().status, "enabled");
+        return member.isEnabled();
     }
 
     @Override

@@ -54,7 +54,20 @@ public class ChatChooseModel {
                     } else if (rhs.isBot()) {
                         return 1;
                     } else {
-                        return lhs.getName().compareTo(rhs.getName());
+                        String lhsName, rhsName;
+                        if (!lhs.isInactive()) {
+                            lhsName = lhs.getName();
+                        } else {
+                            lhsName = lhs.getEmail();
+                        }
+
+                        if (!rhs.isInactive()) {
+                            rhsName = rhs.getName();
+                        } else {
+                            rhsName = rhs.getEmail();
+                        }
+
+                        return lhsName.compareTo(rhsName);
                     }
                 } else {
                     return -1;
@@ -68,7 +81,20 @@ public class ChatChooseModel {
                     } else if (rhs.isBot()) {
                         return 1;
                     } else {
-                        return lhs.getName().compareTo(rhs.getName());
+                        String lhsName, rhsName;
+                        if (!lhs.isInactive()) {
+                            lhsName = lhs.getName();
+                        } else {
+                            lhsName = lhs.getEmail();
+                        }
+
+                        if (!rhs.isInactive()) {
+                            rhsName = rhs.getName();
+                        } else {
+                            rhsName = rhs.getEmail();
+                        }
+
+                        return lhsName.compareTo(rhsName);
                     }
                 }
             }
@@ -90,7 +116,9 @@ public class ChatChooseModel {
                             .statusMessage(formattedEntity.getUserStatusMessage())
                             .name(formattedEntity.getName())
                             .starred(formattedEntity.isStarred)
-                            .enabled(TextUtils.equals(formattedEntity.getUser().status, "enabled"))
+                            .enabled(formattedEntity.isEnabled())
+                            .inactive(formattedEntity.isInavtived())
+                            .email(formattedEntity.getUserEmail())
                             .photoUrl(formattedEntity.getUserLargeProfileUrl());
 
                     return chatChooseItem;
@@ -124,7 +152,7 @@ public class ChatChooseModel {
 
 
         return Observable.from(formattedUsersWithoutMe)
-                .filter(entity -> !TextUtils.equals(entity.getUser().status, "enabled"))
+                .filter(entity -> !entity.isEnabled())
                 .map(entity -> true)
                 .firstOrDefault(false)
                 .toBlocking()
@@ -149,7 +177,7 @@ public class ChatChooseModel {
         List<ChatChooseItem> chatChooseItems = new ArrayList<>();
 
         Observable.from(formattedUsersWithoutMe)
-                .filter(entity -> TextUtils.equals(entity.getUser().status, "enabled"))
+                .filter(FormattedEntity::isEnabled)
                 .map(formattedEntity -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
 
@@ -158,6 +186,8 @@ public class ChatChooseModel {
                             .name(formattedEntity.getName())
                             .starred(formattedEntity.isStarred)
                             .enabled(true)
+                            .inactive(formattedEntity.isInavtived())
+                            .email(formattedEntity.getUserEmail())
                             .owner(formattedEntity.isTeamOwner())
                             .photoUrl(formattedEntity.getUserLargeProfileUrl());
 

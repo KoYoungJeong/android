@@ -86,7 +86,7 @@ public class FileViewHolder implements BodyViewHolder {
 
         ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);
 
-        if (TextUtils.equals(fromEntity.status, "enabled")) {
+        if (entity.isEnabled()) {
             tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
             vDisableCover.setVisibility(View.GONE);
             vDisableLineThrough.setVisibility(View.GONE);

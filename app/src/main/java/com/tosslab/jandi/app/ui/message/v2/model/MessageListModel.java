@@ -366,7 +366,7 @@ public class MessageListModel {
         FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
         if (entity != EntityManager.UNKNOWN_USER_ENTITY && entity.isUser()) {
-            return TextUtils.equals(entity.getUser().status, "enabled");
+            return entity.isEnabled();
         } else {
             return true;
         }
@@ -688,4 +688,7 @@ public class MessageListModel {
         return false;
     }
 
+    public boolean isInactiveUser(long entityId) {
+        return EntityManager.getInstance().getEntityById(entityId).isInavtived();
+    }
 }

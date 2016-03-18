@@ -87,7 +87,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
         FormattedEntity feedbackEntityById = entityManager.getEntityById(link.feedback.writerId);
         ResLeftSideMenu.User feedbackUser = feedbackEntityById != EntityManager.UNKNOWN_USER_ENTITY ? feedbackEntityById.getUser() : null;
 
-        if (user != null && TextUtils.equals(user.status, "enabled")) {
+        if (user != null && entityById.isEnabled()) {
             tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
             vDisableCover.setVisibility(View.GONE);
             vDisableLineThrough.setVisibility(View.GONE);

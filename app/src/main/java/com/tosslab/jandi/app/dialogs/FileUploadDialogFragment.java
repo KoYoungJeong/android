@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -79,7 +78,7 @@ public class FileUploadDialogFragment extends DialogFragment {
         List<FormattedEntity> formattedEntities = new ArrayList<>();
 
         Observable.from(unsharedEntities)
-                .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))
+                .filter(entity -> !entity.isUser() || entity.isEnabled())
                 .toSortedList((formattedEntity, formattedEntity2) -> {
                     if (formattedEntity.isUser() && formattedEntity2.isUser()) {
                         return StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());

@@ -64,8 +64,8 @@ import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
-import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListSearchAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
+import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListSearchAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPresenter;
@@ -151,7 +151,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     @ViewById(R.id.vg_messages_go_to_latest)
     View vgMoveToLatest;
 
-    @ViewById(R.id.vg_messages_disable_alert)
+    @ViewById(R.id.vg_messages_member_status_alert)
     View vDisabledUser;
 
     @ViewById(R.id.layout_messages_empty)

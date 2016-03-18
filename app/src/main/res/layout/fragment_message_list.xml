@@ -9,7 +9,7 @@
     <com.tosslab.jandi.app.views.KeyboardVisibleChangeDetectView
         android:id="@+id/v_messages_keyboard_visible_change_detector"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/layout_search_bar"
@@ -22,7 +22,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/v_messages_divider"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@+id/vg_messages_disable_alert" />
+        android:layout_below="@+id/vg_messages_member_status_alert" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/lv_messages"
@@ -30,7 +30,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/v_messages_divider"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@+id/vg_messages_disable_alert"
+        android:layout_below="@+id/vg_messages_member_status_alert"
         android:scrollbars="vertical" />
 
     <LinearLayout
@@ -82,28 +82,32 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/vg_messages_disable_alert"
+        android:id="@+id/vg_messages_member_status_alert"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout_search_bar"
         android:layout_margin="2dp"
-        android:background="#CCEB6016"
-        android:gravity="center"
-        android:padding="10dp"
-        android:visibility="gone">
+        android:background="@color/jandi_disabled_user_background"
+        android:paddingBottom="14dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="14dp"
+        android:visibility="visible">
 
         <ImageView
+            android:id="@+id/iv_messages_member_status_alert"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/icon_disabled_members_bar" />
 
         <TextView
+            android:id="@+id/tv_messages_member_status_alert"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="10dp"
             android:text="@string/jandi_disabled_user"
             android:textColor="@color/jandi_text_white"
-            android:textSize="18sp" />
+            android:textSize="14sp" />
 
     </LinearLayout>
 

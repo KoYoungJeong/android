@@ -65,7 +65,7 @@ public class MainMoreModel {
     public int getEnabledUserCount() {
         List<FormattedEntity> formattedUsers = EntityManager.getInstance().getFormattedUsers();
         int enabledUserCount = Observable.from(formattedUsers)
-                .filter(formattedEntity -> TextUtils.equals(formattedEntity.getUser().status, "enabled"))
+                .filter(formattedEntity -> formattedEntity.isEnabled())
                 .count()
                 .toBlocking()
                 .firstOrDefault(0);

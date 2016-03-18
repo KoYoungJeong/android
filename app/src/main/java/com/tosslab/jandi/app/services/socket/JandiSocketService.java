@@ -418,7 +418,7 @@ public class JandiSocketService extends Service {
                         return;
                     }
 
-                    trySocketConnect();
+//                    trySocketConnect();
                 });
     }
 
