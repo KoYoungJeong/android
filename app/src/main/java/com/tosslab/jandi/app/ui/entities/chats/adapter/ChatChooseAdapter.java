@@ -116,7 +116,11 @@ public class ChatChooseAdapter extends BaseAdapter {
 
         ChatChooseItem item = getItem(position);
 
-        chatChooseViewHolder.tvName.setText(item.getName());
+        if (!item.isInactive()) {
+            chatChooseViewHolder.tvName.setText(item.getName());
+        } else {
+            chatChooseViewHolder.tvName.setText(item.getEmail());
+        }
         chatChooseViewHolder.ivKick.setVisibility(View.GONE);
 
         Resources resources = context.getResources();

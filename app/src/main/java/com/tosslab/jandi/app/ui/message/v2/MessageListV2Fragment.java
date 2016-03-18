@@ -21,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -35,6 +36,7 @@ import android.view.inputmethod.BaseInputConnection;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
@@ -797,6 +799,9 @@ public class MessageListV2Fragment extends Fragment implements
     @Override
     public void showDisabledUserLayer() {
         vgMessageInput.setVisibility(View.GONE);
+        int dp_2 = ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, getResources().getDisplayMetrics()));
+        ((RelativeLayout.LayoutParams) vgMemberStatusAlert.getLayoutParams())
+                .setMargins(dp_2, dp_2, dp_2, dp_2);
         vgMemberStatusAlert.setVisibility(View.VISIBLE);
         vgMemberStatusAlert.setBackgroundColor(getResources().getColor(R.color.jandi_disabled_user_background));
         ivMemberStatusAlert.setImageResource(R.drawable.icon_disabled_members_bar);
@@ -807,8 +812,9 @@ public class MessageListV2Fragment extends Fragment implements
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showInactivedUserLayer() {
+        ((RelativeLayout.LayoutParams) vgMemberStatusAlert.getLayoutParams()).setMargins(0, 0, 0, 0);
         vgMemberStatusAlert.setVisibility(View.VISIBLE);
-        vgMemberStatusAlert.setBackgroundColor(Color.BLACK);
+        vgMemberStatusAlert.setBackgroundColor(getResources().getColor(R.color.jandi_black_de));
         ivMemberStatusAlert.setImageResource(R.drawable.bar_icon_info);
         tvMemberStatusAlert.setText(R.string.jandi_this_member_is_pending_to_join);
     }

@@ -31,6 +31,11 @@ public class MemberProfileLoader implements ProfileLoader {
     }
 
     @Override
+    public void setName(TextView tvProfileName, FormattedEntity member) {
+        tvProfileName.setText(member.getName());
+    }
+
+    @Override
     public void setDescription(TextView tvProfileDescription, FormattedEntity member) {
         String description;
         if (isEnabled(member)) {

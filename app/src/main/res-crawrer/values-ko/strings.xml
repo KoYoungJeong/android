@@ -112,6 +112,7 @@
 	<string name="jandi_browse_other_topics">"참여하지 않은 토픽 목록 보기"</string>
 	<string name="jandi_browse_team">"팀으로 가기"</string>
 	<string name="jandi_cancel">"취소"</string>
+	<string name="jandi_cancel_invitation">"초대 취소"</string>
 	<string name="jandi_canceled">"취소됨"</string>
 	<string name="jandi_cannot_connect_service_try_again">"일시적으로 서비스 접속이 되지 않습니다. 잠시 후 다시 시도해주세요."</string>
 	<string name="jandi_cannot_find_messages">"검색 결과가 없습니다 : "</string>
@@ -157,7 +158,7 @@
 	<string name="jandi_confirm_new_passcode">"비밀번호를 한번 더 입력해주세요."</string>
 	<string name="jandi_confirm_passcode">"비밀번호 재입력"</string>
 	<string name="jandi_copied_to_clipboard">"클립보드에 복사되었습니다."</string>
-	<string name="jandi_copy_link">"링크 복사"</string>
+	<string name="jandi_copy_link">"주소 복사하기"</string>
 	<string name="jandi_count_with_brace">"(%d)"</string>
 	<string name="jandi_create">"생성하기"</string>
 	<string name="jandi_create_channel">"토픽 생성"</string>
@@ -265,6 +266,8 @@
 	<string name="jandi_invite_succes_copy_link">"초대 링크가 클립보드에 복사되었습니다. 초대를 원하시는 멤버에게 이 링크를 보내세요!"</string>
 	<string name="jandi_invite_succes_send">"아래 주소로 초대장이 성공적으로 전송되었습니다."</string>
 	<string name="jandi_invite_success">"초대 메일이 성공적으로 발송되었습니다"</string>
+	<string name="jandi_invite_to_dummy_account_again">"입력하신 이메일 주소는 이미 다른 멤버가 초대 중입니다.
+초대메일을 다시 보낼까요?"</string>
 	<string name="jandi_invite_wechat">"위챗으로 보내기"</string>
 	<string name="jandi_invited_topic">"%1$s님이 %2$s님을 초대했습니다."</string>
 	<string name="jandi_is_newcomer">"잔디가 처음이신가요?"</string>
@@ -382,6 +385,7 @@
 	<string name="jandi_question_team_create">"아직 잔디 사용자가 아니세요?"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"정말 이 이메일 주소를 삭제하시겠습니까?"</string>
 	<string name="jandi_reorder_from_long_press">"폴더를 길게 눌러 순서를 조정할 수 있습니다."</string>
+	<string name="jandi_resend_invitation">"초대메일 재전송"</string>
 	<string name="jandi_retry">"다시 시도"</string>
 	<string name="jandi_retry_voice_search">"음성 검색을 다시 시도해주십시요."</string>
 	<string name="jandi_save">"저장"</string>

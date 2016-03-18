@@ -39,6 +39,7 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.profile.member.model.InactivedMemberProfileLoader;
 import com.tosslab.jandi.app.ui.profile.member.model.JandiBotProfileLoader;
 import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileLoader;
 import com.tosslab.jandi.app.ui.profile.member.model.ProfileLoader;
@@ -168,7 +169,11 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     void initObject() {
         boolean isBot = EntityManager.getInstance().isBot(memberId);
         if (!isBot) {
-            profileLoader = new MemberProfileLoader();
+            if (!EntityManager.getInstance().getEntityById(memberId).isInavtived()) {
+                profileLoader = new MemberProfileLoader();
+            } else {
+                profileLoader = new InactivedMemberProfileLoader();
+            }
         } else {
             profileLoader = new JandiBotProfileLoader();
         }
@@ -201,8 +206,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         boolean isDisableUser = !profileLoader.isEnabled(member);
         vDisableIcon.setVisibility(isDisableUser ? View.VISIBLE : View.GONE);
 
-        tvProfileName.setText(member.getName());
-
+        profileLoader.setName(tvProfileName, member);
         profileLoader.setDescription(tvProfileDescription, member);
         profileLoader.setProfileInfo(vgProfileTeamInfo, tvProfileDivision, tvProfilePosition, member);
         profileLoader.loadSmallThumb(ivProfileImageSmall, member);
@@ -451,6 +455,20 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                             getString(R.string.jandi_mention_mentions), (v) -> {
                                 startStarMentionListActivity();
                                 AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Mentions);
+                            }));
+        } else if (member.isInavtived()) {
+            vgProfileTeamButtons.addView(
+                    getButton(R.drawable.icon_profile_mail,
+                            getString(R.string.jandi_resend_invitation),
+                            v -> {
+
+                            }));
+
+            vgProfileTeamButtons.addView(
+                    getButton(R.drawable.icon_profile_cancel,
+                            getString(R.string.jandi_cancel_invitation),
+                            v -> {
+
                             }));
         } else {
             final String userPhoneNumber = member.getUserPhoneNumber();

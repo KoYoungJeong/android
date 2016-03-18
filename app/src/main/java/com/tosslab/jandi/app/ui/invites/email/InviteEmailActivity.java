@@ -4,6 +4,7 @@ import android.database.DataSetObserver;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
@@ -212,4 +213,14 @@ public class InviteEmailActivity extends BaseAppCompatActivity
         manyPeopleInviteText.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
+    public void showSendInviteAgain(String email) {
+        new AlertDialog.Builder(InviteEmailActivity.this)
+                .setMessage(R.string.jandi_invite_to_dummy_account_again)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
+                    presenter.invite(email);
+                })
+                .create()
+                .show();
+    }
 }
