@@ -38,6 +38,8 @@ public interface ITeamApiLoader {
 
     IExecutor<List<ResInvitationMembers>> loadInviteToTeamByTeamApi(long teamId, ReqInvitationMembers invitationMembers);
 
+    IExecutor<ResCommon> loadCancelInvitationUserByTeamApi(long teamId, long memberId);
+
     IExecutor<ResTeamDetailInfo.InviteTeam> loadGetTeamInfoByTeamApi(long teamId);
 
     IExecutor<ResAnnouncement> loadGetAnnouncement(long teamId, long topicId);

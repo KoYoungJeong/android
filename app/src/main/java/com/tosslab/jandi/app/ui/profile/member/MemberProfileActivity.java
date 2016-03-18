@@ -35,7 +35,10 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -48,6 +51,7 @@ import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -62,8 +66,13 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.Arrays;
+import java.util.List;
+
+import retrofit.RetrofitError;
 import uk.co.senab.photoview.PhotoView;
 
 /**
@@ -462,13 +471,14 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                             getString(R.string.jandi_resend_invitation),
                             v -> {
 
+                                requestReInvite();
                             }));
 
             vgProfileTeamButtons.addView(
                     getButton(R.drawable.icon_profile_cancel,
                             getString(R.string.jandi_cancel_invitation),
                             v -> {
-
+                                showRejectInvitationAlert();
                             }));
         } else {
             final String userPhoneNumber = member.getUserPhoneNumber();
@@ -495,6 +505,66 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                                 AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.DirectMessage);
                             }));
         }
+    }
+
+    private void showRejectInvitationAlert() {
+
+        new AlertDialog.Builder(MemberProfileActivity.this)
+                .setMessage(R.string.jandi_r_u_sure_cancel_invitation)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
+                    requestRejectUser();
+                })
+                .create()
+                .show();
+    }
+
+    @Background
+    private void requestRejectUser() {
+        String userEmail = EntityManager.getInstance().getEntityById(memberId).getUserEmail();
+        long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
+        try {
+            RequestApiManager.getInstance().cancelInvitationUserByTeamApi(teamId, memberId);
+            showSuccessEmail(userEmail);
+        } catch (RetrofitError retrofitError) {
+            showNetworkErrorToast();
+            retrofitError.printStackTrace();
+        }
+    }
+
+    @UiThread
+    void showNetworkErrorToast() {
+        ColoredToast.showError(R.string.err_network);
+    }
+
+    @UiThread
+    void showSuccessEmail(String userEmail) {
+        ColoredToast.show(getString(R.string.jandi_success_to_cancel_invitation, userEmail));
+    }
+
+    @Background
+    void requestReInvite() {
+
+        long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
+
+        List<String> invites = Arrays.asList(EntityManager.getInstance().getEntityById(memberId).getUserEmail());
+        try {
+            RequestApiManager.getInstance().inviteToTeamByTeamApi(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage()));
+            showSuccessReinvite();
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+            showNetworkErrorToast();
+        }
+
+    }
+
+    @UiThread
+    void showSuccessReinvite() {
+        new AlertDialog.Builder(MemberProfileActivity.this)
+                .setMessage(R.string.jandi_another_invitation_sent)
+                .setPositiveButton(R.string.jandi_confirm, null)
+                .create()
+                .show();
     }
 
     @Click(R.id.tv_member_profile_phone)

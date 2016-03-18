@@ -89,6 +89,7 @@
 	<string name="jandi_announcement_delete_question">"公告将被删除，你确定要继续?"</string>
 	<string name="jandi_announcement_deleted">"%s 删除公告"</string>
 	<string name="jandi_announcement_minimize">"最小化"</string>
+	<string name="jandi_another_invitation_sent">"新的邀请信已寄出"</string>
 	<string name="jandi_are_you_sure_disable_external_link">"若移除共享链接，访问至该文件的权限将被撤销。 你确定要移除共享链接？"</string>
 	<string name="jandi_ask_assign_topic_owner">"你确定将议题管理权限转移至此成员？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你确定将此成员剔除议题？"</string>
@@ -380,6 +381,7 @@
 	<string name="jandi_push_preview_all_message">"所有信息"</string>
 	<string name="jandi_push_preview_public_only">"仅限公开议题"</string>
 	<string name="jandi_question_team_create">"您的团队还未使用JANDI吗？"</string>
+	<string name="jandi_r_u_sure_cancel_invitation">"你确定取消邀请？"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"你确认要删除这个电子邮件地址？"</string>
 	<string name="jandi_reorder_from_long_press">"초대 메일을 다시 전송했습니다."</string>
 	<string name="jandi_resend_invitation">"重新寄发邀请"</string>
@@ -469,6 +471,7 @@
 	<string name="jandi_success_copy_clipboard_external_link">"共享链接已复制到剪贴板"</string>
 	<string name="jandi_success_disable_external_link">"共享链接已被删除"</string>
 	<string name="jandi_success_kick_user_from_topic">"该成员已被剔除出此议题"</string>
+	<string name="jandi_success_to_cancel_invitation">"%s的邀请已被取消"</string>
 	<string name="jandi_success_update_account_profile">"帐号已经成功更新"</string>
 	<string name="jandi_success_web_token">"登录成功"</string>
 	<string name="jandi_switch_team">"更换团队"</string>

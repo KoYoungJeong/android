@@ -204,7 +204,7 @@ public class SignUpActivity extends BaseAppCompatActivity {
         String email = signUpViewModel.getEmailText();
         String password = signUpViewModel.getPasswordText();
         String name = signUpViewModel.getNameText();
-        String lang = LanguageUtil.getLanguage(SignUpActivity.this);
+        String lang = LanguageUtil.getLanguage();
 
         signUpViewModel.showProgressWheel();
         try {

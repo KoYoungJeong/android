@@ -89,6 +89,7 @@
 	<string name="jandi_announcement_delete_question">"이 공지를 삭제하시겠습니까? 삭제시 토픽 내 다른 멤버들 또한 더 이상 이 공지를 볼 수 없게되며, 원본 메시지는 보존됩니다."</string>
 	<string name="jandi_announcement_deleted">"%s님이 공지사항을 삭제했습니다."</string>
 	<string name="jandi_announcement_minimize">"최소화"</string>
+	<string name="jandi_another_invitation_sent">"초대 메일을 다시 전송했습니다."</string>
 	<string name="jandi_are_you_sure_disable_external_link">"기존에 공유된 링크로 접속할 경우 더 이상 파일을 볼 수 없게 됩니다. 삭제하시겠습니까?"</string>
 	<string name="jandi_ask_assign_topic_owner">"이 멤버를 토픽 관리자로 지정하시겠습니까?"</string>
 	<string name="jandi_ask_kick_user_from_topic">"정말 이 멤버를 내보내시겠습니까?"</string>
@@ -383,6 +384,7 @@
 	<string name="jandi_push_preview_all_message">"모든 메시지"</string>
 	<string name="jandi_push_preview_public_only">"공개 토픽만"</string>
 	<string name="jandi_question_team_create">"아직 잔디 사용자가 아니세요?"</string>
+	<string name="jandi_r_u_sure_cancel_invitation">"정말로 초대를 취소할까요?"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"정말 이 이메일 주소를 삭제하시겠습니까?"</string>
 	<string name="jandi_reorder_from_long_press">"폴더를 길게 눌러 순서를 조정할 수 있습니다."</string>
 	<string name="jandi_resend_invitation">"초대메일 재전송"</string>
@@ -473,6 +475,7 @@
 	<string name="jandi_success_copy_clipboard_external_link">"외부 공유용 링크가 클립보드에 복사되었습니다."</string>
 	<string name="jandi_success_disable_external_link">"외부 공유용 링크가 삭제되었습니다."</string>
 	<string name="jandi_success_kick_user_from_topic">"선택한 멤버를 내보냈습니다."</string>
+	<string name="jandi_success_to_cancel_invitation">"%s님의 초대를 취소했습니다."</string>
 	<string name="jandi_success_update_account_profile">"계정 정보가 성공적으로 수정되었습니다"</string>
 	<string name="jandi_success_web_token">"로그인 되었습니다."</string>
 	<string name="jandi_switch_team">"팀 이동하기"</string>

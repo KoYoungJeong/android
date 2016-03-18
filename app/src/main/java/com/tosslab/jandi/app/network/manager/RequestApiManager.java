@@ -582,6 +582,11 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
+    public ResCommon cancelInvitationUserByTeamApi(long teamId, long memberId) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadCancelInvitationUserByTeamApi(teamId, memberId));
+    }
+
+    @Override
     public ResTeamDetailInfo.InviteTeam getTeamInfoByTeamApi(long teamId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadGetTeamInfoByTeamApi(teamId));
     }

@@ -102,7 +102,7 @@ public class MainMoreModel {
     }
 
     public String getSupportUrlEachLanguage() {
-        String language = LanguageUtil.getLanguage(JandiApplication.getContext());
+        String language = LanguageUtil.getLanguage();
         String supportUrl;
         if (TextUtils.equals(language, LanguageUtil.LANG_KO)) {
             supportUrl = SUPPORT_URL_KO;

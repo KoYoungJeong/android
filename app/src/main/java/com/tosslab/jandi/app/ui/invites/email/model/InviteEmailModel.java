@@ -38,7 +38,7 @@ public class InviteEmailModel {
 
         long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
 
-        return RequestApiManager.getInstance().inviteToTeamByTeamApi(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage(context.getApplicationContext())));
+        return RequestApiManager.getInstance().inviteToTeamByTeamApi(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage()));
 
     }
 
