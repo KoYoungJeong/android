@@ -89,6 +89,7 @@
 	<string name="jandi_announcement_delete_question">"This announcement will be removed. Are you sure you want to continue?"</string>
 	<string name="jandi_announcement_deleted">"%s deleted the announcement."</string>
 	<string name="jandi_announcement_minimize">"Hide"</string>
+	<string name="jandi_another_invitation_sent">"Another invitation has been sent."</string>
 	<string name="jandi_are_you_sure_disable_external_link">"Access to the previously shared file will be revoked. Are you sure?"</string>
 	<string name="jandi_ask_assign_topic_owner">"Are you sure you want to transfer topic administrator permissions to this member?"</string>
 	<string name="jandi_ask_kick_user_from_topic">"Are you sure you want to remove this member from the topic?"</string>
@@ -112,6 +113,7 @@
 	<string name="jandi_browse_other_topics">"Browse other topics"</string>
 	<string name="jandi_browse_team">"Browse team "</string>
 	<string name="jandi_cancel">"Cancel"</string>
+	<string name="jandi_cancel_invitation">"Cancel invitation"</string>
 	<string name="jandi_canceled">"Canceled"</string>
 	<string name="jandi_cannot_connect_service_try_again">"JANDI appears to be currently unavailable. Please try again soon. Sorry for any inconvenience!"</string>
 	<string name="jandi_cannot_find_messages">"No messages found matching : "</string>
@@ -157,7 +159,7 @@
 	<string name="jandi_confirm_new_passcode">"Confirm new passcode"</string>
 	<string name="jandi_confirm_passcode">"Confirm Passcode"</string>
 	<string name="jandi_copied_to_clipboard">"Copied to clipboard"</string>
-	<string name="jandi_copy_link">"Copy link"</string>
+	<string name="jandi_copy_link">"Copy Link"</string>
 	<string name="jandi_count_with_brace">"(%d)"</string>
 	<string name="jandi_create">"Create"</string>
 	<string name="jandi_create_channel">"Create New Topic"</string>
@@ -265,6 +267,8 @@
 	<string name="jandi_invite_succes_copy_link">"The team invitation link has been copied to your clipboard. Use it to invite others to your team."</string>
 	<string name="jandi_invite_succes_send">"Invitations have been sent to:"</string>
 	<string name="jandi_invite_success">"Invitation has been sent successfully"</string>
+	<string name="jandi_invite_to_dummy_account_again">"Another member of your team has already sent an invitation to this address.
+Do you want to send it again?"</string>
 	<string name="jandi_invite_wechat">"WeChat"</string>
 	<string name="jandi_invited_topic">"%1$s invited %2$s"</string>
 	<string name="jandi_is_newcomer">"New to JANDI?"</string>
@@ -378,8 +382,10 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_push_preview_all_message">"All messages"</string>
 	<string name="jandi_push_preview_public_only">"Public topics only"</string>
 	<string name="jandi_question_team_create">"Don't have a team on JANDI yet?"</string>
+	<string name="jandi_r_u_sure_cancel_invitation">"Are you sure you want cancel invitation?"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"Are you sure you want to delete this email address?"</string>
 	<string name="jandi_reorder_from_long_press">"Drag and drop folders to rearrange the order"</string>
+	<string name="jandi_resend_invitation">"Resend invitation"</string>
 	<string name="jandi_retry">"Please try again"</string>
 	<string name="jandi_retry_voice_search">"Didn\'t catch that, try speaking again"</string>
 	<string name="jandi_save">"Save"</string>
@@ -466,6 +472,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_success_copy_clipboard_external_link">"Public link has been copied to clipboard."</string>
 	<string name="jandi_success_disable_external_link">"Public link has been deleted."</string>
 	<string name="jandi_success_kick_user_from_topic">"Member has been removed from this topic."</string>
+	<string name="jandi_success_to_cancel_invitation">"%s invitation has been canceled."</string>
 	<string name="jandi_success_update_account_profile">"Account has bean updated successfully"</string>
 	<string name="jandi_success_web_token">"Sign-in was successful"</string>
 	<string name="jandi_switch_team">"Switch Teams"</string>
