@@ -205,6 +205,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
         offlineLayer = new OfflineLayer(vgOffline);
 
+        JandiPreference.setSocketReconnectDelay(0l);
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
         // onResume -> AfterViews 로 이동
         // (소켓에서 필요한 갱신을 다 처리한다고 간주)
