@@ -850,19 +850,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
 
         // 소켓 이벤트로 넘어온 이벤트중 같은 roomId 만 처리
-        List<Long> sharedRooms = event.getSharedRooms();
-        boolean has = sharedRooms != null && !sharedRooms.isEmpty();
-        if (has) {
-            boolean eventForThisRoom = false;
-            for (Long id : sharedRooms) {
-                if (id == roomId) {
-                    eventForThisRoom = true;
-                    break;
-                }
-            }
-            if (eventForThisRoom) {
-                reInitializeOnEvent(event.getFileId());
-            }
+        if (event.getFileId() == fileId) {
+            reInitializeOnEvent(event.getFileId());
         }
     }
 
