@@ -387,6 +387,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         super.onResume();
         isForeground = true;
         ActivityHelper.setOrientation(this);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
