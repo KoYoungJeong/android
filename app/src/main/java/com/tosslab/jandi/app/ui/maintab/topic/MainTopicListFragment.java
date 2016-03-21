@@ -49,6 +49,7 @@ import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -262,6 +263,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     void onOrderTitleClick() {
         boolean currentFolder = isCurrentFolder();
         changeTopicSort(currentFolder, !currentFolder);
+        JandiPreference.setLastTopicOrderType(!currentFolder ? 0 : 1);
     }
 
     private boolean isCurrentFolder() {
