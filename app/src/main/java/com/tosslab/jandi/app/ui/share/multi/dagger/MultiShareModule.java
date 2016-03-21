@@ -1,11 +1,8 @@
 package com.tosslab.jandi.app.ui.share.multi.dagger;
 
-import com.tosslab.jandi.app.ui.share.multi.model.MultiShareModel;
 import com.tosslab.jandi.app.ui.share.multi.model.SharesDataModel;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenter;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenterImpl;
-
-import java.util.ArrayList;
 
 import dagger.Module;
 import dagger.Provides;
@@ -16,23 +13,23 @@ public class MultiShareModule {
     private MultiSharePresenter.View view;
     private SharesDataModel sharesDataModel;
 
-    public MultiShareModule(MultiSharePresenter.View view) {
+    public MultiShareModule(MultiSharePresenter.View view, SharesDataModel sharesDataModel) {
         this.view = view;
-        sharesDataModel = new SharesDataModel(new ArrayList<>());
+        this.sharesDataModel = sharesDataModel;
     }
 
     @Provides
-    public MultiSharePresenter provideMultiSharePresenter() {
-        return new MultiSharePresenterImpl(view, sharesDataModel);
+    MultiSharePresenter provideMultiSharePresenter(MultiSharePresenterImpl multiSharePresenter) {
+        return multiSharePresenter;
     }
 
     @Provides
-    public MultiShareModel provideMultiShareModel() {
-        return new MultiShareModel();
+    MultiSharePresenter.View provideViewOfMultiSharePresenter() {
+        return view;
     }
 
     @Provides
-    public SharesDataModel provideSharesDataModel() {
+    SharesDataModel provideSharesDataModel() {
         return sharesDataModel;
     }
 

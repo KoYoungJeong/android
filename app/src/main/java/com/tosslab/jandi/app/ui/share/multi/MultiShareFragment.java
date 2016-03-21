@@ -28,7 +28,6 @@ import com.tosslab.jandi.app.ui.share.MainShareActivity;
 import com.tosslab.jandi.app.ui.share.multi.adapter.ShareFragmentPageAdapter;
 import com.tosslab.jandi.app.ui.share.multi.dagger.DaggerMultiShareComponent;
 import com.tosslab.jandi.app.ui.share.multi.dagger.MultiShareModule;
-import com.tosslab.jandi.app.ui.share.multi.model.SharesDataModel;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenter;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
@@ -56,8 +55,6 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     private static final String EXTRA_URIS = "uris";
     @Inject
     MultiSharePresenter multiSharePresenter;
-    @Inject
-    SharesDataModel sharesDataModel;
 
     MentionControlViewModel mentionControlViewModel;
 
@@ -112,12 +109,14 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         EventBus.getDefault().register(this);
+
+        comments = new ArrayList<>();
+        adapter = new ShareFragmentPageAdapter(getFragmentManager());
+
         DaggerMultiShareComponent.builder()
-                .multiShareModule(new MultiShareModule(this))
+                .multiShareModule(new MultiShareModule(this, adapter))
                 .build()
                 .inject(this);
-        comments = new ArrayList<>();
-        adapter = new ShareFragmentPageAdapter(getFragmentManager(), sharesDataModel);
 
         uris = initUris(getArguments());
 

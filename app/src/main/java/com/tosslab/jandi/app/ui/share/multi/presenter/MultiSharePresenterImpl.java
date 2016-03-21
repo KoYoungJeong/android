@@ -118,7 +118,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                 .observeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(sharesDataModel::add, t -> view.moveIntro(), () -> {
-                    ShareData item = sharesDataModel.getItem(0);
+                    ShareData item = sharesDataModel.getShareData(0);
                     String fileName = getFileName(item.getData());
                     view.setFileTitle(fileName);
                     view.updateFiles();
@@ -143,7 +143,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
         int dataSize = sharesDataModel.size();
 
         for (int idx = 0; idx < dataSize; idx++) {
-            ShareData item = sharesDataModel.getItem(idx);
+            ShareData item = sharesDataModel.getShareData(idx);
             Pair<String, List<MentionObject>> stringListPair = mentionInfos.get(idx);
             FileUploadDTO object = new FileUploadDTO(item.getData(), getFileName(item.getData()), shareTarget.getRoomId(), stringListPair.first);
             object.setTeamId(shareTarget.getTeamId());
@@ -156,7 +156,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
 
     @Override
     public void onFilePageChanged(int position) {
-        ShareData item = sharesDataModel.getItem(position);
+        ShareData item = sharesDataModel.getShareData(position);
         String fileName = getFileName(item.getData());
         view.setFileTitle(fileName);
     }

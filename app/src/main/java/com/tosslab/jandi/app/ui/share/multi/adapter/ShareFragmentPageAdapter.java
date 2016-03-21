@@ -9,13 +9,16 @@ import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
 import com.tosslab.jandi.app.ui.share.multi.domain.ShareData;
 import com.tosslab.jandi.app.ui.share.multi.model.SharesDataModel;
 
-public class ShareFragmentPageAdapter extends FragmentStatePagerAdapter {
+import java.util.ArrayList;
+import java.util.List;
 
-    private SharesDataModel sharesDataModel;
+public class ShareFragmentPageAdapter extends FragmentStatePagerAdapter implements SharesDataModel {
 
-    public ShareFragmentPageAdapter(FragmentManager fm, SharesDataModel sharesDataModel) {
+    private List<ShareData> shareDatas;
+
+    public ShareFragmentPageAdapter(FragmentManager fm) {
         super(fm);
-        this.sharesDataModel = sharesDataModel;
+        shareDatas = new ArrayList<>();
     }
 
     @Override
@@ -25,7 +28,7 @@ public class ShareFragmentPageAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        ShareData item = sharesDataModel.getItem(position);
+        ShareData item = getShareData(position);
         if (item instanceof FileShareData) {
             return ShareFileItemFragment.create(item.getData());
         } else {
@@ -35,9 +38,26 @@ public class ShareFragmentPageAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        if (sharesDataModel == null) {
-            return 0;
-        }
-        return sharesDataModel.size();
+        return size();
+    }
+
+    @Override
+    public int size() {
+        return shareDatas.size();
+    }
+
+    @Override
+    public ShareData getShareData(int position) {
+        return shareDatas.get(position);
+    }
+
+    @Override
+    synchronized public void clear() {
+        shareDatas.clear();
+    }
+
+    @Override
+    synchronized public void add(ShareData shareData) {
+        shareDatas.add(shareData);
     }
 }
