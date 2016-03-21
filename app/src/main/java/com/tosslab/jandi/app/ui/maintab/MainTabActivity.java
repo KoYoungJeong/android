@@ -314,6 +314,8 @@ public class MainTabActivity extends BaseAppCompatActivity {
             return;
         }
 
+        refreshEntityIfNeed();
+
         if (NetworkCheckUtil.isConnected()) {
             offlineLayer.dismissOfflineView();
         } else {
@@ -325,6 +327,15 @@ public class MainTabActivity extends BaseAppCompatActivity {
         updateMoreBadge();
         updateTopicBadge();
         updateChatBadge();
+
+    }
+
+    private void refreshEntityIfNeed() {
+        long diffTime = System.currentTimeMillis() - JandiPreference.getSocketConnectedLastTime();
+        if (diffTime > 1000 * 60 * 5) {
+            LogUtil.d("refreshEntityIfNeed");
+            getEntities();
+        }
 
     }
 
@@ -343,7 +354,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
     /**
      * 해당 사용자의 채널, DM, PG 리스트를 획득 (with 통신)
      */
-    @Background
+    @Background(serial = "getEntities")
     public void getEntities() {
         try {
             ResLeftSideMenu resLeftSideMenu = entityClientManager.getTotalEntitiesInfo();

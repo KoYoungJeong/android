@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ListView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
@@ -104,7 +103,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
         btnFAB.setVisibility(View.VISIBLE);
 
         mainChatListAdapter.startAnimation();
-        mainChatListPresenter.onReloadChatList(JandiApplication.getContext());
+        mainChatListPresenter.onReloadChatList();
 
     }
 
@@ -206,7 +205,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
 
     public void onEvent(RetrieveTopicListEvent event) {
         if (foreground) {
-            mainChatListPresenter.onReloadChatList(getActivity());
+            mainChatListPresenter.onReloadChatList();
         }
     }
 
@@ -219,14 +218,14 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
         if (TextUtils.equals(event.getMessageType(), "file_comment")) {
             for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
                 if (TextUtils.equals(messageRoom.getType(), "chat")) {
-                    mainChatListPresenter.onReloadChatList(getActivity());
+                    mainChatListPresenter.onReloadChatList();
                     return;
                 }
             }
         } else {
 
             if (TextUtils.equals(event.getRoom().getType(), "chat")) {
-                mainChatListPresenter.onReloadChatList(getActivity());
+                mainChatListPresenter.onReloadChatList();
             }
         }
     }
@@ -238,7 +237,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
         }
 
         if (TextUtils.equals(event.getEntityType(), PushTO.RoomType.CHAT.getName())) {
-            mainChatListPresenter.onReloadChatList(getActivity());
+            mainChatListPresenter.onReloadChatList();
         }
     }
 
