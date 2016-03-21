@@ -520,7 +520,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     @Background
-    private void requestRejectUser() {
+    void requestRejectUser() {
         String userEmail = EntityManager.getInstance().getEntityById(memberId).getUserEmail();
         long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
         try {
