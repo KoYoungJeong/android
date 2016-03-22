@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.network.socket.connector;
 
 import com.tosslab.jandi.app.network.socket.events.EventListener;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.net.URISyntaxException;
@@ -18,6 +17,7 @@ import javax.net.ssl.X509TrustManager;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import io.socket.engineio.client.transports.WebSocket;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 1..
@@ -42,6 +42,7 @@ public class JandiSocketConnector implements SocketConnector {
                 options.forceNew = false;
                 options.timeout = 1000 * 10;
                 options.rememberUpgrade = true;
+                options.transports = new String[]{WebSocket.NAME};
                 try {
                     options.sslContext = getSSLContext();
                 } catch (Exception e) {
