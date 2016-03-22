@@ -43,8 +43,14 @@ public class StringCompareUtil {
             }
 
             // 같은 캐릭터라면 대문자가 먼저 나오도록
-            if (getAbsChar(c1) == getAbsChar(c2)) {
-                return c1 - c2;
+            if (Character.isLetter(c1) && Character.isLetter(c2)) {
+                if (getAbsChar(c1) == getAbsChar(c2)) {
+                    return c1 - c2;
+                }
+            } else if (Character.isLetter(c1)) {
+                return -1;
+            } else if (Character.isLetter(c2)) {
+                return 1;
             }
 
             return getAbsChar(c1) - getAbsChar(c2);
@@ -64,8 +70,11 @@ public class StringCompareUtil {
     }
 
     private static boolean isSpecialCharacters(char c) {
-        if (!Character.isLetterOrDigit(c)
-                && !Character.isSpaceChar(c)) {
+        if ((c >= '!' && c <= '/') // 아스키 코드 33 ~ 47
+                || (c >= ':' && c <= '@') // 58 ~ 64
+                || (c >= '[' && c <= '\'') // 91 ~ 96
+                || (c >= '{' && c <= '}') // 123 ~ 125
+                ) {
             return true;
         }
         return false;
