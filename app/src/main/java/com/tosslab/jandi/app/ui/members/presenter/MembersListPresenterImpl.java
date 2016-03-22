@@ -121,7 +121,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                         }
 
                         return StringCompareUtil.compare(lhs.getName(), rhs.getName());
-1
+
                     }
                 })
                 .subscribe(chatChooseItems::addAll, Throwable::printStackTrace);
