@@ -120,8 +120,8 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                             rhsName = rhs.getEmail();
                         }
 
-                        return StringCompareUtil.compare(chatChooseItem.getName(), chatChooseItem2.getName());
-
+                        return StringCompareUtil.compare(lhs.getName(), rhs.getName());
+1
                     }
                 })
                 .subscribe(chatChooseItems::addAll, Throwable::printStackTrace);
