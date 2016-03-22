@@ -442,8 +442,8 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_signup_title">"Sign Up"</string>
 	<string name="jandi_signup_verification_code">"We sent a code to your inbox.\nEnter it here to verify your account."</string>
 	<string name="jandi_signup_verify_title">"Code Verification"</string>
-	<string name="jandi_sort_folder">"Sort by folder"</string>
-	<string name="jandi_sort_updated">"Sort by updated date"</string>
+	<string name="jandi_sort_folder">"Folder View"</string>
+	<string name="jandi_sort_updated">"Most Recent"</string>
 	<string name="jandi_sounds">"Sounds"</string>
 	<string name="jandi_sounds_air_pop">"Pop"</string>
 	<string name="jandi_sounds_arise">"Arise"</string>

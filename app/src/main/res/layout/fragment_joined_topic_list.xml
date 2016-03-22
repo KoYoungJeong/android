@@ -18,7 +18,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="#FFF5F5F5">
+        android:background="@color/white">
 
         <View
             android:layout_width="match_parent"
@@ -33,7 +33,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
-            android:background="?android:attr/selectableItemBackground"
             android:gravity="center_vertical"
             android:paddingLeft="12dp"
             android:paddingRight="12dp">

@@ -15,7 +15,7 @@ public interface MainChatListPresenter {
 
     void initChatList(Context context, long selectedEntity);
 
-    void onReloadChatList(Context context);
+    void onReloadChatList();
 
     void onMoveDirectMessage(Context context, long userId);
 

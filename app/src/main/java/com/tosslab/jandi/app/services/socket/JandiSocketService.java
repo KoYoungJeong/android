@@ -223,10 +223,10 @@ public class JandiSocketService extends Service {
 
         EventListener unshareFileListener = objects -> jandiSocketServiceModel.unshareFile(objects[0]);
         eventHashMap.put("file_unshared", unshareFileListener);
-        
+
         EventListener shareFileListener = objects -> jandiSocketServiceModel.shareFile(objects[0]);
         eventHashMap.put("file_shared", shareFileListener);
-        
+
         EventListener fileCommentCreatedListener = objects ->
                 jandiSocketServiceModel.refreshFileComment(objects[0]);
         eventHashMap.put("file_comment_created", fileCommentCreatedListener);
@@ -236,6 +236,7 @@ public class JandiSocketService extends Service {
 
         eventHashMap.put("check_connect_team", objects -> {
             LogUtil.d(TAG, "check_connect_team");
+            JandiPreference.setSocketReconnectDelay(0l);
             ConnectTeam connectTeam = jandiSocketServiceModel.getConnectTeam();
             if (connectTeam != null) {
                 jandiSocketManager.sendByJson("connect_team", connectTeam);
@@ -439,10 +440,26 @@ public class JandiSocketService extends Service {
     }
 
     private void trySocketConnect() {
+        if (JandiPreference.getSocketReconnectDelay() > 0) {
+            try {
+                Thread.sleep(JandiPreference.getSocketReconnectDelay());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         jandiSocketManager.connect(objects -> {
             StringBuilder sb = new StringBuilder();
             for (Object o : objects) {
                 sb.append(o.toString() + "\n");
+            }
+            long socketReconnectDelay = JandiPreference.getSocketReconnectDelay();
+            if (socketReconnectDelay == 0) {
+                JandiPreference.setSocketReconnectDelay(1000l);
+            } else if (socketReconnectDelay * 2 > 1000 * 60 * 5) {
+                JandiPreference.setSocketReconnectDelay(0l);
+            } else {
+                JandiPreference.setSocketReconnectDelay(socketReconnectDelay * 2);
             }
             stopService(getBaseContext());
             sendBroadcastForRestart();

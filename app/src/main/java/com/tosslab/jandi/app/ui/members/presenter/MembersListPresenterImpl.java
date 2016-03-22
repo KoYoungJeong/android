@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -119,7 +120,8 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                             rhsName = rhs.getEmail();
                         }
 
-                        return lhsName.compareTo(rhsName);
+                        return StringCompareUtil.compare(chatChooseItem.getName(), chatChooseItem2.getName());
+
                     }
                 })
                 .subscribe(chatChooseItems::addAll, Throwable::printStackTrace);

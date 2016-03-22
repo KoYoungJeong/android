@@ -117,7 +117,7 @@
 	<string name="jandi_canceled">"취소됨"</string>
 	<string name="jandi_cannot_connect_service_try_again">"일시적으로 서비스 접속이 되지 않습니다. 잠시 후 다시 시도해주세요."</string>
 	<string name="jandi_cannot_find_messages">"검색 결과가 없습니다 : "</string>
-	<string name="jandi_cannot_find_search_result_1">"파일 서랍에 아직 파일이 없습니다."</string>
+	<string name="jandi_cannot_find_search_result_1">"아직 파일이 없습니다."</string>
 	<string name="jandi_cannot_find_search_result_2">"토픽 또는 1:1메시지에서 파일을 업로드하실 수 있습니다."</string>
 	<string name="jandi_cannot_find_search_result_old">"검색된 파일이 없습니다."</string>
 	<string name="jandi_change_passcode">"비밀번호 변경"</string>
@@ -445,8 +445,8 @@
 	<string name="jandi_signup_title">"가입하기"</string>
 	<string name="jandi_signup_verification_code">"인증번호 이메일을 발송했습니다.\n받으신 인증번호를 입력해주세요."</string>
 	<string name="jandi_signup_verify_title">"인증번호 확인"</string>
-	<string name="jandi_sort_folder">"폴더로 보기"</string>
-	<string name="jandi_sort_updated">"최신 메시지 순으로 보기"</string>
+	<string name="jandi_sort_folder">"폴더 순으로"</string>
+	<string name="jandi_sort_updated">"최신 메시지 순으로"</string>
 	<string name="jandi_sounds">"소리"</string>
 	<string name="jandi_sounds_air_pop">"버블팝"</string>
 	<string name="jandi_sounds_arise">"기타 이중음"</string>

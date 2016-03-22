@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.domain.DisableDummyItem;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -67,7 +68,8 @@ public class ChatChooseModel {
                             rhsName = rhs.getEmail();
                         }
 
-                        return lhsName.compareTo(rhsName);
+                        return StringCompareUtil.compare(lhs.getName(), rhs.getName());
+
                     }
                 } else {
                     return -1;
@@ -94,7 +96,7 @@ public class ChatChooseModel {
                             rhsName = rhs.getEmail();
                         }
 
-                        return lhsName.compareTo(rhsName);
+                        return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                     }
                 }
             }

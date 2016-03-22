@@ -129,7 +129,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
     }
 
     @Override
-    public void onReloadChatList(Context context) {
+    public void onReloadChatList() {
         long memberId = mainChatListModel.getMemberId();
         long teamId = mainChatListModel.getTeamId();
 
