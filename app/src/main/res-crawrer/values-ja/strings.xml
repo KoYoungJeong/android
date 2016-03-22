@@ -89,6 +89,7 @@
 	<string name="jandi_announcement_delete_question">"この告知を削除します。続きますか？"</string>
 	<string name="jandi_announcement_deleted">"%sさんが告知を削除しました。"</string>
 	<string name="jandi_announcement_minimize">"環境設定"</string>
+	<string name="jandi_another_invitation_sent">"メールでもう一度招待しました"</string>
 	<string name="jandi_are_you_sure_disable_external_link">"削除すると、リンクはこれから使用できず、本当に削除しますか？"</string>
 	<string name="jandi_ask_assign_topic_owner">"このメンバーにトピック管理者の権限を譲りますか？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"本当にこのメンバーをトピックから退室させますか？"</string>
@@ -112,6 +113,7 @@
 	<string name="jandi_browse_other_topics">"未参加のトピック一覧"</string>
 	<string name="jandi_browse_team">"チームに移動"</string>
 	<string name="jandi_cancel">"戻る"</string>
+	<string name="jandi_cancel_invitation">"招待をキャンセル"</string>
 	<string name="jandi_canceled">"キャンセルされました"</string>
 	<string name="jandi_cannot_connect_service_try_again">"JANDIに接続できません。後で再起動してください。"</string>
 	<string name="jandi_cannot_find_messages">"一致するメッセージがありません : "</string>
@@ -265,6 +267,7 @@
 	<string name="jandi_invite_succes_copy_link">"あなたのチームへの招待リンクがコピーされました。チームに招待したい人に送りましょう"</string>
 	<string name="jandi_invite_succes_send">"招待メールが以下のアドレスに正常に送信されました"</string>
 	<string name="jandi_invite_success">"招待メールが送信されました"</string>
+	<string name="jandi_invite_to_dummy_account_again">"NEW KEY"</string>
 	<string name="jandi_invite_wechat">"WeChat"</string>
 	<string name="jandi_invited_topic">"%1$sが %2$sさんを招待しました"</string>
 	<string name="jandi_is_newcomer">"初めてJANDIを使いますか？"</string>
@@ -379,8 +382,10 @@
 	<string name="jandi_push_preview_all_message">"全メッセージ"</string>
 	<string name="jandi_push_preview_public_only">"公開トピックのみ"</string>
 	<string name="jandi_question_team_create">"JANDIにチームを作成していない方はこちら"</string>
+	<string name="jandi_r_u_sure_cancel_invitation">"本当にい招待をキャンセルしますか?"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"プライマリアドレスは削除できません"</string>
 	<string name="jandi_reorder_from_long_press">"フォルダを長押しして順番が調整できます。"</string>
+	<string name="jandi_resend_invitation">"招待メールを再発信"</string>
 	<string name="jandi_retry">"もう一度試す"</string>
 	<string name="jandi_retry_voice_search">"言葉を認識できませんでした。もう一度お試し下さい"</string>
 	<string name="jandi_save">"保存"</string>
@@ -467,6 +472,7 @@
 	<string name="jandi_success_copy_clipboard_external_link">"共有リンクがクリップボードにコピーされました"</string>
 	<string name="jandi_success_disable_external_link">"共有用リンクが削除されました"</string>
 	<string name="jandi_success_kick_user_from_topic">"選択したメンバーがトピックから退室されました。"</string>
+	<string name="jandi_success_to_cancel_invitation">"%sさんの招待をキャンセルしました"</string>
 	<string name="jandi_success_update_account_profile">"アカウント情報が更新されました"</string>
 	<string name="jandi_success_web_token">"ログインしました。"</string>
 	<string name="jandi_switch_team">"チーム切替"</string>
