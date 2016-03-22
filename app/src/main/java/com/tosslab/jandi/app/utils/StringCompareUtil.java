@@ -25,12 +25,12 @@ public class StringCompareUtil {
             }
 
             // 특수 문자
-            if (isSpecialCharacters(c1) && !isSpecialCharacters(c2)) {
-                return -1;
-            } else if (!isSpecialCharacters(c1) && isSpecialCharacters(c2)) {
-                return 1;
-            } else if (isSpecialCharacters(c1) && isSpecialCharacters(c2)) {
+            if (isSpecialCharacters(c1) && isSpecialCharacters(c2)) {
                 return c1 - c2;
+            } else if (isSpecialCharacters(c1)) {
+                return -1;
+            } else if (isSpecialCharacters(c2)) {
+                return 1;
             }
 
             // 숫자
@@ -72,7 +72,7 @@ public class StringCompareUtil {
     private static boolean isSpecialCharacters(char c) {
         if ((c >= '!' && c <= '/') // 아스키 코드 33 ~ 47
                 || (c >= ':' && c <= '@') // 58 ~ 64
-                || (c >= '[' && c <= '\'') // 91 ~ 96
+                || (c >= '[' && c <= '`') // 91 ~ 96
                 || (c >= '{' && c <= '}') // 123 ~ 125
                 ) {
             return true;
