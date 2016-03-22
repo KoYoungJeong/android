@@ -917,6 +917,7 @@ public class MessageListV2Fragment extends Fragment implements
         int lastItemPosition = messageAdapter.getItemCount();
 
         messageAdapter.addAll(lastItemPosition, records);
+
         saveCacheAndNotifyDataSetChanged(() -> {
             ResMessages.Link lastUpdatedMessage = records.get(location);
             if (!isFirstLoad

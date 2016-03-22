@@ -34,12 +34,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
@@ -59,7 +55,8 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     long roomId = -1;
     long entityId;
     List<ResMessages.Link> links;
-    ExecutorService threadPool = Executors.newCachedThreadPool();
+    private ExecutorService threadPool = Executors.newSingleThreadExecutor();
+
     private MessagePointer messagePointer;
 
     public MainMessageListAdapter(Context context) {
@@ -67,41 +64,18 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         oldMoreState = MoreState.Idle;
         links = new CopyOnWriteArrayList<>();
         setHasStableIds(true);
-//        registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-//            @Override
-//            public void onChanged() {
-//
-//            }
-//        });
     }
 
     public void saveCacheAndNotifyDataSetChanged(NotifyDataSetChangedCallback callback) {
-
-        if (roomId == -1 || messagePointer.getFirstCursorLinkId() == -1) {
-            links.clear();
-            return;
-        }
-
-        Runnable runnable = () -> {
-            FutureTask<Boolean> futureTask = new FutureTask<>(() -> {
-                addBeforeLinks(roomId, messagePointer.getFirstCursorLinkId(), links);
-                removeDummyLink(links);
-                addAfterLinks(roomId, links);
-                addDummyLink(roomId, links);
-                return true;
-            });
-
-            threadPool.execute(futureTask);
-
-            try {
-                futureTask.get(10, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (TimeoutException e) {
-                e.printStackTrace();
+        Runnable saveCacheRunnable = () -> {
+            if (roomId == -1 || messagePointer.getFirstCursorLinkId() == -1) {
+                links.clear();
+                return;
             }
+            addBeforeLinks(roomId, messagePointer.getFirstCursorLinkId(), links);
+            removeDummyLink(links);
+            addAfterLinks(roomId, links);
+            addDummyLink(roomId, links);
 
             Activity activity = (Activity) context;
             activity.runOnUiThread(() -> {
@@ -110,10 +84,9 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
                     callback.callBack();
                 }
             });
-
         };
 
-        new Thread(runnable).start();
+        threadPool.execute(saveCacheRunnable);
     }
 
     @Override
@@ -165,7 +138,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
             bodyViewHolder.setLastReadViewVisible(0, -1);
         }
 
-        if (position == getItemCount() / 10 && oldMoreState == MainMessageListAdapter.MoreState.Idle) {
+        if (position == 50 || position == getItemCount() / 10 && oldMoreState == MainMessageListAdapter.MoreState.Idle) {
             oldMoreState = MainMessageListAdapter.MoreState.Loading;
             if (oldMoreState != MainMessageListAdapter.MoreState.Idle) {
                 EventBus.getDefault().post(new RefreshOldMessageEvent());
