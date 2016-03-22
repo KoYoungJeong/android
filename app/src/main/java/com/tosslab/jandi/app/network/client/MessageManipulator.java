@@ -28,7 +28,7 @@ import retrofit.RetrofitError;
 // TODO Must be seperate logic
 @EBean
 public class MessageManipulator {
-    public static final int NUMBER_OF_MESSAGES = 20;
+    public static final int NUMBER_OF_MESSAGES = 100;
     public static final int MAX_OF_MESSAGES = 100;
 
     @RootContext

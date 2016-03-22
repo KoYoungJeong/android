@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.ui.message.to.queue.NewMessageContainer;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageContainer;
 import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageContainer;
 import com.tosslab.jandi.app.ui.message.to.queue.UpdateLinkPreviewMessageContainer;
+import com.tosslab.jandi.app.ui.message.v2.adapter.MainMessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
 import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
@@ -222,6 +223,7 @@ public class MessageListV2Presenter {
 
     @Background
     public void onInitMessages(boolean withProgress) {
+
         if (withProgress) {
             view.showProgressView();
         }
@@ -274,6 +276,7 @@ public class MessageListV2Presenter {
 
         addQueue(oldMessageQueue);
         addQueue(newMessageQueue);
+
     }
 
     private void addQueue(MessageContainer messageContainer) {
@@ -312,6 +315,7 @@ public class MessageListV2Presenter {
 
     private void loadOldMessage(long teamId, long roomId, long linkId, boolean isFirst,
                                 boolean isCacheMode) {
+
         if (!isFirst) {
             view.showOldLoadProgress();
         }
@@ -397,6 +401,7 @@ public class MessageListV2Presenter {
     }
 
     private void loadOldMessage(OldMessageContainer messageContainer) {
+
         long teamId = room.getTeamId();
         long roomId = room.getRoomId();
         long linkId = messagePointer.getFirstCursorLinkId();
@@ -404,6 +409,7 @@ public class MessageListV2Presenter {
         boolean isCacheMode = messageContainer.isCacheMode();
 
         loadOldMessage(teamId, roomId, linkId, isFirstLoad, isCacheMode);
+
     }
 
     @NonNull
@@ -483,6 +489,7 @@ public class MessageListV2Presenter {
     }
 
     private void loadNewMessage(NewMessageContainer messageContainer) {
+
         MessageState data = messageContainer.getData();
         final long lastUpdateLinkId = MessageRepository.getRepository()
                 .getLastMessage(room.getRoomId()).id;
@@ -504,8 +511,8 @@ public class MessageListV2Presenter {
 
         boolean loadHistory = currentMessageState.loadHistory();
 
-        if (loadHistory) {
 
+        if (loadHistory) {
             try {
                 newMessages = messageListModel.getNewMessage(lastUpdateLinkId);
             } catch (RetrofitError e) {
@@ -531,6 +538,7 @@ public class MessageListV2Presenter {
             newMessages = getResUpdateMessages(lastUpdateLinkId);
         }
 
+
         if (newMessages == null || newMessages.isEmpty()) {
             boolean hasMessages = hasMessages(firstCursorLinkId, currentItemCount);
             view.showEmptyView(!hasMessages);
@@ -538,10 +546,14 @@ public class MessageListV2Presenter {
             if (currentMessageState.isFirstLoadNewMessage()) {
                 currentMessageState.setIsFirstLoadNewMessage(false);
                 view.setUpLastReadLinkIdIfPosition();
-                view.notifyDataSetChanged();
-                view.moveLastReadLink();
-            }
+                view.saveCacheAndNotifyDataSetChanged(new MainMessageListAdapter.NotifyDataSetChangedCallback() {
+                    @Override
+                    public void callBack() {
+                        view.moveLastReadLink();
+                    }
+                });
 
+            }
             return;
         }
 
@@ -588,6 +600,8 @@ public class MessageListV2Presenter {
     }
 
     private int getEventMessageCount(long firstCursorLinkId) {
+
+
         List<ResMessages.Link> messages = MessageRepository.getRepository()
                 .getMessages(room.getRoomId(), firstCursorLinkId, Integer.MAX_VALUE);
 
@@ -643,6 +657,7 @@ public class MessageListV2Presenter {
                         view.setMoreNewFromAdapter(true);
                         view.setNewLoadingComplete();
                     }
+
                 } catch (RetrofitError retrofitError) {
                     retrofitError.printStackTrace();
                     view.setMoreNewFromAdapter(true);
@@ -680,7 +695,7 @@ public class MessageListV2Presenter {
                 MessageRepository.getRepository().getTextMessage(messageId);
 
         view.updateLinkPreviewMessage(textMessage);
-        view.notifyDataSetChanged();
+        view.saveCacheAndNotifyDataSetChanged(null);
     }
 
     public void onInitializeEmptyLayout(long entityId) {
@@ -757,16 +772,18 @@ public class MessageListV2Presenter {
         long roomId = room.getRoomId();
         long localId = messageListModel.insertSendingMessageIfCan(entityId, roomId, stickerInfo);
         if (localId > 0) {
-            view.notifyDataSetChanged();
-            view.moveLastPage();
+            view.saveCacheAndNotifyDataSetChanged(() -> {
+                view.moveLastPage();
 
-            StickerInfo reqStickerInfo = new StickerInfo(stickerInfo);
-            ArrayList<MentionObject> mentions = new ArrayList<>();
-            SendingMessage sendingMessage = new SendingMessage(localId, "", reqStickerInfo, mentions);
+                StickerInfo reqStickerInfo = new StickerInfo(stickerInfo);
+                ArrayList<MentionObject> mentions = new ArrayList<>();
+                SendingMessage sendingMessage = new SendingMessage(localId, "", reqStickerInfo, mentions);
 
-            SendingMessageContainer messageQueue = new SendingMessageContainer(sendingMessage);
+                SendingMessageContainer messageQueue = new SendingMessageContainer(sendingMessage);
 
-            addQueue(messageQueue);
+                addQueue(messageQueue);
+            });
+
         }
     }
 
@@ -779,7 +796,7 @@ public class MessageListV2Presenter {
 
         if (localId > 0) {
             // insert to ui
-            view.notifyDataSetChanged();
+            view.saveCacheAndNotifyDataSetChanged(null);
             view.moveLastPage();
             // networking...
             SendingMessage sendingMessage = new SendingMessage(localId, reqSendMessage);
@@ -807,7 +824,7 @@ public class MessageListV2Presenter {
             }
         }
 
-        view.notifyDataSetChanged();
+        view.saveCacheAndNotifyDataSetChanged(null);
     }
 
     public void restoreStatus() {
@@ -863,7 +880,7 @@ public class MessageListV2Presenter {
     @Background
     public void onDeleteDummyMessageAction(long localId) {
         messageListModel.deleteDummyMessageAtDatabase(localId);
-        view.notifyDataSetChanged();
+        view.saveCacheAndNotifyDataSetChanged(null);
     }
 
     @Background
@@ -960,7 +977,7 @@ public class MessageListV2Presenter {
     public void onRoomMarkerChange(long memberId, long lastLinkId) {
         MarkerRepository.getRepository().upsertRoomMarker(
                 room.getTeamId(), room.getRoomId(), memberId, lastLinkId);
-        view.notifyDataSetChanged();
+        view.saveCacheAndNotifyDataSetChanged(null);
     }
 
     public interface View {
@@ -995,7 +1012,7 @@ public class MessageListV2Presenter {
 
         void showEmptyView(boolean show);
 
-        void notifyDataSetChanged();
+        void saveCacheAndNotifyDataSetChanged(MainMessageListAdapter.NotifyDataSetChangedCallback callback);
 
         void dismissOfflineLayer();
 

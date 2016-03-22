@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.v2.adapter;
 import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -33,6 +34,12 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
@@ -52,6 +59,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     long roomId = -1;
     long entityId;
     List<ResMessages.Link> links;
+    ExecutorService threadPool = Executors.newCachedThreadPool();
     private MessagePointer messagePointer;
 
     public MainMessageListAdapter(Context context) {
@@ -59,21 +67,53 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         oldMoreState = MoreState.Idle;
         links = new CopyOnWriteArrayList<>();
         setHasStableIds(true);
-        registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onChanged() {
-                LogUtil.e("tony", "onChanged");
-                if (roomId == -1 || messagePointer.getFirstCursorLinkId() == -1) {
-                    links.clear();
-                    return;
-                }
+//        registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+//            @Override
+//            public void onChanged() {
+//
+//            }
+//        });
+    }
 
+    public void saveCacheAndNotifyDataSetChanged(NotifyDataSetChangedCallback callback) {
+
+        if (roomId == -1 || messagePointer.getFirstCursorLinkId() == -1) {
+            links.clear();
+            return;
+        }
+
+        Runnable runnable = () -> {
+            FutureTask<Boolean> futureTask = new FutureTask<>(() -> {
                 addBeforeLinks(roomId, messagePointer.getFirstCursorLinkId(), links);
                 removeDummyLink(links);
                 addAfterLinks(roomId, links);
                 addDummyLink(roomId, links);
+                return true;
+            });
+
+            threadPool.execute(futureTask);
+
+            try {
+                futureTask.get(10, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (TimeoutException e) {
+                e.printStackTrace();
             }
-        });
+
+            Activity activity = (Activity) context;
+            activity.runOnUiThread(() -> {
+                MainMessageListAdapter.this.notifyDataSetChanged();
+                if (callback != null) {
+                    callback.callBack();
+                }
+            });
+
+        };
+
+        new Thread(runnable).start();
     }
 
     @Override
@@ -125,19 +165,16 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
             bodyViewHolder.setLastReadViewVisible(0, -1);
         }
 
-        if (position <= getItemCount() / 10 && oldMoreState == MainMessageListAdapter.MoreState.Idle) {
+        if (position == getItemCount() / 10 && oldMoreState == MainMessageListAdapter.MoreState.Idle) {
             oldMoreState = MainMessageListAdapter.MoreState.Loading;
-            synchronized (this) {
-                if (oldMoreState != MainMessageListAdapter.MoreState.Idle) {
-                    EventBus.getDefault().post(new RefreshOldMessageEvent());
-                }
+            if (oldMoreState != MainMessageListAdapter.MoreState.Idle) {
+                EventBus.getDefault().post(new RefreshOldMessageEvent());
             }
-        } else if (moreFromNew && position == getItemCount() - 1 && newMoreState == MainMessageListAdapter.MoreState.Idle) {
+        } else if (moreFromNew && position == getItemCount() - 1
+                && newMoreState == MainMessageListAdapter.MoreState.Idle) {
             newMoreState = MainMessageListAdapter.MoreState.Loading;
-            synchronized (this) {
-                if (oldMoreState != MainMessageListAdapter.MoreState.Idle) {
-                    EventBus.getDefault().post(new RefreshNewMessageEvent());
-                }
+            if (oldMoreState != MainMessageListAdapter.MoreState.Idle) {
+                EventBus.getDefault().post(new RefreshNewMessageEvent());
             }
         }
 
@@ -286,7 +323,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     public void remove(int position) {
     }
 
-
     public void clear() {
 
     }
@@ -321,7 +357,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         }
         return -1;
     }
-
 
     public List<Integer> indexByFeedbackId(long messageId) {
 
@@ -367,7 +402,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         }
         return -1;
     }
-
 
     public void setMarker(long lastMarker) {
         this.lastMarker = lastMarker;
@@ -456,6 +490,10 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     enum AnimState {
         Idle, Loading, End
+    }
+
+    public interface NotifyDataSetChangedCallback {
+        void callBack();
     }
 
     public interface OnItemClickListener {
