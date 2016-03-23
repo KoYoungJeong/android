@@ -4,12 +4,19 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.test.rule.ActivityTestRule;
+import android.support.test.espresso.intent.Intents;
+import android.support.test.espresso.intent.matcher.IntentMatchers;
+import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.v4.app.FragmentManager;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.intro.IntroActivity_;
+import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
+import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,85 +29,124 @@ import java.util.List;
 import rx.Observable;
 import setup.BaseInitUtil;
 
+import static com.jayway.awaitility.Awaitility.await;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNull.notNullValue;
+
 @RunWith(AndroidJUnit4.class)
 public class MultiShareFragmentTest {
 
     @Rule
-    public ActivityTestRule<BaseAppCompatActivity> rule = new ActivityTestRule<>(BaseAppCompatActivity.class, false, false);
+    public IntentsTestRule<BaseAppCompatActivity> rule = new IntentsTestRule<>(BaseAppCompatActivity.class, false, false);
+    private MultiShareFragment fragment;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws Throwable {
         BaseInitUtil.initData();
         rule.launchActivity(null);
 
-        FragmentManager supportFragmentManager = rule.getActivity().getSupportFragmentManager();
         ArrayList<Uri> uris = new ArrayList<>();
         Observable.from(getImagePathList(2))
-                .map(s -> Uri.parse(s))
+                .map(Uri::parse)
                 .collect(() -> uris, ArrayList::add)
                 .subscribe();
-        MultiShareFragment.create(uris);
+        fragment = MultiShareFragment.create(uris);
+
+        rule.runOnUiThread(() -> {
+            FragmentManager supportFragmentManager = rule.getActivity().getSupportFragmentManager();
+            supportFragmentManager.beginTransaction()
+                    .add(android.R.id.content, fragment)
+                    .commit();
+        });
+
+        await().until(() -> fragment.tvTitle.getText().length() > 0);
+
+        fragment.comments.set(0, "hello1");
+        fragment.comments.set(1, "hello2");
+    }
+
+    @Test
+    public void testOnFilePageSelected() throws Throwable {
+        rule.runOnUiThread(() -> fragment.onFilePageSelected(1));
+
+        assertThat(fragment.etComment.getText().toString(), is(equalTo("hello2")));
+        assertThat(fragment.tvTitle.getText().length(), is(greaterThan(0)));
+
+    }
+
+
+    @Test
+    public void testOnScrollButtonClick() throws Throwable {
+        rule.runOnUiThread(() -> fragment.onScrollButtonClick(fragment.getView().findViewById(R.id.iv_multi_share_next)));
+        assertThat(fragment.vpShare.getCurrentItem(), is(equalTo(1)));
+    }
+
+    @Test
+    public void testOnTeamNameClick() throws Throwable {
+        rule.runOnUiThread(fragment::onTeamNameClick);
+
+        Intents.intending(IntentMatchers.hasComponent(ShareSelectTeamActivity_.class.getName()));
 
     }
 
     @Test
-    public void testOnFilePageSelected() throws Exception {
+    public void testOnRoomNameClick() throws Throwable {
+        rule.runOnUiThread(fragment::onRoomNameClick);
+
+        Intents.intending(IntentMatchers.hasComponent(ShareSelectRoomActivity_.class.getName()));
+        Intents.intending(IntentMatchers.hasExtra("teamId", EntityManager.getInstance().getTeamId()));
 
     }
 
     @Test
-    public void testOnScrollButtonClick() throws Exception {
+    public void testCallRoomSelector() throws Throwable {
+        rule.runOnUiThread(fragment::onRoomNameClick);
+
+        Intents.intending(IntentMatchers.hasComponent(ShareSelectRoomActivity_.class.getName()));
+        Intents.intending(IntentMatchers.hasExtra("teamId", EntityManager.getInstance().getTeamId()));
 
     }
 
     @Test
-    public void testOnTeamNameClick() throws Exception {
+    public void testUpdateFiles() throws Throwable {
+        rule.runOnUiThread(fragment::updateFiles);
+
+        assertThat(fragment.vpShare.getAdapter(), is(notNullValue()));
+    }
+
+    @Test
+    public void testMoveIntro() throws Throwable {
+        rule.runOnUiThread(fragment::moveIntro);
+
+        Intents.intending(IntentMatchers.hasComponent(IntroActivity_.class.getName()));
 
     }
 
     @Test
-    public void testOnRoomNameClick() throws Exception {
+    public void testSetTeamName() throws Throwable {
+        String text = "hello";
+        rule.runOnUiThread(() -> fragment.setTeamName(text));
 
+        assertThat(fragment.tvTeamName.getText(), is(equalTo(text)));
     }
 
     @Test
-    public void testCallRoomSelector() throws Exception {
+    public void testSetRoomName() throws Throwable {
+        String text = "hello";
+        rule.runOnUiThread(() -> fragment.setRoomName(text));
 
+        assertThat(fragment.tvRoomName.getText(), is(equalTo(text)));
     }
 
     @Test
-    public void testUpdateFiles() throws Exception {
+    public void testSetFileTitle() throws Throwable {
+        String text = "title";
+        rule.runOnUiThread(() -> fragment.setFileTitle(text));
 
-    }
-
-    @Test
-    public void testMoveIntro() throws Exception {
-
-    }
-
-    @Test
-    public void testSetTeamName() throws Exception {
-
-    }
-
-    @Test
-    public void testSetRoomName() throws Exception {
-
-    }
-
-    @Test
-    public void testSetMentionInfo() throws Exception {
-
-    }
-
-    @Test
-    public void testSetFileTitle() throws Exception {
-
-    }
-
-    @Test
-    public void testMoveRoom() throws Exception {
-
+        assertThat(fragment.tvTitle.getText(), is(equalTo(text)));
     }
 
     private List<String> getImagePathList(int limit) {
@@ -117,8 +163,6 @@ public class MultiShareFragmentTest {
                 .build();
 
         // Make the query.
-        StringBuilder sb = new StringBuilder();
-
 
         ContentResolver contentResolver = JandiApplication.getContext().getContentResolver();
         Cursor cursor = contentResolver.query(images,

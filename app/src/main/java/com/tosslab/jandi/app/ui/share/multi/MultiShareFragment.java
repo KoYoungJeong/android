@@ -83,7 +83,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     private List<String> uris;
 
     private int lastPageIndex = 0;
-    private List<String> comments;
+    List<String> comments;
 
     public static MultiShareFragment create(List<Uri> uris) {
         MultiShareFragment fragment = new MultiShareFragment();
