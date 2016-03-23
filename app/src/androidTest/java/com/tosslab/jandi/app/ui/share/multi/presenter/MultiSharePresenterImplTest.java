@@ -1,0 +1,163 @@
+package com.tosslab.jandi.app.ui.share.multi.presenter;
+
+import android.content.ContentResolver;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.test.runner.AndroidJUnit4;
+
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
+import com.tosslab.jandi.app.ui.share.multi.model.SharesDataModel;
+import com.tosslab.jandi.app.utils.file.ImageFilePath;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import setup.BaseInitUtil;
+
+import static com.jayway.awaitility.Awaitility.await;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@RunWith(AndroidJUnit4.class)
+public class MultiSharePresenterImplTest {
+
+
+    private SharesDataModel mockDataModel;
+    private MultiSharePresenter.View mockView;
+    private MultiSharePresenter multiSharePresenter;
+
+    @Before
+    public void setUp() throws Exception {
+
+        BaseInitUtil.initData();
+
+        mockDataModel = mock(SharesDataModel.class);
+        mockView = mock(MultiSharePresenter.View.class);
+        multiSharePresenter = new MultiSharePresenterImpl(mockView, mockDataModel);
+    }
+
+    @Test
+    public void testOnRoomChange() throws Exception {
+        multiSharePresenter.onRoomChange();
+
+        verify(mockView).callRoomSelector(any());
+    }
+
+    @Test
+    public void testOnSelectTeam() throws Exception {
+        long teamId = EntityManager.getInstance().getTeamId();
+        long defaultTopicId = EntityManager.getInstance().getDefaultTopicId();
+
+        final boolean[] finish = {false};
+        doAnswer(invocationOnMock -> {
+            finish[0] = true;
+            return invocationOnMock;
+        }).when(mockView).setMentionInfo(eq(teamId), eq(defaultTopicId));
+
+        multiSharePresenter.onSelectTeam(teamId);
+
+        await().until(() -> finish[0]);
+
+        verify(mockView).setTeamName(anyString());
+        verify(mockView).setRoomName(anyString());
+        verify(mockView).setMentionInfo(eq(teamId), eq(defaultTopicId));
+    }
+
+    @Test
+    public void testInitShareData() throws Exception {
+        final boolean[] finish = {false};
+        doAnswer(invocationOnMock -> {
+            finish[0] = true;
+            return invocationOnMock;
+        }).when(mockView).setFileTitle(anyString());
+
+        int limit = 2;
+        List<String> imagePathList = getImagePathList(limit);
+
+        if (imagePathList == null || imagePathList.isEmpty()) return;
+
+        multiSharePresenter.initShareData(imagePathList);
+        when(mockDataModel.getShareData(0)).thenReturn(new FileShareData(ImageFilePath.getPath(JandiApplication.getContext(), Uri.parse(imagePathList.get(0)))));
+
+        await().timeout(1, TimeUnit.MINUTES).until(() -> finish[0]);
+
+        verify(mockView).setFileTitle(anyString());
+        verify(mockView).updateFiles();
+        verify(mockDataModel).clear();
+        verify(mockDataModel, times(limit)).add(any());
+    }
+
+    @Test
+    public void testOnSelectRoom() throws Exception {
+        multiSharePresenter.onSelectRoom(EntityManager.getInstance().getDefaultTopicId());
+
+        verify(mockView).setRoomName(anyString());
+        verify(mockView).setMentionInfo(anyLong(), anyLong());
+    }
+
+    @Test
+    public void testOnFilePageChanged() throws Exception {
+        String filePath = "/hello.txt";
+        when(mockDataModel.getShareData(0)).thenReturn(new FileShareData(filePath));
+        multiSharePresenter.onFilePageChanged(0);
+        verify(mockView).setFileTitle(eq("hello.txt"));
+    }
+
+    private List<String> getImagePathList(int limit) {
+        String[] projection = {
+                MediaStore.Images.ImageColumns._ID,
+                MediaStore.Images.ImageColumns.DATA};
+
+        String orderBy = String.format("%s DESC", MediaStore.Images.ImageColumns._ID);
+
+        // Get the base URI for the People table in the Contacts content provider.
+        Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                .buildUpon()
+                .appendQueryParameter("limit", String.valueOf(limit))
+                .build();
+
+        // Make the query.
+        StringBuilder sb = new StringBuilder();
+
+
+        ContentResolver contentResolver = JandiApplication.getContext().getContentResolver();
+        Cursor cursor = contentResolver.query(images,
+                projection, // Which columns to return
+                null,       // Which rows to return (all rows)
+                null,       // Selection arguments (none)
+                orderBy        // Ordering
+        );
+
+        List<String> photos = new ArrayList<>();
+
+        if (cursor == null || cursor.getCount() <= 0) {
+            return photos;
+        }
+
+//        int idxData = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        int idxId = cursor.getColumnIndex(MediaStore.Images.ImageColumns._ID);
+
+        while (cursor.moveToNext()) {
+            int _id = cursor.getInt(idxId);
+
+            photos.add(MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString() + "/" + _id);
+        }
+        cursor.close();
+        return photos;
+    }
+}

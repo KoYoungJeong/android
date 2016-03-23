@@ -33,7 +33,7 @@ import rx.schedulers.Schedulers;
 public class MultiSharePresenterImpl implements MultiSharePresenter {
     private final View view;
     private SharesDataModel sharesDataModel;
-    private ShareTarget shareTarget;
+    ShareTarget shareTarget;
     private ShareSelectModel shareSelectModel;
     private ShareModel shareModel;
 
