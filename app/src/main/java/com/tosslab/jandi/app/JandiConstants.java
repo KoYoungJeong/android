@@ -40,4 +40,12 @@ public class JandiConstants {
         public static final int BAD_REQUEST = 400;
     }
 
+    public static class TeamInviteErrorCode {
+        public static final int NOT_AVAILABLE_INVITATION_CODE = 40003;
+        public static final int DISABLED_MEMBER = 40301;
+        public static final int REMOVED_TEAM = 40302;
+        public static final int TEAM_INVITATION_DISABLED = 40303;
+        public static final int ENABLED_MEMBER = 40304;
+    }
+
 }

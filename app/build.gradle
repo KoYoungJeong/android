@@ -48,7 +48,7 @@ checkstyle {
     toolVersion = "6.2"
 }
 
-def supportLibVersion = "23.1.1"
+def supportLibVersion = "23.2.1"
 def playServiceVersion = "7.0.0"
 def dexmakerVersion = "1.4"
 
@@ -70,6 +70,7 @@ dependencies {
 //    compile project(':photoview-expand')
 
     apt 'org.androidannotations:androidannotations:3.3.2'
+    apt 'com.google.dagger:dagger-compiler:2.0.2'
 
     compile 'com.android.support:multidex:1.0.0'
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -94,6 +95,9 @@ dependencies {
     // Boilerplate
     compile 'de.greenrobot:eventbus:2.4.+'
     compile 'org.androidannotations:androidannotations-api:3.3.2'
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.google.dagger:dagger:2.0.2'
+//    compile 'org.glassfish:javax.annotation:10.0-b28'
     // Network
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.+'
     compile('io.socket:socket.io-client:0.6.2') {

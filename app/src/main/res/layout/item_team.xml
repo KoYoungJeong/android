@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="@drawable/jandi_selector_team"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp">
+
+    <View
+        android:layout_width="17dp"
+        android:layout_height="17dp"
+        android:background="@drawable/account_icon_teamlist_inactive"/>
+
+    <TextView
+        android:id="@+id/tv_team_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="@color/jandi_text"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/tv_team_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/topiclist_unread_badge"
+        android:gravity="center"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:visibility="gone"/>
+
+</LinearLayout>

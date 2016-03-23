@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.settings.Settings;
+import com.tosslab.jandi.app.ui.settings.account.SettingAccountActivity;
 import com.tosslab.jandi.app.ui.settings.main.presenter.SettingsPresenter;
 import com.tosslab.jandi.app.ui.settings.main.presenter.SettingsPresenterImpl;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
@@ -47,6 +48,9 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
 
     @ViewById(R.id.vg_settings_main_orientation)
     SettingsBodyView sbvOrientation;
+
+    @ViewById(R.id.vg_settings_main_version)
+    SettingsBodyView sbvVersion;
 
     @Bean(SettingsPresenterImpl.class)
     SettingsPresenter settingsPresenter;
@@ -113,11 +117,16 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
         showOrientationDialog();
     }
 
+    @Click(R.id.vg_settings_main_account_name)
+    void onAccountClick() {
+        Intent intent = new Intent(getActivity(), SettingAccountActivity.class);
+        startActivity(intent);
+    }
+
     @Click(R.id.vg_settings_main_sign_out)
     void onSignOutClick() {
         settingsPresenter.onSignOut();
     }
-
 
     private void showOrientationDialog() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -201,6 +210,11 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
         IntroActivity_.intent(SettingsFragment.this)
                 .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .start();
+    }
+
+    @Override
+    public void setVersion(String version) {
+        sbvVersion.setTitle(version);
     }
 
     public void onEvent(SignOutEvent event) {
