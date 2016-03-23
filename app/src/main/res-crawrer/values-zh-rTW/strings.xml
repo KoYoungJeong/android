@@ -89,6 +89,7 @@
 	<string name="jandi_announcement_delete_question">"公告將被刪除，你確定要繼續?"</string>
 	<string name="jandi_announcement_deleted">"%s 刪除公告"</string>
 	<string name="jandi_announcement_minimize">"最小化"</string>
+	<string name="jandi_another_invitation_sent">"新的邀請信已寄出"</string>
 	<string name="jandi_are_you_sure_disable_external_link">"若移除共享連結，存取至該檔案的權限將被撤銷。你確定要移除共享連結？"</string>
 	<string name="jandi_ask_assign_topic_owner">"你確定將議題管理權限轉移至此成員？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你確定將此成員剔除議題？"</string>
@@ -110,7 +111,9 @@
 	<string name="jandi_bot_role">"身為JANDI最強使者，肩負傳遞JANDI Connect和平台訊息通知的任務，絕對使命必達！"</string>
 	<string name="jandi_bot_status">"你好，我是Mr.J！"</string>
 	<string name="jandi_browse_other_topics">"瀏覽其他議題"</string>
+	<string name="jandi_browse_team">"瀏覽團隊"</string>
 	<string name="jandi_cancel">"取消"</string>
+	<string name="jandi_cancel_invitation">"取消邀請"</string>
 	<string name="jandi_canceled">"取消了"</string>
 	<string name="jandi_cannot_connect_service_try_again">"非常抱歉！JANDI暫時無法運作，先喝杯茶稍後再試！"</string>
 	<string name="jandi_cannot_find_messages">"搜尋沒有結果 : "</string>
@@ -264,6 +267,7 @@
 	<string name="jandi_invite_succes_copy_link">"成員邀請的連結已複製到剪貼簿"</string>
 	<string name="jandi_invite_succes_send">"邀請信發送至："</string>
 	<string name="jandi_invite_success">"邀請已經成功送出"</string>
+	<string name="jandi_invite_to_dummy_account_again">"其他成員已寄發邀請信至該郵箱，你確定要在發送一次嗎？"</string>
 	<string name="jandi_invite_wechat">"微信"</string>
 	<string name="jandi_invited_topic">"%1$s邀請了%2$s"</string>
 	<string name="jandi_is_newcomer">"還沒使用過JANDI?"</string>
@@ -319,6 +323,7 @@
 	<string name="jandi_name_in_jandi">"帳號名稱"</string>
 	<string name="jandi_need_to_assign_topic_owner">"你為此議題的管理員，請於離開議題前，先將管理權限轉移給其他成員"</string>
 	<string name="jandi_new_team_name">"新團隊名稱"</string>
+	<string name="jandi_next">"下一步"</string>
 	<string name="jandi_no_invite_email">"請提供您想邀請的團隊成員的電子郵件地址"</string>
 	<string name="jandi_no_long_team_member">"%s 不再是此團隊的成員"</string>
 	<string name="jandi_no_message_in_topic_dm">"輸入訊息以開始對話"</string>
@@ -359,6 +364,8 @@
 	<string name="jandi_profile_division_hint">"部門"</string>
 	<string name="jandi_profile_edit">"編輯"</string>
 	<string name="jandi_profile_email">"電子郵件"</string>
+	<string name="jandi_profile_extra_introduce">"請填寫其他資訊 \n 讓成員更了解你"</string>
+	<string name="jandi_profile_main_introduce">"請設定在 \n %s團隊 \n 顯示的姓名和大頭照"</string>
 	<string name="jandi_profile_optional">"非必要"</string>
 	<string name="jandi_profile_phone_number">"手機號碼"</string>
 	<string name="jandi_profile_phone_number_hint">"電話號碼"</string>
@@ -369,12 +376,15 @@
 	<string name="jandi_profile_status_message">"狀態"</string>
 	<string name="jandi_profile_update">"更新"</string>
 	<string name="jandi_profile_update_succeed">"簡介已更新"</string>
+	<string name="jandi_profile_welcome">"你好！"</string>
 	<string name="jandi_push_no_preview">"無預覽"</string>
 	<string name="jandi_push_preview_all_message">"所有訊息"</string>
 	<string name="jandi_push_preview_public_only">"僅限公開議題"</string>
 	<string name="jandi_question_team_create">"您的團隊還未使用JANDI嗎？"</string>
+	<string name="jandi_r_u_sure_cancel_invitation">"你確定取消邀請？"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"你確認要刪除這個電子郵件地址？"</string>
 	<string name="jandi_reorder_from_long_press">"拖拉資料夾更改排列順序"</string>
+	<string name="jandi_resend_invitation">"重新寄發邀請"</string>
 	<string name="jandi_retry">"請再試一次"</string>
 	<string name="jandi_retry_voice_search">"沒有接收清楚您剛才説的，麻煩再說一次"</string>
 	<string name="jandi_save">"儲存"</string>
@@ -398,6 +408,7 @@
 	<string name="jandi_service_maintenance">"JANDI現在基於定期維護而無法使用。我們預計幾個小時内就可以恢復運作。感謝您的耐心等候。"</string>
 	<string name="jandi_set_passcode">"設定密碼"</string>
 	<string name="jandi_set_passcode_detail">"如果你忘記密碼，將無法解鎖。請重新安裝JANDI，再重新登入。"</string>
+	<string name="jandi_setting_account_email_info">"增加多個電子郵箱到您的JANDI帳號。您可以使用任何綁定的電子郵箱進行登入，或針對特定的團隊指定一個專屬的電子郵箱。"</string>
 	<string name="jandi_setting_display">"螢幕顯示"</string>
 	<string name="jandi_setting_folder">"管理議題資料夾"</string>
 	<string name="jandi_setting_general">"一般"</string>
@@ -431,7 +442,7 @@
 	<string name="jandi_signup_title">"註冊"</string>
 	<string name="jandi_signup_verification_code">"我們寄送了一組密碼至你的電子郵箱\n請在此處輸入密碼進行帳戶驗證"</string>
 	<string name="jandi_signup_verify_title">"驗證碼認證"</string>
-	<string name="jandi_sort_folder">"資料夾"</string>
+	<string name="jandi_sort_folder">"依資料夾排序"</string>
 	<string name="jandi_sort_updated">"依更新時間排序"</string>
 	<string name="jandi_sounds">"聲音"</string>
 	<string name="jandi_sounds_air_pop">"爆米花"</string>
@@ -461,6 +472,7 @@
 	<string name="jandi_success_copy_clipboard_external_link">"共享連結已複製至到剪貼簿"</string>
 	<string name="jandi_success_disable_external_link">"共享連結已被刪除"</string>
 	<string name="jandi_success_kick_user_from_topic">"該成員已被剔除出此議題"</string>
+	<string name="jandi_success_to_cancel_invitation">"%s的邀請已被取消"</string>
 	<string name="jandi_success_update_account_profile">"帳號已經成功更新"</string>
 	<string name="jandi_success_web_token">"登入成功"</string>
 	<string name="jandi_switch_team">"更換團隊"</string>
@@ -482,6 +494,7 @@
 	<string name="jandi_team_switch">"更換團隊"</string>
 	<string name="jandi_term_of_service">"使用條款"</string>
 	<string name="jandi_this_is_disabled_user_explain">"此成員權限已被暫時關閉。欲知更多細節，請聯絡團隊管理員。"</string>
+	<string name="jandi_this_member_is_pending_to_join">"等候此成員加入"</string>
 	<string name="jandi_title_activity_file_explorer">"檔案探索"</string>
 	<string name="jandi_title_cdp_to_be_shared">"請選擇在哪裏分享"</string>
 	<string name="jandi_title_cdp_to_be_unshared">"請選擇在哪裏取消分享"</string>

@@ -12,4 +12,8 @@ public class UiUtils {
         Resources resources = JandiApplication.getContext().getResources();
         return resources.getDisplayMetrics().density * dp;
     }
+
+    public interface KeyboardHandler {
+        void hideKeyboard();
+    }
 }

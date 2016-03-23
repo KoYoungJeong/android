@@ -131,6 +131,16 @@ class EntityManagerLockProxy extends EntityManager {
     }
 
     @Override
+    public String getTeamDomain() {
+        lock.lock();
+        try {
+            return super.getTeamDomain();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
     public long getDefaultTopicId() {
         lock.lock();
         try {
