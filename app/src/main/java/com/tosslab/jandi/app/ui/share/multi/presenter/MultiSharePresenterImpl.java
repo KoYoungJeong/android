@@ -34,7 +34,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     private final View view;
     private SharesDataModel sharesDataModel;
     ShareTarget shareTarget;
-    private ShareSelectModel shareSelectModel;
+    ShareSelectModel shareSelectModel;
     private ShareModel shareModel;
 
 

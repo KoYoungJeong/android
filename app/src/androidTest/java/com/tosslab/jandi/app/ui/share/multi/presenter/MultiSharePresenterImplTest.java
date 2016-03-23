@@ -8,6 +8,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.ui.share.model.ShareModel_;
 import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
 import com.tosslab.jandi.app.ui.share.multi.model.SharesDataModel;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
@@ -28,6 +29,7 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -49,13 +51,14 @@ public class MultiSharePresenterImplTest {
         mockDataModel = mock(SharesDataModel.class);
         mockView = mock(MultiSharePresenter.View.class);
         multiSharePresenter = new MultiSharePresenterImpl(mockView, mockDataModel);
+        ((MultiSharePresenterImpl) multiSharePresenter).shareSelectModel = ShareModel_.getInstance_(JandiApplication.getContext()).getShareSelectModel(EntityManager.getInstance().getTeamId());
     }
 
     @Test
     public void testOnRoomChange() throws Exception {
         multiSharePresenter.onRoomChange();
 
-        verify(mockView).callRoomSelector(any());
+        verify(mockView).callRoomSelector(anyLong());
     }
 
     @Test
@@ -92,7 +95,7 @@ public class MultiSharePresenterImplTest {
         if (imagePathList == null || imagePathList.isEmpty()) return;
 
         multiSharePresenter.initShareData(imagePathList);
-        when(mockDataModel.getShareData(0)).thenReturn(new FileShareData(ImageFilePath.getPath(JandiApplication.getContext(), Uri.parse(imagePathList.get(0)))));
+        doReturn(new FileShareData(ImageFilePath.getPath(JandiApplication.getContext(), Uri.parse(imagePathList.get(0))))).when(mockDataModel).getShareData(eq(0));
 
         await().timeout(1, TimeUnit.MINUTES).until(() -> finish[0]);
 
