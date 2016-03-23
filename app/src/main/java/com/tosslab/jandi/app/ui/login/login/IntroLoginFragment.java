@@ -87,6 +87,7 @@ public class IntroLoginFragment extends Fragment implements IntroMainActivity.Ke
                     ExceptionData exceptionData = (ExceptionData) error.getBodyAs(ExceptionData.class);
                     switch (exceptionData.getCode()) {
                         case 40000:
+                        case 40021:
                             introLoginViewModel.loginFail(R.string.err_login_invalid_id_or_password);
                             break;
                         case 40007:
