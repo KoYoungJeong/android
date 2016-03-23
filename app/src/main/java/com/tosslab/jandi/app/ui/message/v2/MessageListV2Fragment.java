@@ -689,7 +689,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private void initMessageListView() {
-        messageAdapter = new MainMessageListAdapter(getActivity());
+        messageAdapter = new MainMessageListAdapter(getActivity().getBaseContext());
         messageAdapter.setMessagePointer(messagePointer);
         MessageListHeaderAdapter messageListHeaderAdapter =
                 new MessageListHeaderAdapter(getContext(), messageAdapter);

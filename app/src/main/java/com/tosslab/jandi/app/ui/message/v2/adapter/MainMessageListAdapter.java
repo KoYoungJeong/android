@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.message.v2.adapter;
 import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -39,6 +38,7 @@ import java.util.concurrent.Executors;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHolder>
         implements MessageListHeaderAdapter.MessageItemDate {
@@ -72,18 +72,20 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
                 links.clear();
                 return;
             }
+
             addBeforeLinks(roomId, messagePointer.getFirstCursorLinkId(), links);
             removeDummyLink(links);
             addAfterLinks(roomId, links);
             addDummyLink(roomId, links);
 
-            Activity activity = (Activity) context;
-            activity.runOnUiThread(() -> {
-                MainMessageListAdapter.this.notifyDataSetChanged();
-                if (callback != null) {
-                    callback.callBack();
-                }
-            });
+            Observable.just(0)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(i -> {
+                        MainMessageListAdapter.this.notifyDataSetChanged();
+                        if (callback != null) {
+                            callback.callBack();
+                        }
+                    });
         };
 
         threadPool.execute(saveCacheRunnable);
@@ -102,13 +104,14 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
             addDummyLink(roomId, links);
             int endLinkSize = links.size();
 
-            Activity activity = (Activity) context;
-            activity.runOnUiThread(() -> {
-                MainMessageListAdapter.this.notifyItemRangeInserted(0, endLinkSize - startLinkSize);
-                if (callback != null) {
-                    callback.callBack();
-                }
-            });
+            Observable.just(0)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(i -> {
+                        MainMessageListAdapter.this.notifyItemRangeInserted(0, endLinkSize - startLinkSize);
+                        if (callback != null) {
+                            callback.callBack();
+                        }
+                    });
         };
 
         threadPool.execute(saveCacheRunnable);
