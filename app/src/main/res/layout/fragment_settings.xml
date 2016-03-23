@@ -23,20 +23,26 @@
 
         <View style="@style/JandiSettings.Divider"/>
 
-        <LinearLayout style="@style/JandiSettings.Group">
+        <LinearLayout
+            android:id="@+id/vg_settings_main_orientation_wrapper"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout style="@style/JandiSettings.Group">
 
-            <TextView
-                style="@style/JandiSettings.Header.Text"
-                android:text="@string/jandi_setting_display"/>
+                <TextView
+                    style="@style/JandiSettings.Header.Text"
+                    android:text="@string/jandi_setting_display"/>
 
-            <com.tosslab.jandi.app.views.settings.SettingsBodyView
-                android:id="@+id/vg_settings_main_orientation"
-                style="@style/JandiSettings.Body"
-                app:sbvSummary="@string/jandi_screen_auto"
-                app:sbvTitle="@string/jandi_screen_orientation"/>
+                <com.tosslab.jandi.app.views.settings.SettingsBodyView
+                    android:id="@+id/vg_settings_main_orientation"
+                    style="@style/JandiSettings.Body"
+                    app:sbvSummary="@string/jandi_screen_auto"
+                    app:sbvTitle="@string/jandi_screen_orientation"/>
+            </LinearLayout>
+
+            <View style="@style/JandiSettings.Divider"/>
         </LinearLayout>
-
-        <View style="@style/JandiSettings.Divider"/>
 
         <LinearLayout style="@style/JandiSettings.Group">
 

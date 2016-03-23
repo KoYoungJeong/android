@@ -21,7 +21,7 @@ import com.tosslab.jandi.app.ui.carousel.presenter.CarouselViewerPresenterImpl;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+
 import com.tosslab.jandi.app.utils.file.FileUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -132,7 +132,6 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     protected void onResume() {
         super.onResume();
         setUpFullScreen(isFullScreen);
-        ActivityHelper.setOrientation(this);
     }
 
     private void setUpFullScreen(boolean isFullScreen) {

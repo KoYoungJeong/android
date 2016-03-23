@@ -9,7 +9,7 @@ import android.view.View;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -65,7 +65,6 @@ public class PhotoViewActivity extends BaseAppCompatActivity implements OnSwipeE
     protected void onResume() {
         super.onResume();
         setUpFullScreen(isFullScreen);
-        ActivityHelper.setOrientation(this);
     }
 
     private void setUpFullScreen(boolean isFullScreen) {

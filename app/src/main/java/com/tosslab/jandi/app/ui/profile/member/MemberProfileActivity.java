@@ -47,7 +47,7 @@ import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.transform.fresco.BlurPostprocessor;
@@ -150,12 +150,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             isFullSizeImageShowing = savedInstanceState.getBoolean(KEY_FULL_SIZE_IMAGE_SHOWING);
         }
         setNeedUnLockPassCode(false);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        ActivityHelper.setOrientation(this);
     }
 
     @Override

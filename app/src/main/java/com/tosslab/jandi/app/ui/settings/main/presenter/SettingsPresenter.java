@@ -26,6 +26,8 @@ public interface SettingsPresenter {
 
         void dismissProgressDialog();
 
+        void setOrientationViewVisibility(boolean show);
+
         void setOrientation(int orientation);
 
         void setOrientationSummary(String value);

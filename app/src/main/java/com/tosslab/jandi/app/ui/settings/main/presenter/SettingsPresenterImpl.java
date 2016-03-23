@@ -86,7 +86,6 @@ public class SettingsPresenterImpl implements SettingsPresenter {
         int orientation = SettingsModel.getOrientationValue(selectedValue);
         view.setOrientation(orientation);
         view.setOrientationSummary(selectedValue);
-
     }
 
     @Override
@@ -97,8 +96,14 @@ public class SettingsPresenterImpl implements SettingsPresenter {
 
     @Override
     public void onInitViews() {
-        String value = PreferenceManager.getDefaultSharedPreferences(JandiApplication.getContext()).getString(Settings.SETTING_ORIENTATION, "0");
-        onSetUpOrientation(value);
+        boolean portraitOnly = JandiApplication.getContext().getResources().getBoolean(R.bool.portrait_only);
+        if (portraitOnly) {
+            view.setOrientationViewVisibility(false);
+        } else {
+            String value = PreferenceManager.getDefaultSharedPreferences(
+                    JandiApplication.getContext()).getString(Settings.SETTING_ORIENTATION, "0");
+            onSetUpOrientation(value);
+        }
 
         onSetUpVersion();
     }

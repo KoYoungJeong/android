@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.entities.chats.view.ChatsChooseFragment;
 import com.tosslab.jandi.app.ui.entities.chats.view.ChatsChooseFragment_;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -31,12 +31,6 @@ public class EntityChooseActivity extends BaseAppCompatActivity {
                 .beginTransaction()
                 .replace(R.id.vg_entity_choose, chooseFragment)
                 .commit();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ActivityHelper.setOrientation(this);
     }
 
     void initActionBarTitle() {

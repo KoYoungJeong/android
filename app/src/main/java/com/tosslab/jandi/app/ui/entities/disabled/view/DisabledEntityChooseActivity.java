@@ -13,7 +13,7 @@ import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.view.ChatsChooseFragment;
 import com.tosslab.jandi.app.ui.entities.disabled.presenter.DisabledEntityChoosePresenter;
 import com.tosslab.jandi.app.ui.entities.disabled.presenter.DisabledEntityChoosePresenterImpl;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -46,12 +46,6 @@ public class DisabledEntityChooseActivity extends BaseAppCompatActivity implemen
         initActionBarTitle();
         presenter.initDisabledMembers();
         lvMembers.setAdapter(adapter);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ActivityHelper.setOrientation(this);
     }
 
     @Override
