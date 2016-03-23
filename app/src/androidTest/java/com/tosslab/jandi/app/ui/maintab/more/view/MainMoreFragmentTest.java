@@ -11,7 +11,7 @@ import android.view.View;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
+import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -106,7 +106,7 @@ public class MainMoreFragmentTest {
     public void testOnInvitationDisableCheck() throws Exception {
         final boolean[] received = {false};
         Object subscriber = new Object() {
-            public void onEvent(InvitationDisableCheckEvent event) {
+            public void onEvent(RequestInviteMemberEvent event) {
                 received[0] = true;
             }
         };

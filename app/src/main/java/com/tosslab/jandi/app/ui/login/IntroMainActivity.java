@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.ui.login.adapter.IntroMainPagerAdapter;
 import com.tosslab.jandi.app.ui.login.tutorial.IntroTutorialFragment;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterViews;
@@ -37,7 +38,7 @@ public class IntroMainActivity extends BaseAppCompatActivity {
     LinearLayout tutorialFooterLayout;
     private ViewPager mViewPager;
     private IntroMainPagerAdapter mAdapter;
-    private KeyboardHandler keyboardHandler;
+    private UiUtils.KeyboardHandler keyboardHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,12 +113,8 @@ public class IntroMainActivity extends BaseAppCompatActivity {
     @Override
     public void onAttachFragment(Fragment fragment) {
         super.onAttachFragment(fragment);
-        if (fragment instanceof KeyboardHandler) {
-            keyboardHandler = (KeyboardHandler) fragment;
+        if (fragment instanceof UiUtils.KeyboardHandler) {
+            keyboardHandler = (UiUtils.KeyboardHandler) fragment;
         }
-    }
-
-    public interface KeyboardHandler {
-        void hideKeyboard();
     }
 }

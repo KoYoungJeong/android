@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/tab_icon_team"
+        android:layout_width="27dp"
+        android:layout_height="27dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="4dp"
+        android:src="@drawable/jandi_tab_selector_team" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tab_icon_team"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="2dp"
+        android:text="@string/team_info"
+        android:textColor="@color/jandi_selector_font"
+        android:textSize="@dimen/jandi_tab_text_size" />
+</RelativeLayout>

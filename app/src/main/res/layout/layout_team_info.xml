@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="123dp"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="114dp"
+        android:background="@color/white"
+        android:paddingBottom="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="24dp">
+
+        <TextView
+            android:id="@+id/tv_team_info_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/jandi_member_profile_user_name"
+            android:textSize="24dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_team_info_domain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/tv_team_info_owner"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/btn_team_info_invite"
+            android:textColor="@color/jandi_text_medium"
+            android:textSize="14dp"/>
+
+        <TextView
+            android:id="@+id/tv_team_info_owner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_toLeftOf="@+id/btn_team_info_invite"
+            android:textColor="@color/jandi_text_medium"
+            android:textSize="14dp"/>
+
+        <Button
+            android:id="@+id/btn_team_info_invite"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/jandi_selector_btn_team_invite"
+            android:gravity="center"
+            android:paddingLeft="11dp"
+            android:paddingRight="11dp"
+            android:text="@string/jandi_invite_member"
+            android:textColor="@color/white"
+            android:textSize="14dp"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/jandi_messages_item_click"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:background="@color/jandi_settings_background"/>
+
+</LinearLayout>
