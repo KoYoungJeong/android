@@ -23,8 +23,8 @@ public class DateTransformator {
         switch (locale.getLanguage()) {
             case "ko":
             case "zh":
-                return getTimeString(date, "yyyy/MM/dd a hh:mm");
             case "ja":
+                return getTimeString(date, "yyyy/MM/dd a hh:mm");
             default:
                 return getTimeString(date, "MM/dd/yyyy hh:mm a");
         }
@@ -86,8 +86,8 @@ public class DateTransformator {
         switch (locale.getLanguage()) {
             case "ko":
             case "zh":
-                return getTimeString(date, "a h:mm");
             case "ja":
+                return getTimeString(date, "a h:mm");
             default:
                 return getTimeString(date, "h:mm a");
         }
