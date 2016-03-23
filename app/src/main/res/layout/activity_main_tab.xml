@@ -10,20 +10,48 @@
         android:id="@+id/layout_search_bar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:visibility="visible" />
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/tv_main_tab_title"
+            style="@style/ToolbarText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <FrameLayout
+            android:id="@+id/v_main_tab_metaphor_another_team"
+            android:layout_width="wrap_content"
+            android:layout_height="14dp"
+            android:paddingLeft="8dp"
+            android:visibility="gone">
+
+            <View
+                android:layout_width="15dp"
+                android:layout_height="14dp"
+                android:background="@drawable/team_arrow_down_white"/>
+
+            <View
+                android:id="@+id/v_main_tab_metaphor_another_team_has_message"
+                android:layout_width="15dp"
+                android:layout_height="14dp"
+                android:alpha="0"
+                android:background="@drawable/team_arrow_down_red"/>
+        </FrameLayout>
+
+    </android.support.v7.widget.Toolbar>
 
     <com.tosslab.jandi.app.views.PagerSlidingTabStrip
         android:id="@+id/sliding_tabs"
         style="@style/PagerSlidingTabStrip"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:layout_below="@+id/layout_search_bar" />
+        android:layout_below="@+id/layout_search_bar"/>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager_main_tab"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/sliding_tabs" />
+        android:layout_below="@+id/sliding_tabs"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,7 +68,7 @@
             android:paddingRight="15dp"
             android:visibility="gone">
 
-            <include layout="@layout/layout_network_offline" />
+            <include layout="@layout/layout_network_offline"/>
 
         </LinearLayout>
     </LinearLayout>
@@ -49,12 +77,12 @@
         android:layout_width="match_parent"
         android:layout_height="4dp"
         android:layout_below="@id/sliding_tabs"
-        android:background="@drawable/menu_shadow" />
+        android:background="@drawable/menu_shadow"/>
 
     <com.tosslab.jandi.app.views.FloatingActionMenu
         android:id="@+id/vg_fab_menu"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
 
 </RelativeLayout>

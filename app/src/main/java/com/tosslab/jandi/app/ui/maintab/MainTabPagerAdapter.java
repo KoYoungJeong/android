@@ -9,7 +9,8 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.chat.MainChatListFragment_;
 import com.tosslab.jandi.app.ui.maintab.file.FileListFragment_;
-import com.tosslab.jandi.app.ui.maintab.more.view.MainMoreFragment_;
+import com.tosslab.jandi.app.ui.maintab.mypage.MyPageFragment;
+import com.tosslab.jandi.app.ui.maintab.team.TeamFragment;
 import com.tosslab.jandi.app.ui.maintab.topic.MainTopicListFragment_;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 
@@ -18,10 +19,11 @@ import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
  */
 public class MainTabPagerAdapter extends FragmentPagerAdapter
         implements PagerSlidingTabStrip.ViewTabProvider {
-    private static final int TAB_TOPIC = 0;
-    private static final int TAB_CHAT = 1;
-    private static final int TAB_FILE = 2;
-    private static final int TAB_MORE = 3;
+    public static final int TAB_TOPIC = 0;
+    public static final int TAB_CHAT = 1;
+    public static final int TAB_FILE = 2;
+    public static final int TAB_TEAM = 3;
+    public static final int TAB_MYPAGE = 4;
 
     View[] mTabs;
     private long selectedEntity;
@@ -49,10 +51,10 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
                 return FileListFragment_
                         .builder()
                         .build();
-            case TAB_MORE:
-                return MainMoreFragment_
-                        .builder()
-                        .build();
+            case TAB_TEAM:
+                return new TeamFragment();
+            case TAB_MYPAGE:
+                return new MyPageFragment();
             default:
                 return MainTopicListFragment_.builder().build();
         }
@@ -114,8 +116,6 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
             return tabView.findViewById(R.id.tab_badge_topic_new);
         } else if (position == TAB_CHAT) {
             return tabView.findViewById(R.id.tab_badge_chat_new);
-        } else if (position == TAB_MORE) {
-            return tabView.findViewById(R.id.tab_badge_more_new);
         }
         return null;
     }
@@ -125,10 +125,10 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
     }
 
     public void showMoreNewBadge() {
-        showBadge(TAB_MORE);
+        showBadge(TAB_MYPAGE);
     }
 
     public void hideMoreNewBadge() {
-        hideBadge(TAB_MORE);
+        hideBadge(TAB_MYPAGE);
     }
 }

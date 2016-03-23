@@ -338,6 +338,10 @@ public class EntityManager {
         return mMyTeam.name;
     }
 
+    public String getTeamDomain() {
+        return mMyTeam.t_domain;
+    }
+
     public long getDefaultTopicId() {
         return mMyTeam.t_defaultChannelId;
     }
