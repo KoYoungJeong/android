@@ -225,10 +225,6 @@
             android:theme="@style/JandiTheme.PushIntro" />
 
         <activity
-            android:name="com.tosslab.jandi.app.ui.profile.crop.JandiCropImageActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-
-        <activity
             android:name=".ui.share.MainShareActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"

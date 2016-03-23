@@ -80,6 +80,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     public static final int EXTRA_FROM_PARTICIPANT = 7;
     private static final String KEY_FULL_SIZE_IMAGE_SHOWING = "full_size_image_showing";
     private static final int REQ_CALL_PERMISSION = 102;
+
     @Extra
     long memberId;
 
