@@ -14,7 +14,8 @@ import rx.Observable;
 public class SelectPictures {
 
     public static final int MAX_PICKER_COUNT = 10;
-    private static final ImagePicture NULL_OBJECT = new ImagePicture.ImagePictureBuilder().createImagePicture();
+    private static final ImagePicture NULL_OBJECT =
+            new ImagePicture.ImagePictureBuilder().createImagePicture();
 
     private static SelectPictures selectPictures;
 
@@ -22,7 +23,7 @@ public class SelectPictures {
 
 
     private SelectPictures() {
-        pictures = new CopyOnWriteArrayList<ImagePicture>();
+        pictures = new CopyOnWriteArrayList<>();
     }
 
     public static SelectPictures getSelectPictures() {
