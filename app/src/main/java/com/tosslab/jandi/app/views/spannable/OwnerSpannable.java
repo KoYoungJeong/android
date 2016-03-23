@@ -9,7 +9,6 @@ import android.util.DisplayMetrics;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
  * Created by tonyjs on 16. 3. 17..
@@ -60,18 +59,13 @@ public class OwnerSpannable extends ReplacementSpan {
 
         int textWidth = (int) paint.measureText(ownerText);
         int layoutWidth = textWidth + (padding * 2);
-        LogUtil.e("tony", "textWidth - " + textWidth + " layoutWidth = " + layoutWidth);
-//        LogUtil.e("tony", String.format("start = %d. end = %d. x = %f. top = %d. y = %d, bottom = %d", start, end, x, top, y, bottom));
 
         int left = (int) x + marginLeftDp;
-        background.setBounds(left, top, (int) left + layoutWidth, bottom);
+        background.setBounds(left, top, left + layoutWidth, bottom);
         background.draw(canvas);
 
         float newY = top + ((bottom - top) - (textSize / 2));
 
-//        int halfOfLayoutWidth = layoutWidth / 2;
-//        int halfOfTextWidth = textWidth / 2;
-//        LogUtil.d("tony", "halfOfLayoutWidth - " + halfOfLayoutWidth + " halfOfTextWidth - " + halfOfTextWidth);
         canvas.drawText(ownerText, x + padding + marginLeftDp, newY, paint);
 
         canvas.restore();
