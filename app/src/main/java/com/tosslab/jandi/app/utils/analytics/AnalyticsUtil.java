@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.utils.analytics;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.analytics.HitBuilders;
@@ -12,6 +13,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 public class AnalyticsUtil {
 
     public static final String FACEBOOK_ACTION = "action";
+    public static final String FACEBOOK_LABEL = "label";
 
     private AnalyticsUtil() {
     }
@@ -26,12 +28,13 @@ public class AnalyticsUtil {
         }
     }
 
-    public static void sendEvent(String category, String action) {
+    public static void sendEvent(String category, String action, String label) {
         try {
             ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
                     .send(new HitBuilders.EventBuilder()
                             .setCategory(category)
                             .setAction(action)
+                            .setLabel(label)
                             .build());
         } catch (Exception e) {
             e.printStackTrace();
@@ -40,6 +43,9 @@ public class AnalyticsUtil {
         try {
             Bundle parameters = new Bundle();
             parameters.putString(FACEBOOK_ACTION, action);
+            if (!TextUtils.isEmpty(label)) {
+                parameters.putString(FACEBOOK_LABEL, label);
+            }
             AppEventsLogger.newLogger(JandiApplication.getContext())
                     .logEvent(category, parameters);
         } catch (Exception e) {
@@ -53,7 +59,11 @@ public class AnalyticsUtil {
     }
 
     public static void sendEvent(AnalyticsValue.Screen screen, AnalyticsValue.Action action) {
-        sendEvent(screen.name(), action.name());
+        sendEvent(screen.name(), action.name(), null);
+    }
+
+    public static void sendEvent(AnalyticsValue.Screen screen, AnalyticsValue.Action action, AnalyticsValue.Label label) {
+        sendEvent(screen.name(), action.name(), label.name());
     }
 
     public static AnalyticsValue.Action getProfileAction(long userId, ShowProfileEvent.From from) {

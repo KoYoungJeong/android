@@ -49,6 +49,7 @@ import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -249,11 +250,17 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             lvMainTopic.setAdapter(updatedTopicAdapter);
             mainTopicListPresenter.onRefreshUpdatedTopicList();
             tvSortTitle.setText(R.string.jandi_sort_updated);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
+                    AnalyticsValue.Action.ChangeTopicOrder,
+                    AnalyticsValue.Label.Folder);
         } else if (!currentFolder && changeToFolder) {
             lvMainTopic.setAdapter(wrappedAdapter);  // requires *wrapped* expandableTopicAdapter
             lvMainTopic.setHasFixedSize(false);
             mainTopicListPresenter.refreshList();
             tvSortTitle.setText(R.string.jandi_sort_folder);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
+                    AnalyticsValue.Action.ChangeTopicOrder,
+                    AnalyticsValue.Label.UpdateDate);
         }
     }
 
@@ -261,6 +268,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     void onOrderTitleClick() {
         boolean currentFolder = isCurrentFolder();
         changeTopicSort(currentFolder, !currentFolder);
+        JandiPreference.setLastTopicOrderType(!currentFolder ? 0 : 1);
     }
 
     private boolean isCurrentFolder() {

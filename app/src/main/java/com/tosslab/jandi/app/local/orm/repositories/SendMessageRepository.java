@@ -55,12 +55,17 @@ public class SendMessageRepository {
 
             Collection<MentionObject> mentionObjects = sendMessage.getMentionObjects();
             if (mentionObjects != null && !mentionObjects.isEmpty()) {
-                for (MentionObject mentionObject : mentionObjects) {
-                    mentionObjectDao.create(mentionObject);
-                }
+                mentionObjectDao.callBatchTasks(() -> {
+                    for (MentionObject mentionObject : mentionObjects) {
+                        mentionObjectDao.create(mentionObject);
+                    }
+                    return null;
+                });
             }
             return true;
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
