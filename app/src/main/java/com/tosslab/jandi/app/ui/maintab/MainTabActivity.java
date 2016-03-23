@@ -266,6 +266,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
         offlineLayer = new OfflineLayer(vgOffline);
 
+        JandiPreference.setSocketReconnectDelay(0l);
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
         // onResume -> AfterViews 로 이동
         // (소켓에서 필요한 갱신을 다 처리한다고 간주)
@@ -539,6 +540,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
             return;
         }
 
+        refreshEntityIfNeed();
+
         if (NetworkCheckUtil.isConnected()) {
             offlineLayer.dismissOfflineView();
         } else {
@@ -552,6 +555,15 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         updateChatBadge();
 
         teamsPresenter.initializeTeams();
+
+    }
+
+    private void refreshEntityIfNeed() {
+        long diffTime = System.currentTimeMillis() - JandiPreference.getSocketConnectedLastTime();
+        if (diffTime > 1000 * 60 * 5) {
+            LogUtil.d("refreshEntityIfNeed");
+            getEntities();
+        }
 
     }
 
@@ -578,7 +590,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     /**
      * 해당 사용자의 채널, DM, PG 리스트를 획득 (with 통신)
      */
-    @Background
+    @Background(serial = "getEntities")
     public void getEntities() {
         try {
             ResLeftSideMenu resLeftSideMenu = entityClientManager.getTotalEntitiesInfo();
