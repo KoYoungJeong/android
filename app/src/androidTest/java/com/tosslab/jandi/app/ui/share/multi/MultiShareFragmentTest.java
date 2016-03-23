@@ -31,7 +31,6 @@ import setup.BaseInitUtil;
 
 import static com.jayway.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -73,7 +72,7 @@ public class MultiShareFragmentTest {
         rule.runOnUiThread(() -> fragment.onFilePageSelected(1));
 
         assertThat(fragment.etComment.getText().toString(), is(equalTo("hello2")));
-        assertThat(fragment.tvTitle.getText().length(), is(greaterThan(0)));
+        assertThat(fragment.tvTitle.getText().length(), is(equalTo(0)));
 
     }
 
