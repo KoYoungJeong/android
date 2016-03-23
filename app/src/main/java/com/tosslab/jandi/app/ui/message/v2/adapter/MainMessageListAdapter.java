@@ -162,7 +162,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
             bodyViewHolder.setLastReadViewVisible(0, -1);
         }
 
-        if (position == 50 || position == getItemCount() / 10 && oldMoreState == MainMessageListAdapter.MoreState.Idle) {
+        if (position == 20 || position == getItemCount() / 10 || position == 0 && oldMoreState == MainMessageListAdapter.MoreState.Idle) {
             oldMoreState = MainMessageListAdapter.MoreState.Loading;
             if (oldMoreState != MainMessageListAdapter.MoreState.Idle) {
                 EventBus.getDefault().post(new RefreshOldMessageEvent());

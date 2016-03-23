@@ -887,7 +887,6 @@ public class MessageListV2Fragment extends Fragment implements
             });
 
         } else {
-
             saveCacheAndNotifyDataSetChangedForAdding(() -> {
                 if (!isFirstMessage) {
                     messageAdapter.setOldLoadingComplete();
