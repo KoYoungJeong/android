@@ -247,6 +247,7 @@
 	<string name="jandi_hi_apk_store">"Hi Apk Store"</string>
 	<string name="jandi_image_too_big">"Image is too big to display."</string>
 	<string name="jandi_incorrect_passcode">"Passcode Does Not Match"</string>
+	<string name="jandi_info">"App Information"</string>
 	<string name="jandi_input_password">"Input your password for selected team"</string>
 	<string name="jandi_input_search_keyword">"Search by keyword(s)"</string>
 	<string name="jandi_input_topic_name">"Enter the topic name"</string>
@@ -267,8 +268,9 @@
 	<string name="jandi_invite_succes_copy_link">"The team invitation link has been copied to your clipboard. Use it to invite others to your team."</string>
 	<string name="jandi_invite_succes_send">"Invitations have been sent to:"</string>
 	<string name="jandi_invite_success">"Invitation has been sent successfully"</string>
-	<string name="jandi_invite_to_dummy_account_again">"Another member of your team has already sent an invitation to this address.
+	<string name="jandi_invite_to_dummy_account_again">"Another team member has already sent an invitation to this address.
 Do you want to send it again?"</string>
+	<string name="jandi_invite_to_team">"Invite"</string>
 	<string name="jandi_invite_wechat">"WeChat"</string>
 	<string name="jandi_invited_topic">"%1$s invited %2$s"</string>
 	<string name="jandi_is_newcomer">"New to JANDI?"</string>
@@ -321,6 +323,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_msg_network_offline">"Network is not connected"</string>
 	<string name="jandi_msg_network_offline_warn">"It seems you are not connected to the Internet."</string>
 	<string name="jandi_my_files">"<b>My Files</b>"</string>
+	<string name="jandi_mypage">"My Page"</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
 	<string name="jandi_need_to_assign_topic_owner">" "</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>
@@ -409,6 +412,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_service_maintenance">"JANDI is currently unavailable due to scheduled maintenance. We expect to be back in a couple of hours. Thanks for your patience."</string>
 	<string name="jandi_set_passcode">"Set Passcode Lock"</string>
 	<string name="jandi_set_passcode_detail">"For your security, we cannot unlock this screen without the passcode. If you can't remember it, please reinstall the application to sign in again."</string>
+	<string name="jandi_setting_account">"Account Settings"</string>
 	<string name="jandi_setting_account_email_info">"Choose an email address where we should send all of your JANDI related emails. Add other email addresses to assign to specific teams."</string>
 	<string name="jandi_setting_display">"Display"</string>
 	<string name="jandi_setting_folder">"Manage folders"</string>
@@ -484,11 +488,14 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_tab_private_group">"Private Topics"</string>
 	<string name="jandi_tab_to_view_original">"Tap here to view original file."</string>
 	<string name="jandi_tab_topic">"Topics"</string>
+	<string name="jandi_team">"Team"</string>
 	<string name="jandi_team_creation_succeed">"Success! Please check your email."</string>
 	<string name="jandi_team_info">"Team"</string>
 	<string name="jandi_team_join_fail">"There was an issue processing your invitation and joining the team. Please try again."</string>
 	<string name="jandi_team_member">"Team Members"</string>
+	<string name="jandi_team_member_count_with_format">"Members(%d)"</string>
 	<string name="jandi_team_owner">"Team admin"</string>
+	<string name="jandi_team_owner_with_format">"Team admin:%s"</string>
 	<string name="jandi_team_select_accept">"Accept"</string>
 	<string name="jandi_team_select_create_a_team">"Create a Team"</string>
 	<string name="jandi_team_select_ignore">"Ignore"</string>

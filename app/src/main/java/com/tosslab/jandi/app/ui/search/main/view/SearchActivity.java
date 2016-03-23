@@ -27,7 +27,6 @@ import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment;
 import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment_;
 import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
 import com.tosslab.jandi.app.utils.ColoredToast;
-
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 

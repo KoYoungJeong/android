@@ -21,7 +21,6 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.fileexplorer.model.FileExplorerModel;
 import com.tosslab.jandi.app.ui.fileexplorer.model.FileExplorerModel_;
 import com.tosslab.jandi.app.utils.ColoredToast;
-
 import com.tosslab.jandi.app.views.listeners.SimpleOnItemSelectedListner;
 
 import java.util.ArrayList;

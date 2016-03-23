@@ -40,7 +40,6 @@ import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresente
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.TextCutter;
-
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 

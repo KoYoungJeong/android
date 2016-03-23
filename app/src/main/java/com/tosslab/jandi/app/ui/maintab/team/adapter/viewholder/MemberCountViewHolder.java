@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
-import com.tosslab.jandi.app.ui.maintab.team.vo.Team;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -33,6 +32,8 @@ public class MemberCountViewHolder extends BaseViewHolder<Integer> {
 
     @Override
     public void onBindView(Integer count) {
-        tvMemberCount.setText(String.format("멤버 (%d)", count));
+        String memberCount = itemView.getResources()
+                .getString(R.string.jandi_team_member_count_with_format, count);
+        tvMemberCount.setText(memberCount);
     }
 }

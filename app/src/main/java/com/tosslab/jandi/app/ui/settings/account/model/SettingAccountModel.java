@@ -4,8 +4,6 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
-
 import retrofit.RetrofitError;
 import rx.Observable;
 import rx.schedulers.Schedulers;
@@ -23,7 +21,7 @@ public class SettingAccountModel {
     public Observable<ResAccountInfo.UserEmail> getAccountEmailObservable() {
         return Observable.from(AccountRepository.getRepository().getAccountEmails())
                 .subscribeOn(Schedulers.io())
-                .filter(userEmail -> userEmail.isPrimary())
+                .filter(ResAccountInfo.UserEmail::isPrimary)
                 .firstOrDefault(new ResAccountInfo.UserEmail());
     }
 

@@ -8,8 +8,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.entities.chats.view.ChatsChooseFragment;
 import com.tosslab.jandi.app.ui.entities.chats.view.ChatsChooseFragment_;
-
-
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;

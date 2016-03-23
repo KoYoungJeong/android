@@ -25,8 +25,6 @@ import com.tosslab.jandi.app.ui.invites.email.model.bean.EmailVO;
 import com.tosslab.jandi.app.ui.invites.email.presenter.InviteEmailPresenter;
 import com.tosslab.jandi.app.ui.invites.email.presenter.InviteEmailPresenterImpl;
 import com.tosslab.jandi.app.utils.ColoredToast;
-
-
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;

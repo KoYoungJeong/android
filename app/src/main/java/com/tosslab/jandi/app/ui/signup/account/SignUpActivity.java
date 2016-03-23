@@ -17,7 +17,6 @@ import com.tosslab.jandi.app.ui.signup.account.to.CheckPointsHolder;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.LanguageUtil;
-
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;

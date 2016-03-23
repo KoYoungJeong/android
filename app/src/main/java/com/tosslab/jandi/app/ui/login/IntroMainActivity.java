@@ -15,8 +15,6 @@ import com.tosslab.jandi.app.ui.login.tutorial.IntroTutorialFragment;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UiUtils;
-
-
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;

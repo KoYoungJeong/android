@@ -23,7 +23,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -405,23 +404,23 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
     @Override
     public void showAnotherTeamHasMessageMetaphor() {
-        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
-        valueAnimator.setDuration(1500);
-        valueAnimator.setRepeatMode(ValueAnimator.REVERSE);
-        valueAnimator.setRepeatCount(Animation.INFINITE);
-        valueAnimator.addUpdateListener(animation -> {
+        ValueAnimator whiteToRedAnim = ValueAnimator.ofFloat(0.0f, 1.0f);
+        whiteToRedAnim.setDuration(2000);
+        whiteToRedAnim.setRepeatMode(ValueAnimator.REVERSE);
+        whiteToRedAnim.setRepeatCount(ValueAnimator.INFINITE);
+        whiteToRedAnim.addUpdateListener(animation -> {
             Float alpha = (Float) animation.getAnimatedValue();
             vMetaphorAnotherTeamHasMessage.setAlpha(alpha);
         });
-        vMetaphorAnotherTeamHasMessage.setTag(valueAnimator);
-        valueAnimator.start();
+        vMetaphorAnotherTeamHasMessage.setTag(whiteToRedAnim);
+        whiteToRedAnim.start();
     }
 
     @Override
     public void hideAnotherTeamHasMessageMetaphor() {
-        Object animation = vMetaphorAnotherTeamHasMessage.getTag();
-        if (animation != null && animation instanceof ValueAnimator) {
-            ((ValueAnimator) animation).cancel();
+        Object whiteToRedAnim = vMetaphorAnotherTeamHasMessage.getTag();
+        if (whiteToRedAnim != null && whiteToRedAnim instanceof ValueAnimator) {
+            ((ValueAnimator) whiteToRedAnim).cancel();
         }
         vMetaphorAnotherTeamHasMessage.setAlpha(0.0f);
     }

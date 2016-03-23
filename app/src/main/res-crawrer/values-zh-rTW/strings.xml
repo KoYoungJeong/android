@@ -247,6 +247,7 @@
 	<string name="jandi_hi_apk_store">"安卓市場"</string>
 	<string name="jandi_image_too_big">"圖像過大無法載入"</string>
 	<string name="jandi_incorrect_passcode">"密碼不吻合"</string>
+	<string name="jandi_info">""</string>
 	<string name="jandi_input_password">"請爲選擇的團隊輸入您的密碼"</string>
 	<string name="jandi_input_search_keyword">"按照關鍵字搜尋您的訊息"</string>
 	<string name="jandi_input_topic_name">"請輸入議題群組名稱"</string>
@@ -268,6 +269,7 @@
 	<string name="jandi_invite_succes_send">"邀請信發送至："</string>
 	<string name="jandi_invite_success">"邀請已經成功送出"</string>
 	<string name="jandi_invite_to_dummy_account_again">"其他成員已寄發邀請信至該郵箱，你確定要在發送一次嗎？"</string>
+	<string name="jandi_invite_to_team">""</string>
 	<string name="jandi_invite_wechat">"微信"</string>
 	<string name="jandi_invited_topic">"%1$s邀請了%2$s"</string>
 	<string name="jandi_is_newcomer">"還沒使用過JANDI?"</string>
@@ -320,6 +322,7 @@
 	<string name="jandi_msg_network_offline">"連線中斷。"</string>
 	<string name="jandi_msg_network_offline_warn">"目前為無網路狀態JANDI會於連上網路後，"</string>
 	<string name="jandi_my_files">"<b>我的檔案</b>"</string>
+	<string name="jandi_mypage">"我的頁面"</string>
 	<string name="jandi_name_in_jandi">"帳號名稱"</string>
 	<string name="jandi_need_to_assign_topic_owner">"你為此議題的管理員，請於離開議題前，先將管理權限轉移給其他成員"</string>
 	<string name="jandi_new_team_name">"新團隊名稱"</string>
@@ -408,6 +411,7 @@
 	<string name="jandi_service_maintenance">"JANDI現在基於定期維護而無法使用。我們預計幾個小時内就可以恢復運作。感謝您的耐心等候。"</string>
 	<string name="jandi_set_passcode">"設定密碼"</string>
 	<string name="jandi_set_passcode_detail">"如果你忘記密碼，將無法解鎖。請重新安裝JANDI，再重新登入。"</string>
+	<string name="jandi_setting_account">""</string>
 	<string name="jandi_setting_account_email_info">"增加多個電子郵箱到您的JANDI帳號。您可以使用任何綁定的電子郵箱進行登入，或針對特定的團隊指定一個專屬的電子郵箱。"</string>
 	<string name="jandi_setting_display">"螢幕顯示"</string>
 	<string name="jandi_setting_folder">"管理議題資料夾"</string>
@@ -483,11 +487,14 @@
 	<string name="jandi_tab_private_group">"私人議題"</string>
 	<string name="jandi_tab_to_view_original">"點擊此處瀏覽原始檔"</string>
 	<string name="jandi_tab_topic">"議題"</string>
+	<string name="jandi_team">"團隊"</string>
 	<string name="jandi_team_creation_succeed">"團隊建立成功！請查看您的電子郵件。"</string>
 	<string name="jandi_team_info">"團隊"</string>
 	<string name="jandi_team_join_fail">"處理過程中發生錯誤。請再試一次。"</string>
 	<string name="jandi_team_member">"團隊成員"</string>
+	<string name="jandi_team_member_count_with_format">"成員(%d)"</string>
 	<string name="jandi_team_owner">"團隊管理員"</string>
+	<string name="jandi_team_owner_with_format">"團隊管理員:%s"</string>
 	<string name="jandi_team_select_accept">"接受"</string>
 	<string name="jandi_team_select_create_a_team">"建立新的團隊"</string>
 	<string name="jandi_team_select_ignore">"不理會"</string>

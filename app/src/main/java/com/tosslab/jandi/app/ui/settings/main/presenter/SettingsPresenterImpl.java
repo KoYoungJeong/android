@@ -86,6 +86,7 @@ public class SettingsPresenterImpl implements SettingsPresenter {
         int orientation = SettingsModel.getOrientationValue(selectedValue);
         view.setOrientation(orientation);
         view.setOrientationSummary(selectedValue);
+
     }
 
     @Override

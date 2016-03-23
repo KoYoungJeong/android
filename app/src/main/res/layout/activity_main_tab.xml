@@ -21,21 +21,21 @@
         <FrameLayout
             android:id="@+id/v_main_tab_metaphor_another_team"
             android:layout_width="wrap_content"
-            android:layout_height="6.6dp"
+            android:layout_height="14dp"
             android:paddingLeft="8dp"
             android:visibility="gone">
 
             <View
-                android:layout_width="8dp"
-                android:layout_height="6.6dp"
-                android:background="@drawable/file_arrow_down"/>
+                android:layout_width="15dp"
+                android:layout_height="14dp"
+                android:background="@drawable/team_arrow_down_white"/>
 
             <View
                 android:id="@+id/v_main_tab_metaphor_another_team_has_message"
-                android:layout_width="8dp"
-                android:layout_height="6.6dp"
+                android:layout_width="15dp"
+                android:layout_height="14dp"
                 android:alpha="0"
-                android:background="@drawable/file_arrow_down_red"/>
+                android:background="@drawable/team_arrow_down_red"/>
         </FrameLayout>
 
     </android.support.v7.widget.Toolbar>

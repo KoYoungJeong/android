@@ -249,7 +249,10 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
     public void initTeamInfo(Team team) {
         tvTeamName.setText(team.getName());
         tvTeamDomain.setText(team.getDomain());
-        tvTeamOwner.setText("Owner: " + team.getOwner().name);
+        String owner = JandiApplication.getContext()
+                .getResources()
+                .getString(R.string.jandi_team_owner_with_format, team.getOwner().name);
+        tvTeamOwner.setText(owner);
 
         List<FormattedEntity> members = team.getMembers();
         if (members == null || members.isEmpty()) {

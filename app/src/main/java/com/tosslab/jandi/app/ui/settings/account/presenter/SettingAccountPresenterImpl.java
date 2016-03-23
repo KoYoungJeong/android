@@ -33,8 +33,6 @@ public class SettingAccountPresenterImpl implements SettingAccountPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(resAccountInfo -> {
                     view.setAccountName(resAccountInfo.getName());
-
-                    view.setAccountCreatedAt(resAccountInfo.getCreatedAt());
                 }, throwable -> {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
                 });

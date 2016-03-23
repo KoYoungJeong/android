@@ -3,8 +3,11 @@ package com.tosslab.jandi.app.ui.settings.account;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
@@ -42,6 +45,9 @@ public class SettingAccountActivity extends BaseAppCompatActivity implements Set
     @Bind(R.id.vg_settin_account_email)
     SettingsBodyView sbvAccountEmail;
 
+    @Bind(R.id.layout_search_bar)
+    Toolbar toolbar;
+
     private ProgressWheel progressWheel;
 
     @Override
@@ -54,13 +60,29 @@ public class SettingAccountActivity extends BaseAppCompatActivity implements Set
                 .inject(this);
 
         setContentView(R.layout.activity_setting_account);
+
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
+
+        setUpActionBar();
 
         progressWheel = new ProgressWheel(this);
 
         presenter.initializeAccountName();
         presenter.initializeAccountEmail();
+    }
+
+    private void setUpActionBar() {
+        setSupportActionBar(toolbar);
+
+        // Set up the action bar.
+        ActionBar actionBar = getSupportActionBar();
+        toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
+        actionBar.setTitle(R.string.jandi_setting_account);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setIcon(
+                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+
     }
 
     @OnClick(R.id.vg_setting_account_name)
@@ -89,6 +111,15 @@ public class SettingAccountActivity extends BaseAppCompatActivity implements Set
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
         ButterKnife.unbind(this);
@@ -98,11 +129,6 @@ public class SettingAccountActivity extends BaseAppCompatActivity implements Set
     @Override
     public void setAccountName(String name) {
         sbvAccountName.setTitle(name);
-    }
-
-    @Override
-    public void setAccountCreatedAt(String createdAt) {
-        sbvAccountName.setSummary("생성일 - " + createdAt);
     }
 
     @Override

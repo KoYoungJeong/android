@@ -47,7 +47,6 @@ import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
-
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.transform.fresco.BlurPostprocessor;

@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.starmention.views.StarMentionListFragment;
 import com.tosslab.jandi.app.ui.starmention.views.StarMentionListFragment_;
-
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
