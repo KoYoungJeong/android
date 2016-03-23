@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
 import com.tosslab.jandi.app.ui.settings.account.component.DaggerSettingAccountComponent;
 import com.tosslab.jandi.app.ui.settings.account.module.SettingAccountModule;
@@ -29,7 +30,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tonyjs on 16. 3. 23..
  */
-public class SettingAccountActivity extends AppCompatActivity implements SettingAccountView {
+public class SettingAccountActivity extends BaseAppCompatActivity implements SettingAccountView {
 
     public static final int REQUEST_EMAIL_CHOOSE = 323;
     @Inject
