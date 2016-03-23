@@ -887,11 +887,8 @@ public class MessageListV2Fragment extends Fragment implements
             });
 
         } else {
-            long latestVisibleLinkId = getFirstVisibleItemLinkId();
-            int firstVisibleItemTop = getFirstVisibleItemTop();
 
-            saveCacheAndNotifyDataSetChanged(() -> {
-                moveToMessage(latestVisibleLinkId, firstVisibleItemTop);
+            saveCacheAndNotifyDataSetChangedForAdding(() -> {
                 if (!isFirstMessage) {
                     messageAdapter.setOldLoadingComplete();
                 } else {
@@ -899,8 +896,8 @@ public class MessageListV2Fragment extends Fragment implements
                 }
 
             });
-        }
 
+        }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -987,6 +984,7 @@ public class MessageListV2Fragment extends Fragment implements
         } else {
             message = "";
         }
+
         SpannableStringBuilder builder =
                 new SpannableStringBuilder(TextUtils.isEmpty(message) ? "" : message);
 
@@ -1031,6 +1029,10 @@ public class MessageListV2Fragment extends Fragment implements
 
     private void moveToMessage(long messageId, int firstVisibleItemTop) {
         int itemPosition = messageAdapter.indexByMessageId(messageId);
+        layoutManager.scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
+    }
+
+    private void moveToMessage(int itemPosition, int firstVisibleItemTop) {
         layoutManager.scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
@@ -1446,6 +1448,12 @@ public class MessageListV2Fragment extends Fragment implements
     public void saveCacheAndNotifyDataSetChanged(
             MainMessageListAdapter.NotifyDataSetChangedCallback callback) {
         messageAdapter.saveCacheAndNotifyDataSetChanged(callback);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void saveCacheAndNotifyDataSetChangedForAdding(
+            MainMessageListAdapter.NotifyDataSetChangedCallback callback) {
+        messageAdapter.saveCacheAndNotifyDataSetChangedForAdding(callback);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

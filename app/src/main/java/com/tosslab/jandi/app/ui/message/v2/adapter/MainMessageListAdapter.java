@@ -89,6 +89,31 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         threadPool.execute(saveCacheRunnable);
     }
 
+    public void saveCacheAndNotifyDataSetChangedForAdding(NotifyDataSetChangedCallback callback) {
+        Runnable saveCacheRunnable = () -> {
+            if (roomId == -1 || messagePointer.getFirstCursorLinkId() == -1) {
+                links.clear();
+                return;
+            }
+            int startLinkSize = links.size();
+            addBeforeLinks(roomId, messagePointer.getFirstCursorLinkId(), links);
+            removeDummyLink(links);
+            addAfterLinks(roomId, links);
+            addDummyLink(roomId, links);
+            int endLinkSize = links.size();
+
+            Activity activity = (Activity) context;
+            activity.runOnUiThread(() -> {
+                MainMessageListAdapter.this.notifyItemRangeInserted(0, endLinkSize - startLinkSize);
+                if (callback != null) {
+                    callback.callBack();
+                }
+            });
+        };
+
+        threadPool.execute(saveCacheRunnable);
+    }
+
     @Override
     public RecyclerBodyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -101,7 +126,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     @Override
     public void onBindViewHolder(RecyclerBodyViewHolder viewHolder, int position) {
-
         ResMessages.Link item = getItem(position);
         BodyViewHolder bodyViewHolder = viewHolder.getViewHolder();
         bodyViewHolder.bindData(item, teamId, roomId, entityId);
