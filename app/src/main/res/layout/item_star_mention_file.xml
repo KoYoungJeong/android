@@ -42,7 +42,7 @@
         <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/iv_star_file"
             android:layout_width="47dp"
-            android:layout_height="56.6dp"
+            android:layout_height="47dp"
             android:layout_below="@id/tv_star_mention_name"
             android:layout_marginTop="7dp"
             fresco:placeholderImage="@drawable/file_icon_audio_dropbox" />

@@ -16,7 +16,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -67,11 +66,13 @@ import com.tosslab.jandi.app.ui.maintab.teams.module.TeamsModule;
 import com.tosslab.jandi.app.ui.maintab.teams.presenter.TeamsPresenter;
 import com.tosslab.jandi.app.ui.maintab.teams.view.TeamsView;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
+import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -86,6 +87,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
+import com.tosslab.jandi.app.views.MaxHeightRecyclerView;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -354,8 +356,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @Override
     public void initializeTeamsView() {
         View teamView = getLayoutInflater().inflate(R.layout.layout_teams, null);
+        int displayHeight = ApplicationUtil.getDisplaySize(true);
+        int maxHeight = displayHeight / 2;
+        MaxHeightRecyclerView recyclerView =
+                (MaxHeightRecyclerView) teamView.findViewById(R.id.lv_team);
+        recyclerView.setMaxHeight(maxHeight);
 
-        RecyclerView recyclerView = (RecyclerView) teamView.findViewById(R.id.lv_team);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getBaseContext());
         layoutManager.setAutoMeasureEnabled(true);
         recyclerView.setLayoutManager(layoutManager);
@@ -368,6 +374,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         });
         teamsAdapter.setOnTeamClickListener(team -> {
             teamsPresenter.onTeamJoinAction(team.getTeamId());
+
             teamsPopupWindow.dismiss();
         });
         recyclerView.setAdapter(teamsAdapter);
@@ -396,17 +403,18 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                 new MultiItemRecyclerAdapter.Row<>(null, TeamsAdapter.VIEW_TYPE_TEAM_CREATE));
 
         teamsAdapter.notifyDataSetChanged();
+    }
 
-        tvTitle.setOnClickListener(v -> {
-            int yoff = -tvTitle.getMeasuredHeight() - (int) UiUtils.getPixelFromDp(8) /* 조금 더 올리려고 */;
-            teamsPopupWindow.showAsDropDown(tvTitle, 0, yoff);
-        });
+    @Click(R.id.btn_main_tab_show_another_team)
+    void showAnotherTeams() {
+        int yoff = -tvTitle.getMeasuredHeight() - (int) UiUtils.getPixelFromDp(8) /* 조금 더 올리려고 */;
+        teamsPopupWindow.showAsDropDown(tvTitle, 0, yoff);
     }
 
     @Override
     public void showAnotherTeamHasMessageMetaphor() {
         ValueAnimator whiteToRedAnim = ValueAnimator.ofFloat(0.0f, 1.0f);
-        whiteToRedAnim.setDuration(2000);
+        whiteToRedAnim.setDuration(1000);
         whiteToRedAnim.setRepeatMode(ValueAnimator.REVERSE);
         whiteToRedAnim.setRepeatCount(ValueAnimator.INFINITE);
         whiteToRedAnim.addUpdateListener(animation -> {
@@ -451,7 +459,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     @Override
-    public void moveToSelectTeam() {
+    public void moveToSelectTeam(boolean shouldOpenModifyProfileActivity) {
         JandiSocketService.stopService(this);
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
@@ -460,6 +468,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         MainTabActivity_.intent(this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
+
+        if (shouldOpenModifyProfileActivity) { // 초대 수락 또는 팀 생성 후
+            ModifyProfileActivity_.intent(this)
+                    .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    .start();
+        }
 
         finish();
     }
@@ -510,7 +524,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         if (event.isConnected()) {
             offlineLayer.dismissOfflineView();
 
-            teamsPresenter.initializeTeams();
+            teamsPresenter.onInitializeTeams();
         } else {
             offlineLayer.showOfflineView();
             ColoredToast.showGray(JandiApplication.getContext().getString(R
@@ -554,7 +568,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         updateTopicBadge();
         updateChatBadge();
 
-        teamsPresenter.initializeTeams();
+        teamsPresenter.onInitializeTeams();
 
     }
 
@@ -576,7 +590,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @OnActivityResult(REQUEST_TEAM_CREATE)
     void onTeamCreateResult(int resultCode) {
         if (resultCode == RESULT_OK) {
-            teamsPresenter.onTeamCreated();
+            teamsPresenter.onTeamCreated(true);
         }
     }
 

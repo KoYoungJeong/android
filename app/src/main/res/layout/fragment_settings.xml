@@ -93,6 +93,8 @@
                 app:sbvTitle="@string/jandi_help"/>
         </LinearLayout>
 
+        <View style="@style/JandiSettings.Divider"/>
+
         <LinearLayout style="@style/JandiSettings.Group">
 
             <TextView

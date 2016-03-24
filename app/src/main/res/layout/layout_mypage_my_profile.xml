@@ -2,62 +2,68 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="147dp"
+    android:layout_height="151dp"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <FrameLayout
+        android:background="@color/white"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="@color/white">
+        android:layout_height="100dp">
 
-        <com.tosslab.jandi.app.views.FrescoImageView
-            android:id="@+id/iv_my_profile"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="14dp"/>
 
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/vg_mypage_my_profile_wrapper"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="16dp"
-            android:layout_toLeftOf="@+id/btn_my_profile_setting"
-            android:layout_toRightOf="@id/iv_my_profile"
-            android:orientation="vertical">
+            android:layout_height="100dp"
+            android:background="?attr/selectableItemBackground">
 
-            <TextView
-                android:id="@+id/tv_my_profile_name"
-                android:layout_width="wrap_content"
+            <com.tosslab.jandi.app.views.FrescoImageView
+                android:id="@+id/iv_mypage_my_profile"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="14dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="3"
-                android:text="소유asdasdasdasdasd돈크라이포미세월 지나도난 변하지 않asdasda sdas das das das das아"
-                android:textColor="@color/jandi_member_profile_user_name"
-                android:textSize="16dp"
-                android:textStyle="bold"/>
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16dp"
+                android:layout_toLeftOf="@+id/btn_mypage_my_profile_setting"
+                android:layout_toRightOf="@id/iv_mypage_my_profile"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_my_profile_email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textColor="@color/jandi_text_medium"
-                android:textSize="13dp"/>
+                <TextView
+                    android:id="@+id/tv_mypage_my_profile_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="3"
+                    android:textColor="@color/jandi_member_profile_user_name"
+                    android:textSize="16dp"
+                    android:textStyle="bold"/>
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tv_mypage_my_profile_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/jandi_text_medium"
+                    android:textSize="13dp"/>
 
-        <View
-            android:id="@+id/btn_my_profile_setting"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="16dp"
-            android:background="@drawable/jandi_selector_btn_profile_setting"/>
+            </LinearLayout>
 
+            <View
+                android:id="@+id/btn_mypage_my_profile_setting"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/jandi_selector_btn_profile_setting"/>
 
-    </RelativeLayout>
+        </RelativeLayout>
+    </FrameLayout>
 
     <View
         android:layout_width="match_parent"
@@ -148,5 +154,10 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/jandi_starred_list_line"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@drawable/shadow_mypage"/>
 
 </LinearLayout>

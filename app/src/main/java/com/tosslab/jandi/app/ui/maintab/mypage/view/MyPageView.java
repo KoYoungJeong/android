@@ -19,6 +19,8 @@ public interface MyPageView {
 
     void showEmptyMentionView();
 
+    void showProfileLayout();
+
     void clearMentions();
 
     void setHasMore(boolean hasMore);

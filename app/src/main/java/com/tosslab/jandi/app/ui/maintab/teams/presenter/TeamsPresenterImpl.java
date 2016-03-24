@@ -45,11 +45,12 @@ public class TeamsPresenterImpl implements TeamsPresenter {
         teamInitializeQueueSubscription =
                 teamInitializeQueue.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
                         .onBackpressureBuffer()
-                        .subscribe(o -> initializeTeams());
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(o -> onInitializeTeams());
     }
 
     @Override
-    public void initializeTeams() {
+    public void onInitializeTeams() {
         if (!model.isNetworkConnected()) {
             view.clearTeams();
             return;
@@ -104,7 +105,7 @@ public class TeamsPresenterImpl implements TeamsPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     view.dismissProgressWheel();
-                    view.moveToSelectTeam();
+                    view.moveToSelectTeam(false);
                 }, error -> {
                     view.dismissProgressWheel();
                 });
@@ -122,7 +123,7 @@ public class TeamsPresenterImpl implements TeamsPresenter {
                     view.removePendingTeam(team);
 
                     // 같은 액션을 한다.
-                    onTeamCreated();
+                    onTeamCreated(true /* shouldOpenModifyProfileActivity */);
 
                 }, error -> {
                     LogUtil.e(TAG, Log.getStackTraceString(error));
@@ -159,7 +160,7 @@ public class TeamsPresenterImpl implements TeamsPresenter {
     }
 
     @Override
-    public void onTeamCreated() {
+    public void onTeamCreated(boolean shouldOpenModifyProfileActivity) {
         view.showProgressWheel();
 
         model.getSelectedTeamObservable()
@@ -168,7 +169,7 @@ public class TeamsPresenterImpl implements TeamsPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     view.dismissProgressWheel();
-                    view.moveToSelectTeam();
+                    view.moveToSelectTeam(shouldOpenModifyProfileActivity);
                 }, error -> {
                     view.dismissProgressWheel();
                 });

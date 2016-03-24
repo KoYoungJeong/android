@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
@@ -12,31 +10,42 @@
         android:layout_height="?attr/actionBarSize"
         android:visibility="visible">
 
-        <TextView
-            android:id="@+id/tv_main_tab_title"
-            style="@style/ToolbarText"
+        <com.tosslab.jandi.app.views.FixedLinearLayout
+            android:id="@+id/btn_main_tab_show_another_team"
+            android:paddingRight="16dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-        <FrameLayout
-            android:id="@+id/v_main_tab_metaphor_another_team"
-            android:layout_width="wrap_content"
-            android:layout_height="14dp"
-            android:paddingLeft="8dp"
-            android:visibility="gone">
+            <TextView
+                android:id="@+id/tv_main_tab_title"
+                style="@style/ToolbarText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"/>
 
-            <View
-                android:layout_width="15dp"
+            <FrameLayout
+                android:id="@+id/v_main_tab_metaphor_another_team"
+                android:layout_width="wrap_content"
                 android:layout_height="14dp"
-                android:background="@drawable/team_arrow_down_white"/>
+                android:layout_gravity="center"
+                android:layout_marginLeft="8dp"
+                android:visibility="gone">
 
-            <View
-                android:id="@+id/v_main_tab_metaphor_another_team_has_message"
-                android:layout_width="15dp"
-                android:layout_height="14dp"
-                android:alpha="0"
-                android:background="@drawable/team_arrow_down_red"/>
-        </FrameLayout>
+                <View
+                    android:layout_width="15dp"
+                    android:layout_height="14dp"
+                    android:background="@drawable/team_arrow_down_white"/>
+
+                <View
+                    android:id="@+id/v_main_tab_metaphor_another_team_has_message"
+                    android:layout_width="15dp"
+                    android:layout_height="14dp"
+                    android:alpha="0"
+                    android:background="@drawable/team_arrow_down_red"/>
+            </FrameLayout>
+        </com.tosslab.jandi.app.views.FixedLinearLayout>
 
     </android.support.v7.widget.Toolbar>
 
@@ -83,6 +92,5 @@
         android:id="@+id/vg_fab_menu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
 
 </RelativeLayout>

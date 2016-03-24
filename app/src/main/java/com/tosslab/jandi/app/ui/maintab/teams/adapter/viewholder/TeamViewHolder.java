@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.teams.adapter.viewholder;
 
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,21 +24,22 @@ public class TeamViewHolder extends BaseViewHolder<Team> {
     @Bind(R.id.tv_team_badge)
     TextView tvBadge;
 
+    private TeamViewHolder(View itemView) {
+        super(itemView);
+        ButterKnife.bind(this, itemView);
+    }
+
     public static TeamViewHolder newInstance(ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.item_team, parent, false);
         return new TeamViewHolder(itemView);
     }
 
-    private TeamViewHolder(View itemView) {
-        super(itemView);
-        ButterKnife.bind(this, itemView);
-    }
-
     @Override
     public void onBindView(Team team) {
         itemView.setSelected(team.isSelected());
 
+        tvName.setTypeface(team.isSelected() ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
         tvName.setText(team.getName());
 
         tvBadge.setVisibility(team.getUnread() > 0 ? View.VISIBLE : View.GONE);

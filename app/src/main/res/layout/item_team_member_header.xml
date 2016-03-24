@@ -7,7 +7,7 @@
     android:layout_height="48dp">
 
     <TextView
-        android:id="@+id/tv_team_member_count"
+        android:id="@+id/tv_team_member_header_message"
         android:textSize="14sp"
         android:textColor="@color/jandi_text_light"
         android:gravity="center_vertical"

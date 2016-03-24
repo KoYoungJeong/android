@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.messages.MentionToMeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.mypage.adapter.MyPageAdapter;
@@ -29,8 +30,8 @@ import com.tosslab.jandi.app.ui.maintab.mypage.presenter.MyPagePresenter;
 import com.tosslab.jandi.app.ui.maintab.mypage.view.MyPageView;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
-import com.tosslab.jandi.app.ui.settings.main.SettingsActivity;
 import com.tosslab.jandi.app.ui.settings.main.SettingsActivity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
@@ -39,6 +40,7 @@ import com.tosslab.jandi.app.utils.ViewSlider;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.views.spannable.OwnerSpannable;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -46,6 +48,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by tonyjs on 16. 3. 17..
@@ -56,14 +59,17 @@ public class MyPageFragment extends Fragment implements MyPageView {
     MyPagePresenter presenter;
 
     @Bind(R.id.vg_mypage_profile)
-    ViewGroup vgProfile;
-    @Bind(R.id.iv_my_profile)
+    ViewGroup vgProfileLayout;
+
+    @Bind(R.id.vg_mypage_my_profile_wrapper)
+    ViewGroup vgMyProfileWrapper;
+    @Bind(R.id.iv_mypage_my_profile)
     SimpleDraweeView ivProfile;
-    @Bind(R.id.tv_my_profile_name)
+    @Bind(R.id.tv_mypage_my_profile_name)
     TextView tvName;
-    @Bind(R.id.tv_my_profile_email)
+    @Bind(R.id.tv_mypage_my_profile_email)
     TextView tvEmail;
-    @Bind(R.id.btn_my_profile_setting)
+    @Bind(R.id.btn_mypage_my_profile_setting)
     View btnSetting;
 
     @Bind(R.id.lv_mypage)
@@ -81,6 +87,8 @@ public class MyPageFragment extends Fragment implements MyPageView {
     private MyPageAdapter adapter;
 
     private MentionMessageMoreRequestHandler moreRequestHandler;
+
+    private boolean isLaidOut;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,12 +117,14 @@ public class MyPageFragment extends Fragment implements MyPageView {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        EventBus.getDefault().register(this);
 
         initMentionListView();
 
         initMoreLoadingProgress();
 
-        presenter.onInitialize();
+        presenter.onRetrieveMyInfo();
+        presenter.onInitializeMyPage();
     }
 
     private void initMentionListView() {
@@ -126,7 +136,7 @@ public class MyPageFragment extends Fragment implements MyPageView {
         adapter.setOnLoadMoreCallback(moreRequestHandler);
         lvMyPage.setAdapter(adapter);
 
-        lvMyPage.addOnScrollListener(new ViewSlider(vgProfile));
+        lvMyPage.addOnScrollListener(new ViewSlider(vgProfileLayout));
 
         adapter.setOnMentionClickListener(presenter::onClickMention);
     }
@@ -160,8 +170,27 @@ public class MyPageFragment extends Fragment implements MyPageView {
         return super.onOptionsItemSelected(menuItem);
     }
 
+    public void onEvent(MentionToMeEvent event) {
+        Date latestCreatedAt = adapter.getItem(0) != null
+                ? adapter.getItem(0).getCreatedAt() : null;
+        presenter.onNewMentionComing(event.getTeamId(), latestCreatedAt);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (isLaidOut) {
+            presenter.onRetrieveMyInfo();
+        }
+
+        isLaidOut = true;
+    }
+
     @Override
     public void onDestroyView() {
+        presenter.clearMentionInitializeQueue();
+        EventBus.getDefault().unregister(this);
         ButterKnife.unbind(this);
         super.onDestroyView();
     }
@@ -204,6 +233,13 @@ public class MyPageFragment extends Fragment implements MyPageView {
         ImageUtil.loadProfileImage(ivProfile, me.getUserLargeProfileUrl(), R.drawable.profile_img);
 
         btnSetting.setOnClickListener(v -> ModifyProfileActivity_.intent(this).start());
+
+        final long memberId = me.getId();
+        vgMyProfileWrapper.setOnClickListener(v -> {
+            MemberProfileActivity_.intent(getActivity())
+                    .memberId(memberId)
+                    .start();
+        });
     }
 
     @Override
@@ -214,6 +250,11 @@ public class MyPageFragment extends Fragment implements MyPageView {
     @Override
     public void showEmptyMentionView() {
         vEmptyLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showProfileLayout() {
+        vgProfileLayout.setTranslationY(0);
     }
 
     @Override

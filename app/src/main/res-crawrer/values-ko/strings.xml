@@ -188,7 +188,7 @@
 	<string name="jandi_entity_create_entity_name">"사용자 성함"</string>
 	<string name="jandi_entity_joined_topic">"참여한 토픽"</string>
 	<string name="jandi_entity_unjoined_topic">"참여하지 않은 토픽"</string>
-	<string name="jandi_err_unexpected">"알 수 없는 문제가 생겼습니다!"</string>
+	<string name="jandi_err_unexpected">"알 수 없는 문제가 생겼습니다."</string>
 	<string name="jandi_error_web_token">"로그인 중 에러가 발생했습니다. 다시 시도해 주세요."</string>
 	<string name="jandi_exceeded_max_text_length">"5000자 까지 입력할 수 있습니다."</string>
 	<string name="jandi_expired_invitation_link">"이 초대 링크는 만료되었습니다. 새로운 링크를 요청하세요."</string>
@@ -242,6 +242,7 @@
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_guide_to_assign_topic_owner">"토픽 상세보기 > 토픽 관리자 변경하기에서 다음 관리자를 지정한 후 토픽에서 내보낼 수 있습니다."</string>
 	<string name="jandi_has_joined">"%s님이 참여하였습니다"</string>
+	<string name="jandi_has_no_searched_member">"<![CDATA[<b><font color=#404040>%s</font></b>]]>의 검색 결과가 없습니다."</string>
 	<string name="jandi_have_an_account_already">"이미 계정이 있으신가요?"</string>
 	<string name="jandi_help">"도움말"</string>
 	<string name="jandi_hi_apk_store">"Hi Apk 스토어"</string>
@@ -297,6 +298,8 @@
 	<string name="jandi_mention_no_mentions">"다른 팀 멤버에게 받은 멘션이 없습니다. 
 메시지 입력창에서 "@"을 입력하여 멘션을 주고받을 수 있습니다."</string>
 	<string name="jandi_mention_push_message">"%s 님의 멘션"</string>
+	<string name="jandi_mentions_are_empty">"다른 멤버에게 받은 멘션이 없습니다. 
+메시지 입력창에서 "@"을 입력하여 멘션을 주고받을 수 있습니다."</string>
 	<string name="jandi_message_ask_about_delete_comment">"이 댓글을 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
 	<string name="jandi_message_ask_about_deleting">"이 메시지를 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
 	<string name="jandi_message_create_entity">"%1$s을 생성하였습니다"</string>

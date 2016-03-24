@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.team.presenter;
 
+import android.util.Pair;
+
 import com.tosslab.jandi.app.ui.maintab.team.model.TeamModel;
 import com.tosslab.jandi.app.ui.maintab.team.view.TeamView;
 
@@ -7,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.PublishSubject;
@@ -36,9 +39,11 @@ public class TeamPresenterImpl implements TeamPresenter {
         searchQueryQueueSubscription =
                 searchQueryQueue
                         .throttleWithTimeout(300, TimeUnit.MILLISECONDS)
-                        .map(model::getSearchedMembers)
+                        .map(query -> Pair.create(query, model.getSearchedMembers(query)))
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(view::setSearchedMembers);
+                        .subscribe(pair -> {
+                            view.setSearchedMembers(pair.first, pair.second);
+                        });
     }
 
     @Override
@@ -49,7 +54,9 @@ public class TeamPresenterImpl implements TeamPresenter {
     }
 
     @Override
-    public void onInitialize() {
+    public void onInitializeTeam() {
+        view.showTeamLayout();
+
         view.showProgress();
 
         model.getTeamObservable()
@@ -57,6 +64,16 @@ public class TeamPresenterImpl implements TeamPresenter {
                 .subscribe(team -> {
                     view.hideProgress();
                     view.initTeamInfo(team);
+                });
+    }
+
+    @Override
+    public void reInitializeTeam() {
+        Observable.just(1)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(i -> {
+                    view.clearMembers();
+                    onInitializeTeam();
                 });
     }
 
