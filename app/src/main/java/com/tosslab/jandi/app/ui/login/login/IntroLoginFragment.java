@@ -42,7 +42,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.Touch;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
+
 
 /**
  * Created by justinygchoi on 14. 11. 13..

@@ -34,7 +34,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
+
 
 @EFragment(R.layout.fragment_chat_detail)
 public class ChatDetailFragment extends Fragment {

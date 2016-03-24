@@ -13,7 +13,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 import setup.BaseInitUtil;
 
 import static junit.framework.Assert.fail;

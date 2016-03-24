@@ -40,7 +40,7 @@ import java.net.URLConnection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 13..
@@ -59,7 +59,7 @@ public class ShareModel {
         return RequestApiManager.getInstance().getTeamInfoByTeamApi(teamId);
     }
 
-    public ResCommon sendMessage(long teamId, long entityId, int entityType, String messageText, List<MentionObject> mention) throws RetrofitError {
+    public ResCommon sendMessage(long teamId, long entityId, int entityType, String messageText, List<MentionObject> mention) throws IOException {
 
         MessageManipulator messageManipulator = MessageManipulator_.getInstance_(context);
 

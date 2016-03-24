@@ -16,7 +16,7 @@ import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
 import org.robolectric.shadows.httpclient.FakeHttp;
 
-import retrofit.RetrofitError;
+
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.core.Is.is;

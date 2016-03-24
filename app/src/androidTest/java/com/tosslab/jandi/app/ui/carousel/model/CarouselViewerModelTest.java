@@ -17,8 +17,6 @@ import org.junit.runner.RunWith;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
-import retrofit.mime.TypedByteArray;
 import setup.BaseInitUtil;
 
 import static org.hamcrest.Matchers.equalTo;

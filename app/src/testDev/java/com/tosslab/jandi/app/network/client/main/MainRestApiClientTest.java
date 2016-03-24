@@ -20,9 +20,9 @@ import com.tosslab.jandi.app.network.models.ResSearchFile;
 import org.junit.Test;
 
 import retrofit.RestAdapter;
-import retrofit.http.Body;
-import retrofit.http.Path;
-import retrofit.http.Query;
+import retrofit2.http.Body;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 import static junit.framework.Assert.assertNotNull;
 

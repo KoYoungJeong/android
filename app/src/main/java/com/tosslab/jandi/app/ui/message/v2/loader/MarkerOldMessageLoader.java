@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPre
 
 import java.util.Collections;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 17..

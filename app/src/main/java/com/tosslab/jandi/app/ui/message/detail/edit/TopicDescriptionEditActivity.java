@@ -25,7 +25,7 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.ViewById;
 
-import retrofit.RetrofitError;
+
 
 @EActivity(R.layout.activity_topic_description_edit)
 @OptionsMenu(R.menu.topic_description_edit)

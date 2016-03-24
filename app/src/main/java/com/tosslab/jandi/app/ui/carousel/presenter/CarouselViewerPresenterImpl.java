@@ -13,7 +13,7 @@ import org.androidannotations.annotations.EBean;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Bill MinWook Heo on 15. 6. 24..

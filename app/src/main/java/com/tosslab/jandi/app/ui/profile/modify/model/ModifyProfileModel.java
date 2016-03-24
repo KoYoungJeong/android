@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import retrofit.RetrofitError;
+
 import rx.Observable;
 
 /**
@@ -39,12 +39,12 @@ public class ModifyProfileModel {
     @Bean
     EntityClientManager entityClientManager;
 
-    public ResLeftSideMenu.User getProfile() throws RetrofitError {
+    public ResLeftSideMenu.User getProfile() throws IOException {
         EntityManager entityManager = EntityManager.getInstance();
         return entityClientManager.getUserProfile(entityManager.getMe().getId());
     }
 
-    public ResLeftSideMenu.User updateProfile(ReqUpdateProfile reqUpdateProfile) throws RetrofitError {
+    public ResLeftSideMenu.User updateProfile(ReqUpdateProfile reqUpdateProfile) throws IOException {
         EntityManager entityManager = EntityManager.getInstance();
         return entityClientManager.updateUserProfile(entityManager.getMe().getId(), reqUpdateProfile);
     }
@@ -67,7 +67,7 @@ public class ModifyProfileModel {
                 .get();
     }
 
-    public com.tosslab.jandi.app.network.models.ResCommon updateProfileName(ReqProfileName reqProfileName) throws RetrofitError {
+    public com.tosslab.jandi.app.network.models.ResCommon updateProfileName(ReqProfileName reqProfileName) throws IOException {
         EntityManager entityManager = EntityManager.getInstance();
         return entityClientManager.updateMemberName(entityManager.getMe().getId(), reqProfileName);
     }
@@ -101,7 +101,7 @@ public class ModifyProfileModel {
 
     }
 
-    public ResLeftSideMenu.User updateProfileEmail(String email) throws RetrofitError {
+    public ResLeftSideMenu.User updateProfileEmail(String email) throws IOException {
         EntityManager entityManager = EntityManager.getInstance();
         return entityClientManager.updateMemberEmail(entityManager.getMe().getId(), email);
     }

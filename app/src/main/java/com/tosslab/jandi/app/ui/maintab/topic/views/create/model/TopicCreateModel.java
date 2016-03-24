@@ -19,7 +19,7 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -30,7 +30,7 @@ public class TopicCreateModel {
     @Bean
     EntityClientManager entityClientManager;
 
-    public ResCommon createTopic(String entityName, boolean publicSelected, String topicDescription, boolean isAutojoin) throws RetrofitError {
+    public ResCommon createTopic(String entityName, boolean publicSelected, String topicDescription, boolean isAutojoin) throws IOException {
         if (publicSelected) {
             return entityClientManager.createPublicTopic(entityName, topicDescription, isAutojoin);
         } else {
@@ -39,7 +39,7 @@ public class TopicCreateModel {
 
     }
 
-    public void refreshEntity() throws RetrofitError {
+    public void refreshEntity() throws IOException {
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);

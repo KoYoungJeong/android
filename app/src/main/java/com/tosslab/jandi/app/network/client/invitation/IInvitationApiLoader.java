@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.invitation;
 
-import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.apiexecutor.Executor;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
@@ -12,8 +12,8 @@ import java.util.List;
  */
 public interface IInvitationApiLoader {
 
-    IExecutor<ResTeamDetailInfo> loadAcceptOrDeclineInvitationByInvitationApi(String invitationId, ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore);
+    Executor<ResTeamDetailInfo> loadAcceptOrDeclineInvitationByInvitationApi(String invitationId, ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore);
 
-    IExecutor<List<ResPendingTeamInfo>> loadGetPendingTeamInfoByInvitationApi();
+    Executor<List<ResPendingTeamInfo>> loadGetPendingTeamInfoByInvitationApi();
 
 }

@@ -31,7 +31,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
 
-import retrofit.RetrofitError;
+
 import retrofit.mime.TypedByteArray;
 
 /**

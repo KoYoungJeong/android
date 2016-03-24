@@ -20,7 +20,7 @@ import org.androidannotations.annotations.RootContext;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by justinygchoi on 2014. 6. 5..
@@ -53,7 +53,7 @@ public class MessageManipulator {
         this.entityType = entityType;
     }
 
-    public ResMessages getMessages(final long firstItemId, int count) throws RetrofitError {
+    public ResMessages getMessages(final long firstItemId, int count) throws IOException {
 
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -86,13 +86,13 @@ public class MessageManipulator {
 
     }
 
-    public List<ResMessages.Link> updateMessages(final long fromCurrentId) throws RetrofitError {
+    public List<ResMessages.Link> updateMessages(final long fromCurrentId) throws IOException {
 
         return RequestApiManager.getInstance().getRoomUpdateMessageByMessagesApiAuth
                 (selectedTeamId, roomId, fromCurrentId);
     }
 
-    public ResCommon setLastReadLinkId(final long lastLinkId) throws RetrofitError {
+    public ResCommon setLastReadLinkId(final long lastLinkId) throws IOException {
 
         String entityType;
         switch (this.entityType) {
@@ -111,7 +111,7 @@ public class MessageManipulator {
         return RequestApiManager.getInstance().setMarkerByMainRest(entityId, reqSetMarker);
     }
 
-    public ResCommon sendMessage(String message, List<MentionObject> mentions) throws RetrofitError {
+    public ResCommon sendMessage(String message, List<MentionObject> mentions) throws IOException {
         final ReqSendMessage sendingMessage = new ReqSendMessage();
         sendingMessage.teamId = selectedTeamId;
         sendingMessage.type = "string";
@@ -130,7 +130,7 @@ public class MessageManipulator {
 
     }
 
-    public ResCommon deleteMessage(final long messageId) throws RetrofitError {
+    public ResCommon deleteMessage(final long messageId) throws IOException {
 
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -145,7 +145,7 @@ public class MessageManipulator {
 
     }
 
-    public ResCommon deleteSticker(final long messageId, int messageType) throws RetrofitError {
+    public ResCommon deleteSticker(final long messageId, int messageType) throws IOException {
 
         switch (messageType) {
             case MessageItem.TYPE_STICKER:
@@ -159,7 +159,7 @@ public class MessageManipulator {
     }
 
 
-    public ResMessages getBeforeMarkerMessage(long linkId) throws RetrofitError {
+    public ResMessages getBeforeMarkerMessage(long linkId) throws IOException {
 
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -175,7 +175,7 @@ public class MessageManipulator {
 
     }
 
-    public ResMessages getAfterMarkerMessage(long linkId) throws RetrofitError {
+    public ResMessages getAfterMarkerMessage(long linkId) throws IOException {
 
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -206,7 +206,7 @@ public class MessageManipulator {
 
     }
 
-    public ResMessages.OriginalMessage getMessage(long teamId, long messageId) throws RetrofitError {
+    public ResMessages.OriginalMessage getMessage(long teamId, long messageId) throws IOException {
         return RequestApiManager.getInstance().getMessage(teamId, messageId);
     }
 

@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.sticker;
 
-import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.apiexecutor.Executor;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 
@@ -9,12 +9,12 @@ import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
  */
 public interface IStickerApiLoader {
 
-    IExecutor<ResCommon> loadSendStickerByStickerApi(ReqSendSticker reqSendSticker);
+    Executor<ResCommon> loadSendStickerByStickerApi(ReqSendSticker reqSendSticker);
 
-    IExecutor<ResCommon> loadSendStickerCommentByStickerApi(ReqSendSticker reqSendSticker);
+    Executor<ResCommon> loadSendStickerCommentByStickerApi(ReqSendSticker reqSendSticker);
 
-    IExecutor<ResCommon> loadDeleteStickerCommentByStickerApi(long commentId, long teamId);
+    Executor<ResCommon> loadDeleteStickerCommentByStickerApi(long commentId, long teamId);
 
-    IExecutor<ResCommon> loadDeleteStickerByStickerApi(long messageId, long teamId);
+    Executor<ResCommon> loadDeleteStickerByStickerApi(long messageId, long teamId);
 
 }

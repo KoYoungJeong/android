@@ -25,7 +25,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
+
 import retrofit.client.Response;
 
 /**

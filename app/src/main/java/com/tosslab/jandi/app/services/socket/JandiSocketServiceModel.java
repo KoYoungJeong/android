@@ -78,7 +78,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -553,7 +552,7 @@ public class JandiSocketServiceModel {
         }
     }
 
-    public ResAccessToken refreshToken() throws RetrofitError {
+    public ResAccessToken refreshToken() throws IOException {
         ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
         String jandiRefreshToken = accessToken.getRefreshToken();
         ReqAccessToken refreshReqToken = ReqAccessToken.createRefreshReqToken(jandiRefreshToken);

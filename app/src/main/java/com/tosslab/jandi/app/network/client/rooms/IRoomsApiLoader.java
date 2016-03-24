@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.rooms;
 
-import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.apiexecutor.Executor;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 
 /**
@@ -8,6 +8,6 @@ import com.tosslab.jandi.app.network.models.ResRoomInfo;
  */
 public interface IRoomsApiLoader {
 
-    IExecutor<ResRoomInfo> loadGetRoomInfoByRoomsApi(long teamId, long roomId);
+    Executor<ResRoomInfo> loadGetRoomInfoByRoomsApi(long teamId, long roomId);
 
 }

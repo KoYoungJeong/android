@@ -19,7 +19,7 @@ public class JandiConstantsForFlavors {
     private static final String SERVICE_PORT = "443";
     public static final String SERVICE_ROOT_URL =
             SERVICE_PROTOCOL + "://" + SERVICE_DOMAIN + ":" + SERVICE_PORT + "/";
-    public static final String SERVICE_INNER_API_URL = SERVICE_ROOT_URL + "inner-api";
+    public static final String SERVICE_INNER_API_URL = SERVICE_ROOT_URL + "inner-api/";
     public static final String SERVICE_FILE_URL =
             SERVICE_PROTOCOL + "://" + SERVICE_FILE_DOMAIN + ":" + SERVICE_PORT + "/";
     public static final String SERVICE_FILE_UPLOAD_URL =

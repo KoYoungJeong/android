@@ -3,15 +3,19 @@ package com.tosslab.jandi.app.network.client.file;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
+import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResSearchFile;
 
 import java.util.List;
 
-import retrofit.http.GET;
-import retrofit.http.Headers;
-import retrofit.http.Path;
-import retrofit.http.Query;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by tee on 15. 7. 2..
@@ -41,4 +45,13 @@ public interface FileApiV2Client {
             , @Query("messageId") long messageId
             , @Query("count") int count);
 
+    /**
+     * *********************************************************
+     * Search
+     * **********************************************************
+     */
+    // File search
+    @POST("/search")
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    ResSearchFile searchFile(@Body ReqSearchFile reqSearchFile);
 }

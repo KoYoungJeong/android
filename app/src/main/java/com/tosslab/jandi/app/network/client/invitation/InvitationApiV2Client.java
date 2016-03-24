@@ -8,11 +8,11 @@ import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 
 import java.util.List;
 
-import retrofit.http.Body;
-import retrofit.http.GET;
-import retrofit.http.Headers;
-import retrofit.http.PUT;
-import retrofit.http.Path;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
 
 /**
  * Created by tee on 15. 6. 16..

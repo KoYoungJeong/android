@@ -14,7 +14,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 3..
@@ -139,7 +139,7 @@ public class IntroActivityPresenter {
         }
     }
 
-    private void migrationAccountInfos(Context context, long initTime, final boolean startForInvite) throws RetrofitError {
+    private void migrationAccountInfos(Context context, long initTime, final boolean startForInvite) throws IOException {
         // v1.0.7 이전 설치자가 넘어온 경우
 
         model.refreshAccountInfo();
@@ -157,7 +157,7 @@ public class IntroActivityPresenter {
 
     }
 
-    void refreshAccountInfo() throws RetrofitError {
+    void refreshAccountInfo() throws IOException {
         model.refreshAccountInfo();
     }
 

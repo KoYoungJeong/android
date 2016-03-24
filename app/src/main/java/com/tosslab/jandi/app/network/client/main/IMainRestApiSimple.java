@@ -10,23 +10,23 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by tee on 15. 6. 20..
  */
 public interface IMainRestApiSimple {
 
-    ResConfig getConfigByMainRest() throws RetrofitError;
+    ResConfig getConfigByMainRest() throws IOException;
 
-    ResMyTeam getTeamIdByMainRest(String userEmail) throws RetrofitError;
+    ResMyTeam getTeamIdByMainRest(String userEmail) throws IOException;
 
-    ResAccessToken getAccessTokenByMainRest(ReqAccessToken login) throws RetrofitError;
+    ResAccessToken getAccessTokenByMainRest(ReqAccessToken login) throws IOException;
 
-    ResCommon signUpAccountByMainRest(ReqSignUpInfo signUpInfo) throws RetrofitError;
+    ResCommon signUpAccountByMainRest(ReqSignUpInfo signUpInfo) throws IOException;
 
-    ResAccountActivate activateAccountByMainRest(ReqAccountActivate reqAccountActivate) throws RetrofitError;
+    ResAccountActivate activateAccountByMainRest(ReqAccountActivate reqAccountActivate) throws IOException;
 
-    ResCommon accountVerificationByMainRest(ReqAccountVerification reqAccountVerification) throws RetrofitError;
+    ResCommon accountVerificationByMainRest(ReqAccountVerification reqAccountVerification) throws IOException;
 
 }

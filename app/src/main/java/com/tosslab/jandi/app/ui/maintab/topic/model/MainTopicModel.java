@@ -31,7 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import retrofit.RetrofitError;
+
 import rx.Observable;
 
 @EBean
@@ -41,7 +41,7 @@ public class MainTopicModel {
     EntityClientManager entityClientManager;
 
     // 폴더 정보 가져오기
-    public List<ResFolder> getTopicFolders() throws RetrofitError {
+    public List<ResFolder> getTopicFolders() throws IOException {
         if (!NetworkCheckUtil.isConnected()) {
             return TopicFolderRepository.getRepository().getFolders();
         }
@@ -51,7 +51,7 @@ public class MainTopicModel {
     }
 
     // 폴더 속 토픽 아이디 가져오기
-    public List<ResFolderItem> getTopicFolderItems() throws RetrofitError {
+    public List<ResFolderItem> getTopicFolderItems() throws IOException {
         if (!NetworkCheckUtil.isConnected()) {
             return TopicFolderRepository.getRepository().getFolderItems();
         }

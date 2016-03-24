@@ -25,7 +25,7 @@ import org.json.JSONException;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 @EBean
 public class TopicDetailModel {
@@ -66,7 +66,7 @@ public class TopicDetailModel {
 
     }
 
-    public void deleteTopic(long entityId, int entityType) throws RetrofitError {
+    public void deleteTopic(long entityId, int entityType) throws IOException {
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
             entityClientManager.deleteChannel(entityId);
         } else {
@@ -118,7 +118,7 @@ public class TopicDetailModel {
                         .build());
     }
 
-    public void modifyTopicName(int entityType, long entityId, String inputName) throws RetrofitError {
+    public void modifyTopicName(int entityType, long entityId, String inputName) throws IOException {
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
             entityClientManager.modifyChannelName(entityId, inputName);
         } else if (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) {
@@ -126,7 +126,7 @@ public class TopicDetailModel {
         }
     }
 
-    public void updatePushStatus(long teamId, long entityId, boolean pushOn) throws RetrofitError {
+    public void updatePushStatus(long teamId, long entityId, boolean pushOn) throws IOException {
         ReqUpdateTopicPushSubscribe req = new ReqUpdateTopicPushSubscribe(pushOn);
         RequestApiManager.getInstance().updateTopicPushSubscribe(teamId, entityId, req);
     }

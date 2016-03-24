@@ -3,9 +3,9 @@ package com.tosslab.jandi.app.network.client.validation;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.validation.ResValidation;
 
-import retrofit.http.GET;
-import retrofit.http.Headers;
-import retrofit.http.Path;
+import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.Path;
 
 public interface ValidationApi {
 

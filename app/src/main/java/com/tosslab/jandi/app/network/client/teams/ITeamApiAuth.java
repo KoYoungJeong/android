@@ -26,56 +26,56 @@ import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObj
 
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by tee on 15. 6. 23..
  */
 public interface ITeamApiAuth {
 
-    ResTeamDetailInfo createNewTeamByTeamApi(ReqCreateNewTeam req) throws RetrofitError;
+    ResTeamDetailInfo createNewTeamByTeamApi(ReqCreateNewTeam req) throws IOException;
 
-    ResLeftSideMenu.User getMemberProfileByTeamApi(long teamId, long memberId) throws RetrofitError;
+    ResLeftSideMenu.User getMemberProfileByTeamApi(long teamId, long memberId) throws IOException;
 
-    List<ResInvitationMembers> inviteToTeamByTeamApi(long teamId, ReqInvitationMembers invitationMembers) throws RetrofitError;
+    List<ResInvitationMembers> inviteToTeamByTeamApi(long teamId, ReqInvitationMembers invitationMembers) throws IOException;
 
-    ResTeamDetailInfo.InviteTeam getTeamInfoByTeamApi(long teamId) throws RetrofitError;
+    ResTeamDetailInfo.InviteTeam getTeamInfoByTeamApi(long teamId) throws IOException;
 
-    ResAnnouncement getAnnouncement(long teamId, long topicId) throws RetrofitError;
+    ResAnnouncement getAnnouncement(long teamId, long topicId) throws IOException;
 
-    ResCommon createAnnouncement(long teamId, long topicId, ReqCreateAnnouncement reqCreateAnnouncement) throws RetrofitError;
+    ResCommon createAnnouncement(long teamId, long topicId, ReqCreateAnnouncement reqCreateAnnouncement) throws IOException;
 
-    ResCommon updateAnnouncementStatus(long teamId, long memberId, ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus) throws RetrofitError;
+    ResCommon updateAnnouncementStatus(long teamId, long memberId, ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus) throws IOException;
 
-    ResCommon deleteAnnouncement(long teamId, long topicId) throws RetrofitError;
+    ResCommon deleteAnnouncement(long teamId, long topicId) throws IOException;
 
-    ResMessages.OriginalMessage getMessage(long teamId, long messageId) throws RetrofitError;
+    ResMessages.OriginalMessage getMessage(long teamId, long messageId) throws IOException;
 
-    ResStarMentioned getMentionedMessagesByTeamApi(long teamId, long messageId, int count) throws RetrofitError;
+    ResStarMentioned getMentionedMessagesByTeamApi(long teamId, long messageId, int count) throws IOException;
 
-    StarMentionedMessageObject registStarredMessageByTeamApi(long teamId, long messageId) throws RetrofitError;
+    StarMentionedMessageObject registStarredMessageByTeamApi(long teamId, long messageId) throws IOException;
 
-    ResCommon unregistStarredMessageByTeamApi(long teamId, long messageId) throws RetrofitError;
+    ResCommon unregistStarredMessageByTeamApi(long teamId, long messageId) throws IOException;
 
     ResStarMentioned getStarredMessagesByTeamApi(long teamId, long starredId,
-                                                 int count, String type) throws RetrofitError;
+                                                 int count, String type) throws IOException;
 
 
-    ResCommon updateTopicPushSubscribe(long teamId, long topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe) throws RetrofitError;
+    ResCommon updateTopicPushSubscribe(long teamId, long topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe) throws IOException;
 
-    ResCreateFolder createFolderByTeamApi(long teamId, ReqCreateFolder reqCreateFolder) throws RetrofitError;
+    ResCreateFolder createFolderByTeamApi(long teamId, ReqCreateFolder reqCreateFolder) throws IOException;
 
-    ResCommon deleteFolderByTeamApi(long teamId, long folderId) throws RetrofitError;
+    ResCommon deleteFolderByTeamApi(long teamId, long folderId) throws IOException;
 
-    ResUpdateFolder updateFolderByTeamApi(long teamId, long folderId, ReqUpdateFolder reqUpdateFolder) throws RetrofitError;
+    ResUpdateFolder updateFolderByTeamApi(long teamId, long folderId, ReqUpdateFolder reqUpdateFolder) throws IOException;
 
-    List<ResFolder> getFoldersByTeamApi(long teamId) throws RetrofitError;
+    List<ResFolder> getFoldersByTeamApi(long teamId) throws IOException;
 
-    List<ResFolderItem> getFolderItemsByTeamApi(long teamId) throws RetrofitError;
+    List<ResFolderItem> getFolderItemsByTeamApi(long teamId) throws IOException;
 
-    ResRegistFolderItem registFolderItemByTeamApi(long teamId, long folderId, ReqRegistFolderItem reqRegistFolderItem) throws RetrofitError;
+    ResRegistFolderItem registFolderItemByTeamApi(long teamId, long folderId, ReqRegistFolderItem reqRegistFolderItem) throws IOException;
 
-    ResCommon deleteFolderItemByTeamApi(long teamId, long folderId, long itemId) throws RetrofitError;
+    ResCommon deleteFolderItemByTeamApi(long teamId, long folderId, long itemId) throws IOException;
 
     ResCommon kickUserFromTopic(long teamId, long topicId, ReqMember member);
 

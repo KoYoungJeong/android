@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.settings;
 
-import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.apiexecutor.Executor;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -10,8 +10,8 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
  */
 public interface IAccountProfileApiLoader {
 
-    IExecutor<ResAccountInfo> loadChangeNameByAccountProfileApi(ReqProfileName reqProfileName);
+    Executor<ResAccountInfo> loadChangeNameByAccountProfileApi(ReqProfileName reqProfileName);
 
-    IExecutor<ResAccountInfo> loadChangePrimaryEmailByAccountProfileApi(ReqAccountEmail reqAccountEmail);
+    Executor<ResAccountInfo> loadChangePrimaryEmailByAccountProfileApi(ReqAccountEmail reqAccountEmail);
 
 }

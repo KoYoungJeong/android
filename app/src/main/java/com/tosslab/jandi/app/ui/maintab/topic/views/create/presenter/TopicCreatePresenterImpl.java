@@ -16,7 +16,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.json.JSONException;
 
-import retrofit.RetrofitError;
+
 import retrofit.client.Response;
 
 /**

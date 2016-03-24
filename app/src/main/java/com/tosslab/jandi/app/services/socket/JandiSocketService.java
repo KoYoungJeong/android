@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
+
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;

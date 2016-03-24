@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -122,7 +121,7 @@ public class MembersModel {
 
     }
 
-    public void kickUser(long teamId, long topicId, long userEntityId) throws RetrofitError {
+    public void kickUser(long teamId, long topicId, long userEntityId) throws IOException {
         RequestApiManager.getInstance().kickUserFromTopic(teamId, topicId, new ReqMember(userEntityId));
     }
 

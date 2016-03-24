@@ -17,7 +17,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by tonyjs on 15. 7. 27..
@@ -197,9 +197,9 @@ public class SprinklerService extends IntentService {
                 setPreRequestFailed(false);
                 flusher.deleteRows(startIndex, endIndex);
             }
-        } catch (RetrofitError retrofitError) {
+        } catch (Exception e) {
             Logger.e(TAG, "flush fail");
-            Logger.print(retrofitError);
+            Logger.print(e);
             setPreRequestFailed(true);
         }
     }

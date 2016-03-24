@@ -10,7 +10,7 @@ import org.androidannotations.annotations.EBean;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by tee on 16. 1. 6..

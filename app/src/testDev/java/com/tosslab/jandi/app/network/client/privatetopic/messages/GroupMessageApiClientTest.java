@@ -21,7 +21,7 @@ import org.robolectric.RuntimeEnvironment;
 
 import java.sql.Timestamp;
 
-import retrofit.RetrofitError;
+
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;

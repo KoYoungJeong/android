@@ -6,10 +6,10 @@ import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
-import retrofit.http.Body;
-import retrofit.http.Headers;
-import retrofit.http.POST;
-import retrofit.http.PUT;
+import retrofit2.http.Body;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
 
 /**
  * Created by tee on 15. 6. 16..

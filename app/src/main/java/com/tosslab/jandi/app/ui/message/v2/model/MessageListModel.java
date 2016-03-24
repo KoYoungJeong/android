@@ -71,7 +71,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
+
 import rx.Observable;
 import rx.functions.Func0;
 
@@ -96,7 +96,7 @@ public class MessageListModel {
         messageManipulator.initEntity(entityType, entityId);
     }
 
-    public ResMessages getOldMessage(long linkId, int count) throws RetrofitError {
+    public ResMessages getOldMessage(long linkId, int count) throws IOException {
         return messageManipulator.getMessages(linkId, count);
     }
 
@@ -114,15 +114,15 @@ public class MessageListModel {
         return TextUtils.isEmpty(text.toString().trim());
     }
 
-    public List<ResMessages.Link> getNewMessage(long linkId) throws RetrofitError {
+    public List<ResMessages.Link> getNewMessage(long linkId) throws IOException {
         return messageManipulator.updateMessages(linkId);
     }
 
-    public void deleteMessage(long messageId) throws RetrofitError {
+    public void deleteMessage(long messageId) throws IOException {
         messageManipulator.deleteMessage(messageId);
     }
 
-    public void deleteSticker(long messageId, int messageType) throws RetrofitError {
+    public void deleteSticker(long messageId, int messageType) throws IOException {
         messageManipulator.deleteSticker(messageId, messageType);
     }
 
@@ -256,7 +256,7 @@ public class MessageListModel {
         return requestFuture.get();
     }
 
-    public void updateLastLinkId(long lastUpdateLinkId) throws RetrofitError {
+    public void updateLastLinkId(long lastUpdateLinkId) throws IOException {
         messageManipulator.setLastReadLinkId(lastUpdateLinkId);
     }
 
@@ -267,7 +267,7 @@ public class MessageListModel {
         ReadyMessageRepository.getRepository().upsertReadyMessage(readyMessage);
     }
 
-    public void deleteTopic(long entityId, int entityType) throws RetrofitError {
+    public void deleteTopic(long entityId, int entityType) throws IOException {
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
             entityClientManager.deleteChannel(entityId);
         } else {
@@ -275,7 +275,7 @@ public class MessageListModel {
         }
     }
 
-    public void modifyTopicName(int entityType, long entityId, String inputName) throws RetrofitError {
+    public void modifyTopicName(int entityType, long entityId, String inputName) throws IOException {
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
             entityClientManager.modifyChannelName(entityId, inputName);
         } else if (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) {
@@ -373,16 +373,16 @@ public class MessageListModel {
 
     }
 
-    public ResMessages getBeforeMarkerMessage(long linkId) throws RetrofitError {
+    public ResMessages getBeforeMarkerMessage(long linkId) throws IOException {
 
         return messageManipulator.getBeforeMarkerMessage(linkId);
     }
 
-    public ResMessages getAfterMarkerMessage(long linkId) throws RetrofitError {
+    public ResMessages getAfterMarkerMessage(long linkId) throws IOException {
         return messageManipulator.getAfterMarkerMessage(linkId);
     }
 
-    public ResMessages getAfterMarkerMessage(long linkId, int count) throws RetrofitError {
+    public ResMessages getAfterMarkerMessage(long linkId, int count) throws IOException {
         return messageManipulator.getAfterMarkerMessage(linkId, count);
     }
 

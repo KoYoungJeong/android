@@ -21,7 +21,7 @@ import org.androidannotations.annotations.SystemService;
 
 import java.net.URISyntaxException;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by tee on 16. 1. 13..
@@ -59,7 +59,7 @@ public class InternalWebPresenter {
     }
 
 
-    public void sendMessageToRoom(long entityId, int entityType, String text, Activity activity) throws RetrofitError {
+    public void sendMessageToRoom(long entityId, int entityType, String text, Activity activity) throws IOException {
         MessageManipulator messageManipulator = MessageManipulator_.getInstance_(activity);
         messageManipulator.initEntity(entityType, entityId);
         messageManipulator.sendMessage(text, null);

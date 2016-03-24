@@ -23,7 +23,7 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by tonyjs on 15. 5. 19..
@@ -55,7 +55,7 @@ public class SignUpVerifyModel {
         return resAccountActivate;
     }
 
-    public ResCommon requestNewVerificationCode(String email) throws RetrofitError {
+    public ResCommon requestNewVerificationCode(String email) throws IOException {
         ReqAccountVerification accountVerification = new ReqAccountVerification(email);
         ResCommon resCommon = null;
         try {

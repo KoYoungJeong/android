@@ -30,7 +30,7 @@ import org.androidannotations.annotations.SystemService;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 26..
@@ -56,11 +56,11 @@ public class JandiInterfaceModel {
         }
     }
 
-    public ResConfig getConfigInfo() throws RetrofitError {
+    public ResConfig getConfigInfo() throws IOException {
         return RequestApiManager.getInstance().getConfigByMainRest();
     }
 
-    public void refreshAccountInfo() throws RetrofitError {
+    public void refreshAccountInfo() throws IOException {
         ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
 
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);

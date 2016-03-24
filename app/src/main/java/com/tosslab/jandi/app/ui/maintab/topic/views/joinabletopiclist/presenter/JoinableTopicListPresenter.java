@@ -18,7 +18,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
-import retrofit.RetrofitError;
+
 import rx.Observable;
 
 @EBean

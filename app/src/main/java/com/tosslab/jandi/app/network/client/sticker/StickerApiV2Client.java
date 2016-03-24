@@ -6,11 +6,11 @@ import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWith
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 
-import retrofit.http.Body;
-import retrofit.http.Headers;
-import retrofit.http.POST;
-import retrofit.http.Path;
-import retrofit.http.Query;
+import retrofit2.http.Body;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by tee on 15. 6. 23..

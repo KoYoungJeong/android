@@ -20,13 +20,13 @@ import org.androidannotations.annotations.EBean;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 import rx.Observable;
 
 @EBean
 public class TeamDomainInfoModel {
 
-    public ResTeamDetailInfo createNewTeam(String name, String teamDomain) throws RetrofitError {
+    public ResTeamDetailInfo createNewTeam(String name, String teamDomain) throws IOException {
 
         ReqCreateNewTeam reqCreateNewTeam = new ReqCreateNewTeam(name, teamDomain);
         return RequestApiManager.getInstance().createNewTeamByTeamApi(reqCreateNewTeam);

@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.main;
 
-import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.apiexecutor.Executor;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqAccountVerification;
@@ -22,27 +22,27 @@ import com.tosslab.jandi.app.network.models.ResSearchFile;
  */
 public interface IMainRestApiLoader {
 
-    IExecutor<ResAccountInfo> loadGetAccountInfoByMainRestApi();
+    Executor<ResAccountInfo> loadGetAccountInfoByMainRestApi();
 
-    IExecutor<ResAccountInfo> loadUpdatePrimaryEmailByMainRestApi(ReqUpdatePrimaryEmailInfo
+    Executor<ResAccountInfo> loadUpdatePrimaryEmailByMainRestApi(ReqUpdatePrimaryEmailInfo
                                                                           updatePrimaryEmailInfo);
 
-    IExecutor<ResLeftSideMenu> loadGetInfosForSideMenuByMainRestApi(long teamId);
+    Executor<ResLeftSideMenu> loadGetInfosForSideMenuByMainRestApi(long teamId);
 
-    IExecutor<ResCommon> loadSetMarkerByMainRestApi(long entityId, ReqSetMarker reqSetMarker);
+    Executor<ResCommon> loadSetMarkerByMainRestApi(long entityId, ReqSetMarker reqSetMarker);
 
-    IExecutor<ResSearchFile> loadSearchFileByMainRestApi(ReqSearchFile reqSearchFile);
+    Executor<ResSearchFile> loadSearchFileByMainRestApi(ReqSearchFile reqSearchFile);
 
-    IExecutor<ResConfig> loadGetConfigByMainRestApi();
+    Executor<ResConfig> loadGetConfigByMainRestApi();
 
-    IExecutor<ResMyTeam> loadGetTeamIdByMainRestApi(String userEmail);
+    Executor<ResMyTeam> loadGetTeamIdByMainRestApi(String userEmail);
 
-    IExecutor<ResAccessToken> loadGetAccessTokenByMainRestApi(ReqAccessToken login);
+    Executor<ResAccessToken> loadGetAccessTokenByMainRestApi(ReqAccessToken login);
 
-    IExecutor<ResCommon> loadSignUpAccountByMainRestApi(ReqSignUpInfo signUpInfo);
+    Executor<ResCommon> loadSignUpAccountByMainRestApi(ReqSignUpInfo signUpInfo);
 
-    IExecutor<ResAccountActivate> loadActivateAccountByMainRestApi(ReqAccountActivate reqAccountActivate);
+    Executor<ResAccountActivate> loadActivateAccountByMainRestApi(ReqAccountActivate reqAccountActivate);
 
-    IExecutor<ResCommon> loadAccountVerificationByMainRestApi(ReqAccountVerification reqAccountVerification);
+    Executor<ResCommon> loadAccountVerificationByMainRestApi(ReqAccountVerification reqAccountVerification);
 
 }

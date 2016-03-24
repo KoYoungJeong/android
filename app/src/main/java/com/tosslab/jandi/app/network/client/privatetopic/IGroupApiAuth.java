@@ -7,23 +7,23 @@ import com.tosslab.jandi.app.network.models.ReqModifyTopicName;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by tee on 15. 6. 23..
  */
 public interface IGroupApiAuth {
 
-    ResCommon createPrivateGroupByGroupApi(ReqCreateTopic group) throws RetrofitError;
+    ResCommon createPrivateGroupByGroupApi(ReqCreateTopic group) throws IOException;
 
-    ResCommon modifyGroupNameByGroupApi(ReqModifyTopicName channel, long groupId) throws RetrofitError;
+    ResCommon modifyGroupNameByGroupApi(ReqModifyTopicName channel, long groupId) throws IOException;
 
     ResCommon modifyGroupDescriptionByGroupApi(ReqModifyTopicDescription description, long entityId);
 
-    ResCommon deleteGroupByGroupApi(long teamId, long groupId) throws RetrofitError;
+    ResCommon deleteGroupByGroupApi(long teamId, long groupId) throws IOException;
 
-    ResCommon leaveGroupByGroupApi(long groupId, ReqTeam team) throws RetrofitError;
+    ResCommon leaveGroupByGroupApi(long groupId, ReqTeam team) throws IOException;
 
-    ResCommon inviteGroupByGroupApi(long groupId, ReqInviteTopicUsers inviteUsers) throws RetrofitError;
+    ResCommon inviteGroupByGroupApi(long groupId, ReqInviteTopicUsers inviteUsers) throws IOException;
 
 }

@@ -40,8 +40,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import retrofit.RetrofitError;
-
 import static com.jayway.awaitility.Awaitility.await;
 
 

@@ -4,7 +4,7 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqMessageSearchQeury;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 
-import retrofit.RetrofitError;
+
 
 public class MessageSearchManager {
 
@@ -18,7 +18,7 @@ public class MessageSearchManager {
         return new MessageSearchManager(reqMessageSearchQuery);
     }
 
-    public ResMessageSearch request() throws RetrofitError {
+    public ResMessageSearch request() throws IOException {
 
         int searchType = getSearchType(reqMessageSearchQeury);
 

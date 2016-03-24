@@ -5,9 +5,9 @@ import com.tosslab.jandi.app.network.manager.restapiclient.annotation.Authorized
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
-import retrofit.http.Body;
-import retrofit.http.Headers;
-import retrofit.http.PUT;
+import retrofit2.http.Body;
+import retrofit2.http.Headers;
+import retrofit2.http.PUT;
 
 /**
  * Created by tonyjs on 15. 7. 31..

@@ -16,7 +16,7 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 24..
@@ -126,7 +126,7 @@ public class SignUpModel {
                 && mCheckPointsHolder.didAgreeAll == CheckPointsHolder.VALID);
     }
 
-    public ResCommon requestSignUp(String email, String password, String name, String lang) throws RetrofitError {
+    public ResCommon requestSignUp(String email, String password, String name, String lang) throws IOException {
 
         ReqSignUpInfo signUpInfo = new ReqSignUpInfo(email, password, name, lang);
 

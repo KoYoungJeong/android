@@ -13,7 +13,7 @@ import org.androidannotations.annotations.EBean;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 import rx.Observable;
 
 /**
@@ -23,7 +23,7 @@ import rx.Observable;
 public class CarouselViewerModel {
 
     public List<ResMessages.FileMessage> searchInitFileList(long teamId, long roomId, long messageId)
-            throws RetrofitError {
+            throws IOException {
         return RequestApiManager.getInstance().searchInitImageFileByFileApi(teamId, roomId,
                 messageId, 20);
     }

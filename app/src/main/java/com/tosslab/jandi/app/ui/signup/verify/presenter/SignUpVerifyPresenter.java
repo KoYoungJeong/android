@@ -15,7 +15,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by tonyjs on 15. 5. 19..

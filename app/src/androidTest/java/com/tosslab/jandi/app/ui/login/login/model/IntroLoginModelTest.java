@@ -19,7 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import retrofit.RetrofitError;
+
 import setup.BaseInitUtil;
 
 import static junit.framework.Assert.fail;

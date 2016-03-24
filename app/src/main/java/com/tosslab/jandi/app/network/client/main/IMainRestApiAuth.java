@@ -8,21 +8,21 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by tee on 15. 6. 20..
  */
 public interface IMainRestApiAuth {
 
-    ResAccountInfo getAccountInfoByMainRest() throws RetrofitError;
+    ResAccountInfo getAccountInfoByMainRest() throws IOException;
 
-    ResAccountInfo updatePrimaryEmailByMainRest(ReqUpdatePrimaryEmailInfo updatePrimaryEmailInfo) throws RetrofitError;
+    ResAccountInfo updatePrimaryEmailByMainRest(ReqUpdatePrimaryEmailInfo updatePrimaryEmailInfo) throws IOException;
 
-    ResLeftSideMenu getInfosForSideMenuByMainRest(long teamId) throws RetrofitError;
+    ResLeftSideMenu getInfosForSideMenuByMainRest(long teamId) throws IOException;
 
-    ResCommon setMarkerByMainRest(long entityId, ReqSetMarker reqSetMarker) throws RetrofitError;
+    ResCommon setMarkerByMainRest(long entityId, ReqSetMarker reqSetMarker) throws IOException;
 
-    ResSearchFile searchFileByMainRest(ReqSearchFile reqSearchFile) throws RetrofitError;
+    ResSearchFile searchFileByMainRest(ReqSearchFile reqSearchFile) throws IOException;
 
 }

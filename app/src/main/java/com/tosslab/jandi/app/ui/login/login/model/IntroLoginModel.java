@@ -20,7 +20,7 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 4..
@@ -28,7 +28,7 @@ import retrofit.RetrofitError;
 @EBean
 public class IntroLoginModel {
 
-    public ResAccessToken login(String myEmailId, String password) throws RetrofitError {
+    public ResAccessToken login(String myEmailId, String password) throws IOException {
         // 팀이 아무것도 없는 사용자일 경우의 에러 메시지
 //        final int errStringResNotRegisteredId = R.string.err_login_unregistered_id;
 

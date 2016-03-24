@@ -24,7 +24,7 @@ import org.androidannotations.annotations.EBean;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 @EBean
 public class TextSharePresenterImpl implements TextSharePresenter {

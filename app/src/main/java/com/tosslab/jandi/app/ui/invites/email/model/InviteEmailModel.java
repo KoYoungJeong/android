@@ -18,7 +18,7 @@ import org.androidannotations.annotations.RootContext;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 import rx.Observable;
 
 /**
@@ -34,7 +34,7 @@ public class InviteEmailModel {
         return !FormatConverter.isInvalidEmailString(text);
     }
 
-    public List<ResInvitationMembers> inviteMembers(List<String> invites) throws RetrofitError {
+    public List<ResInvitationMembers> inviteMembers(List<String> invites) throws IOException {
 
         long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
 

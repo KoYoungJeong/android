@@ -19,7 +19,7 @@ import org.robolectric.RuntimeEnvironment;
 
 import java.sql.Timestamp;
 
-import retrofit.RetrofitError;
+
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.core.Is.is;

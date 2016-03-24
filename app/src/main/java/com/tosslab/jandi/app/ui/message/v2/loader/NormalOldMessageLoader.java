@@ -15,7 +15,7 @@ import org.androidannotations.annotations.UiThread;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 17..

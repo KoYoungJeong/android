@@ -17,7 +17,6 @@ import org.junit.runner.RunWith;
 
 import java.util.Date;
 
-import retrofit.RetrofitError;
 import rx.Observable;
 import rx.observers.TestSubscriber;
 import setup.BaseInitUtil;

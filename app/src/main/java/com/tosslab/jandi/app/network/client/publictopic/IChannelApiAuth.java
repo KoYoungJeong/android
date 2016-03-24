@@ -8,25 +8,25 @@ import com.tosslab.jandi.app.network.models.ReqModifyTopicDescription;
 import com.tosslab.jandi.app.network.models.ReqModifyTopicName;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by tee on 15. 6. 23..
  */
 public interface IChannelApiAuth {
 
-    ResCommon createChannelByChannelApi(ReqCreateTopic channel) throws RetrofitError;
+    ResCommon createChannelByChannelApi(ReqCreateTopic channel) throws IOException;
 
-    ResCommon modifyPublicTopicNameByChannelApi(ReqModifyTopicName channel, long channelId) throws RetrofitError;
-    ResCommon modifyPublicTopicDescriptionByChannelApi(ReqModifyTopicDescription description, long channelId) throws RetrofitError;
+    ResCommon modifyPublicTopicNameByChannelApi(ReqModifyTopicName channel, long channelId) throws IOException;
+    ResCommon modifyPublicTopicDescriptionByChannelApi(ReqModifyTopicDescription description, long channelId) throws IOException;
     ResCommon modifyPublicTopicAutoJoinByChannelApi(ReqModifyTopicAutoJoin topicAutoJoin, long channelId);
 
-    ResCommon deleteTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError;
+    ResCommon deleteTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic) throws IOException;
 
-    ResCommon joinTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError;
+    ResCommon joinTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic) throws IOException;
 
-    ResCommon leaveTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError;
+    ResCommon leaveTopicByChannelApi(long channelId, ReqDeleteTopic reqDeleteTopic) throws IOException;
 
-    ResCommon invitePublicTopicByChannelApi(long channelId, ReqInviteTopicUsers reqInviteTopicUsers) throws RetrofitError;
+    ResCommon invitePublicTopicByChannelApi(long channelId, ReqInviteTopicUsers reqInviteTopicUsers) throws IOException;
 
 }

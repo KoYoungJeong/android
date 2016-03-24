@@ -26,7 +26,7 @@ import org.androidannotations.annotations.RootContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 import rx.Observable;
 
 /**

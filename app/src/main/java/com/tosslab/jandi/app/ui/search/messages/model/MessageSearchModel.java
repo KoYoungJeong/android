@@ -25,7 +25,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 10..
@@ -36,7 +36,7 @@ public class MessageSearchModel {
     @RootContext
     Context context;
 
-    public ResMessageSearch requestSearchQuery(long teamId, String query, int page, int perPage, long entityId, long writerId) throws RetrofitError {
+    public ResMessageSearch requestSearchQuery(long teamId, String query, int page, int perPage, long entityId, long writerId) throws IOException {
         ReqMessageSearchQeury reqMessageSearchQeury = new ReqMessageSearchQeury(teamId, query, page, perPage);
         reqMessageSearchQeury.entityId(entityId).writerId(writerId);
         return MessageSearchManager.newInstance(reqMessageSearchQeury).request();

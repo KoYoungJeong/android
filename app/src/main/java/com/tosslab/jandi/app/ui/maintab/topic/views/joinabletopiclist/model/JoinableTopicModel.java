@@ -12,7 +12,7 @@ import org.androidannotations.annotations.EBean;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 import rx.Observable;
 
 /**
@@ -44,7 +44,7 @@ public class JoinableTopicModel {
         });
     }
 
-    public void joinPublicTopic(long id) throws RetrofitError {
+    public void joinPublicTopic(long id) throws IOException {
         entityClientManager.joinChannel(id);
     }
 

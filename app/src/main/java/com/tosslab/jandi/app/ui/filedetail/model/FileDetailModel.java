@@ -51,7 +51,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import retrofit.RetrofitError;
+
 import rx.Observable;
 
 @EBean
@@ -71,27 +71,27 @@ public class FileDetailModel {
         return NetworkCheckUtil.isConnected();
     }
 
-    public void deleteFile(long fileId) throws RetrofitError {
+    public void deleteFile(long fileId) throws IOException {
         entityClientManager.deleteFile(fileId);
     }
 
-    public ResFileDetail getFileDetailFromServer(long fileId) throws RetrofitError {
+    public ResFileDetail getFileDetailFromServer(long fileId) throws IOException {
         return entityClientManager.getFileDetail(fileId);
     }
 
-    public void shareMessage(long fileId, long entityIdToBeShared) throws RetrofitError {
+    public void shareMessage(long fileId, long entityIdToBeShared) throws IOException {
         entityClientManager.shareMessage(fileId, entityIdToBeShared);
     }
 
-    public void unshareMessage(long fileId, long entityIdToBeUnshared) throws RetrofitError {
+    public void unshareMessage(long fileId, long entityIdToBeUnshared) throws IOException {
         entityClientManager.unshareMessage(fileId, entityIdToBeUnshared);
     }
 
-    public void sendMessageComment(long fileId, String message, List<MentionObject> mentions) throws RetrofitError {
+    public void sendMessageComment(long fileId, String message, List<MentionObject> mentions) throws IOException {
         entityClientManager.sendMessageComment(fileId, message, mentions);
     }
 
-    public ResLeftSideMenu.User getUserProfile(long userEntityId) throws RetrofitError {
+    public ResLeftSideMenu.User getUserProfile(long userEntityId) throws IOException {
         return entityClientManager.getUserProfile(userEntityId);
     }
 
@@ -105,11 +105,11 @@ public class FileDetailModel {
         return me != null && me.getId() == writerId;
     }
 
-    public void deleteComment(long messageId, long feedbackId) throws RetrofitError {
+    public void deleteComment(long messageId, long feedbackId) throws IOException {
         entityClientManager.deleteMessageComment(messageId, feedbackId);
     }
 
-    public void deleteStickerComment(long messageId, int messageType) throws RetrofitError {
+    public void deleteStickerComment(long messageId, int messageType) throws IOException {
         messageManipulator.deleteSticker(messageId, messageType);
     }
 
@@ -182,7 +182,7 @@ public class FileDetailModel {
         return formattedEntities;
     }
 
-    public ResCommon joinEntity(FormattedEntity entity) throws RetrofitError {
+    public ResCommon joinEntity(FormattedEntity entity) throws IOException {
 
         return entityClientManager.joinChannel(entity.getChannel().id);
 
@@ -207,7 +207,7 @@ public class FileDetailModel {
         }
     }
 
-    public void sendMessageCommentWithSticker(long fileId, long stickerGroupId, String stickerId, String comment, List<MentionObject> mentions) throws RetrofitError {
+    public void sendMessageCommentWithSticker(long fileId, long stickerGroupId, String stickerId, String comment, List<MentionObject> mentions) throws IOException {
         try {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
             ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerGroupId, stickerId, teamId, fileId, "", comment, mentions);
@@ -297,7 +297,7 @@ public class FileDetailModel {
 
     }
 
-    public void registStarredMessage(long teamId, long messageId) throws RetrofitError {
+    public void registStarredMessage(long teamId, long messageId) throws IOException {
         try {
             RequestApiManager.getInstance()
                     .registStarredMessageByTeamApi(teamId, messageId);
@@ -307,7 +307,7 @@ public class FileDetailModel {
         }
     }
 
-    public void unregistStarredMessage(long teamId, long messageId) throws RetrofitError {
+    public void unregistStarredMessage(long teamId, long messageId) throws IOException {
         try {
             RequestApiManager.getInstance()
                     .unregistStarredMessageByTeamApi(teamId, messageId);

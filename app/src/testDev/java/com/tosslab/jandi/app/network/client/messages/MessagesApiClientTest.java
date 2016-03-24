@@ -17,7 +17,7 @@ import org.robolectric.BaseInitUtil;
 import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
-import retrofit.RetrofitError;
+
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.core.Is.is;

@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.profile;
 
-import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.apiexecutor.Executor;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
@@ -13,12 +13,12 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
  */
 public interface IProfileApiLoader {
 
-    IExecutor<ResLeftSideMenu.User> loadUpdateMemberProfileByProfileApi(long memberId, ReqUpdateProfile reqUpdateProfile);
+    Executor<ResLeftSideMenu.User> loadUpdateMemberProfileByProfileApi(long memberId, ReqUpdateProfile reqUpdateProfile);
 
-    IExecutor<ResCommon> loadUpdateMemberNameByProfileApi(long memberId, ReqProfileName reqProfileName);
+    Executor<ResCommon> loadUpdateMemberNameByProfileApi(long memberId, ReqProfileName reqProfileName);
 
-    IExecutor<ResLeftSideMenu.User> loadUpdateMemberEmailByProfileApi(long memberId, ReqAccountEmail reqAccountEmail);
+    Executor<ResLeftSideMenu.User> loadUpdateMemberEmailByProfileApi(long memberId, ReqAccountEmail reqAccountEmail);
 
-    IExecutor<ResAvatarsInfo> loadGetAvartarsInfo();
+    Executor<ResAvatarsInfo> loadGetAvartarsInfo();
 
 }

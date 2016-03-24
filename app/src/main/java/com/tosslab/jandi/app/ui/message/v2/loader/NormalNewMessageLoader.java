@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import retrofit.RetrofitError;
 import rx.Observable;
 import rx.functions.Func0;
 

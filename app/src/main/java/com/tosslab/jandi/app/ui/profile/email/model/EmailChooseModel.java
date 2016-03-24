@@ -23,7 +23,7 @@ import org.androidannotations.annotations.RootContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 12..
@@ -60,7 +60,7 @@ public class EmailChooseModel {
         return accountEmails;
     }
 
-    public ResAccountInfo requestNewEmail(String email) throws RetrofitError {
+    public ResAccountInfo requestNewEmail(String email) throws IOException {
         ReqAccountEmail reqAccountEmail = new ReqAccountEmail(email, LanguageUtil.getLanguage(context.getApplicationContext()));
         return RequestApiManager.getInstance().requestAddEmailByAccountEmailApi(reqAccountEmail);
     }
@@ -91,17 +91,17 @@ public class EmailChooseModel {
 
     }
 
-    public ResAccountInfo requestDeleteEmail(String email) throws RetrofitError {
+    public ResAccountInfo requestDeleteEmail(String email) throws IOException {
         ReqAccountEmail reqAccountEmail = new ReqAccountEmail(email, LanguageUtil.getLanguage(context.getApplicationContext()));
         return RequestApiManager.getInstance().deleteEmailByAccountEmailApi(reqAccountEmail);
     }
 
-    public ResAccountInfo getAccountEmailsFromServer() throws RetrofitError {
+    public ResAccountInfo getAccountEmailsFromServer() throws IOException {
         return RequestApiManager.getInstance().getAccountInfoByMainRest();
 
     }
 
-    public ResAccountInfo updatePrimaryEmail(String selectedEmail) throws RetrofitError {
+    public ResAccountInfo updatePrimaryEmail(String selectedEmail) throws IOException {
         return RequestApiManager.getInstance().updatePrimaryEmailByMainRest(new ReqUpdatePrimaryEmailInfo(selectedEmail));
     }
 

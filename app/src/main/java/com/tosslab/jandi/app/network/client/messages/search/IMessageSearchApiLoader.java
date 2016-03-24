@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.messages.search;
 
-import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.apiexecutor.Executor;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 
 /**
@@ -8,12 +8,12 @@ import com.tosslab.jandi.app.network.models.ResMessageSearch;
  */
 public interface IMessageSearchApiLoader {
 
-    IExecutor<ResMessageSearch> loadSearchMessagesByMessageSearchApi(long teamId, String query, int page, int perPage, long writerId, long entityId);
+    Executor<ResMessageSearch> loadSearchMessagesByMessageSearchApi(long teamId, String query, int page, int perPage, long writerId, long entityId);
 
-    IExecutor<ResMessageSearch> loadSearchMessagesByEntityIdByMessageSearchApi(long teamId, String query, int page, int perPage, long entityId);
+    Executor<ResMessageSearch> loadSearchMessagesByEntityIdByMessageSearchApi(long teamId, String query, int page, int perPage, long entityId);
 
-    IExecutor<ResMessageSearch> loadSearchMessagesByWriterIdByMessageSearchApi(long teamId, String query, int page, int perPage, long writerId);
+    Executor<ResMessageSearch> loadSearchMessagesByWriterIdByMessageSearchApi(long teamId, String query, int page, int perPage, long writerId);
 
-    IExecutor<ResMessageSearch> loadSearchMessagesByMessageSearchApi(long teamId, String query, int page, int perPage);
+    Executor<ResMessageSearch> loadSearchMessagesByMessageSearchApi(long teamId, String query, int page, int perPage);
 
 }

@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
+
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -408,7 +408,7 @@ public class MessageListV2Presenter {
 
     @NonNull
     private ResMessages loadMoreOldMessagesFromServer(ResMessages resOldMessage, int offset)
-            throws RetrofitError {
+            throws IOException {
         try {
             // 캐시된 데이터가 부족한 경우
             ResMessages.Link firstLink =
@@ -428,7 +428,7 @@ public class MessageListV2Presenter {
     @Nullable
     private ResMessages loadOldMessagesFromServer(long teamId, long linkId,
                                                   boolean isFirst, int offset)
-            throws RetrofitError {
+            throws IOException {
         ResMessages resOldMessage = null;
         // 캐시가 없는 경우
         if (!isFirst) {

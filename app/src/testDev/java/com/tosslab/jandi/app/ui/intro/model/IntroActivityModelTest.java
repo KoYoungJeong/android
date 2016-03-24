@@ -18,7 +18,7 @@ import org.robolectric.shadows.httpclient.FakeHttp;
 
 import java.util.concurrent.Callable;
 
-import retrofit.RetrofitError;
+
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;

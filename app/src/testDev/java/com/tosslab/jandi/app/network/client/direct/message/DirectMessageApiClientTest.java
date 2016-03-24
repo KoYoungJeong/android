@@ -20,7 +20,7 @@ import org.robolectric.shadows.httpclient.FakeHttp;
 import java.sql.Timestamp;
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.is;

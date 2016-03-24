@@ -24,7 +24,7 @@ import org.androidannotations.annotations.UiThread;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 import rx.Observable;
 
 /**
@@ -89,7 +89,7 @@ public class InvitationDialogExecutor {
         dismissProgressWheel();
     }
 
-    private ResTeamDetailInfo.InviteTeam getTeamInfo(long teamId) throws RetrofitError {
+    private ResTeamDetailInfo.InviteTeam getTeamInfo(long teamId) throws IOException {
         ResTeamDetailInfo.InviteTeam resTeamDetailInfo = RequestApiManager.getInstance().getTeamInfoByTeamApi(teamId);
         return resTeamDetailInfo;
     }

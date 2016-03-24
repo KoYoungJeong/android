@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 
 import java.util.Date;
 
-import retrofit.RetrofitError;
+
 import setup.BaseInitUtil;
 
 import static junit.framework.Assert.fail;

@@ -10,7 +10,7 @@ import org.robolectric.BaseInitUtil;
 import org.robolectric.JandiRobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
-import retrofit.RetrofitError;
+
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;

@@ -25,7 +25,7 @@ import org.androidannotations.annotations.EBean;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 import rx.Observable;
 
 @EBean

@@ -21,7 +21,7 @@ import org.androidannotations.annotations.EBean;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by tee on 15. 7. 30..

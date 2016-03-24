@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.settings;
 
-import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.apiexecutor.Executor;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
@@ -9,8 +9,8 @@ import com.tosslab.jandi.app.network.models.ResCommon;
  */
 public interface IStarredEntityApiLoader {
 
-    IExecutor<ResCommon> loadEnableFavoriteByStarredEntityApi(ReqTeam reqTeam, long entityId);
+    Executor<ResCommon> loadEnableFavoriteByStarredEntityApi(ReqTeam reqTeam, long entityId);
 
-    IExecutor<ResCommon> loadDisableFavoriteByStarredEntityApi(long teamId, long entityId);
+    Executor<ResCommon> loadDisableFavoriteByStarredEntityApi(long teamId, long entityId);
 
 }

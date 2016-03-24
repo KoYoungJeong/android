@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPresenter;
 
-import retrofit.RetrofitError;
+
 
 public class MarkerNewMessageLoader implements NewsMessageLoader {
 

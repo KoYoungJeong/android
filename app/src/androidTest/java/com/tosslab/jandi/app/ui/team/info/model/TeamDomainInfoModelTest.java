@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.UUID;
 
 import retrofit.RestAdapter;
-import retrofit.http.Body;
-import retrofit.http.Headers;
-import retrofit.http.Path;
+import retrofit2.http.Body;
+import retrofit2.http.Headers;
+import retrofit2.http.Path;
 import setup.BaseInitUtil;
 
 import static org.hamcrest.Matchers.lessThanOrEqualTo;

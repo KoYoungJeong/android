@@ -25,7 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import retrofit.RetrofitError;
+
 import rx.Observable;
 
 /**
@@ -46,7 +46,7 @@ public class ShareSelectModel {
     private ResLeftSideMenu.Team currentTeam;
     private ResLeftSideMenu.User mMe;
 
-    public ResLeftSideMenu getLeftSideMenu(long teamId) throws RetrofitError {
+    public ResLeftSideMenu getLeftSideMenu(long teamId) throws IOException {
         return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
     }
 
@@ -114,7 +114,7 @@ public class ShareSelectModel {
     }
 
     // 폴더 정보 가져오기
-    public List<ResFolder> getTopicFolders(long teamId) throws RetrofitError {
+    public List<ResFolder> getTopicFolders(long teamId) throws IOException {
         try {
             return RequestApiManager.getInstance().getFoldersByTeamApi(teamId);
         } catch (RetrofitError e) {
@@ -124,7 +124,7 @@ public class ShareSelectModel {
     }
 
     // 폴더 속 토픽 아이디 가져오기
-    public List<ResFolderItem> getTopicFolderItems(long teamId) throws RetrofitError {
+    public List<ResFolderItem> getTopicFolderItems(long teamId) throws IOException {
         try {
             return RequestApiManager.getInstance().getFolderItemsByTeamApi(teamId);
         } catch (RetrofitError e) {
@@ -313,7 +313,7 @@ public class ShareSelectModel {
         return ret;
     }
 
-    public List<Team> getTeamInfos() throws RetrofitError {
+    public List<Team> getTeamInfos() throws IOException {
 
         ArrayList<Team> teams = new ArrayList<>();
 

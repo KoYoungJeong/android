@@ -13,13 +13,13 @@ import com.tosslab.jandi.lib.sprinkler.io.model.Track;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import retrofit.RetrofitError;
 
 /**
  * Created by tonyjs on 15. 7. 23..
@@ -133,15 +133,15 @@ final class Flusher {
         try {
             requestManager.request(new RequestManager.Request<ResponseBody>() {
                 @Override
-                public ResponseBody performRequest() throws RetrofitError {
+                public ResponseBody performRequest() throws IOException {
                     RequestClient client = requestManager.getClient(RequestClient.class);
-                    return client.ping();
+                    return client.ping().execute().body();
                 }
             });
             Logger.d(TAG, "ping success");
             Logger.i(TAG, "ping end");
             return true;
-        } catch (RetrofitError retrofitError) {
+        } catch (IOException retrofitError) {
             Logger.print(retrofitError);
             Logger.d(TAG, "ping fail");
             Logger.i(TAG, "ping end");
@@ -150,7 +150,7 @@ final class Flusher {
     }
 
     public ResponseBody flush(boolean retry, int num, String deviceId, long lastDate, List<Track> data)
-            throws RetrofitError {
+            throws IOException {
         RequestManager.Request<ResponseBody> request = getRequest(num, deviceId, lastDate, data);
         if (retry) {
             return requestManager.requestWithRetry(request);
@@ -163,10 +163,10 @@ final class Flusher {
 
         return new RequestManager.Request<ResponseBody>() {
             @Override
-            public ResponseBody performRequest() throws RetrofitError {
+            public ResponseBody performRequest() throws IOException {
                 RequestBody body = new RequestBody(num, deviceId, lastDate, data);
                 RequestClient client = requestManager.getClient(RequestClient.class);
-                ResponseBody response = client.post(body);
+                ResponseBody response = client.post(body).execute().body();
                 return response;
             }
         };

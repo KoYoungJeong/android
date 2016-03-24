@@ -27,7 +27,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by tee on 15. 9. 8..

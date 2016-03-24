@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.publictopic.messages;
 
-import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.apiexecutor.Executor;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -12,22 +12,22 @@ import com.tosslab.jandi.app.network.models.ResUpdateMessages;
  */
 public interface IChannelMessageApiLoader {
 
-    IExecutor<ResMessages> loadGetPublicTopicMessagesByChannelMessageApi(long teamId, long channelId, long fromId, int count);
+    Executor<ResMessages> loadGetPublicTopicMessagesByChannelMessageApi(long teamId, long channelId, long fromId, int count);
 
-    IExecutor<ResMessages> loadGetPublicTopicMessagesByChannelMessageApi(int teamId, int channelId);
+    Executor<ResMessages> loadGetPublicTopicMessagesByChannelMessageApi(int teamId, int channelId);
 
-    IExecutor<ResUpdateMessages> loadGetPublicTopicUpdatedMessagesByChannelMessageApi(int teamId, int channelId, int currentLinkId);
+    Executor<ResUpdateMessages> loadGetPublicTopicUpdatedMessagesByChannelMessageApi(int teamId, int channelId, int currentLinkId);
 
-    IExecutor<ResMessages> loadGetPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(long teamId, long channelId, long currentLinkId);
+    Executor<ResMessages> loadGetPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(long teamId, long channelId, long currentLinkId);
 
-    IExecutor<ResMessages> loadGetPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(long teamId, long channelId, long currentLinkId, int count);
+    Executor<ResMessages> loadGetPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(long teamId, long channelId, long currentLinkId, int count);
 
-    IExecutor<ResMessages> loadGetPublicTopicMarkerMessagesByChannelMessageApi(long teamId, long channelId, long currentLinkId);
+    Executor<ResMessages> loadGetPublicTopicMarkerMessagesByChannelMessageApi(long teamId, long channelId, long currentLinkId);
 
-    IExecutor<ResCommon> loadSendPublicTopicMessageByChannelMessageApi(long channelId, long teamId, ReqSendMessageV3 reqSendMessageV3);
+    Executor<ResCommon> loadSendPublicTopicMessageByChannelMessageApi(long channelId, long teamId, ReqSendMessageV3 reqSendMessageV3);
 
-    IExecutor<ResCommon> loadModifyPublicTopicMessageByChannelMessageApi(ReqModifyMessage message, int channelId, int messageId);
+    Executor<ResCommon> loadModifyPublicTopicMessageByChannelMessageApi(ReqModifyMessage message, int channelId, int messageId);
 
-    IExecutor<ResCommon> loadDeletePublicTopicMessageByChannelMessageApi(long teamId, long channelId, long messageId);
+    Executor<ResCommon> loadDeletePublicTopicMessageByChannelMessageApi(long teamId, long channelId, long messageId);
 
 }

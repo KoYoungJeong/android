@@ -29,7 +29,7 @@ import org.androidannotations.annotations.EBean;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 3..
@@ -37,7 +37,7 @@ import retrofit.RetrofitError;
 @EBean
 public class AccountHomeModel {
 
-    public ResTeamDetailInfo acceptOrDeclineInvite(String invitationId, String type) throws RetrofitError {
+    public ResTeamDetailInfo acceptOrDeclineInvite(String invitationId, String type) throws IOException {
 
         ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
 
@@ -52,7 +52,7 @@ public class AccountHomeModel {
     }
 
 
-    public List<Team> getTeamInfos() throws RetrofitError {
+    public List<Team> getTeamInfos() throws IOException {
 
         List<Team> teams = new ArrayList<Team>();
 
@@ -103,7 +103,7 @@ public class AccountHomeModel {
 
     }
 
-    public ResAccountInfo updateAccountName(String newName) throws RetrofitError {
+    public ResAccountInfo updateAccountName(String newName) throws IOException {
         return RequestApiManager.getInstance().changeNameByAccountProfileApi(new ReqProfileName(newName));
     }
 
@@ -111,7 +111,7 @@ public class AccountHomeModel {
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
     }
 
-    public ResLeftSideMenu getEntityInfo(long teamId) throws RetrofitError {
+    public ResLeftSideMenu getEntityInfo(long teamId) throws IOException {
         return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
     }
 

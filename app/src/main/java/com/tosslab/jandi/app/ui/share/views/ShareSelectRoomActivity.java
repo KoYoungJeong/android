@@ -39,7 +39,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
+
 
 @EActivity(R.layout.layout_room_selector)
 public class ShareSelectRoomActivity extends BaseAppCompatActivity implements ShareRoomsAdapter.OnItemClickListener {

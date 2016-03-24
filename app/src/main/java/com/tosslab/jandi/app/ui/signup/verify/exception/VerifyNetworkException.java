@@ -5,7 +5,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by tonyjs on 15. 6. 1..

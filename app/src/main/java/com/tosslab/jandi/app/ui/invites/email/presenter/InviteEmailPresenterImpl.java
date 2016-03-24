@@ -17,7 +17,7 @@ import org.androidannotations.annotations.RootContext;
 import java.util.Arrays;
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 

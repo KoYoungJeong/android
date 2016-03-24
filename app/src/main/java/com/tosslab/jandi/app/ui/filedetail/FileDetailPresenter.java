@@ -37,7 +37,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
+
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 

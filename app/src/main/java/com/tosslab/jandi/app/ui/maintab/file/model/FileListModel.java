@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 @EBean
 public class FileListModel {
@@ -37,7 +37,7 @@ public class FileListModel {
     @RootContext
     Context context;
 
-    public ResSearchFile searchFileList(ReqSearchFile reqSearchFile) throws RetrofitError {
+    public ResSearchFile searchFileList(ReqSearchFile reqSearchFile) throws IOException {
         ResSearchFile resSearchFile = RequestApiManager.getInstance().searchFileByMainRest(reqSearchFile);
         return resSearchFile;
     }

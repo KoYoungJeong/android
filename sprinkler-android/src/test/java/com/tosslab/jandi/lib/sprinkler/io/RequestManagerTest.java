@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import retrofit.RetrofitError;
+
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -35,7 +35,7 @@ public class RequestManagerTest {
     public void testRequestPost() throws Exception {
         RequestManager.Request<ResponseBody> request = new RequestManager.Request<ResponseBody>() {
             @Override
-            public ResponseBody performRequest() throws RetrofitError {
+            public ResponseBody performRequest() throws IOException {
                 RequestClient client = requestManager.getClient(RequestClient.class);
                 return client.post(new RequestBody(0, null, 0, null));
             }
@@ -52,7 +52,7 @@ public class RequestManagerTest {
     public void testPing() throws Exception {
         RequestManager.Request<ResponseBody> request = new RequestManager.Request<ResponseBody>() {
             @Override
-            public ResponseBody performRequest() throws RetrofitError {
+            public ResponseBody performRequest() throws IOException {
                 RequestClient client = requestManager.getClient(RequestClient.class);
                 return client.ping();
             }

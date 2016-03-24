@@ -12,7 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import retrofit.RetrofitError;
+
 
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;

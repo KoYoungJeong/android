@@ -6,34 +6,34 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by tee on 15. 6. 23..
  */
 public interface IGroupMessageApiAuth {
 
-    ResMessages getGroupMessagesByGroupMessageApi(long teamId, long groupId, long fromId, int count) throws RetrofitError;
+    ResMessages getGroupMessagesByGroupMessageApi(long teamId, long groupId, long fromId, int count) throws IOException;
 
-    ResMessages getGroupMessagesByGroupMessageApi(int teamId, int groupId) throws RetrofitError;
+    ResMessages getGroupMessagesByGroupMessageApi(int teamId, int groupId) throws IOException;
 
-    ResUpdateMessages getGroupMessagesUpdatedByGroupMessageApi(int teamId, int groupId, int lastLinkId) throws RetrofitError;
+    ResUpdateMessages getGroupMessagesUpdatedByGroupMessageApi(int teamId, int groupId, int lastLinkId) throws IOException;
 
     ResMessages getGroupMessagesUpdatedForMarkerByGroupMessageApi(long teamId, long groupId, long
-            currentLinkId) throws RetrofitError;
+            currentLinkId) throws IOException;
 
     ResMessages getGroupMessagesUpdatedForMarkerByGroupMessageApi(long teamId,
                                                                   long groupId,
                                                                   long currentLinkId,
-                                                                  int count) throws RetrofitError;
+                                                                  int count) throws IOException;
 
-    ResMessages getGroupMarkerMessagesByGroupMessageApi(long teamId, long groupId, long currentLinkId) throws RetrofitError;
+    ResMessages getGroupMarkerMessagesByGroupMessageApi(long teamId, long groupId, long currentLinkId) throws IOException;
 
-    ResCommon sendGroupMessageByGroupMessageApi(long privateGroupId, long teamId, ReqSendMessageV3 reqSendMessageV3) throws RetrofitError;
+    ResCommon sendGroupMessageByGroupMessageApi(long privateGroupId, long teamId, ReqSendMessageV3 reqSendMessageV3) throws IOException;
 
     ResCommon modifyPrivateGroupMessageByGroupMessageApi(ReqModifyMessage message,
-                                                         int groupId, int messageId) throws RetrofitError;
+                                                         int groupId, int messageId) throws IOException;
 
-    ResCommon deletePrivateGroupMessageByGroupMessageApi(long teamId, long groupId, long messageId) throws RetrofitError;
+    ResCommon deletePrivateGroupMessageByGroupMessageApi(long teamId, long groupId, long messageId) throws IOException;
 
 }

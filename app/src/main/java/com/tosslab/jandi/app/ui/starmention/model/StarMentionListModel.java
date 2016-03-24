@@ -15,7 +15,7 @@ import org.androidannotations.annotations.EBean;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by tee on 15. 7. 30..
@@ -31,7 +31,7 @@ public class StarMentionListModel {
     protected boolean hasMore = false;
     protected boolean isEmpty = false;
 
-    public List<StarMentionVO> getStarMentionedMessages(String categoryType, int count) throws RetrofitError {
+    public List<StarMentionVO> getStarMentionedMessages(String categoryType, int count) throws IOException {
         int requestCount = Math.max(count, DEFAULT_COUNT);
 
         ResStarMentioned resStarMentioned = getRawDatas(categoryType, requestCount);
@@ -47,7 +47,7 @@ public class StarMentionListModel {
         return starMentionList;
     }
 
-    public void unregistStarredMessage(long teamId, long messageId) throws RetrofitError {
+    public void unregistStarredMessage(long teamId, long messageId) throws IOException {
         try {
             RequestApiManager.getInstance().unregistStarredMessageByTeamApi(teamId, messageId);
         } catch (RetrofitError e) {
@@ -55,13 +55,13 @@ public class StarMentionListModel {
         }
     }
 
-    protected ResStarMentioned getMentionRawDatas(long messageId, int count) throws RetrofitError {
+    protected ResStarMentioned getMentionRawDatas(long messageId, int count) throws IOException {
         long teamId = getTeamId();
         return RequestApiManager.getInstance().getMentionedMessagesByTeamApi(teamId, messageId, count);
     }
 
     protected ResStarMentioned getStarredRawDatas(String categoryType, long starredId,
-                                                  int count) throws RetrofitError {
+                                                  int count) throws IOException {
         long teamId = getTeamId();
         if (categoryType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
             return RequestApiManager.getInstance().getStarredMessagesByTeamApi(
@@ -174,7 +174,7 @@ public class StarMentionListModel {
         return messageId;
     }
 
-    public void refreshList() throws RetrofitError {
+    public void refreshList() throws IOException {
         isFirstDatas = true;
         lastId = 0;
         hasMore = false;

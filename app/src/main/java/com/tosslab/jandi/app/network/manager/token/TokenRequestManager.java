@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.network.manager.token;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedSimpleRestApiClient;
@@ -14,7 +13,6 @@ import java.util.Date;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import retrofit.RetrofitError;
 
 public class TokenRequestManager {
     public static final String TAG = TokenRequestManager.class.getSimpleName();
@@ -73,14 +71,8 @@ public class TokenRequestManager {
                 latestTokenInfo = new LatestTokenInfo(accessToken, new Date());
 
                 break;
-            } catch (RetrofitError e) {
-                if (e.getKind() == RetrofitError.Kind.NETWORK) {
-                    Log.e(TAG, "RefreshToken has failed by NETWORK. retry");
-                    loginRetryCount++;
-                } else {
-                    Log.e(TAG, "RefreshToken has failed by HTTP. end the request");
-                    break;
-                }
+            } catch (Exception e) {
+                loginRetryCount++;
             }
         }
 
@@ -88,7 +80,7 @@ public class TokenRequestManager {
         return accessToken;
     }
 
-    private ResAccessToken requestRefreshTokenAndSave(ReqAccessToken reqAccessToken) throws RetrofitError {
+    private ResAccessToken requestRefreshTokenAndSave(ReqAccessToken reqAccessToken) throws Exception {
         JacksonConvertedSimpleRestApiClient requestApiClient = new JacksonConvertedSimpleRestApiClient();
         ResAccessToken accessToken = requestApiClient.getAccessTokenByMainRest(reqAccessToken);
         TokenUtil.saveTokenInfoByRefresh(accessToken);

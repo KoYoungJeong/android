@@ -27,7 +27,7 @@ import org.androidannotations.annotations.UiThread;
 import org.json.JSONException;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 10..

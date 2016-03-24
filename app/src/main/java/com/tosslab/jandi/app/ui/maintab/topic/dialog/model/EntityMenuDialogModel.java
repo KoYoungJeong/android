@@ -25,7 +25,7 @@ import org.androidannotations.annotations.RootContext;
 import org.json.JSONException;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 7..
@@ -43,15 +43,15 @@ public class EntityMenuDialogModel {
         return EntityManager.getInstance().getEntityById(entityId);
     }
 
-    public void requestStarred(long entityId) throws RetrofitError {
+    public void requestStarred(long entityId) throws IOException {
         entityClientManager.enableFavorite(entityId);
     }
 
-    public void requestUnstarred(long entityId) throws RetrofitError {
+    public void requestUnstarred(long entityId) throws IOException {
         entityClientManager.disableFavorite(entityId);
     }
 
-    public void requestLeaveEntity(long entityId, boolean publicTopic) throws RetrofitError {
+    public void requestLeaveEntity(long entityId, boolean publicTopic) throws IOException {
         if (publicTopic) {
             entityClientManager.leaveChannel(entityId);
         } else {
@@ -59,7 +59,7 @@ public class EntityMenuDialogModel {
         }
     }
 
-    public void refreshEntities() throws RetrofitError {
+    public void refreshEntities() throws IOException {
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
@@ -69,7 +69,7 @@ public class EntityMenuDialogModel {
         EntityManager.getInstance().refreshEntity();
     }
 
-    public ResCommon requestDeleteChat(long memberId, long entityId) throws RetrofitError {
+    public ResCommon requestDeleteChat(long memberId, long entityId) throws IOException {
         return RequestApiManager.getInstance().deleteChatByChatApi(memberId, entityId);
     }
 
@@ -100,7 +100,7 @@ public class EntityMenuDialogModel {
 
     }
 
-    public void updatePushStatus(long teamId, long entityId, boolean pushOn) throws RetrofitError {
+    public void updatePushStatus(long teamId, long entityId, boolean pushOn) throws IOException {
         ReqUpdateTopicPushSubscribe req = new ReqUpdateTopicPushSubscribe(pushOn);
         RequestApiManager.getInstance().updateTopicPushSubscribe(teamId, entityId, req);
     }

@@ -6,31 +6,31 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by tee on 15. 6. 23..
  */
 public interface IDirectMessageApiAuth {
 
-    ResMessages getDirectMessagesByDirectMessageApi(long teamId, long userId, long fromId, int count) throws RetrofitError;
+    ResMessages getDirectMessagesByDirectMessageApi(long teamId, long userId, long fromId, int count) throws IOException;
 
-    ResMessages getDirectMessagesByDirectMessageApi(int teamId, int userId) throws RetrofitError;
+    ResMessages getDirectMessagesByDirectMessageApi(int teamId, int userId) throws IOException;
 
-    ResUpdateMessages getDirectMessagesUpdatedByDirectMessageApi(int teamId, int userId, int timeAfter) throws RetrofitError;
+    ResUpdateMessages getDirectMessagesUpdatedByDirectMessageApi(int teamId, int userId, int timeAfter) throws IOException;
 
-    ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(long teamId, long userId, long currentLinkId) throws RetrofitError;
+    ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(long teamId, long userId, long currentLinkId) throws IOException;
 
-    ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(long teamId, long userId, long currentLinkId, int count) throws RetrofitError;
+    ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(long teamId, long userId, long currentLinkId, int count) throws IOException;
 
-    ResMessages getDirectMarkerMessagesByDirectMessageApi(long teamId, long userId, long currentLinkId) throws RetrofitError;
+    ResMessages getDirectMarkerMessagesByDirectMessageApi(long teamId, long userId, long currentLinkId) throws IOException;
 
     ResCommon sendDirectMessageByDirectMessageApi(long userId, long teamId,
-                                                  ReqSendMessageV3 reqSendMessageV3) throws RetrofitError;
+                                                  ReqSendMessageV3 reqSendMessageV3) throws IOException;
 
     ResCommon modifyDirectMessageByDirectMessageApi(ReqModifyMessage message,
-                                                    int userId, int messageId) throws RetrofitError;
+                                                    int userId, int messageId) throws IOException;
 
-    ResCommon deleteDirectMessageByDirectMessageApi(long teamId, long userId, long messageId) throws RetrofitError;
+    ResCommon deleteDirectMessageByDirectMessageApi(long teamId, long userId, long messageId) throws IOException;
 
 }

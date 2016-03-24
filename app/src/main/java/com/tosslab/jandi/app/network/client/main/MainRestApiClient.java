@@ -18,13 +18,13 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 
-import retrofit.http.Body;
-import retrofit.http.GET;
-import retrofit.http.Headers;
-import retrofit.http.POST;
-import retrofit.http.PUT;
-import retrofit.http.Path;
-import retrofit.http.Query;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by tee on 15. 6. 16..
@@ -77,15 +77,5 @@ public interface MainRestApiClient {
     @POST("/entities/{entityId}/marker")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon setMarker(@Path("entityId") long entityId, @Body ReqSetMarker reqSetMarker);
-
-    /**
-     * *********************************************************
-     * Search
-     * **********************************************************
-     */
-    // File search
-    @POST("/search")
-    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResSearchFile searchFile(@Body ReqSearchFile reqSearchFile);
 
 }

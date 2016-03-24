@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.privatetopic;
 
-import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.apiexecutor.Executor;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ReqModifyTopicDescription;
@@ -13,15 +13,15 @@ import com.tosslab.jandi.app.network.models.ResCommon;
  */
 public interface IGroupApiLoader {
 
-    IExecutor<ResCommon> loadCreatePrivateGroupByGroupApi(ReqCreateTopic group);
+    Executor<ResCommon> loadCreatePrivateGroupByGroupApi(ReqCreateTopic group);
 
-    IExecutor<ResCommon> loadModifyGroupByGroupApi(ReqModifyTopicName channel, long groupId);
+    Executor<ResCommon> loadModifyGroupByGroupApi(ReqModifyTopicName channel, long groupId);
 
-    IExecutor<ResCommon> loadModifyGroupDescriptionByGroupApi(ReqModifyTopicDescription entityInfo, long entityId);
+    Executor<ResCommon> loadModifyGroupDescriptionByGroupApi(ReqModifyTopicDescription entityInfo, long entityId);
 
-    IExecutor<ResCommon> loadDeleteGroupByGroupApi(long teamId, long groupId);
+    Executor<ResCommon> loadDeleteGroupByGroupApi(long teamId, long groupId);
 
-    IExecutor<ResCommon> loadLeaveGroupByGroupApi(long groupId, ReqTeam team);
+    Executor<ResCommon> loadLeaveGroupByGroupApi(long groupId, ReqTeam team);
 
-    IExecutor<ResCommon> loadInviteGroupByGroupApi(long groupId, ReqInviteTopicUsers inviteUsers);
+    Executor<ResCommon> loadInviteGroupByGroupApi(long groupId, ReqInviteTopicUsers inviteUsers);
 }

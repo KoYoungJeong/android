@@ -16,7 +16,7 @@ import org.androidannotations.api.BackgroundExecutor;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 10..
@@ -194,7 +194,7 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
         view.startMessageListActivity(currentTeamId, entityId, entityType, roomId,isStarred, linkId);
     }
 
-    private ResMessageSearch searchMessage(ReqMessageSearchQeury searchQeuryInfo) throws RetrofitError {
+    private ResMessageSearch searchMessage(ReqMessageSearchQeury searchQeuryInfo) throws IOException {
 
         return messageSearchModel.requestSearchQuery(searchQeuryInfo.getTeamId(), searchQeuryInfo.getQuery(), searchQeuryInfo.getPage(), ITEM_PER_PAGE, searchQeuryInfo.getEntityId(), searchQeuryInfo.getWriterId());
     }

@@ -19,7 +19,7 @@ import org.androidannotations.annotations.EBean;
 
 import java.io.File;
 
-import retrofit.RetrofitError;
+
 
 @EBean
 public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {

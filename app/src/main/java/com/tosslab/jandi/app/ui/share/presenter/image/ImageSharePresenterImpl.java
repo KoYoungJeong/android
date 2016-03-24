@@ -33,7 +33,7 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import retrofit.RetrofitError;
+
 
 @EBean
 public class ImageSharePresenterImpl implements ImageSharePresenter {

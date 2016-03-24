@@ -34,7 +34,6 @@ import org.androidannotations.annotations.EBean;
 
 import java.util.Collection;
 
-import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -65,7 +64,7 @@ public class IntroActivityModel {
         return TextUtils.isEmpty(accessToken.getRefreshToken());
     }
 
-    public void refreshAccountInfo() throws RetrofitError {
+    public void refreshAccountInfo() throws IOException {
 
         ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
@@ -130,7 +129,7 @@ public class IntroActivityModel {
         }
     }
 
-    public ResConfig getConfigInfo() throws RetrofitError {
+    public ResConfig getConfigInfo() throws IOException {
         return RequestApiManager.getInstance().getConfigByMainRest();
     }
 
