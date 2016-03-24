@@ -39,6 +39,11 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
     @ViewById(R.id.v_setting_privacy_divider_for_passcode_modify)
     View vModifyPassCodeDivider;
 
+    @ViewById(R.id.vg_setting_privacy_fingerprint)
+    ViewGroup vgUseFingerPrint;
+    @ViewById(R.id.switch_setting_privacy_fingerprint)
+    SwitchCompat switchFingerPrint;
+
     @ViewById(R.id.tv_setting_privacy_passcode_detail)
     TextView tvPassCodeDetail;
 
@@ -99,6 +104,16 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
         tvPassCodeDetail.setVisibility(hasPassCode ? View.GONE : View.VISIBLE);
         vgModifyPassCode.setVisibility(hasPassCode ? View.VISIBLE : View.GONE);
         vModifyPassCodeDivider.setVisibility(hasPassCode ? View.VISIBLE : View.GONE);
+
+        vgUseFingerPrint.setVisibility(hasPassCode ? View.VISIBLE : View.GONE);
+        switchFingerPrint.setChecked(JandiPreference.isUseFingerprint(getApplicationContext()));
+    }
+
+    @Click(R.id.vg_setting_privacy_fingerprint)
+    void setUseFingerprint() {
+        boolean checked = switchFingerPrint.isChecked();
+        switchFingerPrint.setChecked(!checked);
+        JandiPreference.setUseFingerprint(getApplicationContext(), !checked);
     }
 
     @Click(R.id.vg_setting_privacy_passcode_modify)

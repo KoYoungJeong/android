@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.Vibrator;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.passcode.adapter.PassCodeAdapter;
+import com.tosslab.jandi.app.ui.passcode.fingerprint.FingerprintDialogFragment;
 import com.tosslab.jandi.app.ui.passcode.presenter.PassCodePresenter;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -160,6 +162,10 @@ public class PassCodeActivity extends BaseAppCompatActivity implements PassCodeP
         if (!isPassCodeSettingMode) {
             AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.InputPasscode);
         }
+
+        if (mode == MODE_TO_UNLOCK) {
+            presenter.onDetermineUseFingerprint();
+        }
     }
 
     @Override
@@ -228,5 +234,11 @@ public class PassCodeActivity extends BaseAppCompatActivity implements PassCodeP
         }
 
         finish();
+    }
+
+    @Override
+    public void showUnLockFromFingerprintDialog() {
+        DialogFragment dialogFragment = new FingerprintDialogFragment();
+        dialogFragment.show(getSupportFragmentManager(), "finger_print_dialog");
     }
 }
