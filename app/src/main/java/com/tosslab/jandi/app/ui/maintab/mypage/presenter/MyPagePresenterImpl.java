@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.mypage.presenter;
 
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -13,12 +14,16 @@ import com.tosslab.jandi.app.ui.maintab.mypage.view.MyPageView;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.subjects.PublishSubject;
 
 /**
  * Created by tonyjs on 16. 3. 17..
@@ -30,17 +35,33 @@ public class MyPagePresenterImpl implements MyPagePresenter {
     private final MyPageModel model;
     private final MyPageView view;
 
+    private Subscription mentionInitializeQueueSubscription;
+    private PublishSubject<Object> mentionInitializeQueue;
+
     @Inject
     public MyPagePresenterImpl(MyPageModel model, MyPageView view) {
         this.model = model;
         this.view = view;
+
+        initializeMentionInitializeQueue();
     }
 
     @Override
-    public void onInitialize() {
-        view.clearMentions();
+    public void initializeMentionInitializeQueue() {
+        mentionInitializeQueue = PublishSubject.create();
+        mentionInitializeQueueSubscription =
+                mentionInitializeQueue.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
+                        .onBackpressureBuffer()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(o -> onInitializeMyPage());
+    }
 
-        view.setMe(model.getMe());
+    @Override
+    public void onInitializeMyPage() {
+
+        view.showProfileLayout();
+
+        view.clearMentions();
 
         view.showProgress();
 
@@ -63,6 +84,11 @@ public class MyPagePresenterImpl implements MyPagePresenter {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
                     view.hideProgress();
                 });
+    }
+
+    @Override
+    public void onRetrieveMyInfo() {
+        view.setMe(model.getMe());
     }
 
     @Override
@@ -138,6 +164,22 @@ public class MyPagePresenterImpl implements MyPagePresenter {
             view.moveToMessageListActivity(teamId, entityId, entityType, roomId, linkId);
         } else {
             view.showUnknownEntityToast();
+        }
+    }
+
+    @Override
+    public void onNewMentionComing(long teamId, @Nullable Date latestCreatedAt) {
+        if (teamId != EntityManager.getInstance().getTeamId()) {
+            return;
+        }
+
+        mentionInitializeQueue.onNext(new Object());
+    }
+
+    @Override
+    public void clearMentionInitializeQueue() {
+        if (mentionInitializeQueueSubscription != null && !mentionInitializeQueueSubscription.isUnsubscribed()) {
+            mentionInitializeQueueSubscription.unsubscribe();
         }
     }
 }

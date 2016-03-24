@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -110,7 +109,7 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
 
         initKeyboardActions();
 
-        presenter.onInitialize();
+        presenter.onInitializeTeam();
     }
 
     private void initTeamMemberListView() {
@@ -150,29 +149,45 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
         inputMethodManager = JandiApplication.getService(Context.INPUT_METHOD_SERVICE);
 
         vgKeyboardVisibleChangeDetectView.setOnKeyboardVisibleChangeListener((isShow, height) -> {
-            int teamInfoHeight = vgTeamInfo.getMeasuredHeight();
-            int searchBarHeight = vgTeamMemberSearch.getMeasuredHeight();
 
             if (!isShow) {
-                vgTeamInfo.setTranslationY(0);
-                vgTeamMemberSearch.setTranslationY(0);
 
-                lvTeam.setPadding(0, teamInfoHeight + searchBarHeight, 0, 0);
-                lvTeam.invalidate();
+                changeToNormalMode();
 
-                uiMode = UiMode.NORMAL;
-
-                lvTeam.smoothScrollBy(0, -teamInfoHeight);
             } else {
-                vgTeamInfo.setTranslationY(-teamInfoHeight);
-                vgTeamMemberSearch.setTranslationY(-teamInfoHeight);
 
-                lvTeam.setPadding(0, searchBarHeight, 0, 0);
-                lvTeam.invalidate();
+                changeToSearchMode();
 
-                uiMode = UiMode.SEARCH;
             }
         });
+    }
+
+    private void changeToNormalMode() {
+        int teamInfoHeight = vgTeamInfo.getMeasuredHeight();
+        int searchBarHeight = vgTeamMemberSearch.getMeasuredHeight();
+
+        vgTeamInfo.setTranslationY(0);
+        vgTeamMemberSearch.setTranslationY(0);
+
+        lvTeam.setPadding(0, teamInfoHeight + searchBarHeight, 0, 0);
+        lvTeam.invalidate();
+
+        uiMode = UiMode.NORMAL;
+
+        lvTeam.smoothScrollBy(0, -teamInfoHeight);
+    }
+
+    private void changeToSearchMode() {
+        int teamInfoHeight = vgTeamInfo.getMeasuredHeight();
+        int searchBarHeight = vgTeamMemberSearch.getMeasuredHeight();
+
+        vgTeamInfo.setTranslationY(-teamInfoHeight);
+        vgTeamMemberSearch.setTranslationY(-teamInfoHeight);
+
+        lvTeam.setPadding(0, searchBarHeight, 0, 0);
+        lvTeam.invalidate();
+
+        uiMode = UiMode.SEARCH;
     }
 
     @OnFocusChange(R.id.et_team_member_search)
@@ -217,7 +232,7 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
     }
 
     public void onEvent(TeamLeaveEvent event) {
-        presenter.onInitialize();
+        presenter.reInitializeTeam();
     }
 
     public void onEvent(ProfileChangeEvent profileChangeEvent) {
@@ -272,18 +287,19 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
     }
 
     @Override
-    public void setSearchedMembers(List<FormattedEntity> searchedMembers) {
+    public void setSearchedMembers(String query, List<FormattedEntity> searchedMembers) {
         adapter.clear();
 
         boolean isEmpty = searchedMembers == null || searchedMembers.isEmpty();
-
-        int memberCount = isEmpty ? 0 : searchedMembers.size();
-        adapter.setRow(0, new MultiItemRecyclerAdapter.Row<>(
-                memberCount, TeamMemberListAdapter.VIEW_TYPE_MEMBER_COUNT));
-
         if (isEmpty) {
+            adapter.setRow(0, new MultiItemRecyclerAdapter.Row<>(
+                    query, TeamMemberListAdapter.VIEW_TYPE_EMPTY_QUERY));
             adapter.notifyDataSetChanged();
             return;
+        } else {
+            int memberCount = searchedMembers.size();
+            adapter.setRow(0, new MultiItemRecyclerAdapter.Row<>(
+                    memberCount, TeamMemberListAdapter.VIEW_TYPE_MEMBER_COUNT));
         }
 
         Observable.from(searchedMembers)
@@ -296,7 +312,14 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
     }
 
     @Override
-    public void modifyUser(FormattedEntity entity) {
+    public void showTeamLayout() {
+        vgTeamInfo.post(this::changeToNormalMode);
+    }
+
+    @Override
+    public void clearMembers() {
+        adapter.clear();
+        adapter.notifyDataSetChanged();
     }
 
     @Override

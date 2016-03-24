@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
-import com.tosslab.jandi.app.ui.maintab.team.vo.Team;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -17,12 +16,12 @@ import butterknife.ButterKnife;
  */
 public class MemberCountViewHolder extends BaseViewHolder<Integer> {
 
-    @Bind(R.id.tv_team_member_count)
-    TextView tvMemberCount;
+    @Bind(R.id.tv_team_member_header_message)
+    TextView tvMessage;
 
     public static MemberCountViewHolder newInstance(ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View itemView = inflater.inflate(R.layout.item_team_member_count, parent, false);
+        View itemView = inflater.inflate(R.layout.item_team_member_header, parent, false);
         return new MemberCountViewHolder(itemView);
     }
 
@@ -35,6 +34,6 @@ public class MemberCountViewHolder extends BaseViewHolder<Integer> {
     public void onBindView(Integer count) {
         String memberCount = itemView.getResources()
                 .getString(R.string.jandi_team_member_count_with_format, count);
-        tvMemberCount.setText(memberCount);
+        tvMessage.setText(memberCount);
     }
 }

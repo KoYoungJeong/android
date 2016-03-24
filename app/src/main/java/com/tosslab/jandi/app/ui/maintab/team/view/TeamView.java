@@ -15,7 +15,9 @@ public interface TeamView {
 
     void initTeamInfo(Team team);
 
-    void setSearchedMembers(List<FormattedEntity> searchedMembers);
+    void setSearchedMembers(String query, List<FormattedEntity> searchedMembers);
 
-    void modifyUser(FormattedEntity entity);
+    void showTeamLayout();
+
+    void clearMembers();
 }

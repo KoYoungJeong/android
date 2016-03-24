@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
+import com.tosslab.jandi.app.ui.maintab.team.adapter.viewholder.EmptySearchedMemberViewHolder;
 import com.tosslab.jandi.app.ui.maintab.team.adapter.viewholder.MemberViewHolder;
 import com.tosslab.jandi.app.ui.maintab.team.adapter.viewholder.MemberCountViewHolder;
 
@@ -15,6 +16,7 @@ public class TeamMemberListAdapter extends MultiItemRecyclerAdapter {
 
     public static final int VIEW_TYPE_MEMBER_COUNT = 0;
     public static final int VIEW_TYPE_MEMBER = 1;
+    public static final int VIEW_TYPE_EMPTY_QUERY = 2;
 
     private OnMemberClickListener onMemberClickListener;
 
@@ -25,6 +27,8 @@ public class TeamMemberListAdapter extends MultiItemRecyclerAdapter {
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
+            case VIEW_TYPE_EMPTY_QUERY:
+                return EmptySearchedMemberViewHolder.newInstance(parent);
             case VIEW_TYPE_MEMBER_COUNT:
                 return MemberCountViewHolder.newInstance(parent);
             default:
