@@ -84,12 +84,6 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
     }
 
     @Override
-    public void onInitImageSingleFile(
-            String imageExt, String imageOriginUrl, String imageThumbUrl, String imageType) {
-
-    }
-
-    @Override
     public void onInitImageSingleFile(String imageExt, String imageOriginUrl, String imageThumbUrl, String imageType, String imageName, long imageSize) {
         List<CarouselFileInfo> imageFiles = new ArrayList<>();
         CarouselFileInfo.Builder builder = new CarouselFileInfo.Builder();
