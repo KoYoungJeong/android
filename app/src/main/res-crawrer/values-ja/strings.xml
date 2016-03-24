@@ -242,11 +242,13 @@
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_guide_to_assign_topic_owner">"トピックメニューから次の管理者を指定してからトピックから退出させられます。"</string>
 	<string name="jandi_has_joined">"%sさんが参加しました"</string>
+	<string name="jandi_has_no_searched_member">"<![CDATA[<b><font color=#404040>%s</font></b>]]>に一致する結果がありません"</string>
 	<string name="jandi_have_an_account_already">"すでにJANDIに登録済みの方はこちら"</string>
 	<string name="jandi_help">"ヘルプ"</string>
 	<string name="jandi_hi_apk_store">"Hi Apkストア"</string>
 	<string name="jandi_image_too_big">"画像が大きすぎです"</string>
 	<string name="jandi_incorrect_passcode">"パスコードが間違っています。"</string>
+	<string name="jandi_info">"NEW KEY"</string>
 	<string name="jandi_input_password">"選択したチームのパスワードを入力してください"</string>
 	<string name="jandi_input_search_keyword">"キーワードで検索"</string>
 	<string name="jandi_input_topic_name">"トピック名を入力してください"</string>
@@ -263,11 +265,13 @@
 	<string name="jandi_invite_line">"LINE"</string>
 	<string name="jandi_invite_many_people_explain">"100人以上のメンバーを追加したいですか？サポートにご連絡はこちらまで support@tosslab.com"</string>
 	<string name="jandi_invite_member">"メンバーを招待する"</string>
-	<string name="jandi_invite_member_to_topic">"このトピックに招待"</string>
+	<string name="jandi_invite_member_to_topic">"トピックにメンバー招待"</string>
 	<string name="jandi_invite_succes_copy_link">"あなたのチームへの招待リンクがコピーされました。チームに招待したい人に送りましょう"</string>
 	<string name="jandi_invite_succes_send">"招待メールが以下のアドレスに正常に送信されました"</string>
 	<string name="jandi_invite_success">"招待メールが送信されました"</string>
-	<string name="jandi_invite_to_dummy_account_again">"NEW KEY"</string>
+	<string name="jandi_invite_to_dummy_account_again">"入力しましたメールアドレスはすでに他のメンバーが招待中です。
+招待メールを再送信しますか？"</string>
+	<string name="jandi_invite_to_team">"NEW KEY"</string>
 	<string name="jandi_invite_wechat">"WeChat"</string>
 	<string name="jandi_invited_topic">"%1$sが %2$sさんを招待しました"</string>
 	<string name="jandi_is_newcomer">"初めてJANDIを使いますか？"</string>
@@ -294,6 +298,8 @@
 	<string name="jandi_mention_no_mentions">"チームメンバーからメンションされたけんがありません。
 メンションするには、メッセージやコメントを入力する時「@」を入力してください"</string>
 	<string name="jandi_mention_push_message">"%sさんからのメンション"</string>
+	<string name="jandi_mentions_are_empty">"チームメンバーからメンションされたけんがありません。
+メンションするには、メッセージやコメントを入力する時「@」を入力してください"</string>
 	<string name="jandi_message_ask_about_delete_comment">"本当に削除しますか？元には戻せません"</string>
 	<string name="jandi_message_ask_about_deleting">"本当に削除しますか？元には戻せません"</string>
 	<string name="jandi_message_create_entity">"%1$s が作成されました"</string>
@@ -320,6 +326,7 @@
 	<string name="jandi_msg_network_offline">"インターネット接続が切断されました。"</string>
 	<string name="jandi_msg_network_offline_warn">"現在ネットワークに接続されていません。"</string>
 	<string name="jandi_my_files">"<b>自分</b>"</string>
+	<string name="jandi_mypage">"マイページ"</string>
 	<string name="jandi_name_in_jandi">"アカウント名"</string>
 	<string name="jandi_need_to_assign_topic_owner">"あなたはこのトピックの管理者です。
 トピックメニューからトピックの管理者を変更してから退出できます。"</string>
@@ -409,6 +416,8 @@
 	<string name="jandi_service_maintenance">"JANDIは現在定期メンテナンス中のためご利用できません。定期メンテナンスは数時間で終了の予定です。ご不便をお掛けし申し訳ありません。"</string>
 	<string name="jandi_set_passcode">"パスコードロック設定"</string>
 	<string name="jandi_set_passcode_detail">"パスコードを忘れた場合はJANDIアプリを削除して再インストールしてください。"</string>
+	<string name="jandi_setting_account">"NEW KEY"</string>
+	<string name="jandi_setting_account_email_info">"JANDIからのメールを受信するメールアドレスを一つ選択してください。メールアドレスを追加しチームごとに使い分けられます"</string>
 	<string name="jandi_setting_display">"画面表示"</string>
 	<string name="jandi_setting_folder">"フォルダ管理"</string>
 	<string name="jandi_setting_general">"一般"</string>
@@ -464,7 +473,7 @@
 	<string name="jandi_starred_star">"スター付き"</string>
 	<string name="jandi_starred_stars">"スター付き"</string>
 	<string name="jandi_starred_undo">"取り消し"</string>
-	<string name="jandi_starred_unstar">"お気に入りから削除する"</string>
+	<string name="jandi_starred_unstar">"お気に入りから削除"</string>
 	<string name="jandi_starred_unstar_from_item">"スター付きを解除しましょうか？"</string>
 	<string name="jandi_starred_unstarred">"スターなし"</string>
 	<string name="jandi_start_direct_messages_1">"<b>メッセージ送ったり、これまでの会話履歴を見るには</b>"</string>
@@ -483,11 +492,14 @@
 	<string name="jandi_tab_private_group">"プライベートグループ"</string>
 	<string name="jandi_tab_to_view_original">"原本を見るにはこちらをタップ"</string>
 	<string name="jandi_tab_topic">"トピックス"</string>
+	<string name="jandi_team">"チーム"</string>
 	<string name="jandi_team_creation_succeed">"チームの作成に成功しました。メールを確認してください"</string>
 	<string name="jandi_team_info">"チーム"</string>
 	<string name="jandi_team_join_fail">"チーム参加の際にエラーが発生しました。もう一度お試しください"</string>
 	<string name="jandi_team_member">"チームメンバー"</string>
+	<string name="jandi_team_member_count_with_format">"メンバー(%d)"</string>
 	<string name="jandi_team_owner">"チームの管理者"</string>
+	<string name="jandi_team_owner_with_format">"チームの管理者:%s"</string>
 	<string name="jandi_team_select_accept">"接受"</string>
 	<string name="jandi_team_select_create_a_team">"チームを作成する"</string>
 	<string name="jandi_team_select_ignore">"無視"</string>
