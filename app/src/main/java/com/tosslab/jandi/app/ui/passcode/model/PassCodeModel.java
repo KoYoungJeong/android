@@ -86,7 +86,7 @@ public class PassCodeModel {
     }
 
     public boolean isUserWantsFingerPrintToAuth() {
-        return JandiPreference.isUseFingerprint(JandiApplication.getContext());
+        return JandiPreference.isUseFingerprint();
     }
 
     public boolean canUseFingerprintToAuth() {

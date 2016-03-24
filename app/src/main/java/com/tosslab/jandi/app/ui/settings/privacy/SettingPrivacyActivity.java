@@ -106,14 +106,14 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
         vModifyPassCodeDivider.setVisibility(hasPassCode ? View.VISIBLE : View.GONE);
 
         vgUseFingerPrint.setVisibility(hasPassCode ? View.VISIBLE : View.GONE);
-        switchFingerPrint.setChecked(JandiPreference.isUseFingerprint(getApplicationContext()));
+        switchFingerPrint.setChecked(JandiPreference.isUseFingerprint());
     }
 
     @Click(R.id.vg_setting_privacy_fingerprint)
     void setUseFingerprint() {
         boolean checked = switchFingerPrint.isChecked();
         switchFingerPrint.setChecked(!checked);
-        JandiPreference.setUseFingerprint(getApplicationContext(), !checked);
+        JandiPreference.setUseFingerprint(!checked);
     }
 
     @Click(R.id.vg_setting_privacy_passcode_modify)

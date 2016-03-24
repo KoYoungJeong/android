@@ -276,11 +276,11 @@ public class JandiPreference {
         pref.edit().remove(PREF_PASSCODE).commit();
     }
 
-    public static boolean isUseFingerprint(Context context) {
-        return getSharedPreferences().getBoolean(PREF_PASSCODE, true);
+    public static boolean isUseFingerprint() {
+        return getSharedPreferences().getBoolean(PREF_USE_FINGERPRRINT, true);
     }
 
-    public static void setUseFingerprint(Context context, boolean useFingerprint) {
+    public static void setUseFingerprint(boolean useFingerprint) {
         SharedPreferences pref = getSharedPreferences();
         pref.edit().putBoolean(PREF_USE_FINGERPRRINT, useFingerprint).commit();
     }
