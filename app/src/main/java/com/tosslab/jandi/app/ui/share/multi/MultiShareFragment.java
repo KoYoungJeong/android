@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,14 +17,13 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
-import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.services.upload.UploadNotificationActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
-import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.share.MainShareActivity;
 import com.tosslab.jandi.app.ui.share.multi.adapter.ShareFragmentPageAdapter;
+import com.tosslab.jandi.app.ui.share.multi.adapter.ShareListDataView;
 import com.tosslab.jandi.app.ui.share.multi.dagger.DaggerMultiShareComponent;
 import com.tosslab.jandi.app.ui.share.multi.dagger.MultiShareModule;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenter;
@@ -78,12 +76,10 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     TextView tvRoomName;
     @Bind(R.id.et_multi_share_comment)
     EditText etComment;
-    private ShareFragmentPageAdapter adapter;
+    @Inject
+    ShareListDataView shareListDataView;
 
     private List<String> uris;
-
-    private int lastPageIndex = 0;
-    List<String> comments;
 
     public static MultiShareFragment create(List<Uri> uris) {
         MultiShareFragment fragment = new MultiShareFragment();
@@ -110,13 +106,14 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         super.onActivityCreated(savedInstanceState);
         EventBus.getDefault().register(this);
 
-        comments = new ArrayList<>();
-        adapter = new ShareFragmentPageAdapter(getFragmentManager());
+        ShareFragmentPageAdapter adapter = new ShareFragmentPageAdapter(getFragmentManager());
 
         DaggerMultiShareComponent.builder()
                 .multiShareModule(new MultiShareModule(this, adapter))
                 .build()
                 .inject(this);
+
+        vpShare.setAdapter(adapter);
 
         uris = initUris(getArguments());
 
@@ -140,15 +137,12 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @OnPageChange(R.id.vp_multi_share)
     void onFilePageSelected(int position) {
-        comments.set(lastPageIndex, etComment.getText().toString());
-        setCommentText(comments.get(position));
-        lastPageIndex = position;
-        multiSharePresenter.onFilePageChanged(position);
+        multiSharePresenter.onFilePageChanged(position, etComment.getText().toString());
 
-        setUpScrollButton(position, adapter.getCount());
     }
 
-    private void setUpScrollButton(int position, int count) {
+    @Override
+    public void setUpScrollButton(int position, int count) {
         if (position == 0) {
             ivPreviousScroll.setVisibility(View.GONE);
         } else {
@@ -165,9 +159,9 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     @OnClick(value = {R.id.iv_multi_share_previous, R.id.iv_multi_share_next})
     void onScrollButtonClick(View view) {
         if (view.getId() == R.id.iv_multi_share_previous) {
-            vpShare.setCurrentItem(vpShare.getCurrentItem() -1);
+            vpShare.setCurrentItem(vpShare.getCurrentItem() - 1);
         } else {
-            vpShare.setCurrentItem(vpShare.getCurrentItem() +1);
+            vpShare.setCurrentItem(vpShare.getCurrentItem() + 1);
 
         }
     }
@@ -196,15 +190,11 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     }
 
     @Override
-    public void updateFiles() {
-        int size = adapter.getCount();
-        for (int idx = 0; idx < size; idx++) {
-            comments.add("");
-        }
+    public void updateFiles(int pageCount) {
 
-        vpShare.setAdapter(adapter);
+        shareListDataView.refresh();
 
-        setUpScrollButton(0, size);
+        setUpScrollButton(0, pageCount);
     }
 
     @Override
@@ -240,7 +230,8 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         mentionControlViewModel.setUpMention(etComment.getText().toString());
     }
 
-    private void setCommentText(String comment) {
+    @Override
+    public void setCommentText(String comment) {
         etComment.setText(comment);
         mentionControlViewModel.setUpMention(comment);
     }
@@ -260,20 +251,8 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @Override
     public void startShare() {
-        comments.set(lastPageIndex, etComment.getText().toString());
-
-        List<Pair<String, List<MentionObject>>> mentionInfos = new ArrayList<>();
-        Observable.from(comments)
-                .map(comment -> {
-                    ResultMentionsVO mentionInfoObject = mentionControlViewModel.getMentionInfoObject(comment);
-                    List<MentionObject> mentions = mentionInfoObject.getMentions();
-                    String message = mentionInfoObject.getMessage();
-                    return new Pair<>(message, mentions);
-                })
-                .collect(() -> mentionInfos, List::add)
-                .subscribe();
-
-        multiSharePresenter.startShare(mentionInfos);
+        multiSharePresenter.updateComment(vpShare.getCurrentItem(), etComment.getText().toString());
+        multiSharePresenter.startShare();
 
     }
 

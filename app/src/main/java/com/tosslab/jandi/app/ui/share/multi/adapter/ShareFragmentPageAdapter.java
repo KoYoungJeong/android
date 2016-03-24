@@ -7,12 +7,12 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import com.tosslab.jandi.app.ui.share.multi.adapter.items.ShareFileItemFragment;
 import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
 import com.tosslab.jandi.app.ui.share.multi.domain.ShareData;
-import com.tosslab.jandi.app.ui.share.multi.model.SharesDataModel;
+import com.tosslab.jandi.app.ui.share.multi.model.ShareListDataModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShareFragmentPageAdapter extends FragmentStatePagerAdapter implements SharesDataModel {
+public class ShareFragmentPageAdapter extends FragmentStatePagerAdapter implements ShareListDataModel, ShareListDataView {
 
     private List<ShareData> shareDatas;
 
@@ -59,5 +59,10 @@ public class ShareFragmentPageAdapter extends FragmentStatePagerAdapter implemen
     @Override
     synchronized public void add(ShareData shareData) {
         shareDatas.add(shareData);
+    }
+
+    @Override
+    public void refresh() {
+        notifyDataSetChanged();
     }
 }

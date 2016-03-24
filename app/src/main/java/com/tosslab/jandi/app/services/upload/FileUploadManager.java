@@ -58,6 +58,7 @@ public class FileUploadManager {
     private int notificationId = 100;
     private NotificationCompat.Builder notificationBuilder;
     private Subscription subscription;
+    private PendingIntent pendingIntent;
 
     private FileUploadManager() {
         Context context = JandiApplication.getContext();
@@ -67,8 +68,8 @@ public class FileUploadManager {
         notificationBuilder
                 .setWhen(System.currentTimeMillis())
                 .setOngoing(true)
-                .setTicker("잔디로 파일 업로드")
-                .setContentTitle("잔디로 파일 업로드")
+                .setTicker(JandiApplication.getContext().getString(R.string.title_file_upload))
+                .setContentTitle(JandiApplication.getContext().getString(R.string.title_file_upload))
                 .setContentText(JandiApplication.getContext().getString(R.string.app_name))
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                 .setSmallIcon(android.R.drawable.stat_sys_upload);
@@ -128,7 +129,7 @@ public class FileUploadManager {
 
                     notificationBuilder.setProgress(100, 0, false)
                             .setAutoCancel(false)
-                            .setContentTitle(String.format("업로드 중 %d/%d", (fileUploadDTOList.indexOf(fileUploadDTO) + 1), fileUploadDTOList.size()))
+                            .setContentTitle(JandiApplication.getContext().getString(R.string.jandi_file_upload_state, (fileUploadDTOList.indexOf(fileUploadDTO) + 1), fileUploadDTOList.size()))
                             .setContentIntent(getPendingActivities(context, fileUploadDTO))
                             .setSmallIcon(android.R.drawable.stat_sys_upload);
                     updateNotificationBuilder();
@@ -155,7 +156,7 @@ public class FileUploadManager {
                                     EventBus.getDefault().post(event);
                                     if (progress[0] != progress[1]) {
                                         progress[0] = progress[1];
-                                        notificationBuilder.setContentTitle(String.format("업로드 중 %d/%d", (fileUploadDTOList.indexOf(fileUploadDTO) + 1), fileUploadDTOList.size()))
+                                        notificationBuilder.setContentTitle(JandiApplication.getContext().getString(R.string.jandi_file_upload_state, (fileUploadDTOList.indexOf(fileUploadDTO) + 1), fileUploadDTOList.size()))
                                                 .setContentText(JandiApplication.getContext().getString(R.string.app_name));
                                         notificationBuilder.setProgress(100, progress[0], false);
                                         showNotification(context);
@@ -195,8 +196,8 @@ public class FileUploadManager {
                     } else {
                         notificationBuilder.mActions.clear();
                         notificationBuilder
-                                .setContentTitle("업로드 완료")
-                                .setContentText("메세지 확인하기")
+                                .setContentTitle(JandiApplication.getContext().getString(R.string.jandi_file_upload_finish))
+                                .setContentText(JandiApplication.getContext().getString(R.string.jandi_file_upload_go_topic))
                                 .setSmallIcon(android.R.drawable.stat_sys_upload_done)
                                 .setAutoCancel(true)
                                 .setOngoing(false);
@@ -210,11 +211,14 @@ public class FileUploadManager {
     }
 
     private PendingIntent getPendingActivities(Context context, FileUploadDTO fileUploadDTO) {
-        return PendingIntent.getActivity(
-                context,
-                1021,
-                UploadNotificationActivity.getIntent(context, fileUploadDTO.getTeamId(), fileUploadDTO.getEntity()),
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        if (pendingIntent == null) {
+            pendingIntent = PendingIntent.getActivity(
+                    context,
+                    1021,
+                    UploadNotificationActivity.getIntent(context, fileUploadDTO.getTeamId(), fileUploadDTO.getEntity()),
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+        return pendingIntent;
     }
 
     private void showNotification(Context context) {

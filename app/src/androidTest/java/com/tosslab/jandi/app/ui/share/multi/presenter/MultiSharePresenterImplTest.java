@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.share.model.ShareModel_;
 import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
-import com.tosslab.jandi.app.ui.share.multi.model.SharesDataModel;
+import com.tosslab.jandi.app.ui.share.multi.model.ShareListDataModel;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
 
 import org.junit.Before;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
 public class MultiSharePresenterImplTest {
 
 
-    private SharesDataModel mockDataModel;
+    private ShareListDataModel mockDataModel;
     private MultiSharePresenter.View mockView;
     private MultiSharePresenter multiSharePresenter;
 
@@ -48,7 +48,7 @@ public class MultiSharePresenterImplTest {
 
         BaseInitUtil.initData();
 
-        mockDataModel = mock(SharesDataModel.class);
+        mockDataModel = mock(ShareListDataModel.class);
         mockView = mock(MultiSharePresenter.View.class);
         multiSharePresenter = new MultiSharePresenterImpl(mockView, mockDataModel);
         ((MultiSharePresenterImpl) multiSharePresenter).shareSelectModel = ShareModel_.getInstance_(JandiApplication.getContext()).getShareSelectModel(EntityManager.getInstance().getTeamId());
@@ -96,11 +96,12 @@ public class MultiSharePresenterImplTest {
 
         multiSharePresenter.initShareData(imagePathList);
         doReturn(new FileShareData(ImageFilePath.getPath(JandiApplication.getContext(), Uri.parse(imagePathList.get(0))))).when(mockDataModel).getShareData(eq(0));
+        doReturn(2).when(mockDataModel).size();
 
         await().timeout(1, TimeUnit.MINUTES).until(() -> finish[0]);
 
         verify(mockView).setFileTitle(anyString());
-        verify(mockView).updateFiles();
+        verify(mockView).updateFiles(eq(2));
         verify(mockDataModel).clear();
         verify(mockDataModel, times(limit)).add(any());
     }
@@ -117,8 +118,9 @@ public class MultiSharePresenterImplTest {
     public void testOnFilePageChanged() throws Exception {
         String filePath = "/hello.txt";
         when(mockDataModel.getShareData(0)).thenReturn(new FileShareData(filePath));
-        multiSharePresenter.onFilePageChanged(0);
+        multiSharePresenter.onFilePageChanged(0, "ads");
         verify(mockView).setFileTitle(eq("hello.txt"));
+        verify(mockView).setCommentText(eq("ads"));
     }
 
     private List<String> getImagePathList(int limit) {

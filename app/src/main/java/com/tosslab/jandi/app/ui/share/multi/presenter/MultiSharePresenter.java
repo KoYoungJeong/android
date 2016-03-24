@@ -1,9 +1,5 @@
 package com.tosslab.jandi.app.ui.share.multi.presenter;
 
-import android.util.Pair;
-
-import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-
 import java.util.List;
 
 public interface MultiSharePresenter {
@@ -18,15 +14,19 @@ public interface MultiSharePresenter {
 
     void onSelectRoom(long roomId);
 
-    void startShare(List<Pair<String, List<MentionObject>>> mentionInfos);
+    void startShare();
 
-    void onFilePageChanged(int position);
+    void onFilePageChanged(int position, String comment);
+
+    void updateComment(int currentItem, String comment);
 
     interface View {
 
+        void setUpScrollButton(int position, int count);
+
         void callRoomSelector(long teamId);
 
-        void updateFiles();
+        void updateFiles(int pageCount);
 
         void moveIntro();
 
@@ -36,6 +36,8 @@ public interface MultiSharePresenter {
 
         void setMentionInfo(long teamId, long roomId);
 
+
+        void setCommentText(String comment);
 
         void setFileTitle(String fileName);
 

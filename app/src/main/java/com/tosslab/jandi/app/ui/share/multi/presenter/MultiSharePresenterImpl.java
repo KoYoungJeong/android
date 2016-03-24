@@ -9,18 +9,21 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
 import com.tosslab.jandi.app.ui.share.model.ShareModel_;
 import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
 import com.tosslab.jandi.app.ui.share.multi.domain.ShareData;
 import com.tosslab.jandi.app.ui.share.multi.domain.ShareTarget;
-import com.tosslab.jandi.app.ui.share.multi.model.SharesDataModel;
+import com.tosslab.jandi.app.ui.share.multi.model.ShareListDataModel;
 import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -32,18 +35,20 @@ import rx.schedulers.Schedulers;
 
 public class MultiSharePresenterImpl implements MultiSharePresenter {
     private final View view;
-    private SharesDataModel sharesDataModel;
     ShareTarget shareTarget;
     ShareSelectModel shareSelectModel;
+    List<String> comments;
+    private ShareListDataModel shareListDataModel;
     private ShareModel shareModel;
-
+    private int lastPageIndex = 0;
 
     @Inject
-    public MultiSharePresenterImpl(View view, SharesDataModel sharesDataModel) {
+    public MultiSharePresenterImpl(View view, ShareListDataModel shareListDataModel) {
         this.view = view;
-        this.sharesDataModel = sharesDataModel;
+        this.shareListDataModel = shareListDataModel;
         shareTarget = new ShareTarget();
         this.shareModel = ShareModel_.getInstance_(JandiApplication.getContext());
+        comments = new ArrayList<>();
 
     }
 
@@ -91,7 +96,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
 
     @Override
     public void initShareData(List<String> uris) {
-        sharesDataModel.clear();
+        shareListDataModel.clear();
         Observable.from(uris)
                 .observeOn(Schedulers.io())
                 .map(uri -> {
@@ -116,12 +121,13 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
 
                 })
                 .observeOn(Schedulers.computation())
+                .doOnNext(shareData -> comments.add(""))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(sharesDataModel::add, t -> view.moveIntro(), () -> {
-                    ShareData item = sharesDataModel.getShareData(0);
+                .subscribe(shareListDataModel::add, t -> view.moveIntro(), () -> {
+                    ShareData item = shareListDataModel.getShareData(0);
                     String fileName = getFileName(item.getData());
                     view.setFileTitle(fileName);
-                    view.updateFiles();
+                    view.updateFiles(shareListDataModel.size());
                 });
 
     }
@@ -139,25 +145,38 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     }
 
     @Override
-    public void startShare(List<Pair<String, List<MentionObject>>> mentionInfos) {
-        int dataSize = sharesDataModel.size();
+    public void startShare() {
 
-        for (int idx = 0; idx < dataSize; idx++) {
-            ShareData item = sharesDataModel.getShareData(idx);
-            Pair<String, List<MentionObject>> stringListPair = mentionInfos.get(idx);
-            FileUploadDTO object = new FileUploadDTO(item.getData(), getFileName(item.getData()), shareTarget.getRoomId(), stringListPair.first);
-            object.setTeamId(shareTarget.getTeamId());
-            object.setMentions(stringListPair.second);
-            FileUploadManager.getInstance().add(object);
-        }
+        Observable.range(0, shareListDataModel.size())
+                .subscribe(idx -> {
+                    ShareData item = shareListDataModel.getShareData(idx);
+                    ResultMentionsVO mentionInfoObject = MentionControlViewModel.getMentionInfoObject(shareTarget.getTeamId(), shareTarget.getRoomId(), comments.get(idx), MentionControlViewModel.MENTION_TYPE_FILE_COMMENT);
+                    List<MentionObject> mentions = mentionInfoObject.getMentions();
+                    String message = mentionInfoObject.getMessage();
+                    Pair<String, List<MentionObject>> stringListPair = new Pair<>(message, mentions);
+                    FileUploadDTO object = new FileUploadDTO(item.getData(), getFileName(item.getData()), shareTarget.getRoomId(), stringListPair.first);
+                    object.setTeamId(shareTarget.getTeamId());
+                    object.setMentions(stringListPair.second);
+                    FileUploadManager.getInstance().add(object);
+                }, t -> {});
 
         view.moveRoom(shareTarget.getTeamId(), shareTarget.getRoomId());
     }
 
     @Override
-    public void onFilePageChanged(int position) {
-        ShareData item = sharesDataModel.getShareData(position);
+    public void onFilePageChanged(int position, String comment) {
+        ShareData item = shareListDataModel.getShareData(position);
         String fileName = getFileName(item.getData());
+        comments.set(lastPageIndex, comment);
+        view.setCommentText(comments.get(position));
         view.setFileTitle(fileName);
+        view.setUpScrollButton(position, shareListDataModel.size());
+        lastPageIndex = position;
+
+    }
+
+    @Override
+    public void updateComment(int currentItem, String comment) {
+        comments.set(lastPageIndex, comment);
     }
 }

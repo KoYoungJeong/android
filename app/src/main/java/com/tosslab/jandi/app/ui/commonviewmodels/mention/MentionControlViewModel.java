@@ -29,6 +29,7 @@ import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel_;
 import com.tosslab.jandi.app.views.spannable.MentionMessageSpannable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -431,7 +432,7 @@ public class MentionControlViewModel {
     }
 
     // 현재까지의 editText에서 멘션 가공된 message와 mention object 리스트를 얻어오는 메서드
-    private ResultMentionsVO getMentionInfoObject(String message,
+    private static ResultMentionsVO getMentionInfoObject(String message,
                                                   LinkedHashMap<Long, SearchedItemVO> selectableMembers) {
 
         if (TextUtils.isEmpty(message)) {
@@ -518,6 +519,18 @@ public class MentionControlViewModel {
     public ResultMentionsVO getMentionInfoObject(String message) {
         return getMentionInfoObject(message,
                 getAllSelectableMembers());
+    }
+
+    public static ResultMentionsVO getMentionInfoObject(long teamId,
+                                                        long roomId,
+                                                        String message,
+                                                        String mentionType) {
+
+        SearchMemberModel model = new SearchMemberModel();
+        model.refreshSelectableMembers(teamId, Arrays.asList(roomId), mentionType);
+
+        return getMentionInfoObject(message,
+                model.getAllSelectableMembers());
     }
 
     public boolean hasMentionMember() {

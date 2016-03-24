@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.ui.share.multi.dagger;
 
-import com.tosslab.jandi.app.ui.share.multi.model.SharesDataModel;
+import com.tosslab.jandi.app.ui.share.multi.adapter.ShareFragmentPageAdapter;
+import com.tosslab.jandi.app.ui.share.multi.adapter.ShareListDataView;
+import com.tosslab.jandi.app.ui.share.multi.model.ShareListDataModel;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenter;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenterImpl;
 
@@ -11,11 +13,11 @@ import dagger.Provides;
 public class MultiShareModule {
 
     private MultiSharePresenter.View view;
-    private SharesDataModel sharesDataModel;
+    private ShareFragmentPageAdapter adapter;
 
-    public MultiShareModule(MultiSharePresenter.View view, SharesDataModel sharesDataModel) {
+    public MultiShareModule(MultiSharePresenter.View view, ShareFragmentPageAdapter adapter) {
         this.view = view;
-        this.sharesDataModel = sharesDataModel;
+        this.adapter = adapter;
     }
 
     @Provides
@@ -29,8 +31,12 @@ public class MultiShareModule {
     }
 
     @Provides
-    SharesDataModel provideSharesDataModel() {
-        return sharesDataModel;
+    ShareListDataModel provideSharesDataModel() {
+        return adapter;
     }
 
+    @Provides
+    ShareListDataView provideSharesDataView() {
+        return adapter;
+    }
 }

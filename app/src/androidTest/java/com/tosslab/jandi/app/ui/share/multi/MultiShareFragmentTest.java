@@ -63,8 +63,8 @@ public class MultiShareFragmentTest {
 
         await().until(() -> fragment.tvTitle.getText().length() > 0);
 
-        fragment.comments.set(0, "hello1");
-        fragment.comments.set(1, "hello2");
+        fragment.multiSharePresenter.onFilePageChanged(1, "hello1");
+        fragment.multiSharePresenter.onFilePageChanged(0, "hello2");
     }
 
     @Test
@@ -111,7 +111,7 @@ public class MultiShareFragmentTest {
 
     @Test
     public void testUpdateFiles() throws Throwable {
-        rule.runOnUiThread(fragment::updateFiles);
+        rule.runOnUiThread(() -> fragment.updateFiles(2));
 
         assertThat(fragment.vpShare.getAdapter(), is(notNullValue()));
     }
