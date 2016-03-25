@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -382,7 +383,10 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         int matchParent = ViewGroup.LayoutParams.MATCH_PARENT;
         int wrapContent = ViewGroup.LayoutParams.WRAP_CONTENT;
         teamsPopupWindow = new PopupWindow(teamView, matchParent, wrapContent);
+        teamsPopupWindow.setTouchable(true);
+        teamsPopupWindow.setFocusable(true);
         teamsPopupWindow.setOutsideTouchable(true);
+        teamsPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 
     @Override
