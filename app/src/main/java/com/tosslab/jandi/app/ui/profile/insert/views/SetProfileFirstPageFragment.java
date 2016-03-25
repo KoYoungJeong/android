@@ -24,7 +24,6 @@ import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
 import com.tosslab.jandi.app.permissions.Permissions;
-import com.tosslab.jandi.app.ui.profile.insert.SetProfileActivity;
 import com.tosslab.jandi.app.ui.profile.insert.presenter.SetProfileFirstPagePresenter;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -76,12 +75,12 @@ public class SetProfileFirstPageFragment extends Fragment
 
     private ProgressWheel progressWheel;
 
-    private SetProfileActivity activity;
+    private FirstFragmentActivityListener firstFragmentActivityListener;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (SetProfileActivity) context;
+        firstFragmentActivityListener = (FirstFragmentActivityListener) context;
     }
 
     @AfterInject
@@ -121,7 +120,7 @@ public class SetProfileFirstPageFragment extends Fragment
 
     @Click(R.id.iv_next_page)
     void onClickNextPage() {
-        activity.goNextPage();
+        firstFragmentActivityListener.goNextPage();
     }
 
     @Override
@@ -339,4 +338,7 @@ public class SetProfileFirstPageFragment extends Fragment
         presenter.updateProfileName(event.inputMessage);
     }
 
+    public interface FirstFragmentActivityListener {
+        void goNextPage();
+    }
 }

@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.insert.adapter.ProfilePagerAdapter;
 import com.tosslab.jandi.app.ui.profile.insert.presenter.SetProfileFirstPagePresenter;
+import com.tosslab.jandi.app.ui.profile.insert.views.SetProfileFirstPageFragment;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -20,7 +21,7 @@ import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_set_new_profile)
 public class SetProfileActivity extends BaseAppCompatActivity
-        implements ViewPager.OnPageChangeListener {
+        implements ViewPager.OnPageChangeListener, SetProfileFirstPageFragment.FirstFragmentActivityListener {
 
     @Bean(SetProfileFirstPagePresenter.class)
     SetProfileFirstPagePresenter setNewProfilePresenter;
@@ -74,6 +75,7 @@ public class SetProfileActivity extends BaseAppCompatActivity
     public void onPageScrollStateChanged(int state) {
     }
 
+    @Override
     public void goNextPage() {
         if (viewPager != null) {
             viewPager.setCurrentItem(1);
