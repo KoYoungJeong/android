@@ -125,6 +125,8 @@ public class MessageListV2Presenter {
             view.showInactivedUserLayer();
         } else if (!messageListModel.isEnabledIfUser(room.getEntityId())) {
             view.showDisabledUserLayer();
+        } else {
+            view.dismissStatusLayout();
         }
     }
 
@@ -1059,6 +1061,7 @@ public class MessageListV2Presenter {
 
         void modifyStarredInfo(long messageId, boolean isStarred);
 
+        void dismissStatusLayout();
     }
 
 }

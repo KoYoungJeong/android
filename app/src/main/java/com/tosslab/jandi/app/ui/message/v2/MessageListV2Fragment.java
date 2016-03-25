@@ -2248,6 +2248,12 @@ public class MessageListV2Fragment extends Fragment implements
         messageAdapter.modifyStarredStateByPosition(position, isStarred);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void dismissStatusLayout() {
+        vgMemberStatusAlert.setVisibility(View.GONE);
+    }
+
     private void showCoachMarkIfNeed() {
         TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(
                 entityType == JandiConstants.TYPE_DIRECT_MESSAGE, getActivity());
