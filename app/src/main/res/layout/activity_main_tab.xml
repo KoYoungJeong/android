@@ -7,8 +7,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/layout_search_bar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentBottom="true">
+        android:layout_height="?attr/actionBarSize">
 
         <com.tosslab.jandi.app.views.FixedLinearLayout
             android:id="@+id/btn_main_tab_show_another_team"
@@ -31,7 +30,6 @@
                 android:layout_height="14dp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="8dp"
-                android:rotation="180"
                 android:visibility="gone">
 
                 <View
@@ -55,18 +53,19 @@
         style="@style/PagerSlidingTabStrip"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:layout_above="@+id/layout_search_bar"/>
+        android:layout_alignParentBottom="true"/>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager_main_tab"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/sliding_tabs"/>
+        android:layout_above="@+id/sliding_tabs"
+        android:layout_below="@id/layout_search_bar"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/sliding_tabs">
+        android:layout_below="@+id/layout_search_bar">
 
         <LinearLayout
             android:id="@+id/vg_main_offline"
@@ -88,6 +87,12 @@
         android:layout_height="4dp"
         android:layout_above="@id/sliding_tabs"
         android:background="@drawable/jandi_gradient_main_tab_border"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_below="@id/layout_search_bar"
+        android:background="@drawable/jandi_gradient_team_member_search_divider"/>
 
     <com.tosslab.jandi.app.views.FloatingActionMenu
         android:id="@+id/vg_fab_menu"
