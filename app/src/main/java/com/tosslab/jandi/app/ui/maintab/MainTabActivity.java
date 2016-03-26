@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -114,6 +115,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @Extra
     int tabIndex = -1;
 
+    @ViewById(R.id.layout_search_bar)
+    Toolbar toolbar;
     @ViewById(R.id.vg_fab_menu)
     FloatingActionMenu floatingActionMenu;
     @Bean
@@ -349,7 +352,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     private void setupActionBar(String teamName) {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
