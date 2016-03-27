@@ -228,6 +228,9 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
 
     @Override
     public void hideProgress() {
+        if(isFinishing()) {
+            return;
+        }
         pbTeam.setVisibility(View.GONE);
     }
 
@@ -236,6 +239,9 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
     }
 
     public void onEvent(ProfileChangeEvent profileChangeEvent) {
+        if(isFinishing()) {
+            return;
+        }
         // adapter index 를 알아내야 돼서...
         long id = profileChangeEvent.getMember().id;
 
@@ -262,6 +268,9 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
 
     @Override
     public void initTeamInfo(Team team) {
+        if(isFinishing()) {
+            return;
+        }
         tvTeamName.setText(team.getName());
         tvTeamDomain.setText(team.getDomain());
         String owner = JandiApplication.getContext()
@@ -288,6 +297,9 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
 
     @Override
     public void setSearchedMembers(String query, List<FormattedEntity> searchedMembers) {
+        if(isFinishing()) {
+            return;
+        }
         adapter.clear();
 
         boolean isEmpty = searchedMembers == null || searchedMembers.isEmpty();
@@ -328,6 +340,10 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
             return;
         }
         inputMethodManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
+    }
+
+    private boolean isFinishing() {
+        return getActivity() == null || getActivity().isFinishing();
     }
 
     enum UiMode {
