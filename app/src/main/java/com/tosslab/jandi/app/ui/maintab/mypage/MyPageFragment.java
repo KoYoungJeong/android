@@ -210,11 +210,18 @@ public class MyPageFragment extends Fragment implements MyPageView {
 
     @Override
     public void hideProgress() {
+        if (isFinishing()) {
+            return;
+        }
         pbMyPage.setVisibility(View.GONE);
     }
 
     @Override
     public void setMe(FormattedEntity me) {
+        if (isFinishing()) {
+            return;
+        }
+
         SpannableStringBuilder ssb = new SpannableStringBuilder(me.getName());
         if (me.isTeamOwner()) {
             int start = ssb.length();
@@ -249,23 +256,36 @@ public class MyPageFragment extends Fragment implements MyPageView {
 
     @Override
     public void showEmptyMentionView() {
+        if (isFinishing()) {
+            return;
+        }
         vEmptyLayout.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void showProfileLayout() {
+        if (isFinishing()) {
+            return;
+        }
         vgProfileLayout.setTranslationY(0);
     }
 
     @Override
     public void clearMentions() {
         adapter.clear();
+
+        if (isFinishing()) {
+            return;
+        }
         adapter.notifyDataSetChanged();
     }
 
     @Override
     public void addMentions(List<MentionMessage> mentions) {
         adapter.addAll(mentions);
+        if (isFinishing()) {
+            return;
+        }
         adapter.notifyDataSetChanged();
     }
 
@@ -279,6 +299,9 @@ public class MyPageFragment extends Fragment implements MyPageView {
 
     @Override
     public void hideMoreProgress() {
+        if (isFinishing()) {
+            return;
+        }
         int bottomMargin =
                 ((ViewGroup.MarginLayoutParams) pbMoreLoading.getLayoutParams()).bottomMargin;
         pbMoreLoading.animate()
@@ -314,6 +337,10 @@ public class MyPageFragment extends Fragment implements MyPageView {
                 .lastReadLinkId(linkId)
                 .start();
 
+    }
+
+    private boolean isFinishing() {
+        return getActivity() == null || getActivity().isFinishing();
     }
 
     private class MentionMessageMoreRequestHandler implements MyPageAdapter.OnLoadMoreCallback {
