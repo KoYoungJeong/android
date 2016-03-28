@@ -360,6 +360,7 @@
 	<string name="jandi_password_strength_weak">"最低1文字の数字または大文字または記号を含めてください"</string>
 	<string name="jandi_phone_led">"携帯の通知ランプ"</string>
 	<string name="jandi_play_store">"Google Playストア"</string>
+	<string name="jandi_please_retry">"正しいパスワードを入力してください"</string>
 	<string name="jandi_plz_input_topic_description">"トピックの説明（選択）"</string>
 	<string name="jandi_preview_message_contents">"メッセージプレビュー"</string>
 	<string name="jandi_privacy_policy">"プライバシーポリシー"</string>
@@ -559,6 +560,7 @@
 	<string name="jandi_upload_menu_file">"ファイル"</string>
 	<string name="jandi_upload_menu_gallay">"写真"</string>
 	<string name="jandi_upload_menu_video">"動画"</string>
+	<string name="jandi_use_fingerprint">"NEW KEY"</string>
 	<string name="jandi_user_default_email">"プライマリメールアドレス"</string>
 	<string name="jandi_user_id">"メールアドレス"</string>
 	<string name="jandi_user_password">"パスワード"</string>

@@ -159,7 +159,7 @@
 	<string name="jandi_confirm_new_passcode">"Confirm new passcode"</string>
 	<string name="jandi_confirm_passcode">"Confirm Passcode"</string>
 	<string name="jandi_copied_to_clipboard">"Copied to clipboard"</string>
-	<string name="jandi_copy_link">"Copy Link"</string>
+	<string name="jandi_copy_link">"Copy link"</string>
 	<string name="jandi_count_with_brace">"(%d)"</string>
 	<string name="jandi_create">"Create"</string>
 	<string name="jandi_create_channel">"Create New Topic"</string>
@@ -251,7 +251,7 @@
 	<string name="jandi_hi_apk_store">"Hi Apk Store"</string>
 	<string name="jandi_image_too_big">"Image is too big to display."</string>
 	<string name="jandi_incorrect_passcode">"Passcode Does Not Match"</string>
-	<string name="jandi_info">"App Information"</string>
+	<string name="jandi_info">"月曜日"</string>
 	<string name="jandi_input_password">"Input your password for selected team"</string>
 	<string name="jandi_input_search_keyword">"Search by keyword(s)"</string>
 	<string name="jandi_input_topic_name">"Enter the topic name"</string>
@@ -359,6 +359,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_password_strength_weak">"Must contain at least one number, capitalized letter, or special character."</string>
 	<string name="jandi_phone_led">"Phone LED"</string>
 	<string name="jandi_play_store">"Google Playstore"</string>
+	<string name="jandi_please_retry">"Please try again."</string>
 	<string name="jandi_plz_input_topic_description">"Description (optional)"</string>
 	<string name="jandi_preview_message_contents">"Preview Message Contents"</string>
 	<string name="jandi_privacy_policy">"Privacy Policy"</string>
@@ -558,6 +559,7 @@ We combined everything you love about messaging apps and cloud storage with powe
 	<string name="jandi_upload_menu_file">"File"</string>
 	<string name="jandi_upload_menu_gallay">"Gallery"</string>
 	<string name="jandi_upload_menu_video">"Video"</string>
+	<string name="jandi_use_fingerprint">"Use fingerprint"</string>
 	<string name="jandi_user_default_email">"Primary Email Address"</string>
 	<string name="jandi_user_id">"Email"</string>
 	<string name="jandi_user_password">"Password"</string>

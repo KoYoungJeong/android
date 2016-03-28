@@ -53,10 +53,10 @@
 
         <LinearLayout
             android:id="@+id/vg_setting_privacy_fingerprint"
-            android:visibility="gone"
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <LinearLayout
                 style="@style/JandiSettingPrivacy.ViewGroup">
@@ -65,7 +65,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Fingerprint"
+                    android:text="@string/jandi_use_fingerprint"
                     android:textColor="@color/jandi_text"
                     android:textSize="@dimen/jandi_text_size_large"/>
 

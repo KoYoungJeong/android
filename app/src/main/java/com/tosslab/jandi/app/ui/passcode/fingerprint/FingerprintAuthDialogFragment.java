@@ -4,8 +4,10 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,7 +25,6 @@ import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.passcode.OnUnLockSuccessListener;
 import com.tosslab.jandi.app.ui.passcode.fingerprint.presneter.FingerprintAuthPresenter;
 import com.tosslab.jandi.app.ui.passcode.fingerprint.view.FingerprintAuthView;
-import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
@@ -33,6 +34,7 @@ import org.androidannotations.annotations.EFragment;
 /**
  * Created by tonyjs on 16. 3. 24..
  */
+@TargetApi(Build.VERSION_CODES.M)
 @EFragment
 public class FingerprintAuthDialogFragment extends DialogFragment implements FingerprintAuthView {
 
@@ -41,11 +43,14 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
     @Bean
     FingerprintAuthPresenter presenter;
 
-    FingerprintManager fingerprintManager;
-    View view;
-    private CancellationSignal cancellationSignal;
+    View rootView;
 
-    @TargetApi(Build.VERSION_CODES.M)
+    FingerprintManager fingerprintManager;
+
+    private CancellationSignal cancellationSignal;
+    private AlertDialog helpDialog;
+    private AlertDialog errorDialog;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,13 +58,26 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
         fingerprintManager = JandiApplication.getService(Context.FINGERPRINT_SERVICE);
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        helpDialog = new AlertDialog.Builder(activity)
+                .setPositiveButton(R.string.jandi_confirm, null)
+                .setCancelable(true)
+                .create();
+
+        errorDialog = new AlertDialog.Builder(activity)
+                .setCancelable(true)
+                .create();
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        view = LayoutInflater.from(getActivity()).inflate(R.layout.layout_fingerprint, null);
+        rootView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_fingerprint, null);
         return new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.jandi_verify_fingerprint)
-                .setView(view)
+                .setView(rootView)
                 .setNegativeButton(R.string.jandi_cancel, null)
                 .create();
     }
@@ -70,7 +88,6 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
         presenter.setView(this);
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onResume() {
         super.onResume();
@@ -87,6 +104,13 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
 
     @Override
     public void onPause() {
+        if (errorDialog != null && errorDialog.isShowing()) {
+            errorDialog.dismiss();
+        }
+        if (helpDialog != null && helpDialog.isShowing()) {
+            helpDialog.dismiss();
+        }
+
         presenter.setCancelled(true);
         cancellationSignal.cancel();
         cancellationSignal = null;
@@ -99,6 +123,7 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
         presenter.onStartListeningFingerprint();
     }
 
+    @SuppressWarnings("ResourceType")
     @Override
     public void startListening(final FingerprintManager.CryptoObject cryptoObject) {
         fingerprintManager.authenticate(cryptoObject, cancellationSignal, 0, presenter, null);
@@ -106,7 +131,7 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
 
     @Override
     public void showFingerprintAuthFailed() {
-        getDialog().setTitle(R.string.jandi_try_again);
+        getDialog().setTitle(R.string.jandi_please_retry);
 
         float startX = -UiUtils.getPixelFromDp(5);
         float endX = UiUtils.getPixelFromDp(5);
@@ -115,13 +140,12 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
         bounceAnim.setDuration(100);
         bounceAnim.setRepeatCount(3);
         bounceAnim.setRepeatMode(ValueAnimator.REVERSE);
-        bounceAnim.addUpdateListener(animation -> {
-            view.setTranslationX((Float) animation.getAnimatedValue());
-        });
+        bounceAnim.addUpdateListener(animation ->
+                rootView.setTranslationX((Float) animation.getAnimatedValue()));
         bounceAnim.addListener(new SimpleEndAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                view.setTranslationX(0);
+                rootView.setTranslationX(0);
             }
         });
         bounceAnim.start();
@@ -136,21 +160,27 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
 
     @Override
     public void showAuthenticationHelpDialog(CharSequence helpString) {
-        AlertUtil.showConfirmDialog(getActivity(), helpString.toString(), null, false);
+        if (helpDialog != null && !helpDialog.isShowing()) {
+            helpDialog.setMessage(helpString);
+            helpDialog.show();
+        }
     }
 
     @Override
     public void showAuthenticationError(final int errorCode, CharSequence errString) {
-        new AlertDialog.Builder(getActivity())
-                .setMessage(errString)
-                .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
-                    if (errorCode == FingerprintManager.FINGERPRINT_ERROR_LOCKOUT) {
-                        FingerprintAuthDialogFragment.this.dismiss();
-                    }
-                })
-                .setOnCancelListener(dialog -> FingerprintAuthDialogFragment.this.dismiss())
-                .create()
-                .show();
+        if (errorDialog != null && !errorDialog.isShowing()) {
+            String confirm = JandiApplication.getContext()
+                    .getResources().getString(R.string.jandi_confirm);
+            errorDialog.setButton(DialogInterface.BUTTON_POSITIVE, confirm,
+                    (dialog, which) -> {
+                        if (errorCode == FingerprintManager.FINGERPRINT_ERROR_LOCKOUT) {
+                            FingerprintAuthDialogFragment.this.dismiss();
+                        }
+                    });
+            errorDialog.setOnCancelListener(dialog -> FingerprintAuthDialogFragment.this.dismiss());
+            errorDialog.setMessage(errString);
+            errorDialog.show();
+        }
     }
 
     @Override
@@ -158,10 +188,11 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
             int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Permissions.getResult()
                 .addRequestCode(REQUEST_USE_FINGERPRINT)
-                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::startFingerprintAuth)
-                .resultPermission(Permissions.createPermissionResult(requestCode,
-                        permissions,
-                        grantResults));
+                .addPermission(Manifest.permission.USE_FINGERPRINT, this::startFingerprintAuth)
+                .resultPermission(
+                        Permissions.createPermissionResult(requestCode,
+                                permissions,
+                                grantResults));
 
     }
 }

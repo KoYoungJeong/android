@@ -13,6 +13,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by tonyjs on 16. 3. 25..
@@ -20,6 +21,7 @@ import rx.android.schedulers.AndroidSchedulers;
 @EBean
 @TargetApi(Build.VERSION_CODES.M)
 public class FingerprintAuthPresenter extends FingerprintManager.AuthenticationCallback {
+    private static final String TAG = FingerprintAuthPresenter.class.getSimpleName();
 
     @Bean
     FingerprintAuthModel model;
@@ -39,10 +41,11 @@ public class FingerprintAuthPresenter extends FingerprintManager.AuthenticationC
         model.getKeyStoreObservable()
                 .concatMap(model::getSecretKeyObservable)
                 .concatMap(model::initCipherObservable)
+                .subscribeOn(Schedulers.trampoline())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(cipher -> {
                     view.startListening(new FingerprintManager.CryptoObject(cipher));
-                }, e -> LogUtil.e("tony", Log.getStackTraceString(e)));
+                }, e -> LogUtil.e(TAG, Log.getStackTraceString(e)));
     }
 
     @Override
@@ -70,6 +73,5 @@ public class FingerprintAuthPresenter extends FingerprintManager.AuthenticationC
         super.onAuthenticationSucceeded(result);
         view.setFingerprintAuthSuccess();
     }
-
 
 }

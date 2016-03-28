@@ -159,7 +159,7 @@
 	<string name="jandi_confirm_new_passcode">"비밀번호를 한번 더 입력해주세요."</string>
 	<string name="jandi_confirm_passcode">"비밀번호 재입력"</string>
 	<string name="jandi_copied_to_clipboard">"클립보드에 복사되었습니다."</string>
-	<string name="jandi_copy_link">"주소 복사하기"</string>
+	<string name="jandi_copy_link">"링크 복사"</string>
 	<string name="jandi_count_with_brace">"(%d)"</string>
 	<string name="jandi_create">"생성하기"</string>
 	<string name="jandi_create_channel">"토픽 생성"</string>
@@ -361,6 +361,7 @@
 	<string name="jandi_password_strength_weak">"숫자, 특수문자, 또는 영어 대문자 중 최소한 1자 이상이 포함되어야 합니다"</string>
 	<string name="jandi_phone_led">"휴대전화 LED"</string>
 	<string name="jandi_play_store">"구글 플레이 스토어"</string>
+	<string name="jandi_please_retry">"다시 시도해주세요."</string>
 	<string name="jandi_plz_input_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 	<string name="jandi_preview_message_contents">"메시지 내용 미리보기"</string>
 	<string name="jandi_privacy_policy">"개인정보 취급방침"</string>
@@ -560,6 +561,7 @@
 	<string name="jandi_upload_menu_file">"파일"</string>
 	<string name="jandi_upload_menu_gallay">"사진첩"</string>
 	<string name="jandi_upload_menu_video">"동영상"</string>
+	<string name="jandi_use_fingerprint">"지문인식 사용"</string>
 	<string name="jandi_user_default_email">"기본 이메일 주소"</string>
 	<string name="jandi_user_id">"이메일 주소"</string>
 	<string name="jandi_user_password">"비밀번호"</string>

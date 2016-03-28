@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.passcode.fingerprint.model;
 
 import android.annotation.TargetApi;
-import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
@@ -16,7 +15,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by tonyjs on 16. 3. 25..
@@ -33,7 +31,7 @@ public class FingerprintAuthModel {
                 subscriber.onError(e);
             }
             subscriber.onCompleted();
-        }).subscribeOn(Schedulers.computation());
+        });
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -52,17 +50,18 @@ public class FingerprintAuthModel {
                 subscriber.onError(e);
             }
             subscriber.onCompleted();
-        }).subscribeOn(Schedulers.trampoline());
+        });
     }
 
     @TargetApi(Build.VERSION_CODES.M)
     private void initKeyGenerator(KeyGenerator keyGenerator) throws InvalidAlgorithmParameterException {
-        keyGenerator.init(new KeyGenParameterSpec.Builder("jandi_auth_key",
-                KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                .setUserAuthenticationRequired(true)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
-                .build());
+        int purposes = KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT;
+        keyGenerator.init(
+                new KeyGenParameterSpec.Builder("jandi_auth_key", purposes)
+                        .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                        .setUserAuthenticationRequired(true)
+                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                        .build());
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -78,7 +77,7 @@ public class FingerprintAuthModel {
                 subscriber.onError(e);
             }
             subscriber.onCompleted();
-        }).subscribeOn(Schedulers.trampoline());
+        });
     }
 
 }
