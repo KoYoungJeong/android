@@ -3,8 +3,8 @@ package com.tosslab.jandi.app.ui.profile.insert.presenter;
 import android.app.Activity;
 import android.support.v4.app.Fragment;
 
-import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
-import com.tosslab.jandi.app.files.upload.ProfileFileUploadViewModelImpl;
+import com.tosslab.jandi.app.files.upload.FileUploadController;
+import com.tosslab.jandi.app.files.upload.ProfileFileUploadControllerImpl;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -31,8 +31,8 @@ public class SetProfileFirstPagePresenter {
     @Bean
     ModifyProfileModel model;
 
-    @Bean(ProfileFileUploadViewModelImpl.class)
-    ProfileFileUploadViewModelImpl filePickerViewModel;
+    @Bean(ProfileFileUploadControllerImpl.class)
+    ProfileFileUploadControllerImpl fileUploadController;
 
     private View view;
 
@@ -76,7 +76,7 @@ public class SetProfileFirstPagePresenter {
     }
 
     public void startUploadProfileImage(Activity activity, String filePath) {
-        filePickerViewModel.startUpload(activity, null, -1, filePath, null);
+        fileUploadController.startUpload(activity, null, -1, filePath, null);
     }
 
     public void onProfileImageChange(ResLeftSideMenu.User member) {
@@ -86,19 +86,19 @@ public class SetProfileFirstPagePresenter {
     }
 
     public void onRequestCropImage(Fragment fragment) {
-        filePickerViewModel.selectFileSelector(ModifyProfileActivity.REQUEST_CROP, fragment);
+        fileUploadController.selectFileSelector(ModifyProfileActivity.REQUEST_CROP, fragment);
     }
 
     public void onRequestCamera(Fragment fragment) {
-        filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO, fragment);
+        fileUploadController.selectFileSelector(FileUploadController.TYPE_UPLOAD_TAKE_PHOTO, fragment);
     }
 
     public void onRequestCharacter(Fragment fragment) {
-        filePickerViewModel.selectFileSelector(ModifyProfileActivity.REQUEST_CHARACTER, fragment);
+        fileUploadController.selectFileSelector(ModifyProfileActivity.REQUEST_CHARACTER, fragment);
     }
 
     public File getFilePath() {
-        return filePickerViewModel.getUploadedFile();
+        return fileUploadController.getUploadedFile();
     }
 
     public void setView(View view) {

@@ -9,7 +9,7 @@ import android.support.v7.app.AlertDialog;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
-import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
+import com.tosslab.jandi.app.files.upload.FileUploadController;
 
 import de.greenrobot.event.EventBus;
 
@@ -36,14 +36,14 @@ public class FileUploadTypeDialogFragment extends DialogFragment {
                         int eventType;
                         switch (which) {
                             case 0:     // from gallery
-                                eventType = FilePickerViewModel.TYPE_UPLOAD_GALLERY;
+                                eventType = FileUploadController.TYPE_UPLOAD_GALLERY;
                                 break;
                             case 1:     // from camera
-                                eventType = FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO;
+                                eventType = FileUploadController.TYPE_UPLOAD_TAKE_PHOTO;
                                 break;
                             case 2:     // from Explorer
                             default:
-                                eventType = FilePickerViewModel.TYPE_UPLOAD_EXPLORER;
+                                eventType = FileUploadController.TYPE_UPLOAD_EXPLORER;
                                 break;
 
                         }

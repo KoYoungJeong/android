@@ -36,7 +36,7 @@ import java.util.concurrent.ExecutionException;
  * Created by Steve SeongUg Jung on 15. 6. 12..
  */
 @EBean
-public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
+public class MainFileUploadControllerImpl implements FileUploadController {
 
     @Bean
     FilePickerModel filePickerModel;

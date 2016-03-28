@@ -27,7 +27,7 @@ import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
-import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
+import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
@@ -341,7 +341,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         }
     }
 
-    @OnActivityResult(FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO)
+    @OnActivityResult(FileUploadController.TYPE_UPLOAD_TAKE_PHOTO)
     void onCameraActivityResult(int resultCode, Intent intent) {
         if (resultCode != Activity.RESULT_OK) {
             return;

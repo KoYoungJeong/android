@@ -44,7 +44,7 @@ import de.greenrobot.event.EventBus;
  * Created by Steve SeongUg Jung on 15. 6. 12..
  */
 @EBean
-public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
+public class ProfileFileUploadControllerImpl implements FileUploadController {
 
     @Bean
     FilePickerModel filePickerModel;
@@ -65,7 +65,7 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
                         .mode(ImageAlbumActivity.EXTRA_MODE_CROP_PICK)
                         .startForResult(requestCode);
                 break;
-            case FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO:
+            case FileUploadController.TYPE_UPLOAD_TAKE_PHOTO:
                 try {
                     File directory = new File(FileUtil.getDownloadPath());
                     file = File.createTempFile("camera", ".jpg", directory);
@@ -97,7 +97,7 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
                         .mode(ImageAlbumActivity.EXTRA_MODE_CROP_PICK)
                         .startForResult(requestCode);
                 break;
-            case FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO:
+            case FileUploadController.TYPE_UPLOAD_TAKE_PHOTO:
                 try {
                     File directory = new File(FileUtil.getDownloadPath());
                     file = File.createTempFile("camera", ".jpg", directory);
