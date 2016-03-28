@@ -220,6 +220,9 @@
 	<string name="jandi_file_search_type">"Filter results by file type"</string>
 	<string name="jandi_file_search_user">"Filter results by member"</string>
 	<string name="jandi_file_size_large_error">"Currently you cannot upload a file that exceeds 300MB."</string>
+	<string name="jandi_file_upload_finish">"Files has been uploaded."</string>
+	<string name="jandi_file_upload_go_topic">"Tap to view on JANDI"</string>
+	<string name="jandi_file_upload_state">"Uploading files (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"file upload successful"</string>
 	<string name="jandi_file_uploading">"uploading..."</string>
 	<string name="jandi_folder_alread_has_name">"That name is already taken"</string>

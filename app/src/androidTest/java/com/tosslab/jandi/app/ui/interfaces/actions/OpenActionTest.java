@@ -1,8 +1,7 @@
 package com.tosslab.jandi.app.ui.interfaces.actions;
 
 import android.net.Uri;
-import android.support.test.espresso.intent.Intents;
-import android.support.test.rule.ActivityTestRule;
+import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
@@ -36,7 +35,7 @@ public class OpenActionTest {
     private static final String REFRESH_1 = "refresh_1";
     private static final String TOKEN_TYPE_1 = "tokenType_1";
     @Rule
-    public ActivityTestRule<BaseAppCompatActivity> rule = new ActivityTestRule<>(BaseAppCompatActivity.class);
+    public IntentsTestRule<BaseAppCompatActivity> rule = new IntentsTestRule<>(BaseAppCompatActivity.class);
     private OpenAction action;
 
     @Before
@@ -97,7 +96,6 @@ public class OpenActionTest {
     @Test
     public void testExecute_Wrong_QueryParams() throws Exception {
 
-        Intents.init();
 
         boolean[] finished = getFinished();
 
@@ -113,7 +111,6 @@ public class OpenActionTest {
         assertThat(accessToken.getRefreshToken().length(), is(equalTo(0)));
         assertThat(accessToken.getTokenType().length(), is(equalTo(0)));
 
-        Intents.release();
     }
 
     @Test

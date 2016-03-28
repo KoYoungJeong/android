@@ -220,6 +220,9 @@
 	<string name="jandi_file_search_type">"按文件类型筛选搜索结果"</string>
 	<string name="jandi_file_search_user">"按成员筛选搜索结果"</string>
 	<string name="jandi_file_size_large_error">"无法上传大於300MB的文件"</string>
+	<string name="jandi_file_upload_finish">"文件已成功上传"</string>
+	<string name="jandi_file_upload_go_topic">"点击进入JANDI浏览"</string>
+	<string name="jandi_file_upload_state">"上传文件中 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"文件上传成功"</string>
 	<string name="jandi_file_uploading">"上传"</string>
 	<string name="jandi_folder_alread_has_name">"这名称已被使用"</string>

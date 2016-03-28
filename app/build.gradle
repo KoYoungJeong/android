@@ -51,6 +51,9 @@ checkstyle {
 def supportLibVersion = "23.2.1"
 def playServiceVersion = "7.0.0"
 def dexmakerVersion = "1.4"
+def androidAnnotationsVersion = "3.3.2"
+def butterKnifeVersion = "7.0.1"
+def dagger2Version="2.0.2"
 
 dependencies {
 
@@ -69,7 +72,13 @@ dependencies {
 //    compile project(':sprinkler-android')
 //    compile project(':photoview-expand')
 
-    apt 'org.androidannotations:androidannotations:3.3.2'
+    apt "org.androidannotations:androidannotations:${androidAnnotationsVersion}"
+    compile "org.androidannotations:androidannotations-api:${androidAnnotationsVersion}"
+    compile "com.jakewharton:butterknife:${butterKnifeVersion}"
+
+    apt "com.google.dagger:dagger-compiler:${dagger2Version}"
+    compile "com.google.dagger:dagger:${dagger2Version}"
+    provided 'javax.annotation:jsr250-api:1.0'
 
     compile 'com.android.support:multidex:1.0.0'
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -93,7 +102,6 @@ dependencies {
     compile 'me.leolin:ShortcutBadger:1.1.3@aar'
     // Boilerplate
     compile 'de.greenrobot:eventbus:2.4.+'
-    compile 'org.androidannotations:androidannotations-api:3.3.2'
     // Network
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.+'
     compile('io.socket:socket.io-client:0.6.2') {

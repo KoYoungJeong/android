@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.share;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
@@ -9,6 +10,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.inputmethod.InputMethodManager;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
@@ -16,6 +19,7 @@ import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.share.model.MainShareModel;
+import com.tosslab.jandi.app.ui.share.multi.MultiShareFragment;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -108,7 +112,11 @@ public class MainShareActivity extends BaseAppCompatActivity {
                     .text(mainShareModel.handleSendText(intent)).build();
             fragment = textShareFragment;
             share = textShareFragment;
-
+        } else if (intentType == IntentType.Multiple) {
+            MultiShareFragment multiShareFragment = MultiShareFragment
+                    .create(mainShareModel.handleSendImages(intent));
+            fragment = multiShareFragment;
+            share = multiShareFragment;
         } else {
             ImageShareFragment imageShareFragment = ImageShareFragment_.builder()
                     .uriString(mainShareModel.handleSendImage(intent).toString())
@@ -152,6 +160,17 @@ public class MainShareActivity extends BaseAppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                    .hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+        }
+
+        return super.dispatchTouchEvent(ev);
+    }
+
     void setupActionbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_share);
         setSupportActionBar(toolbar);
@@ -165,7 +184,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
     }
 
     public enum IntentType {
-        Image, Text, Etc
+        Image, Text, Multiple, Etc
     }
 
     public interface Share {

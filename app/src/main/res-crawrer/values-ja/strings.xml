@@ -220,6 +220,9 @@
 	<string name="jandi_file_search_type">"ファイルの種類を選択してください"</string>
 	<string name="jandi_file_search_user">"メンバーを選択してください"</string>
 	<string name="jandi_file_size_large_error">"現在のところ、300MBを超えるファイルはアップロードできません。"</string>
+	<string name="jandi_file_upload_finish">"ファイルアップロード完了"</string>
+	<string name="jandi_file_upload_go_topic">"タップしてJANDIで見る"</string>
+	<string name="jandi_file_upload_state">"ファイルアップロード中 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"アップロード完了"</string>
 	<string name="jandi_file_uploading">"アップロード中..."</string>
 	<string name="jandi_folder_alread_has_name">"その名前は既に使用されています"</string>
