@@ -1,10 +1,9 @@
 package com.tosslab.jandi.app.network.client;
 
-import android.content.Context;
-
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
@@ -16,23 +15,15 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 
 import java.util.List;
 
 
-
-/**
- * Created by justinygchoi on 2014. 6. 5..
- */
-// TODO Must be seperate logic
 @EBean
 public class MessageManipulator {
     public static final int NUMBER_OF_MESSAGES = 20;
     public static final int MAX_OF_MESSAGES = 100;
 
-    @RootContext
-    Context context;
 
     int entityType;
     long entityId;
@@ -53,7 +44,7 @@ public class MessageManipulator {
         this.entityType = entityType;
     }
 
-    public ResMessages getMessages(final long firstItemId, int count) throws IOException {
+    public ResMessages getMessages(final long firstItemId, int count) throws RetrofitException {
 
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -86,13 +77,13 @@ public class MessageManipulator {
 
     }
 
-    public List<ResMessages.Link> updateMessages(final long fromCurrentId) throws IOException {
+    public List<ResMessages.Link> updateMessages(final long fromCurrentId) throws RetrofitException {
 
         return RequestApiManager.getInstance().getRoomUpdateMessageByMessagesApiAuth
                 (selectedTeamId, roomId, fromCurrentId);
     }
 
-    public ResCommon setLastReadLinkId(final long lastLinkId) throws IOException {
+    public ResCommon setLastReadLinkId(final long lastLinkId) throws RetrofitException {
 
         String entityType;
         switch (this.entityType) {
@@ -111,7 +102,7 @@ public class MessageManipulator {
         return RequestApiManager.getInstance().setMarkerByMainRest(entityId, reqSetMarker);
     }
 
-    public ResCommon sendMessage(String message, List<MentionObject> mentions) throws IOException {
+    public ResCommon sendMessage(String message, List<MentionObject> mentions) throws RetrofitException {
         final ReqSendMessage sendingMessage = new ReqSendMessage();
         sendingMessage.teamId = selectedTeamId;
         sendingMessage.type = "string";
@@ -130,7 +121,7 @@ public class MessageManipulator {
 
     }
 
-    public ResCommon deleteMessage(final long messageId) throws IOException {
+    public ResCommon deleteMessage(final long messageId) throws RetrofitException {
 
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -145,7 +136,7 @@ public class MessageManipulator {
 
     }
 
-    public ResCommon deleteSticker(final long messageId, int messageType) throws IOException {
+    public ResCommon deleteSticker(final long messageId, int messageType) throws RetrofitException {
 
         switch (messageType) {
             case MessageItem.TYPE_STICKER:
@@ -159,7 +150,7 @@ public class MessageManipulator {
     }
 
 
-    public ResMessages getBeforeMarkerMessage(long linkId) throws IOException {
+    public ResMessages getBeforeMarkerMessage(long linkId) throws RetrofitException {
 
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -175,7 +166,7 @@ public class MessageManipulator {
 
     }
 
-    public ResMessages getAfterMarkerMessage(long linkId) throws IOException {
+    public ResMessages getAfterMarkerMessage(long linkId) throws RetrofitException {
 
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -206,7 +197,7 @@ public class MessageManipulator {
 
     }
 
-    public ResMessages.OriginalMessage getMessage(long teamId, long messageId) throws IOException {
+    public ResMessages.OriginalMessage getMessage(long teamId, long messageId) throws RetrofitException {
         return RequestApiManager.getInstance().getMessage(teamId, messageId);
     }
 
