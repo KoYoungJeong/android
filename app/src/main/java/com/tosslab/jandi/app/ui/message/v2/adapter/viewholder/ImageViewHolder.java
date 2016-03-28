@@ -117,7 +117,7 @@ public class ImageViewHolder implements BodyViewHolder {
         boolean isUnknownUser = fromEntity == EntityManager.UNKNOWN_USER_ENTITY;
         ResLeftSideMenu.User user = isUnknownUser ? null : fromEntity.getUser();
 
-        bindUser(user, fromEntity.getUserLargeProfileUrl());
+        bindUser(fromEntity, fromEntity.getUserLargeProfileUrl());
 
         bindUnreadCount(link.id, teamId, roomId, fromEntityId, entityManager.getMe().getId());
 
@@ -136,18 +136,18 @@ public class ImageViewHolder implements BodyViewHolder {
         bindFileImage(fileMessage, fileContent, sourceType);
     }
 
-    private void bindUser(ResLeftSideMenu.User user, String userProfileUrl) {
+    private void bindUser(FormattedEntity entity, String userProfileUrl) {
         ImageUtil.loadProfileImage(ivProfile, userProfileUrl, R.drawable.profile_img);
 
-        tvName.setText(user != null ? user.name : "");
+        tvName.setText(entity.getName() != null ? entity.getName() : "");
 
-        if (user != null && TextUtils.equals(user.status, "enabled")) {
+        if (entity != null && entity.isEnabled()) {
             tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
-            tvName.setText(user.name);
+            tvName.setText(entity.getName());
             vDisableCover.setVisibility(View.GONE);
             vDisableLineThrough.setVisibility(View.GONE);
 
-            long userId = user.id;
+            long userId = entity.getId();
             ShowProfileEvent eventFromImage = new ShowProfileEvent(userId, ShowProfileEvent.From.Image);
             ivProfile.setOnClickListener(v -> EventBus.getDefault().post(eventFromImage));
 

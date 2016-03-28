@@ -35,8 +35,8 @@ import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
-import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
-import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
+import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl;
+import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -110,8 +110,8 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     @Bean
     FileListPresenter fileListPresenter;
 
-    @Bean(value = EntityFileUploadViewModelImpl.class)
-    FilePickerViewModel filePickerViewModel;
+    @Bean(value = MainFileUploadControllerImpl.class)
+    FileUploadController filePickerViewModel;
 
     @SystemService
     InputMethodManager inputMethodManager;
@@ -574,17 +574,17 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         filePickerViewModel.selectFileSelector(event.type, FileListFragment.this, mSearchQuery.mSearchEntity);
     }
 
-    @OnActivityResult(FilePickerViewModel.TYPE_UPLOAD_GALLERY)
+    @OnActivityResult(FileUploadController.TYPE_UPLOAD_GALLERY)
     void onGalleryActivityResult(int resultCode, Intent intent) {
         // Do Nothing
     }
 
-    @OnActivityResult(FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO)
+    @OnActivityResult(FileUploadController.TYPE_UPLOAD_TAKE_PHOTO)
     void onCameraActivityResult(int resultCode, Intent intent) {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-        List<String> filePath = filePickerViewModel.getFilePath(getActivity(), FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO, intent);
+        List<String> filePath = filePickerViewModel.getFilePath(getActivity(), FileUploadController.TYPE_UPLOAD_TAKE_PHOTO, intent);
         if (filePath != null && filePath.size() > 0) {
             FileUploadPreviewActivity_.intent(this)
                     .singleUpload(true)
@@ -594,14 +594,14 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     }
 
-    @OnActivityResult(FilePickerViewModel.TYPE_UPLOAD_EXPLORER)
+    @OnActivityResult(FileUploadController.TYPE_UPLOAD_EXPLORER)
     void onExplorerActivityResult(int resultCode, Intent intent) {
 
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
 
-        List<String> filePath = filePickerViewModel.getFilePath(getActivity(), FilePickerViewModel.TYPE_UPLOAD_EXPLORER, intent);
+        List<String> filePath = filePickerViewModel.getFilePath(getActivity(), FileUploadController.TYPE_UPLOAD_EXPLORER, intent);
         if (filePath != null && filePath.size() > 0) {
             FileUploadPreviewActivity_.intent(this)
                     .singleUpload(true)

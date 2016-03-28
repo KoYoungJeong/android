@@ -38,7 +38,7 @@ public class InviteEmailModel {
 
         long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
 
-        return RequestApiManager.getInstance().inviteToTeamByTeamApi(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage(context.getApplicationContext())));
+        return RequestApiManager.getInstance().inviteToTeamByTeamApi(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage()));
 
     }
 
@@ -66,5 +66,15 @@ public class InviteEmailModel {
 
     public String getCurrentTeamName() {
         return EntityManager.getInstance().getTeamName();
+    }
+
+    public boolean isInactivedUser(String email) {
+        return Observable.from(EntityManager.getInstance().getFormattedUsersWithoutMe())
+                .filter(FormattedEntity::isInavtived)
+                .filter(entity -> TextUtils.equals(entity.getUserEmail(), email))
+                .map(entity -> true)
+                .firstOrDefault(false)
+                .toBlocking()
+                .first();
     }
 }

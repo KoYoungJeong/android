@@ -62,9 +62,11 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
             return;
         }
 
+        setImageFiles(imageFiles);
+    }
 
+    private void setImageFiles(List<CarouselFileInfo> imageFiles) {
         if (imageFiles.size() > 0) {
-
             view.addFileInfos(imageFiles);
 
             int startLinkPosition = carouselViewerModel.findLinkPosition(imageFiles, fileId);
@@ -79,6 +81,22 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                 view.setFileCreateTime(carouselFirstFileInfo.getFileCreateTime());
             }
         }
+    }
+
+    @Override
+    public void onInitImageSingleFile(String imageExt, String imageOriginUrl, String imageThumbUrl, String imageType, String imageName, long imageSize) {
+        List<CarouselFileInfo> imageFiles = new ArrayList<>();
+        CarouselFileInfo.Builder builder = new CarouselFileInfo.Builder();
+        CarouselFileInfo carouselFileInfo = builder.ext(imageExt)
+                .fileOriginalUrl(imageOriginUrl)
+                .fileThumbUrl(imageThumbUrl)
+                .fileType(imageType)
+                .fileLinkUrl(imageOriginUrl)
+                .fileName(imageName)
+                .size(imageSize)
+                .create();
+        imageFiles.add(carouselFileInfo);
+        setImageFiles(imageFiles);
     }
 
     @Background
@@ -100,7 +118,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
         } catch (RetrofitError e) {
             e.printStackTrace();
-            imageFiles = new ArrayList<CarouselFileInfo>();
+            imageFiles = new ArrayList<>();
         }
 
         if (imageFiles.size() < count) {

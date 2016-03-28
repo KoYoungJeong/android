@@ -188,7 +188,7 @@
 	<string name="jandi_entity_create_entity_name">"사용자 성함"</string>
 	<string name="jandi_entity_joined_topic">"참여한 토픽"</string>
 	<string name="jandi_entity_unjoined_topic">"참여하지 않은 토픽"</string>
-	<string name="jandi_err_unexpected">"알 수 없는 문제가 생겼습니다!"</string>
+	<string name="jandi_err_unexpected">"알 수 없는 문제가 생겼습니다."</string>
 	<string name="jandi_error_web_token">"로그인 중 에러가 발생했습니다. 다시 시도해 주세요."</string>
 	<string name="jandi_exceeded_max_text_length">"5000자 까지 입력할 수 있습니다."</string>
 	<string name="jandi_expired_invitation_link">"이 초대 링크는 만료되었습니다. 새로운 링크를 요청하세요."</string>
@@ -220,6 +220,9 @@
 	<string name="jandi_file_search_type">"파일 타입을 선택해주세요."</string>
 	<string name="jandi_file_search_user">"팀원을 선택해주세요."</string>
 	<string name="jandi_file_size_large_error">"현재 300MB 이상의 파일은 업로드 할 수 없습니다."</string>
+	<string name="jandi_file_upload_finish">"파일 업로드 완료"</string>
+	<string name="jandi_file_upload_go_topic">"탭하여 잔디에서 보기"</string>
+	<string name="jandi_file_upload_state">"파일 업로드 중 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"파일이 업로드 되었습니다"</string>
 	<string name="jandi_file_uploading">"업로드..."</string>
 	<string name="jandi_folder_alread_has_name">"이미 존재하는 이름입니다"</string>
@@ -242,11 +245,13 @@
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_guide_to_assign_topic_owner">"토픽 상세보기 > 토픽 관리자 변경하기에서 다음 관리자를 지정한 후 토픽에서 내보낼 수 있습니다."</string>
 	<string name="jandi_has_joined">"%s님이 참여하였습니다"</string>
+	<string name="jandi_has_no_searched_member">"<![CDATA[<b><font color=#404040>%s</font></b>]]>의 검색 결과가 없습니다."</string>
 	<string name="jandi_have_an_account_already">"이미 계정이 있으신가요?"</string>
 	<string name="jandi_help">"도움말"</string>
 	<string name="jandi_hi_apk_store">"Hi Apk 스토어"</string>
 	<string name="jandi_image_too_big">"이미지가 너무 큽니다."</string>
 	<string name="jandi_incorrect_passcode">"비밀번호가 일치하지 않습니다."</string>
+	<string name="jandi_info">"잔디 정보"</string>
 	<string name="jandi_input_password">"선택한 팀 계정의 비밀번호를 입력하세요"</string>
 	<string name="jandi_input_search_keyword">"검색어를 입력해주세요."</string>
 	<string name="jandi_input_topic_name">"토픽 이름을 입력해주세요."</string>
@@ -269,6 +274,7 @@
 	<string name="jandi_invite_success">"초대 메일이 성공적으로 발송되었습니다"</string>
 	<string name="jandi_invite_to_dummy_account_again">"입력하신 이메일 주소는 이미 다른 멤버가 초대 중입니다.
 초대메일을 다시 보낼까요?"</string>
+	<string name="jandi_invite_to_team">"팀으로 초대하기"</string>
 	<string name="jandi_invite_wechat">"위챗으로 보내기"</string>
 	<string name="jandi_invited_topic">"%1$s님이 %2$s님을 초대했습니다."</string>
 	<string name="jandi_is_newcomer">"잔디가 처음이신가요?"</string>
@@ -295,6 +301,8 @@
 	<string name="jandi_mention_no_mentions">"다른 팀 멤버에게 받은 멘션이 없습니다. 
 메시지 입력창에서 "@"을 입력하여 멘션을 주고받을 수 있습니다."</string>
 	<string name="jandi_mention_push_message">"%s 님의 멘션"</string>
+	<string name="jandi_mentions_are_empty">"다른 멤버에게 받은 멘션이 없습니다. 
+메시지 입력창에서 "@"을 입력하여 멘션을 주고받을 수 있습니다."</string>
 	<string name="jandi_message_ask_about_delete_comment">"이 댓글을 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
 	<string name="jandi_message_ask_about_deleting">"이 메시지를 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
 	<string name="jandi_message_create_entity">"%1$s을 생성하였습니다"</string>
@@ -321,6 +329,7 @@
 	<string name="jandi_msg_network_offline">"인터넷이 연결되어 있지 않습니다."</string>
 	<string name="jandi_msg_network_offline_warn">"현재 네트워크에 접속되지 않은 것으로 보입니다."</string>
 	<string name="jandi_my_files">"<b>내 파일</b>"</string>
+	<string name="jandi_mypage">"마이 페이지"</string>
 	<string name="jandi_name_in_jandi">"잔디 계정 이름"</string>
 	<string name="jandi_need_to_assign_topic_owner">"회원님은 이 토픽의 관리자입니다.
 토픽 상세정보 > 토픽 관리자 변경하기 에서
@@ -352,6 +361,7 @@
 	<string name="jandi_password_strength_weak">"숫자, 특수문자, 또는 영어 대문자 중 최소한 1자 이상이 포함되어야 합니다"</string>
 	<string name="jandi_phone_led">"휴대전화 LED"</string>
 	<string name="jandi_play_store">"구글 플레이 스토어"</string>
+	<string name="jandi_please_retry">"다시 시도해주세요."</string>
 	<string name="jandi_plz_input_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 	<string name="jandi_preview_message_contents">"메시지 내용 미리보기"</string>
 	<string name="jandi_privacy_policy">"개인정보 취급방침"</string>
@@ -412,6 +422,8 @@
 	<string name="jandi_set_passcode">"비밀번호 잠금 설정"</string>
 	<string name="jandi_set_passcode_detail">"비밀번호를 잊은 경우 다시 찾을 수 있는 방법이 없으므로 
 앱을 지우고 재설치 해 주시기 바랍니다"</string>
+	<string name="jandi_setting_account">"계정 설정"</string>
+	<string name="jandi_setting_account_email_info">"등록된 이메일 주소들을 로그인 ID로 사용하실 수 있습니다. 이 이메일 주소들은 각각 연동된 팀의 프로필에도 사용됩니다."</string>
 	<string name="jandi_setting_display">"화면"</string>
 	<string name="jandi_setting_folder">"폴더 관리"</string>
 	<string name="jandi_setting_general">"일반"</string>
@@ -486,11 +498,14 @@
 	<string name="jandi_tab_private_group">"비공개 토픽"</string>
 	<string name="jandi_tab_to_view_original">"이곳을 탭하면 원본으로 볼 수 있습니다."</string>
 	<string name="jandi_tab_topic">"토픽"</string>
+	<string name="jandi_team">"팀"</string>
 	<string name="jandi_team_creation_succeed">"메일 전송 성공. 메일함을 확인하여 잔디 팀을 생성하세요."</string>
 	<string name="jandi_team_info">"팀 정보"</string>
 	<string name="jandi_team_join_fail">"팀 가입에 실패하였습니다."</string>
 	<string name="jandi_team_member">"팀 멤버"</string>
+	<string name="jandi_team_member_count_with_format">"팀원(%d)"</string>
 	<string name="jandi_team_owner">"팀 관리자"</string>
+	<string name="jandi_team_owner_with_format">"팀 관리자:%s"</string>
 	<string name="jandi_team_select_accept">"수락"</string>
 	<string name="jandi_team_select_create_a_team">"팀 생성"</string>
 	<string name="jandi_team_select_ignore">"거부"</string>
@@ -549,6 +564,7 @@
 	<string name="jandi_user_default_email">"기본 이메일 주소"</string>
 	<string name="jandi_user_id">"이메일 주소"</string>
 	<string name="jandi_user_password">"비밀번호"</string>
+	<string name="jandi_verify_fingerprint">"지문을 인식해주세요."</string>
 	<string name="jandi_vibrate">"진동"</string>
 	<string name="jandi_view_all">"전체보기"</string>
 	<string name="jandi_welcome_message">"JANDI에 오신 것을 환영합니다."</string>

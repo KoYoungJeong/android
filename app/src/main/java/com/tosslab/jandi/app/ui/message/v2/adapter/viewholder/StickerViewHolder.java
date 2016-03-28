@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -60,7 +59,7 @@ public class StickerViewHolder implements BodyViewHolder {
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById != EntityManager.UNKNOWN_USER_ENTITY ? entityById.getUser() : null;
-        if (user != null && TextUtils.equals(user.status, "enabled")) {
+        if (user != null && entityById.isEnabled()) {
             tvName.setTextColor(tvName.getContext().getResources().getColor(R.color.jandi_messages_name));
             vDisableCover.setVisibility(View.GONE);
             vDisableLineThrough.setVisibility(View.GONE);

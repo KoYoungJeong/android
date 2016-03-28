@@ -116,7 +116,11 @@ public class ChatChooseAdapter extends BaseAdapter {
 
         ChatChooseItem item = getItem(position);
 
-        chatChooseViewHolder.tvName.setText(item.getName());
+        if (!item.isInactive()) {
+            chatChooseViewHolder.tvName.setText(item.getName());
+        } else {
+            chatChooseViewHolder.tvName.setText(item.getEmail());
+        }
         chatChooseViewHolder.ivKick.setVisibility(View.GONE);
 
         Resources resources = context.getResources();
@@ -159,7 +163,13 @@ public class ChatChooseAdapter extends BaseAdapter {
         imageViewIcon.setLayoutParams(layoutParams);
 
         if (user) {
-            ImageUtil.loadProfileImage(imageViewIcon, item.getPhotoUrl(), R.drawable.profile_img);
+            if (!item.isInactive()) {
+                ImageUtil.loadProfileImage(imageViewIcon, item.getPhotoUrl(), R.drawable.profile_img);
+            } else {
+                ImageUtil.loadProfileImage(imageViewIcon,
+                        UriFactory.getResourceUri(R.drawable.profile_img_dummyaccount_43),
+                        R.drawable.profile_img_dummyaccount_43);
+            }
         } else {
             ImageLoader.newBuilder()
                     .placeHolder(R.drawable.bot_43x54, ScalingUtils.ScaleType.CENTER_INSIDE)

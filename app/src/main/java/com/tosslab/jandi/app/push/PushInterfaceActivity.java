@@ -16,7 +16,6 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -56,7 +55,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
     @Extra(PushInterfaceActivity.EXTRA_TEAM_ID)
     long teamId;
     @Extra(PushInterfaceActivity.EXTRA_ROOM_TYPE)
-    String roomType;
+    String roomType = "";
 
     @Bean
     JandiInterfaceModel jandiInterfaceModel;
@@ -75,12 +74,6 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
         } else {
             checkTeamAndMoveToNextActivity();
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ActivityHelper.setOrientation(this);
     }
 
     @Background(serial = "push_interface_activity_background")

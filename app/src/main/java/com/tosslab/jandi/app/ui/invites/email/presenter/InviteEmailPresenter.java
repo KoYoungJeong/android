@@ -13,7 +13,9 @@ public interface InviteEmailPresenter {
 
     void onEmailTextChanged(String email);
 
-    public interface View {
+    void invite(String email);
+
+    interface View {
         void setEmailTextView(String email);
 
         void clearEmailTextView();

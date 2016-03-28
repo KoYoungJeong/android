@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.interfaces.actions;
 
 import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.matcher.IntentMatchers;
-import android.support.test.rule.ActivityTestRule;
+import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertThat;
 public class UnknownActionTest {
 
     @Rule
-    public ActivityTestRule<BaseAppCompatActivity> rule = new ActivityTestRule<>(BaseAppCompatActivity.class);
+    public IntentsTestRule<BaseAppCompatActivity> rule = new IntentsTestRule<>(BaseAppCompatActivity.class);
     private Action action;
 
     @Before
@@ -32,12 +32,9 @@ public class UnknownActionTest {
     @Test
     public void testExecute() throws Throwable {
 
-        Intents.init();
         rule.runOnUiThread(() -> action.execute(null));
 
         assertThat(rule.getActivity().isFinishing(), is(true));
         Intents.intending(IntentMatchers.hasComponent(IntroActivity_.class.getName()));
-
-        Intents.release();
     }
 }

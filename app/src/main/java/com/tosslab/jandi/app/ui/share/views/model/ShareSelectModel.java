@@ -135,7 +135,7 @@ public class ShareSelectModel {
 
     protected Observable<List<FormattedEntity>> getUsers() {
         return Observable.from(getFormattedUsersWithoutMe())
-                .filter(formattedEntity -> TextUtils.equals(formattedEntity.getUser().status, "enabled"))
+                .filter(formattedEntity -> formattedEntity.isEnabled())
                 .toSortedList((lhs, rhs) -> {
                     return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                 });

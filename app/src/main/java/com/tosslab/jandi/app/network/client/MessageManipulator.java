@@ -21,8 +21,8 @@ import java.util.List;
 
 @EBean
 public class MessageManipulator {
-    public static final int NUMBER_OF_MESSAGES = 20;
-    public static final int MAX_OF_MESSAGES = 100;
+    public static final int NUMBER_OF_MESSAGES = 50;
+    public static final int MAX_OF_MESSAGES = 50;
 
 
     int entityType;

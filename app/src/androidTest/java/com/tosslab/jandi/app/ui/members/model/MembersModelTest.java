@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.members.model;
 
 import android.support.test.runner.AndroidJUnit4;
-import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -98,7 +97,7 @@ public class MembersModelTest {
         int memberCnt = 0;
         while (i.hasNext()) {
             FormattedEntity f = (FormattedEntity) i.next();
-            if (TextUtils.equals(f.getUser().status, "enabled")) {
+            if (f.isEnabled()) {
                 memberCnt++;
             }
         }
@@ -120,7 +119,7 @@ public class MembersModelTest {
         Iterator i = unJoinedMember.iterator();
         while (i.hasNext()) {
             FormattedEntity e = (FormattedEntity) i.next();
-            if (TextUtils.equals(e.getUser().status, "enabled")) {
+            if (e.isEnabled()) {
                 memberCnt++;
             }
         }

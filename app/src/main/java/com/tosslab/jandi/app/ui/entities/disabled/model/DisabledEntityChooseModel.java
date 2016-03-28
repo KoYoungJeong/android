@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.ui.entities.disabled.model;
 
-import android.text.TextUtils;
-
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
@@ -22,7 +20,7 @@ public class DisabledEntityChooseModel {
         List<ChatChooseItem> items = new ArrayList<>();
 
         Observable.from(formattedUsersWithoutMe)
-                .filter(entity -> !TextUtils.equals(entity.getUser().status, "enabled"))
+                .filter(entity -> !entity.isEnabled())
                 .map(formattedEntity -> new ChatChooseItem()
                         .entityId(formattedEntity.getId())
                         .statusMessage(formattedEntity.getUserStatusMessage())

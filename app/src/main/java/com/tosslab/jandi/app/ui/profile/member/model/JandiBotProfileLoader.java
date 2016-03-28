@@ -24,6 +24,11 @@ public class JandiBotProfileLoader implements ProfileLoader {
     }
 
     @Override
+    public void setName(TextView tvProfileName, FormattedEntity member) {
+        tvProfileName.setText(member.getName());
+    }
+
+    @Override
     public void setDescription(TextView tvProfileDescription, FormattedEntity member) {
         tvProfileDescription.setText(R.string.jandi_bot_status);
     }

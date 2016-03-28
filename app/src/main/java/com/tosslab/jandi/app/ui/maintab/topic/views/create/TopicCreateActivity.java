@@ -22,7 +22,6 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -89,12 +88,6 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
 
         progressWheel = new ProgressWheel(TopicCreateActivity.this);
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ActivityHelper.setOrientation(this);
     }
 
     private void setupActionBar() {

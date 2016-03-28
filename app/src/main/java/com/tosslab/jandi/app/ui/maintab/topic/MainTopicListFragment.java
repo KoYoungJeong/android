@@ -250,17 +250,11 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             lvMainTopic.setAdapter(updatedTopicAdapter);
             mainTopicListPresenter.onRefreshUpdatedTopicList();
             tvSortTitle.setText(R.string.jandi_sort_updated);
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
-                    AnalyticsValue.Action.ChangeTopicOrder,
-                    AnalyticsValue.Label.Folder);
         } else if (!currentFolder && changeToFolder) {
             lvMainTopic.setAdapter(wrappedAdapter);  // requires *wrapped* expandableTopicAdapter
             lvMainTopic.setHasFixedSize(false);
             mainTopicListPresenter.refreshList();
             tvSortTitle.setText(R.string.jandi_sort_folder);
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
-                    AnalyticsValue.Action.ChangeTopicOrder,
-                    AnalyticsValue.Label.UpdateDate);
         }
     }
 
@@ -269,11 +263,21 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         boolean currentFolder = isCurrentFolder();
         changeTopicSort(currentFolder, !currentFolder);
         JandiPreference.setLastTopicOrderType(!currentFolder ? 0 : 1);
+
+        if (currentFolder) {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
+                    AnalyticsValue.Action.ChangeTopicOrder,
+                    AnalyticsValue.Label.UpdateDate);
+        } else {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
+                    AnalyticsValue.Action.ChangeTopicOrder,
+                    AnalyticsValue.Label.Folder);
+        }
     }
 
     private boolean isCurrentFolder() {
         RecyclerView.Adapter adapter = lvMainTopic.getAdapter();
-        return !(adapter instanceof UpdatedTopicAdapter);
+        return adapter != null && !(adapter instanceof UpdatedTopicAdapter);
     }
 
     @Override

@@ -73,17 +73,28 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
                 view.moveToSelection(0);
                 emailSendingSubject.onNext(emailVO);
             } else {
+                if (inviteModel.isInactivedUser(email)) {
+                    view.showSendInviteAgain(email);
+                } else {
+                    String teamName = inviteModel.getCurrentTeamName();
 
-                String teamName = inviteModel.getCurrentTeamName();
-
-                view.showToast(JandiApplication.getContext().getString(R.string
-                        .jandi_already_in_team, teamName));
+                    view.showToast(JandiApplication.getContext().getString(R.string
+                            .jandi_already_in_team, teamName));
+                }
             }
         } else {
             view.showToast(view.getString(R.string.jandi_invitation_succeed));
         }
 
         view.clearEmailTextView();
+    }
+
+    @Override
+    public void invite(String email) {
+        EmailVO emailVO = EmailVO.create(email);
+        view.addEmailToList(emailVO);
+        view.moveToSelection(0);
+        emailSendingSubject.onNext(emailVO);
     }
 
     @Override

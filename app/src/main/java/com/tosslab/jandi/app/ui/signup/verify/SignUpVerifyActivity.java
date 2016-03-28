@@ -26,7 +26,6 @@ import com.tosslab.jandi.app.ui.signup.verify.presenter.SignUpVerifyPresenter;
 import com.tosslab.jandi.app.ui.signup.verify.view.SignUpVerifyView;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
@@ -126,12 +125,6 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
 
         blink = new Blink(ivFakeCursor);
         startBlink();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ActivityHelper.setOrientation(this);
     }
 
     @Override

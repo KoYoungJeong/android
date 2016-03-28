@@ -13,74 +13,103 @@
 
             <TextView
                 style="@style/JandiSettings.Header.Text"
-                android:text="@string/jandi_setting_notification" />
+                android:text="@string/jandi_setting_notification"/>
 
             <com.tosslab.jandi.app.views.settings.SettingsBodyView
                 android:id="@+id/vg_settings_main_notification"
                 style="@style/JandiSettings.Body"
-                app:sbvTitle="@string/jandi_setting_notification" />
+                app:sbvTitle="@string/jandi_setting_notification"/>
         </LinearLayout>
 
-        <View style="@style/JandiSettings.Divider" />
+        <View style="@style/JandiSettings.Divider"/>
+
+        <LinearLayout
+            android:id="@+id/vg_settings_main_orientation_wrapper"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout style="@style/JandiSettings.Group">
+
+                <TextView
+                    style="@style/JandiSettings.Header.Text"
+                    android:text="@string/jandi_setting_display"/>
+
+                <com.tosslab.jandi.app.views.settings.SettingsBodyView
+                    android:id="@+id/vg_settings_main_orientation"
+                    style="@style/JandiSettings.Body"
+                    app:sbvSummary="@string/jandi_screen_auto"
+                    app:sbvTitle="@string/jandi_screen_orientation"/>
+            </LinearLayout>
+
+            <View style="@style/JandiSettings.Divider"/>
+        </LinearLayout>
 
         <LinearLayout style="@style/JandiSettings.Group">
 
             <TextView
                 style="@style/JandiSettings.Header.Text"
-                android:text="@string/jandi_setting_display" />
-
-            <com.tosslab.jandi.app.views.settings.SettingsBodyView
-                android:id="@+id/vg_settings_main_orientation"
-                style="@style/JandiSettings.Body"
-                app:sbvSummary="@string/jandi_screen_auto"
-                app:sbvTitle="@string/jandi_screen_orientation" />
-        </LinearLayout>
-
-        <View style="@style/JandiSettings.Divider" />
-
-        <LinearLayout style="@style/JandiSettings.Group">
-
-            <TextView
-                style="@style/JandiSettings.Header.Text"
-                android:text="@string/jandi_privacy_protection" />
+                android:text="@string/jandi_privacy_protection"/>
 
             <com.tosslab.jandi.app.views.settings.SettingsBodyView
                 android:id="@+id/vg_settings_main_passcode"
                 style="@style/JandiSettings.Body"
-                app:sbvTitle="@string/jandi_set_passcode" />
+                app:sbvTitle="@string/jandi_set_passcode"/>
         </LinearLayout>
 
-        <View style="@style/JandiSettings.Divider" />
+        <View style="@style/JandiSettings.Divider"/>
 
         <LinearLayout style="@style/JandiSettings.Group">
 
             <TextView
                 style="@style/JandiSettings.Header.Text"
-                android:text="@string/jandi_tos_and_pp" />
+                android:text="@string/jandi_tos_and_pp"/>
 
             <com.tosslab.jandi.app.views.settings.SettingsBodyView
                 android:id="@+id/vg_settings_main_term_of_service"
                 style="@style/JandiSettings.Body"
-                app:sbvTitle="@string/jandi_term_of_service" />
+                app:sbvTitle="@string/jandi_term_of_service"/>
 
             <com.tosslab.jandi.app.views.settings.SettingsBodyView
                 android:id="@+id/vg_settings_main_privacy_policy"
                 style="@style/JandiSettings.Body"
-                app:sbvTitle="@string/jandi_privacy_policy" />
+                app:sbvTitle="@string/jandi_privacy_policy"/>
         </LinearLayout>
 
-        <View style="@style/JandiSettings.Divider" />
+        <View style="@style/JandiSettings.Divider"/>
 
         <LinearLayout style="@style/JandiSettings.Group">
 
             <TextView
                 style="@style/JandiSettings.Header.Text"
-                android:text="@string/jandi_setting_general" />
+                android:text="@string/jandi_profile_basic_info"/>
+
+            <com.tosslab.jandi.app.views.settings.SettingsBodyView
+                android:id="@+id/vg_settings_main_version"
+                style="@style/JandiSettings.Body"/>
+
+            <com.tosslab.jandi.app.views.settings.SettingsBodyView
+                android:id="@+id/vg_settings_main_help"
+                style="@style/JandiSettings.Body"
+                app:sbvTitle="@string/jandi_help"/>
+        </LinearLayout>
+
+        <View style="@style/JandiSettings.Divider"/>
+
+        <LinearLayout style="@style/JandiSettings.Group">
+
+            <TextView
+                style="@style/JandiSettings.Header.Text"
+                android:text="@string/jandi_setting_general"/>
+
+            <com.tosslab.jandi.app.views.settings.SettingsBodyView
+                android:id="@+id/vg_settings_main_account_name"
+                style="@style/JandiSettings.Body"
+                app:sbvTitle="@string/jandi_account"/>
 
             <com.tosslab.jandi.app.views.settings.SettingsBodyView
                 android:id="@+id/vg_settings_main_sign_out"
                 style="@style/JandiSettings.Body"
-                app:sbvTitle="@string/jandi_setting_sign_out" />
+                app:sbvTitle="@string/jandi_setting_sign_out"/>
         </LinearLayout>
 
     </LinearLayout>

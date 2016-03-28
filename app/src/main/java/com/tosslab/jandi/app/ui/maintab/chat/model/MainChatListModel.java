@@ -74,6 +74,8 @@ public class MainChatListModel {
                                     .getEntityById(resChat.getCompanionId()).isStarred)
                             .unread(resChat.getUnread())
                             .status(userEntity.isEnabled())
+                            .inactive(userEntity.isInavtived())
+                            .email(userEntity.getUserEmail())
                             .photo(userEntity.getUserLargeProfileUrl());
 
 
@@ -98,7 +100,9 @@ public class MainChatListModel {
                 .starred(EntityManager.getInstance()
                         .getEntityById(resChat.getCompanionId()).isStarred)
                 .unread(resChat.getUnread())
-                .status(TextUtils.equals(userEntity.getUser().status, "enabled"))
+                .status(userEntity.isEnabled())
+                .inactive(userEntity.isInavtived())
+                .email(userEntity.getUserEmail())
                 .photo(userEntity.getUserLargeProfileUrl());
 
         return chatItem;

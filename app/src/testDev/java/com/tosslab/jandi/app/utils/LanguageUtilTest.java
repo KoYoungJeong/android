@@ -31,7 +31,7 @@ public class LanguageUtilTest {
         {
             // 일본어
             RuntimeEnvironment.application.getResources().getConfiguration().locale = Locale.JAPAN;
-            String language = LanguageUtil.getLanguage(RuntimeEnvironment.application);
+            String language = LanguageUtil.getLanguage();
             assertThat(language, is("ja"));
             //assertThat(language, is("jp"));
         }
@@ -39,21 +39,21 @@ public class LanguageUtilTest {
         {
             // 타이완 테스트
             RuntimeEnvironment.application.getResources().getConfiguration().locale = Locale.TRADITIONAL_CHINESE;
-            String language = LanguageUtil.getLanguage(RuntimeEnvironment.application);
+            String language = LanguageUtil.getLanguage();
             assertThat(language, is("zh-TW"));
         }
 
         {
             // 중국어
             RuntimeEnvironment.application.getResources().getConfiguration().locale = Locale.SIMPLIFIED_CHINESE;
-            String language = LanguageUtil.getLanguage(RuntimeEnvironment.application);
+            String language = LanguageUtil.getLanguage();
             assertThat(language, is("zh-CN"));
         }
 
         {
             // 한국어
             RuntimeEnvironment.application.getResources().getConfiguration().locale = Locale.KOREA;
-            String language = LanguageUtil.getLanguage(RuntimeEnvironment.application);
+            String language = LanguageUtil.getLanguage();
             assertThat(language, is("ko"));
         }
     }

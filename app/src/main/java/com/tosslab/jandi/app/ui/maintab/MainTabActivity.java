@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab;
 
+import android.animation.ValueAnimator;
 import android.content.ActivityNotFoundException;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -7,22 +8,29 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
-import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
+import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.events.ServiceMaintenanceEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
@@ -30,6 +38,8 @@ import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
+import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
+import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -48,25 +58,37 @@ import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.ui.MixpanelAnalytics;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
+import com.tosslab.jandi.app.ui.maintab.teams.adapter.TeamsAdapter;
+import com.tosslab.jandi.app.ui.maintab.teams.component.DaggerTeamsComponent;
+import com.tosslab.jandi.app.ui.maintab.teams.module.TeamsModule;
+import com.tosslab.jandi.app.ui.maintab.teams.presenter.TeamsPresenter;
+import com.tosslab.jandi.app.ui.maintab.teams.view.TeamsView;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
+import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
+import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
+import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+import com.tosslab.jandi.app.utils.UiUtils;
+
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
+import com.tosslab.jandi.app.views.MaxHeightRecyclerView;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -80,11 +102,14 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 
@@ -94,9 +119,10 @@ import rx.Observable;
  * Created by justinygchoi on 2014. 8. 11..
  */
 @EActivity(R.layout.activity_main_tab)
-public class MainTabActivity extends BaseAppCompatActivity {
+public class MainTabActivity extends BaseAppCompatActivity implements TeamsView {
 
     public static final int CHAT_INDEX = 1;
+    public static final int REQUEST_TEAM_CREATE = 1603;
     @Extra
     boolean fromPush = false;
     @ViewById(R.id.vg_fab_menu)
@@ -112,25 +138,48 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
     @ViewById(R.id.vg_main_offline)
     View vgOffline;
+
+    @ViewById(R.id.tv_main_tab_title)
+    TextView tvTitle;
+
+    @ViewById(R.id.v_main_tab_metaphor_another_team)
+    View vMetaphorAnotherTeam;
+    @ViewById(R.id.v_main_tab_metaphor_another_team_has_message)
+    View vMetaphorAnotherTeamHasMessage;
+
     long selectedEntity = -1;
+    @Inject
+    TeamsPresenter teamsPresenter;
+    private UiUtils.KeyboardHandler keyboardHandler;
     private OfflineLayer offlineLayer;
-    private ProgressWheel mProgressWheel;
-    private Context mContext;
-    private EntityManager mEntityManager;
+    private ProgressWheel progressWheel;
     private MainTabPagerAdapter mMainTabPagerAdapter;
+    private EntityManager mEntityManager;
     private boolean isFirst = true;    // poor implementation
+    private PopupWindow teamsPopupWindow;
+    private TeamsAdapter teamsAdapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        DaggerTeamsComponent.builder()
+                .teamsModule(new TeamsModule(this))
+                .build()
+                .inject(this);
+
+    }
 
     @AfterViews
     void initView() {
         showDialogIfNotLastestVersion();
         ParseUpdateUtil.addChannelOnServer();
 
-        mContext = getApplicationContext();
         mEntityManager = EntityManager.getInstance();
         new MixpanelAnalytics().trackSigningIn(mEntityManager);
 
         // Progress Wheel 설정
-        mProgressWheel = new ProgressWheel(this);
+        progressWheel = new ProgressWheel(this);
 
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
@@ -144,27 +193,28 @@ public class MainTabActivity extends BaseAppCompatActivity {
         selectedEntity = PushInterfaceActivity.selectedEntityId;
 
         // ViewPager
-        View[] tabViews = new View[4];
+        View[] tabViews = new View[5];
         tabViews[0] = getLayoutInflater().inflate(R.layout.tab_topic, null);
         tabViews[1] = getLayoutInflater().inflate(R.layout.tab_chat, null);
         tabViews[2] = getLayoutInflater().inflate(R.layout.tab_file, null);
-        tabViews[3] = getLayoutInflater().inflate(R.layout.tab_more, null);
+        tabViews[3] = getLayoutInflater().inflate(R.layout.tab_team, null);
+        tabViews[4] = getLayoutInflater().inflate(R.layout.tab_mypage, null);
         mMainTabPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), tabViews, selectedEntity);
-        ViewPager mViewPager = (ViewPager) findViewById(R.id.pager_main_tab);
-        mViewPager.setOverScrollMode(ViewPager.OVER_SCROLL_NEVER);
-        mViewPager.setOffscreenPageLimit(3);
-        mViewPager.setAdapter(mMainTabPagerAdapter);
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager_main_tab);
+        viewPager.setOverScrollMode(ViewPager.OVER_SCROLL_NEVER);
+        viewPager.setOffscreenPageLimit(4);
+        viewPager.setAdapter(mMainTabPagerAdapter);
 
         PushInterfaceActivity.selectedEntityId = -1;
 
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.sliding_tabs);
-        tabs.setViewPager(mViewPager);
+        tabs.setViewPager(viewPager);
 
         if (selectedEntity > 0) {
             FormattedEntity entity = EntityManager.getInstance().getEntityById(selectedEntity);
             if (entity == EntityManager.UNKNOWN_USER_ENTITY || entity.isUser()) {
-                mViewPager.setCurrentItem(CHAT_INDEX);
+                viewPager.setCurrentItem(CHAT_INDEX);
             }
         }
 
@@ -187,8 +237,22 @@ public class MainTabActivity extends BaseAppCompatActivity {
                         break;
                     case 3:
                         setFABMenuVisibility(false);
-                        TutorialCoachMarkUtil.showCoachMarkMoreIfNotShown(MainTabActivity.this);
                         break;
+                    case 4:
+                        setFABMenuVisibility(false);
+                        break;
+                }
+
+                hideKeyboardIfNeed(position);
+            }
+
+            void hideKeyboardIfNeed(int position) {
+                if (keyboardHandler == null) {
+                    return;
+                }
+
+                if (position != MainTabPagerAdapter.TAB_TEAM) {
+                    keyboardHandler.hideKeyboard();
                 }
             }
         });
@@ -212,6 +276,8 @@ public class MainTabActivity extends BaseAppCompatActivity {
         if (NetworkCheckUtil.isConnected()) {
             getEntities();
         }
+
+        initializeTeamsView();
     }
 
     private void updateChatBadge() {
@@ -277,10 +343,178 @@ public class MainTabActivity extends BaseAppCompatActivity {
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle(teamName);
+        setActionBarTitle(teamName);
+    }
+
+    private void setActionBarTitle(String title) {
+        tvTitle.setText(title);
+    }
+
+    @Override
+    public void initializeTeamsView() {
+        View teamView = getLayoutInflater().inflate(R.layout.layout_teams, null);
+        int displayHeight = ApplicationUtil.getDisplaySize(true);
+        int maxHeight = displayHeight / 2;
+        MaxHeightRecyclerView recyclerView =
+                (MaxHeightRecyclerView) teamView.findViewById(R.id.lv_team);
+        recyclerView.setMaxHeight(maxHeight);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getBaseContext());
+        layoutManager.setAutoMeasureEnabled(true);
+        recyclerView.setLayoutManager(layoutManager);
+        teamsAdapter = new TeamsAdapter();
+        teamsAdapter.setOnRequestTeamCreateListener(() -> {
+            TeamDomainInfoActivity_.intent(MainTabActivity.this)
+                    .startForResult(REQUEST_TEAM_CREATE);
+
+            teamsPopupWindow.dismiss();
+        });
+        teamsAdapter.setOnTeamClickListener(team -> {
+            teamsPresenter.onTeamJoinAction(team.getTeamId());
+
+            teamsPopupWindow.dismiss();
+        });
+        recyclerView.setAdapter(teamsAdapter);
+
+        int matchParent = ViewGroup.LayoutParams.MATCH_PARENT;
+        int wrapContent = ViewGroup.LayoutParams.WRAP_CONTENT;
+        teamsPopupWindow = new PopupWindow(teamView, matchParent, wrapContent);
+        teamsPopupWindow.setTouchable(true);
+        teamsPopupWindow.setFocusable(true);
+        teamsPopupWindow.setOutsideTouchable(true);
+        teamsPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    }
+
+    @Override
+    public void setTeams(List<Team> teams) {
+        teamsAdapter.clear();
+
+        vMetaphorAnotherTeam.setVisibility(View.VISIBLE);
+
+        Observable.from(teams)
+                .subscribe(team -> {
+                    int viewType = team.getStatus() == Team.Status.PENDING
+                            ? TeamsAdapter.VIEW_TYPE_TEAM_PENDING : TeamsAdapter.VIEW_TYPE_TEAM;
+
+                    teamsAdapter.addRow(new MultiItemRecyclerAdapter.Row<>(team, viewType));
+                });
+
+        teamsAdapter.addRow(
+                new MultiItemRecyclerAdapter.Row<>(null, TeamsAdapter.VIEW_TYPE_TEAM_CREATE));
+
+        teamsAdapter.notifyDataSetChanged();
+    }
+
+    @Click(R.id.btn_main_tab_show_another_team)
+    void showAnotherTeams() {
+        int yoff = -tvTitle.getMeasuredHeight() - (int) UiUtils.getPixelFromDp(8) /* 조금 더 올리려고 */;
+        teamsPopupWindow.showAsDropDown(tvTitle, 0, yoff);
+    }
+
+    @Override
+    public void showAnotherTeamHasMessageMetaphor() {
+        ValueAnimator whiteToRedAnim = ValueAnimator.ofFloat(0.0f, 1.0f);
+        whiteToRedAnim.setDuration(1000);
+        whiteToRedAnim.setRepeatMode(ValueAnimator.REVERSE);
+        whiteToRedAnim.setRepeatCount(ValueAnimator.INFINITE);
+        whiteToRedAnim.addUpdateListener(animation -> {
+            Float alpha = (Float) animation.getAnimatedValue();
+            vMetaphorAnotherTeamHasMessage.setAlpha(alpha);
+        });
+        vMetaphorAnotherTeamHasMessage.setTag(whiteToRedAnim);
+        whiteToRedAnim.start();
+    }
+
+    @Override
+    public void hideAnotherTeamHasMessageMetaphor() {
+        Object whiteToRedAnim = vMetaphorAnotherTeamHasMessage.getTag();
+        if (whiteToRedAnim != null && whiteToRedAnim instanceof ValueAnimator) {
+            ((ValueAnimator) whiteToRedAnim).cancel();
+        }
+        vMetaphorAnotherTeamHasMessage.setAlpha(0.0f);
+    }
+
+    @Override
+    public void clearTeams() {
+        hideAnotherTeamHasMessageMetaphor();
+
+        vMetaphorAnotherTeam.setVisibility(View.GONE);
+        tvTitle.setOnClickListener(null);
+        teamsAdapter.clear();
+        teamsAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void showProgressWheel() {
+        if (!progressWheel.isShowing()) {
+            progressWheel.show();
+        }
+    }
+
+    @Override
+    public void dismissProgressWheel() {
+        if (progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+    }
+
+    @Override
+    public void moveToSelectTeam(boolean shouldOpenModifyProfileActivity) {
+        JandiSocketService.stopService(this);
+        sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
+
+        ParseUpdateUtil.addChannelOnServer();
+
+        MainTabActivity_.intent(this)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .start();
+
+        if (shouldOpenModifyProfileActivity) { // 초대 수락 또는 팀 생성 후
+            ModifyProfileActivity_.intent(this)
+                    .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    .start();
+        }
+
+        finish();
+    }
+
+    public void onEvent(TeamInviteIgnoreEvent event) {
+        teamsPopupWindow.dismiss();
+        teamsPresenter.onTeamInviteIgnoreAction(event.getTeam());
+    }
+
+    public void onEvent(TeamInviteAcceptEvent event) {
+        teamsPopupWindow.dismiss();
+        teamsPresenter.onTeamInviteAcceptAction(event.getTeam());
+    }
+
+    @Override
+    public void removePendingTeam(Team team) {
+        for (int i = teamsAdapter.getItemCount() - 1; i >= 0; i--) {
+            if (teamsAdapter.getItem(i) instanceof Team) {
+                Team targetTeam = teamsAdapter.getItem(i);
+                if (targetTeam.getTeamId() == team.getTeamId()) {
+                    teamsAdapter.remove(i);
+                    teamsAdapter.notifyItemRemoved(i);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void showTeamInviteIgnoreFailToast(String errorMessage) {
+        ColoredToast.showError(errorMessage);
+    }
+
+    @Override
+    public void showTeamInviteAcceptFailDialog(String errorMessage, final Team team) {
+        AlertUtil.showConfirmDialog(this, errorMessage, (dialog, which) -> {
+            teamsPresenter.onTeamInviteIgnoreAction(team);
+        }, false);
     }
 
     @Click(R.id.vg_main_offline)
@@ -293,6 +527,8 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
         if (event.isConnected()) {
             offlineLayer.dismissOfflineView();
+
+            teamsPresenter.onInitializeTeams();
         } else {
             offlineLayer.showOfflineView();
             ColoredToast.showGray(JandiApplication.getContext().getString(R
@@ -301,9 +537,16 @@ public class MainTabActivity extends BaseAppCompatActivity {
     }
 
     @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if (fragment instanceof UiUtils.KeyboardHandler) {
+            keyboardHandler = (UiUtils.KeyboardHandler) fragment;
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        ActivityHelper.setOrientation(this);
         // Entity의 리스트를 획득하여 저장한다.
         EventBus.getDefault().register(this);
 
@@ -329,6 +572,8 @@ public class MainTabActivity extends BaseAppCompatActivity {
         updateTopicBadge();
         updateChatBadge();
 
+        teamsPresenter.onInitializeTeams();
+
     }
 
     private void refreshEntityIfNeed() {
@@ -346,8 +591,16 @@ public class MainTabActivity extends BaseAppCompatActivity {
         super.onPause();
     }
 
+    @OnActivityResult(REQUEST_TEAM_CREATE)
+    void onTeamCreateResult(int resultCode) {
+        if (resultCode == RESULT_OK) {
+            teamsPresenter.onTeamCreated(true);
+        }
+    }
+
     @Override
     protected void onDestroy() {
+        teamsPresenter.clearTeamInitializeQueue();
         JandiSocketService.stopService(this);
         super.onDestroy();
     }
@@ -394,8 +647,8 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
     @UiThread
     public void getEntitiesSucceed(ResLeftSideMenu resLeftSideMenu) {
-        mProgressWheel.dismiss();
-        getSupportActionBar().setTitle(mEntityManager.getTeamName());
+        progressWheel.dismiss();
+        setActionBarTitle(mEntityManager.getTeamName());
         JandiPreference.setMyEntityId(this, mEntityManager.getMe().getId());
         postAllEvents();
     }
@@ -429,7 +682,7 @@ public class MainTabActivity extends BaseAppCompatActivity {
     }
 
 
-    public void onEvent(InvitationDisableCheckEvent event) {
+    public void onEvent(RequestInviteMemberEvent event) {
         invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_INVITE);
         invitationDialogExecutor.execute();
     }
@@ -450,7 +703,13 @@ public class MainTabActivity extends BaseAppCompatActivity {
     }
 
     public void onEventMainThread(MessageOfOtherTeamEvent event) {
-        updateMoreBadge();
+        int messageCount = getOtherTeamMessageCount();
+        if (messageCount > 0) {
+            mMainTabPagerAdapter.showMoreNewBadge();
+            teamsPresenter.reInitializeTeams();
+        } else {
+            mMainTabPagerAdapter.hideMoreNewBadge();
+        }
     }
 
     public void updateMoreBadge() {
@@ -604,6 +863,11 @@ public class MainTabActivity extends BaseAppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if (teamsPopupWindow != null && teamsPopupWindow.isShowing()) {
+            teamsPopupWindow.dismiss();
+            return;
+        }
+
         if (floatingActionMenu != null && floatingActionMenu.isOpened()) {
             floatingActionMenu.close();
         } else {
@@ -614,6 +878,5 @@ public class MainTabActivity extends BaseAppCompatActivity {
     public FloatingActionMenu getFloatingActionMenu() {
         return floatingActionMenu;
     }
-
 
 }

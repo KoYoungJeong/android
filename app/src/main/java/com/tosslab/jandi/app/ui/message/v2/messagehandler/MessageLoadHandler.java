@@ -176,7 +176,7 @@ public class MessageLoadHandler {
         messageHandlingPush(new OldMessageContainer(messageState));
 
 //        if (view.isForeground()) {
-            messageHandlingPush(new NewMessageContainer(messageState));
+        messageHandlingPush(new NewMessageContainer(messageState));
 //        }
 
         isRoomInit = true;
@@ -232,14 +232,14 @@ public class MessageLoadHandler {
                 EventBus.getDefault().post(new RefreshNewMessageEvent());
             }
         }
-        view.notifyDataSetChanged();
+        view.saveCacheAndNotifyDataSetChanged(null);
     }
 
     private void updateLinkPreview(MessageContainer messageContainer) {
         int messageId = (Integer) messageContainer.getData();
         ResMessages.TextMessage textMessage = MessageRepository.getRepository().getTextMessage(messageId);
         updateLinkPreviewMessage(textMessage);
-        view.notifyDataSetChanged();
+        view.saveCacheAndNotifyDataSetChanged(null);
     }
 
     public void updateLinkPreviewMessage(ResMessages.TextMessage message) {

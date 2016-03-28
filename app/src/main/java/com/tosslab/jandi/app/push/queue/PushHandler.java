@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.push.queue;
 import android.content.Context;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.events.messages.MentionToMeEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.receiver.JandiPushReceiverModel_;
@@ -76,6 +77,8 @@ public class PushHandler {
                 jandiPushReceiverModel.isMentionToMe(pushTOInfo.getMentions(), leftSideMenu);
         if (isMentionMessageToMe) {
             showNotification(context, pushTOInfo, true);
+
+            EventBus.getDefault().post(new MentionToMeEvent(teamId));
         } else {
             if (PushTO.RoomType.CHAT.getName().equals(pushTOInfo.getRoomType())) {
                 showNotification(context, pushTOInfo, false);

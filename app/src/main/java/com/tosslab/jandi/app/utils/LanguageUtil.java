@@ -1,7 +1,8 @@
 package com.tosslab.jandi.app.utils;
 
-import android.content.Context;
 import android.text.TextUtils;
+
+import com.tosslab.jandi.app.JandiApplication;
 
 import java.util.Locale;
 
@@ -17,13 +18,9 @@ public class LanguageUtil {
     public static final String LANG_KO = "ko";
     private static final String[] LANGS = {LANG_EN, LANG_JA, LANG_KO, LANG_ZH_CN, LANG_ZH_TW};
 
-    public static String getLanguage(Context context) {
+    public static String getLanguage() {
 
-        if (context == null) {
-            return LANG_EN;
-        }
-
-        Locale locale = context.getResources().getConfiguration().locale;
+        Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
 
         if (locale == null) {
             return LANG_EN;

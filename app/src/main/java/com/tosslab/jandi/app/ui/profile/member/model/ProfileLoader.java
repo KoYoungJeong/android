@@ -10,6 +10,8 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import uk.co.senab.photoview.PhotoView;
 
 public interface ProfileLoader {
+    void setName(TextView tvProfileName, FormattedEntity member);
+
     void setDescription(TextView tvProfileDescription, FormattedEntity member);
 
     void setProfileInfo(ViewGroup vgProfileTeamInfo, TextView tvProfileDivision, TextView tvProfilePosition, FormattedEntity member);

@@ -12,10 +12,12 @@ public class JandiConstantsForFlavors {
     public static final String PARSE_CLIENT_KEY = "RP8MlBZfYVHRQiaZli0IEDzkpNSWulesgmSqmxke";
     // These constants are just for DEBUG mode
     private static final String SERVICE_PROTOCOL = "https";
-    private static final String SERVICE_DOMAIN = "i2.jandi.io";
-    private static final String SERVICE_FILE_DOMAIN = "files.jandi.io";
-    private static final String SERVICE_BASE_DOMAIN = "www.jandi.io";
-    private static final String SERVICE_FILE_UPLOAD_DOMAIN = "upload.jandi.io";
+    private static final String SERVICE_DOMAIN_BASE = "jandi.io";
+    private static final String SERVICE_DOMAIN_SUB = "i2";
+    private static final String SERVICE_DOMAIN = SERVICE_DOMAIN_SUB + "." + SERVICE_DOMAIN_BASE;
+    private static final String SERVICE_FILE_DOMAIN = "files" + "." + SERVICE_DOMAIN_BASE;
+    private static final String SERVICE_BASE_DOMAIN = "www" + "." + SERVICE_DOMAIN_BASE;
+    private static final String SERVICE_FILE_UPLOAD_DOMAIN = "upload" + "." + SERVICE_DOMAIN_BASE;
     private static final String SERVICE_PORT = "443";
     public static final String SERVICE_ROOT_URL =
             SERVICE_PROTOCOL + "://" + SERVICE_DOMAIN + ":" + SERVICE_PORT + "/";
@@ -28,7 +30,7 @@ public class JandiConstantsForFlavors {
             SERVICE_PROTOCOL + "://" + SERVICE_BASE_DOMAIN + ":" + SERVICE_PORT + "/";
 
     private static final String SOCKET_PROTOCOL = "https";
-    private static final String SOCKET_DOMAIN = "ws.jandi.io";
+    private static final String SOCKET_DOMAIN = "ws" + "." + SERVICE_DOMAIN_BASE;
     private static final String SOCKET_PORT = "443";
     public static final String SOCKET_ROOT_URL =
             SOCKET_PROTOCOL + "://" + SOCKET_DOMAIN + ":" + SOCKET_PORT + "/";

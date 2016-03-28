@@ -177,8 +177,15 @@ public class FormattedEntity {
 
     public boolean isEnabled() {
         if (entity instanceof ResLeftSideMenu.User) {
+            return TextUtils.equals(((ResLeftSideMenu.User) entity).status, "enabled") || isInavtived();
+        } else {
+            return true;
+        }
+    }
 
-            return TextUtils.equals(((ResLeftSideMenu.User) entity).status, "enabled");
+    public boolean isInavtived() {
+        if (entity instanceof ResLeftSideMenu.User) {
+            return TextUtils.equals(((ResLeftSideMenu.User) entity).status, "inactive");
         } else {
             return false;
         }
@@ -210,7 +217,11 @@ public class FormattedEntity {
 
     public String getUserEmail() {
         ResLeftSideMenu.User me = getUser();
-        return me.u_email;
+        if (me != null) {
+            return me.u_email;
+        } else {
+            return "";
+        }
     }
 
     public String getUserSmallProfileUrl() {

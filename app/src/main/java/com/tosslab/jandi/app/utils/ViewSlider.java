@@ -34,17 +34,6 @@ public class ViewSlider extends RecyclerView.OnScrollListener {
             return;
         }
 
-//        int childrenHeight = 0;
-//        for (int i = 0; i < childCount; i++) {
-//            View child = recyclerView.getChildAt(i);
-//            childrenHeight += child.getMeasuredHeight();
-//        }
-//
-//        if ((childrenHeight + recyclerView.getPaddingTop())
-//                <= (recyclerViewMeasuredHeight + targetViewMeasuredHeight)) {
-//            return;
-//        }
-
         final float translateY = targetView.getTranslationY() - dy;
 
         float futureTranslateY = Math.max(-targetView.getMeasuredHeight(), translateY);

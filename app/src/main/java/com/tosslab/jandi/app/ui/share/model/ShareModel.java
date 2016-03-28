@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.share.model;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 
@@ -31,7 +30,6 @@ import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
 
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 import org.json.JSONException;
 
 import java.io.File;
@@ -48,9 +46,6 @@ import java.util.concurrent.ExecutionException;
 @EBean
 public class ShareModel {
 
-    @RootContext
-    Context context;
-
     public ResRoomInfo getEntityById(long teamId, long roomId) {
         return RequestApiManager.getInstance().getRoomInfoByRoomsApi(teamId, roomId);
     }
@@ -61,7 +56,7 @@ public class ShareModel {
 
     public ResCommon sendMessage(long teamId, long entityId, int entityType, String messageText, List<MentionObject> mention) throws IOException {
 
-        MessageManipulator messageManipulator = MessageManipulator_.getInstance_(context);
+        MessageManipulator messageManipulator = MessageManipulator_.getInstance_(JandiApplication.getContext());
 
         messageManipulator.initEntity(entityType, entityId);
 
@@ -73,7 +68,7 @@ public class ShareModel {
 
     public String getImagePath(String uriString) {
         Uri uri = Uri.parse(uriString);
-        return ImageFilePath.getPath(context, uri);
+        return ImageFilePath.getPath(JandiApplication.getContext(), uri);
     }
 
     public JsonObject uploadFile(File imageFile, String titleText, String commentText,
@@ -84,14 +79,14 @@ public class ShareModel {
         String permissionCode = (isPublicTopic) ? "744" : "740";
         Builders.Any.M ionBuilder
                 = Ion
-                .with(context)
+                .with(JandiApplication.getContext())
                 .load(requestURL)
                 .uploadProgressHandler((downloaded, total) -> {
                     progressDialog.setProgress((int) (downloaded * 100 / total));
                 })
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
                 .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(JandiApplication.getContext()))
                 .setMultipartParameter("title", titleText)
                 .setMultipartParameter("share", "" + entityId)
                 .setMultipartParameter("permission", permissionCode)
@@ -121,7 +116,7 @@ public class ShareModel {
     public void trackUploadingFile(int entityType, JsonObject result) {
 
         try {
-            MixpanelMemberAnalyticsClient.getInstance(context, EntityManager.getInstance().getDistictId()).trackUploadingFile(entityType, result);
+            MixpanelMemberAnalyticsClient.getInstance(JandiApplication.getContext(), EntityManager.getInstance().getDistictId()).trackUploadingFile(entityType, result);
         } catch (JSONException e) {
         }
     }

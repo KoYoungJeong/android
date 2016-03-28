@@ -17,13 +17,13 @@ import com.tosslab.jandi.app.network.exception.ExceptionData;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.ui.login.IntroMainActivity;
 import com.tosslab.jandi.app.ui.login.login.model.IntroLoginModel;
 import com.tosslab.jandi.app.ui.login.login.viewmodel.IntroLoginViewModel;
 import com.tosslab.jandi.app.ui.signup.account.SignUpActivity_;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.SignOutUtil;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -48,7 +48,7 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 14. 11. 13..
  */
 @EFragment(R.layout.fragment_intro_input_id)
-public class IntroLoginFragment extends Fragment implements IntroMainActivity.KeyboardHandler {
+public class IntroLoginFragment extends Fragment implements UiUtils.KeyboardHandler {
 
     private static final int REQ_SIGNUP = 1081;
 
@@ -87,6 +87,7 @@ public class IntroLoginFragment extends Fragment implements IntroMainActivity.Ke
                     ExceptionData exceptionData = (ExceptionData) error.getBodyAs(ExceptionData.class);
                     switch (exceptionData.getCode()) {
                         case 40000:
+                        case 40021:
                             introLoginViewModel.loginFail(R.string.err_login_invalid_id_or_password);
                             break;
                         case 40007:

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.account.presenter;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
@@ -34,11 +35,6 @@ import rx.Observable;
  */
 @EBean
 public class AccountHomePresenterImpl implements AccountHomePresenter {
-    public static final int NOT_AVAILABLE_INVITATION_CODE = 40003;
-    public static final int DISABLED_MEMBER = 40301;
-    public static final int REMOVED_TEAM = 40302;
-    public static final int TEAM_INVITATION_DISABLED = 40303;
-    public static final int ENABLED_MEMBER = 40304;
 
     @Bean
     AccountHomeModel accountHomeModel;
@@ -207,19 +203,19 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
         String alertText;
         switch (errorCode) {
-            case NOT_AVAILABLE_INVITATION_CODE:
+            case JandiConstants.TeamInviteErrorCode.NOT_AVAILABLE_INVITATION_CODE:
                 alertText = context.getResources().getString(R.string.jandi_expired_invitation_link);
                 break;
-            case DISABLED_MEMBER:
+            case JandiConstants.TeamInviteErrorCode.DISABLED_MEMBER:
                 alertText = context.getResources().getString(R.string.jandi_disabled_team, selectedTeam.getName());
                 break;
-            case REMOVED_TEAM:
+            case JandiConstants.TeamInviteErrorCode.REMOVED_TEAM:
                 alertText = context.getResources().getString(R.string.jandi_deleted_team);
                 break;
-            case TEAM_INVITATION_DISABLED:
+            case JandiConstants.TeamInviteErrorCode.TEAM_INVITATION_DISABLED:
                 alertText = context.getResources().getString(R.string.jandi_invite_disabled, "");
                 break;
-            case ENABLED_MEMBER:
+            case JandiConstants.TeamInviteErrorCode.ENABLED_MEMBER:
                 alertText = context.getResources().getString(R.string.jandi_joined_team, selectedTeam.getName());
                 break;
             default:

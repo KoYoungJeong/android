@@ -56,7 +56,7 @@ public class IntroLoginModel {
 
     public ResCommon requestPasswordReset(String email) {
         Context context = JandiApplication.getContext();
-        return RequestApiManager.getInstance().resetPasswordByAccountPasswordApi(new ReqAccountEmail(email, LanguageUtil.getLanguage(context)));
+        return RequestApiManager.getInstance().resetPasswordByAccountPasswordApi(new ReqAccountEmail(email, LanguageUtil.getLanguage()));
     }
 
     public void trackSignInSuccess() {
