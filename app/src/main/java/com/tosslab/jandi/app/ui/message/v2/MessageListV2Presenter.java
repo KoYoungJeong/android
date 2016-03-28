@@ -827,6 +827,7 @@ public class MessageListV2Presenter {
     @Background
     public void onSaveTempMessageAction(String tempMessage) {
         if (TextUtils.isEmpty(tempMessage)) {
+            messageListModel.deleteReadyMessage(room.getRoomId());
             return;
         }
 
@@ -961,6 +962,11 @@ public class MessageListV2Presenter {
         MarkerRepository.getRepository().upsertRoomMarker(
                 room.getTeamId(), room.getRoomId(), memberId, lastLinkId);
         view.notifyDataSetChanged();
+    }
+
+    @Background
+    public void deleteReadyMessage() {
+        messageListModel.deleteReadyMessage(room.getRoomId());
     }
 
     public interface View {

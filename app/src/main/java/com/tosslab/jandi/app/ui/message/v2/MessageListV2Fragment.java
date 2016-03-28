@@ -1194,6 +1194,7 @@ public class MessageListV2Fragment extends Fragment implements
 
         if (!TextUtils.isEmpty(message)) {
             messageListPresenter.sendTextMessage(message, mentions, reqSendMessageV3);
+            messageListPresenter.deleteReadyMessage();
         }
 
         dismissStickerPreview();
