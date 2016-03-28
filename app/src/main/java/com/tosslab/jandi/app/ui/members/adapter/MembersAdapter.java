@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
+import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -215,7 +216,11 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         public void bindView(ChatChooseItem item, int ownerType, boolean kickMode, long myId,
                              View.OnClickListener onKickClickListener) {
-            tvName.setText(item.getName());
+            if (!item.isInactive()) {
+                tvName.setText(item.getName());
+            } else {
+                tvName.setText(item.getEmail());
+            }
 
             Resources resources = tvOwnerBadge.getResources();
             tvOwnerBadge.setText(ownerType == MembersAdapter.OWNER_TYPE_TEAM
@@ -245,7 +250,13 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
                 layoutParams.height = ivIcon.getResources().getDimensionPixelSize(R.dimen.jandi_entity_item_icon);
                 ivIcon.setLayoutParams(layoutParams);
-                ImageUtil.loadProfileImage(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
+                if (!item.isInactive()) {
+                    ImageUtil.loadProfileImage(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
+                } else {
+                    ImageUtil.loadProfileImage(ivIcon,
+                            UriFactory.getResourceUri(R.drawable.profile_img_dummyaccount_43),
+                            R.drawable.profile_img_dummyaccount_43);
+                }
             } else {
                 ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
                 DisplayMetrics displayMetrics = ivIcon.getResources().getDisplayMetrics();

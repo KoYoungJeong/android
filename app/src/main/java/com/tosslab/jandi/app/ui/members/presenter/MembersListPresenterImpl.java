@@ -100,13 +100,28 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                     } else
                         return chatChooseItem.getName().toLowerCase().contains(s.toLowerCase());
                 })
-                .toSortedList((chatChooseItem, chatChooseItem2) -> {
-                    if (chatChooseItem.isBot()) {
+                .toSortedList((lhs, rhs) -> {
+                    if (lhs.isBot()) {
                         return -1;
-                    } else if (chatChooseItem2.isBot()) {
+                    } else if (rhs.isBot()) {
                         return 1;
                     } else {
-                        return StringCompareUtil.compare(chatChooseItem.getName(), chatChooseItem2.getName());
+
+                        String lhsName, rhsName;
+                        if (!lhs.isInactive()) {
+                            lhsName = lhs.getName();
+                        } else {
+                            lhsName = lhs.getEmail();
+                        }
+
+                        if (!rhs.isInactive()) {
+                            rhsName = rhs.getName();
+                        } else {
+                            rhsName = rhs.getEmail();
+                        }
+
+                        return StringCompareUtil.compare(lhs.getName(), rhs.getName());
+
                     }
                 })
                 .subscribe(chatChooseItems::addAll, Throwable::printStackTrace);

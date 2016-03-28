@@ -346,7 +346,20 @@ public class RoomSelectorImpl implements RoomSelector {
         } else if (EntityManager.getInstance().isBot(rhs.getEntityId())) {
             return 1;
         }
-        return StringCompareUtil.compare(lhs.getName(), rhs.getName());
+        String lhsName, rhsName;
+        if (!lhs.isInactive()) {
+            lhsName = lhs.getName();
+        } else {
+            lhsName = lhs.getEmail();
+        }
+
+        if (!rhs.isInactive()) {
+            rhsName = rhs.getName();
+        } else {
+            rhsName = rhs.getEmail();
+        }
+
+        return StringCompareUtil.compare(lhsName, rhsName);
     }
 
     private int getDisabledUserCount(List<FormattedEntity> users) {

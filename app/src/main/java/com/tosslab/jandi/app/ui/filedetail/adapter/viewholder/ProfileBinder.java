@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.filedetail.adapter.viewholder;
 
 import android.content.res.Resources;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -56,7 +55,7 @@ public class ProfileBinder {
             vUserNameDisableIndicator.setLayoutParams(params);
         });
 
-        boolean isDisabledUser = isDisabledUser(writer.getUser().status);
+        boolean isDisabledUser = writer.isEnabled();
         vUserNameDisableIndicator.setVisibility(isDisabledUser ? View.VISIBLE : View.GONE);
         vUserProfileDisableIndicator.setVisibility(isDisabledUser ? View.VISIBLE : View.GONE);
 
@@ -69,10 +68,6 @@ public class ProfileBinder {
                 v -> onProfileClick(writer.getId(), ShowProfileEvent.From.Image));
         tvUserName.setOnClickListener(
                 v -> onProfileClick(writer.getId(), ShowProfileEvent.From.Name));
-    }
-
-    private boolean isDisabledUser(String userStatus) {
-        return !TextUtils.equals(userStatus, "enabled");
     }
 
     private void onProfileClick(final long writerId, ShowProfileEvent.From clickType) {

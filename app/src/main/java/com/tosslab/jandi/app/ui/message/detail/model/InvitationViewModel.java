@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.message.detail.model;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -148,7 +147,7 @@ public class InvitationViewModel {
 
         for (int idx = unjoinedMembersOfEntity.size() - 1; idx >= 0; idx--) {
             FormattedEntity formattedEntity = unjoinedMembersOfEntity.get(idx);
-            if (!TextUtils.equals(formattedEntity.getUser().status, "enabled")) {
+            if (!formattedEntity.isEnabled()) {
                 unjoinedMembersOfEntity.remove(idx);
             }
         }

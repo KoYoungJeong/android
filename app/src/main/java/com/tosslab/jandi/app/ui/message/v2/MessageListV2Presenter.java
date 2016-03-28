@@ -120,8 +120,13 @@ public class MessageListV2Presenter {
     }
 
     public void onDetermineUserStatus() {
-        if (!messageListModel.isEnabledIfUser(room.getEntityId())) {
+
+        if (messageListModel.isInactiveUser(room.getEntityId())) {
+            view.showInactivedUserLayer();
+        } else if (!messageListModel.isEnabledIfUser(room.getEntityId())) {
             view.showDisabledUserLayer();
+        } else {
+            view.dismissStatusLayout();
         }
     }
 
@@ -966,6 +971,8 @@ public class MessageListV2Presenter {
     public interface View {
         void showDisabledUserLayer();
 
+        void showInactivedUserLayer();
+
         void setAnnouncement(ResAnnouncement announcement, boolean shouldOpenAnnouncement);
 
         void showProgressWheel();
@@ -1054,6 +1061,7 @@ public class MessageListV2Presenter {
 
         void modifyStarredInfo(long messageId, boolean isStarred);
 
+        void dismissStatusLayout();
     }
 
 }

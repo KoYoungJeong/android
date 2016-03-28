@@ -17,6 +17,8 @@ public class ExpandRoomData {
     private boolean isPublicTopic;
     private String profileUrl;
     private boolean enabled;
+    private boolean inactive;
+    private String email;
     private int type;
     private boolean isFirstAmongNoFolderItem;
 
@@ -31,6 +33,8 @@ public class ExpandRoomData {
             e.printStackTrace();
         }
         userData.setType(entity.type);
+        userData.setInactive(entity.isInavtived());
+        userData.setEmail(entity.getUserEmail());
         userData.setEntityId(entity.getId());
         userData.setIsStarred(entity.isStarred);
         userData.setIsFolder(false);
@@ -130,6 +134,22 @@ public class ExpandRoomData {
                 ", type=" + type +
                 ", isFirstAmongNoFolderItem=" + isFirstAmongNoFolderItem +
                 '}';
+    }
+
+    public boolean isInactive() {
+        return inactive;
+    }
+
+    public void setInactive(boolean inactive) {
+        this.inactive = inactive;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public static class DummyDisabledRoomData extends ExpandRoomData {

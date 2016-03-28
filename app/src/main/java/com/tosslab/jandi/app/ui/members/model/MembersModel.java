@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.ui.members.model;
 
-import android.text.TextUtils;
-
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -44,7 +42,9 @@ public class MembersModel {
                                     .statusMessage(entity.getUserStatusMessage())
                                     .photoUrl(entity.getUserLargeProfileUrl())
                                     .starred(entity.isStarred)
-                                    .enabled(TextUtils.equals(entity.getUser().status, "enabled"))
+                                    .enabled(entity.isEnabled())
+                                    .inactive(entity.isInavtived())
+                                    .email(entity.getUserEmail())
                                     .owner(entityManager.isTopicOwner(entityId, entity.getId()))
                                     .name(entity.getName());
 
@@ -69,7 +69,9 @@ public class MembersModel {
                             .statusMessage(entity.getUserStatusMessage())
                             .photoUrl(entity.getUserLargeProfileUrl())
                             .starred(entity.isStarred)
-                            .enabled(TextUtils.equals(entity.getUser().status, "enabled"))
+                            .enabled(entity.isEnabled())
+                            .inactive(entity.isInavtived())
+                            .email(entity.getUserEmail())
                             .owner(entity.isTeamOwner())
                             .name(entity.getName());
                 })
@@ -111,7 +113,9 @@ public class MembersModel {
                             .statusMessage(unjoinedEntity.getUserStatusMessage())
                             .photoUrl(unjoinedEntity.getUserLargeProfileUrl())
                             .starred(unjoinedEntity.isStarred)
-                            .enabled(TextUtils.equals(unjoinedEntity.getUser().status, "enabled"))
+                            .enabled(unjoinedEntity.isEnabled())
+                            .inactive(unjoinedEntity.isInavtived())
+                            .email(unjoinedEntity.getUserEmail())
                             .owner(unjoinedEntity.isTeamOwner())
                             .name(unjoinedEntity.getName());
                 })

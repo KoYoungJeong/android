@@ -36,6 +36,7 @@
 
 
     <color name="jandi_badge_point_color">#FFFF5B49</color>
+    <color name="jandi_disabled_user_background">#CCEB6016</color>
 
 
     <color name="jandi_text">#FF333333</color>

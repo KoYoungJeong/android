@@ -75,7 +75,7 @@ public class TeamsApiClientTest {
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
 
         int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
-        List<ResInvitationMembers> resInvitationMemberses = RequestApiManager.getInstance().inviteToTeamByTeamApi(teamId, new ReqInvitationMembers(teamId, Arrays.asList("jsuch2362@naver.com"), LanguageUtil.getLanguage(RuntimeEnvironment.application)));
+        List<ResInvitationMembers> resInvitationMemberses = RequestApiManager.getInstance().inviteToTeamByTeamApi(teamId, new ReqInvitationMembers(teamId, Arrays.asList("jsuch2362@naver.com"), LanguageUtil.getLanguage()));
 
         assertThat(resInvitationMemberses, is(notNullValue()));
 

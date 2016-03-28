@@ -55,7 +55,7 @@ public class AccountPasswordApiClientTest {
 
         ResCommon resCommon = null;
         try {
-            resCommon = RequestApiManager.getInstance().resetPasswordByAccountPasswordApi(new ReqAccountEmail(BaseInitUtil.TEST_ID, LanguageUtil.getLanguage(RuntimeEnvironment.application)));
+            resCommon = RequestApiManager.getInstance().resetPasswordByAccountPasswordApi(new ReqAccountEmail(BaseInitUtil.TEST_ID, LanguageUtil.getLanguage()));
         } catch (RetrofitError e) {
             fail(e.getResponse().getBody().toString());
         }

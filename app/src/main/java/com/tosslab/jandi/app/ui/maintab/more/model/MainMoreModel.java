@@ -65,7 +65,7 @@ public class MainMoreModel {
     public int getEnabledUserCount() {
         List<FormattedEntity> formattedUsers = EntityManager.getInstance().getFormattedUsers();
         int enabledUserCount = Observable.from(formattedUsers)
-                .filter(formattedEntity -> TextUtils.equals(formattedEntity.getUser().status, "enabled"))
+                .filter(formattedEntity -> formattedEntity.isEnabled())
                 .count()
                 .toBlocking()
                 .firstOrDefault(0);
@@ -102,7 +102,7 @@ public class MainMoreModel {
     }
 
     public String getSupportUrlEachLanguage() {
-        String language = LanguageUtil.getLanguage(JandiApplication.getContext());
+        String language = LanguageUtil.getLanguage();
         String supportUrl;
         if (TextUtils.equals(language, LanguageUtil.LANG_KO)) {
             supportUrl = SUPPORT_URL_KO;

@@ -21,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -35,6 +36,7 @@ import android.view.inputmethod.BaseInputConnection;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
@@ -258,8 +260,7 @@ public class MessageListV2Fragment extends Fragment implements
     View vgMessageInput;
     @ViewById(R.id.vg_messages_go_to_latest)
     View vgMoveToLatest;
-    @ViewById(R.id.vg_messages_disable_alert)
-    View vDisabledUser;
+
     @ViewById(R.id.layout_messages_empty)
     LinearLayout vgEmptyLayout;
     @ViewById(R.id.layout_messages_loading)
@@ -286,6 +287,13 @@ public class MessageListV2Fragment extends Fragment implements
     ViewGroup vgOptionSpace;
     @ViewById(R.id.vg_easteregg_snow)
     FrameLayout vgEasterEggSnow;
+
+    @ViewById(R.id.vg_messages_member_status_alert)
+    View vgMemberStatusAlert;
+    @ViewById(R.id.iv_messages_member_status_alert)
+    ImageView ivMemberStatusAlert;
+    @ViewById(R.id.tv_messages_member_status_alert)
+    TextView tvMemberStatusAlert;
 
     private OfflineLayer offlineLayer;
 
@@ -794,8 +802,24 @@ public class MessageListV2Fragment extends Fragment implements
     @Override
     public void showDisabledUserLayer() {
         vgMessageInput.setVisibility(View.GONE);
-        vDisabledUser.setVisibility(View.VISIBLE);
+        int dp_2 = ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, getResources().getDisplayMetrics()));
+        ((RelativeLayout.LayoutParams) vgMemberStatusAlert.getLayoutParams())
+                .setMargins(dp_2, dp_2, dp_2, dp_2);
+        vgMemberStatusAlert.setVisibility(View.VISIBLE);
+        vgMemberStatusAlert.setBackgroundColor(getResources().getColor(R.color.jandi_disabled_user_background));
+        ivMemberStatusAlert.setImageResource(R.drawable.icon_disabled_members_bar);
+        tvMemberStatusAlert.setText(R.string.jandi_disabled_user);
         setPreviewVisible(false);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showInactivedUserLayer() {
+        ((RelativeLayout.LayoutParams) vgMemberStatusAlert.getLayoutParams()).setMargins(0, 0, 0, 0);
+        vgMemberStatusAlert.setVisibility(View.VISIBLE);
+        vgMemberStatusAlert.setBackgroundColor(getResources().getColor(R.color.jandi_black_de));
+        ivMemberStatusAlert.setImageResource(R.drawable.bar_icon_info);
+        tvMemberStatusAlert.setText(R.string.jandi_this_member_is_pending_to_join);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -2222,6 +2246,12 @@ public class MessageListV2Fragment extends Fragment implements
     public void modifyStarredInfo(long messageId, boolean isStarred) {
         int position = messageAdapter.indexByMessageId(messageId);
         messageAdapter.modifyStarredStateByPosition(position, isStarred);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void dismissStatusLayout() {
+        vgMemberStatusAlert.setVisibility(View.GONE);
     }
 
     private void showCoachMarkIfNeed() {

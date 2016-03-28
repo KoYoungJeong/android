@@ -10,11 +10,10 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
-import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 
@@ -56,7 +55,7 @@ public class PureCommentViewHolder implements BodyViewHolder {
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById.getUser();
-        if (entityById != EntityManager.UNKNOWN_USER_ENTITY && user != null && TextUtils.equals(user.status, "enabled")) {
+        if (entityById != EntityManager.UNKNOWN_USER_ENTITY && user != null && entityById.isEnabled()) {
             vDisableLineThrough.setVisibility(View.GONE);
             tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
         } else {

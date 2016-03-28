@@ -158,7 +158,7 @@ public class FileDetailModel {
         List<FormattedEntity> formattedEntities = new ArrayList<>();
 
         Observable.from(entities)
-                .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))
+                .filter(entity -> !entity.isUser() || entity.isEnabled())
                 .filter(formattedEntity -> formattedEntity.getId() != entityManager.getMe().getId())
                 .toSortedList((formattedEntity, formattedEntity2) -> {
                     if (formattedEntity.isUser() && formattedEntity2.isUser()) {

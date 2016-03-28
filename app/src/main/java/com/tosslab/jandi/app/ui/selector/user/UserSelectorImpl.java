@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.widget.PopupWindowCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -107,7 +106,7 @@ public class UserSelectorImpl implements UserSelector {
 
     private boolean hasDisabledMembers() {
         return Observable.from(EntityManager.getInstance().getFormattedUsers())
-                .filter(formattedEntity -> !TextUtils.equals(formattedEntity.getUser().status, "enabled"))
+                .filter(formattedEntity -> !formattedEntity.isEnabled())
                 .map(formattedEntity1 -> true)
                 .firstOrDefault(false)
                 .toBlocking()
@@ -117,7 +116,7 @@ public class UserSelectorImpl implements UserSelector {
 
     private Observable<List<ExpandRoomData>> getDisabledMembers() {
         return Observable.from(EntityManager.getInstance().getFormattedUsers())
-                .filter(formattedEntity -> !TextUtils.equals(formattedEntity.getUser().status, "enabled"))
+                .filter(formattedEntity -> !formattedEntity.isEnabled())
                 .map(ExpandRoomData::newRoomData)
                 .toSortedList((lhs, rhs) -> {
                     return StringCompareUtil.compare(lhs.getName(), rhs.getName());
@@ -130,7 +129,7 @@ public class UserSelectorImpl implements UserSelector {
         EntityManager entityManager = EntityManager.getInstance();
         long myId = entityManager.getMe().getId();
         return Observable.from(entityManager.getFormattedUsers())
-                .filter(formattedEntity -> TextUtils.equals(formattedEntity.getUser().status, "enabled"))
+                .filter(FormattedEntity::isEnabled)
                 .map(ExpandRoomData::newRoomData)
                 .toSortedList((lhs, rhs) -> {
                     if (lhs.getEntityId() == myId) {

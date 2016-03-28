@@ -12,8 +12,13 @@ public class ChatItem {
     private long lastLinkId;
     private String lastMessage;
     private String photo;
+    private String email;
+    private boolean inactive;
     private boolean status;
     private long roomId;
+
+    public ChatItem() {
+    }
 
     public long getLastMessageId() {
         return lastMessageId;
@@ -105,4 +110,21 @@ public class ChatItem {
         return roomId;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public ChatItem email(String email) {
+        this.email = email;
+        return this;
+    }
+
+    public boolean isInactive() {
+        return inactive;
+    }
+
+    public ChatItem inactive(boolean inactive) {
+        this.inactive = inactive;
+        return this;
+    }
 }

@@ -39,6 +39,8 @@ public interface ITeamApiAuth {
 
     List<ResInvitationMembers> inviteToTeamByTeamApi(long teamId, ReqInvitationMembers invitationMembers) throws RetrofitError;
 
+    ResCommon cancelInvitationUserByTeamApi(long teamId, long memberId) throws RetrofitError;
+
     ResTeamDetailInfo.InviteTeam getTeamInfoByTeamApi(long teamId) throws RetrofitError;
 
     ResAnnouncement getAnnouncement(long teamId, long topicId) throws RetrofitError;
