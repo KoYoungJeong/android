@@ -46,6 +46,7 @@ public class TeamDomainInfoPresenterImpl implements TeamDomainInfoPresenter {
 
         if (!NetworkCheckUtil.isConnected()) {
             view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
+            view.dismissProgressWheel();
             return;
         }
 
