@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,36 +19,18 @@ public class SwipeExitLayout extends FrameLayout {
 
     public static final int MIN_CANCEL_ANIM_DURATION = 200;
     public static final int MIN_EXIT_ANIM_DURATION = 500;
-
-    public interface OnExitListener {
-        void onExit();
-    }
-
-    public interface StatusListener {
-        void onTranslateY(float translateY);
-
-        void onCancel(float spareDistance, int cancelAnimDuration);
-
-        void onExit(float spareDistance, int exitAnimDuration);
-    }
-
     public static final String TAG = SwipeExitLayout.class.getSimpleName();
     private static final float CANCELABLE_PIXEL_AMOUNT = 80;
     private static final float TOO_MANY_SCROLL_PIXEL_AMOUNT = 400;
-
     private static final float MIN_DIM_AMOUNT = 0.1f;
     private static final float MAX_DIM_AMOUNT = 0.9f;
     private static final int NEEDLESS_ALPHA_VALUE = -1;
-
     private GestureDetectorCompat gestureDetector;
-
     private float cancelablePixelAmount;
     private float tooManyScrollPixelAmount;
-
     private OnExitListener onExitListener;
     private StatusListener statusListener;
     private List<StatusListener> statusListenerList;
-
     private View vBackgroundDim;
 
     public SwipeExitLayout(Context context) {
@@ -94,14 +77,12 @@ public class SwipeExitLayout extends FrameLayout {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean hasCounsumeTouchEvent = gestureDetector.onTouchEvent(event);
-
         int action = event.getAction();
         if (action == MotionEvent.ACTION_CANCEL
                 || action == MotionEvent.ACTION_UP) {
             exitOrCancel();
             return true;
         }
-
         return hasCounsumeTouchEvent;
     }
 
@@ -270,6 +251,18 @@ public class SwipeExitLayout extends FrameLayout {
         vBackgroundDim.animate()
                 .alpha(toAlpha)
                 .setDuration(duration);
+    }
+
+    public interface OnExitListener {
+        void onExit();
+    }
+
+    public interface StatusListener {
+        void onTranslateY(float translateY);
+
+        void onCancel(float spareDistance, int cancelAnimDuration);
+
+        void onExit(float spareDistance, int exitAnimDuration);
     }
 
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {

@@ -90,8 +90,19 @@ public class SettingsPresenterImpl implements SettingsPresenter {
     }
 
     @Override
+    public void onSetUpVersion() {
+        String version = SettingsModel.getVersionName();
+        view.setVersion(version);
+    }
+
+    @Override
     public void onInitViews() {
         String value = PreferenceManager.getDefaultSharedPreferences(JandiApplication.getContext()).getString(Settings.SETTING_ORIENTATION, "0");
         onSetUpOrientation(value);
+
+        onSetUpVersion();
     }
+
+
+
 }

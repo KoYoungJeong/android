@@ -89,6 +89,7 @@
 	<string name="jandi_announcement_delete_question">"이 공지를 삭제하시겠습니까? 삭제시 토픽 내 다른 멤버들 또한 더 이상 이 공지를 볼 수 없게되며, 원본 메시지는 보존됩니다."</string>
 	<string name="jandi_announcement_deleted">"%s님이 공지사항을 삭제했습니다."</string>
 	<string name="jandi_announcement_minimize">"최소화"</string>
+	<string name="jandi_another_invitation_sent">"초대 메일을 다시 전송했습니다."</string>
 	<string name="jandi_are_you_sure_disable_external_link">"기존에 공유된 링크로 접속할 경우 더 이상 파일을 볼 수 없게 됩니다. 삭제하시겠습니까?"</string>
 	<string name="jandi_ask_assign_topic_owner">"이 멤버를 토픽 관리자로 지정하시겠습니까?"</string>
 	<string name="jandi_ask_kick_user_from_topic">"정말 이 멤버를 내보내시겠습니까?"</string>
@@ -112,10 +113,11 @@
 	<string name="jandi_browse_other_topics">"참여하지 않은 토픽 목록 보기"</string>
 	<string name="jandi_browse_team">"팀으로 가기"</string>
 	<string name="jandi_cancel">"취소"</string>
+	<string name="jandi_cancel_invitation">"초대 취소"</string>
 	<string name="jandi_canceled">"취소됨"</string>
 	<string name="jandi_cannot_connect_service_try_again">"일시적으로 서비스 접속이 되지 않습니다. 잠시 후 다시 시도해주세요."</string>
 	<string name="jandi_cannot_find_messages">"검색 결과가 없습니다 : "</string>
-	<string name="jandi_cannot_find_search_result_1">"파일 서랍에 아직 파일이 없습니다."</string>
+	<string name="jandi_cannot_find_search_result_1">"아직 파일이 없습니다."</string>
 	<string name="jandi_cannot_find_search_result_2">"토픽 또는 1:1메시지에서 파일을 업로드하실 수 있습니다."</string>
 	<string name="jandi_cannot_find_search_result_old">"검색된 파일이 없습니다."</string>
 	<string name="jandi_change_passcode">"비밀번호 변경"</string>
@@ -186,7 +188,7 @@
 	<string name="jandi_entity_create_entity_name">"사용자 성함"</string>
 	<string name="jandi_entity_joined_topic">"참여한 토픽"</string>
 	<string name="jandi_entity_unjoined_topic">"참여하지 않은 토픽"</string>
-	<string name="jandi_err_unexpected">"알 수 없는 문제가 생겼습니다!"</string>
+	<string name="jandi_err_unexpected">"알 수 없는 문제가 생겼습니다."</string>
 	<string name="jandi_error_web_token">"로그인 중 에러가 발생했습니다. 다시 시도해 주세요."</string>
 	<string name="jandi_exceeded_max_text_length">"5000자 까지 입력할 수 있습니다."</string>
 	<string name="jandi_expired_invitation_link">"이 초대 링크는 만료되었습니다. 새로운 링크를 요청하세요."</string>
@@ -240,11 +242,13 @@
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_guide_to_assign_topic_owner">"토픽 상세보기 > 토픽 관리자 변경하기에서 다음 관리자를 지정한 후 토픽에서 내보낼 수 있습니다."</string>
 	<string name="jandi_has_joined">"%s님이 참여하였습니다"</string>
+	<string name="jandi_has_no_searched_member">"<![CDATA[<b><font color=#404040>%s</font></b>]]>의 검색 결과가 없습니다."</string>
 	<string name="jandi_have_an_account_already">"이미 계정이 있으신가요?"</string>
 	<string name="jandi_help">"도움말"</string>
 	<string name="jandi_hi_apk_store">"Hi Apk 스토어"</string>
 	<string name="jandi_image_too_big">"이미지가 너무 큽니다."</string>
 	<string name="jandi_incorrect_passcode">"비밀번호가 일치하지 않습니다."</string>
+	<string name="jandi_info">"잔디 정보"</string>
 	<string name="jandi_input_password">"선택한 팀 계정의 비밀번호를 입력하세요"</string>
 	<string name="jandi_input_search_keyword">"검색어를 입력해주세요."</string>
 	<string name="jandi_input_topic_name">"토픽 이름을 입력해주세요."</string>
@@ -265,6 +269,9 @@
 	<string name="jandi_invite_succes_copy_link">"초대 링크가 클립보드에 복사되었습니다. 초대를 원하시는 멤버에게 이 링크를 보내세요!"</string>
 	<string name="jandi_invite_succes_send">"아래 주소로 초대장이 성공적으로 전송되었습니다."</string>
 	<string name="jandi_invite_success">"초대 메일이 성공적으로 발송되었습니다"</string>
+	<string name="jandi_invite_to_dummy_account_again">"입력하신 이메일 주소는 이미 다른 멤버가 초대 중입니다.
+초대메일을 다시 보낼까요?"</string>
+	<string name="jandi_invite_to_team">"팀으로 초대하기"</string>
 	<string name="jandi_invite_wechat">"위챗으로 보내기"</string>
 	<string name="jandi_invited_topic">"%1$s님이 %2$s님을 초대했습니다."</string>
 	<string name="jandi_is_newcomer">"잔디가 처음이신가요?"</string>
@@ -291,6 +298,8 @@
 	<string name="jandi_mention_no_mentions">"다른 팀 멤버에게 받은 멘션이 없습니다. 
 메시지 입력창에서 "@"을 입력하여 멘션을 주고받을 수 있습니다."</string>
 	<string name="jandi_mention_push_message">"%s 님의 멘션"</string>
+	<string name="jandi_mentions_are_empty">"다른 멤버에게 받은 멘션이 없습니다. 
+메시지 입력창에서 "@"을 입력하여 멘션을 주고받을 수 있습니다."</string>
 	<string name="jandi_message_ask_about_delete_comment">"이 댓글을 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
 	<string name="jandi_message_ask_about_deleting">"이 메시지를 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
 	<string name="jandi_message_create_entity">"%1$s을 생성하였습니다"</string>
@@ -317,6 +326,7 @@
 	<string name="jandi_msg_network_offline">"인터넷이 연결되어 있지 않습니다."</string>
 	<string name="jandi_msg_network_offline_warn">"현재 네트워크에 접속되지 않은 것으로 보입니다."</string>
 	<string name="jandi_my_files">"<b>내 파일</b>"</string>
+	<string name="jandi_mypage">"마이 페이지"</string>
 	<string name="jandi_name_in_jandi">"잔디 계정 이름"</string>
 	<string name="jandi_need_to_assign_topic_owner">"회원님은 이 토픽의 관리자입니다.
 토픽 상세정보 > 토픽 관리자 변경하기 에서
@@ -380,8 +390,10 @@
 	<string name="jandi_push_preview_all_message">"모든 메시지"</string>
 	<string name="jandi_push_preview_public_only">"공개 토픽만"</string>
 	<string name="jandi_question_team_create">"아직 잔디 사용자가 아니세요?"</string>
+	<string name="jandi_r_u_sure_cancel_invitation">"정말로 초대를 취소할까요?"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"정말 이 이메일 주소를 삭제하시겠습니까?"</string>
 	<string name="jandi_reorder_from_long_press">"폴더를 길게 눌러 순서를 조정할 수 있습니다."</string>
+	<string name="jandi_resend_invitation">"초대메일 재전송"</string>
 	<string name="jandi_retry">"다시 시도"</string>
 	<string name="jandi_retry_voice_search">"음성 검색을 다시 시도해주십시요."</string>
 	<string name="jandi_save">"저장"</string>
@@ -406,6 +418,8 @@
 	<string name="jandi_set_passcode">"비밀번호 잠금 설정"</string>
 	<string name="jandi_set_passcode_detail">"비밀번호를 잊은 경우 다시 찾을 수 있는 방법이 없으므로 
 앱을 지우고 재설치 해 주시기 바랍니다"</string>
+	<string name="jandi_setting_account">"계정 설정"</string>
+	<string name="jandi_setting_account_email_info">"등록된 이메일 주소들을 로그인 ID로 사용하실 수 있습니다. 이 이메일 주소들은 각각 연동된 팀의 프로필에도 사용됩니다."</string>
 	<string name="jandi_setting_display">"화면"</string>
 	<string name="jandi_setting_folder">"폴더 관리"</string>
 	<string name="jandi_setting_general">"일반"</string>
@@ -439,8 +453,8 @@
 	<string name="jandi_signup_title">"가입하기"</string>
 	<string name="jandi_signup_verification_code">"인증번호 이메일을 발송했습니다.\n받으신 인증번호를 입력해주세요."</string>
 	<string name="jandi_signup_verify_title">"인증번호 확인"</string>
-	<string name="jandi_sort_folder">"폴더로 보기"</string>
-	<string name="jandi_sort_updated">"최신 메시지 순으로 보기"</string>
+	<string name="jandi_sort_folder">"폴더 순으로"</string>
+	<string name="jandi_sort_updated">"최신 메시지 순으로"</string>
 	<string name="jandi_sounds">"소리"</string>
 	<string name="jandi_sounds_air_pop">"버블팝"</string>
 	<string name="jandi_sounds_arise">"기타 이중음"</string>
@@ -469,6 +483,7 @@
 	<string name="jandi_success_copy_clipboard_external_link">"외부 공유용 링크가 클립보드에 복사되었습니다."</string>
 	<string name="jandi_success_disable_external_link">"외부 공유용 링크가 삭제되었습니다."</string>
 	<string name="jandi_success_kick_user_from_topic">"선택한 멤버를 내보냈습니다."</string>
+	<string name="jandi_success_to_cancel_invitation">"%s님의 초대를 취소했습니다."</string>
 	<string name="jandi_success_update_account_profile">"계정 정보가 성공적으로 수정되었습니다"</string>
 	<string name="jandi_success_web_token">"로그인 되었습니다."</string>
 	<string name="jandi_switch_team">"팀 이동하기"</string>
@@ -479,17 +494,21 @@
 	<string name="jandi_tab_private_group">"비공개 토픽"</string>
 	<string name="jandi_tab_to_view_original">"이곳을 탭하면 원본으로 볼 수 있습니다."</string>
 	<string name="jandi_tab_topic">"토픽"</string>
+	<string name="jandi_team">"팀"</string>
 	<string name="jandi_team_creation_succeed">"메일 전송 성공. 메일함을 확인하여 잔디 팀을 생성하세요."</string>
 	<string name="jandi_team_info">"팀 정보"</string>
 	<string name="jandi_team_join_fail">"팀 가입에 실패하였습니다."</string>
 	<string name="jandi_team_member">"팀 멤버"</string>
+	<string name="jandi_team_member_count_with_format">"팀원(%d)"</string>
 	<string name="jandi_team_owner">"팀 관리자"</string>
+	<string name="jandi_team_owner_with_format">"팀 관리자:%s"</string>
 	<string name="jandi_team_select_accept">"수락"</string>
 	<string name="jandi_team_select_create_a_team">"팀 생성"</string>
 	<string name="jandi_team_select_ignore">"거부"</string>
 	<string name="jandi_team_switch">"팀 전환하기"</string>
 	<string name="jandi_term_of_service">"이용 약관"</string>
 	<string name="jandi_this_is_disabled_user_explain">"차단된 멤버입니다. 궁금하신 사항은 팀 관리자에게 문의하세요."</string>
+	<string name="jandi_this_member_is_pending_to_join">"팀에 초대중인 멤버입니다."</string>
 	<string name="jandi_title_activity_file_explorer">"파일 탐색기"</string>
 	<string name="jandi_title_cdp_to_be_shared">"공유할 대화방을 선택하세요"</string>
 	<string name="jandi_title_cdp_to_be_unshared">"공유를 해제할 대화방을 선택하세요"</string>

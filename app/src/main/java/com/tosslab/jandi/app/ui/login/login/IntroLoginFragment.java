@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.ui.signup.account.SignUpActivity_;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.SignOutUtil;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -48,7 +49,7 @@ import retrofit.RetrofitError;
  * Created by justinygchoi on 14. 11. 13..
  */
 @EFragment(R.layout.fragment_intro_input_id)
-public class IntroLoginFragment extends Fragment implements IntroMainActivity.KeyboardHandler {
+public class IntroLoginFragment extends Fragment implements UiUtils.KeyboardHandler {
 
     private static final int REQ_SIGNUP = 1081;
 

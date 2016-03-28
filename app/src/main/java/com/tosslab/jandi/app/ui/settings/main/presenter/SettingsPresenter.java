@@ -10,6 +10,8 @@ public interface SettingsPresenter {
 
     void onSetUpOrientation(String selectedValue);
 
+    void onSetUpVersion();
+
     void onInitViews();
 
     interface View {
@@ -29,5 +31,7 @@ public interface SettingsPresenter {
         void setOrientationSummary(String value);
 
         void moveLoginActivity();
+
+        void setVersion(String version);
     }
 }
