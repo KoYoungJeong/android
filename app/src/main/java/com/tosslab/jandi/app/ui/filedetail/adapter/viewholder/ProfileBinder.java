@@ -55,7 +55,7 @@ public class ProfileBinder {
             vUserNameDisableIndicator.setLayoutParams(params);
         });
 
-        boolean isDisabledUser = writer.isEnabled();
+        boolean isDisabledUser = !writer.isEnabled();
         vUserNameDisableIndicator.setVisibility(isDisabledUser ? View.VISIBLE : View.GONE);
         vUserProfileDisableIndicator.setVisibility(isDisabledUser ? View.VISIBLE : View.GONE);
 
