@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
@@ -45,6 +47,9 @@ import de.greenrobot.event.EventBus;
 
 @EFragment(R.layout.fragment_settings)
 public class SettingsFragment extends Fragment implements SettingsPresenter.View {
+
+    @ViewById(R.id.vg_settings_main_orientation_wrapper)
+    ViewGroup vgOrientation;
 
     @ViewById(R.id.vg_settings_main_orientation)
     SettingsBodyView sbvOrientation;
@@ -192,6 +197,11 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
         if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
         }
+    }
+
+    @Override
+    public void setOrientationViewVisibility(boolean show) {
+        vgOrientation.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     @Override

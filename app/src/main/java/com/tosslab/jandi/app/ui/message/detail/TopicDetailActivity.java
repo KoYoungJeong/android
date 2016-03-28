@@ -12,7 +12,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.message.detail.view.ChatDetailFragment_;
 import com.tosslab.jandi.app.ui.message.detail.view.TopicDetailFragment_;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -52,12 +52,6 @@ public class TopicDetailActivity extends BaseAppCompatActivity {
                 .add(R.id.vg_topic_detail_content, fragment, "detail")
                 .commit();
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ActivityHelper.setOrientation(this);
     }
 
     @Override

@@ -164,12 +164,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        ActivityHelper.setOrientation(this);
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(KEY_FULL_SIZE_IMAGE_SHOWING, ivProfileImageFull.isShown());

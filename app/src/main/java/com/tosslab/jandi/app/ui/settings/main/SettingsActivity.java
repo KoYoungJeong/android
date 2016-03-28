@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.settings.main.view.SettingsFragment;
 import com.tosslab.jandi.app.ui.settings.main.view.SettingsFragment_;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -20,11 +20,6 @@ import org.androidannotations.annotations.EActivity;
  */
 @EActivity(R.layout.activity_setting)
 public class SettingsActivity extends BaseAppCompatActivity {
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ActivityHelper.setOrientation(this);
-    }
 
     @AfterViews
     void initView() {

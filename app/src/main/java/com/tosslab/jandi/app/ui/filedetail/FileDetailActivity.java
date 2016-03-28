@@ -82,7 +82,6 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.TextCutter;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -386,7 +385,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     protected void onResume() {
         super.onResume();
         isForeground = true;
-        ActivityHelper.setOrientation(this);
         adapter.notifyDataSetChanged();
     }
 

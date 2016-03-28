@@ -4,6 +4,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.facebook.appevents.AppEventsLogger;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
+import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+
 
 public class BaseAppCompatActivity extends AppCompatActivity {
 
@@ -17,6 +19,7 @@ public class BaseAppCompatActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         AppEventsLogger.activateApp(this);
+        ActivityHelper.setOrientation(this);
 
         if (needUnLockPassCode) {
             UnLockPassCodeManager.getInstance().unLockPassCodeIfNeed(this);

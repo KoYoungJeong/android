@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -21,7 +20,6 @@ import com.tosslab.jandi.app.ui.settings.account.module.SettingAccountModule;
 import com.tosslab.jandi.app.ui.settings.account.presenter.SettingAccountPresenter;
 import com.tosslab.jandi.app.ui.settings.account.view.SettingAccountView;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.views.settings.SettingsBodyView;
 
