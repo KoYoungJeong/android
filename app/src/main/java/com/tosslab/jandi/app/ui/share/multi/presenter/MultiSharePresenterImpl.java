@@ -16,7 +16,7 @@ import com.tosslab.jandi.app.ui.share.model.ShareModel_;
 import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
 import com.tosslab.jandi.app.ui.share.multi.domain.ShareData;
 import com.tosslab.jandi.app.ui.share.multi.domain.ShareTarget;
-import com.tosslab.jandi.app.ui.share.multi.model.ShareListDataModel;
+import com.tosslab.jandi.app.ui.share.multi.model.ShareAdapterDataModel;
 import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
@@ -38,14 +38,14 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     ShareTarget shareTarget;
     ShareSelectModel shareSelectModel;
     List<String> comments;
-    private ShareListDataModel shareListDataModel;
+    private ShareAdapterDataModel shareAdapterDataModel;
     private ShareModel shareModel;
     private int lastPageIndex = 0;
 
     @Inject
-    public MultiSharePresenterImpl(View view, ShareListDataModel shareListDataModel) {
+    public MultiSharePresenterImpl(View view, ShareAdapterDataModel shareAdapterDataModel) {
         this.view = view;
-        this.shareListDataModel = shareListDataModel;
+        this.shareAdapterDataModel = shareAdapterDataModel;
         shareTarget = new ShareTarget();
         this.shareModel = ShareModel_.getInstance_(JandiApplication.getContext());
         comments = new ArrayList<>();
@@ -96,7 +96,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
 
     @Override
     public void initShareData(List<String> uris) {
-        shareListDataModel.clear();
+        shareAdapterDataModel.clear();
         Observable.from(uris)
                 .observeOn(Schedulers.io())
                 .map(uri -> {
@@ -123,11 +123,11 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                 .observeOn(Schedulers.computation())
                 .doOnNext(shareData -> comments.add(""))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(shareListDataModel::add, t -> view.moveIntro(), () -> {
-                    ShareData item = shareListDataModel.getShareData(0);
+                .subscribe(shareAdapterDataModel::add, t -> view.moveIntro(), () -> {
+                    ShareData item = shareAdapterDataModel.getShareData(0);
                     String fileName = getFileName(item.getData());
                     view.setFileTitle(fileName);
-                    view.updateFiles(shareListDataModel.size());
+                    view.updateFiles(shareAdapterDataModel.size());
                 });
 
     }
@@ -147,9 +147,9 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     @Override
     public void startShare() {
 
-        Observable.range(0, shareListDataModel.size())
+        Observable.range(0, shareAdapterDataModel.size())
                 .subscribe(idx -> {
-                    ShareData item = shareListDataModel.getShareData(idx);
+                    ShareData item = shareAdapterDataModel.getShareData(idx);
                     ResultMentionsVO mentionInfoObject = MentionControlViewModel.getMentionInfoObject(shareTarget.getTeamId(), shareTarget.getRoomId(), comments.get(idx), MentionControlViewModel.MENTION_TYPE_FILE_COMMENT);
                     List<MentionObject> mentions = mentionInfoObject.getMentions();
                     String message = mentionInfoObject.getMessage();
@@ -165,12 +165,12 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
 
     @Override
     public void onFilePageChanged(int position, String comment) {
-        ShareData item = shareListDataModel.getShareData(position);
+        ShareData item = shareAdapterDataModel.getShareData(position);
         String fileName = getFileName(item.getData());
         comments.set(lastPageIndex, comment);
         view.setCommentText(comments.get(position));
         view.setFileTitle(fileName);
-        view.setUpScrollButton(position, shareListDataModel.size());
+        view.setUpScrollButton(position, shareAdapterDataModel.size());
         lastPageIndex = position;
 
     }

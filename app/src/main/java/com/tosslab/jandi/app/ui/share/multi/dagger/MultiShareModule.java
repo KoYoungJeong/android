@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.ui.share.multi.dagger;
 
+import com.tosslab.jandi.app.ui.share.multi.adapter.ShareAdapterDataView;
 import com.tosslab.jandi.app.ui.share.multi.adapter.ShareFragmentPageAdapter;
-import com.tosslab.jandi.app.ui.share.multi.adapter.ShareListDataView;
-import com.tosslab.jandi.app.ui.share.multi.model.ShareListDataModel;
+import com.tosslab.jandi.app.ui.share.multi.model.ShareAdapterDataModel;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenter;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenterImpl;
 
@@ -31,12 +31,12 @@ public class MultiShareModule {
     }
 
     @Provides
-    ShareListDataModel provideSharesDataModel() {
+    ShareAdapterDataModel provideSharesDataModel() {
         return adapter;
     }
 
     @Provides
-    ShareListDataView provideSharesDataView() {
+    ShareAdapterDataView provideSharesDataView() {
         return adapter;
     }
 }

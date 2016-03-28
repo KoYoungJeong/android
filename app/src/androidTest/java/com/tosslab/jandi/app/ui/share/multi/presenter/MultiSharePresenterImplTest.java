@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.share.model.ShareModel_;
 import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
-import com.tosslab.jandi.app.ui.share.multi.model.ShareListDataModel;
+import com.tosslab.jandi.app.ui.share.multi.model.ShareAdapterDataModel;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
 
 import org.junit.Before;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
 public class MultiSharePresenterImplTest {
 
 
-    private ShareListDataModel mockDataModel;
+    private ShareAdapterDataModel mockDataModel;
     private MultiSharePresenter.View mockView;
     private MultiSharePresenter multiSharePresenter;
 
@@ -48,7 +48,7 @@ public class MultiSharePresenterImplTest {
 
         BaseInitUtil.initData();
 
-        mockDataModel = mock(ShareListDataModel.class);
+        mockDataModel = mock(ShareAdapterDataModel.class);
         mockView = mock(MultiSharePresenter.View.class);
         multiSharePresenter = new MultiSharePresenterImpl(mockView, mockDataModel);
         ((MultiSharePresenterImpl) multiSharePresenter).shareSelectModel = ShareModel_.getInstance_(JandiApplication.getContext()).getShareSelectModel(EntityManager.getInstance().getTeamId());

@@ -7,12 +7,12 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import com.tosslab.jandi.app.ui.share.multi.adapter.items.ShareFileItemFragment;
 import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
 import com.tosslab.jandi.app.ui.share.multi.domain.ShareData;
-import com.tosslab.jandi.app.ui.share.multi.model.ShareListDataModel;
+import com.tosslab.jandi.app.ui.share.multi.model.ShareAdapterDataModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShareFragmentPageAdapter extends FragmentStatePagerAdapter implements ShareListDataModel, ShareListDataView {
+public class ShareFragmentPageAdapter extends FragmentStatePagerAdapter implements ShareAdapterDataModel, ShareAdapterDataView {
 
     private List<ShareData> shareDatas;
 

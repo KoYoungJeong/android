@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.share.multi.model;
 
 import com.tosslab.jandi.app.ui.share.multi.domain.ShareData;
 
-public interface ShareListDataModel {
+public interface ShareAdapterDataModel {
 
     int size();
 

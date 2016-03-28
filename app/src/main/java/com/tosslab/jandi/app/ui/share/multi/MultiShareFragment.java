@@ -22,8 +22,8 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.share.MainShareActivity;
+import com.tosslab.jandi.app.ui.share.multi.adapter.ShareAdapterDataView;
 import com.tosslab.jandi.app.ui.share.multi.adapter.ShareFragmentPageAdapter;
-import com.tosslab.jandi.app.ui.share.multi.adapter.ShareListDataView;
 import com.tosslab.jandi.app.ui.share.multi.dagger.DaggerMultiShareComponent;
 import com.tosslab.jandi.app.ui.share.multi.dagger.MultiShareModule;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenter;
@@ -77,7 +77,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     @Bind(R.id.et_multi_share_comment)
     EditText etComment;
     @Inject
-    ShareListDataView shareListDataView;
+    ShareAdapterDataView shareAdapterDataView;
 
     private List<String> uris;
 
@@ -192,7 +192,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     @Override
     public void updateFiles(int pageCount) {
 
-        shareListDataView.refresh();
+        shareAdapterDataView.refresh();
 
         setUpScrollButton(0, pageCount);
     }

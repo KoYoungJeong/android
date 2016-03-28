@@ -1,5 +1,5 @@
 package com.tosslab.jandi.app.ui.share.multi.adapter;
 
-public interface ShareListDataView {
+public interface ShareAdapterDataView {
     void refresh();
 }
