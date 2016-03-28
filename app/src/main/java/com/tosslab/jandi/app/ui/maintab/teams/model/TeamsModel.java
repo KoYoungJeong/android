@@ -46,12 +46,11 @@ public class TeamsModel {
                 subscriber.onError(retrofitError);
             }
             subscriber.onCompleted();
-        }).subscribeOn(Schedulers.io());
+        });
     }
 
     public Observable<List<Team>> getTeamsObservable(final List<Team> teams) {
         return Observable.from(AccountRepository.getRepository().getAccountTeams())
-                .subscribeOn(Schedulers.io())
                 .map(Team::createTeam)
                 .collect(() -> teams, List::add);
     }
@@ -68,11 +67,9 @@ public class TeamsModel {
                 subscriber.onError(error);
             }
             subscriber.onCompleted();
-
         };
 
         return Observable.create(subscribe)
-                .subscribeOn(Schedulers.io())
                 .concatMap(Observable::from)
                 .filter(resPendingTeamInfo ->
                         TextUtils.equals("pending", resPendingTeamInfo.getStatus()))
@@ -90,7 +87,7 @@ public class TeamsModel {
                     });
             subscriber.onNext(teams);
             subscriber.onCompleted();
-        }).subscribeOn(Schedulers.io());
+        });
     }
 
     public Observable<Pair<Long, List<Team>>> getCheckSelectedTeamObservable(final List<Team> teams) {
@@ -102,7 +99,7 @@ public class TeamsModel {
                     .subscribe(team -> team.setSelected(true));
             subscriber.onNext(Pair.create(selectedTeamInfo.getTeamId(), teams));
             subscriber.onCompleted();
-        }).subscribeOn(Schedulers.io());
+        });
     }
 
     public Observable<Object> getUpdateEntityInfoObservable(final long teamId) {
@@ -119,7 +116,7 @@ public class TeamsModel {
                 subscriber.onError(error);
             }
             subscriber.onCompleted();
-        }).subscribeOn(Schedulers.io());
+        });
     }
 
     private void updateSelectedTeam(long teamId) {

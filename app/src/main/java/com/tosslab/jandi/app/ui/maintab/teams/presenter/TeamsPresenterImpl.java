@@ -18,6 +18,7 @@ import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 /**
@@ -62,6 +63,7 @@ public class TeamsPresenterImpl implements TeamsPresenter {
                 .concatMap(model::getPendingTeamsObservable)
                 .concatMap(model::getUpdateBadgeCountObservable)
                 .concatMap(model::getCheckSelectedTeamObservable)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(myTeams -> {
                     long selectedTeamId = myTeams.first;
@@ -102,6 +104,7 @@ public class TeamsPresenterImpl implements TeamsPresenter {
     public void onTeamJoinAction(long teamId) {
         view.showProgressWheel();
         model.getUpdateEntityInfoObservable(teamId)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     view.dismissProgressWheel();
@@ -166,6 +169,7 @@ public class TeamsPresenterImpl implements TeamsPresenter {
         model.getSelectedTeamObservable()
                 .concatMap(userTeam ->
                         model.getUpdateEntityInfoObservable(userTeam.getTeamId()))
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     view.dismissProgressWheel();

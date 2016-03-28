@@ -1,25 +1,17 @@
 package com.tosslab.jandi.app.ui.maintab.team.model;
 
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Pair;
 
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.maintab.team.vo.Team;
-import com.tosslab.jandi.app.utils.AccountUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
@@ -33,30 +25,24 @@ public class TeamModel {
         return currentMembers;
     }
 
-    public void setCurrentMembers(List<FormattedEntity> currentMembers) {
+    public synchronized void setCurrentMembers(List<FormattedEntity> currentMembers) {
         this.currentMembers = currentMembers;
     }
 
     public Observable<Team> getTeamObservable() {
         final EntityManager entityManager = EntityManager.getInstance();
         return Observable.from(entityManager.getFormattedUsers())
-                .subscribeOn(Schedulers.trampoline())
                 .filter(FormattedEntity::isTeamOwner)
                 .firstOrDefault(EntityManager.UNKNOWN_USER_ENTITY)
-                .first()
                 .map(ownerEntity -> {
                     long teamId = entityManager.getTeamId();
                     String teamName = entityManager.getTeamName();
                     String teamDomain = entityManager.getTeamDomain();
-                    return Team.create(teamId, teamName, teamDomain, ownerEntity.getUser());
-                })
-                .concatMap(team -> {
                     List<FormattedEntity> teamMembers = getTeamMember();
-                    team.setMembers(teamMembers);
 
                     setCurrentMembers(teamMembers);
 
-                    return Observable.just(team);
+                    return Team.create(teamId, teamName, teamDomain, ownerEntity.getUser(), teamMembers);
                 });
     }
 
