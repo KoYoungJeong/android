@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 /**
@@ -60,6 +61,7 @@ public class TeamPresenterImpl implements TeamPresenter {
         view.showProgress();
 
         model.getTeamObservable()
+                .subscribeOn(Schedulers.trampoline())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(team -> {
                     view.hideProgress();

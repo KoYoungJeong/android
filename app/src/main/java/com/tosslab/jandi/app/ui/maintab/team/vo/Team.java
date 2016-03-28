@@ -15,15 +15,16 @@ public class Team {
     private ResLeftSideMenu.User owner;
     private List<FormattedEntity> members;
 
-    private Team(long id, String name, String domain, ResLeftSideMenu.User owner) {
+    private Team(long id, String name, String domain, ResLeftSideMenu.User owner, List<FormattedEntity> members) {
         this.id = id;
         this.name = name;
         this.domain = domain;
         this.owner = owner;
+        this.members = members;
     }
 
-    public static Team create(long id, String name, String domain, ResLeftSideMenu.User owner) {
-        return new Team(id, name, domain, owner);
+    public static Team create(long id, String name, String domain, ResLeftSideMenu.User owner, List<FormattedEntity> members) {
+        return new Team(id, name, domain, owner, members);
     }
 
     public long getId() {

@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.ui.maintab.mypage.model.MyPageModel;
 import com.tosslab.jandi.app.ui.maintab.mypage.view.MyPageView;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
@@ -23,6 +22,7 @@ import javax.inject.Inject;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 /**
@@ -58,7 +58,6 @@ public class MyPagePresenterImpl implements MyPagePresenter {
 
     @Override
     public void onInitializeMyPage() {
-
         view.showProfileLayout();
 
         view.clearMentions();
@@ -66,20 +65,21 @@ public class MyPagePresenterImpl implements MyPagePresenter {
         view.showProgress();
 
         model.getMentionsObservable(-1, MyPageModel.MENTION_LIST_LIMIT)
+                .concatMap(model::getConvertedMentionObservable)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(resStarMentioned -> {
+                .subscribe(pair -> {
                     view.hideProgress();
 
-                    view.setHasMore(resStarMentioned.hasMore());
+                    view.setHasMore(pair.first);
 
-                    List<StarMentionedMessageObject> records = resStarMentioned.getRecords();
+                    List<MentionMessage> records = pair.second;
                     if (records == null || records.isEmpty()) {
                         view.showEmptyMentionView();
                         return;
                     }
 
-                    List<MentionMessage> convertedMentionList = model.getConvertedMentionList(records);
-                    view.addMentions(convertedMentionList);
+                    view.addMentions(records);
                 }, throwable -> {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
                     view.hideProgress();
@@ -96,19 +96,20 @@ public class MyPagePresenterImpl implements MyPagePresenter {
         view.showMoreProgress();
 
         model.getMentionsObservable(offset, MyPageModel.MENTION_LIST_LIMIT)
+                .concatMap(model::getConvertedMentionObservable)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(resStarMentioned -> {
-                    view.setHasMore(resStarMentioned.hasMore());
-
+                .subscribe(pair -> {
                     view.hideMoreProgress();
 
-                    List<StarMentionedMessageObject> records = resStarMentioned.getRecords();
+                    view.setHasMore(pair.first);
+
+                    List<MentionMessage> records = pair.second;
                     if (records == null || records.isEmpty()) {
                         return;
                     }
 
-                    List<MentionMessage> convertedMentionList = model.getConvertedMentionList(records);
-                    view.addMentions(convertedMentionList);
+                    view.addMentions(records);
                 }, throwable -> {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
                     view.hideMoreProgress();
@@ -178,7 +179,9 @@ public class MyPagePresenterImpl implements MyPagePresenter {
 
     @Override
     public void clearMentionInitializeQueue() {
-        if (mentionInitializeQueueSubscription != null && !mentionInitializeQueueSubscription.isUnsubscribed()) {
+        if (mentionInitializeQueueSubscription != null
+                && !mentionInitializeQueueSubscription.isUnsubscribed()) {
+
             mentionInitializeQueueSubscription.unsubscribe();
         }
     }
