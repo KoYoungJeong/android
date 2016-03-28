@@ -688,6 +688,9 @@ public class MessageListModel {
         return false;
     }
 
+    public void deleteReadyMessage(long roomId) {
+        ReadyMessageRepository.getRepository().deleteReadyMessage(roomId);
+    }
     public boolean isInactiveUser(long entityId) {
         return EntityManager.getInstance().getEntityById(entityId).isInavtived();
     }
