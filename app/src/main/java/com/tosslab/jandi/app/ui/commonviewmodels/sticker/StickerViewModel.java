@@ -235,7 +235,7 @@ public class StickerViewModel {
             } else {
                 action = AnalyticsValue.Action.Sticker_StickerTab;
             }
-            AnalyticsUtil.sendEvent(screen.name(), action.name() + String.valueOf(groupIdx));
+            AnalyticsUtil.sendEvent(screen.name(), action.name() + String.valueOf(groupIdx), null);
         }
     }
 

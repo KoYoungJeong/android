@@ -217,9 +217,16 @@ public class AccountRepository {
             deleteBuilder.where().eq("accountInfo_id", accountInfo.getId());
             deleteBuilder.delete();
 
-            for (ResAccountInfo.UserEmail userEmail : userEmails) {
-                userEmail.setAccountInfo(accountInfo);
-                userEmailDao.create(userEmail);
+            try {
+                userEmailDao.callBatchTasks(() -> {
+                    for (ResAccountInfo.UserEmail userEmail : userEmails) {
+                        userEmail.setAccountInfo(accountInfo);
+                        userEmailDao.create(userEmail);
+                    }
+                    return null;
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } finally {
             lock.unlock();

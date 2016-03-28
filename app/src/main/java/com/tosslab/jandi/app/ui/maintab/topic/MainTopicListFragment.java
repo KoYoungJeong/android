@@ -49,6 +49,7 @@ import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -261,11 +262,22 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     void onOrderTitleClick() {
         boolean currentFolder = isCurrentFolder();
         changeTopicSort(currentFolder, !currentFolder);
+        JandiPreference.setLastTopicOrderType(!currentFolder ? 0 : 1);
+
+        if (currentFolder) {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
+                    AnalyticsValue.Action.ChangeTopicOrder,
+                    AnalyticsValue.Label.UpdateDate);
+        } else {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
+                    AnalyticsValue.Action.ChangeTopicOrder,
+                    AnalyticsValue.Label.Folder);
+        }
     }
 
     private boolean isCurrentFolder() {
         RecyclerView.Adapter adapter = lvMainTopic.getAdapter();
-        return !(adapter instanceof UpdatedTopicAdapter);
+        return adapter != null && !(adapter instanceof UpdatedTopicAdapter);
     }
 
     @Override

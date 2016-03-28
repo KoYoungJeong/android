@@ -34,9 +34,13 @@ import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 
 import org.androidannotations.api.BackgroundExecutor;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
+import java.util.logging.LogManager;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -76,6 +80,8 @@ public class JandiApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
+
+        addLogConfigIfDebug();
 
         JandiApplication.setContext(this);
         FacebookSdk.sdkInitialize(this);
@@ -121,6 +127,25 @@ public class JandiApplication extends MultiDexApplication {
                 .build();
 
         Fresco.initialize(context, config);
+    }
+
+    private void addLogConfigIfDebug() {
+        if (!BuildConfig.DEBUG) return;
+
+        try {
+
+            String config = "handlers=java.util.logging.ConsoleHandler\n" +
+                    "java.util.logging.ConsoleHandler.level=ALL\n" +
+                    "java.util.logging.ConsoleHandler.formatter=java.util.logging.SimpleFormatter\n" +
+                    ".level=ALL";
+
+            InputStream inputStream = new ByteArrayInputStream(config.getBytes());
+            LogManager.getLogManager().readConfiguration(inputStream);
+            inputStream.close();
+            LogUtil.d("Read Log Configuration");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private DiskCacheConfig getMainDiskConfig() {

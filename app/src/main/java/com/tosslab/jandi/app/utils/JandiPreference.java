@@ -51,6 +51,8 @@ public class JandiPreference {
     private static final String PREF_LAST_EXECUTED_TIME = "last_executed_time";
     private static final String PREF_LAST_TOPIC_ORDER_TYPE = "last_topic_order_type";
 
+    private static final String PREF_SOCKET_RECONNECT_DELAY = "socket_reconnect_delay";
+
     public static boolean isOldParseFileCacheDeleted(Context context) {
         SharedPreferences pref = getSharedPreferences();
         return pref.getBoolean(PREF_OLD_PARSE_FILE_CACHE_DELETED, false);
@@ -360,6 +362,18 @@ public class JandiPreference {
         getSharedPreferences()
                 .edit()
                 .putInt(PREF_LAST_TOPIC_ORDER_TYPE, type)
+                .apply();
+    }
+
+    public static long getSocketReconnectDelay() {
+        return getSharedPreferences()
+                .getLong(PREF_SOCKET_RECONNECT_DELAY, 0l);
+    }
+
+    public static void setSocketReconnectDelay(long delay) {
+        getSharedPreferences()
+                .edit()
+                .putLong(PREF_SOCKET_RECONNECT_DELAY, delay)
                 .apply();
     }
 }

@@ -47,15 +47,20 @@ public class ChatRepository {
             updateBuilder.updateColumnValue("isOld", true);
             updateBuilder.update();
 
-            int order = 0;
-            for (ResChat chat : chats) {
-                chat.setTeamId(selectedTeamId);
-                chat.setOrder(order++);
-                chat.setIsOld(false);
-                chatDao.createOrUpdate(chat);
-            }
+            chatDao.callBatchTasks(() -> {
+                int order = 0;
+                for (ResChat chat : chats) {
+                    chat.setTeamId(selectedTeamId);
+                    chat.setOrder(order++);
+                    chat.setIsOld(false);
+                    chatDao.createOrUpdate(chat);
+                }
+                return null;
+            });
             return true;
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
