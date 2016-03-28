@@ -8,7 +8,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +39,7 @@ public class SwipeExitLayout extends FrameLayout {
     private static final float MAX_DIM_AMOUNT = 0.9f;
     private static final int NEEDLESS_ALPHA_VALUE = -1;
 
-    private SwipeGestureDetector gestureDetector;
+    private GestureDetectorCompat gestureDetector;
 
     private float cancelablePixelAmount;
     private float tooManyScrollPixelAmount;
@@ -67,7 +66,7 @@ public class SwipeExitLayout extends FrameLayout {
     }
 
     private void init(Context context) {
-        gestureDetector = new SwipeGestureDetector(getContext(), new GestureListener());
+        gestureDetector = new GestureDetectorCompat(getContext(), new GestureListener());
         cancelablePixelAmount = context.getResources().getDisplayMetrics().density * CANCELABLE_PIXEL_AMOUNT;
         tooManyScrollPixelAmount = context.getResources().getDisplayMetrics().density * TOO_MANY_SCROLL_PIXEL_AMOUNT;
     }
@@ -94,7 +93,16 @@ public class SwipeExitLayout extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        return gestureDetector.onTouchEvent(event);
+        boolean hasCounsumeTouchEvent = gestureDetector.onTouchEvent(event);
+
+        int action = event.getAction();
+        if (action == MotionEvent.ACTION_CANCEL
+                || action == MotionEvent.ACTION_UP) {
+            exitOrCancel();
+            return true;
+        }
+
+        return hasCounsumeTouchEvent;
     }
 
     private void handleScroll(float distance) {
@@ -264,26 +272,7 @@ public class SwipeExitLayout extends FrameLayout {
                 .setDuration(duration);
     }
 
-    private class SwipeGestureDetector extends GestureDetectorCompat {
-        GestureListener gestureListener;
-
-        public SwipeGestureDetector(Context context, GestureListener listener) {
-            super(context, listener);
-            gestureListener = listener;
-        }
-
-        @Override
-        public boolean onTouchEvent(MotionEvent event) {
-            boolean handleTouchEvent = super.onTouchEvent(event);
-            int action = event.getAction();
-            if (action == MotionEvent.ACTION_UP) {
-                gestureListener.onSingleTapUp(event);
-            }
-            return handleTouchEvent;
-        }
-    }
-
-    private class GestureListener implements GestureDetector.OnGestureListener {
+    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
 
         @Override
         public boolean onDown(MotionEvent e) {
@@ -291,31 +280,11 @@ public class SwipeExitLayout extends FrameLayout {
         }
 
         @Override
-        public void onShowPress(MotionEvent e) {
-        }
-
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            exitOrCancel();
-            return true;
-        }
-
-        @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             if (Math.abs(distanceY) > Math.abs(distanceX)) {
                 handleScroll(distanceY);
-                return true;
             }
-            return false;
-        }
-
-        @Override
-        public void onLongPress(MotionEvent e) {
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            return Math.abs(velocityY) > Math.abs(velocityX);
+            return true;
         }
     }
 
