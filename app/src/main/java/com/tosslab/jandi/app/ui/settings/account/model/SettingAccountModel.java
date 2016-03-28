@@ -4,6 +4,7 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+
 import retrofit.RetrofitError;
 import rx.Observable;
 import rx.schedulers.Schedulers;

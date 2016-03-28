@@ -14,7 +14,6 @@ import java.util.List;
 
 import retrofit.RetrofitError;
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by tonyjs on 16. 3. 17..

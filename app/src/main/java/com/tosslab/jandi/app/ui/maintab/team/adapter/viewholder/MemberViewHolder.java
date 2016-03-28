@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.ui.maintab.team.adapter.viewholder;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;

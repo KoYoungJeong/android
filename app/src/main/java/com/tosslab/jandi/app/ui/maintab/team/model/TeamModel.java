@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.team.model;
 
 import android.text.TextUtils;
-import android.util.Pair;
 
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by tonyjs on 16. 3. 15..

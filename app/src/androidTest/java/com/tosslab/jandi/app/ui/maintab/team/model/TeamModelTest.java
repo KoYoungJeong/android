@@ -4,7 +4,6 @@ import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.maintab.team.vo.Team;
 
 import org.junit.Before;
@@ -17,7 +16,8 @@ import rx.Observable;
 import rx.observers.TestSubscriber;
 import setup.BaseInitUtil;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by tonyjs on 16. 3. 28..

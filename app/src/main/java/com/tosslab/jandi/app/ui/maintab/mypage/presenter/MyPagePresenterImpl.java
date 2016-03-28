@@ -8,9 +8,9 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
 import com.tosslab.jandi.app.ui.maintab.mypage.model.MyPageModel;
 import com.tosslab.jandi.app.ui.maintab.mypage.view.MyPageView;
-import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Date;

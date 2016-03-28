@@ -3,8 +3,6 @@ package com.tosslab.jandi.app.ui.maintab.mypage.model;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Pair;
 
-import com.jayway.awaitility.Awaitility;
-import com.jayway.awaitility.Duration;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
 
@@ -16,10 +14,9 @@ import java.util.List;
 
 import rx.Observable;
 import rx.observers.TestSubscriber;
-import rx.schedulers.Schedulers;
 import setup.BaseInitUtil;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 /**
  * Created by tonyjs on 16. 3. 28..

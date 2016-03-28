@@ -6,8 +6,8 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.maintab.team.adapter.viewholder.EmptySearchedMemberViewHolder;
-import com.tosslab.jandi.app.ui.maintab.team.adapter.viewholder.MemberViewHolder;
 import com.tosslab.jandi.app.ui.maintab.team.adapter.viewholder.MemberCountViewHolder;
+import com.tosslab.jandi.app.ui.maintab.team.adapter.viewholder.MemberViewHolder;
 
 /**
  * Created by tonyjs on 16. 3. 15..
