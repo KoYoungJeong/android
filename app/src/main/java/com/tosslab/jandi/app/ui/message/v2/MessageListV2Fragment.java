@@ -82,8 +82,8 @@ import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
-import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
-import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
+import com.tosslab.jandi.app.files.upload.FileUploadController;
+import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
@@ -227,8 +227,8 @@ public class MessageListV2Fragment extends Fragment implements
     StickerViewModel stickerViewModel;
     @Bean
     UploadMenuViewModel uploadMenuViewModel;
-    @Bean(value = EntityFileUploadViewModelImpl.class)
-    FilePickerViewModel filePickerViewModel;
+    @Bean(value = MainFileUploadControllerImpl.class)
+    FileUploadController fileUploadController;
     @Bean
     FileUploadStateViewModel fileUploadStateViewModel;
 
@@ -397,12 +397,12 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
         switch (requestCode) {
-            case FilePickerViewModel.TYPE_UPLOAD_GALLERY:
+            case FileUploadController.TYPE_UPLOAD_GALLERY:
                 break;
-            case FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO:
+            case FileUploadController.TYPE_UPLOAD_TAKE_PHOTO:
                 showPreviewForUploadPhoto(requestCode, intent);
                 break;
-            case FilePickerViewModel.TYPE_UPLOAD_EXPLORER:
+            case FileUploadController.TYPE_UPLOAD_EXPLORER:
                 showPreviewForUploadFiles(requestCode, intent);
                 break;
             case FileUploadPreviewActivity.REQUEST_CODE:
@@ -439,8 +439,8 @@ public class MessageListV2Fragment extends Fragment implements
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (filePickerViewModel.getUploadedFile() != null) {
-            outState.putSerializable(EXTRA_NEW_PHOTO_FILE, filePickerViewModel.getUploadedFile());
+        if (fileUploadController.getUploadedFile() != null) {
+            outState.putSerializable(EXTRA_NEW_PHOTO_FILE, fileUploadController.getUploadedFile());
         }
     }
 
@@ -1120,7 +1120,7 @@ public class MessageListV2Fragment extends Fragment implements
 
     private void showPreviewForUploadPhoto(int requestCode, Intent intent) {
         List<String> filePaths =
-                filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
+                fileUploadController.getFilePath(getActivity(), requestCode, intent);
         if (filePaths == null || filePaths.size() == 0) {
             filePaths = new ArrayList<>();
             String filePath = photoFileByCamera.getPath();
@@ -1135,7 +1135,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private void showPreviewForUploadFiles(int requestCode, Intent intent) {
-        List<String> filePaths = filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
+        List<String> filePaths = fileUploadController.getFilePath(getActivity(), requestCode, intent);
         if (filePaths != null && filePaths.size() > 0) {
             FileUploadPreviewActivity_.intent(this)
                     .singleUpload(true)
@@ -1836,7 +1836,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private void startFileUpload(String title, long entityId, String filePath, String comment) {
-        filePickerViewModel.startUpload(getActivity(), title, entityId, filePath, comment);
+        fileUploadController.startUpload(getActivity(), title, entityId, filePath, comment);
     }
 
     public void onEvent(ConfirmDeleteTopicEvent event) {
@@ -1956,18 +1956,18 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
 
-        filePickerViewModel.selectFileSelector(event.type, this, entityId);
+        fileUploadController.selectFileSelector(event.type, this, entityId);
 
         AnalyticsValue.Action action;
         switch (event.type) {
             default:
-            case FilePickerViewModel.TYPE_UPLOAD_GALLERY:
+            case FileUploadController.TYPE_UPLOAD_GALLERY:
                 action = AnalyticsValue.Action.Upload_Photo;
                 break;
-            case FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO:
+            case FileUploadController.TYPE_UPLOAD_TAKE_PHOTO:
                 action = AnalyticsValue.Action.Upload_Camera;
                 break;
-            case FilePickerViewModel.TYPE_UPLOAD_EXPLORER:
+            case FileUploadController.TYPE_UPLOAD_EXPLORER:
                 action = AnalyticsValue.Action.Upload_File;
                 break;
         }

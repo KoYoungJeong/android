@@ -268,4 +268,6 @@
 
     <color name="jandi_email_selector_item_text_color">#FF404040</color>
 
+    <color name="jandi_profile_text">#333333</color>
+
 </resources>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="36dp"
+            android:layout_marginTop="36dp"
+            android:gravity="center_horizontal"
+            android:text="@string/jandi_profile_welcome"
+            android:textColor="@color/jandi_profile_text"
+            android:textSize="25dp" />
+
+        <TextView
+            android:id="@+id/tv_profile_introduce"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="19dp"
+            android:gravity="center_horizontal"
+            android:lineSpacingExtra="4dip"
+            android:text="@string/jandi_profile_main_introduce" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="43dp">
+
+            <com.tosslab.jandi.app.views.FrescoImageView
+                android:id="@+id/iv_profile_picture"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                fresco:placeholderImage="@drawable/profile_img"
+                fresco:placeholderImageScaleType="fitXY" />
+
+            <ImageView
+                android:id="@+id/iv_edit_profile_picture"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/profile_img_edit_bg" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="EDIT"
+                android:textColor="@color/white"
+                android:textSize="16dp" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_name_length"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="45dp"
+            android:gravity="right"
+            android:textColor="@color/jandi_text_light"
+            android:textSize="12dp" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/profile_text_input_bg"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/jandi_profile_text"
+            android:textSize="14dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_next_page"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="96dp"
+            android:clickable="true"
+            android:src="@drawable/btn_profile_next" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="38dp"
+            android:layout_marginTop="12dp"
+            android:text="@string/jandi_next"
+            android:textColor="@color/jandi_text_light"
+            android:textSize="13dp" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

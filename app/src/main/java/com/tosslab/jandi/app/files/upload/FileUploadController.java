@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by Steve SeongUg Jung on 15. 6. 12..
  */
-public interface FilePickerViewModel {
+public interface FileUploadController {
     int TYPE_UPLOAD_GALLERY = 0x00;
     int TYPE_UPLOAD_TAKE_PHOTO = 0x01;
     int TYPE_UPLOAD_EXPLORER = 0x02;
@@ -20,6 +20,8 @@ public interface FilePickerViewModel {
     void selectFileSelector(int type, Fragment fragment, long entityId);
 
     void selectFileSelector(int type, Activity activity);
+
+    void selectFileSelector(int requestCode, Fragment fragment);
 
     List<String> getFilePath(Context context, int requestCode, Intent intent);
 

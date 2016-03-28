@@ -46,7 +46,7 @@ public class IntroMainActivity extends BaseAppCompatActivity {
     }
 
     @AfterViews
-    void init() {
+     void init() {
         setUpView();
         setTab();
 
@@ -74,7 +74,6 @@ public class IntroMainActivity extends BaseAppCompatActivity {
         mAdapter = new IntroMainPagerAdapter(getFragmentManager());
         mViewPager.setAdapter(mAdapter);
         mViewPager.setCurrentItem(IntroTutorialFragment.FIRST_PAGE);
-
     }
 
     private void setTab() {

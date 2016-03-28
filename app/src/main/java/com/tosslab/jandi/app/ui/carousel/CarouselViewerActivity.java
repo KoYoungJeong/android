@@ -45,6 +45,9 @@ import java.util.List;
 public class CarouselViewerActivity extends BaseAppCompatActivity
         implements CarouselViewerPresenter.View, OnSwipeExitListener {
 
+    public static final long CAROUSEL_MODE = 0x00;
+    public static final long SINGLE_IMAGE_MODE = 0x01;
+
     private static final int REQ_STORAGE_PERMISSION = 101;
     @ViewById(R.id.vp_carousel)
     ViewPager viewPager;
@@ -64,6 +67,31 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @Extra
     long roomId = -1;
 
+    @Extra
+    long mode = CAROUSEL_MODE;
+
+    // for only use SINGLE_IMAGE_MODE
+
+    @Extra
+    String imageType;
+
+    @Extra
+    String imageOriginUrl;
+
+    @Extra
+    String imageThumbUrl;
+
+    @Extra
+    String imageExt;
+
+    @Extra
+    String imageName;
+
+    @Extra
+    long imageSize = -1;
+
+    ////
+
     @Bean(CarouselViewerPresenterImpl.class)
     CarouselViewerPresenter carouselViewerPresenter;
     CarouselViewerAdapter carouselViewerAdapter;
@@ -72,15 +100,16 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @AfterInject
     void initObject() {
         carouselViewerPresenter.setView(this);
-        carouselViewerPresenter.setFileId(startLinkId);
-        carouselViewerPresenter.setRoomId(roomId);
+        if (mode == CAROUSEL_MODE) {
+            carouselViewerPresenter.setFileId(startLinkId);
+            carouselViewerPresenter.setRoomId(roomId);
+        }
     }
-
 
     @AfterViews
     public void initViews() {
 
-        if (roomId <= 0) {
+        if (mode == CAROUSEL_MODE && roomId <= 0) {
             finish();
             return;
         }
@@ -93,8 +122,6 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
             setUpFullScreen(isFullScreen);
         });
         viewPager.setAdapter(carouselViewerAdapter);
-
-
         viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -109,23 +136,36 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
                     actionBar.setSubtitle(FileUtil.fileSizeCalculation(fileInfo.getSize())
                             + ", " + fileInfo.getExt());
                 }
-                tvFileWriterName.setText(fileInfo.getFileWriter());
-                tvFileCreateTime.setText(fileInfo.getFileCreateTime());
 
-                if (position == 0) {
-                    carouselViewerPresenter.onBeforeImageFiles(fileInfo.getFileLinkId(), count);
-                } else {
-                    if (position == count - 1) {
-                        carouselViewerPresenter.onAfterImageFiles(fileInfo.getFileLinkId(), count);
+                if (mode == CAROUSEL_MODE) {
+                    tvFileWriterName.setText(fileInfo.getFileWriter());
+                    tvFileCreateTime.setText(fileInfo.getFileCreateTime());
+
+                    if (position == 0) {
+                        carouselViewerPresenter.onBeforeImageFiles(fileInfo.getFileLinkId(), count);
+                    } else {
+                        if (position == count - 1) {
+                            carouselViewerPresenter.onAfterImageFiles(fileInfo.getFileLinkId(), count);
+                        }
                     }
                 }
 
             }
         });
 
-
-        carouselViewerPresenter.onInitImageFiles();
-
+        if (mode == CAROUSEL_MODE) {
+            carouselViewerPresenter.onInitImageFiles();
+        } else if (mode == SINGLE_IMAGE_MODE) {
+            if (imageExt != null
+                    && imageOriginUrl != null
+                    && imageThumbUrl != null
+                    && imageType != null
+                    && imageName != null
+                    && imageSize != -1) {
+                carouselViewerPresenter.onInitImageSingleFile
+                        (imageExt, imageOriginUrl, imageThumbUrl, imageType, imageName, imageSize);
+            }
+        }
     }
 
     @Override
@@ -295,7 +335,11 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
 
     @Click(R.id.iv_file_datail_info)
     void onMoveToFileDatail() {
-        carouselViewerPresenter.onFileDatail();
+        if (mode == CAROUSEL_MODE) {
+            carouselViewerPresenter.onFileDatail();
+        } else if (mode == SINGLE_IMAGE_MODE) {
+            finish();
+        }
     }
 
     @UiThread
