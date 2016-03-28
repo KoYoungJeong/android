@@ -281,7 +281,7 @@ android {
 
     configurations.all {
         resolutionStrategy {
-            force 'com.android.support:support-annotations:23.0.1'
+            force "com.android.support:support-annotations:${supportLibVersion}"
         }
     }
 }

@@ -358,6 +358,7 @@
 	<string name="jandi_password_strength_weak">"必須含有至少一個數字、 大寫字母或特殊字符。"</string>
 	<string name="jandi_phone_led">"鎖屏通知"</string>
 	<string name="jandi_play_store">"Google Play"</string>
+	<string name="jandi_please_retry">"請重試一次"</string>
 	<string name="jandi_plz_input_topic_description">"說明 (選項)"</string>
 	<string name="jandi_preview_message_contents">"預覽訊息內容"</string>
 	<string name="jandi_privacy_policy">"隱私權條款"</string>
@@ -558,6 +559,7 @@
 	<string name="jandi_user_default_email">"主要電子郵件地址"</string>
 	<string name="jandi_user_id">"電子郵件"</string>
 	<string name="jandi_user_password">"密碼"</string>
+	<string name="jandi_verify_fingerprint">"指紋驗證"</string>
 	<string name="jandi_vibrate">"振動"</string>
 	<string name="jandi_view_all">"檢視全部"</string>
 	<string name="jandi_welcome_message">"歡迎使用JANDI!"</string>
