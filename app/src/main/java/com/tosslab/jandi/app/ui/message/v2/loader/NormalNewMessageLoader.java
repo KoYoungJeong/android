@@ -107,7 +107,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 showEmptyViewIfNeed();
 
                 if (firstLoad) {
-                    view.notifyDataSetChanged();
+                    view.saveCacheAndNotifyDataSetChanged(null);
                     firstLoad = false;
                 }
                 return;

@@ -367,7 +367,7 @@ public class MessageListV2Fragment extends Fragment implements
                 .delay(100, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(integer -> {
-                    notifyDataSetChanged();
+                    saveCacheAndNotifyDataSetChanged(null);
 
                     if (mentionControlViewModel != null) {
                         mentionControlViewModel.onConfigurationChanged();
@@ -895,7 +895,7 @@ public class MessageListV2Fragment extends Fragment implements
     public void setMarkerInfo(long roomId) {
         messageAdapter.setTeamId(teamId);
         messageAdapter.setRoomId(roomId);
-        messageAdapter.notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(null);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -905,22 +905,25 @@ public class MessageListV2Fragment extends Fragment implements
             // 첫 로드라면...
             clearMessages();
 
-            messageAdapter.notifyDataSetChanged();
-            layoutManager.scrollToPosition(messageAdapter.getItemCount() - 1);
+            saveCacheAndNotifyDataSetChanged(() -> {
+                layoutManager.scrollToPosition(messageAdapter.getItemCount() - 1);
+                if (!isFirstMessage) {
+                    messageAdapter.setOldLoadingComplete();
+                } else {
+                    messageAdapter.setOldNoMoreLoading();
+                }
+            });
 
         } else {
+            saveCacheAndNotifyDataSetChangedForAdding(() -> {
+                if (!isFirstMessage) {
+                    messageAdapter.setOldLoadingComplete();
+                } else {
+                    messageAdapter.setOldNoMoreLoading();
+                }
 
-            long latestVisibleLinkId = getFirstVisibleItemLinkId();
-            int firstVisibleItemTop = getFirstVisibleItemTop();
+            });
 
-            messageAdapter.notifyDataSetChanged();
-            moveToMessage(latestVisibleLinkId, firstVisibleItemTop);
-        }
-
-        if (!isFirstMessage) {
-            messageAdapter.setOldLoadingComplete();
-        } else {
-            messageAdapter.setOldNoMoreLoading();
         }
     }
 
@@ -938,23 +941,24 @@ public class MessageListV2Fragment extends Fragment implements
         int lastItemPosition = messageAdapter.getItemCount();
 
         messageAdapter.addAll(lastItemPosition, records);
-        notifyDataSetChanged();
 
-        ResMessages.Link lastUpdatedMessage = records.get(location);
-        if (!isFirstLoad
-                && visibleLastItemPosition >= 0
-                && visibleLastItemPosition < lastItemPosition - 1
-                && lastUpdatedMessage.fromEntity != myId) {
-            showPreviewIfNotLastItem();
-        } else {
-            long messageId = lastUpdatedMessage.messageId;
-
-            if (isFirstLoad) {
-                moveLastReadLink();
+        saveCacheAndNotifyDataSetChanged(() -> {
+            ResMessages.Link lastUpdatedMessage = records.get(location);
+            if (!isFirstLoad
+                    && visibleLastItemPosition >= 0
+                    && visibleLastItemPosition < lastItemPosition - 1
+                    && lastUpdatedMessage.fromEntity != myId) {
+                showPreviewIfNotLastItem();
             } else {
-                moveToMessage(messageId, 0);
+                long messageId = lastUpdatedMessage.messageId;
+
+                if (isFirstLoad) {
+                    moveLastReadLink();
+                } else {
+                    moveToMessage(messageId, 0);
+                }
             }
-        }
+        });
     }
 
     @UiThread
@@ -1007,6 +1011,7 @@ public class MessageListV2Fragment extends Fragment implements
         } else {
             message = "";
         }
+
         SpannableStringBuilder builder =
                 new SpannableStringBuilder(TextUtils.isEmpty(message) ? "" : message);
 
@@ -1051,6 +1056,10 @@ public class MessageListV2Fragment extends Fragment implements
 
     private void moveToMessage(long messageId, int firstVisibleItemTop) {
         int itemPosition = messageAdapter.indexByMessageId(messageId);
+        layoutManager.scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
+    }
+
+    private void moveToMessage(int itemPosition, int firstVisibleItemTop) {
         layoutManager.scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
@@ -1463,8 +1472,15 @@ public class MessageListV2Fragment extends Fragment implements
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void notifyDataSetChanged() {
-        messageAdapter.notifyDataSetChanged();
+    public void saveCacheAndNotifyDataSetChanged(
+            MainMessageListAdapter.NotifyDataSetChangedCallback callback) {
+        messageAdapter.saveCacheAndNotifyDataSetChanged(callback);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void saveCacheAndNotifyDataSetChangedForAdding(
+            MainMessageListAdapter.NotifyDataSetChangedCallback callback) {
+        messageAdapter.saveCacheAndNotifyDataSetChangedForAdding(callback);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -1604,7 +1620,7 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
 
-        notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(null);
     }
 
     public void onEvent(SocketRoomMarkerEvent event) {
@@ -1686,11 +1702,11 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     public void onEvent(ProfileChangeEvent event) {
-        notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(null);
     }
 
     public void onEvent(RefreshConnectBotEvent event) {
-        notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(null);
     }
 
     public void onEvent(ConfirmModifyTopicEvent event) {
@@ -1779,7 +1795,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     public void onEvent(UnshareFileEvent event) {
-        notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(null);
     }
 
     public void onEvent(DummyRetryEvent event) {
@@ -1791,29 +1807,31 @@ public class MessageListV2Fragment extends Fragment implements
         DummyMessageLink dummyMessage = getDummyMessageLink(localId);
         dummyMessage.setStatus(SendMessage.Status.SENDING.name());
 
-        notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(() -> {
+            if (dummyMessage.message instanceof ResMessages.TextMessage) {
 
-        if (dummyMessage.message instanceof ResMessages.TextMessage) {
+                ResMessages.TextMessage dummyMessageContent = (ResMessages.TextMessage) dummyMessage.message;
+                List<MentionObject> mentionObjects = new ArrayList<>();
 
-            ResMessages.TextMessage dummyMessageContent = (ResMessages.TextMessage) dummyMessage.message;
-            List<MentionObject> mentionObjects = new ArrayList<>();
+                if (dummyMessageContent.mentions != null) {
+                    Observable.from(dummyMessageContent.mentions)
+                            .subscribe(mentionObjects::add);
+                }
 
-            if (dummyMessageContent.mentions != null) {
-                Observable.from(dummyMessageContent.mentions)
-                        .subscribe(mentionObjects::add);
+                messageListPresenter.addSendingMessageQueue(
+                        localId, dummyMessageContent.content.body, null, mentionObjects);
+            } else if (dummyMessage.message instanceof ResMessages.StickerMessage) {
+                ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) dummyMessage.message;
+
+                StickerInfo stickerInfo1 = new StickerInfo();
+                stickerInfo1.setStickerGroupId(stickerMessage.content.groupId);
+                stickerInfo1.setStickerId(stickerMessage.content.stickerId);
+
+                messageListPresenter.addSendingMessageQueue(localId, "", stickerInfo1, new ArrayList<>());
             }
+        });
 
-            messageListPresenter.addSendingMessageQueue(
-                    localId, dummyMessageContent.content.body, null, mentionObjects);
-        } else if (dummyMessage.message instanceof ResMessages.StickerMessage) {
-            ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) dummyMessage.message;
 
-            StickerInfo stickerInfo = new StickerInfo();
-            stickerInfo.setStickerGroupId(stickerMessage.content.groupId);
-            stickerInfo.setStickerId(stickerMessage.content.stickerId);
-
-            messageListPresenter.addSendingMessageQueue(localId, "", stickerInfo, new ArrayList<>());
-        }
     }
 
     private DummyMessageLink getDummyMessageLink(long localId) {
@@ -1871,7 +1889,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     public void onEvent(FileUploadFinishEvent event) {
-        notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(null);
     }
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {
@@ -1972,7 +1990,7 @@ public class MessageListV2Fragment extends Fragment implements
         if (!isForeground) {
             return;
         }
-        notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(null);
     }
 
     public void onEvent(RequestFileUploadEvent event) {
@@ -2213,7 +2231,7 @@ public class MessageListV2Fragment extends Fragment implements
     public void deleteLinkByMessageId(long messageId) {
         int position = messageAdapter.indexByMessageId(messageId);
         messageAdapter.remove(position);
-        messageAdapter.notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(null);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
