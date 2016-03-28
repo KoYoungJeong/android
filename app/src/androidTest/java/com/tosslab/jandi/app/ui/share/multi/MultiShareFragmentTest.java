@@ -63,8 +63,10 @@ public class MultiShareFragmentTest {
 
         await().until(() -> fragment.tvTitle.getText().length() > 0);
 
-        fragment.multiSharePresenter.onFilePageChanged(1, "hello1");
-        fragment.multiSharePresenter.onFilePageChanged(0, "hello2");
+        rule.runOnUiThread(() -> {
+            fragment.multiSharePresenter.onFilePageChanged(1, "hello1");
+            fragment.multiSharePresenter.onFilePageChanged(0, "hello2");
+        });
     }
 
     @Test

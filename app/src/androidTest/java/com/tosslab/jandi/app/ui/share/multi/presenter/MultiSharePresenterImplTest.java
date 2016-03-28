@@ -117,6 +117,7 @@ public class MultiSharePresenterImplTest {
     @Test
     public void testOnFilePageChanged() throws Exception {
         String filePath = "/hello.txt";
+        ((MultiSharePresenterImpl) multiSharePresenter).comments.add("");
         when(mockDataModel.getShareData(0)).thenReturn(new FileShareData(filePath));
         multiSharePresenter.onFilePageChanged(0, "ads");
         verify(mockView).setFileTitle(eq("hello.txt"));
