@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.file.upload.preview.model;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -33,7 +32,7 @@ public class FileUploadModel {
         List<FormattedEntity> formattedEntities = new ArrayList<>();
 
         Observable.from(unsharedEntities)
-                .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))
+                .filter(entity -> !entity.isUser() || entity.isEnabled())
                 .toSortedList((formattedEntity, formattedEntity2) -> {
                     if (formattedEntity.isUser() && formattedEntity2.isUser()) {
                         return StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());

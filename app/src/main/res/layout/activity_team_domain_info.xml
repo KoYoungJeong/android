@@ -16,7 +16,6 @@
             android:layout_height="?attr/actionBarSize"
             android:visibility="visible" />
 
-
         <TextView
             style="@style/JandiTeam.TextView.Title"
             android:text="@string/jandi_team_info" />

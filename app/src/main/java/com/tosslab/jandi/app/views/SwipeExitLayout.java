@@ -19,36 +19,18 @@ public class SwipeExitLayout extends FrameLayout {
 
     public static final int MIN_CANCEL_ANIM_DURATION = 200;
     public static final int MIN_EXIT_ANIM_DURATION = 500;
-
-    public interface OnExitListener {
-        void onExit();
-    }
-
-    public interface StatusListener {
-        void onTranslateY(float translateY);
-
-        void onCancel(float spareDistance, int cancelAnimDuration);
-
-        void onExit(float spareDistance, int exitAnimDuration);
-    }
-
     public static final String TAG = SwipeExitLayout.class.getSimpleName();
     private static final float CANCELABLE_PIXEL_AMOUNT = 80;
     private static final float TOO_MANY_SCROLL_PIXEL_AMOUNT = 400;
-
     private static final float MIN_DIM_AMOUNT = 0.1f;
     private static final float MAX_DIM_AMOUNT = 0.9f;
     private static final int NEEDLESS_ALPHA_VALUE = -1;
-
-    private SwipeGestureDetector gestureDetector;
-
+    private GestureDetectorCompat gestureDetector;
     private float cancelablePixelAmount;
     private float tooManyScrollPixelAmount;
-
     private OnExitListener onExitListener;
     private StatusListener statusListener;
     private List<StatusListener> statusListenerList;
-
     private View vBackgroundDim;
 
     public SwipeExitLayout(Context context) {
@@ -67,7 +49,7 @@ public class SwipeExitLayout extends FrameLayout {
     }
 
     private void init(Context context) {
-        gestureDetector = new SwipeGestureDetector(getContext(), new GestureListener());
+        gestureDetector = new GestureDetectorCompat(getContext(), new GestureListener());
         cancelablePixelAmount = context.getResources().getDisplayMetrics().density * CANCELABLE_PIXEL_AMOUNT;
         tooManyScrollPixelAmount = context.getResources().getDisplayMetrics().density * TOO_MANY_SCROLL_PIXEL_AMOUNT;
     }
@@ -94,7 +76,14 @@ public class SwipeExitLayout extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        return gestureDetector.onTouchEvent(event);
+        boolean hasCounsumeTouchEvent = gestureDetector.onTouchEvent(event);
+        int action = event.getAction();
+        if (action == MotionEvent.ACTION_CANCEL
+                || action == MotionEvent.ACTION_UP) {
+            exitOrCancel();
+            return true;
+        }
+        return hasCounsumeTouchEvent;
     }
 
     private void handleScroll(float distance) {
@@ -264,26 +253,19 @@ public class SwipeExitLayout extends FrameLayout {
                 .setDuration(duration);
     }
 
-    private class SwipeGestureDetector extends GestureDetectorCompat {
-        GestureListener gestureListener;
-
-        public SwipeGestureDetector(Context context, GestureListener listener) {
-            super(context, listener);
-            gestureListener = listener;
-        }
-
-        @Override
-        public boolean onTouchEvent(MotionEvent event) {
-            boolean handleTouchEvent = super.onTouchEvent(event);
-            int action = event.getAction();
-            if (action == MotionEvent.ACTION_UP) {
-                gestureListener.onSingleTapUp(event);
-            }
-            return handleTouchEvent;
-        }
+    public interface OnExitListener {
+        void onExit();
     }
 
-    private class GestureListener implements GestureDetector.OnGestureListener {
+    public interface StatusListener {
+        void onTranslateY(float translateY);
+
+        void onCancel(float spareDistance, int cancelAnimDuration);
+
+        void onExit(float spareDistance, int exitAnimDuration);
+    }
+
+    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
 
         @Override
         public boolean onDown(MotionEvent e) {
@@ -291,31 +273,11 @@ public class SwipeExitLayout extends FrameLayout {
         }
 
         @Override
-        public void onShowPress(MotionEvent e) {
-        }
-
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            exitOrCancel();
-            return true;
-        }
-
-        @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             if (Math.abs(distanceY) > Math.abs(distanceX)) {
                 handleScroll(distanceY);
-                return true;
             }
-            return false;
-        }
-
-        @Override
-        public void onLongPress(MotionEvent e) {
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            return Math.abs(velocityY) > Math.abs(velocityX);
+            return true;
         }
     }
 

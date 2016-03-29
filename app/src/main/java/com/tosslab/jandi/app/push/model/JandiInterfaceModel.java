@@ -31,6 +31,7 @@ import org.androidannotations.annotations.SystemService;
 import java.util.List;
 
 import retrofit.RetrofitError;
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 26..
@@ -152,6 +153,20 @@ public class JandiInterfaceModel {
 
     public long getEntityId(long teamId, long roomId, String roomType) {
 
+        if (!isKnowRoomType(roomType)) {
+            getEntityInfo();
+            if (hasEntity(roomId)) {
+                if (!EntityManager.getInstance().getEntityById(roomId).isUser()) {
+                    roomType = PushTO.RoomType.CHANNEL.getName();
+                } else {
+                    roomType = PushTO.RoomType.CHAT.getName();
+                }
+            } else {
+                return roomId;
+            }
+        }
+
+
         if (!isChatType(roomType)) {
             // Room Type 은 RoomId = EntityId
             if (hasEntity(roomId)) {
@@ -169,6 +184,15 @@ public class JandiInterfaceModel {
             }
             return chatMemberId;
         }
+    }
+
+    private boolean isKnowRoomType(String roomTypeRaw) {
+        return Observable.from(PushTO.RoomType.values())
+                .filter(roomType -> TextUtils.equals(roomTypeRaw, roomType.getName()))
+                .map(roomType1 -> true)
+                .firstOrDefault(false)
+                .toBlocking()
+                .first();
     }
 
     private boolean hasEntity(long roomId) {

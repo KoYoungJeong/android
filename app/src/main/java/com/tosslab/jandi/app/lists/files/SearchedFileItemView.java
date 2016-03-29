@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.lists.files;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -78,7 +77,7 @@ public class SearchedFileItemView extends RelativeLayout {
             tvComment.setVisibility(View.INVISIBLE);
         }
 
-        if (entity != null && entity.getUser() != null && TextUtils.equals(entity.getUser().status, "enabled")) {
+        if (entity != null && entity.getUser() != null && entity.isEnabled()) {
             tvFileOwner.setTextColor(getResources().getColor(R.color.jandi_file_search_item_owner_text));
             vLineThrough.setVisibility(View.GONE);
         } else {

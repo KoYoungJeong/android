@@ -8,8 +8,8 @@ import zipfile
 
 __author__ = 'jsuch2362'
 
-LIST_URL = 'http://jandidesign.myds.me:5000/webapi/FileStation/file_share.cgi'
-DOWNLOAD_URL = 'http://jandidesign.myds.me:5000/webapi/FileStation/file_download.cgi'
+LIST_URL = 'http://jandidesign.myds.me:5000/webapi/entry.cgi'
+DOWNLOAD_URL = 'http://jandidesign.myds.me:5000/webapi/entry.cgi'
 DRAWABLE_PATH = 'drawable-xxhdpi'
 
 def getDownloadPath(sid):

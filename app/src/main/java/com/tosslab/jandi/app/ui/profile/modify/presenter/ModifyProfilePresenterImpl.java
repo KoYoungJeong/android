@@ -2,9 +2,8 @@ package com.tosslab.jandi.app.ui.profile.modify.presenter;
 
 import android.app.Activity;
 
-import com.soundcloud.android.crop.Crop;
-import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
-import com.tosslab.jandi.app.files.upload.ProfileFileUploadViewModelImpl;
+import com.tosslab.jandi.app.files.upload.FileUploadController;
+import com.tosslab.jandi.app.files.upload.ProfileFileUploadControllerImpl;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -24,8 +23,8 @@ import retrofit.RetrofitError;
 @EBean
 public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
 
-    @Bean(ProfileFileUploadViewModelImpl.class)
-    ProfileFileUploadViewModelImpl filePickerViewModel;
+    @Bean(ProfileFileUploadControllerImpl.class)
+    ProfileFileUploadControllerImpl filePickerViewModel;
 
     @Bean
     ModifyProfileModel modifyProfileModel;
@@ -138,7 +137,7 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
 
     @Override
     public void onRequestCamera(Activity activity) {
-        filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO, activity);
+        filePickerViewModel.selectFileSelector(FileUploadController.TYPE_UPLOAD_TAKE_PHOTO, activity);
     }
 
     @Override

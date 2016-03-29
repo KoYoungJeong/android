@@ -25,7 +25,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter.TopicFold
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter.TopicFolderSettingAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.presenter.TopicFolderSettingPresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
@@ -126,12 +126,6 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
         });
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MoveToaFolder);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ActivityHelper.setOrientation(this);
     }
 
     @UiThread

@@ -577,6 +577,11 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
+    public IExecutor<ResCommon> loadCancelInvitationUserByTeamApi(long teamId, long memberId) {
+        return () -> authRestApiClient.cancelInvitationUserByTeamApi(teamId, memberId);
+    }
+
+    @Override
     public IExecutor<ResTeamDetailInfo.InviteTeam> loadGetTeamInfoByTeamApi(long teamId) {
         return () -> authRestApiClient.getTeamInfoByTeamApi(teamId);
     }

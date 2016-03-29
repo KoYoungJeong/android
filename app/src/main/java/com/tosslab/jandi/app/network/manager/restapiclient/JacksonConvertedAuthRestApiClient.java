@@ -547,6 +547,11 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
+    public ResCommon cancelInvitationUserByTeamApi(long teamId, long memberId) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().cancelInvitationUser(teamId, memberId);
+    }
+
+    @Override
     public ResTeamDetailInfo.InviteTeam getTeamInfoByTeamApi(long teamId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getTeamInfo(teamId);
     }

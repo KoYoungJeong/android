@@ -25,6 +25,8 @@ public interface CarouselViewerPresenter {
 
     void setRoomId(long roomId);
 
+    void onInitImageSingleFile(String imageExt, String imageOriginUrl, String imageThumbUrl, String imageType, String imageName, long imageSize);
+
     interface View {
 
         void addFileInfos(List<CarouselFileInfo> fileInfoList);

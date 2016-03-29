@@ -8,9 +8,11 @@ public class ChatChooseItem {
     private String name;
     private String statusMessage;
     private String photoUrl;
+    private String email;
     private boolean isBot = false;
     private boolean isStarred;
     private boolean isEnabled;
+    private boolean isInactive;
     private boolean isChooseItem = false;
     private boolean isOwner = false;
 
@@ -94,6 +96,24 @@ public class ChatChooseItem {
 
     public ChatChooseItem isBot(boolean isBot) {
         this.isBot = isBot;
+        return this;
+    }
+
+    public boolean isInactive() {
+        return isInactive;
+    }
+
+    public ChatChooseItem inactive(boolean isInactive) {
+        this.isInactive = isInactive;
+        return this;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public ChatChooseItem email(String email) {
+        this.email = email;
         return this;
     }
 }

@@ -21,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -35,6 +36,7 @@ import android.view.inputmethod.BaseInputConnection;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
@@ -82,8 +84,8 @@ import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
-import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
-import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
+import com.tosslab.jandi.app.files.upload.FileUploadController;
+import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
@@ -227,8 +229,8 @@ public class MessageListV2Fragment extends Fragment implements
     StickerViewModel stickerViewModel;
     @Bean
     UploadMenuViewModel uploadMenuViewModel;
-    @Bean(value = EntityFileUploadViewModelImpl.class)
-    FilePickerViewModel filePickerViewModel;
+    @Bean(value = MainFileUploadControllerImpl.class)
+    FileUploadController fileUploadController;
     @Bean
     FileUploadStateViewModel fileUploadStateViewModel;
 
@@ -258,8 +260,7 @@ public class MessageListV2Fragment extends Fragment implements
     View vgMessageInput;
     @ViewById(R.id.vg_messages_go_to_latest)
     View vgMoveToLatest;
-    @ViewById(R.id.vg_messages_disable_alert)
-    View vDisabledUser;
+
     @ViewById(R.id.layout_messages_empty)
     LinearLayout vgEmptyLayout;
     @ViewById(R.id.layout_messages_loading)
@@ -286,6 +287,13 @@ public class MessageListV2Fragment extends Fragment implements
     ViewGroup vgOptionSpace;
     @ViewById(R.id.vg_easteregg_snow)
     FrameLayout vgEasterEggSnow;
+
+    @ViewById(R.id.vg_messages_member_status_alert)
+    View vgMemberStatusAlert;
+    @ViewById(R.id.iv_messages_member_status_alert)
+    ImageView ivMemberStatusAlert;
+    @ViewById(R.id.tv_messages_member_status_alert)
+    TextView tvMemberStatusAlert;
 
     private OfflineLayer offlineLayer;
 
@@ -359,7 +367,7 @@ public class MessageListV2Fragment extends Fragment implements
                 .delay(100, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(integer -> {
-                    notifyDataSetChanged();
+                    saveCacheAndNotifyDataSetChanged(null);
 
                     if (mentionControlViewModel != null) {
                         mentionControlViewModel.onConfigurationChanged();
@@ -397,12 +405,12 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
         switch (requestCode) {
-            case FilePickerViewModel.TYPE_UPLOAD_GALLERY:
+            case FileUploadController.TYPE_UPLOAD_GALLERY:
                 break;
-            case FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO:
+            case FileUploadController.TYPE_UPLOAD_TAKE_PHOTO:
                 showPreviewForUploadPhoto(requestCode, intent);
                 break;
-            case FilePickerViewModel.TYPE_UPLOAD_EXPLORER:
+            case FileUploadController.TYPE_UPLOAD_EXPLORER:
                 showPreviewForUploadFiles(requestCode, intent);
                 break;
             case FileUploadPreviewActivity.REQUEST_CODE:
@@ -439,8 +447,8 @@ public class MessageListV2Fragment extends Fragment implements
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (filePickerViewModel.getUploadedFile() != null) {
-            outState.putSerializable(EXTRA_NEW_PHOTO_FILE, filePickerViewModel.getUploadedFile());
+        if (fileUploadController.getUploadedFile() != null) {
+            outState.putSerializable(EXTRA_NEW_PHOTO_FILE, fileUploadController.getUploadedFile());
         }
     }
 
@@ -794,8 +802,24 @@ public class MessageListV2Fragment extends Fragment implements
     @Override
     public void showDisabledUserLayer() {
         vgMessageInput.setVisibility(View.GONE);
-        vDisabledUser.setVisibility(View.VISIBLE);
+        int dp_2 = ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, getResources().getDisplayMetrics()));
+        ((RelativeLayout.LayoutParams) vgMemberStatusAlert.getLayoutParams())
+                .setMargins(dp_2, dp_2, dp_2, dp_2);
+        vgMemberStatusAlert.setVisibility(View.VISIBLE);
+        vgMemberStatusAlert.setBackgroundColor(getResources().getColor(R.color.jandi_disabled_user_background));
+        ivMemberStatusAlert.setImageResource(R.drawable.icon_disabled_members_bar);
+        tvMemberStatusAlert.setText(R.string.jandi_disabled_user);
         setPreviewVisible(false);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showInactivedUserLayer() {
+        ((RelativeLayout.LayoutParams) vgMemberStatusAlert.getLayoutParams()).setMargins(0, 0, 0, 0);
+        vgMemberStatusAlert.setVisibility(View.VISIBLE);
+        vgMemberStatusAlert.setBackgroundColor(getResources().getColor(R.color.jandi_black_de));
+        ivMemberStatusAlert.setImageResource(R.drawable.bar_icon_info);
+        tvMemberStatusAlert.setText(R.string.jandi_this_member_is_pending_to_join);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -871,7 +895,7 @@ public class MessageListV2Fragment extends Fragment implements
     public void setMarkerInfo(long roomId) {
         messageAdapter.setTeamId(teamId);
         messageAdapter.setRoomId(roomId);
-        messageAdapter.notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(null);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -881,22 +905,25 @@ public class MessageListV2Fragment extends Fragment implements
             // 첫 로드라면...
             clearMessages();
 
-            messageAdapter.notifyDataSetChanged();
-            layoutManager.scrollToPosition(messageAdapter.getItemCount() - 1);
+            saveCacheAndNotifyDataSetChanged(() -> {
+                layoutManager.scrollToPosition(messageAdapter.getItemCount() - 1);
+                if (!isFirstMessage) {
+                    messageAdapter.setOldLoadingComplete();
+                } else {
+                    messageAdapter.setOldNoMoreLoading();
+                }
+            });
 
         } else {
+            saveCacheAndNotifyDataSetChangedForAdding(() -> {
+                if (!isFirstMessage) {
+                    messageAdapter.setOldLoadingComplete();
+                } else {
+                    messageAdapter.setOldNoMoreLoading();
+                }
 
-            long latestVisibleLinkId = getFirstVisibleItemLinkId();
-            int firstVisibleItemTop = getFirstVisibleItemTop();
+            });
 
-            messageAdapter.notifyDataSetChanged();
-            moveToMessage(latestVisibleLinkId, firstVisibleItemTop);
-        }
-
-        if (!isFirstMessage) {
-            messageAdapter.setOldLoadingComplete();
-        } else {
-            messageAdapter.setOldNoMoreLoading();
         }
     }
 
@@ -914,23 +941,24 @@ public class MessageListV2Fragment extends Fragment implements
         int lastItemPosition = messageAdapter.getItemCount();
 
         messageAdapter.addAll(lastItemPosition, records);
-        notifyDataSetChanged();
 
-        ResMessages.Link lastUpdatedMessage = records.get(location);
-        if (!isFirstLoad
-                && visibleLastItemPosition >= 0
-                && visibleLastItemPosition < lastItemPosition - 1
-                && lastUpdatedMessage.fromEntity != myId) {
-            showPreviewIfNotLastItem();
-        } else {
-            long messageId = lastUpdatedMessage.messageId;
-
-            if (isFirstLoad) {
-                moveLastReadLink();
+        saveCacheAndNotifyDataSetChanged(() -> {
+            ResMessages.Link lastUpdatedMessage = records.get(location);
+            if (!isFirstLoad
+                    && visibleLastItemPosition >= 0
+                    && visibleLastItemPosition < lastItemPosition - 1
+                    && lastUpdatedMessage.fromEntity != myId) {
+                showPreviewIfNotLastItem();
             } else {
-                moveToMessage(messageId, 0);
+                long messageId = lastUpdatedMessage.messageId;
+
+                if (isFirstLoad) {
+                    moveLastReadLink();
+                } else {
+                    moveToMessage(messageId, 0);
+                }
             }
-        }
+        });
     }
 
     @UiThread
@@ -983,6 +1011,7 @@ public class MessageListV2Fragment extends Fragment implements
         } else {
             message = "";
         }
+
         SpannableStringBuilder builder =
                 new SpannableStringBuilder(TextUtils.isEmpty(message) ? "" : message);
 
@@ -1027,6 +1056,10 @@ public class MessageListV2Fragment extends Fragment implements
 
     private void moveToMessage(long messageId, int firstVisibleItemTop) {
         int itemPosition = messageAdapter.indexByMessageId(messageId);
+        layoutManager.scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
+    }
+
+    private void moveToMessage(int itemPosition, int firstVisibleItemTop) {
         layoutManager.scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
@@ -1120,7 +1153,7 @@ public class MessageListV2Fragment extends Fragment implements
 
     private void showPreviewForUploadPhoto(int requestCode, Intent intent) {
         List<String> filePaths =
-                filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
+                fileUploadController.getFilePath(getActivity(), requestCode, intent);
         if (filePaths == null || filePaths.size() == 0) {
             filePaths = new ArrayList<>();
             String filePath = photoFileByCamera.getPath();
@@ -1135,7 +1168,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private void showPreviewForUploadFiles(int requestCode, Intent intent) {
-        List<String> filePaths = filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
+        List<String> filePaths = fileUploadController.getFilePath(getActivity(), requestCode, intent);
         if (filePaths != null && filePaths.size() > 0) {
             FileUploadPreviewActivity_.intent(this)
                     .singleUpload(true)
@@ -1194,6 +1227,7 @@ public class MessageListV2Fragment extends Fragment implements
 
         if (!TextUtils.isEmpty(message)) {
             messageListPresenter.sendTextMessage(message, mentions, reqSendMessageV3);
+            messageListPresenter.deleteReadyMessage();
         }
 
         dismissStickerPreview();
@@ -1439,8 +1473,15 @@ public class MessageListV2Fragment extends Fragment implements
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void notifyDataSetChanged() {
-        messageAdapter.notifyDataSetChanged();
+    public void saveCacheAndNotifyDataSetChanged(
+            MainMessageListAdapter.NotifyDataSetChangedCallback callback) {
+        messageAdapter.saveCacheAndNotifyDataSetChanged(callback);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void saveCacheAndNotifyDataSetChangedForAdding(
+            MainMessageListAdapter.NotifyDataSetChangedCallback callback) {
+        messageAdapter.saveCacheAndNotifyDataSetChangedForAdding(callback);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -1580,7 +1621,7 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
 
-        notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(null);
     }
 
     public void onEvent(SocketRoomMarkerEvent event) {
@@ -1662,11 +1703,11 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     public void onEvent(ProfileChangeEvent event) {
-        notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(null);
     }
 
     public void onEvent(RefreshConnectBotEvent event) {
-        notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(null);
     }
 
     public void onEvent(ConfirmModifyTopicEvent event) {
@@ -1755,7 +1796,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     public void onEvent(UnshareFileEvent event) {
-        notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(null);
     }
 
     public void onEvent(DummyRetryEvent event) {
@@ -1767,29 +1808,31 @@ public class MessageListV2Fragment extends Fragment implements
         DummyMessageLink dummyMessage = getDummyMessageLink(localId);
         dummyMessage.setStatus(SendMessage.Status.SENDING.name());
 
-        notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(() -> {
+            if (dummyMessage.message instanceof ResMessages.TextMessage) {
 
-        if (dummyMessage.message instanceof ResMessages.TextMessage) {
+                ResMessages.TextMessage dummyMessageContent = (ResMessages.TextMessage) dummyMessage.message;
+                List<MentionObject> mentionObjects = new ArrayList<>();
 
-            ResMessages.TextMessage dummyMessageContent = (ResMessages.TextMessage) dummyMessage.message;
-            List<MentionObject> mentionObjects = new ArrayList<>();
+                if (dummyMessageContent.mentions != null) {
+                    Observable.from(dummyMessageContent.mentions)
+                            .subscribe(mentionObjects::add);
+                }
 
-            if (dummyMessageContent.mentions != null) {
-                Observable.from(dummyMessageContent.mentions)
-                        .subscribe(mentionObjects::add);
+                messageListPresenter.addSendingMessageQueue(
+                        localId, dummyMessageContent.content.body, null, mentionObjects);
+            } else if (dummyMessage.message instanceof ResMessages.StickerMessage) {
+                ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) dummyMessage.message;
+
+                StickerInfo stickerInfo1 = new StickerInfo();
+                stickerInfo1.setStickerGroupId(stickerMessage.content.groupId);
+                stickerInfo1.setStickerId(stickerMessage.content.stickerId);
+
+                messageListPresenter.addSendingMessageQueue(localId, "", stickerInfo1, new ArrayList<>());
             }
+        });
 
-            messageListPresenter.addSendingMessageQueue(
-                    localId, dummyMessageContent.content.body, null, mentionObjects);
-        } else if (dummyMessage.message instanceof ResMessages.StickerMessage) {
-            ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) dummyMessage.message;
 
-            StickerInfo stickerInfo = new StickerInfo();
-            stickerInfo.setStickerGroupId(stickerMessage.content.groupId);
-            stickerInfo.setStickerId(stickerMessage.content.stickerId);
-
-            messageListPresenter.addSendingMessageQueue(localId, "", stickerInfo, new ArrayList<>());
-        }
     }
 
     private DummyMessageLink getDummyMessageLink(long localId) {
@@ -1836,7 +1879,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private void startFileUpload(String title, long entityId, String filePath, String comment) {
-        filePickerViewModel.startUpload(getActivity(), title, entityId, filePath, comment);
+        fileUploadController.startUpload(getActivity(), title, entityId, filePath, comment);
     }
 
     public void onEvent(ConfirmDeleteTopicEvent event) {
@@ -1847,7 +1890,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     public void onEvent(FileUploadFinishEvent event) {
-        notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(null);
     }
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {
@@ -1948,7 +1991,7 @@ public class MessageListV2Fragment extends Fragment implements
         if (!isForeground) {
             return;
         }
-        notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(null);
     }
 
     public void onEvent(RequestFileUploadEvent event) {
@@ -1956,18 +1999,18 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
 
-        filePickerViewModel.selectFileSelector(event.type, this, entityId);
+        fileUploadController.selectFileSelector(event.type, this, entityId);
 
         AnalyticsValue.Action action;
         switch (event.type) {
             default:
-            case FilePickerViewModel.TYPE_UPLOAD_GALLERY:
+            case FileUploadController.TYPE_UPLOAD_GALLERY:
                 action = AnalyticsValue.Action.Upload_Photo;
                 break;
-            case FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO:
+            case FileUploadController.TYPE_UPLOAD_TAKE_PHOTO:
                 action = AnalyticsValue.Action.Upload_Camera;
                 break;
-            case FilePickerViewModel.TYPE_UPLOAD_EXPLORER:
+            case FileUploadController.TYPE_UPLOAD_EXPLORER:
                 action = AnalyticsValue.Action.Upload_File;
                 break;
         }
@@ -2189,7 +2232,7 @@ public class MessageListV2Fragment extends Fragment implements
     public void deleteLinkByMessageId(long messageId) {
         int position = messageAdapter.indexByMessageId(messageId);
         messageAdapter.remove(position);
-        messageAdapter.notifyDataSetChanged();
+        saveCacheAndNotifyDataSetChanged(null);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -2222,6 +2265,12 @@ public class MessageListV2Fragment extends Fragment implements
     public void modifyStarredInfo(long messageId, boolean isStarred) {
         int position = messageAdapter.indexByMessageId(messageId);
         messageAdapter.modifyStarredStateByPosition(position, isStarred);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void dismissStatusLayout() {
+        vgMemberStatusAlert.setVisibility(View.GONE);
     }
 
     private void showCoachMarkIfNeed() {

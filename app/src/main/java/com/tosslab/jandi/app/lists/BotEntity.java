@@ -169,4 +169,9 @@ public class BotEntity extends FormattedEntity {
     public boolean isAutoJoin() {
         return false;
     }
+
+    @Override
+    public boolean isInavtived() {
+        return false;
+    }
 }

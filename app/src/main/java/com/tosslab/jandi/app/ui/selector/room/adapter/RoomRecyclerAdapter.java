@@ -29,13 +29,11 @@ import java.util.List;
  */
 public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    public static final int FROM_ROOM_SELECTOR = 0x01;
+    public static final int FROM_USER_SELECTOR = 0x02;
     private static final int TYPE_FOLDER = 1;
     private static final int TYPE_ROOM = 2;
     private static final int TYPE_DUMMY_DISABLE = 3;
-
-    public static final int FROM_ROOM_SELECTOR = 0x01;
-    public static final int FROM_USER_SELECTOR = 0x02;
-
     private final Context context;
     private final int from;
     private List<ExpandRoomData> roomDatas;
@@ -157,8 +155,16 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         .into(ivIcon);
                 name.append(item.getName());
             } else {
-                ImageUtil.loadProfileImage(ivIcon, fileUrl, R.drawable.profile_img_comment);
-                name.append(item.getName());
+
+                if (!item.isInactive()) {
+                    ImageUtil.loadProfileImage(ivIcon, fileUrl, R.drawable.profile_img_comment);
+                    name.append(item.getName());
+                } else {
+                    ImageUtil.loadProfileImage(ivIcon,
+                            UriFactory.getResourceUri(R.drawable.profile_img_dummyaccount_32),
+                            R.drawable.profile_img_dummyaccount_32);
+                    name.append(item.getEmail());
+                }
 
                 if (!item.isEnabled()) {
                     roomholder.vDisableCover.setVisibility(View.VISIBLE);
@@ -239,6 +245,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void clear() {
         roomDatas.clear();
     }
+
     public void addAll(List<ExpandRoomData> categorizableEntities) {
         roomDatas.addAll(categorizableEntities);
     }

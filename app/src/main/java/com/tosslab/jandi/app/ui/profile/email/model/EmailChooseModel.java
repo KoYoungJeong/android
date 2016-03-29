@@ -61,7 +61,7 @@ public class EmailChooseModel {
     }
 
     public ResAccountInfo requestNewEmail(String email) throws RetrofitError {
-        ReqAccountEmail reqAccountEmail = new ReqAccountEmail(email, LanguageUtil.getLanguage(context.getApplicationContext()));
+        ReqAccountEmail reqAccountEmail = new ReqAccountEmail(email, LanguageUtil.getLanguage());
         return RequestApiManager.getInstance().requestAddEmailByAccountEmailApi(reqAccountEmail);
     }
 
@@ -92,7 +92,7 @@ public class EmailChooseModel {
     }
 
     public ResAccountInfo requestDeleteEmail(String email) throws RetrofitError {
-        ReqAccountEmail reqAccountEmail = new ReqAccountEmail(email, LanguageUtil.getLanguage(context.getApplicationContext()));
+        ReqAccountEmail reqAccountEmail = new ReqAccountEmail(email, LanguageUtil.getLanguage());
         return RequestApiManager.getInstance().deleteEmailByAccountEmailApi(reqAccountEmail);
     }
 

@@ -57,6 +57,10 @@ public interface TeamApiV2Client {
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     List<ResInvitationMembers> inviteToTeam(@Path("teamId") long teamId, @Body ReqInvitationMembers invitationMembers);
 
+    @DELETE("/teams/{teamId}/members/{memberId}/invitation")
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    ResCommon cancelInvitationUser(@Path("teamId") long teamId, @Path("memberId") long memberId);
+
     @GET("/teams/{teamId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResTeamDetailInfo.InviteTeam getTeamInfo(@Path("teamId") long teamId);

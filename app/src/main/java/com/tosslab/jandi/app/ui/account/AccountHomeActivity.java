@@ -25,14 +25,14 @@ import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenterImpl;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
-import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
+import com.tosslab.jandi.app.ui.profile.insert.SetProfileActivity_;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
@@ -114,7 +114,6 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
     protected void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
-        ActivityHelper.setOrientation(this);
     }
 
     @Override
@@ -271,7 +270,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
                 .start();
 
         if (firstJoin) { // 초대 수락 또는 팀 생성 후
-            ModifyProfileActivity_.intent(AccountHomeActivity.this)
+            SetProfileActivity_.intent(AccountHomeActivity.this)
                     .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                     .start();
         }

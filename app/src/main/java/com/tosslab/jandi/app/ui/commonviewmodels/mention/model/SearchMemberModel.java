@@ -86,7 +86,7 @@ public class SearchMemberModel {
                         .setId(entity.getId())
                         .setType(SearchType.member.name())
                         .setSmallProfileImageUrl(entity.getUserSmallProfileUrl())
-                        .setEnabled(TextUtils.equals(entity.getUser().status, "enabled"))
+                        .setEnabled(entity.isEnabled())
                         .setStarred(entity.isStarred))
                 .collect(() -> selectableMembersLinkedHashMap,
                         (selectableMembersLinkedHashMap, searchedItem) -> selectableMembersLinkedHashMap.put(searchedItem.getId(), searchedItem))

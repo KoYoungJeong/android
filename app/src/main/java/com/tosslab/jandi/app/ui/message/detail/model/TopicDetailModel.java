@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.message.detail.model;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -234,7 +233,7 @@ public class TopicDetailModel {
             FormattedEntity formattedEntity = formattedUsers.get(idx);
             if (formattedEntity != null
                     && formattedEntity.getUser() != null
-                    && TextUtils.equals(formattedEntity.getUser().status, "enabled")) {
+                    && formattedEntity.isEnabled()) {
                 ++total;
             }
         }

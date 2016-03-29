@@ -14,9 +14,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import retrofit.RestAdapter;
+import rx.Observable;
 import setup.BaseInitUtil;
 
 import static com.jayway.awaitility.Awaitility.await;
@@ -67,10 +68,16 @@ public class TeamDomainInfoPresenterImplTest {
             return invocationOnMock;
         }).when(mockView).dismissProgressWheel();
 
-        String teamName = UUID.randomUUID().toString().substring(0, 6);
+        StringBuffer teamNameBuffer = new StringBuffer();
+        Observable.range(0, 6)
+                .map(integer -> ((char) (Math.random() * ('z' - 'a') + 'a')))
+                .collect(() -> teamNameBuffer, (stringBuffer, aDouble) -> stringBuffer.append(aDouble))
+                .subscribe();
+
+        String teamName = teamNameBuffer.toString();
 
         presenter.createTeam(teamName, teamName);
-        await().until(() -> finish[0]);
+        await().timeout(30, TimeUnit.SECONDS).until(() -> finish[0]);
 
         verify(mockView, times(1)).showProgressWheel();
         verify(mockView, times(1)).successCreateTeam(teamName);

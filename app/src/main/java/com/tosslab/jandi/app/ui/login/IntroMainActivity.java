@@ -14,8 +14,7 @@ import com.tosslab.jandi.app.ui.login.adapter.IntroMainPagerAdapter;
 import com.tosslab.jandi.app.ui.login.tutorial.IntroTutorialFragment;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
-
+import com.tosslab.jandi.app.utils.UiUtils;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
@@ -37,7 +36,7 @@ public class IntroMainActivity extends BaseAppCompatActivity {
     LinearLayout tutorialFooterLayout;
     private ViewPager mViewPager;
     private IntroMainPagerAdapter mAdapter;
-    private KeyboardHandler keyboardHandler;
+    private UiUtils.KeyboardHandler keyboardHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +45,7 @@ public class IntroMainActivity extends BaseAppCompatActivity {
     }
 
     @AfterViews
-    void init() {
+     void init() {
         setUpView();
         setTab();
 
@@ -61,12 +60,6 @@ public class IntroMainActivity extends BaseAppCompatActivity {
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ActivityHelper.setOrientation(this);
-    }
-
     private void setUpView() {
         buttonTutorialFirst.setSelected(true);
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -74,7 +67,6 @@ public class IntroMainActivity extends BaseAppCompatActivity {
         mAdapter = new IntroMainPagerAdapter(getFragmentManager());
         mViewPager.setAdapter(mAdapter);
         mViewPager.setCurrentItem(IntroTutorialFragment.FIRST_PAGE);
-
     }
 
     private void setTab() {
@@ -112,12 +104,8 @@ public class IntroMainActivity extends BaseAppCompatActivity {
     @Override
     public void onAttachFragment(Fragment fragment) {
         super.onAttachFragment(fragment);
-        if (fragment instanceof KeyboardHandler) {
-            keyboardHandler = (KeyboardHandler) fragment;
+        if (fragment instanceof UiUtils.KeyboardHandler) {
+            keyboardHandler = (UiUtils.KeyboardHandler) fragment;
         }
-    }
-
-    public interface KeyboardHandler {
-        void hideKeyboard();
     }
 }

@@ -124,7 +124,7 @@ public class FileUploadStateViewModel {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void initDownloadState() {
-        FileUploadManager instance = FileUploadManager.getInstance(context);
+        FileUploadManager instance = FileUploadManager.getInstance();
         List<FileUploadDTO> uploadInfos = instance.getUploadInfos(entityId);
 
         if (uploadInfos.size() <= 0) {
@@ -210,7 +210,7 @@ public class FileUploadStateViewModel {
                     holder.ivState.setImageResource(R.drawable.upload_image_error);
                     holder.ivState.setVisibility(View.VISIBLE);
                     holder.ivState.setOnClickListener(view -> {
-                        FileUploadManager.getInstance(context).retryAsFailed(item);
+                        FileUploadManager.getInstance().retryAsFailed(item);
                         FileUploadInfoAdapter.this.notifyDataSetChanged();
                     });
                     break;

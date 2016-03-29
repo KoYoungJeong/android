@@ -107,7 +107,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 showEmptyViewIfNeed();
 
                 if (firstLoad) {
-                    view.notifyDataSetChanged();
+                    view.saveCacheAndNotifyDataSetChanged(null);
                     firstLoad = false;
                 }
                 return;
@@ -200,7 +200,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
 //                subscriber.onCompleted();
 //            }
 //        }).collect(() -> messages,
-//                (resUpdateMessages, o) -> messages.addAll(o.records))
+//                (resUpdateMessages, o) -> messages.add(o.records))
 //                .subscribe(resUpdateMessages -> {
 //                }, Throwable::printStackTrace);
         return messages;

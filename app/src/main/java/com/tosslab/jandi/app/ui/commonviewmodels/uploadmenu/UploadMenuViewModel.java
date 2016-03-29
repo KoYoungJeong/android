@@ -13,7 +13,7 @@ import android.widget.ImageView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
-import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
+import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel;
 
 import org.androidannotations.annotations.AfterViews;
@@ -69,14 +69,14 @@ public class UploadMenuViewModel {
 
     void initClickEvent() {
         ivUploadImage.setOnClickListener(v -> {
-            EventBus.getDefault().post(new RequestFileUploadEvent(FilePickerViewModel.TYPE_UPLOAD_GALLERY));
+            EventBus.getDefault().post(new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_GALLERY));
             dismissUploadSelector(true);
             if (onClickUploadEventListener != null) {
                 onClickUploadEventListener.onClick();
             }
         });
         ivUploadCamera.setOnClickListener(v -> {
-            EventBus.getDefault().post(new RequestFileUploadEvent(FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO));
+            EventBus.getDefault().post(new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_TAKE_PHOTO));
             dismissUploadSelector(true);
 
             if (onClickUploadEventListener != null) {
@@ -84,7 +84,7 @@ public class UploadMenuViewModel {
             }
         });
         ivUploadFile.setOnClickListener(v -> {
-            EventBus.getDefault().post(new RequestFileUploadEvent(FilePickerViewModel.TYPE_UPLOAD_EXPLORER));
+            EventBus.getDefault().post(new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_EXPLORER));
             dismissUploadSelector(true);
 
             if (onClickUploadEventListener != null) {

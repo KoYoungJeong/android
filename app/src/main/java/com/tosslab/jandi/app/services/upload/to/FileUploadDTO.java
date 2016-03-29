@@ -12,6 +12,7 @@ public class FileUploadDTO {
 
     private String filePath;
     private String fileName;
+    private long teamId;
     private long entity;
     private String comment;
     private List<MentionObject> mentions;
@@ -88,6 +89,14 @@ public class FileUploadDTO {
 
     public void setUploadState(UploadState uploadState) {
         this.uploadState = uploadState;
+    }
+
+    public long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
     }
 
     public enum UploadState {
