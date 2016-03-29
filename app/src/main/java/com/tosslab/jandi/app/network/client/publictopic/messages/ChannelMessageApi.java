@@ -24,51 +24,51 @@ public class ChannelMessageApi extends ApiTemplate<ChannelMessageApi.Api> {
         super(Api.class);
     }
 
-    ResMessages getPublicTopicMessages(long teamId, long channelId,
+    public ResMessages getPublicTopicMessages(long teamId, long channelId,
                                        long fromId, int count) throws RetrofitException {
         return call(() -> getApi().getPublicTopicMessages(teamId, channelId, fromId, count));
     }
 
-    ResMessages getPublicTopicMessages(int teamId, int channelId) throws RetrofitException {
+    public ResMessages getPublicTopicMessages(int teamId, int channelId) throws RetrofitException {
         return call(() -> getApi().getPublicTopicMessages(teamId, channelId));
     }
 
     // 채널의 업데이트 Message 리스트 정보 획득
-    ResUpdateMessages getPublicTopicUpdatedMessages(int teamId, int channelId,
+    public ResUpdateMessages getPublicTopicUpdatedMessages(int teamId, int channelId,
                                                     int currentLinkId) throws RetrofitException {
         return call(() -> getApi().getPublicTopicUpdatedMessages(teamId, channelId, currentLinkId));
     }
 
-    ResMessages getPublicTopicUpdatedMessagesForMarker(long teamId, long channelId,
+    public ResMessages getPublicTopicUpdatedMessagesForMarker(long teamId, long channelId,
                                                        long currentLinkId) throws RetrofitException {
         return call(() -> getApi().getPublicTopicUpdatedMessagesForMarker(teamId, channelId, currentLinkId));
     }
 
-    ResMessages getPublicTopicUpdatedMessagesForMarker(long teamId, long channelId,
+    public ResMessages getPublicTopicUpdatedMessagesForMarker(long teamId, long channelId,
                                                        long currentLinkId, int count) throws RetrofitException {
         return call(() -> getApi().getPublicTopicUpdatedMessagesForMarker(teamId, channelId, currentLinkId));
     }
 
 
-    ResMessages getPublicTopicMarkerMessages(long teamId, long channelId,
+    public ResMessages getPublicTopicMarkerMessages(long teamId, long channelId,
                                              long currentLinkId) throws RetrofitException {
         return call(() -> getApi().getPublicTopicMarkerMessages(teamId, channelId, currentLinkId));
     }
 
     // 채널에서 Message 생성
-    ResCommon sendPublicTopicMessage(long channelId, long teamId,
+    public ResCommon sendPublicTopicMessage(long channelId, long teamId,
                                      ReqSendMessageV3 reqSendMessageV3) throws RetrofitException {
         return call(() -> getApi().sendPublicTopicMessage(channelId, teamId, reqSendMessageV3));
     }
 
     // 채널에서 Message 수정
-    ResCommon modifyPublicTopicMessage(ReqModifyMessage message, int channelId,
+    public ResCommon modifyPublicTopicMessage(ReqModifyMessage message, int channelId,
                                        int messageId) throws RetrofitException {
         return call(() -> getApi().modifyPublicTopicMessage(message, channelId, messageId));
     }
 
     // 채널에서 Message 삭제
-    ResCommon deletePublicTopicMessage(long teamId, long channelId,
+    public ResCommon deletePublicTopicMessage(long teamId, long channelId,
                                        long messageId) throws RetrofitException {
         return call(() -> getApi().deletePublicTopicMessage(teamId, channelId, messageId));
     }

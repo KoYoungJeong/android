@@ -47,7 +47,8 @@ import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.main.ConfigApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -81,7 +82,6 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
-
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -112,7 +112,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
-
 import rx.Observable;
 
 /**
@@ -619,20 +618,18 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
             BadgeUtils.setBadge(getApplicationContext(), badgeCountRepository.getTotalBadgeCount());
             mEntityManager.refreshEntity();
             getEntitiesSucceed(resLeftSideMenu);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
-            if (e.getResponse() != null) {
-                if (e.getResponse().getStatus() == JandiConstants.NetworkError.UNAUTHORIZED) {
+            if (e.getStatusCode() == JandiConstants.NetworkError.UNAUTHORIZED) {
 
-                    SignOutUtil.removeSignData();
+                SignOutUtil.removeSignData();
 
-                    getEntitiesFailed(getString(R.string.err_expired_session));
-                    stopJandiServiceInMainThread();
-                } else if (e.getResponse().getStatus() == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
-                    EventBus.getDefault().post(new ServiceMaintenanceEvent());
-                } else {
-                    getEntitiesFailed(getString(R.string.err_service_connection));
-                }
+                getEntitiesFailed(getString(R.string.err_expired_session));
+                stopJandiServiceInMainThread();
+            } else if (e.getStatusCode() == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
+                EventBus.getDefault().post(new ServiceMaintenanceEvent());
+            } else {
+                getEntitiesFailed(getString(R.string.err_service_connection));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -785,22 +782,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         return false;
     }
 
-    @Background
-    public void showDialogIfNotLastestVersion() {
-        if (!NetworkCheckUtil.isConnected())
-            return;
-
-        ResConfig configInfo = getConfigInfo();
-        if (configInfo != null && configInfo.latestVersions != null &&
-                (getCurrentAppVersionCode() < configInfo.latestVersions.android)) {
-            final long oneDayMillis = 1000 * 60 * 60 * 24;
-            long timeFromLastPopup = System.currentTimeMillis() - JandiPreference.getVersionPopupLastTime();
-            if (timeFromLastPopup > oneDayMillis) {
-                showUpdateVersionDialog(configInfo);
-            }
-        }
-    }
-
     @UiThread
     public void showUpdateVersionDialog(ResConfig configInfo) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainTabActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_300);
@@ -824,14 +805,30 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         builder.create().show();
     }
 
-    public ResConfig getConfigInfo() {
-        ResConfig resConfig = null;
+    @Background
+    public void showDialogIfNotLastestVersion() {
+        if (!NetworkCheckUtil.isConnected())
+            return;
+
+        ResConfig configInfo = getConfigInfo();
+        if (configInfo != null && configInfo.latestVersions != null &&
+                (getCurrentAppVersionCode() < configInfo.latestVersions.android)) {
+            final long oneDayMillis = 1000 * 60 * 60 * 24;
+            long timeFromLastPopup = System.currentTimeMillis() - JandiPreference.getVersionPopupLastTime();
+            if (timeFromLastPopup > oneDayMillis) {
+                showUpdateVersionDialog(configInfo);
+            }
+        }
+    }
+
+
+    private ResConfig getConfigInfo() {
         try {
-            resConfig = RequestApiManager.getInstance().getConfigByMainRest();
-        } catch (RetrofitError e) {
+            return new ConfigApi().getConfig();
+        } catch (RetrofitException e) {
             e.printStackTrace();
         }
-        return resConfig;
+        return null;
     }
 
     public int getCurrentAppVersionCode() {

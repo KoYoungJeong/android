@@ -4,7 +4,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 
 import org.junit.Before;
@@ -90,6 +90,6 @@ public class TopicCreatePresenterImplTest {
         }
 
         // restore
-        RequestApiManager.getInstance().deleteTopicByChannelApi(topicId[0], new ReqDeleteTopic(teamId[0]));
+        new ChannelApi().deleteTopic(topicId[0], new ReqDeleteTopic(teamId[0]));
     }
 }

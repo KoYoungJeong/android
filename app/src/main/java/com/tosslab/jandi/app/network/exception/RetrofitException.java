@@ -4,20 +4,22 @@ public class RetrofitException extends Exception {
     private final int statusCode;
     private final int responseCode;
     private final String responseMessage;
+    private final String rawBody;
 
     private RetrofitException(int statusCode) {
-        this(statusCode, statusCode * 100, "");
+        this(statusCode, statusCode * 100, "", "");
     }
 
-    private RetrofitException(int statusCode, int responseCode, String responseMessage) {
+    private RetrofitException(int statusCode, int responseCode, String responseMessage, String rawBody) {
         this.statusCode = statusCode;
         this.responseCode = responseCode;
         this.responseMessage = responseMessage;
+        this.rawBody = rawBody;
     }
 
     public static RetrofitException create(int statusCode) {return new RetrofitException(statusCode);}
 
-    public static RetrofitException create(int statusCode, int responseCode, String responseMessage) {return new RetrofitException(statusCode, responseCode, responseMessage);}
+    public static RetrofitException create(int statusCode, int responseCode, String responseMessage, String rawBody) {return new RetrofitException(statusCode, responseCode, responseMessage, rawBody);}
 
     public int getStatusCode() {
         return statusCode;
@@ -38,5 +40,9 @@ public class RetrofitException extends Exception {
                 ", responseCode=" + responseCode +
                 ", responseMessage='" + responseMessage + '\'' +
                 '}';
+    }
+
+    public String getRawBody() {
+        return rawBody;
     }
 }

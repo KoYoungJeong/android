@@ -24,35 +24,35 @@ public class GroupApi extends ApiTemplate<GroupApi.Api> {
         super(Api.class);
     }
 
-    ResCommon createPrivateGroup(long teamId, ReqCreateTopic group) throws RetrofitException {
+    public ResCommon createPrivateGroup(long teamId, ReqCreateTopic group) throws RetrofitException {
         return call(() -> getApi().createPrivateGroup(teamId, group));
     }
 
     // Private Group 수정
-    ResCommon modifyGroupName(long teamId,
+    public ResCommon modifyGroupName(long teamId,
                               ReqModifyTopicName channel,
                               long groupId) throws RetrofitException {
         return call(() -> getApi().modifyGroupName(teamId, channel, groupId));
     }
 
-    ResCommon modifyGroupDescription(long teamId,
+    public ResCommon modifyGroupDescription(long teamId,
                                      ReqModifyTopicDescription description,
                                      long groupId) throws RetrofitException {
         return call(() -> getApi().modifyGroupDescription(teamId, description, groupId));
     }
 
     // Private Group 삭제
-    ResCommon deleteGroup(long teamId, long groupId) throws RetrofitException {
+    public ResCommon deleteGroup(long teamId, long groupId) throws RetrofitException {
         return call(() -> getApi().deleteGroup(teamId, groupId));
     }
 
     // Private Group Leave
-    ResCommon leaveGroup(long groupId, ReqTeam team) throws RetrofitException {
+    public ResCommon leaveGroup(long groupId, ReqTeam team) throws RetrofitException {
         return call(() -> getApi().leaveGroup(groupId, team));
     }
 
     // Private Group invite
-    ResCommon inviteGroup(long groupId, ReqInviteTopicUsers inviteUsers) throws RetrofitException {
+    public ResCommon inviteGroup(long groupId, ReqInviteTopicUsers inviteUsers) throws RetrofitException {
         return call(() -> getApi().inviteGroup(groupId, inviteUsers));
     }
 

@@ -10,7 +10,8 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
@@ -24,6 +25,10 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 
+import javax.inject.Inject;
+
+import dagger.Lazy;
+
 /**
  * Created by Steve SeongUg Jung on 14. 12. 28..
  */
@@ -34,10 +39,15 @@ public class OpenAction implements Action {
     Activity activity;
 
     ProgressWheel progressWheel;
+    @Inject
+    Lazy<AccountApi> accountApi;
 
     @AfterInject
     void initObject() {
         progressWheel = new ProgressWheel(activity);
+        DaggerApiClientComponent
+                .create()
+                .inject(this);
     }
 
     @Override
@@ -73,7 +83,7 @@ public class OpenAction implements Action {
             helper.clearAllData();
 
             TokenUtil.saveTokenInfoByRefresh(accessToken);
-            ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+            ResAccountInfo accountInfo = accountApi.get().getAccountInfo();
 
             AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
 

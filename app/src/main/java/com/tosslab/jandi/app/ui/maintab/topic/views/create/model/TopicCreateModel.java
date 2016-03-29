@@ -7,6 +7,8 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -30,7 +32,7 @@ public class TopicCreateModel {
     @Bean
     EntityClientManager entityClientManager;
 
-    public ResCommon createTopic(String entityName, boolean publicSelected, String topicDescription, boolean isAutojoin) throws IOException {
+    public ResCommon createTopic(String entityName, boolean publicSelected, String topicDescription, boolean isAutojoin) throws RetrofitException {
         if (publicSelected) {
             return entityClientManager.createPublicTopic(entityName, topicDescription, isAutojoin);
         } else {
@@ -39,7 +41,7 @@ public class TopicCreateModel {
 
     }
 
-    public void refreshEntity() throws IOException {
+    public void refreshEntity() throws RetrofitException {
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);

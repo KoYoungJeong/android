@@ -13,8 +13,8 @@ public class ApiTemplate<API> {
 
     public ApiTemplate(Class<API> clazz) {
         api = RetrofitAdapterBuilder
-                .newInstance(clazz)
-                .create();
+                .newInstance()
+                .create(clazz);
     }
 
     public String getToken() {
@@ -25,7 +25,7 @@ public class ApiTemplate<API> {
         return PoolableRequestApiExecutor.obtain().execute(() -> action0.call().execute());
     }
 
-    public API getApi() {
+    protected API getApi() {
         return api;
     }
 

@@ -1,11 +1,12 @@
 package com.tosslab.jandi.app.ui.signup.verify.model;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.main.SignUpApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqAccountVerification;
@@ -20,9 +21,12 @@ import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 
+import javax.inject.Inject;
+
+import dagger.Lazy;
 
 
 /**
@@ -31,8 +35,14 @@ import org.androidannotations.annotations.RootContext;
 @EBean
 public class SignUpVerifyModel {
 
-    @RootContext
-    Context context;
+    @Inject
+    Lazy<SignUpApi> signUpApi;
+
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent.create()
+                .inject(this);
+    }
 
     public boolean isValidVerificationCode(String verificationCode) {
         return !TextUtils.isEmpty(verificationCode)
@@ -44,8 +54,8 @@ public class SignUpVerifyModel {
         ReqAccountActivate accountActivate = new ReqAccountActivate(email, verificationCode);
         ResAccountActivate resAccountActivate = null;
         try {
-            resAccountActivate = RequestApiManager.getInstance().activateAccountByMainRest(accountActivate);
-        } catch (RetrofitError e) {
+            resAccountActivate = signUpApi.get().activateAccount(accountActivate);
+        } catch (RetrofitException e) {
             e.printStackTrace();
             throw new VerifyNetworkException(e);
         } catch (Exception e) {
@@ -55,17 +65,9 @@ public class SignUpVerifyModel {
         return resAccountActivate;
     }
 
-    public ResCommon requestNewVerificationCode(String email) throws IOException {
+    public ResCommon requestNewVerificationCode(String email) throws RetrofitException {
         ReqAccountVerification accountVerification = new ReqAccountVerification(email);
-        ResCommon resCommon = null;
-        try {
-            resCommon = RequestApiManager.getInstance().accountVerificationByMainRest(accountVerification);
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return resCommon;
+        return signUpApi.get().accountVerification(accountVerification);
     }
 
     public void setAccountInfo(ResAccountActivate accountActivate) {
@@ -75,17 +77,17 @@ public class SignUpVerifyModel {
 
         AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
 
-        JandiPreference.setFirstLogin(context);
+        JandiPreference.setFirstLogin(JandiApplication.getContext());
 
     }
 
     public void trackSignUpSuccessAndFlush(ResAccountInfo accountInfo) {
         MixpanelAccountAnalyticsClient
-                .getInstance(context, accountInfo.getId())
+                .getInstance(JandiApplication.getContext(), accountInfo.getId())
                 .pageViewAccountCreateSuccess();
 
         MixpanelAccountAnalyticsClient mixpanelAccountAnalyticsClient =
-                MixpanelAccountAnalyticsClient.getInstance(context, accountInfo.getId());
+                MixpanelAccountAnalyticsClient.getInstance(JandiApplication.getContext(), accountInfo.getId());
         mixpanelAccountAnalyticsClient.trackAccountSingingIn();
 
         Sprinkler.with(JandiApplication.getContext())

@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.starmention.model.StarMentionListModel;
@@ -52,7 +53,7 @@ public class StarMentionListPresentor {
             } else {
                 view.onSetNoMoreState();
             }
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,13 +106,8 @@ public class StarMentionListPresentor {
     }
 
     public boolean executeLongClickEvent(StarMentionVO starMentionVO, int position) {
-        try {
-            view.onShowDialog(starMentionVO.getTeamId(), starMentionVO.getMessageId(), position);
-            return true;
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            return false;
-        }
+        view.onShowDialog(starMentionVO.getTeamId(), starMentionVO.getMessageId(), position);
+        return true;
     }
 
     @Background
@@ -120,7 +116,7 @@ public class StarMentionListPresentor {
             starMentionListModel.unregistStarredMessage(teamId, messageId);
             view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_unpinned_message));
             view.onRemoveItem(position);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         }
     }
@@ -133,14 +129,22 @@ public class StarMentionListPresentor {
             e.printStackTrace();
         }
 
-        starMentionListModel.refreshList();
-        addStarMentionMessagesToList(listType);
+        try {
+            starMentionListModel.refreshList();
+            addStarMentionMessagesToList(listType);
+        } catch (RetrofitException e) {
+            e.printStackTrace();
+        }
     }
 
     @Background
     public void reloadStartList(String listType, int requestCount) {
-        starMentionListModel.refreshList();
-        addStarMentionMessagesToList(listType, requestCount);
+        try {
+            starMentionListModel.refreshList();
+            addStarMentionMessagesToList(listType, requestCount);
+        } catch (RetrofitException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setView(View view) {

@@ -3,14 +3,11 @@ package com.tosslab.jandi.app.ui.settings.account.presenter;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.ui.settings.account.model.SettingAccountModel;
 import com.tosslab.jandi.app.ui.settings.account.view.SettingAccountView;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import javax.inject.Inject;
-
-import retrofit.RetrofitError;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
@@ -21,7 +18,6 @@ public class SettingAccountPresenterImpl implements SettingAccountPresenter {
     private final SettingAccountModel model;
     private final SettingAccountView view;
 
-    @Inject
     public SettingAccountPresenterImpl(SettingAccountModel model, SettingAccountView view) {
         this.model = model;
         this.view = view;
@@ -68,9 +64,10 @@ public class SettingAccountPresenterImpl implements SettingAccountPresenter {
                     view.dismissProgressWheel();
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
 
-                    if (throwable instanceof RetrofitError
-                            && throwable.getCause() instanceof ConnectionNotFoundException) {
-                        view.showChangeAccountNameFailToast();
+                    if (throwable instanceof RetrofitException) {
+                        if (((RetrofitException) throwable).getStatusCode() >= 500) {
+                            view.showChangeAccountNameFailToast();
+                        }
                     }
 
                 });

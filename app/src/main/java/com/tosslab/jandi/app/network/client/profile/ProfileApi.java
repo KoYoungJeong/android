@@ -22,24 +22,33 @@ public class ProfileApi extends ApiTemplate<ProfileApi.Api> {
         super(Api.class);
     }
 
-    ResLeftSideMenu.User updateMemberProfile(long memberId, ReqUpdateProfile reqUpdateProfile) throws RetrofitException {
+    public ResLeftSideMenu.User updateMemberProfile(long memberId, ReqUpdateProfile reqUpdateProfile) throws RetrofitException {
         return call(() -> getApi().updateMemberProfile(memberId, reqUpdateProfile));
     }
 
-    ResCommon updateMemberName(long memberId, ReqProfileName reqProfileName) throws RetrofitException {
+    public ResCommon updateMemberName(long memberId, ReqProfileName reqProfileName) throws RetrofitException {
         return call(() -> getApi().updateMemberName(memberId, reqProfileName));
     }
 
-    ResLeftSideMenu.User updateMemberEmail(long memberId, ReqAccountEmail reqAccountEmail) throws RetrofitException {
+    public ResLeftSideMenu.User updateMemberEmail(long memberId, ReqAccountEmail reqAccountEmail) throws RetrofitException {
         return call(() -> getApi().updateMemberEmail(memberId, reqAccountEmail));
     }
 
-    ResAvatarsInfo getAvartarsInfo() throws RetrofitException {
+    public ResAvatarsInfo getAvartarsInfo() throws RetrofitException {
         return call(() -> getApi().getAvartarsInfo());
+    }
+
+    public ResLeftSideMenu.User getMemberProfile(long teamId, long memberId) throws RetrofitException {
+        return call(() -> getApi().getMemberProfile(teamId, memberId));
     }
 
 
     interface Api {
+
+        @GET("/teams/{teamId}/members/{memberId}")
+        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+        Call<ResLeftSideMenu.User> getMemberProfile(@Path("teamId") long teamId,
+                                                    @Path("memberId") long memberId);
 
         @PUT("/members/{memberId}/profile")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)

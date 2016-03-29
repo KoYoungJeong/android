@@ -1,10 +1,13 @@
 package com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder;
 
 import com.tosslab.jandi.app.BuildConfig;
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor.ResponseConverter;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor.RestAdapterDecor;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.UserAgentUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,21 +19,19 @@ import retrofit2.Retrofit;
 /**
  * Created by Steve SeongUg Jung on 15. 6. 22..
  */
-public class RetrofitAdapterBuilder<CLIENT> {
+public class RetrofitAdapterBuilder {
 
-    private final Class<CLIENT> clazz;
     private List<RestAdapterDecor> restAdapterDecors;
 
-    private RetrofitAdapterBuilder(Class<CLIENT> clazz) {
-        this.clazz = clazz;
+    private RetrofitAdapterBuilder() {
 
         restAdapterDecors = new ArrayList<>();
         restAdapterDecors.add(new ResponseConverter());
 
     }
 
-    public static <CLIENT> RetrofitAdapterBuilder<CLIENT> newInstance(Class<CLIENT> clazz) {
-        return new RetrofitAdapterBuilder<>(clazz);
+    public static RetrofitAdapterBuilder newInstance() {
+        return new RetrofitAdapterBuilder();
     }
 
     protected Retrofit getRestAdapter() {
@@ -42,7 +43,8 @@ public class RetrofitAdapterBuilder<CLIENT> {
         OkHttpClient.Builder okhttpClientBuilder = new OkHttpClient.Builder()
                 .authenticator((route, response) ->
                         response.request().newBuilder()
-                                .header("Authorization", TokenUtil.getRequestAuthentication())
+                                .header(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
+                                .header("User-Agent", UserAgentUtil.getDefaultUserAgent(JandiApplication.getContext()))
                                 .build());
 
         if (BuildConfig.DEBUG) {
@@ -61,7 +63,7 @@ public class RetrofitAdapterBuilder<CLIENT> {
         return retofitBuilder.build();
     }
 
-    public CLIENT create() {
+    public <CLIENT> CLIENT create(Class<CLIENT> clazz) {
         return getRestAdapter().create(clazz);
     }
 

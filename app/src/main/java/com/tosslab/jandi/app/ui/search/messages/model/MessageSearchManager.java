@@ -1,24 +1,33 @@
 package com.tosslab.jandi.app.ui.search.messages.model;
 
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.messages.search.MessageSearchApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqMessageSearchQeury;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 
+import javax.inject.Inject;
+
+import dagger.Lazy;
 
 
 public class MessageSearchManager {
 
     private final ReqMessageSearchQeury reqMessageSearchQeury;
 
+    @Inject
+    Lazy<MessageSearchApi> messageSearchApi;
+
     private MessageSearchManager(ReqMessageSearchQeury reqMessageSearchQuery) {
         this.reqMessageSearchQeury = reqMessageSearchQuery;
+        DaggerApiClientComponent.create().inject(this);
     }
 
     public static final MessageSearchManager newInstance(ReqMessageSearchQeury reqMessageSearchQuery) {
         return new MessageSearchManager(reqMessageSearchQuery);
     }
 
-    public ResMessageSearch request() throws IOException {
+    public ResMessageSearch request() throws RetrofitException {
 
         int searchType = getSearchType(reqMessageSearchQeury);
 
@@ -31,18 +40,18 @@ public class MessageSearchManager {
         switch (searchType) {
 
             case 0x11:  // condition with writer & entity
-                return RequestApiManager.getInstance().searchMessagesByMessageSearchApi(teamId, query, page, perPage, writerId, entityId);
+                return messageSearchApi.get().searchMessages(teamId, query, page, perPage, writerId, entityId);
 
             case 0x10:  // condition with entity
-                return RequestApiManager.getInstance().searchMessagesByEntityIdByMessageSearchApi(teamId, query, page, perPage, entityId);
+                return messageSearchApi.get().searchMessagesByEntityId(teamId, query, page, perPage, entityId);
 
             case 0x01:  // condition with writer
-                return RequestApiManager.getInstance().searchMessagesByWriterIdByMessageSearchApi(teamId, query, page, perPage, writerId);
+                return messageSearchApi.get().searchMessagesByWriterId(teamId, query, page, perPage, writerId);
 
             default:
 
             case 0x00:  // all type
-                return RequestApiManager.getInstance().searchMessagesByMessageSearchApi(teamId, query, page, perPage);
+                return messageSearchApi.get().searchMessages(teamId, query, page, perPage);
 
         }
 

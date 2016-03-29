@@ -11,7 +11,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
@@ -26,11 +26,6 @@ import org.androidannotations.annotations.EBean;
 
 import de.greenrobot.event.EventBus;
 
-import retrofit.client.Response;
-
-/**
- * Created by Steve SeongUg Jung on 15. 7. 9..
- */
 @EBean
 public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
@@ -128,8 +123,8 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
             view.setStarred(!isStarred);
 
-        } catch (RetrofitError e) {
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+        } catch (RetrofitException e) {
+            int errorCode = e.getStatusCode();
             if (isStarred) {
                 topicDetailModel.trackTopicUnStarFail(errorCode);
             } else {
@@ -140,7 +135,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
     @Override
     public void onAssignTopicOwner(long entityId) {
-        if(topicDetailModel.isStandAlone(entityId)) {
+        if (topicDetailModel.isStandAlone(entityId)) {
             String message = JandiApplication.getContext()
                     .getResources().getString(R.string.jandi_topic_inside_alone);
             view.showFailToast(message);
@@ -181,8 +176,8 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             topicDetailModel.trackTopicDeleteSuccess(entityId);
             view.dismissProgressWheel();
             view.leaveTopic();
-        } catch (RetrofitError e) {
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+        } catch (RetrofitException e) {
+            int errorCode = e.getStatusCode();
             topicDetailModel.trackTopicDeleteFail(errorCode);
             e.printStackTrace();
             view.dismissProgressWheel();
@@ -215,13 +210,12 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             EntityManager.getInstance().getEntityById(entityId).getEntity().name = topicName;
             EventBus.getDefault().post(new TopicInfoUpdateEvent(entityId));
 
-        } catch (RetrofitError e) {
-            Response response = e.getResponse();
-            int errorCode = response != null ? response.getStatus() : -1;
+        } catch (RetrofitException e) {
+            int errorCode = e.getStatusCode();
 
             topicDetailModel.trackChangingEntityNameFail(errorCode);
 
-            if (response != null && response.getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
+            if (errorCode == JandiConstants.NetworkError.DUPLICATED_NAME) {
                 view.showFailToast(context.getString(R.string.err_entity_duplicated_name));
             } else {
                 view.showFailToast(context.getString(R.string.err_entity_modify));
@@ -244,12 +238,12 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             topicDetailModel.updatePushStatus(teamId, entityId, pushOn);
             EntityManager.getInstance().getEntityById(entityId).isTopicPushOn = pushOn;
             view.dismissProgressWheel();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
 
             view.dismissProgressWheel();
 
-            if (e.getCause() instanceof ConnectionNotFoundException) {
+            if (e.getStatusCode() >= 500) {
                 view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
             }
 
@@ -293,11 +287,11 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             view.dismissProgressWheel();
             ((ResLeftSideMenu.Channel) EntityManager.getInstance().getEntityById(entityId).getEntity()).autoJoin = autoJoin;
             onInit(JandiApplication.getContext(), entityId);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             view.dismissProgressWheel();
 
-            if (e.getCause() instanceof ConnectionNotFoundException) {
+            if (e.getStatusCode() >= 500) {
                 view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
             }
 

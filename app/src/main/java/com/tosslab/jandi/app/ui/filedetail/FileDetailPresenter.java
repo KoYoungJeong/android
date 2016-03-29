@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
@@ -97,7 +98,7 @@ public class FileDetailPresenter {
         ResFileDetail fileDetail = null;
         try {
             fileDetail = fileDetailModel.getFileDetailFromServer(fileId);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
             view.showUnexpectedErrorToast();
             view.finish();
@@ -206,7 +207,7 @@ public class FileDetailPresenter {
             }
             view.setFilesStarredState(starred);
             view.notifyDataSetChanged();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             Log.getStackTraceString(e);
         }
     }
@@ -226,7 +227,7 @@ public class FileDetailPresenter {
             view.modifyCommentStarredState(messageId, starred);
 
             EventBus.getDefault().post(new StarredInfoChangeEvent());
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
         }
     }
@@ -369,10 +370,10 @@ public class FileDetailPresenter {
             view.dismissProgress();
 
             view.showMoveToSharedTopicDialog(entityId);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            int errorCode = e.getStatusCode();
             fileDetailModel.trackFileShareFail(errorCode);
             view.dismissProgress();
             view.showShareErrorToast();
@@ -400,10 +401,10 @@ public class FileDetailPresenter {
             view.dismissProgress();
 
             view.showUnshareSuccessToast();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            int errorCode = e.getStatusCode();
             fileDetailModel.trackFileUnShareFail(errorCode);
             view.dismissProgress();
             view.showUnshareErrorToast();
@@ -429,10 +430,10 @@ public class FileDetailPresenter {
             view.showDeleteSuccessToast();
 
             view.deliverResultToMessageList();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            int errorCode = e.getStatusCode();
             fileDetailModel.trackFileDeleteFail(errorCode);
 
             view.dismissProgress();

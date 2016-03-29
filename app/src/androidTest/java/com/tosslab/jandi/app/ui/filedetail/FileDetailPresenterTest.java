@@ -4,11 +4,11 @@ import android.app.ProgressDialog;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.file.FileApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
@@ -24,15 +24,11 @@ import java.util.List;
 import setup.BaseInitUtil;
 
 import static com.jayway.awaitility.Awaitility.await;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -158,7 +154,7 @@ public class FileDetailPresenterTest {
         return integerWrappers;
     }
 
-    private ResMessages.FileMessage getFileMessage() {
+    private ResMessages.FileMessage getFileMessage() throws RetrofitException {
         ReqSearchFile reqSearchFile = new ReqSearchFile();
         reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
         reqSearchFile.listCount = ReqSearchFile.MAX;
@@ -170,7 +166,7 @@ public class FileDetailPresenterTest {
         reqSearchFile.startMessageId = -1;
         reqSearchFile.keyword = "";
         reqSearchFile.teamId = EntityManager.getInstance().getTeamId();
-        ResSearchFile resSearchFile = RequestApiManager.getInstance().searchFileByMainRest(reqSearchFile);
+        ResSearchFile resSearchFile = new FileApi().searchFile(reqSearchFile);
 
         ResMessages.OriginalMessage originalMessage = resSearchFile.files.get(0);
 

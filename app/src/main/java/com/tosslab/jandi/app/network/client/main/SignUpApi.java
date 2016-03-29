@@ -20,15 +20,15 @@ public class SignUpApi extends ApiTemplate<SignUpApi.Api> {
         super(Api.class);
     }
 
-    ResCommon signUpAccount(ReqSignUpInfo signUpInfo) throws RetrofitException {
+    public ResCommon signUpAccount(ReqSignUpInfo signUpInfo) throws RetrofitException {
         return call(() -> getApi().signUpAccount(signUpInfo));
     }
 
-    ResAccountActivate activateAccount(ReqAccountActivate reqAccountActivate) throws RetrofitException {
+    public ResAccountActivate activateAccount(ReqAccountActivate reqAccountActivate) throws RetrofitException {
         return call(() -> getApi().activateAccount(reqAccountActivate));
     }
 
-    ResCommon accountVerification(ReqAccountVerification reqAccountVerification) throws RetrofitException {
+    public ResCommon accountVerification(ReqAccountVerification reqAccountVerification) throws RetrofitException {
         return call(() -> getApi().accountVerification(reqAccountVerification));
     }
 

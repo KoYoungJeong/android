@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.settings.main.view.SettingsFragment;
 import com.tosslab.jandi.app.ui.settings.main.view.SettingsFragment_;
 
-
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 

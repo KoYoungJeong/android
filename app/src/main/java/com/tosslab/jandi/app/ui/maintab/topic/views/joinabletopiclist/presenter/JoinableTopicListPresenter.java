@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.adapter.TopicRecyclerAdapter;
@@ -74,7 +75,7 @@ public class JoinableTopicListPresenter {
             view.moveToMessageActivity(topic.getEntityId(), entityType, topic.isStarred(),
                     teamId, topic.getMarkerLinkId());
 
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             LogUtil.e("fail to join entity", e);
             view.showErrorToast(context.getString(R.string.err_entity_join));

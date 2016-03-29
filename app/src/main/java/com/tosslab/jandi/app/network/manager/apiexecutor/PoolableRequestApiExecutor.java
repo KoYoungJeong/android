@@ -3,10 +3,11 @@ package com.tosslab.jandi.app.network.manager.apiexecutor;
 import android.support.v4.util.Pools;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.network.exception.ExceptionData;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.manager.token.TokenRequestManager;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
-import com.tosslab.jandi.app.services.SignOutService;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.io.IOException;
@@ -57,7 +58,11 @@ public class PoolableRequestApiExecutor {
 
         // 현재(2015/6) 시나리오엔 존재하지 않지만 Client측의 Network Connection에러를 UI단에 던지기 위한 코드 추가
         if (!isActiveNetwork()) {
-            throw RetrofitException.create(response.code());
+            if (response != null) {
+                throw RetrofitException.create(response.code());
+            } else {
+                throw RetrofitException.create(503);
+            }
         }
 
         if (e instanceof RuntimeException) {
@@ -68,10 +73,10 @@ public class PoolableRequestApiExecutor {
                 return execute(apiExecutor);
             } else {
                 retryCnt = 0;
-                throw RetrofitException.create(400);
+                throw RetrofitException.create(503);
             }
         } else if (response == null) {
-            throw RetrofitException.create(400);
+            throw RetrofitException.create(503);
         } else {
             int status = response.code();
             if (status == JandiConstants.NetworkError.UNAUTHORIZED) {
@@ -85,12 +90,25 @@ public class PoolableRequestApiExecutor {
                     }
                 } else {
                     // unauthorized exception
-                    SignOutService.start();
-                    throw RetrofitException.create(401);
+                    throw RetrofitException.create(response.code());
                 }
             } else {
                 // exception, not unauthorized
-                throw RetrofitException.create(400);
+                String errorBody;
+                int responseCode;
+                String responseMsg;
+                try {
+                    errorBody = response.errorBody().string();
+                    ExceptionData exceptionData = JacksonMapper.getInstance().getObjectMapper().readValue(errorBody, ExceptionData.class);
+                    responseCode = exceptionData.getCode();
+                    responseMsg = exceptionData.getMsg();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                    errorBody = "";
+                    responseCode = response.code() * 100;
+                    responseMsg = "";
+                }
+                throw RetrofitException.create(response.code(), responseCode, responseMsg, errorBody);
             }
         }
     }

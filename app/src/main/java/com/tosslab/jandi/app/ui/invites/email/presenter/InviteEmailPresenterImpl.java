@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.ui.invites.email.InviteEmailActivity;
 import com.tosslab.jandi.app.ui.invites.email.model.InviteEmailModel;
 import com.tosslab.jandi.app.ui.invites.email.model.bean.EmailVO;
@@ -16,7 +17,6 @@ import org.androidannotations.annotations.RootContext;
 
 import java.util.Arrays;
 import java.util.List;
-
 
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -48,8 +48,7 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
                         inviteModel.inviteMembers(Arrays.asList(object.getEmail()));
                         view.updateSuccessInvite(object, 1);
                         view.addSendEmailSuccessText();
-                    } catch (RetrofitError e) {
-                        e.printStackTrace();
+                    } catch (RetrofitException e) {
                         LogUtil.d("Email Sending Fail : " + e.getMessage());
                         view.removeEmailFromList(object);
                         view.showToast(view.getString(R.string.err_invitation_failed));

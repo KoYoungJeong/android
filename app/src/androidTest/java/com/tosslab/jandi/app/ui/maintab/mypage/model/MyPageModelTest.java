@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.mypage.model;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Pair;
 
+import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
 
@@ -30,7 +31,7 @@ public class MyPageModelTest {
     public void setup() throws Exception {
         BaseInitUtil.initData();
 
-        model = new MyPageModel();
+        model = new MyPageModel(() -> new MessageApi());
     }
 
     @Test

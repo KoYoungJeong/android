@@ -5,6 +5,7 @@ import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
@@ -70,12 +71,16 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
         Observable
                 .create((Subscriber<? super ShareSelectModel> subscriber) -> {
                     if (!shareModel.hasLeftSideMenu(shareTarget.getTeamId())) {
-                        ResLeftSideMenu leftSideMenu = shareModel.getLeftSideMenu(teamId);
-                        shareModel.updateLeftSideMenu(leftSideMenu);
+                        try {
+                            ResLeftSideMenu leftSideMenu = shareModel.getLeftSideMenu(teamId);
+                            shareModel.updateLeftSideMenu(leftSideMenu);
+                            shareSelectModel = shareModel.getShareSelectModel(teamId);
+                            subscriber.onNext(shareSelectModel);
+                        } catch (RetrofitException e) {
+                            subscriber.onError(e);
+                        }
                     }
 
-                    shareSelectModel = shareModel.getShareSelectModel(teamId);
-                    subscriber.onNext(shareSelectModel);
                     subscriber.onCompleted();
                 })
                 .subscribeOn(Schedulers.io())

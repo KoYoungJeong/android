@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.teams;
 
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.models.ReqOwner;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
@@ -23,7 +23,7 @@ public class ApiTest {
         int memberId = 11169482;
 
         ResCommon resCommon =
-                RequestApiManager.getInstance().assignToTopicOwner(teamId, topicId, new ReqOwner(memberId));
+                new RoomsApi().assignToTopicOwner(teamId, topicId, new ReqOwner(memberId));
 
         assertNotNull(resCommon);
     }

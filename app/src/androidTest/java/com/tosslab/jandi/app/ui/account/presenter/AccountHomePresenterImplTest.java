@@ -6,7 +6,7 @@ import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
@@ -189,7 +189,7 @@ public class AccountHomePresenterImplTest {
         assertThat(newSavedName, is(not(equalTo(originName))));
         assertThat(newSavedName, is(equalTo(newName)));
 
-        RequestApiManager.getInstance().changeNameByAccountProfileApi(new ReqProfileName(originName));
+        new AccountProfileApi().changeName(new ReqProfileName(originName));
     }
 
     @Ignore

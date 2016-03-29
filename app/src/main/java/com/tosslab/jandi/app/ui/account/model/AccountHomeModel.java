@@ -8,7 +8,12 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
+import com.tosslab.jandi.app.network.client.main.LeftSideApi;
+import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
@@ -24,11 +29,15 @@ import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.Lazy;
 
 
 /**
@@ -37,7 +46,30 @@ import java.util.List;
 @EBean
 public class AccountHomeModel {
 
-    public ResTeamDetailInfo acceptOrDeclineInvite(String invitationId, String type) throws IOException {
+    @Inject
+    Lazy<InvitationApi> invitationApi;
+    @Inject
+    Lazy<LeftSideApi> leftSideApi;
+    @Inject
+    Lazy<AccountApi> accountApi;
+    @Inject
+    Lazy<AccountProfileApi> accountProfileApi;
+
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent.create().inject(this);
+    }
+
+    public void refreshAccountInfo() {
+        try {
+            ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+            AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+        } catch (RetrofitException retrofitError) {
+            retrofitError.printStackTrace();
+        }
+    }
+
+    public ResTeamDetailInfo acceptOrDeclineInvite(String invitationId, String type) throws RetrofitException {
 
         ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
 
@@ -46,20 +78,19 @@ public class AccountHomeModel {
         }
 
         ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore = new ReqInvitationAcceptOrIgnore(type);
-        return RequestApiManager.getInstance().
-                acceptOrDeclineInvitationByInvitationApi(invitationId, reqInvitationAcceptOrIgnore);
+        return invitationApi.get().acceptOrDeclineInvitation(invitationId, reqInvitationAcceptOrIgnore);
 
     }
 
 
-    public List<Team> getTeamInfos() throws IOException {
+    public List<Team> getTeamInfos() throws RetrofitException {
 
         List<Team> teams = new ArrayList<Team>();
 
         List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
         teams.addAll(convertJoinedTeamList(userTeams));
 
-        List<ResPendingTeamInfo> pendingTeamInfo = RequestApiManager.getInstance().getPendingTeamInfoByInvitationApi();
+        List<ResPendingTeamInfo> pendingTeamInfo = invitationApi.get().getPedingTeamInfo();
         for (int idx = pendingTeamInfo.size() - 1; idx >= 0; idx--) {
             if (!TextUtils.equals(pendingTeamInfo.get(idx).getStatus(), "pending")) {
                 pendingTeamInfo.remove(idx);
@@ -103,16 +134,16 @@ public class AccountHomeModel {
 
     }
 
-    public ResAccountInfo updateAccountName(String newName) throws IOException {
-        return RequestApiManager.getInstance().changeNameByAccountProfileApi(new ReqProfileName(newName));
+    public ResAccountInfo updateAccountName(String newName) throws RetrofitException {
+        return accountProfileApi.get().changeName(new ReqProfileName(newName));
     }
 
     public void updateSelectTeam(long teamId) {
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
     }
 
-    public ResLeftSideMenu getEntityInfo(long teamId) throws IOException {
-        return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
+    public ResLeftSideMenu getEntityInfo(long teamId) throws RetrofitException {
+        return leftSideApi.get().getInfosForSideMenu(teamId);
     }
 
     public EntityManager updateEntityInfo(Context context, ResLeftSideMenu entityInfo) {

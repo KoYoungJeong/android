@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.network.client.events;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -40,7 +39,7 @@ public class ApiTest {
         LogUtil.e("time", time + "");
         LogUtil.e("user id", EntityManager.getInstance().getMe().getId() + "");
         ResEventHistory eventHistory =
-                RequestApiManager.getInstance().getEventHistory(time, EntityManager.getInstance().getMe().getId(), null, 300);
+                new EventsApi().getEventHistory(time, EntityManager.getInstance().getMe().getId(), null, 300);
         LogUtil.e("event history size", eventHistory.records.size() + "");
         int cnt = 0;
         Iterator<ResEventHistory.EventHistoryInfo> i = eventHistory.records.iterator();

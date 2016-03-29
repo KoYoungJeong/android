@@ -14,7 +14,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.koushikdutta.ion.Ion;
 import com.parse.ParseInstallation;
@@ -24,21 +23,24 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.network.client.main.LeftSideApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.to.PushTO;
-import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
+import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.SystemService;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -46,6 +48,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.Lazy;
 
 
 /**
@@ -59,6 +64,14 @@ public class JandiPushReceiverModel {
     private static final int PENDING_INTENT_REQUEST_CODE = 20140626;
     @SystemService
     AudioManager audioManager;
+
+    @Inject
+    Lazy<LeftSideApi> leftSideApi;
+
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent.create().inject(this);
+    }
 
     public PendingIntent generatePendingIntent(Context context, int chatId, int chatType, int teamId, String roomType) {
 
@@ -173,9 +186,8 @@ public class JandiPushReceiverModel {
     public ResLeftSideMenu getLeftSideMenuFromServer(int teamId) {
         ResLeftSideMenu leftSideMenu = null;
         try {
-            leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
-        } catch (RetrofitError e) {
-            LogUtil.e(Log.getStackTraceString(e));
+            leftSideMenu = leftSideApi.get().getInfosForSideMenu(teamId);
+        } catch (RetrofitException e) {
         }
         return leftSideMenu;
     }

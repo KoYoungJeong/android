@@ -19,19 +19,19 @@ public class StickerApi extends ApiTemplate<StickerApi.Api> {
         super(Api.class);
     }
 
-    ResCommon sendSticker(ReqSendSticker reqSendSticker) throws RetrofitException {
+    public ResCommon sendSticker(ReqSendSticker reqSendSticker) throws RetrofitException {
         return call(() -> getApi().sendSticker(reqSendSticker));
     }
 
-    ResCommon sendStickerComment(ReqSendSticker reqSendSticker) throws RetrofitException {
+    public ResCommon sendStickerComment(ReqSendSticker reqSendSticker) throws RetrofitException {
         return call(() -> getApi().sendStickerComment(reqSendSticker));
     }
 
-    ResCommon deleteStickerComment(long commentId, long teamId) throws RetrofitException {
+    public ResCommon deleteStickerComment(long commentId, long teamId) throws RetrofitException {
         return call(() -> getApi().deleteStickerComment(commentId, teamId));
     }
 
-    ResCommon deleteSticker(long messageId, long teamId) throws RetrofitException {
+    public ResCommon deleteSticker(long messageId, long teamId) throws RetrofitException {
         return call(() -> getApi().deleteSticker(messageId, teamId));
     }
 

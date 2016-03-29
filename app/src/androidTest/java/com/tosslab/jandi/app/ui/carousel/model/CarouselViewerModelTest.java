@@ -5,7 +5,8 @@ import android.support.test.runner.AndroidJUnit4;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.file.FileApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
@@ -43,7 +44,7 @@ public class CarouselViewerModelTest {
 
     }
 
-    private int getLatestFileId() {
+    private int getLatestFileId() throws RetrofitException {
         ReqSearchFile reqSearchFile = new ReqSearchFile();
         reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
         reqSearchFile.fileType = "image";
@@ -53,7 +54,7 @@ public class CarouselViewerModelTest {
         reqSearchFile.sharedEntityId = roomId;
         reqSearchFile.startMessageId = -1;
         reqSearchFile.teamId = teamId;
-        return RequestApiManager.getInstance().searchFileByMainRest(reqSearchFile).firstIdOfReceivedList;
+        return new FileApi().searchFile(reqSearchFile).firstIdOfReceivedList;
     }
 
     @After
@@ -72,20 +73,20 @@ public class CarouselViewerModelTest {
             try {
                 model.searchInitFileList(teamId, roomId, -1);
                 fail("성공할리가..");
-            } catch (RetrofitError retrofitError) {
-                System.out.println(new String(((TypedByteArray) retrofitError.getResponse().getBody()).getBytes()));
+            } catch (RetrofitException retrofitError) {
+                System.out.println(retrofitError.getRawBody());
             }
             try {
                 model.searchInitFileList(teamId, -1, lastImageMessageId);
                 fail("성공 할 수 없음..");
-            } catch (RetrofitError retrofitError) {
-                System.out.println(new String(((TypedByteArray) retrofitError.getResponse().getBody()).getBytes()));
+            } catch (RetrofitException retrofitError) {
+                System.out.println(retrofitError.getRawBody());
             }
             try {
                 model.searchInitFileList(-1, roomId, lastImageMessageId);
                 fail("성공 할 수 없음..");
-            } catch (RetrofitError retrofitError) {
-                System.out.println(new String(((TypedByteArray) retrofitError.getResponse().getBody()).getBytes()));
+            } catch (RetrofitException retrofitError) {
+                System.out.println(retrofitError.getRawBody());
             }
         }
     }

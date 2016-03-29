@@ -2,7 +2,8 @@ package com.tosslab.jandi.app.ui.signup.account.model;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.main.SignUpApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.signup.account.to.CheckPointsHolder;
@@ -15,7 +16,6 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
-
 
 
 /**
@@ -126,11 +126,11 @@ public class SignUpModel {
                 && mCheckPointsHolder.didAgreeAll == CheckPointsHolder.VALID);
     }
 
-    public ResCommon requestSignUp(String email, String password, String name, String lang) throws IOException {
+    public ResCommon requestSignUp(String email, String password, String name, String lang) throws RetrofitException {
 
         ReqSignUpInfo signUpInfo = new ReqSignUpInfo(email, password, name, lang);
 
-        return RequestApiManager.getInstance().signUpAccountByMainRest(signUpInfo);
+        return new SignUpApi().signUpAccount(signUpInfo);
 
     }
 

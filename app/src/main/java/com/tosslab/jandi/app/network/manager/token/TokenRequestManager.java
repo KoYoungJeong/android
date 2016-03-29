@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.manager.token;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
-import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedSimpleRestApiClient;
+import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -81,8 +81,7 @@ public class TokenRequestManager {
     }
 
     private ResAccessToken requestRefreshTokenAndSave(ReqAccessToken reqAccessToken) throws Exception {
-        JacksonConvertedSimpleRestApiClient requestApiClient = new JacksonConvertedSimpleRestApiClient();
-        ResAccessToken accessToken = requestApiClient.getAccessTokenByMainRest(reqAccessToken);
+        ResAccessToken accessToken = new LoginApi().getAccessToken(reqAccessToken);
         TokenUtil.saveTokenInfoByRefresh(accessToken);
         return accessToken;
     }

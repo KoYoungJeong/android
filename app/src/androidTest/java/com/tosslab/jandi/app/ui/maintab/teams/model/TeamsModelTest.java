@@ -4,6 +4,9 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
+import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
+import com.tosslab.jandi.app.network.client.main.LeftSideApi;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 
 import org.junit.Before;
@@ -31,7 +34,7 @@ public class TeamsModelTest {
     public void setup() throws Exception {
         BaseInitUtil.initData();
 
-        model = new TeamsModel();
+        model = new TeamsModel(AccountApi::new, LeftSideApi::new, InvitationApi::new);
     }
 
     @Test

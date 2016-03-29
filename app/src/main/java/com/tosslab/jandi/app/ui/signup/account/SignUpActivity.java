@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import com.google.ads.conversiontracking.AdWordsConversionReporter;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.signup.account.model.SignUpModel;
@@ -29,9 +30,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
-
-
-import retrofit.mime.TypedByteArray;
 
 /**
  * Created by justinygchoi on 14. 12. 11..
@@ -208,21 +206,17 @@ public class SignUpActivity extends BaseAppCompatActivity {
             signUpModel.trackSendEmailSuccess(email);
 
             signUpViewModel.requestSignUpVerify(email);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             signUpViewModel.dismissProgressWheel();
-            int errorCode = -1;
-            if (e.getResponse() != null) {
-                errorCode = e.getResponse().getStatus();
 
-                String error = new String(((TypedByteArray) e.getResponse().getBody()).getBytes());
-                if (error.contains("40001")) {
-                    signUpViewModel.showErrorToast(getString(R.string.jandi_duplicate_email));
-                }
+            if (e.getResponseCode() == 40001) {
+                signUpViewModel.showErrorToast(getString(R.string.jandi_duplicate_email));
             } else {
+
                 signUpViewModel.showErrorToast(getString(R.string.err_network));
             }
 
-            signUpModel.trackSendEmailFail(errorCode);
+            signUpModel.trackSendEmailFail(e.getResponseCode());
         }
     }
 }

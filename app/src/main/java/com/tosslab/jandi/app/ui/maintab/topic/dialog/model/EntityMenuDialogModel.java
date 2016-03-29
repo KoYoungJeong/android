@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.maintab.topic.dialog.model;
 
-import android.content.Context;
 import android.preference.PreferenceManager;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -9,7 +8,10 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.chat.ChatApi;
+import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -18,12 +20,15 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 import org.json.JSONException;
 
+import javax.inject.Inject;
+
+import dagger.Lazy;
 import de.greenrobot.event.EventBus;
 
 
@@ -33,25 +38,32 @@ import de.greenrobot.event.EventBus;
 @EBean
 public class EntityMenuDialogModel {
 
-    @RootContext
-    Context context;
-
     @Bean
     EntityClientManager entityClientManager;
+
+    @Inject
+    Lazy<ChatApi> chatApi;
+    @Inject
+    Lazy<RoomsApi> roomsApi;
+
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent.create().inject(this);
+    }
 
     public FormattedEntity getEntity(long entityId) {
         return EntityManager.getInstance().getEntityById(entityId);
     }
 
-    public void requestStarred(long entityId) throws IOException {
+    public void requestStarred(long entityId) throws RetrofitException {
         entityClientManager.enableFavorite(entityId);
     }
 
-    public void requestUnstarred(long entityId) throws IOException {
+    public void requestUnstarred(long entityId) throws RetrofitException {
         entityClientManager.disableFavorite(entityId);
     }
 
-    public void requestLeaveEntity(long entityId, boolean publicTopic) throws IOException {
+    public void requestLeaveEntity(long entityId, boolean publicTopic) throws RetrofitException {
         if (publicTopic) {
             entityClientManager.leaveChannel(entityId);
         } else {
@@ -59,25 +71,25 @@ public class EntityMenuDialogModel {
         }
     }
 
-    public void refreshEntities() throws IOException {
+    public void refreshEntities() throws RetrofitException {
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
         BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
         badgeCountRepository.upsertBadgeCount(EntityManager.getInstance().getTeamId(), totalUnreadCount);
-        BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
+        BadgeUtils.setBadge(JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
         EntityManager.getInstance().refreshEntity();
     }
 
-    public ResCommon requestDeleteChat(long memberId, long entityId) throws IOException {
-        return RequestApiManager.getInstance().deleteChatByChatApi(memberId, entityId);
+    public ResCommon requestDeleteChat(long memberId, long entityId) throws RetrofitException {
+        return chatApi.get().deleteChat(memberId, entityId);
     }
 
     public void leaveEntity(boolean publicTopic) {
         String distictId = EntityManager.getInstance().getDistictId();
         try {
             MixpanelMemberAnalyticsClient
-                    .getInstance(context, distictId)
+                    .getInstance(JandiApplication.getContext(), distictId)
                     .trackLeavingEntity(publicTopic);
         } catch (JSONException e) {
         }
@@ -96,13 +108,17 @@ public class EntityMenuDialogModel {
         }
 
         final long teamId = EntityManager.getInstance().getTeamId();
-        updatePushStatus(teamId, entityId, isTopicPushOn);
+        try {
+            updatePushStatus(teamId, entityId, isTopicPushOn);
+        } catch (RetrofitException e) {
+            e.printStackTrace();
+        }
 
     }
 
-    public void updatePushStatus(long teamId, long entityId, boolean pushOn) throws IOException {
+    public void updatePushStatus(long teamId, long entityId, boolean pushOn) throws RetrofitException {
         ReqUpdateTopicPushSubscribe req = new ReqUpdateTopicPushSubscribe(pushOn);
-        RequestApiManager.getInstance().updateTopicPushSubscribe(teamId, entityId, req);
+        roomsApi.get().updateTopicPushSubscribe(teamId, entityId, req);
     }
 
     public boolean isPushOn(long entityId) {

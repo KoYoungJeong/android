@@ -31,8 +31,13 @@ import com.tosslab.jandi.app.local.orm.repositories.ReadyMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.messages.MessageApi;
+import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
+import com.tosslab.jandi.app.network.client.sticker.StickerApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -56,6 +61,7 @@ import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -70,8 +76,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import de.greenrobot.event.EventBus;
+import javax.inject.Inject;
 
+import dagger.Lazy;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.functions.Func0;
 
@@ -88,6 +96,18 @@ public class MessageListModel {
     @RootContext
     AppCompatActivity activity;
 
+    @Inject
+    Lazy<RoomsApi> roomsApi;
+    @Inject
+    Lazy<StickerApi> stickerApi;
+    @Inject
+    Lazy<MessageApi> messageApi;
+
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent.create().inject(this);
+    }
+
     public boolean isTopic(FormattedEntity entity) {
         return entity != EntityManager.UNKNOWN_USER_ENTITY && !entity.isUser();
     }
@@ -96,7 +116,7 @@ public class MessageListModel {
         messageManipulator.initEntity(entityType, entityId);
     }
 
-    public ResMessages getOldMessage(long linkId, int count) throws IOException {
+    public ResMessages getOldMessage(long linkId, int count) throws RetrofitException {
         return messageManipulator.getMessages(linkId, count);
     }
 
@@ -104,7 +124,7 @@ public class MessageListModel {
         ResMessages.OriginalMessage message = null;
         try {
             message = messageManipulator.getMessage(teamId, messageId);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         }
         return message;
@@ -114,15 +134,15 @@ public class MessageListModel {
         return TextUtils.isEmpty(text.toString().trim());
     }
 
-    public List<ResMessages.Link> getNewMessage(long linkId) throws IOException {
+    public List<ResMessages.Link> getNewMessage(long linkId) throws RetrofitException {
         return messageManipulator.updateMessages(linkId);
     }
 
-    public void deleteMessage(long messageId) throws IOException {
+    public void deleteMessage(long messageId) throws RetrofitException {
         messageManipulator.deleteMessage(messageId);
     }
 
-    public void deleteSticker(long messageId, int messageType) throws IOException {
+    public void deleteSticker(long messageId, int messageType) throws RetrofitException {
         messageManipulator.deleteSticker(messageId, messageType);
     }
 
@@ -162,7 +182,7 @@ public class MessageListModel {
         try {
             ResMessages oldMessage = getOldMessage(-1, 1);
             return oldMessage.entityId;
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         }
         return -1;
@@ -185,12 +205,12 @@ public class MessageListModel {
 
             EventBus.getDefault().post(new SendCompleteEvent(sendingMessage.getLocalId(), resCommon.id));
             return resCommon.id;
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             SendMessageRepository.getRepository().updateSendMessageStatus(
                     sendingMessage.getLocalId(), SendMessage.Status.FAIL);
             EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
 
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            int errorCode = e.getStatusCode();
             trackMessagePostFail(errorCode);
             return -1;
         } catch (Exception e) {
@@ -256,7 +276,7 @@ public class MessageListModel {
         return requestFuture.get();
     }
 
-    public void updateLastLinkId(long lastUpdateLinkId) throws IOException {
+    public void updateLastLinkId(long lastUpdateLinkId) throws RetrofitException {
         messageManipulator.setLastReadLinkId(lastUpdateLinkId);
     }
 
@@ -267,7 +287,7 @@ public class MessageListModel {
         ReadyMessageRepository.getRepository().upsertReadyMessage(readyMessage);
     }
 
-    public void deleteTopic(long entityId, int entityType) throws IOException {
+    public void deleteTopic(long entityId, int entityType) throws RetrofitException {
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
             entityClientManager.deleteChannel(entityId);
         } else {
@@ -275,7 +295,7 @@ public class MessageListModel {
         }
     }
 
-    public void modifyTopicName(int entityType, long entityId, String inputName) throws IOException {
+    public void modifyTopicName(int entityType, long entityId, String inputName) throws RetrofitException {
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
             entityClientManager.modifyChannelName(entityId, inputName);
         } else if (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) {
@@ -373,16 +393,16 @@ public class MessageListModel {
 
     }
 
-    public ResMessages getBeforeMarkerMessage(long linkId) throws IOException {
+    public ResMessages getBeforeMarkerMessage(long linkId) throws RetrofitException {
 
         return messageManipulator.getBeforeMarkerMessage(linkId);
     }
 
-    public ResMessages getAfterMarkerMessage(long linkId) throws IOException {
+    public ResMessages getAfterMarkerMessage(long linkId) throws RetrofitException {
         return messageManipulator.getAfterMarkerMessage(linkId);
     }
 
-    public ResMessages getAfterMarkerMessage(long linkId, int count) throws IOException {
+    public ResMessages getAfterMarkerMessage(long linkId, int count) throws RetrofitException {
         return messageManipulator.getAfterMarkerMessage(linkId, count);
     }
 
@@ -392,10 +412,10 @@ public class MessageListModel {
         }
 
         try {
-            ResRoomInfo resRoomInfo = RequestApiManager.getInstance().getRoomInfoByRoomsApi(teamId, roomId);
+            ResRoomInfo resRoomInfo = roomsApi.get().getRoomInfo(teamId, roomId);
             MarkerRepository.getRepository().upsertRoomInfo(resRoomInfo);
             EventBus.getDefault().post(new RoomMarkerEvent());
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         }
     }
@@ -413,8 +433,7 @@ public class MessageListModel {
         ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), teamId, entityId, type, "", new ArrayList<>());
 
         try {
-            ResCommon resCommon = RequestApiManager.getInstance()
-                    .sendStickerByStickerApi(reqSendSticker);
+            ResCommon resCommon = stickerApi.get().sendSticker(reqSendSticker);
 
             SendMessageRepository.getRepository()
                     .updateSendMessageStatus(localId, resCommon.id, SendMessage.Status.COMPLETE);
@@ -423,14 +442,14 @@ public class MessageListModel {
             EventBus.getDefault().post(new SendCompleteEvent(localId, resCommon.id));
 
             return 1;
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
 
             SendMessageRepository.getRepository()
                     .updateSendMessageStatus(localId, SendMessage.Status.FAIL);
             EventBus.getDefault().post(new SendFailEvent(localId));
 
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            int errorCode = e.getStatusCode();
             trackMessagePostFail(errorCode);
             return -1;
         }
@@ -484,23 +503,21 @@ public class MessageListModel {
                         .build());
     }
 
-    public void registStarredMessage(long teamId, long messageId) {
+    public void registStarredMessage(long teamId, long messageId) throws RetrofitException {
         try {
-            RequestApiManager.getInstance()
-                    .registStarredMessageByTeamApi(teamId, messageId);
+            messageApi.get().registStarredMessage(teamId, messageId, new ReqNull());
             MessageRepository.getRepository().updateStarred(messageId, true);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             throw e;
         }
     }
 
-    public void unregistStarredMessage(long teamId, long messageId) {
+    public void unregistStarredMessage(long teamId, long messageId) throws RetrofitException {
         try {
-            RequestApiManager.getInstance()
-                    .unregistStarredMessageByTeamApi(teamId, messageId);
+            messageApi.get().unregistStarredMessage(teamId, messageId);
             MessageRepository.getRepository().updateStarred(messageId, false);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             throw e;
         }
@@ -691,6 +708,7 @@ public class MessageListModel {
     public void deleteReadyMessage(long roomId) {
         ReadyMessageRepository.getRepository().deleteReadyMessage(roomId);
     }
+
     public boolean isInactiveUser(long entityId) {
         return EntityManager.getInstance().getEntityById(entityId).isInavtived();
     }

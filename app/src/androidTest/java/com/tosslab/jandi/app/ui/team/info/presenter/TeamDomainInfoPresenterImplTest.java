@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.team.info.presenter;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModelTest;
@@ -16,7 +15,7 @@ import org.junit.runner.RunWith;
 
 import java.util.concurrent.TimeUnit;
 
-import retrofit.RestAdapter;
+import retrofit2.Retrofit;
 import rx.Observable;
 import setup.BaseInitUtil;
 
@@ -82,12 +81,10 @@ public class TeamDomainInfoPresenterImplTest {
         verify(mockView, times(1)).showProgressWheel();
         verify(mockView, times(1)).successCreateTeam(teamName);
 
-        new RestAdapter.Builder()
-                .setEndpoint(JandiConstantsForFlavors.SERVICE_INNER_API_URL)
-                .setRequestInterceptor(request -> request.addHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication()))
-                .setLogLevel(RestAdapter.LogLevel.HEADERS_AND_ARGS)
+        new Retrofit.Builder()
+                .baseUrl(JandiConstantsForFlavors.SERVICE_INNER_API_URL)
                 .build()
                 .create(TeamDomainInfoModelTest.Team.class)
-                .deleteTeam(AccountRepository.getRepository().getSelectedTeamId(), new TeamDomainInfoModelTest.ReqDeleteTeam());
+                .deleteTeam(TokenUtil.getRequestAuthentication(), AccountRepository.getRepository().getSelectedTeamId(), new TeamDomainInfoModelTest.ReqDeleteTeam());
     }
 }

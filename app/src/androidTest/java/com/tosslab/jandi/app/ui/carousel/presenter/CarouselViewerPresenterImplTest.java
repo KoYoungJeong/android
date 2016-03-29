@@ -7,7 +7,8 @@ import android.support.test.runner.AndroidJUnit4;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.file.FileApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.services.download.DownloadService;
@@ -62,7 +63,7 @@ public class CarouselViewerPresenterImplTest {
         presenter.setFileId(lastImageMessageId);
     }
 
-    private int getLatestFileId() {
+    private int getLatestFileId() throws RetrofitException {
         ReqSearchFile reqSearchFile = new ReqSearchFile();
         reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
         reqSearchFile.fileType = "image";
@@ -72,7 +73,7 @@ public class CarouselViewerPresenterImplTest {
         reqSearchFile.sharedEntityId = roomId;
         reqSearchFile.startMessageId = -1;
         reqSearchFile.teamId = teamId;
-        return RequestApiManager.getInstance().searchFileByMainRest(reqSearchFile).firstIdOfReceivedList;
+        return new FileApi().searchFile(reqSearchFile).firstIdOfReceivedList;
     }
 
 

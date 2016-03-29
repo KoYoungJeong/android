@@ -1,11 +1,12 @@
 package com.tosslab.jandi.app.ui.profile.email.model;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.account.emails.AccountEmailsApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -18,11 +19,9 @@ import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 /**
@@ -31,8 +30,6 @@ import java.util.List;
 @EBean
 public class EmailChooseModel {
 
-    @RootContext
-    Context context;
 
     public List<AccountEmail> getAccountEmails() {
 
@@ -60,9 +57,9 @@ public class EmailChooseModel {
         return accountEmails;
     }
 
-    public ResAccountInfo requestNewEmail(String email) throws RetrofitError {
+    public ResAccountInfo requestNewEmail(String email) throws RetrofitException {
         ReqAccountEmail reqAccountEmail = new ReqAccountEmail(email, LanguageUtil.getLanguage());
-        return RequestApiManager.getInstance().requestAddEmailByAccountEmailApi(reqAccountEmail);
+        return new AccountEmailsApi().requestAddEmail(reqAccountEmail);
     }
 
     public boolean isConfirmedEmail(String email) {
@@ -91,18 +88,18 @@ public class EmailChooseModel {
 
     }
 
-    public ResAccountInfo requestDeleteEmail(String email) throws RetrofitError {
+    public ResAccountInfo requestDeleteEmail(String email) throws RetrofitException {
         ReqAccountEmail reqAccountEmail = new ReqAccountEmail(email, LanguageUtil.getLanguage());
-        return RequestApiManager.getInstance().deleteEmailByAccountEmailApi(reqAccountEmail);
+        return new AccountEmailsApi().deleteEmail(reqAccountEmail);
     }
 
-    public ResAccountInfo getAccountEmailsFromServer() throws IOException {
-        return RequestApiManager.getInstance().getAccountInfoByMainRest();
+    public ResAccountInfo getAccountEmailsFromServer() throws RetrofitException {
+        return new AccountApi().getAccountInfo();
 
     }
 
-    public ResAccountInfo updatePrimaryEmail(String selectedEmail) throws IOException {
-        return RequestApiManager.getInstance().updatePrimaryEmailByMainRest(new ReqUpdatePrimaryEmailInfo(selectedEmail));
+    public ResAccountInfo updatePrimaryEmail(String selectedEmail) throws RetrofitException {
+        return new AccountApi().updatePrimaryEmail(new ReqUpdatePrimaryEmailInfo(selectedEmail));
     }
 
     public void trackChangeAccountEmailSuccess(String accountId) {

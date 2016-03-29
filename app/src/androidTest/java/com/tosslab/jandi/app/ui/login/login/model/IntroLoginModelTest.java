@@ -5,7 +5,9 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.main.LoginApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -19,12 +21,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-
 import setup.BaseInitUtil;
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.IsEqual.equalTo;
 
@@ -57,9 +59,9 @@ public class IntroLoginModelTest {
             introLoginModel.login(wrongId, wrongPw);
             fail("성공하면 안되는 경우임 : 잘못된 ID 로 접근");
 
-        } catch (RetrofitError retrofitError) {
+        } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();
-            assertThat(retrofitError.getKind(), is(equalTo(RetrofitError.Kind.HTTP)));
+            assertThat(retrofitError.getStatusCode(), is(lessThan(500)));
         }
     }
 
@@ -71,9 +73,9 @@ public class IntroLoginModelTest {
         try {
             introLoginModel.login(rightId, wrongPw);
             fail("성공하면 안되는 경우임 : 잘못된 PW 로 접근");
-        } catch (RetrofitError retrofitError) {
+        } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();
-            assertThat(retrofitError.getKind(), is(equalTo(RetrofitError.Kind.HTTP)));
+            assertThat(retrofitError.getStatusCode(), is(lessThan(500)));
         }
     }
 
@@ -90,7 +92,7 @@ public class IntroLoginModelTest {
             assertThat(login.getTokenType(), is(notNullValue()));
             assertThat(login.getTokenType(), is(equalTo("bearer")));
 
-        } catch (RetrofitError retrofitError) {
+        } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();
             fail("실패할리가.... : 올바른 ID, PW 사용");
         }
@@ -115,11 +117,11 @@ public class IntroLoginModelTest {
 
     @Test
     public void testSaveAccountInfo() throws Exception {
-        ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
+        ResAccessToken accessToken = new LoginApi().getAccessToken(
                 ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_EMAIL, BaseInitUtil.TEST_PASSWORD));
 
         TokenUtil.saveTokenInfoByPassword(accessToken);
-        ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+        ResAccountInfo accountInfo = new AccountApi().getAccountInfo();
         boolean isSaved = introLoginModel.saveAccountInfo(accountInfo);
         assertThat(isSaved, is(true));
 
@@ -141,7 +143,7 @@ public class IntroLoginModelTest {
     @Test
     public void testGetAccountInfo_Has_Token() throws Exception {
 
-        ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
+        ResAccessToken accessToken = new LoginApi().getAccessToken(
                 ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_EMAIL, BaseInitUtil.TEST_PASSWORD));
 
         TokenUtil.saveTokenInfoByPassword(accessToken);

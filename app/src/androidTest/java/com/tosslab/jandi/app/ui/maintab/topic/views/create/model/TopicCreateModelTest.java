@@ -1,12 +1,13 @@
 package com.tosslab.jandi.app.ui.maintab.topic.views.create.model;
 
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
+import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
@@ -15,7 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Date;
-
 
 import setup.BaseInitUtil;
 
@@ -58,7 +58,7 @@ public class TopicCreateModelTest {
             assertThat(entity.isAutoJoin(), is(true));
 
             // Restore
-            RequestApiManager.getInstance().deleteTopicByChannelApi(topic.id, new ReqDeleteTopic(EntityManager.getInstance().getTeamId()));
+            new ChannelApi().deleteTopic(topic.id, new ReqDeleteTopic(EntityManager.getInstance().getTeamId()));
         }
 
         {
@@ -69,10 +69,8 @@ public class TopicCreateModelTest {
             try {
                 topic = topicCreateModel.createTopic(topicName, false, topicDescription, true);
                 fail("절대로 성공하면 안됨");
-            } catch (RetrofitError retrofitError) {
+            } catch (RetrofitException retrofitError) {
                 retrofitError.printStackTrace();
-
-                Log.d(TAG, retrofitError.getBody().toString());
             }
         }
 
@@ -93,7 +91,7 @@ public class TopicCreateModelTest {
             assertThat(entity.isAutoJoin(), is(false));
 
             // Restore
-            RequestApiManager.getInstance().deleteGroupByGroupApi(EntityManager.getInstance().getTeamId(), topic.id);
+            new GroupApi().deleteGroup(EntityManager.getInstance().getTeamId(), topic.id);
         }
 
     }

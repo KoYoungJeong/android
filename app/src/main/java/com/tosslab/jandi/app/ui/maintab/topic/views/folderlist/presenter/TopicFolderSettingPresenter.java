@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
-import com.tosslab.jandi.app.network.models.ResCommonError;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter.TopicFolderMainAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter.TopicFolderSettingAdapter;
@@ -20,7 +20,6 @@ import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 /**
@@ -50,7 +49,7 @@ public class TopicFolderSettingPresenter {
             // 네트워크를 통해 가져오기
             try {
                 folders = topicFolderChooseModel.getFolders();
-            } catch (RetrofitError retrofitError) {
+            } catch (RetrofitException retrofitError) {
                 retrofitError.printStackTrace();
                 folders = new ArrayList<>();
             }
@@ -73,7 +72,7 @@ public class TopicFolderSettingPresenter {
         try {
             topicFolderChooseModel.createFolder(title);
             onRefreshFolders(folderId);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             view.showAlreadyHasFolderToast();
             e.printStackTrace();
         }
@@ -85,7 +84,7 @@ public class TopicFolderSettingPresenter {
             topicFolderChooseModel.deleteItemFromFolder(folderId, topicId);
             view.showRemoveFromFolderToast(name);
             view.finishAcitivty();
-        } catch (RetrofitError retrofitError) {
+        } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();
             view.showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
         }
@@ -97,7 +96,7 @@ public class TopicFolderSettingPresenter {
             topicFolderChooseModel.addTopicIntoFolder(folderId, topicId);
             view.showMoveToFolderToast(name);
             view.finishAcitivty();
-        } catch (RetrofitError retrofitError) {
+        } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();
             view.showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
         }
@@ -141,17 +140,10 @@ public class TopicFolderSettingPresenter {
             topicFolderSettingModel.renameFolder(folderId, name, seq);
             onRefreshFolders(folderId);
             view.showFolderRenamedToast();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
-            if (e.getResponse() != null) {
-                try {
-                    ResCommonError error = (ResCommonError) e.getBodyAs(ResCommonError.class);
-                    if (error.getCode() == 40008) {
-                        view.showAlreadyHasFolderToast();
-                    }
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
+            if (e.getResponseCode() == 40008) {
+                view.showAlreadyHasFolderToast();
             }
         }
     }
@@ -159,8 +151,12 @@ public class TopicFolderSettingPresenter {
     // 순서 및 이름 변경
     @Background
     public void modifySeqFolder(long folderId, int seq) {
-        topicFolderSettingModel.modifySeqFolder(folderId, seq);
-        onRefreshFolders(folderId);
+        try {
+            topicFolderSettingModel.modifySeqFolder(folderId, seq);
+            onRefreshFolders(folderId);
+        } catch (RetrofitException e) {
+            e.printStackTrace();
+        }
     }
 
     @Background

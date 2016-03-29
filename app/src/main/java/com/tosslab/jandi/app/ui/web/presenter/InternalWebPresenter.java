@@ -14,13 +14,13 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.MessageManipulator_;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.SystemService;
 
 import java.net.URISyntaxException;
-
 
 
 /**
@@ -59,7 +59,7 @@ public class InternalWebPresenter {
     }
 
 
-    public void sendMessageToRoom(long entityId, int entityType, String text, Activity activity) throws IOException {
+    public void sendMessageToRoom(long entityId, int entityType, String text, Activity activity) throws RetrofitException {
         MessageManipulator messageManipulator = MessageManipulator_.getInstance_(activity);
         messageManipulator.initEntity(entityType, entityId);
         messageManipulator.sendMessage(text, null);
@@ -86,7 +86,7 @@ public class InternalWebPresenter {
             sendMessageToRoom(entityId, entityType, message, activity);
             view.showSuccessToast(context, context.getString(R.string.jandi_share_succeed,
                     context.getString(R.string.jandi_message_hint)));
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             view.showErrorToast(context, context.getString(R.string.err_network));
         } finally {

@@ -26,45 +26,45 @@ public class ChannelApi extends ApiTemplate<ChannelApi.Api> {
     }
 
     // 채널 생성
-    ResCommon createChannel(long teamId, ReqCreateTopic channel) throws RetrofitException {
+    public ResCommon createChannel(long teamId, ReqCreateTopic channel) throws RetrofitException {
         return call(() -> getApi().createChannel(teamId, channel));
     }
 
-    ResCommon modifyPublicTopicName(long teamId,
+    public ResCommon modifyPublicTopicName(long teamId,
                                     ReqModifyTopicName topicName,
                                     long channelId) throws RetrofitException {
         return call(() -> getApi().modifyPublicTopicName(teamId, topicName, channelId));
     }
 
-    ResCommon modifyPublicTopicDescription(long teamId,
+    public ResCommon modifyPublicTopicDescription(long teamId,
                                            ReqModifyTopicDescription description,
                                            long channelId) throws RetrofitException {
         return call(() -> getApi().modifyPublicTopicDescription(teamId, description, channelId));
     }
 
-    ResCommon modifyPublicTopicAutoJoin(long teamId,
+    public ResCommon modifyPublicTopicAutoJoin(long teamId,
                                         ReqModifyTopicAutoJoin topicAutoJoin,
                                         long channelId) throws RetrofitException {
         return call(() -> getApi().modifyPublicTopicAutoJoin(teamId, topicAutoJoin, channelId));
     }
 
     // 채널 삭제
-    ResCommon deleteTopic(long channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitException {
+    public ResCommon deleteTopic(long channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitException {
         return call(() -> getApi().deleteTopic(channelId, reqDeleteTopic));
     }
 
     // 채널 Join
-    ResCommon joinTopic(long channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitException {
+    public ResCommon joinTopic(long channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitException {
         return call(() -> getApi().joinTopic(channelId, reqDeleteTopic));
     }
 
     // 채널 leave
-    ResCommon leaveTopic(long channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitException {
+    public ResCommon leaveTopic(long channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitException {
         return call(() -> getApi().leaveTopic(channelId, reqDeleteTopic));
     }
 
     // 채널 invite
-    ResCommon invitePublicTopic(long channelId, ReqInviteTopicUsers reqInviteTopicUsers) throws RetrofitException {
+    public ResCommon invitePublicTopic(long channelId, ReqInviteTopicUsers reqInviteTopicUsers) throws RetrofitException {
         return call(() -> getApi().invitePublicTopic(channelId, reqInviteTopicUsers));
     }
 

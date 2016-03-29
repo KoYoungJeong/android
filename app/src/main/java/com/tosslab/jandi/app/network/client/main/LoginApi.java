@@ -17,7 +17,7 @@ public class LoginApi extends ApiTemplate<LoginApi.Api> {
         super(LoginApi.Api.class);
     }
 
-    ResAccessToken getAccessToken(ReqAccessToken login) throws RetrofitException {
+    public ResAccessToken getAccessToken(ReqAccessToken login) throws RetrofitException {
         return call(() -> getApi().getAccessToken(login));
     }
 

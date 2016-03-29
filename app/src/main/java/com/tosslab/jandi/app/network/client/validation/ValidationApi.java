@@ -15,7 +15,7 @@ public class ValidationApi extends ApiTemplate<ValidationApi.Api> {
         super(Api.class);
     }
 
-    ResValidation validDomain(String domain) throws RetrofitException {
+    public ResValidation validDomain(String domain) throws RetrofitException {
         return call(() -> getApi().validDomain(domain));
     }
 

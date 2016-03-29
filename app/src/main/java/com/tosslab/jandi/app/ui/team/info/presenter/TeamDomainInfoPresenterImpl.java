@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.team.info.presenter;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
@@ -15,7 +15,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import java.util.List;
-
 
 
 @EBean
@@ -72,20 +71,17 @@ public class TeamDomainInfoPresenterImpl implements TeamDomainInfoPresenter {
             view.dismissProgressWheel();
             view.successCreateTeam(newTeam.getInviteTeam().getName());
 
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
-            int errorCode = -1;
-            if (e.getResponse() != null) {
-                errorCode = e.getResponse().getStatus();
-            }
+            int errorCode = e.getStatusCode();
             teamDomainInfoModel.trackCreateTeamFail(errorCode);
 
             view.dismissProgressWheel();
-            if (e.getCause() instanceof ConnectionNotFoundException) {
+            if (errorCode >= 500) {
                 view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
                 return;
             }
-            view.failCreateTeam(e.getResponse().getStatus());
+            view.failCreateTeam(errorCode);
         }
     }
 

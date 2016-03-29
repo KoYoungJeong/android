@@ -31,50 +31,50 @@ public class MessageApi extends ApiTemplate<MessageApi.Api> {
         super(Api.class);
     }
 
-    ResCommon setMarker(long entityId, ReqSetMarker reqSetMarker) throws RetrofitException {
+    public ResCommon setMarker(long entityId, ReqSetMarker reqSetMarker) throws RetrofitException {
         return call(() -> getApi().setMarker(entityId, reqSetMarker));
     }
 
     // Message Detail
-    ResFileDetail getFileDetail(long teamId, long messageId) throws RetrofitException {
+    public ResFileDetail getFileDetail(long teamId, long messageId) throws RetrofitException {
         return call(() -> getApi().getFileDetail(teamId, messageId));
     }
 
     // Share Message
-    ResCommon shareMessage(ReqShareMessage share, long messageId) throws RetrofitException {
+    public ResCommon shareMessage(ReqShareMessage share, long messageId) throws RetrofitException {
         return call(() -> getApi().shareMessage(share, messageId));
     }
 
     // Unshare Message
-    ResCommon unshareMessage(ReqUnshareMessage share, long messageId) throws RetrofitException {
+    public ResCommon unshareMessage(ReqUnshareMessage share, long messageId) throws RetrofitException {
         return call(() -> getApi().unshareMessage(share, messageId));
     }
 
-    List<ResMessages.Link> getRoomUpdateMessage(long teamId,
+    public List<ResMessages.Link> getRoomUpdateMessage(long teamId,
                                                 long roomId,
                                                 long currentLinkId) throws RetrofitException {
         return call(() -> getApi().getRoomUpdateMessage(teamId, roomId, currentLinkId));
     }
 
-    ResMessages.OriginalMessage getMessage(long teamId, long messageId) throws RetrofitException {
+    public ResMessages.OriginalMessage getMessage(long teamId, long messageId) throws RetrofitException {
         return call(() -> getApi().getMessage(teamId, messageId));
     }
 
 
-    ResStarMentioned getStarredMessages(long teamId, long starredId,
+    public ResStarMentioned getStarredMessages(long teamId, long starredId,
                                         int count, String type) throws RetrofitException {
         return call(() -> getApi().getStarredMessages(teamId, starredId, count, type));
     }
 
-    StarMentionedMessageObject registStarredMessage(long teamId, long messageId, ReqNull reqNull) throws RetrofitException {
+    public StarMentionedMessageObject registStarredMessage(long teamId, long messageId, ReqNull reqNull) throws RetrofitException {
         return call(() -> getApi().registStarredMessage(teamId, messageId, reqNull));
     }
 
-    ResCommon unregistStarredMessage(long teamId, long messageId) throws RetrofitException {
+    public ResCommon unregistStarredMessage(long teamId, long messageId) throws RetrofitException {
         return call(() -> getApi().unregistStarredMessage(teamId, messageId));
     }
 
-    ResStarMentioned getMentionedMessages(long teamId,
+    public ResStarMentioned getMentionedMessages(long teamId,
                                           long messageId, int count) throws RetrofitException {
         return call(() -> getApi().getMentionedMessages(teamId, messageId, count));
     }

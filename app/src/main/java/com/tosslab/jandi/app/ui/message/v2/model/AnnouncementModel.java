@@ -1,22 +1,26 @@
 package com.tosslab.jandi.app.ui.message.v2.model;
 
-import android.content.Context;
 import android.support.annotation.Nullable;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AnnouncementRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.rooms.AnnounceApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 
+import javax.inject.Inject;
+
+import dagger.Lazy;
 
 
 /**
@@ -25,10 +29,14 @@ import org.androidannotations.annotations.RootContext;
 @EBean
 public class AnnouncementModel {
 
-    @RootContext
-    Context context;
-
+    @Inject
+    Lazy<AnnounceApi> announceApi;
     private boolean isActionFromUser = false;
+
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent.create().inject(this);
+    }
 
     public boolean isActionFromUser() {
         return isActionFromUser;
@@ -52,9 +60,9 @@ public class AnnouncementModel {
                 return AnnouncementRepository.getRepository().getAnnounce(topicId);
             }
 
-            announcement = RequestApiManager.getInstance().getAnnouncement(teamId, topicId);
+            announcement = announceApi.get().getAnnouncement(teamId, topicId);
             AnnouncementRepository.getRepository().upsertAnnounce(announcement);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         }
         return announcement;
@@ -63,8 +71,8 @@ public class AnnouncementModel {
     public void createAnnouncement(long teamId, long topicId, long messageId) {
         try {
             ReqCreateAnnouncement reqCreateAnnouncement = new ReqCreateAnnouncement(messageId);
-            RequestApiManager.getInstance().createAnnouncement(teamId, topicId, reqCreateAnnouncement);
-        } catch (RetrofitError e) {
+            announceApi.get().createAnnouncement(teamId, topicId, reqCreateAnnouncement);
+        } catch (RetrofitException e) {
             e.printStackTrace();
         }
     }
@@ -76,20 +84,19 @@ public class AnnouncementModel {
         try {
             ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus =
                     new ReqUpdateAnnouncementStatus(topicId, isOpened);
-            RequestApiManager.getInstance()
-                    .updateAnnouncementStatus(teamId, memberId, reqUpdateAnnouncementStatus);
-        } catch (RetrofitError e) {
+            announceApi.get().updateAnnouncementStatus(teamId, memberId, reqUpdateAnnouncementStatus);
+        } catch (RetrofitException e) {
             e.printStackTrace();
         }
     }
 
     public void deleteAnnouncement(long teamId, long topicId) {
         try {
-            ResCommon resCommon = RequestApiManager.getInstance().deleteAnnouncement(teamId, topicId);
+            ResCommon resCommon = announceApi.get().deleteAnnouncement(teamId, topicId);
             if (resCommon != null) {
                 AnnouncementRepository.getRepository().deleteAnnouncement(topicId);
             }
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         }
     }

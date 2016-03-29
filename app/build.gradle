@@ -69,7 +69,7 @@ dependencies {
 //    compile(name: 'sprinkler-android-release_2016_0120_1510', ext: 'aar')
     compile(name: 'android-image-zoom-crop-release_2016_0202_1747', ext: 'aar')
 
-//    compile project(':sprinkler-android')
+    compile project(':sprinkler-android')
 //    compile project(':photoview-expand')
 
     apt "org.androidannotations:androidannotations:${androidAnnotationsVersion}"

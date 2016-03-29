@@ -35,11 +35,12 @@ import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
-import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
+import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
@@ -81,7 +82,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -314,7 +314,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
                 searchedFileItemListAdapter.setReadyMore();
             }
 
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             LogUtil.e("fail to get searched files.", e);
             fileListPresenter.showErrorToast(JandiApplication.getContext().getString(R.string.err_file_search));
@@ -532,8 +532,8 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             }
 
             searchSucceed(resSearchFile);
-        } catch (RetrofitError e) {
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+        } catch (RetrofitException e) {
+            int errorCode = e.getStatusCode();
             fileListModel.trackFileKeywordSearchFail(errorCode);
             e.printStackTrace();
             LogUtil.e("fail to get searched files.", e);

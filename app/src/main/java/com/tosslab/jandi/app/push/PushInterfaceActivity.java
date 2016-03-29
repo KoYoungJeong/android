@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
@@ -26,7 +26,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
-
 
 
 /**
@@ -93,8 +92,8 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
             } else {
                 checkTeamAndMoveToNextActivity();
             }
-        } catch (RetrofitError e) {
-            if (e.getCause() instanceof ConnectionNotFoundException) {
+        } catch (RetrofitException e) {
+            if (e.getStatusCode() >= 500) {
                 showCheckNetworkDialog();
             } else {
                 checkTeamAndMoveToNextActivity();

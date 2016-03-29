@@ -16,7 +16,7 @@ public class LeftSideApi extends ApiTemplate<LeftSideApi.Api> {
         super(Api.class);
     }
 
-    ResLeftSideMenu getInfosForSideMenu(long teamId) throws RetrofitException {
+    public ResLeftSideMenu getInfosForSideMenu(long teamId) throws RetrofitException {
         return call(() -> getApi().getInfosForSideMenu(teamId));
     }
 

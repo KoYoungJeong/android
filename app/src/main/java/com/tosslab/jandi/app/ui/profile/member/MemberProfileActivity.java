@@ -37,11 +37,14 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
+import com.tosslab.jandi.app.network.client.teams.TeamApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.profile.member.dagger.DaggerMemberProfileComponent;
 import com.tosslab.jandi.app.ui.profile.member.model.InactivedMemberProfileLoader;
 import com.tosslab.jandi.app.ui.profile.member.model.JandiBotProfileLoader;
 import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileLoader;
@@ -52,7 +55,6 @@ import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.LanguageUtil;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.transform.fresco.BlurPostprocessor;
@@ -72,7 +74,9 @@ import org.androidannotations.annotations.ViewById;
 import java.util.Arrays;
 import java.util.List;
 
-import retrofit.RetrofitError;
+import javax.inject.Inject;
+
+import dagger.Lazy;
 import uk.co.senab.photoview.PhotoView;
 
 /**
@@ -142,7 +146,10 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     SimpleDraweeView ivProfileImageSmall;
 
     ProfileLoader profileLoader;
-
+    @Inject
+    Lazy<TeamApi> teamApi;
+    @Inject
+    Lazy<InvitationApi> invitationApi;
     private boolean isFullSizeImageShowing = false;
     private boolean hasChangedProfileImage = true;
 
@@ -150,6 +157,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         overridePendingTransition(R.anim.slide_in_bottom_with_alpha, 0);
         super.onCreate(savedInstanceState);
+
+        DaggerMemberProfileComponent.create().inject(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getDecorView().setSystemUiVisibility(
@@ -432,13 +441,17 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     @Background
     void postStar(boolean star) {
-        if (star) {
-            entityClientManager.enableFavorite(memberId);
-        } else {
-            entityClientManager.disableFavorite(memberId);
-        }
+        try {
+            if (star) {
+                entityClientManager.enableFavorite(memberId);
+            } else {
+                entityClientManager.disableFavorite(memberId);
+            }
 
-        EntityManager.getInstance().getEntityById(memberId).isStarred = star;
+            EntityManager.getInstance().getEntityById(memberId).isStarred = star;
+        } catch (RetrofitException e) {
+            e.printStackTrace();
+        }
     }
 
     private void addButtons(final FormattedEntity member) {
@@ -519,11 +532,10 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         String userEmail = EntityManager.getInstance().getEntityById(memberId).getUserEmail();
         long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
         try {
-            RequestApiManager.getInstance().cancelInvitationUserByTeamApi(teamId, memberId);
+            teamApi.get().cancelInviteTeam(teamId, memberId);
             showSuccessEmail(userEmail);
-        } catch (RetrofitError retrofitError) {
+        } catch (RetrofitException retrofitError) {
             showNetworkErrorToast();
-            retrofitError.printStackTrace();
         }
     }
 
@@ -544,10 +556,10 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
         List<String> invites = Arrays.asList(EntityManager.getInstance().getEntityById(memberId).getUserEmail());
         try {
-            RequestApiManager.getInstance().inviteToTeamByTeamApi(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage()));
+            teamApi.get().inviteToTeam(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage()));
             showSuccessReinvite();
-        } catch (RetrofitError retrofitError) {
-            retrofitError.printStackTrace();
+        } catch (RetrofitException e) {
+            e.printStackTrace();
             showNetworkErrorToast();
         }
 

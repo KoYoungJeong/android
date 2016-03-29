@@ -24,51 +24,51 @@ public class GroupMessageApi extends ApiTemplate<GroupMessageApi.Api> {
         super(Api.class);
     }
 
-    ResMessages getGroupMessages(long teamId, long groupId,
-                                 long fromId, int count) throws RetrofitException {
+    public ResMessages getGroupMessages(long teamId, long groupId,
+                                        long fromId, int count) throws RetrofitException {
         return call(() -> getApi().getGroupMessages(teamId, groupId, fromId, count));
     }
 
-    ResMessages getGroupMessages(int teamId, int groupId) throws RetrofitException {
+    public ResMessages getGroupMessages(int teamId, int groupId) throws RetrofitException {
         return call(() -> getApi().getGroupMessages(teamId, groupId));
     }
 
-    ResUpdateMessages getGroupMessagesUpdated(int teamId,
-                                              int groupId, int lastLinkId) throws RetrofitException {
+    public ResUpdateMessages getGroupMessagesUpdated(int teamId,
+                                                     int groupId, int lastLinkId) throws RetrofitException {
         return call(() -> getApi().getGroupMessagesUpdated(teamId, groupId, lastLinkId));
     }
 
-    ResMessages getGroupMessagesUpdatedForMarker(long teamId, long groupId,
-                                                 long currentLinkId) throws RetrofitException {
+    public ResMessages getGroupMessagesUpdatedForMarker(long teamId, long groupId,
+                                                        long currentLinkId) throws RetrofitException {
         return call(() -> getApi().getGroupMessagesUpdatedForMarker(teamId, groupId, currentLinkId));
     }
 
-    ResMessages getGroupMessagesUpdatedForMarker(long teamId, long groupId,
-                                                 long currentLinkId, int count) throws RetrofitException {
+    public ResMessages getGroupMessagesUpdatedForMarker(long teamId, long groupId,
+                                                        long currentLinkId, int count) throws RetrofitException {
         return call(() -> getApi().getGroupMessagesUpdatedForMarker(teamId, groupId, currentLinkId, count));
     }
 
     // Updated 된 Private Group의 리스트 정보 획득
-    ResMessages getGroupMarkerMessages(long teamId, long groupId,
-                                       long currentLinkId) throws RetrofitException {
+    public ResMessages getGroupMarkerMessages(long teamId, long groupId,
+                                              long currentLinkId) throws RetrofitException {
         return call(() -> getApi().getGroupMarkerMessages(teamId, groupId, currentLinkId));
     }
 
     // Private Group에서의 Message 생성
-    ResCommon sendGroupMessage(long privateGroupId, long teamId,
-                               ReqSendMessageV3 reqSendMessageV3) throws RetrofitException {
+    public ResCommon sendGroupMessage(long privateGroupId, long teamId,
+                                      ReqSendMessageV3 reqSendMessageV3) throws RetrofitException {
         return call(() -> getApi().sendGroupMessage(privateGroupId, teamId, reqSendMessageV3));
     }
 
     // Private Group Message 수정
-    ResCommon modifyPrivateGroupMessage(ReqModifyMessage message,
-                                        int groupId, int messageId) throws RetrofitException {
+    public ResCommon modifyPrivateGroupMessage(ReqModifyMessage message,
+                                               int groupId, int messageId) throws RetrofitException {
         return call(() -> getApi().modifyPrivateGroupMessage(message, groupId, messageId));
     }
 
     // Private Group Message 삭제
-    ResCommon deletePrivateGroupMessage(long teamId, long groupId,
-                                        long messageId) throws RetrofitException {
+    public ResCommon deletePrivateGroupMessage(long teamId, long groupId,
+                                               long messageId) throws RetrofitException {
         return call(() -> getApi().deletePrivateGroupMessage(teamId, groupId, messageId));
     }
 

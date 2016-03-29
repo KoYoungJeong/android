@@ -4,7 +4,11 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.teams.TeamApi;
+import com.tosslab.jandi.app.network.client.validation.ValidationApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
@@ -15,28 +19,45 @@ import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 
+import dagger.Lazy;
 import rx.Observable;
 
 @EBean
 public class TeamDomainInfoModel {
 
-    public ResTeamDetailInfo createNewTeam(String name, String teamDomain) throws IOException {
+    @Inject
+    Lazy<AccountApi> accountApi;
+    @Inject
+    Lazy<ValidationApi> validationApi;
+    @Inject
+    Lazy<TeamApi> teamApi;
+
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent
+                .create()
+                .inject(this);
+    }
+
+    public ResTeamDetailInfo createNewTeam(String name, String teamDomain) throws RetrofitException {
 
         ReqCreateNewTeam reqCreateNewTeam = new ReqCreateNewTeam(name, teamDomain);
-        return RequestApiManager.getInstance().createNewTeamByTeamApi(reqCreateNewTeam);
+        return teamApi.get().createNewTeam(reqCreateNewTeam);
 
     }
 
     public ResValidation validDomain(String domain) {
         try {
-            return RequestApiManager.getInstance().validDomain(domain);
-        } catch (RetrofitError retrofitError) {
+            return validationApi.get().validDomain(domain);
+        } catch (RetrofitException retrofitError) {
             ResValidation resValidation = new ResValidation();
             resValidation.setIsValidate(false);
             return resValidation;
@@ -57,9 +78,9 @@ public class TeamDomainInfoModel {
     }
 
 
-    public void updateTeamInfo(long teamId) {
+    public void updateTeamInfo(long teamId) throws RetrofitException {
 
-        ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+        ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
     }

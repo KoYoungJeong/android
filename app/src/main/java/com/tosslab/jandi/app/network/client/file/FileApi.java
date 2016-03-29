@@ -28,34 +28,34 @@ public class FileApi extends ApiTemplate<FileApi.Api> {
         super(Api.class);
     }
 
-    ResCommon deleteFile(long teamId, long fileId) throws RetrofitException {
+    public ResCommon deleteFile(long teamId, long fileId) throws RetrofitException {
         return call(() -> getApi().deleteFile(teamId, fileId));
     }
 
-    List<ResMessages.FileMessage> searchInitImageFile(long teamId
+    public List<ResMessages.FileMessage> searchInitImageFile(long teamId
             , long roomId, long messageId, int count) throws RetrofitException {
         return call(() -> getApi().searchInitImageFile(teamId, roomId, messageId, count));
     }
 
-    List<ResMessages.FileMessage> searchOldImageFile(long teamId
+    public List<ResMessages.FileMessage> searchOldImageFile(long teamId
             , long roomId, long messageId, int count) throws RetrofitException {
         return call(() -> getApi().searchOldImageFile(teamId, roomId, messageId, count));
     }
 
-    List<ResMessages.FileMessage> searchNewImageFile(long teamId
+    public List<ResMessages.FileMessage> searchNewImageFile(long teamId
             , long roomId, long messageId, int count) throws RetrofitException {
         return call(() -> getApi().searchNewImageFile(teamId, roomId, messageId, count));
     }
 
-    ResSearchFile searchFile(ReqSearchFile reqSearchFile) throws RetrofitException {
+    public ResSearchFile searchFile(ReqSearchFile reqSearchFile) throws RetrofitException {
         return call(() -> getApi().searchFile(reqSearchFile));
     }
 
-    ResMessages.FileMessage enableFileExternalLink(long teamId, long fileId, ReqNull reqNull) throws RetrofitException {
+    public ResMessages.FileMessage enableFileExternalLink(long teamId, long fileId, ReqNull reqNull) throws RetrofitException {
         return call(() -> getApi().enableFileExternalLink(teamId, fileId, reqNull));
     }
 
-    ResMessages.FileMessage disableFileExternalLink(long teamId, long fileId) throws RetrofitException {
+    public ResMessages.FileMessage disableFileExternalLink(long teamId, long fileId) throws RetrofitException {
         return call(() -> getApi().disableFileExternalLink(teamId, fileId));
     }
 

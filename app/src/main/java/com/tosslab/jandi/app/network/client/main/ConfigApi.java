@@ -15,7 +15,7 @@ public class ConfigApi extends ApiTemplate<ConfigApi.Api> {
         super(ConfigApi.Api.class);
     }
 
-    ResConfig getConfig() throws RetrofitException {
+    public ResConfig getConfig() throws RetrofitException {
         return call(() -> getApi().getConfig());
     }
 

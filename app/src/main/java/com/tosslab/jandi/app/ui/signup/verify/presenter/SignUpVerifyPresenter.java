@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.signup.verify.presenter;
 import android.content.Context;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountActivate;
 import com.tosslab.jandi.app.ui.signup.verify.exception.VerifyNetworkException;
 import com.tosslab.jandi.app.ui.signup.verify.model.SignUpVerifyModel;
@@ -93,7 +94,7 @@ public class SignUpVerifyPresenter {
             view.showToast(successEmailText);
             view.changeExplainText();
             view.clearVerifyCode();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             view.hideProgress();
             view.showErrorToast(context.getResources().getString(R.string.err_network));

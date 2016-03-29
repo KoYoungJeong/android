@@ -21,12 +21,12 @@ public class InvitationApi extends ApiTemplate<InvitationApi.Api> {
         super(Api.class);
     }
 
-    ResTeamDetailInfo acceptOrDeclineInvitation(String invitationId,
+    public ResTeamDetailInfo acceptOrDeclineInvitation(String invitationId,
                                                 ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore) throws RetrofitException {
         return call(() -> getApi().acceptOrDeclineInvitation(invitationId, reqInvitationAcceptOrIgnore));
     }
 
-    List<ResPendingTeamInfo> getPedingTeamInfo() throws RetrofitException {
+    public List<ResPendingTeamInfo> getPedingTeamInfo() throws RetrofitException {
         return call(() -> getApi().getPedingTeamInfo());
     }
 

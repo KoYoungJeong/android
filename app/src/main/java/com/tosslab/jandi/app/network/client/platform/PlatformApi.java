@@ -16,7 +16,7 @@ public class PlatformApi extends ApiTemplate<PlatformApi.Api> {
         super(Api.class);
     }
 
-    ResCommon updatePlatformStatus(ReqUpdatePlatformStatus reqUpdatePlatformStatus) throws RetrofitException {
+    public ResCommon updatePlatformStatus(ReqUpdatePlatformStatus reqUpdatePlatformStatus) throws RetrofitException {
         return call(() -> getApi().updatePlatformStatus(reqUpdatePlatformStatus));
     }
 

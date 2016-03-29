@@ -7,7 +7,9 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.teams.folder.FolderApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -19,6 +21,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -31,7 +34,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 
+import dagger.Lazy;
 import rx.Observable;
 
 @EBean
@@ -40,23 +45,30 @@ public class MainTopicModel {
     @Bean
     EntityClientManager entityClientManager;
 
+    @Inject
+    Lazy<FolderApi> folderApi;
+
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent.create()
+                .inject(this);
+    }
+
     // 폴더 정보 가져오기
-    public List<ResFolder> getTopicFolders() throws IOException {
+    public List<ResFolder> getTopicFolders() throws RetrofitException {
         if (!NetworkCheckUtil.isConnected()) {
             return TopicFolderRepository.getRepository().getFolders();
         }
 
-        return RequestApiManager.getInstance()
-                .getFoldersByTeamApi(entityClientManager.getSelectedTeamId());
+        return folderApi.get().getFolders(entityClientManager.getSelectedTeamId());
     }
 
     // 폴더 속 토픽 아이디 가져오기
-    public List<ResFolderItem> getTopicFolderItems() throws IOException {
+    public List<ResFolderItem> getTopicFolderItems() throws RetrofitException {
         if (!NetworkCheckUtil.isConnected()) {
             return TopicFolderRepository.getRepository().getFolderItems();
         }
-        List<ResFolderItem> folderItems = RequestApiManager.getInstance()
-                .getFolderItemsByTeamApi(entityClientManager.getSelectedTeamId());
+        List<ResFolderItem> folderItems = folderApi.get().getFolderItems(entityClientManager.getSelectedTeamId());
 
         for (ResFolderItem resFolderItem : folderItems) {
             resFolderItem.teamId = entityClientManager.getSelectedTeamId();

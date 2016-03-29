@@ -21,19 +21,19 @@ public class RoomsApi extends ApiTemplate<RoomsApi.Api> {
         super(Api.class);
     }
 
-    ResRoomInfo getRoomInfo(long teamId, long roomId) throws RetrofitException {
+    public ResRoomInfo getRoomInfo(long teamId, long roomId) throws RetrofitException {
         return call(() -> getApi().getRoomInfo(teamId, roomId));
     }
 
-    ResCommon updateTopicPushSubscribe(long teamId, long topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe) throws RetrofitException {
+    public ResCommon updateTopicPushSubscribe(long teamId, long topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe) throws RetrofitException {
         return call(() -> getApi().updateTopicPushSubscribe(teamId, topicId, reqUpdateTopicPushSubscribe));
     }
 
-    ResCommon kickUserFromTopic(long teamId, long topicId, ReqMember member) throws RetrofitException {
+    public ResCommon kickUserFromTopic(long teamId, long topicId, ReqMember member) throws RetrofitException {
         return call(() -> getApi().kickUserFromTopic(teamId, topicId, member));
     }
 
-    ResCommon assignToTopicOwner(long teamId, long topicId, ReqOwner owner) throws RetrofitException {
+    public ResCommon assignToTopicOwner(long teamId, long topicId, ReqOwner owner) throws RetrofitException {
         return call(() -> getApi().assignToTopicOwner(teamId, topicId, owner));
     }
 

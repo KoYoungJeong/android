@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.search.messages.presenter;
 
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqMessageSearchQeury;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.search.messages.model.MessageSearchModel;
@@ -15,7 +16,6 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.api.BackgroundExecutor;
 
 import java.util.List;
-
 
 
 /**
@@ -85,8 +85,8 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
             } else {
                 view.setOnLoadingEnd();
             }
-        } catch (RetrofitError e) {
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+        } catch (RetrofitException e) {
+            int errorCode = e.getStatusCode();
             messageSearchModel.trackMessageKeywordSearchFail(errorCode);
             e.printStackTrace();
         }
@@ -115,7 +115,7 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
             } else {
                 view.setOnLoadingEnd();
             }
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         } catch (Exception e) {
 
@@ -191,10 +191,10 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
         long linkId = searchRecord.getLinkId();
 
 
-        view.startMessageListActivity(currentTeamId, entityId, entityType, roomId,isStarred, linkId);
+        view.startMessageListActivity(currentTeamId, entityId, entityType, roomId, isStarred, linkId);
     }
 
-    private ResMessageSearch searchMessage(ReqMessageSearchQeury searchQeuryInfo) throws IOException {
+    private ResMessageSearch searchMessage(ReqMessageSearchQeury searchQeuryInfo) throws RetrofitException {
 
         return messageSearchModel.requestSearchQuery(searchQeuryInfo.getTeamId(), searchQeuryInfo.getQuery(), searchQeuryInfo.getPage(), ITEM_PER_PAGE, searchQeuryInfo.getEntityId(), searchQeuryInfo.getWriterId());
     }

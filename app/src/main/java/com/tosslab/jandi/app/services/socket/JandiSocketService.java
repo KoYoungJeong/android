@@ -12,16 +12,14 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
-import com.tosslab.jandi.app.network.models.ResEventHistory;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
 import com.tosslab.jandi.app.services.SignOutService;
+import com.tosslab.jandi.app.services.socket.dagger.DaggerSocketServiceComponent;
+import com.tosslab.jandi.app.services.socket.dagger.SocketServiceModule;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
-import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketServiceStopEvent;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -31,8 +29,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.greenrobot.event.EventBus;
+import javax.inject.Inject;
 
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
@@ -45,16 +44,14 @@ public class JandiSocketService extends Service {
     public static final String TAG = "SocketService";
     public static final String STOP_FORCIBLY = "stop_forcibly";
     public static final String ACTION_CONNECTIVITY_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
-
+    @Inject
+    JandiSocketServiceModel jandiSocketServiceModel;
     private JandiSocketManager jandiSocketManager;
-    private JandiSocketServiceModel jandiSocketServiceModel;
     private Map<String, EventListener> eventHashMap;
-
     private boolean isRegister = true;
     private boolean isStopForcibly = false;
     private boolean isRunning = false;
     private boolean isInRefreshToken = false;
-
     private BroadcastReceiver connectReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -123,9 +120,13 @@ public class JandiSocketService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        DaggerSocketServiceComponent.builder()
+                .socketServiceModule(new SocketServiceModule(this))
+                .build()
+                .inject(this);
+
         eventHashMap = new HashMap<>();
 
-        jandiSocketServiceModel = new JandiSocketServiceModel(JandiSocketService.this);
         jandiSocketManager = JandiSocketManager.getInstance();
 
         IntentFilter filter = new IntentFilter(ACTION_CONNECTIVITY_CHANGE);
@@ -252,7 +253,7 @@ public class JandiSocketService extends Service {
         });
         eventHashMap.put("pong", objects -> {
             LogUtil.d(TAG, "pong");
-            updateEventHistory();
+            jandiSocketServiceModel.updateEventHistory();
         });
         eventHashMap.put("error_connect_team", objects -> {
             LogUtil.e(TAG, "Get Error - error_connect_team");
@@ -306,31 +307,6 @@ public class JandiSocketService extends Service {
                 objects -> jandiSocketServiceModel.refreshKickedOut(objects[0]);
         eventHashMap.put("topic_kicked_out", topicThrowOutListener);
     }
-
-    // 확장성 생각하여 추후 모듈로 빼내야 함.
-    protected void updateEventHistory() {
-        long ts = JandiPreference.getSocketConnectedLastTime();
-        EntityManager entityManager = EntityManager.getInstance();
-        long userId = entityManager.getMe().getId();
-        LogUtil.e("ts", ts + "");
-        if (ts > -1) {
-            try {
-                ResEventHistory eventHistory =
-                        RequestApiManager.getInstance().getEventHistory(ts, userId, "file_unshared", null);
-                Observable.from(eventHistory.records)
-                        .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketFileUnsharedEvent)
-                        .map(eventHistoryInfo -> (SocketFileUnsharedEvent) eventHistoryInfo)
-                        .subscribe(eventHistoryInfo -> {
-                            int fileId = eventHistoryInfo.getFile().getId();
-                            int roomId = eventHistoryInfo.room.id;
-                            MessageRepository.getRepository().updateUnshared(fileId, roomId);
-                        }, Throwable::printStackTrace);
-            } catch (RetrofitError e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
 
     private void setUpSocketListener() {
         for (String key : eventHashMap.keySet()) {
@@ -426,13 +402,12 @@ public class JandiSocketService extends Service {
     private Boolean isValidToken() {
         try {
             jandiSocketServiceModel.refreshToken();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             /**
              * RefreshToken 요청에서 400 에러가 발생하면 비정상적인 RefreshToken 을 가지고 있다고 판단.
              */
             e.printStackTrace();
-            if (e.getKind() == RetrofitError.Kind.HTTP
-                    && e.getResponse().getStatus() == JandiConstants.NetworkError.BAD_REQUEST) {
+            if (e.getStatusCode() == JandiConstants.NetworkError.BAD_REQUEST) {
                 return false;
             }
         }

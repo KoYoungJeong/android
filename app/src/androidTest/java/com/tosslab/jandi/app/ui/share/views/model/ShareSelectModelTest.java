@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
@@ -44,8 +45,12 @@ public class ShareSelectModelTest {
 
         Observable.from(accountTeams)
                 .subscribe(userTeam -> {
-                    ResLeftSideMenu leftSideMenu = shareSelectModel.getLeftSideMenu(userTeam.getTeamId());
-                    LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+                    try {
+                        ResLeftSideMenu leftSideMenu = shareSelectModel.getLeftSideMenu(userTeam.getTeamId());
+                        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                    }
                 });
     }
 

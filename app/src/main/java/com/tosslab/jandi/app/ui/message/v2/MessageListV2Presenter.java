@@ -14,7 +14,7 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
-import com.tosslab.jandi.app.network.exception.ExceptionData;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -46,7 +46,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -419,7 +418,7 @@ public class MessageListV2Presenter {
 
     @NonNull
     private ResMessages loadMoreOldMessagesFromServer(ResMessages resOldMessage, int offset)
-            throws IOException {
+            throws RetrofitException {
         try {
             // 캐시된 데이터가 부족한 경우
             ResMessages.Link firstLink =
@@ -430,7 +429,7 @@ public class MessageListV2Presenter {
             addOldMessage.records.addAll(resOldMessage.records);
 
             resOldMessage = addOldMessage;
-        } catch (RetrofitError retrofitError) {
+        } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();
         }
         return resOldMessage;
@@ -439,14 +438,14 @@ public class MessageListV2Presenter {
     @Nullable
     private ResMessages loadOldMessagesFromServer(long teamId, long linkId,
                                                   boolean isFirst, int offset)
-            throws IOException {
+            throws RetrofitException {
         ResMessages resOldMessage = null;
         // 캐시가 없는 경우
         if (!isFirst) {
             // 요청한 링크 ID 이전 값 가져오기
             try {
                 resOldMessage = messageListModel.getOldMessage(linkId, offset);
-            } catch (RetrofitError retrofitError) {
+            } catch (RetrofitException retrofitError) {
                 retrofitError.printStackTrace();
             }
         } else {
@@ -520,14 +519,12 @@ public class MessageListV2Presenter {
         if (loadHistory) {
             try {
                 newMessages = messageListModel.getNewMessage(lastUpdateLinkId);
-            } catch (RetrofitError e) {
+            } catch (RetrofitException e) {
                 e.printStackTrace();
 
-                if (e.getKind() == RetrofitError.Kind.HTTP) {
+                if (e.getStatusCode() < 500) {
                     try {
-                        ExceptionData exceptionData = (ExceptionData) e.getBodyAs(ExceptionData.class);
-                        LogUtil.e(TAG, "errorCode = " + exceptionData.getCode());
-                        if (exceptionData.getCode() == 40017 || exceptionData.getCode() == 40018) {
+                        if (e.getResponseCode() == 40017 || e.getResponseCode() == 40018) {
                             moveToLink = true;
                             newMessages = getResUpdateMessages(lastUpdateLinkId);
                         }
@@ -591,7 +588,10 @@ public class MessageListV2Presenter {
 
         long lastLinkId = newMessages.get(newMessages.size() - 1).id;
         messageListModel.upsertMyMarker(roomId, lastLinkId);
-        messageListModel.updateLastLinkId(lastUpdateLinkId);
+        try {
+            messageListModel.updateLastLinkId(lastUpdateLinkId);
+        } catch (RetrofitException e) {
+        }
         messageListModel.updateMarkerInfo(teamId, roomId);
     }
 
@@ -663,7 +663,7 @@ public class MessageListV2Presenter {
                         view.setNewLoadingComplete();
                     }
 
-                } catch (RetrofitError retrofitError) {
+                } catch (RetrofitException retrofitError) {
                     retrofitError.printStackTrace();
                     view.setMoreNewFromAdapter(true);
                     view.setNewLoadingComplete();
@@ -731,7 +731,7 @@ public class MessageListV2Presenter {
                 messageListModel.updateLastLinkId(lastUpdateLinkId);
                 messageListModel.updateMarkerInfo(teamId, roomId);
             }
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
@@ -757,10 +757,9 @@ public class MessageListV2Presenter {
 
             EntityManager.getInstance().getEntityById(entityId).getEntity().name = name;
 
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             view.dismissProgressWheel();
-            if (e.getResponse() != null &&
-                    e.getResponse().getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
+            if (e.getStatusCode() == JandiConstants.NetworkError.DUPLICATED_NAME) {
                 view.showDuplicatedTopicName();
             } else {
                 view.showModifyEntityError();
@@ -907,9 +906,9 @@ public class MessageListV2Presenter {
 
             messageListModel.trackMessageDeleteSuccess(messageId);
 
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             view.dismissProgressWheel();
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            int errorCode = e.getStatusCode();
             messageListModel.trackMessageDeleteFail(errorCode);
         } catch (Exception e) {
             view.dismissProgressWheel();
@@ -926,7 +925,7 @@ public class MessageListV2Presenter {
             messageListModel.trackDeletingEntity(room.getEntityType());
             view.dismissProgressWheel();
             view.finish();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             view.dismissProgressWheel();
             e.printStackTrace();
         } catch (Exception e) {
@@ -974,7 +973,7 @@ public class MessageListV2Presenter {
             view.showMessageUnStarSuccessToast();
             view.modifyStarredInfo(messageId, false);
             EventBus.getDefault().post(new StarredInfoChangeEvent());
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         }
     }

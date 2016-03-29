@@ -16,7 +16,11 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.main.ConfigApi;
+import com.tosslab.jandi.app.network.client.main.LeftSideApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
@@ -30,10 +34,14 @@ import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 
 import java.util.Collection;
 
+import javax.inject.Inject;
+
+import dagger.Lazy;
 import rx.Observable;
 
 /**
@@ -42,6 +50,20 @@ import rx.Observable;
 
 @EBean
 public class IntroActivityModel {
+
+    @Inject
+    Lazy<AccountApi> accountApi;
+    @Inject
+    Lazy<LeftSideApi> leftSideApi;
+    @Inject
+    Lazy<ConfigApi> configApi;
+
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent
+                .create()
+                .inject(this);
+    }
 
     public boolean isNetworkConnected() {
         return NetworkCheckUtil.isConnected();
@@ -64,9 +86,9 @@ public class IntroActivityModel {
         return TextUtils.isEmpty(accessToken.getRefreshToken());
     }
 
-    public void refreshAccountInfo() throws IOException {
+    public void refreshAccountInfo() throws RetrofitException {
 
-        ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+        ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
         Collection<ResAccountInfo.UserTeam> teamList = resAccountInfo.getMemberships();
@@ -112,7 +134,7 @@ public class IntroActivityModel {
         try {
             long selectedTeamId = selectedTeamInfo.getTeamId();
             ResLeftSideMenu totalEntitiesInfo =
-                    RequestApiManager.getInstance().getInfosForSideMenuByMainRest(selectedTeamId);
+                    leftSideApi.get().getInfosForSideMenu(selectedTeamId);
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
@@ -120,7 +142,7 @@ public class IntroActivityModel {
             BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
             EntityManager.getInstance().refreshEntity();
             return true;
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             return false;
         } catch (Exception e) {
@@ -129,8 +151,8 @@ public class IntroActivityModel {
         }
     }
 
-    public ResConfig getConfigInfo() throws IOException {
-        return RequestApiManager.getInstance().getConfigByMainRest();
+    public ResConfig getConfigInfo() throws RetrofitException {
+        return configApi.get().getConfig();
     }
 
     public boolean hasMigration() {

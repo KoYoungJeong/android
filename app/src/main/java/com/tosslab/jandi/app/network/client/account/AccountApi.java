@@ -18,11 +18,11 @@ public class AccountApi extends ApiTemplate<AccountApi.Api> {
         super(Api.class);
     }
 
-    ResAccountInfo getAccountInfo() throws RetrofitException {
+    public ResAccountInfo getAccountInfo() throws RetrofitException {
         return call(() -> getApi().getAccountInfo());
     }
 
-    ResAccountInfo updatePrimaryEmail(ReqUpdatePrimaryEmailInfo updatePrimaryEmailInfo) throws RetrofitException {
+    public ResAccountInfo updatePrimaryEmail(ReqUpdatePrimaryEmailInfo updatePrimaryEmailInfo) throws RetrofitException {
         return call(() -> getApi().updatePrimaryEmail(updatePrimaryEmailInfo));
     }
 

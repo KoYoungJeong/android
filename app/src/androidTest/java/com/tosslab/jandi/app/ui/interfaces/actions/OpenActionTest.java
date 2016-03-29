@@ -5,7 +5,7 @@ import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -118,7 +118,7 @@ public class OpenActionTest {
 
         boolean[] finished = getFinished();
 
-        ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
+        ResAccessToken accessToken = new LoginApi().getAccessToken(
                 ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST1_EMAIL, BaseInitUtil.TEST_PASSWORD));
 
 

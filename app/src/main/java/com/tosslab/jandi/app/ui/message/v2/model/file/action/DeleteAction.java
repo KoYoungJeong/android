@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.support.v7.app.AlertDialog;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel_;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -44,7 +45,7 @@ public class DeleteAction implements FileAction {
         try {
 
             FileDetailModel_.getInstance_(activity.getApplicationContext()).deleteFile(fileId);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();

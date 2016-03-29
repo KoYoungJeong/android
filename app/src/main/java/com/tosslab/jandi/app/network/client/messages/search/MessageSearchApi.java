@@ -16,22 +16,22 @@ public class MessageSearchApi extends ApiTemplate<MessageSearchApi.Api> {
         super(Api.class);
     }
 
-    ResMessageSearch searchMessages(long teamId, String query, int page,
+    public ResMessageSearch searchMessages(long teamId, String query, int page,
                                     int perPage, long writerId, long entityId) throws RetrofitException {
         return call(() -> getApi().searchMessages(teamId, query, page, perPage, writerId, entityId));
     }
 
-    ResMessageSearch searchMessagesByEntityId(long teamId, String query, int page,
+    public ResMessageSearch searchMessagesByEntityId(long teamId, String query, int page,
                                               int perPage, long entityId) throws RetrofitException {
         return call(() -> getApi().searchMessagesByEntityId(teamId, query, page, perPage, entityId));
     }
 
-    ResMessageSearch searchMessagesByWriterId(long teamId, String query, int page,
+    public ResMessageSearch searchMessagesByWriterId(long teamId, String query, int page,
                                               int perPage, long writerId) throws RetrofitException {
         return call(() -> getApi().searchMessagesByWriterId(teamId, query, page, perPage, writerId));
     }
 
-    ResMessageSearch searchMessages(long teamId, String query, int page,
+    public ResMessageSearch searchMessages(long teamId, String query, int page,
                                     int perPage) throws RetrofitException {
         return call(() -> getApi().searchMessages(teamId, query, page, perPage));
     }

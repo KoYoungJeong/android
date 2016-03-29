@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.carousel.presenter;
 
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.services.download.DownloadService;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
@@ -56,7 +57,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
             List<ResMessages.FileMessage> fileMessages = carouselViewerModel.searchInitFileList(teamId, roomId, fileId);
             imageFiles = carouselViewerModel.getImageFileConvert(roomId, fileMessages);
 
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             view.setInitFail();
             return;
@@ -116,7 +117,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                     (teamId, roomId, fileLinkId, count);
             imageFiles = carouselViewerModel.getImageFileConvert(roomId, fileMessages);
 
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             imageFiles = new ArrayList<>();
         }
@@ -148,7 +149,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                     .searchAfterFileList(teamId, roomId, fileLinkId, count);
             imageFiles = carouselViewerModel.getImageFileConvert(roomId, fileMessages);
 
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             imageFiles = new ArrayList<>();
         }

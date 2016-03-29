@@ -18,11 +18,11 @@ public class AccountProfileApi extends ApiTemplate<AccountProfileApi.Api> {
         super(Api.class);
     }
 
-    ResAccountInfo changeName(ReqProfileName reqProfileName) throws RetrofitException {
+    public ResAccountInfo changeName(ReqProfileName reqProfileName) throws RetrofitException {
         return call(() -> getApi().changeName(reqProfileName));
     }
 
-    ResAccountInfo changePrimaryEmail(ReqAccountEmail reqAccountEmail) throws RetrofitException {
+    public ResAccountInfo changePrimaryEmail(ReqAccountEmail reqAccountEmail) throws RetrofitException {
         return call(() -> getApi().changePrimaryEmail(reqAccountEmail));
     }
 

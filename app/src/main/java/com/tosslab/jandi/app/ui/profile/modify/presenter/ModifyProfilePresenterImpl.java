@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.files.upload.ProfileFileUploadControllerImpl;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -17,7 +18,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import java.io.File;
-
 
 
 @EBean
@@ -44,7 +44,7 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
             }
             view.dismissProgressWheel();
             view.displayProfile(me);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             LogUtil.e("get profile failed", e);
             view.dismissProgressWheel();
             view.showFailProfile();
@@ -63,7 +63,7 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
             ResLeftSideMenu.User me = modifyProfileModel.updateProfile(reqUpdateProfile);
             view.updateProfileSucceed();
             view.displayProfile(me);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             LogUtil.e("get profile failed", e);
             view.updateProfileFailed();
@@ -80,7 +80,7 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
             modifyProfileModel.updateProfileName(new ReqProfileName(name));
             view.updateProfileSucceed();
             view.successUpdateNameColor();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             view.updateProfileFailed();
         } finally {
@@ -101,7 +101,7 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
             modifyProfileModel.updateProfileEmail(email);
             view.updateProfileSucceed();
             view.successUpdateEmailColor();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             view.updateProfileFailed();
         }
     }

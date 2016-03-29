@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
@@ -201,9 +202,6 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
             BadgeUtils.setBadge(JandiApplication.getContext(), totalUnreadCount);
             EntityManager.getInstance().refreshEntity();
             return true;
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            return false;
         } catch (Exception e) {
             e.printStackTrace();
             return false;

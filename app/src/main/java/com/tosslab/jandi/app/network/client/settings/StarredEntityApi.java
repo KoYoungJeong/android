@@ -19,11 +19,11 @@ public class StarredEntityApi extends ApiTemplate<StarredEntityApi.Api> {
         super(Api.class);
     }
 
-    ResCommon enableFavorite(ReqTeam reqTeam, long entityId) throws RetrofitException {
+    public ResCommon enableFavorite(ReqTeam reqTeam, long entityId) throws RetrofitException {
         return call(() -> getApi().enableFavorite(reqTeam, entityId));
     }
 
-    ResCommon disableFavorite(long teamId, long entityId) throws RetrofitException {
+    public ResCommon disableFavorite(long teamId, long entityId) throws RetrofitException {
         return call(() -> getApi().disableFavorite(teamId, entityId));
     }
 

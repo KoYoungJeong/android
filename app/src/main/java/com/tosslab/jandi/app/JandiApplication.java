@@ -20,7 +20,8 @@ import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
 import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.network.SimpleApiRequester;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.platform.PlatformApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
@@ -39,6 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.logging.LogManager;
 
@@ -53,7 +55,7 @@ public class JandiApplication extends MultiDexApplication {
     static Context context;
     static boolean isApplicationDeactive = true;
 
-    HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
+    Map<TrackerName, Tracker> mTrackers = new HashMap<>();
 
     public static Context getContext() {
         return context;
@@ -69,11 +71,6 @@ public class JandiApplication extends MultiDexApplication {
 
     public static void setIsApplicationDeactive(boolean isApplicationactive) {
         JandiApplication.isApplicationDeactive = isApplicationactive;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <SERVICE> SERVICE getService(String service) {
-        return (SERVICE) getContext().getSystemService(service);
     }
 
     @Override
@@ -255,7 +252,10 @@ public class JandiApplication extends MultiDexApplication {
 
         SimpleApiRequester.request(() -> {
             ReqUpdatePlatformStatus req = new ReqUpdatePlatformStatus(active);
-            RequestApiManager.getInstance().updatePlatformStatus(req);
+            try {
+                new PlatformApi().updatePlatformStatus(req);
+            } catch (RetrofitException e) {
+            }
         }, () -> LogUtil.i("PlatformApi", "Success(updatePlatformStatus)"));
     }
 

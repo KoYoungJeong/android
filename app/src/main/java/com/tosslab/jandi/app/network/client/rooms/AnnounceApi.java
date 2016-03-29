@@ -22,19 +22,19 @@ public class AnnounceApi extends ApiTemplate<AnnounceApi.Api> {
         super(Api.class);
     }
 
-    ResAnnouncement getAnnouncement(long teamId, long topicId) throws RetrofitException {
+    public ResAnnouncement getAnnouncement(long teamId, long topicId) throws RetrofitException {
         return call(() -> getApi().getAnnouncement(teamId, topicId));
     }
 
-    ResCommon createAnnouncement(long teamId, long topicId, ReqCreateAnnouncement reqCreateAnnouncement) throws RetrofitException {
+    public ResCommon createAnnouncement(long teamId, long topicId, ReqCreateAnnouncement reqCreateAnnouncement) throws RetrofitException {
         return call(() -> getApi().createAnnouncement(teamId, topicId, reqCreateAnnouncement));
     }
 
-    ResCommon updateAnnouncementStatus(long teamId, long memberId, ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus) throws RetrofitException {
+    public ResCommon updateAnnouncementStatus(long teamId, long memberId, ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus) throws RetrofitException {
         return call(() -> getApi().updateAnnouncementStatus(teamId, memberId, reqUpdateAnnouncementStatus));
     }
 
-    ResCommon deleteAnnouncement(long teamId, long topicId) throws RetrofitException {
+    public ResCommon deleteAnnouncement(long teamId, long topicId) throws RetrofitException {
         return call(() -> getApi().deleteAnnouncement(teamId, topicId));
     }
 

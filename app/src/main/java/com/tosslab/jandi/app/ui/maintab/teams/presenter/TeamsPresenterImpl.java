@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.teams.presenter;
 
 import android.util.Log;
 
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.ui.maintab.teams.model.TeamsModel;
 import com.tosslab.jandi.app.ui.maintab.teams.view.TeamsView;
@@ -12,9 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
-
-import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -32,7 +30,6 @@ public class TeamsPresenterImpl implements TeamsPresenter {
     private PublishSubject<Object> teamInitializeQueue;
     private Subscription teamInitializeQueueSubscription;
 
-    @Inject
     public TeamsPresenterImpl(TeamsModel model, TeamsView view) {
         this.model = model;
         this.view = view;
@@ -132,8 +129,8 @@ public class TeamsPresenterImpl implements TeamsPresenter {
                     LogUtil.e(TAG, Log.getStackTraceString(error));
                     view.dismissProgressWheel();
 
-                    if (error instanceof RetrofitError) {
-                        RetrofitError e = (RetrofitError) error;
+                    if (error instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) error;
                         String errorMessage = model.getTeamInviteErrorMessage(e, team.getName());
                         view.showTeamInviteAcceptFailDialog(errorMessage, team);
                     }
@@ -154,8 +151,8 @@ public class TeamsPresenterImpl implements TeamsPresenter {
                     LogUtil.e(TAG, Log.getStackTraceString(error));
                     view.dismissProgressWheel();
 
-                    if (error instanceof RetrofitError) {
-                        RetrofitError e = (RetrofitError) error;
+                    if (error instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) error;
                         String errorMessage = model.getTeamInviteErrorMessage(e, team.getName());
                         view.showTeamInviteIgnoreFailToast(errorMessage);
                     }

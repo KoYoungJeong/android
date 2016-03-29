@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2.loader;
 
 import com.tosslab.jandi.app.network.client.MessageManipulator;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
@@ -70,7 +71,7 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
             view.updateMarkerMessage(linkId, oldMessage, noFirstLoad,
                     isFirstMessage, latestVisibleMessageId, firstVisibleItemTop);
 
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();

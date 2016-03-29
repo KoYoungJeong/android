@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.models.ResCommonError;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.TopicFolderSettingModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -26,7 +26,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
-
 
 
 /**
@@ -142,7 +141,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
             topicFolderDialogModel.deleteTopicFolder(folderId);
             showDeleteFolderToast();
             dismiss();
-        } catch (RetrofitError retrofitError) {
+        } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();
         }
     }
@@ -152,17 +151,10 @@ public class TopicFolderDialogFragment extends DialogFragment {
         try {
             topicFolderDialogModel.renameFolder(folderId, name, seq);
             showRenameFolderToast();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
-            if (e.getResponse() != null) {
-                try {
-                    ResCommonError error = (ResCommonError) e.getBodyAs(ResCommonError.class);
-                    if (error.getCode() == 40008) {
-                        showFailedRenameFolderToast();
-                    }
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
+            if (e.getResponseCode() == 40008) {
+                showFailedRenameFolderToast();
             }
         }
     }

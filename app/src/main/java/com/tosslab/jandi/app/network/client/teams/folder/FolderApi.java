@@ -29,33 +29,33 @@ public class FolderApi extends ApiTemplate<FolderApi.Api> {
         super(Api.class);
     }
 
-    ResCreateFolder createFolder(long teamId, ReqCreateFolder reqCreateFolder) throws RetrofitException {
+    public ResCreateFolder createFolder(long teamId, ReqCreateFolder reqCreateFolder) throws RetrofitException {
         return call(() -> getApi().createFolder(teamId, reqCreateFolder));
     }
 
-    ResCommon deleteFolder(long teamId, long folderId) throws RetrofitException {
+    public ResCommon deleteFolder(long teamId, long folderId) throws RetrofitException {
         return call(() -> getApi().deleteFolder(teamId, folderId));
     }
 
-    ResUpdateFolder updateFolder(long teamId, long folderId,
+    public ResUpdateFolder updateFolder(long teamId, long folderId,
                                  ReqUpdateFolder reqUpdateFolder) throws RetrofitException {
         return call(() -> getApi().updateFolder(teamId, folderId, reqUpdateFolder));
     }
 
-    List<ResFolder> getFolders(long teamId) throws RetrofitException {
+    public List<ResFolder> getFolders(long teamId) throws RetrofitException {
         return call(() -> getApi().getFolders(teamId));
     }
 
-    List<ResFolderItem> getFolderItems(long teamId) throws RetrofitException {
+    public List<ResFolderItem> getFolderItems(long teamId) throws RetrofitException {
         return call(() -> getApi().getFolderItems(teamId));
     }
 
-    ResRegistFolderItem registFolderItem(long teamId, long folderId,
+    public ResRegistFolderItem registFolderItem(long teamId, long folderId,
                                          ReqRegistFolderItem reqRegistFolderItem) throws RetrofitException {
         return call(() -> getApi().registFolderItem(teamId, folderId, reqRegistFolderItem));
     }
 
-    ResCommon deleteFolderItem(long teamId, long folderId,
+    public ResCommon deleteFolderItem(long teamId, long folderId,
                                long itemId) throws RetrofitException {
         return call(() -> getApi().deleteFolderItem(teamId, folderId, itemId));
     }

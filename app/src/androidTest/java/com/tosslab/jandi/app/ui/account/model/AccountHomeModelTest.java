@@ -7,7 +7,10 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
+import com.tosslab.jandi.app.network.client.main.LeftSideApi;
+import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -55,7 +58,7 @@ public class AccountHomeModelTest {
     public void testGetTeamInfos() throws Exception {
 
         // Given
-        List<ResPendingTeamInfo> pendingTeamInfo = RequestApiManager.getInstance().getPendingTeamInfoByInvitationApi();
+        List<ResPendingTeamInfo> pendingTeamInfo = new InvitationApi().getPedingTeamInfo();
         int pendingCount = 0;
         for (ResPendingTeamInfo resPendingTeamInfo : pendingTeamInfo) {
             if (TextUtils.equals(resPendingTeamInfo.getStatus(), "pending")) {
@@ -85,13 +88,13 @@ public class AccountHomeModelTest {
         accountHomeModel.updateAccountName(changedName);
 
         // Then
-        ResAccountInfo newAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+        ResAccountInfo newAccountInfo = new AccountApi().getAccountInfo();
         String newName = newAccountInfo.getName();
 
         assertThat(originName, is(not(equalTo(newName))));
         assertThat(changedName, is(equalTo(newName)));
 
-        RequestApiManager.getInstance().changeNameByAccountProfileApi(new ReqProfileName("Steve"));
+        new AccountProfileApi().changeName(new ReqProfileName("Steve"));
 
     }
 
@@ -149,7 +152,7 @@ public class AccountHomeModelTest {
         List<ResAccountInfo.UserTeam> accountTeams = AccountRepository.getRepository().getAccountTeams();
         long teamId = accountTeams.get(accountTeams.size() - 1).getTeamId();
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
-        ResLeftSideMenu leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
+        ResLeftSideMenu leftSideMenu = new LeftSideApi().getInfosForSideMenu(teamId);
 
         // When
         EntityManager entityManager = accountHomeModel.updateEntityInfo(JandiApplication.getContext(), leftSideMenu);

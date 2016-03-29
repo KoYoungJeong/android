@@ -22,17 +22,17 @@ public class CommentApi extends ApiTemplate<CommentApi.Api> {
     }
 
     // Send Comment
-    ResCommon sendMessageComment(long messageId, long teamId, ReqSendComment reqSendComment) throws RetrofitException {
+    public ResCommon sendMessageComment(long messageId, long teamId, ReqSendComment reqSendComment) throws RetrofitException {
         return call(() -> getApi().sendMessageComment(messageId, teamId, reqSendComment));
     }
 
     // Modify comment
-    ResCommon modifyMessageComment(ReqModifyComment comment, int messageId, int commentId) throws RetrofitException {
+    public ResCommon modifyMessageComment(ReqModifyComment comment, int messageId, int commentId) throws RetrofitException {
         return call(() -> getApi().modifyMessageComment(comment, messageId, commentId));
     }
 
     // Delete comment
-    ResCommon deleteMessageComment(long teamId, long messageId, long commentId) throws RetrofitException {
+    public ResCommon deleteMessageComment(long teamId, long messageId, long commentId) throws RetrofitException {
         return call(() -> getApi().deleteMessageComment(teamId, messageId, commentId));
     }
 
