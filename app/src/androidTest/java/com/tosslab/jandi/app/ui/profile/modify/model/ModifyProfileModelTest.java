@@ -11,8 +11,8 @@ import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -33,17 +33,14 @@ public class ModifyProfileModelTest {
 
     private ModifyProfileModel modifyProfileModel;
     private ResLeftSideMenu.User user;
-
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         modifyProfileModel = ModifyProfileModel_.getInstance_(JandiApplication.getContext());
         user = EntityManager.getInstance().getMe().getUser();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
     }
 
     @Test

@@ -13,6 +13,8 @@ import com.tosslab.jandi.app.network.models.validation.ResValidation;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -38,9 +40,13 @@ public class TeamDomainInfoModelTest {
 
     private TeamDomainInfoModel teamDomainInfoModel;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         teamDomainInfoModel = TeamDomainInfoModel_.getInstance_(JandiApplication.getContext());
 
     }
@@ -76,6 +82,7 @@ public class TeamDomainInfoModelTest {
 
     }
 
+    @Ignore
     @Test
     public void testCreateNewTeam() throws Exception {
         String name = UUID.randomUUID().toString().substring(0, 5);
@@ -105,7 +112,7 @@ public class TeamDomainInfoModelTest {
     }
 
     public interface Team {
-        @HTTP(path = "/teams/{teamId}", hasBody = true, method = "DELETE")
+        @HTTP(path = "teams/{teamId}", hasBody = true, method = "DELETE")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         ResCommon deleteTeam(@Header(JandiConstants.AUTH_HEADER) String auth, @Path("teamId") long teamId, @Body ReqDeleteTeam team);
     }

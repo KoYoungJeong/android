@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,9 +38,13 @@ public class ModifyProfileActivityTest {
     public ActivityTestRule<ModifyProfileActivity_> rule = new ActivityTestRule<>(ModifyProfileActivity_.class, false, false);
     private ModifyProfileActivity activity;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         rule.launchActivity(null);
         activity = rule.getActivity();
     }

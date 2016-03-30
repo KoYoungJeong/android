@@ -9,12 +9,13 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -41,10 +42,13 @@ public class FileDetailPresenterTest {
     private FileDetailPresenter.View mockView;
     private ResMessages.FileMessage fileMessage;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
     @Before
     public void setUp() throws Exception {
 
-        BaseInitUtil.initData();
 
         fileDetailPresenter = FileDetailPresenter_.getInstance_(JandiApplication.getContext());
         mockView = mock(FileDetailPresenter.View.class);
@@ -54,10 +58,7 @@ public class FileDetailPresenterTest {
         MessageRepository.getRepository().upsertFileMessage(fileMessage);
     }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
-    }
+
 
     @Test
     public void testOnExportFile() throws Exception {
@@ -166,7 +167,7 @@ public class FileDetailPresenterTest {
         reqSearchFile.startMessageId = -1;
         reqSearchFile.keyword = "";
         reqSearchFile.teamId = EntityManager.getInstance().getTeamId();
-        ResSearchFile resSearchFile = new FileApi().searchFile(reqSearchFile);
+        ResSearchFile resSearchFile = new FileApi(RetrofitAdapterBuilder.newInstance()).searchFile(reqSearchFile);
 
         ResMessages.OriginalMessage originalMessage = resSearchFile.files.get(0);
 

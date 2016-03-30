@@ -7,8 +7,8 @@ import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.SelectPictures;
 
 import org.hamcrest.Matchers;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.List;
@@ -28,16 +28,16 @@ public class ImageAlbumModelTest {
 
     private ImageAlbumModel imageAlbumModel;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         imageAlbumModel = ImageAlbumModel_.getInstance_(JandiApplication.getContext());
     }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
-    }
+
 
     @Test
     public void testGetDefaultAlbumList() {

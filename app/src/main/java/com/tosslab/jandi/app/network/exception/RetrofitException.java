@@ -6,20 +6,29 @@ public class RetrofitException extends Exception {
     private final String responseMessage;
     private final String rawBody;
 
-    private RetrofitException(int statusCode) {
-        this(statusCode, statusCode * 100, "", "");
+    private RetrofitException(int statusCode, Throwable e) {
+        super(e);
+        this.statusCode = statusCode;
+        this.responseCode = statusCode * 100;
+        this.responseMessage = "";
+        this.rawBody = "";
     }
 
-    private RetrofitException(int statusCode, int responseCode, String responseMessage, String rawBody) {
+    private RetrofitException(int statusCode, int responseCode, String responseMessage, String rawBody, Throwable e) {
+        super(e);
         this.statusCode = statusCode;
         this.responseCode = responseCode;
         this.responseMessage = responseMessage;
         this.rawBody = rawBody;
     }
 
-    public static RetrofitException create(int statusCode) {return new RetrofitException(statusCode);}
+    public static RetrofitException create(int statusCode, Throwable e) {
+        return new RetrofitException(statusCode, e);
+    }
 
-    public static RetrofitException create(int statusCode, int responseCode, String responseMessage, String rawBody) {return new RetrofitException(statusCode, responseCode, responseMessage, rawBody);}
+    public static RetrofitException create(int statusCode, int responseCode, String responseMessage, String rawBody, Throwable e) {
+        return new RetrofitException(statusCode, responseCode, responseMessage, rawBody, e);
+    }
 
     public int getStatusCode() {
         return statusCode;
@@ -39,7 +48,8 @@ public class RetrofitException extends Exception {
                 "statusCode=" + statusCode +
                 ", responseCode=" + responseCode +
                 ", responseMessage='" + responseMessage + '\'' +
-                '}';
+                ", rawBody='" + rawBody + '\'' +
+                "} " + super.toString();
     }
 
     public String getRawBody() {

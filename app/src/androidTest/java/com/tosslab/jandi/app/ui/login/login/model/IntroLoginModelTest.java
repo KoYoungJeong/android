@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -15,7 +16,6 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -43,12 +43,9 @@ public class IntroLoginModelTest {
     @Before
     public void setUp() throws Exception {
         introLoginModel = IntroLoginModel_.getInstance_(JandiApplication.getContext());
-    }
-
-    @After
-    public void tearDown() throws Exception {
         BaseInitUtil.clear();
     }
+
 
     @Test
     public void testLogin_Wrong_ID() throws Exception {
@@ -117,11 +114,11 @@ public class IntroLoginModelTest {
 
     @Test
     public void testSaveAccountInfo() throws Exception {
-        ResAccessToken accessToken = new LoginApi().getAccessToken(
+        ResAccessToken accessToken = new LoginApi(RetrofitAdapterBuilder.newInstance()).getAccessToken(
                 ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_EMAIL, BaseInitUtil.TEST_PASSWORD));
 
         TokenUtil.saveTokenInfoByPassword(accessToken);
-        ResAccountInfo accountInfo = new AccountApi().getAccountInfo();
+        ResAccountInfo accountInfo = new AccountApi(RetrofitAdapterBuilder.newInstance()).getAccountInfo();
         boolean isSaved = introLoginModel.saveAccountInfo(accountInfo);
         assertThat(isSaved, is(true));
 
@@ -143,7 +140,7 @@ public class IntroLoginModelTest {
     @Test
     public void testGetAccountInfo_Has_Token() throws Exception {
 
-        ResAccessToken accessToken = new LoginApi().getAccessToken(
+        ResAccessToken accessToken = new LoginApi(RetrofitAdapterBuilder.newInstance()).getAccessToken(
                 ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_EMAIL, BaseInitUtil.TEST_PASSWORD));
 
         TokenUtil.saveTokenInfoByPassword(accessToken);

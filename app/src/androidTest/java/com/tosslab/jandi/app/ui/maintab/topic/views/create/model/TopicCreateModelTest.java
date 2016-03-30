@@ -8,10 +8,12 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,12 +33,15 @@ public class TopicCreateModelTest {
 
     private static final String TAG = TopicCreateModelTest.class.getName();
     private TopicCreateModel topicCreateModel;
-    ;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
 
     @Before
     public void setUp() throws Exception {
 
-        BaseInitUtil.initData();
         topicCreateModel = TopicCreateModel_.getInstance_(JandiApplication.getContext());
     }
 
@@ -58,7 +63,7 @@ public class TopicCreateModelTest {
             assertThat(entity.isAutoJoin(), is(true));
 
             // Restore
-            new ChannelApi().deleteTopic(topic.id, new ReqDeleteTopic(EntityManager.getInstance().getTeamId()));
+            new ChannelApi(RetrofitAdapterBuilder.newInstance()).deleteTopic(topic.id, new ReqDeleteTopic(EntityManager.getInstance().getTeamId()));
         }
 
         {
@@ -91,7 +96,7 @@ public class TopicCreateModelTest {
             assertThat(entity.isAutoJoin(), is(false));
 
             // Restore
-            new GroupApi().deleteGroup(EntityManager.getInstance().getTeamId(), topic.id);
+            new GroupApi(RetrofitAdapterBuilder.newInstance()).deleteGroup(EntityManager.getInstance().getTeamId(), topic.id);
         }
 
     }

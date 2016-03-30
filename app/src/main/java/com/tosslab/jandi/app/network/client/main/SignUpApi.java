@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.client.main;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqAccountVerification;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
@@ -16,8 +17,8 @@ import retrofit2.http.POST;
 
 public class SignUpApi extends ApiTemplate<SignUpApi.Api> {
 
-    public SignUpApi() {
-        super(Api.class);
+    public SignUpApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        super(Api.class, retrofitAdapterBuilder);
     }
 
     public ResCommon signUpAccount(ReqSignUpInfo signUpInfo) throws RetrofitException {
@@ -35,15 +36,15 @@ public class SignUpApi extends ApiTemplate<SignUpApi.Api> {
 
     interface Api {
 
-        @POST("/accounts")
+        @POST("accounts")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V4)
         Call<ResCommon> signUpAccount(@Body ReqSignUpInfo signUpInfo);
 
-        @POST("/accounts/activate")
+        @POST("accounts/activate")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
         Call<ResAccountActivate> activateAccount(@Body ReqAccountActivate reqAccountActivate);
 
-        @POST("/accounts/verification")
+        @POST("accounts/verification")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResCommon> accountVerification(@Body ReqAccountVerification reqAccountVerification);
     }

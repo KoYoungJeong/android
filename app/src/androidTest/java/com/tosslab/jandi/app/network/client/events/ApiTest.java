@@ -1,12 +1,14 @@
 package com.tosslab.jandi.app.network.client.events;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.sql.Timestamp;
@@ -20,11 +22,14 @@ import setup.BaseInitUtil;
 public class ApiTest {
 
     long time;
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
 
     @Before
     public void setUp() throws Exception {
         time = new Timestamp(System.currentTimeMillis()).getTime() - 24 * 60 * 60 * 1000;
-        BaseInitUtil.initData();
 //        int defaultTopicId = EntityManager.getInstance().getDefaultTopicId();
 //
     }
@@ -39,7 +44,7 @@ public class ApiTest {
         LogUtil.e("time", time + "");
         LogUtil.e("user id", EntityManager.getInstance().getMe().getId() + "");
         ResEventHistory eventHistory =
-                new EventsApi().getEventHistory(time, EntityManager.getInstance().getMe().getId(), null, 300);
+                new EventsApi(RetrofitAdapterBuilder.newInstance()).getEventHistory(time, EntityManager.getInstance().getMe().getId(), null, 300);
         LogUtil.e("event history size", eventHistory.records.size() + "");
         int cnt = 0;
         Iterator<ResEventHistory.EventHistoryInfo> i = eventHistory.records.iterator();

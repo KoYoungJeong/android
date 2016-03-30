@@ -4,8 +4,7 @@ import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.matcher.IntentMatchers;
-import android.support.test.espresso.matcher.ViewMatchers;
-import android.support.test.rule.ActivityTestRule;
+import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -13,14 +12,15 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel_;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,25 +35,28 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Matchers.eq;
 
 @RunWith(AndroidJUnit4.class)
 public class CarouselViewerActivityTest {
 
     @Rule
-    public ActivityTestRule<CarouselViewerActivity_> rule = new ActivityTestRule<>(CarouselViewerActivity_.class, false, false);
+    public IntentsTestRule<CarouselViewerActivity_> rule = new IntentsTestRule<>(CarouselViewerActivity_.class, false, false);
     private long latestFileId;
     private long teamId;
     private long roomId;
     private CarouselViewerActivity activity;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
     @Before
     public void setUp() throws Exception {
-
-        BaseInitUtil.initData();
 
         teamId = AccountRepository.getRepository().getSelectedTeamId();
         roomId = EntityManager.getInstance().getDefaultTopicId();
@@ -77,19 +80,13 @@ public class CarouselViewerActivityTest {
         reqSearchFile.sharedEntityId = roomId;
         reqSearchFile.startMessageId = -1;
         reqSearchFile.teamId = teamId;
-        return new FileApi().searchFile(reqSearchFile).firstIdOfReceivedList;
+        return new FileApi(RetrofitAdapterBuilder.newInstance()).searchFile(reqSearchFile).firstIdOfReceivedList;
     }
 
     private List<CarouselFileInfo> getCarousel() throws RetrofitException {
         CarouselViewerModel_ carouselViewerModel = CarouselViewerModel_.getInstance_(JandiApplication.getContext());
         List<ResMessages.FileMessage> fileMessages = carouselViewerModel.searchInitFileList(teamId, roomId, latestFileId);
         return carouselViewerModel.getImageFileConvert(roomId, fileMessages);
-    }
-
-
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
     }
 
     @Test
@@ -112,7 +109,6 @@ public class CarouselViewerActivityTest {
     public void testSetInitFail() throws Throwable {
 
         rule.runOnUiThread(() -> activity.setInitFail());
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
         assertThat(activity.isFinishing(), is(true));
     }
 
@@ -121,7 +117,6 @@ public class CarouselViewerActivityTest {
 
         int movePosition = 0;
         rule.runOnUiThread(() -> activity.movePosition(movePosition));
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
         assertThat(activity.viewPager.getCurrentItem(), is(equalTo(movePosition)));
     }
 
@@ -132,7 +127,6 @@ public class CarouselViewerActivityTest {
         String xls = "xls";
         rule.runOnUiThread(() -> activity.setActionbarTitle(fileName, size, xls));
 
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
         onView(withText(fileName))
                 .check(matches(isDisplayed()));
@@ -160,16 +154,13 @@ public class CarouselViewerActivityTest {
     @Ignore
     @Test
     public void testMoveToFileDatail() throws Throwable {
-        Intents.init();
         rule.runOnUiThread(() -> activity.moveToFileDatail());
 
-        ViewMatchers.assertThat(activity.isFinishing(), is(true));
+        assertThat(activity.isFinishing(), is(true));
 
         Intents.intending(IntentMatchers.hasComponent(FileDetailActivity_.class.getName()));
-        Intents.intending(IntentMatchers.hasExtra("roomId", any(Integer.class)));
-        Intents.intending(IntentMatchers.hasExtra("fileId", any(Integer.class)));
-
-        Intents.release();
+        Intents.intending(IntentMatchers.hasExtra("roomId", eq(roomId)));
+        Intents.intending(IntentMatchers.hasExtra("fileId", eq(latestFileId)));
     }
 
 }

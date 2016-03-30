@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.client.rooms;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqMember;
 import com.tosslab.jandi.app.network.models.ReqOwner;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
@@ -17,8 +18,8 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public class RoomsApi extends ApiTemplate<RoomsApi.Api> {
-    public RoomsApi() {
-        super(Api.class);
+    public RoomsApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        super(Api.class, retrofitAdapterBuilder);
     }
 
     public ResRoomInfo getRoomInfo(long teamId, long roomId) throws RetrofitException {
@@ -40,19 +41,19 @@ public class RoomsApi extends ApiTemplate<RoomsApi.Api> {
 
     interface Api {
 
-        @GET("/teams/{teamId}/rooms/{roomId}")
+        @GET("teams/{teamId}/rooms/{roomId}")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResRoomInfo> getRoomInfo(@Path("teamId") long teamId, @Path("roomId") long roomId);
 
-        @PUT("/teams/{teamId}/rooms/{roomId}/subscribe")
+        @PUT("teams/{teamId}/rooms/{roomId}/subscribe")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResCommon> updateTopicPushSubscribe(@Path("teamId") long teamId, @Path("roomId") long topicId, @Body ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe);
 
-        @PUT("/teams/{teamId}/topics/{topicId}/kickout")
+        @PUT("teams/{teamId}/topics/{topicId}/kickout")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResCommon> kickUserFromTopic(@Path("teamId") long teamId, @Path("topicId") long topicId, @Body ReqMember member);
 
-        @PUT("/teams/{teamId}/topics/{topicId}/admin")
+        @PUT("teams/{teamId}/topics/{topicId}/admin")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResCommon> assignToTopicOwner(@Path("teamId") long teamId, @Path("topicId") long topicId, @Body ReqOwner owner);
     }

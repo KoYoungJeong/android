@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.client.account;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
@@ -14,8 +15,8 @@ import retrofit2.http.PUT;
 
 public class AccountApi extends ApiTemplate<AccountApi.Api> {
 
-    public AccountApi() {
-        super(Api.class);
+    public AccountApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        super(Api.class, retrofitAdapterBuilder);
     }
 
     public ResAccountInfo getAccountInfo() throws RetrofitException {
@@ -27,11 +28,11 @@ public class AccountApi extends ApiTemplate<AccountApi.Api> {
     }
 
     interface Api {
-        @GET("/account")
+        @GET("account")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResAccountInfo> getAccountInfo();
 
-        @PUT("/account")
+        @PUT("account")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResAccountInfo> updatePrimaryEmail(@Body ReqUpdatePrimaryEmailInfo updatePrimaryEmailInfo);
 

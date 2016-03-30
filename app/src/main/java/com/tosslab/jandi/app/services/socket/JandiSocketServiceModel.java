@@ -81,8 +81,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
-
 import dagger.Lazy;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
@@ -96,13 +94,9 @@ public class JandiSocketServiceModel {
 
     private final Context context;
     private final ObjectMapper objectMapper;
-    @Inject
     Lazy<AccountApi> accountApi;
-    @Inject
     Lazy<MessageApi> messageApi;
-    @Inject
     Lazy<LoginApi> loginApi;
-    @Inject
     Lazy<EventsApi> eventsApi;
     private EntitySocketModel entitySocketModel;
     private PublishSubject<SocketRoomMarkerEvent> markerPublishSubject;
@@ -113,8 +107,16 @@ public class JandiSocketServiceModel {
     private Subscription linkPreviewSubscribe;
 
 
-    public JandiSocketServiceModel(Context context) {
+    public JandiSocketServiceModel(Context context,
+                                   Lazy<AccountApi> accountApi,
+                                   Lazy<MessageApi> messageApi,
+                                   Lazy<LoginApi> loginApi,
+                                   Lazy<EventsApi> eventsApi) {
         this.context = context;
+        this.accountApi = accountApi;
+        this.messageApi = messageApi;
+        this.loginApi = loginApi;
+        this.eventsApi = eventsApi;
         this.objectMapper = JacksonMapper.getInstance().getObjectMapper();
         entitySocketModel = new EntitySocketModel(context);
     }

@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.utils.file.FileUtil;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -24,6 +25,10 @@ public class ProfileImageSelectorPresenterTest {
     private ProfileImageSelectorPresenter profileImageSelectorPresenter;
     private ProfileImageSelectorPresenter.View mockView;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
     @Before
     public void setUp() throws Exception {
         profileImageSelectorPresenter = ProfileImageSelectorPresenter_
@@ -31,7 +36,6 @@ public class ProfileImageSelectorPresenterTest {
         mockView = Mockito.mock(ProfileImageSelectorPresenter.View.class);
         profileImageSelectorPresenter.setView(mockView);
 
-        BaseInitUtil.initData();
     }
 
     @Test

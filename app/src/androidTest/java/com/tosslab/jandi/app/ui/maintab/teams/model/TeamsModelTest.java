@@ -7,9 +7,11 @@ import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.main.LeftSideApi;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -30,11 +32,17 @@ public class TeamsModelTest {
 
     private TeamsModel model;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
     @Before
     public void setup() throws Exception {
-        BaseInitUtil.initData();
 
-        model = new TeamsModel(AccountApi::new, LeftSideApi::new, InvitationApi::new);
+        model = new TeamsModel(() -> new AccountApi(RetrofitAdapterBuilder.newInstance()),
+                () -> new LeftSideApi(RetrofitAdapterBuilder.newInstance()),
+                () -> new InvitationApi(RetrofitAdapterBuilder.newInstance()));
     }
 
     @Test

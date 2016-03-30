@@ -30,7 +30,7 @@ public class SendMessage {
     @DatabaseField
     private String stickerId;
 
-    @ForeignCollectionField
+    @ForeignCollectionField()
     private Collection<MentionObject> mentionObjects;
 
     public long getId() {

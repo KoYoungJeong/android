@@ -1,60 +1,52 @@
 package com.tosslab.jandi.app.local.orm.repositories;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
-import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.domain.UploadedFileInfo;
+import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
 
 import java.sql.SQLException;
 
-public class UploadedFileInfoRepository {
-
-    private static UploadedFileInfoRepository repository;
-    private final OrmDatabaseHelper helper;
-
-    public UploadedFileInfoRepository() {
-        helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
-    }
+public class UploadedFileInfoRepository extends LockExecutorTemplate {
 
     public static UploadedFileInfoRepository getRepository() {
-        if (repository == null) {
-            repository = new UploadedFileInfoRepository();
-        }
-        return repository;
+        return new UploadedFileInfoRepository();
     }
 
     public int insertFileInfo(UploadedFileInfo fileInfo) {
+        return execute(() -> {
+            try {
+                Dao<UploadedFileInfo, ?> dao = getHelper().getDao(UploadedFileInfo.class);
+                return dao.create(fileInfo);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return 0;
 
-        try {
-            Dao<UploadedFileInfo, ?> dao = helper.getDao(UploadedFileInfo.class);
-            return dao.create(fileInfo);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
+        });
     }
 
     public UploadedFileInfo getUploadedFileInfo(long messageId) {
-        UploadedFileInfo fileInfo = null;
-        try {
-            Dao<UploadedFileInfo, ?> dao = helper.getDao(UploadedFileInfo.class);
-            fileInfo = dao.queryBuilder()
-                    .where()
-                    .eq("messageId", messageId)
-                    .queryForFirst();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        return execute(() -> {
+            UploadedFileInfo fileInfo = null;
+            try {
+                Dao<UploadedFileInfo, ?> dao = getHelper().getDao(UploadedFileInfo.class);
+                fileInfo = dao.queryBuilder()
+                        .where()
+                        .eq("messageId", messageId)
+                        .queryForFirst();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
-        if (fileInfo == null) {
-            fileInfo = new UploadedFileInfo();
-            fileInfo.setMessageId(messageId);
-            fileInfo.setLocalPath("");
-        }
+            if (fileInfo == null) {
+                fileInfo = new UploadedFileInfo();
+                fileInfo.setMessageId(messageId);
+                fileInfo.setLocalPath("");
+            }
 
-        return fileInfo;
+            return fileInfo;
 
+        });
     }
 
 }

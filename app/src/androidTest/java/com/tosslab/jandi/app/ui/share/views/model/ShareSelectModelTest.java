@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -34,10 +35,13 @@ public class ShareSelectModelTest {
 
     ShareSelectModel shareSelectModel;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
-
         List<ResAccountInfo.UserTeam> accountTeams = AccountRepository.getRepository().getAccountTeams();
         AccountRepository.getRepository().updateSelectedTeamInfo(accountTeams.get(0).getTeamId());
 

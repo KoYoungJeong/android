@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.client.chat;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
@@ -15,8 +16,8 @@ import retrofit2.http.Headers;
 import retrofit2.http.Path;
 
 public class ChatApi extends ApiTemplate<ChatApi.Api> {
-    public ChatApi() {
-        super(Api.class);
+    public ChatApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        super(Api.class, retrofitAdapterBuilder);
     }
 
     public List<ResChat> getChatList(long memberId) throws RetrofitException {
@@ -29,11 +30,11 @@ public class ChatApi extends ApiTemplate<ChatApi.Api> {
 
     interface Api {
 
-        @GET("/members/{memberId}/chats")
+        @GET("members/{memberId}/chats")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<List<ResChat>> getChatList(@Path("memberId") long memberId);
 
-        @HTTP(path = "/members/{memberId}/chats/{entityId}", hasBody = true, method = "DELETE")
+        @HTTP(path = "members/{memberId}/chats/{entityId}", hasBody = true, method = "DELETE")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResCommon> deleteChat(@Path("memberId") long teamId, @Path("entityId") long entityId);
 

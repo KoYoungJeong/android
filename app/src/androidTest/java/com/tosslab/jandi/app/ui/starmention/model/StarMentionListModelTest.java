@@ -7,8 +7,8 @@ import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 
 import junit.framework.Assert;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -37,15 +37,14 @@ public class StarMentionListModelTest {
 
     public StarMentionListModel starMentionListModel;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
-        starMentionListModel = new StarMentionListModel();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
+    @Before
+    public void setUp() throws Exception {
+        starMentionListModel = new StarMentionListModel();
     }
 
     @Test

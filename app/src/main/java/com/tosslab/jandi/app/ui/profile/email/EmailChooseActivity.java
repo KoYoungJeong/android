@@ -29,7 +29,6 @@ import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -96,8 +95,6 @@ public class EmailChooseActivity extends BaseAppCompatActivity {
             emailChooseModel.trackChangeAccountEmailFail(errorCode);
             e.printStackTrace();
             emailChoosePresenter.showFailToast(getString(R.string.err_network));
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             emailChoosePresenter.dismissProgressWheel();
         }
@@ -117,8 +114,6 @@ public class EmailChooseActivity extends BaseAppCompatActivity {
             List<AccountEmail> accountEmails = emailChooseModel.getAccountEmails();
             emailChoosePresenter.refreshEmails(accountEmails);
         } catch (RetrofitException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -216,8 +211,6 @@ public class EmailChooseActivity extends BaseAppCompatActivity {
         } catch (RetrofitException e) {
             e.printStackTrace();
             emailChoosePresenter.showFailToast(getString(R.string.err_network));
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             emailChoosePresenter.dismissProgressWheel();
         }
@@ -245,8 +238,6 @@ public class EmailChooseActivity extends BaseAppCompatActivity {
                 errorMessage = getString(R.string.err_email_exists);
             }
             emailChoosePresenter.showFailToast(errorMessage);
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             emailChoosePresenter.dismissProgressWheel();
         }

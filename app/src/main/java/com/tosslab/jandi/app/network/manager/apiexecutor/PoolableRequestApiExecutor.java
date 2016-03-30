@@ -59,24 +59,28 @@ public class PoolableRequestApiExecutor {
         // 현재(2015/6) 시나리오엔 존재하지 않지만 Client측의 Network Connection에러를 UI단에 던지기 위한 코드 추가
         if (!isActiveNetwork()) {
             if (response != null) {
-                throw RetrofitException.create(response.code());
+                throw RetrofitException.create(response.code(), e);
             } else {
-                throw RetrofitException.create(503);
+                throw RetrofitException.create(503, e);
             }
         }
 
         if (e instanceof RuntimeException) {
-            throw RetrofitException.create(400);
+            throw RetrofitException.create(400, e);
         } else if (e instanceof IOException) {
             if (retryCnt < RETRY_COUNT) {
                 retryCnt++;
                 return execute(apiExecutor);
             } else {
                 retryCnt = 0;
-                throw RetrofitException.create(503);
+                throw RetrofitException.create(503, e);
             }
         } else if (response == null) {
-            throw RetrofitException.create(503);
+            if (e instanceof RetrofitException) {
+                throw (RetrofitException) e;
+            } else {
+                throw RetrofitException.create(503, e);
+            }
         } else {
             int status = response.code();
             if (status == JandiConstants.NetworkError.UNAUTHORIZED) {
@@ -86,11 +90,11 @@ public class PoolableRequestApiExecutor {
                         return apiExecutor.execute().body();
                     } catch (Exception e1) {
                         // unknown exception
-                        throw RetrofitException.create(401);
+                        throw RetrofitException.create(401, e1);
                     }
                 } else {
                     // unauthorized exception
-                    throw RetrofitException.create(response.code());
+                    throw RetrofitException.create(response.code(), e);
                 }
             } else {
                 // exception, not unauthorized
@@ -102,13 +106,14 @@ public class PoolableRequestApiExecutor {
                     ExceptionData exceptionData = JacksonMapper.getInstance().getObjectMapper().readValue(errorBody, ExceptionData.class);
                     responseCode = exceptionData.getCode();
                     responseMsg = exceptionData.getMsg();
+                    throw RetrofitException.create(response.code(), responseCode, responseMsg, errorBody, e);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                     errorBody = "";
                     responseCode = response.code() * 100;
                     responseMsg = "";
+                    throw RetrofitException.create(response.code(), responseCode, responseMsg, errorBody, e1);
                 }
-                throw RetrofitException.create(response.code(), responseCode, responseMsg, errorBody);
             }
         }
     }

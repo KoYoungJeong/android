@@ -4,10 +4,12 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -27,11 +29,14 @@ public class MyPageModelTest {
 
     private MyPageModel model;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
     @Before
     public void setup() throws Exception {
-        BaseInitUtil.initData();
 
-        model = new MyPageModel(() -> new MessageApi());
+        model = new MyPageModel(() -> new MessageApi(RetrofitAdapterBuilder.newInstance()));
     }
 
     @Test

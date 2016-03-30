@@ -5,8 +5,8 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -20,17 +20,15 @@ public class SetProfileFirstPagePresenterTest {
     private SetProfileFirstPagePresenter presenter;
     private SetProfileFirstPagePresenter.View mockView;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         presenter = SetProfileFirstPagePresenter_.getInstance_(JandiApplication.getContext());
         mockView = Mockito.mock(SetProfileFirstPagePresenter.View.class);
         presenter.setView(mockView);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
     }
 
     @Test

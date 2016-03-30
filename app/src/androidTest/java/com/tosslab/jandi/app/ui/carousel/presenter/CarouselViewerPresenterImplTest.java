@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.services.download.DownloadService;
@@ -16,8 +17,8 @@ import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel_;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,10 +49,13 @@ public class CarouselViewerPresenterImplTest {
     private long roomId;
     private long lastImageMessageId;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
     @Before
     public void setUp() throws Exception {
 
-        BaseInitUtil.initData();
         presenter = CarouselViewerPresenterImpl_.getInstance_(JandiApplication.getContext());
         mockView = mock(CarouselViewerPresenter.View.class);
 
@@ -73,13 +77,7 @@ public class CarouselViewerPresenterImplTest {
         reqSearchFile.sharedEntityId = roomId;
         reqSearchFile.startMessageId = -1;
         reqSearchFile.teamId = teamId;
-        return new FileApi().searchFile(reqSearchFile).firstIdOfReceivedList;
-    }
-
-
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
+        return new FileApi(RetrofitAdapterBuilder.newInstance()).searchFile(reqSearchFile).firstIdOfReceivedList;
     }
 
     @Test

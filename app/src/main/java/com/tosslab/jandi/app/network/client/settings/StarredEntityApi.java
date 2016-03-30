@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.client.settings;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
@@ -15,27 +16,27 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class StarredEntityApi extends ApiTemplate<StarredEntityApi.Api> {
-    public StarredEntityApi() {
-        super(Api.class);
+    public StarredEntityApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        super(Api.class, retrofitAdapterBuilder);
     }
 
     public ResCommon enableFavorite(ReqTeam reqTeam, long entityId) throws RetrofitException {
-        return call(() -> getApi().enableFavorite(reqTeam, entityId));
+        return call(() -> getApi().enableFavorite(entityId, reqTeam));
     }
 
     public ResCommon disableFavorite(long teamId, long entityId) throws RetrofitException {
-        return call(() -> getApi().disableFavorite(teamId, entityId));
+        return call(() -> getApi().disableFavorite(entityId, teamId));
     }
 
     interface Api {
 
-        @POST("/settings/starred/entities/{entityId}")
+        @POST("settings/starred/entities/{entityId}")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResCommon> enableFavorite(@Body ReqTeam reqTeam, @Path("entityId") long entityId);
+        Call<ResCommon> enableFavorite(@Path("entityId") long entityId, @Body ReqTeam reqTeam);
 
-        @HTTP(path = "/settings/starred/entities/{entityId}", hasBody = true, method = "DELETE")
+        @HTTP(path = "settings/starred/entities/{entityId}", hasBody = true, method = "DELETE")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResCommon> disableFavorite(@Query("teamId") long teamId, @Path("entityId") long entityId);
+        Call<ResCommon> disableFavorite(@Path("entityId") long entityId, @Query("teamId") long teamId);
 
     }
 }

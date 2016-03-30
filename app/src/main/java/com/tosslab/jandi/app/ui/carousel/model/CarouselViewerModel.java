@@ -5,6 +5,7 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -77,7 +78,12 @@ public class CarouselViewerModel {
     }
 
     public long getTeamId() {
-        return AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
+        if (selectedTeamInfo != null) {
+            return selectedTeamInfo.getTeamId();
+        } else {
+            return -1;
+        }
     }
 
     public int findLinkPosition(List<CarouselFileInfo> imageFiles, long fileId) {

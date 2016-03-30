@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,9 +44,13 @@ public class MultiShareFragmentTest {
     public IntentsTestRule<BaseAppCompatActivity> rule = new IntentsTestRule<>(BaseAppCompatActivity.class, false, false);
     private MultiShareFragment fragment;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
     @Before
     public void setUp() throws Throwable {
-        BaseInitUtil.initData();
         rule.launchActivity(null);
 
         ArrayList<Uri> uris = new ArrayList<>();

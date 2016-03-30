@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,9 +25,13 @@ public class TopicDetailFragmentTest {
     public ActivityTestRule<BaseAppCompatActivity> rule = new ActivityTestRule<BaseAppCompatActivity>(BaseAppCompatActivity.class);
     private TopicDetailFragment fragment;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
 
         EntityManager manager = EntityManager.getInstance();
         fragment = TopicDetailFragment_.builder()

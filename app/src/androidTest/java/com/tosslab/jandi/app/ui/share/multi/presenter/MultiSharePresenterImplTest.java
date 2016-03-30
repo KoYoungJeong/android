@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.ui.share.multi.model.ShareAdapterDataModel;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -43,10 +44,12 @@ public class MultiSharePresenterImplTest {
     private MultiSharePresenter.View mockView;
     private MultiSharePresenter multiSharePresenter;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
     @Before
     public void setUp() throws Exception {
-
-        BaseInitUtil.initData();
 
         mockDataModel = mock(ShareAdapterDataModel.class);
         mockView = mock(MultiSharePresenter.View.class);

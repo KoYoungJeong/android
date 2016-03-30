@@ -30,164 +30,167 @@ import com.tosslab.jandi.app.network.client.sticker.StickerApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.client.teams.folder.FolderApi;
 import com.tosslab.jandi.app.network.client.validation.ValidationApi;
-
-import javax.inject.Singleton;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 
 import dagger.Module;
 import dagger.Provides;
 
 @Module
-@Singleton
 public class ApiClientModule {
 
     @Provides
-    ChannelMessageApi provideChannelMessageApi() {
-        return new ChannelMessageApi();
+    RetrofitAdapterBuilder provideRetrofitAdapterBuilder() {
+        return RetrofitAdapterBuilder.newInstance();
     }
 
     @Provides
-    GroupMessageApi provideGroupMessageApi() {
-        return new GroupMessageApi();
+    ChannelMessageApi provideChannelMessageApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new ChannelMessageApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    DirectMessageApi provideDirectMessageApi() {
-        return new DirectMessageApi();
+    GroupMessageApi provideGroupMessageApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new GroupMessageApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    MessageApi provideMessageApi() {
-        return new MessageApi();
+    DirectMessageApi provideDirectMessageApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new DirectMessageApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    StickerApi provideStickerApi() {
-        return new StickerApi();
+    MessageApi provideMessageApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new MessageApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    LeftSideApi provideLeftSideApi() {
-        return new LeftSideApi();
+    StickerApi provideStickerApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new StickerApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    GroupApi provideGroupApi() {
-        return new GroupApi();
+    LeftSideApi provideLeftSideApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new LeftSideApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    ChannelApi provideChannelApi() {
-        return new ChannelApi();
+    GroupApi provideGroupApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new GroupApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    StarredEntityApi provideStarredEntityApi() {
-        return new StarredEntityApi();
+    ChannelApi provideChannelApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new ChannelApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    TeamApi provideTeamApi() {
-        return new TeamApi();
+    StarredEntityApi provideStarredEntityApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new StarredEntityApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    ProfileApi provideProfileApi() {
-        return new ProfileApi();
+    TeamApi provideTeamApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new TeamApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    FileApi provideFileApi() {
-        return new FileApi();
+    ProfileApi provideProfileApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new ProfileApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    CommentApi provideCommentApi() {
-        return new CommentApi();
+    FileApi provideFileApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new FileApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    FolderApi provideFolderApi() {
-        return new FolderApi();
+    CommentApi provideCommentApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new CommentApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    MessageSearchApi provideMessageSearchApi() {
-        return new MessageSearchApi();
+    FolderApi provideFolderApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new FolderApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    EventsApi provideEventsApi() {
-        return new EventsApi();
+    MessageSearchApi provideMessageSearchApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new MessageSearchApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    DeviceApi provideDeviceApi() {
-        return new DeviceApi();
+    EventsApi provideEventsApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new EventsApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    AccountEmailsApi provideAccountEmailsApi() {
-        return new AccountEmailsApi();
+    DeviceApi provideDeviceApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new DeviceApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    AccountPasswordApi provideAccountPasswordApi() {
-        return new AccountPasswordApi();
+    AccountEmailsApi provideAccountEmailsApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new AccountEmailsApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    AccountApi provideAccountApi() {
-        return new AccountApi();
+    AccountPasswordApi provideAccountPasswordApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new AccountPasswordApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    ChatApi provideChatApi() {
-        return new ChatApi();
+    AccountApi provideAccountApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new AccountApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    InvitationApi provideInvitationApi() {
-        return new InvitationApi();
+    ChatApi provideChatApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new ChatApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    ConfigApi provideConfigApi() {
-        return new ConfigApi();
+    InvitationApi provideInvitationApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new InvitationApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    LoginApi provideLoginApi() {
-        return new LoginApi();
+    ConfigApi provideConfigApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new ConfigApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    SignUpApi provideSignUpApi() {
-        return new SignUpApi();
+    LoginApi provideLoginApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new LoginApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    PlatformApi providePlatformApi() {
-        return new PlatformApi();
+    SignUpApi provideSignUpApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new SignUpApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    AnnounceApi provideAnnounceApi() {
-        return new AnnounceApi();
+    PlatformApi providePlatformApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new PlatformApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    RoomsApi provideRoomsApi() {
-        return new RoomsApi();
+    AnnounceApi provideAnnounceApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new AnnounceApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    AccountProfileApi provideAccountProfileApi() {
-        return new AccountProfileApi();
+    RoomsApi provideRoomsApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new RoomsApi(retrofitAdapterBuilder);
     }
 
     @Provides
-    ValidationApi provideValidationApi() {
-        return new ValidationApi();
+    AccountProfileApi provideAccountProfileApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new AccountProfileApi(retrofitAdapterBuilder);
+    }
+
+    @Provides
+    ValidationApi provideValidationApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        return new ValidationApi(retrofitAdapterBuilder);
     }
 
 }

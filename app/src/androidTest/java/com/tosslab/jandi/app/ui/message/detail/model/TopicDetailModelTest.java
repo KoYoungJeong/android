@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -23,10 +24,13 @@ public class TopicDetailModelTest {
 
     private TopicDetailModel topicDetailModel;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
-
         topicDetailModel = TopicDetailModel_.getInstance_(JandiApplication.getContext());
     }
 

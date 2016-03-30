@@ -3,8 +3,8 @@ package com.tosslab.jandi.app.ui.team.info;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,16 +21,15 @@ public class TeamDomainInfoActivityTest {
     public ActivityTestRule<TeamDomainInfoActivity_> rule = new ActivityTestRule<TeamDomainInfoActivity_>(TeamDomainInfoActivity_.class, false, false);
     private TeamDomainInfoActivity activity;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
-        rule.launchActivity(null);
-        activity = rule.getActivity();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
+    @Before
+    public void setUp() throws Exception {
+        rule.launchActivity(null);
+        activity = rule.getActivity();
     }
 
     @Test

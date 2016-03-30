@@ -37,7 +37,7 @@ public class ResRoomInfo {
     private long creatorId;
     @DatabaseField
     private String status;
-    @ForeignCollectionField
+    @ForeignCollectionField()
     private Collection<MarkerInfo> markers;
 
     public long getId() {

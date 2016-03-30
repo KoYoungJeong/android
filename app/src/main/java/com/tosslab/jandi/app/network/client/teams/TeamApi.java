@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.client.teams;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -20,8 +21,8 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public class TeamApi extends ApiTemplate<TeamApi.Api> {
-    public TeamApi() {
-        super(Api.class);
+    public TeamApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        super(Api.class, retrofitAdapterBuilder);
     }
 
     public ResTeamDetailInfo createNewTeam(ReqCreateNewTeam req) throws RetrofitException {
@@ -45,20 +46,20 @@ public class TeamApi extends ApiTemplate<TeamApi.Api> {
 
     interface Api {
 
-        @POST("/teams")
+        @POST("teams")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
         Call<ResTeamDetailInfo> createNewTeam(@Body ReqCreateNewTeam req);
 
-        @POST("/teams/{teamId}/invitations")
+        @POST("teams/{teamId}/invitations")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<List<ResInvitationMembers>> inviteToTeam(@Path("teamId") long teamId,
                                                       @Body ReqInvitationMembers invitationMembers);
 
-        @DELETE("/teams/{teamId}/members/{memberId}/invitation")
+        @DELETE("teams/{teamId}/members/{memberId}/invitation")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResCommon> cancelInviteTeam(@Path("teamId") long teamId, @Path("memberId") long memberId);
 
-        @GET("/teams/{teamId}")
+        @GET("teams/{teamId}")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResTeamDetailInfo.InviteTeam> getTeamInfo(@Path("teamId") long teamId);
 

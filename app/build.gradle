@@ -134,8 +134,6 @@ dependencies {
     androidTestCompile "com.crittercism.dexmaker:dexmaker-dx:${dexmakerVersion}"
     androidTestCompile 'com.jayway.awaitility:awaitility:1.7.+'
 
-    androidTestCompile 'com.jayway.awaitility:awaitility:1.6.5'
-
     compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
         transitive = true;
     }
@@ -191,7 +189,7 @@ android {
         dev {       // demo version
             applicationId 'com.tosslab.jandi.app.dev'
             versionName(defaultConfig.versionName + ".dev." + inhouse_version)
-            minSdkVersion 14
+            minSdkVersion 21
         }
 
         qa {       // demo version

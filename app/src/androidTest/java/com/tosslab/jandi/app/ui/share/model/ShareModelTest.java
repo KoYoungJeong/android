@@ -14,8 +14,8 @@ import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -35,16 +35,14 @@ public class ShareModelTest {
 
     private ShareModel shareModel;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
-        shareModel = ShareModel_.getInstance_(JandiApplication.getContext());
     }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
-
+    @Before
+    public void setUp() throws Exception {
+        shareModel = ShareModel_.getInstance_(JandiApplication.getContext());
     }
 
     @Test

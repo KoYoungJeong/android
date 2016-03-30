@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
@@ -17,6 +18,7 @@ import com.tosslab.jandi.app.utils.file.FileUtil;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsEqual;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -42,9 +44,13 @@ public class FileDetailModelTest {
     private FileDetailModel fileDetailModel;
     private ResMessages.FileMessage fileMessage;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         fileDetailModel = FileDetailModel_.getInstance_(JandiApplication.getContext());
         fileMessage = getFileMessage();
     }
@@ -71,7 +77,7 @@ public class FileDetailModelTest {
         reqSearchFile.startMessageId = -1;
         reqSearchFile.keyword = "";
         reqSearchFile.teamId = EntityManager.getInstance().getTeamId();
-        ResSearchFile resSearchFile = new FileApi().searchFile(reqSearchFile);
+        ResSearchFile resSearchFile = new FileApi(RetrofitAdapterBuilder.newInstance()).searchFile(reqSearchFile);
 
         ResMessages.OriginalMessage originalMessage = resSearchFile.files.get(0);
 

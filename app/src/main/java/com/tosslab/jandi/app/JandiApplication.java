@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.network.SimpleApiRequester;
 import com.tosslab.jandi.app.network.client.platform.PlatformApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.utils.ApplicationActivateDetector;
@@ -253,7 +254,7 @@ public class JandiApplication extends MultiDexApplication {
         SimpleApiRequester.request(() -> {
             ReqUpdatePlatformStatus req = new ReqUpdatePlatformStatus(active);
             try {
-                new PlatformApi().updatePlatformStatus(req);
+                new PlatformApi(RetrofitAdapterBuilder.newInstance()).updatePlatformStatus(req);
             } catch (RetrofitException e) {
             }
         }, () -> LogUtil.i("PlatformApi", "Success(updatePlatformStatus)"));

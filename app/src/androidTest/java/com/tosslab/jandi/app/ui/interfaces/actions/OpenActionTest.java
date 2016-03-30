@@ -6,6 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -118,7 +119,7 @@ public class OpenActionTest {
 
         boolean[] finished = getFinished();
 
-        ResAccessToken accessToken = new LoginApi().getAccessToken(
+        ResAccessToken accessToken = new LoginApi(RetrofitAdapterBuilder.newInstance()).getAccessToken(
                 ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST1_EMAIL, BaseInitUtil.TEST_PASSWORD));
 
 

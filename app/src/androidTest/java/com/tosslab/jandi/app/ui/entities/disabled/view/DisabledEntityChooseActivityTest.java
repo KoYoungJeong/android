@@ -7,8 +7,8 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel_;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,18 +28,19 @@ public class DisabledEntityChooseActivityTest {
     public ActivityTestRule<DisabledEntityChooseActivity_> rule = new ActivityTestRule<DisabledEntityChooseActivity_>(DisabledEntityChooseActivity_.class, false, false);
     private DisabledEntityChooseActivity activity;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         rule.launchActivity(null);
         activity = rule.getActivity();
 
     }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
-    }
+
 
     @Test
     public void testSetDisabledMembers() throws Throwable {

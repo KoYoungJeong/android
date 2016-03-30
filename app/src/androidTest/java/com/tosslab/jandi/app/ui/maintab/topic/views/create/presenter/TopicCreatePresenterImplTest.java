@@ -5,9 +5,11 @@ import android.support.test.runner.AndroidJUnit4;
 import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -34,9 +36,13 @@ public class TopicCreatePresenterImplTest {
     private TopicCreatePresenter topicCreatePresenter;
     private TopicCreatePresenter.View mockView;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         topicCreatePresenter = TopicCreatePresenterImpl_.getInstance_(JandiApplication.getContext());
         mockView = Mockito.mock(TopicCreatePresenter.View.class);
 
@@ -90,6 +96,6 @@ public class TopicCreatePresenterImplTest {
         }
 
         // restore
-        new ChannelApi().deleteTopic(topicId[0], new ReqDeleteTopic(teamId[0]));
+        new ChannelApi(RetrofitAdapterBuilder.newInstance()).deleteTopic(topicId[0], new ReqDeleteTopic(teamId[0]));
     }
 }

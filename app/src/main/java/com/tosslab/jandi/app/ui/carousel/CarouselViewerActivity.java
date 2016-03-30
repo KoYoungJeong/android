@@ -212,7 +212,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     }
 
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void addFileInfos(List<CarouselFileInfo> fileInfoList) {
 
@@ -221,7 +221,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
 
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void addFileInfos(int position, List<CarouselFileInfo> imageFiles) {
 
@@ -231,14 +231,14 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         viewPager.setCurrentItem(imageFiles.size(), false);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setInitFail() {
         ColoredToast.showWarning(getString(R.string.err_download));
         finish();
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void movePosition(int startLinkPosition) {
         viewPager.setCurrentItem(startLinkPosition, false);
@@ -260,7 +260,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         tvFileWriterName.setText(fileWriterName);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setFileCreateTime(String fileCreateTime) {
         tvFileCreateTime.setText(fileCreateTime);
@@ -340,7 +340,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         }
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showFailToast(String message) {
         ColoredToast.showError(message);

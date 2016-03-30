@@ -6,8 +6,8 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -26,18 +26,18 @@ public class ChatChoosePresenterImplTest {
     private ChatChoosePresenterImpl presenter;
     private ChatChoosePresenter.View mockView;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         presenter = ChatChoosePresenterImpl_.getInstance_(JandiApplication.getContext());
         mockView = mock(ChatChoosePresenter.View.class);
         presenter.setView(mockView);
     }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
-    }
+
 
     @Test
     public void testInitMembers() throws Exception {

@@ -6,8 +6,8 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -26,16 +26,16 @@ public class ChatChooseModelTest {
 
     private ChatChooseModel chatChooseModel;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         chatChooseModel = ChatChooseModel_.getInstance_(JandiApplication.getContext());
     }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
-    }
+
 
     @Test
     public void testGetChatListWithoutMe() throws Exception {

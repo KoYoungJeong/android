@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.client.rooms;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
@@ -18,8 +19,8 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public class AnnounceApi extends ApiTemplate<AnnounceApi.Api> {
-    public AnnounceApi() {
-        super(Api.class);
+    public AnnounceApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        super(Api.class, retrofitAdapterBuilder);
     }
 
     public ResAnnouncement getAnnouncement(long teamId, long topicId) throws RetrofitException {
@@ -40,19 +41,19 @@ public class AnnounceApi extends ApiTemplate<AnnounceApi.Api> {
 
 
     interface Api {
-        @GET("/teams/{teamId}/topics/{topicId}/announcement")
+        @GET("teams/{teamId}/topics/{topicId}/announcement")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResAnnouncement> getAnnouncement(@Path("teamId") long teamId, @Path("topicId") long topicId);
 
-        @POST("/teams/{teamId}/topics/{topicId}/announcement")
+        @POST("teams/{teamId}/topics/{topicId}/announcement")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResCommon> createAnnouncement(@Path("teamId") long teamId, @Path("topicId") long topicId, @Body ReqCreateAnnouncement reqCreateAnnouncement);
 
-        @PUT("/teams/{teamId}/members/{memberId}/announcement")
+        @PUT("teams/{teamId}/members/{memberId}/announcement")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResCommon> updateAnnouncementStatus(@Path("teamId") long teamId, @Path("memberId") long memberId, @Body ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus);
 
-        @HTTP(path = "/teams/{teamId}/topics/{topicId}/announcement", hasBody = true, method = "DELETE")
+        @HTTP(path = "teams/{teamId}/topics/{topicId}/announcement", hasBody = true, method = "DELETE")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResCommon> deleteAnnouncement(@Path("teamId") long teamId, @Path("topicId") long topicId);
 

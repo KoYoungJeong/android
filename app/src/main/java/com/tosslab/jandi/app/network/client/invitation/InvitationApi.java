@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.client.invitation;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
@@ -17,8 +18,8 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public class InvitationApi extends ApiTemplate<InvitationApi.Api> {
-    public InvitationApi() {
-        super(Api.class);
+    public InvitationApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        super(Api.class, retrofitAdapterBuilder);
     }
 
     public ResTeamDetailInfo acceptOrDeclineInvitation(String invitationId,
@@ -33,7 +34,7 @@ public class InvitationApi extends ApiTemplate<InvitationApi.Api> {
 
     interface Api {
 
-        @PUT("/account/invitations/{invitationId}")
+        @PUT("account/invitations/{invitationId}")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResTeamDetailInfo> acceptOrDeclineInvitation(@Path("invitationId") String invitationId,
                                                           @Body ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore);
@@ -41,7 +42,7 @@ public class InvitationApi extends ApiTemplate<InvitationApi.Api> {
         /**
          * 초대된 목록 가져오기
          */
-        @GET("/account/invitations")
+        @GET("account/invitations")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
         Call<List<ResPendingTeamInfo>> getPedingTeamInfo();
 

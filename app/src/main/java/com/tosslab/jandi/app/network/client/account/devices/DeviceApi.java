@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.client.account.devices;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqDeviceToken;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
@@ -19,8 +20,8 @@ import retrofit2.http.PUT;
 
 public class DeviceApi extends ApiTemplate<DeviceApi.Api> {
 
-    public DeviceApi() {
-        super(Api.class);
+    public DeviceApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        super(Api.class, retrofitAdapterBuilder);
     }
 
     public ResAccountInfo registerNotificationToken(ReqNotificationRegister reqNotificationRegister) throws RetrofitException {
@@ -43,22 +44,22 @@ public class DeviceApi extends ApiTemplate<DeviceApi.Api> {
     interface Api {
 
         // Notification Token 등록
-        @POST("/account/devices")
+        @POST("account/devices")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResAccountInfo> registerNotificationToken(@Body ReqNotificationRegister reqNotificationRegister);
 
         // Notification Token 삭제
-        @HTTP(path = "/account/devices", method = "DELETE", hasBody = true)
+        @HTTP(path = "account/devices", method = "DELETE", hasBody = true)
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResAccountInfo> deleteNotificationToken(@Body ReqDeviceToken reqDeviceToken);
 
         // Notification 켜고 끄기
-        @PUT("/account/devices")
+        @PUT("account/devices")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResAccountInfo> subscribeStateNotification(@Body ReqSubscibeToken reqDeviceToken);
 
         // ios 뱃지
-        @PUT("/account/devices/badge")
+        @PUT("account/devices/badge")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         @Deprecated
         Call<ResCommon> getNotificationBadge(@Body ReqNotificationTarget reqNotificationTarget);

@@ -5,8 +5,8 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.R;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,19 +27,19 @@ public class EntityChooseActivityTest {
     public ActivityTestRule<EntityChooseActivity_> rule = new ActivityTestRule<>(EntityChooseActivity_.class, false, false);
     private EntityChooseActivity_ activity;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
     @Before
     public void setUp() throws Exception {
 
-        BaseInitUtil.initData();
         rule.launchActivity(null);
         activity = rule.getActivity();
 
     }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
-    }
+
 
     @Test
     public void testInitActionBarTitle() throws Exception {

@@ -6,8 +6,8 @@ import com.tosslab.jandi.app.ui.album.imagealbum.model.ImageAlbumModel;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImageAlbum;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -35,19 +35,19 @@ public class ImageAlbumPresenterImplTest {
     private ImageAlbumPresenter.View viewMock;
     private ImageAlbumModel modelMock;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
     @Before
     public void setUp() throws Exception {
         imageAlbumPresenter = ImageAlbumPresenterImpl_.getInstance_(JandiApplication.getContext());
         viewMock = mock(ImageAlbumPresenter.View.class);
         imageAlbumPresenter.setView(viewMock);
         modelMock = mock(ImageAlbumModel.class);
-        BaseInitUtil.initData();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
-    }
+
 
     @Test
     public void testOnLoadImageAlbum() {

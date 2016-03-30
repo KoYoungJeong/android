@@ -7,11 +7,12 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,18 +41,15 @@ public class AccountHomePresenterImplTest {
     private AccountHomePresenterImpl accountHomePresenter;
     private AccountHomePresenter.View viewMock;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
     @Before
     public void setUp() throws Exception {
         accountHomePresenter = AccountHomePresenterImpl_.getInstance_(JandiApplication.getContext());
         viewMock = mock(AccountHomePresenter.View.class);
         accountHomePresenter.setView(viewMock);
-
-        BaseInitUtil.initData();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
 
     }
 
@@ -189,7 +187,7 @@ public class AccountHomePresenterImplTest {
         assertThat(newSavedName, is(not(equalTo(originName))));
         assertThat(newSavedName, is(equalTo(newName)));
 
-        new AccountProfileApi().changeName(new ReqProfileName(originName));
+        new AccountProfileApi(RetrofitAdapterBuilder.newInstance()).changeName(new ReqProfileName(originName));
     }
 
     @Ignore

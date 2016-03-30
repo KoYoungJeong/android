@@ -1,11 +1,8 @@
 package com.tosslab.jandi.app.local.orm.repositories;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
-import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.domain.DownloadInfo;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
 
@@ -16,11 +13,6 @@ import java.util.List;
 public class DownloadRepository extends LockExecutorTemplate {
 
     private static DownloadRepository repository;
-    private OrmDatabaseHelper helper;
-
-    public DownloadRepository() {
-        helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
-    }
 
     public static DownloadRepository getInstance() {
         if (repository == null) {
@@ -37,7 +29,7 @@ public class DownloadRepository extends LockExecutorTemplate {
 
         return execute(() -> {
             try {
-                Dao<DownloadInfo, ?> dao = helper.getDao(DownloadInfo.class);
+                Dao<DownloadInfo, ?> dao = getHelper().getDao(DownloadInfo.class);
                 dao.createOrUpdate(downloadInfo);
                 return true;
             } catch (SQLException e) {
@@ -51,7 +43,7 @@ public class DownloadRepository extends LockExecutorTemplate {
         return execute(() -> {
 
             try {
-                Dao<DownloadInfo, ?> dao = helper.getDao(DownloadInfo.class);
+                Dao<DownloadInfo, ?> dao = getHelper().getDao(DownloadInfo.class);
                 return dao.queryBuilder()
                         .where()
                         .eq("state", 0)
@@ -68,7 +60,7 @@ public class DownloadRepository extends LockExecutorTemplate {
         return execute(() -> {
 
             try {
-                Dao<DownloadInfo, ?> dao = helper.getDao(DownloadInfo.class);
+                Dao<DownloadInfo, ?> dao = getHelper().getDao(DownloadInfo.class);
                 DeleteBuilder<DownloadInfo, ?> deleteBuilder = dao.deleteBuilder();
                 deleteBuilder.where()
                         .eq("notificationId", notificationId);
@@ -86,7 +78,7 @@ public class DownloadRepository extends LockExecutorTemplate {
         return execute(() -> {
 
             try {
-                Dao<DownloadInfo, ?> dao = helper.getDao(DownloadInfo.class);
+                Dao<DownloadInfo, ?> dao = getHelper().getDao(DownloadInfo.class);
                 UpdateBuilder<DownloadInfo, ?> updateBuilder = dao.updateBuilder();
                 updateBuilder.updateColumnValue("state", state);
                 updateBuilder.where()

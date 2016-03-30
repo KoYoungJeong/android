@@ -4,6 +4,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.client.main.SignUpApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.signup.account.to.CheckPointsHolder;
@@ -130,7 +131,7 @@ public class SignUpModel {
 
         ReqSignUpInfo signUpInfo = new ReqSignUpInfo(email, password, name, lang);
 
-        return new SignUpApi().signUpAccount(signUpInfo);
+        return new SignUpApi(RetrofitAdapterBuilder.newInstance()).signUpAccount(signUpInfo);
 
     }
 

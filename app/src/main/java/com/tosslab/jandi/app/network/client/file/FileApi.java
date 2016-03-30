@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.client.file;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -24,8 +25,8 @@ import retrofit2.http.Query;
 
 public class FileApi extends ApiTemplate<FileApi.Api> {
 
-    public FileApi() {
-        super(Api.class);
+    public FileApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
+        super(Api.class, retrofitAdapterBuilder);
     }
 
     public ResCommon deleteFile(long teamId, long fileId) throws RetrofitException {
@@ -61,41 +62,41 @@ public class FileApi extends ApiTemplate<FileApi.Api> {
 
     interface Api {
 
-        @HTTP(path = "/files/{fileId}", hasBody = true, method = "DELETE")
+        @HTTP(path = "files/{fileId}", hasBody = true, method = "DELETE")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResCommon> deleteFile(@Query("teamId") long teamId, @Path("fileId") long fileId);
 
-        @GET("/teams/{teamId}/rooms/{roomId}/images")
+        @GET("teams/{teamId}/rooms/{roomId}/images")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<List<ResMessages.FileMessage>> searchInitImageFile(@Path("teamId") long teamId,
                                                                 @Path("roomId") long roomId,
                                                                 @Query("messageId") long messageId,
                                                                 @Query("count") int count);
 
-        @GET("/teams/{teamId}/rooms/{roomId}/images?type=old")
+        @GET("teams/{teamId}/rooms/{roomId}/images?type=old")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<List<ResMessages.FileMessage>> searchOldImageFile(@Path("teamId") long teamId,
                                                                @Path("roomId") long roomId,
                                                                @Query("messageId") long messageId,
                                                                @Query("count") int count);
 
-        @GET("/teams/{teamId}/rooms/{roomId}/images?type=new")
+        @GET("teams/{teamId}/rooms/{roomId}/images?type=new")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<List<ResMessages.FileMessage>> searchNewImageFile(@Path("teamId") long teamId,
                                                                @Path("roomId") long roomId,
                                                                @Query("messageId") long messageId,
                                                                @Query("count") int count);
 
-        @POST("/search")
+        @POST("search")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResSearchFile> searchFile(@Body ReqSearchFile reqSearchFile);
 
-        @PUT("/teams/{teamId}/files/{fileId}/externalShared")
+        @PUT("teams/{teamId}/files/{fileId}/externalShared")
         Call<ResMessages.FileMessage> enableFileExternalLink(@Path("teamId") long teamId,
                                                              @Path("fileId") long fileId,
                                                              @Body ReqNull reqNull);
 
-        @DELETE("/teams/{teamId}/files/{fileId}/externalShared")
+        @DELETE("teams/{teamId}/files/{fileId}/externalShared")
         Call<ResMessages.FileMessage> disableFileExternalLink(@Path("teamId") long teamId,
                                                               @Path("fileId") long fileId);
     }
