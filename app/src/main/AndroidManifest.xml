@@ -111,7 +111,7 @@
             android:label="@string/jandi_profile_actionb"/>
 
         <activity
-            android:name=".ui.invites.email.InviteEmailActivity_"
+            android:name=".ui.invites.email.InviteByEmailActivity"
             android:label="@string/menu_entity_invite"
             android:windowSoftInputMode="adjustPan"/>
 
@@ -231,10 +231,6 @@
             android:name=".push.PushInterfaceActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/JandiTheme.PushIntro" />
-
-        <activity
-            android:name="com.tosslab.jandi.app.ui.profile.crop.JandiCropImageActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"/>
 
         <activity
             android:name=".ui.share.MainShareActivity_"
