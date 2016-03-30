@@ -53,6 +53,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         public View getPageView(int position);
     }
 
+    public interface OnTabClickListener {
+        void onTabClick(int index);
+    }
+
     // @formatter:off
     private static final int[] ATTRS = new int[]{
             android.R.attr.textSize,
@@ -65,6 +69,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
     private final PageListener pageListener = new PageListener();
     public OnPageChangeListener delegatePageListener;
+    private OnTabClickListener onTabClickListener;
 
     private LinearLayout tabsContainer;
     private ViewPager pager;
@@ -254,6 +259,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             @Override
             public void onClick(View v) {
                 pager.setCurrentItem(position);
+                if (onTabClickListener != null) {
+                    onTabClickListener.onTabClick(position);
+                }
             }
         });
 
@@ -370,6 +378,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             View tab = tabsContainer.getChildAt(i);
             canvas.drawLine(tab.getRight(), dividerPadding, tab.getRight(), height - dividerPadding, dividerPaint);
         }
+    }
+
+    public void setOnTabClickListener(OnTabClickListener onTabClickListener) {
+        this.onTabClickListener = onTabClickListener;
     }
 
     private class PageListener implements OnPageChangeListener {

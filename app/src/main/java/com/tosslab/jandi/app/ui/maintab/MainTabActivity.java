@@ -32,6 +32,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.events.ServiceMaintenanceEvent;
+import com.tosslab.jandi.app.events.TabClickEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
@@ -254,6 +255,17 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                 if (position != MainTabPagerAdapter.TAB_TEAM) {
                     keyboardHandler.hideKeyboard();
                 }
+            }
+        });
+
+        tabs.setOnTabClickListener(new PagerSlidingTabStrip.OnTabClickListener() {
+            int currentIndex;
+            @Override
+            public void onTabClick(int index) {
+                if (currentIndex == index) {
+                    EventBus.getDefault().post(new TabClickEvent(index));
+                }
+                currentIndex = index;
             }
         });
 

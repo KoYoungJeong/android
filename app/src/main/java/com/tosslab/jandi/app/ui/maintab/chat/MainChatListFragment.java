@@ -10,6 +10,7 @@ import android.widget.ListView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
+import com.tosslab.jandi.app.events.TabClickEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
@@ -19,6 +20,7 @@ import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
+import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.chat.adapter.MainChatListAdapter;
 import com.tosslab.jandi.app.ui.maintab.chat.presenter.MainChatListPresenter;
 import com.tosslab.jandi.app.ui.maintab.chat.presenter.MainChatListPresenterImpl;
@@ -60,7 +62,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     long selectedEntity;
 
     @ViewById(R.id.lv_main_chat_list)
-    ListView chatListView;
+    ListView lvChat;
 
     @ViewById(R.id.layout_main_chat_list_empty)
     View emptyView;
@@ -79,10 +81,10 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
 
     @AfterViews
     void initViews() {
-        chatListView.setEmptyView(emptyView);
-        chatListView.setAdapter(mainChatListAdapter);
+        lvChat.setEmptyView(emptyView);
+        lvChat.setAdapter(mainChatListAdapter);
 
-        FAButtonUtil.setFAButtonController(chatListView, btnFAB);
+        FAButtonUtil.setFAButtonController(lvChat, btnFAB);
 
         mainChatListPresenter.initChatList(getActivity(), selectedEntity);
 
@@ -171,7 +173,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     @Override
     public void scrollToPosition(int selectedEntityPosition) {
         if (selectedEntityPosition > 0) {
-            chatListView.setSelection(selectedEntityPosition - 1);
+            lvChat.setSelection(selectedEntityPosition - 1);
         }
     }
 
@@ -192,6 +194,11 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
         }
     }
 
+    public void onEventMainThread(TabClickEvent event) {
+        if (event.getIndex() == MainTabPagerAdapter.TAB_CHAT) {
+            lvChat.setSelectionFromTop(0, 0);
+        }
+    }
 
     public void onEventMainThread(ShowProfileEvent event) {
         if (foreground) {
