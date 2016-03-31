@@ -6,15 +6,15 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.ApplicationTestCase;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import setup.BaseInitUtil;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
@@ -35,7 +35,7 @@ public class IntroActivityPresenterTest extends ApplicationTestCase<Application>
     public void init() throws Exception {
         Context context = InstrumentationRegistry.getTargetContext();
 
-        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class).clearAllData();
+        BaseInitUtil.clear();
 
         JandiApplication.setContext(context);
     }

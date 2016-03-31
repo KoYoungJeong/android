@@ -51,6 +51,7 @@ public class AccountHomePresenterImplTest {
     public static void tearDownClass() throws Exception {
         BaseInitUtil.releaseDatabase();
     }
+
     @Before
     public void setUp() throws Exception {
         accountHomePresenter = AccountHomePresenterImpl_.getInstance_(JandiApplication.getContext());
@@ -117,18 +118,25 @@ public class AccountHomePresenterImplTest {
 
     @Test
     public void testOnJoinedTeamSelect_Wrong_TeamId() throws Exception {
-        final boolean[] finish = {false};
-        doAnswer(invocationOnMock -> {
-            finish[0] = true;
-            return invocationOnMock;
-        }).when(viewMock).dismissProgressWheel();
 
-        accountHomePresenter.onJoinedTeamSelect(-1, false);
+        long originSelectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
 
-        Awaitility.await().until(() -> finish[0]);
+        try {
+            final boolean[] finish = {false};
+            doAnswer(invocationOnMock -> {
+                finish[0] = true;
+                return invocationOnMock;
+            }).when(viewMock).dismissProgressWheel();
 
-        verify(viewMock).dismissProgressWheel();
+            accountHomePresenter.onJoinedTeamSelect(-1, false);
 
+            Awaitility.await().until(() -> finish[0]);
+
+            verify(viewMock).dismissProgressWheel();
+
+        } finally {
+            AccountRepository.getRepository().updateSelectedTeamInfo(originSelectedTeamId);
+        }
     }
 
     @Test

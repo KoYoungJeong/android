@@ -39,6 +39,7 @@ public class IntroLoginModelTest {
     public void setUp() throws Exception {
         introLoginModel = IntroLoginModel_.getInstance_(JandiApplication.getContext());
         BaseInitUtil.clear();
+        TokenUtil.clearTokenInfo();
     }
 
     @AfterClass
@@ -129,7 +130,7 @@ public class IntroLoginModelTest {
     @Test
     public void testGetAccountInfo_No_Token() throws Exception {
         try {
-            ResAccountInfo accountInfo = introLoginModel.getAccountInfo();
+            introLoginModel.getAccountInfo();
             fail("토큰 정보 없는 상태이므로 성공하면 안됨");
         } catch (Exception e) {
             e.printStackTrace();

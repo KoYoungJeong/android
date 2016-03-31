@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 
 import setup.BaseInitUtil;
 
-import static android.support.test.espresso.core.deps.guava.collect.Range.greaterThan;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -40,7 +40,7 @@ public class LoginApiTest {
             ResAccessToken oldAccessToken = TokenUtil.getTokenObject();
             ResAccessToken newAccessToken = loginApi.getAccessToken(ReqAccessToken.createRefreshReqToken(oldAccessToken.getRefreshToken()));
 
-            assertThat(oldAccessToken.getRefreshToken(), is(equalTo(newAccessToken.getRefreshToken())));
+            assertThat(oldAccessToken.getAccessToken(), is(equalTo(newAccessToken.getAccessToken())));
         }
 
 

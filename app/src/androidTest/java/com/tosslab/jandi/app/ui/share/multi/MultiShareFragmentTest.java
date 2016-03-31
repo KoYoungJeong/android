@@ -73,7 +73,7 @@ public class MultiShareFragmentTest {
                     .commit();
         });
 
-        await().until(() -> fragment.tvTitle.getText().length() > 0);
+        await().until(() -> fragment.tvTitle.length() > 0 && fragment.tvTeamName.length() > 0);
 
         rule.runOnUiThread(() -> {
             fragment.multiSharePresenter.onFilePageChanged(1, "hello1");

@@ -63,7 +63,7 @@ public class ImageAlbumModelTest {
             List<ImagePicture> imagePictures =
                     imageAlbumModel.getPhotoList(JandiApplication.getContext(), imageAlbums.get(0).getBucketId(), imageAlbums.get(0).get_id());
             assertNotNull(imagePictures);
-            assertThat(imagePictures.size(), Matchers.greaterThan(1));
+            assertThat(imagePictures.size(), Matchers.greaterThan(0));
         }
     }
 
@@ -113,7 +113,7 @@ public class ImageAlbumModelTest {
         if (imageAlbums.size() > 0) {
             List<ImagePicture> imagePictures = imageAlbumModel.getAllPhotoList(
                     JandiApplication.getContext(), imageAlbums.get(0).get_id());
-            assertThat(imagePictures.size(), greaterThan(1));
+            assertThat(imagePictures.size(), greaterThan(0));
         }
     }
 
