@@ -467,12 +467,7 @@ public class MessageRepository {
 
     public List<ResMessages.Link> getMessages(long roomId, long firstCursorLinkId, long toCursorLinkId) {
 
-        LogUtil.e("firstCusorLinkId", String.valueOf(firstCursorLinkId));
-        LogUtil.e("toCursorLinkId", String.valueOf(toCursorLinkId));
-
         long start = SystemClock.currentThreadTimeMillis();
-        LogUtil.e("start2");
-
 
         lock.lock();
         try {

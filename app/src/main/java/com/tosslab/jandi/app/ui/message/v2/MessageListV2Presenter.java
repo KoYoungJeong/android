@@ -69,6 +69,7 @@ public class MessageListV2Presenter {
     private MessageState currentMessageState;
     private Room room;
     private MessagePointer messagePointer;
+    private boolean isInitialized;
 
     public void setView(View view) {
         this.view = view;
@@ -279,6 +280,8 @@ public class MessageListV2Presenter {
         messageListModel.updateMarkerInfo(teamId, roomId);
         messageListModel.setRoomId(roomId);
 
+        isInitialized = true;
+
         addQueue(oldMessageQueue);
         addQueue(newMessageQueue);
 
@@ -291,6 +294,9 @@ public class MessageListV2Presenter {
     }
 
     public void addNewMessageQueue(boolean cacheMode) {
+        if (!isInitialized) {
+            return;
+        }
         NewMessageContainer messageQueue = new NewMessageContainer(currentMessageState);
         messageQueue.setCacheMode(cacheMode);
         addQueue(messageQueue);
@@ -543,21 +549,14 @@ public class MessageListV2Presenter {
             newMessages = getResUpdateMessages(lastUpdateLinkId);
         }
 
-
         if (newMessages == null || newMessages.isEmpty()) {
-            boolean hasMessages = hasMessages(firstCursorLinkId, currentItemCount);
+            boolean hasMessages = firstCursorLinkId > 0 && hasMessages(firstCursorLinkId, currentItemCount);
             view.showEmptyView(!hasMessages);
 
             if (currentMessageState.isFirstLoadNewMessage()) {
                 currentMessageState.setIsFirstLoadNewMessage(false);
                 view.setUpLastReadLinkIdIfPosition();
-                view.saveCacheAndNotifyDataSetChanged(new MainMessageListAdapter.NotifyDataSetChangedCallback() {
-                    @Override
-                    public void callBack() {
-                        view.moveLastReadLink();
-                    }
-                });
-
+                view.saveCacheAndNotifyDataSetChanged(() -> view.moveLastReadLink());
             }
             return;
         }
