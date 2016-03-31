@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 
 import junit.framework.Assert;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -40,6 +41,11 @@ public class StarMentionListModelTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
     }
 
     @Before

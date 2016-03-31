@@ -28,7 +28,6 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
@@ -323,8 +322,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     }
 
     private void trackTopicMemberInviteSuccess(int memberCount, long entityId) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                         .event(Event.TopicMemberInvite)
                         .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
@@ -335,8 +333,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     }
 
     private void trackTopicMemberInviteFail(int errorCode) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                         .event(Event.TopicMemberInvite)
                         .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))

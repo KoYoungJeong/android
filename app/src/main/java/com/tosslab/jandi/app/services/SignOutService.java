@@ -9,12 +9,11 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
-import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.SignOutUtil;
+import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
@@ -36,8 +35,7 @@ public class SignOutService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
-        boolean hasRefreshToken = !TextUtils.isEmpty(accessToken.getRefreshToken());
+        boolean hasRefreshToken = !TextUtils.isEmpty(TokenUtil.getRefreshToken());
         if (!hasRefreshToken) {
             return;
         }

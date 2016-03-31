@@ -29,7 +29,6 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.settings.SettingsBodyView;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
@@ -238,13 +237,12 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
     }
 
     private void trackSignOut() {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.SignOut)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .build())
-                .flush();
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.SignOut)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .build());
+        AnalyticsUtil.flushSprinkler();
     }
 
 

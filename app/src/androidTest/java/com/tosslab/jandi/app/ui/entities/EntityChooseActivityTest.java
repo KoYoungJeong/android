@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.R;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -30,6 +31,11 @@ public class EntityChooseActivityTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
     }
     @Before
     public void setUp() throws Exception {

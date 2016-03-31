@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.ui.album.imagealbum.model.ImageAlbumModel;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImageAlbum;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,6 +39,11 @@ public class ImageAlbumPresenterImplTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
     }
     @Before
     public void setUp() throws Exception {

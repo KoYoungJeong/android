@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,6 +28,10 @@ public class ApiTest {
         BaseInitUtil.initData();
     }
 
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
     @Before
     public void setUp() throws Exception {
         time = new Timestamp(System.currentTimeMillis()).getTime() - 24 * 60 * 60 * 1000;

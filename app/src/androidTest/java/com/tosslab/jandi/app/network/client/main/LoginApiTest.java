@@ -2,10 +2,10 @@ package com.tosslab.jandi.app.network.client.main;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,11 +33,11 @@ public class LoginApiTest {
             assertThat(accessToken.getRefreshToken().length(), is(greaterThan(0)));
             assertThat(accessToken.getAccessToken().length(), is(greaterThan(0)));
 
-            AccessTokenRepository.getRepository().upsertAccessToken(accessToken);
+            TokenUtil.saveTokenInfoByPassword(accessToken);
         }
 
         {
-            ResAccessToken oldAccessToken = AccessTokenRepository.getRepository().getAccessToken();
+            ResAccessToken oldAccessToken = TokenUtil.getTokenObject();
             ResAccessToken newAccessToken = loginApi.getAccessToken(ReqAccessToken.createRefreshReqToken(oldAccessToken.getRefreshToken()));
 
             assertThat(oldAccessToken.getRefreshToken(), is(equalTo(newAccessToken.getRefreshToken())));

@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.network.manager.token;
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
@@ -41,7 +40,7 @@ public class TokenRequestManager {
         lock.lock();
 
         // DB에 토큰 정보가 저장이 안되어 있는 경우에 대한 방어코드
-        ResAccessToken savedResAccessToken = AccessTokenRepository.getRepository().getAccessToken();
+        ResAccessToken savedResAccessToken = TokenUtil.getTokenObject();
         if (savedResAccessToken == null || TextUtils.isEmpty(savedResAccessToken.getRefreshToken())) {
             LogUtil.e(TAG, "Token is empty");
             lock.unlock();

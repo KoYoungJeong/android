@@ -59,7 +59,6 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
@@ -154,13 +153,12 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         LogUtil.d("FileListFragment AfterViews");
 
         if (getActivity() instanceof SearchActivity) {
-            Sprinkler.with(JandiApplication.getContext())
-                    .track(new FutureTrack.Builder()
-                            .event(Event.ScreenView)
-                            .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                            .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                            .property(PropertyKey.ScreenView, ScreenViewProperty.FILE_SEARCH)
-                            .build());
+            AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                    .event(Event.ScreenView)
+                    .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                    .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                    .property(PropertyKey.ScreenView, ScreenViewProperty.FILE_SEARCH)
+                    .build());
 
             AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.FilesSearch);
         }

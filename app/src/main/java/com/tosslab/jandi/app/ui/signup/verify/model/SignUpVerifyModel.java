@@ -16,7 +16,7 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.signup.verify.exception.VerifyNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
@@ -90,24 +90,22 @@ public class SignUpVerifyModel {
                 MixpanelAccountAnalyticsClient.getInstance(JandiApplication.getContext(), accountInfo.getId());
         mixpanelAccountAnalyticsClient.trackAccountSingingIn();
 
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.SignUp)
-                        .accountId(accountInfo.getId())
-                        .property(PropertyKey.ResponseSuccess, true)
-                        .build())
-                .flush();
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.SignUp)
+                .accountId(accountInfo.getId())
+                .property(PropertyKey.ResponseSuccess, true)
+                .build());
+        AnalyticsUtil.flushSprinkler();
 
     }
 
     public void trackSignUpFailAndFlush(int errorCode) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.SignUp)
-                        .property(PropertyKey.ResponseSuccess, false)
-                        .property(PropertyKey.ErrorCode, errorCode)
-                        .build())
-                .flush();
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.SignUp)
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
+        AnalyticsUtil.flushSprinkler();
 
     }
 

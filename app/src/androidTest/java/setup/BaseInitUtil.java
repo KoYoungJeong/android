@@ -113,14 +113,11 @@ public class BaseInitUtil {
 
     public static void userSignin(String testId) {
 
-        clear();
         if (TextUtils.isEmpty(testId)) {
             testId = TEST1_EMAIL;
         }
 
         String testPasswd = TEST_PASSWORD;
-
-        clear();
 
         try {
             ResAccessToken accessToken = null;
@@ -227,5 +224,9 @@ public class BaseInitUtil {
     public static void restoreContext() {
         LogUtil.d("restoreContext : " + ORIGIN_CONTEXT.toString());
         JandiApplication.setContext(ORIGIN_CONTEXT);
+    }
+
+    public static void releaseDatabase() {
+        OpenHelperManager.releaseHelper();
     }
 }

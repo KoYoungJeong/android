@@ -24,7 +24,6 @@ import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
@@ -70,6 +69,7 @@ import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -136,7 +136,7 @@ public class JandiSocketServiceModel {
             return null;
         }
 
-        String token = AccessTokenRepository.getRepository().getAccessToken().getAccessToken();
+        String token = TokenUtil.getAccessToken();
         return new ConnectTeam(token,
                 UserAgentUtil.getDefaultUserAgent(context),
                 selectedTeamInfo.getTeamId(),
@@ -576,8 +576,7 @@ public class JandiSocketServiceModel {
     }
 
     public ResAccessToken refreshToken() throws RetrofitException {
-        ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
-        String jandiRefreshToken = accessToken.getRefreshToken();
+        String jandiRefreshToken = TokenUtil.getRefreshToken();
         ReqAccessToken refreshReqToken = ReqAccessToken.createRefreshReqToken(jandiRefreshToken);
         return loginApi.get().getAccessToken(refreshReqToken);
     }

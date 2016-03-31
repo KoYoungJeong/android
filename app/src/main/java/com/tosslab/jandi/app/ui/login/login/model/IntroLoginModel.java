@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.login.login.model;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.account.password.AccountPasswordApi;
@@ -16,7 +15,7 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
@@ -80,23 +79,21 @@ public class IntroLoginModel {
     }
 
     public void trackSignInSuccess() {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                         .event(Event.SignIn)
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.AutoSignIn, false)
-                        .build())
-                .flush();
+                        .build());
+        AnalyticsUtil.flushSprinkler();
     }
 
     public void trackSignInFail(int errorCode) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                         .event(Event.SignIn)
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
-                        .build())
-                .flush();
+                        .build());
+        AnalyticsUtil.flushSprinkler();
 
     }
 }

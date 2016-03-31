@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -94,6 +95,7 @@ public class IntroLoginFragmentTest {
         pressBack();
     }
 
+    @Ignore
     @Test
     public void testHideKeyboard() throws Throwable {
         rule.runOnUiThread(() -> fragment.hideKeyboard());

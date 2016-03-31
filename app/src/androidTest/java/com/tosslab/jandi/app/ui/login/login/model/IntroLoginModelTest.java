@@ -1,10 +1,8 @@
 package com.tosslab.jandi.app.ui.login.login.model;
 
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -13,11 +11,10 @@ import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
+import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -36,8 +33,6 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @RunWith(AndroidJUnit4.class)
 public class IntroLoginModelTest {
 
-    @Rule
-    public ActivityTestRule<BaseAppCompatActivity> rule = new ActivityTestRule<BaseAppCompatActivity>(BaseAppCompatActivity.class);
     private IntroLoginModel introLoginModel;
 
     @Before
@@ -46,6 +41,10 @@ public class IntroLoginModelTest {
         BaseInitUtil.clear();
     }
 
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
 
     @Test
     public void testLogin_Wrong_ID() throws Exception {
@@ -103,7 +102,7 @@ public class IntroLoginModelTest {
         boolean isSaved = introLoginModel.saveTokenInfo(accessToken);
         assertThat(isSaved, is(true));
 
-        ResAccessToken savedToken = AccessTokenRepository.getRepository().getAccessToken();
+        ResAccessToken savedToken = TokenUtil.getTokenObject();
 
         assertThat(savedToken, is(notNullValue()));
         assertThat(accessToken.getAccessToken(), is(equalTo(savedToken.getAccessToken())));

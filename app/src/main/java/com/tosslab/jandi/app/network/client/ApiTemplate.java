@@ -17,7 +17,14 @@ public class ApiTemplate<API> {
     }
 
     public <RESPONSE> RESPONSE call(Action0<RESPONSE> action0) throws RetrofitException {
-        return PoolableRequestApiExecutor.obtain().execute(() -> action0.call().execute());
+        return PoolableRequestApiExecutor.obtain().execute(() -> {
+            Call<RESPONSE> call = action0.call();
+            if (!call.isExecuted()) {
+                return call.execute();
+            } else {
+                return call.clone().execute();
+            }
+        });
     }
 
     protected API getApi() {

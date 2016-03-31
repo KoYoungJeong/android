@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,6 +27,11 @@ public class DisabledEntityChooseModelTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
     }
 
     @Before

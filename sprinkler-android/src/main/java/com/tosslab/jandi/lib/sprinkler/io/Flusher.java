@@ -135,7 +135,7 @@ final class Flusher {
                 @Override
                 public ResponseBody performRequest() throws IOException {
                     RequestClient client = requestManager.getClient(RequestClient.class);
-                    return client.ping().execute().body();
+                    return client.ping().clone().execute().body();
                 }
             });
             Logger.d(TAG, "ping success");
@@ -166,7 +166,7 @@ final class Flusher {
             public ResponseBody performRequest() throws IOException {
                 RequestBody body = new RequestBody(num, deviceId, lastDate, data);
                 RequestClient client = requestManager.getClient(RequestClient.class);
-                ResponseBody response = client.post(body).execute().body();
+                ResponseBody response = client.post(body).clone().execute().body();
                 return response;
             }
         };

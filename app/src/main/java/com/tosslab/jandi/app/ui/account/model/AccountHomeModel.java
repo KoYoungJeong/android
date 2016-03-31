@@ -24,7 +24,7 @@ import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
@@ -182,19 +182,17 @@ public class AccountHomeModel {
     }
 
     public void trackLaunchTeamSuccess(long teamId) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.LaunchTeam)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, true)
-                        .property(PropertyKey.TeamId, teamId)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.LaunchTeam)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.TeamId, teamId)
+                .build());
 
     }
 
     public void trackLaunchTeamFail(int errorCode) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                         .event(Event.LaunchTeam)
                         .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, false)
@@ -208,8 +206,7 @@ public class AccountHomeModel {
                 .getInstance(context, accountId)
                 .trackSetAccount();
 
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                         .event(Event.ChangeAccountName)
                         .accountId(accountId)
                         .property(PropertyKey.ResponseSuccess, true)
@@ -217,8 +214,7 @@ public class AccountHomeModel {
     }
 
     public void trackChangeAccountNameFail(int errorCode) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                         .event(Event.ChangeAccountName)
                         .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, false)

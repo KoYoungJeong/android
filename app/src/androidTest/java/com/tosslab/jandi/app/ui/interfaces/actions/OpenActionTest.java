@@ -4,14 +4,15 @@ import android.net.Uri;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -51,8 +52,13 @@ public class OpenActionTest {
         accessToken.setRefreshToken(REFRESH_1);
         accessToken.setTokenType(TOKEN_TYPE_1);
 
-        AccessTokenRepository.getRepository().upsertAccessToken(accessToken);
+        TokenUtil.saveTokenInfoByPassword(accessToken);
 
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
     }
 
     private boolean[] getFinished() {
@@ -74,7 +80,7 @@ public class OpenActionTest {
 
         await().until(() -> finished[0]);
 
-        ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
+        ResAccessToken accessToken = TokenUtil.getTokenObject();
         assertThat(accessToken, is(notNullValue()));
         assertThat(accessToken.getAccessToken(), is(ACCESS_1));
         assertThat(accessToken.getRefreshToken(), is(REFRESH_1));
@@ -86,7 +92,7 @@ public class OpenActionTest {
 
         action.execute(null);
 
-        ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
+        ResAccessToken accessToken = TokenUtil.getTokenObject();
         assertThat(accessToken, is(notNullValue()));
         assertThat(accessToken.getAccessToken(), is(ACCESS_1));
         assertThat(accessToken.getRefreshToken(), is(REFRESH_1));
@@ -106,7 +112,7 @@ public class OpenActionTest {
 
         await().until(() -> finished[0]);
 
-        ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
+        ResAccessToken accessToken = TokenUtil.getTokenObject();
         assertThat(accessToken, is(notNullValue()));
         assertThat(accessToken.getAccessToken().length(), is(equalTo(0)));
         assertThat(accessToken.getRefreshToken().length(), is(equalTo(0)));
@@ -128,7 +134,7 @@ public class OpenActionTest {
         action.execute(Uri.parse(String.format("tosslab://open?access_token=%1s&refresh_token=%2s", newAccessToken, newRefreshToken)));
         await().until(() -> finished[0]);
 
-        ResAccessToken newToken = AccessTokenRepository.getRepository().getAccessToken();
+        ResAccessToken newToken = TokenUtil.getTokenObject();
         assertThat(newToken, is(notNullValue()));
         assertThat(newToken.getAccessToken(), is(equalTo(accessToken.getAccessToken())));
         assertThat(newToken.getRefreshToken(), is(equalTo(accessToken.getRefreshToken())));

@@ -18,7 +18,6 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
-import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.network.SimpleApiRequester;
 import com.tosslab.jandi.app.network.client.platform.PlatformApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -28,7 +27,9 @@ import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.utils.ApplicationActivateDetector;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.image.BitmapMemoryCacheSupplier;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
@@ -177,14 +178,14 @@ public class JandiApplication extends MultiDexApplication {
         String accessTokenType = JandiPreference.getAccessTokenType(this);
 
         // DB 에 저장된 정보
-        ResAccessToken savedAccessToken = AccessTokenRepository.getRepository().getAccessToken();
+        ResAccessToken savedAccessToken = TokenUtil.getTokenObject();
         String accessTokenFromRepository = savedAccessToken != null ? savedAccessToken.getAccessToken() : null;
         if (TextUtils.isEmpty(accessTokenFromRepository)) {
             ResAccessToken newToken = new ResAccessToken();
             newToken.setAccessToken(accessToken);
             newToken.setRefreshToken(refreshToken);
             newToken.setTokenType(accessTokenType);
-            AccessTokenRepository.getRepository().upsertAccessToken(newToken);
+            TokenUtil.saveTokenInfoByPassword(newToken);
         }
 
         JandiPreference.removeTokenInfo(this);
@@ -245,8 +246,7 @@ public class JandiApplication extends MultiDexApplication {
     private void updatePlatformStatus(boolean active) {
         LogUtil.i("PlatformApi", "updatePlatformStatus - " + active);
 
-        ResAccessToken savedAccessToken = AccessTokenRepository.getRepository().getAccessToken();
-        String accessToken = savedAccessToken != null ? savedAccessToken.getAccessToken() : null;
+        String accessToken = TokenUtil.getAccessToken();
         if (TextUtils.isEmpty(accessToken)) {
             return;
         }
@@ -261,10 +261,13 @@ public class JandiApplication extends MultiDexApplication {
     }
 
     private void trackApplicationActive() {
+        if (BuildConfig.DEBUG) {
+            return;
+        }
         Sprinkler sprinkler = Sprinkler.with(this);
         if (sprinkler.isFlushRetrieverStopped()) {
-            sprinkler.track(sprinkler.getDefaultTrack());
-            sprinkler.flush();
+            AnalyticsUtil.trackSprinkler(sprinkler.getDefaultTrack());
+            AnalyticsUtil.flushSprinkler();
             sprinkler.startFlushRetriever();
         }
         sprinkler.setActive(true);

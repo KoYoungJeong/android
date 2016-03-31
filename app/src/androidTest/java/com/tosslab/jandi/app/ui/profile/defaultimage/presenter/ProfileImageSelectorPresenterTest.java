@@ -6,6 +6,7 @@ import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -28,6 +29,11 @@ public class ProfileImageSelectorPresenterTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
     }
     @Before
     public void setUp() throws Exception {

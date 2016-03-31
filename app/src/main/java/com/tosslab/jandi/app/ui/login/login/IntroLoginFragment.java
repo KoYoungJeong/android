@@ -27,7 +27,6 @@ import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
@@ -60,11 +59,10 @@ public class IntroLoginFragment extends Fragment implements UiUtils.KeyboardHand
 
     @AfterViews
     void init() {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.ScreenView)
-                        .property(PropertyKey.ScreenView, ScreenViewProperty.LOGIN_PAGE)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.ScreenView)
+                .property(PropertyKey.ScreenView, ScreenViewProperty.LOGIN_PAGE)
+                .build());
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.SignIn);
     }

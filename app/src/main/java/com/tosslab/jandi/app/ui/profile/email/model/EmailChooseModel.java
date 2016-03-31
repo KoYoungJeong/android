@@ -14,7 +14,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.LanguageUtil;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
@@ -105,47 +105,43 @@ public class EmailChooseModel {
 
     public void trackChangeAccountEmailSuccess(String accountId) {
         String email = getPrimaryEmail();
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.ChangeAccountPrimaryEmail)
-                        .accountId(accountId)
-                        .property(PropertyKey.ResponseSuccess, true)
-                        .property(PropertyKey.Email, email)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.ChangeAccountPrimaryEmail)
+                .accountId(accountId)
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.Email, email)
+                .build());
 
     }
 
     public void trackChangeAccountEmailFail(int errorCode) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.ChangeAccountPrimaryEmail)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, false)
-                        .property(PropertyKey.ErrorCode, errorCode)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.ChangeAccountPrimaryEmail)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
 
     }
 
     public void trackRequestVerifyEmailSuccess() {
         String email = getPrimaryEmail();
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.RequestVerificationEmail)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, true)
-                        .property(PropertyKey.Email, email)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.RequestVerificationEmail)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.Email, email)
+                .build());
 
     }
 
     public void trackRequestVerifyEmailFail(int errorCode) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.RequestVerificationEmail)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, false)
-                        .property(PropertyKey.ErrorCode, errorCode)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.RequestVerificationEmail)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
 
     }
 }
