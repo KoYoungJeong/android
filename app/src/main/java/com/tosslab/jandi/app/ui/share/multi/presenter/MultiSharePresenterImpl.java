@@ -74,12 +74,14 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                         try {
                             ResLeftSideMenu leftSideMenu = shareModel.getLeftSideMenu(teamId);
                             shareModel.updateLeftSideMenu(leftSideMenu);
-                            shareSelectModel = shareModel.getShareSelectModel(teamId);
-                            subscriber.onNext(shareSelectModel);
                         } catch (RetrofitException e) {
                             subscriber.onError(e);
                         }
                     }
+
+                    shareSelectModel = shareModel.getShareSelectModel(teamId);
+                    subscriber.onNext(shareSelectModel);
+                    subscriber.onCompleted();
 
                     subscriber.onCompleted();
                 })

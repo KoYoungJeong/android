@@ -51,6 +51,7 @@ public class StarMentionListModelTest {
     @Before
     public void setUp() throws Exception {
         starMentionListModel = new StarMentionListModel();
+        starMentionListModel.initObject();
     }
 
     @Test
