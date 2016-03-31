@@ -14,12 +14,12 @@
         tools:replace="android:icon, android:allowBackup">
 
         // 삼성폰 멀티윈도우
-        <uses-library
-            android:name="com.sec.android.app.multiwindow"
-            android:required="false"/>
         <meta-data
             android:name="com.samsung.android.sdk.multiwindow.enable"
             android:value="true"/>
+        <meta-data
+            android:name="com.sec.android.multiwindow.STYLE"
+            android:value="fixedRatio"/>
         <meta-data
             android:name="com.sec.android.support.multiwindow"
             android:value="true"/>
@@ -60,6 +60,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER"/>
+
             </intent-filter>
         </activity>
 
@@ -245,10 +246,6 @@
             android:name=".push.PushInterfaceActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/JandiTheme.PushIntro"/>
-
-        <activity
-            android:name="com.tosslab.jandi.app.ui.profile.crop.JandiCropImageActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"/>
 
         <activity
             android:name=".ui.share.MainShareActivity_"
