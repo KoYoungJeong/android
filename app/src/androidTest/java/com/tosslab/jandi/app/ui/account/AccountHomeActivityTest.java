@@ -35,6 +35,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isSelected;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.jayway.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
@@ -60,6 +61,8 @@ public class AccountHomeActivityTest {
         rule.launchActivity(null);
 
         activity = rule.getActivity();
+
+        await().until(() -> activity.teamLayout.getChildCount() > 0);
     }
 
     @Test

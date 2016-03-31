@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.entities;
 
+import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -42,6 +43,7 @@ public class EntityChooseActivityTest {
 
         rule.launchActivity(null);
         activity = rule.getActivity();
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
     }
 

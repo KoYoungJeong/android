@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.members;
 
 import android.content.Intent;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -40,6 +41,7 @@ public class MembersListActivityTest {
         i.putExtra("type", MembersListActivity.TYPE_MEMBERS_LIST_TOPIC);
         rule.launchActivity(i);
         activity = rule.getActivity();
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
         membersListPresenter = MembersListPresenterImpl_.getInstance_(activity);
         membersListPresenter.setView(activity);
     }

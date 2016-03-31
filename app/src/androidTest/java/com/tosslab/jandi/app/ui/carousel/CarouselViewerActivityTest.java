@@ -35,6 +35,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.jayway.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -73,6 +74,8 @@ public class CarouselViewerActivityTest {
         startIntent.putExtra("startLinkId", latestFileId);
         rule.launchActivity(startIntent);
         activity = rule.getActivity();
+
+        await().until(() -> activity.viewPager.getChildCount() > 0);
 
     }
 

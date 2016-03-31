@@ -113,6 +113,8 @@ public class BaseInitUtil {
 
     public static void userSignin(String testId) {
 
+        clear();
+
         if (TextUtils.isEmpty(testId)) {
             testId = TEST1_EMAIL;
         }

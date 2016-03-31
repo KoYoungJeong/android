@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.entities.disabled.view;
 
+import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -43,6 +44,7 @@ public class DisabledEntityChooseActivityTest {
     public void setUp() throws Exception {
         rule.launchActivity(null);
         activity = rule.getActivity();
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
     }
 

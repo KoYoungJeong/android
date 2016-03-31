@@ -28,6 +28,7 @@ import static android.support.test.espresso.matcher.RootMatchers.isDialog;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.jayway.awaitility.Awaitility.await;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.fail;
@@ -53,6 +54,8 @@ public class ModifyProfileActivityTest {
     public void setUp() throws Exception {
         rule.launchActivity(null);
         activity = rule.getActivity();
+
+        await().until(() -> activity.tvProfileUserEmail.length() > 0);
     }
 
     @Test
