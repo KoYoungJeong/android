@@ -69,12 +69,6 @@ public class InviteEmailActivity extends BaseAppCompatActivity
 
     private InviteEmailListAdapter adapter;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setNeedUnLockPassCode(false);
-    }
-
     @AfterViews
     void initView() {
         setUpActionbar();
