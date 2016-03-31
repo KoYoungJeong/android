@@ -114,6 +114,7 @@ public class CarouselViewerActivityTest {
         assertThat(activity.viewPager.getCurrentItem(), is(equalTo(carousel.size())));
     }
 
+    @Ignore
     @Test
     public void testSetInitFail() throws Throwable {
 
