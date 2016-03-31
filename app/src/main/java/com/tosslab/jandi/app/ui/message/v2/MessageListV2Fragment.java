@@ -1922,7 +1922,6 @@ public class MessageListV2Fragment extends Fragment implements
             ResMessages.Link item = messageAdapter.getItem(position);
             item.message.status = archivedStatus;
             item.message.createTime = new Date();
-
         }
 
         List<Integer> commentIndexes = messageAdapter.indexByFeedbackId(messageId);
