@@ -22,7 +22,7 @@ import static org.mockito.Mockito.verify;
 /**
  * Created by tonyjs on 16. 3. 28..
  */
-//@Ignore
+@Ignore
 @RunWith(AndroidJUnit4.class)
 public class FingerprintAuthPresenterTest {
 
