@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.account.devices;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqDeviceToken;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
@@ -20,8 +20,8 @@ import retrofit2.http.PUT;
 
 public class DeviceApi extends ApiTemplate<DeviceApi.Api> {
 
-    public DeviceApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
-        super(Api.class, retrofitAdapterBuilder);
+    public DeviceApi(RetrofitBuilder retrofitBuilder) {
+        super(Api.class, retrofitBuilder);
     }
 
     public ResAccountInfo registerNotificationToken(ReqNotificationRegister reqNotificationRegister) throws RetrofitException {

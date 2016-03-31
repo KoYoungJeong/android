@@ -7,7 +7,7 @@ import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
 import org.junit.Before;
@@ -25,10 +25,10 @@ public class JandiSocketServiceModelTest {
     @Before
     public void setUp() throws Exception {
         jandiSocketServiceModel = new JandiSocketServiceModel(JandiApplication.getContext(),
-                () -> new AccountApi(RetrofitAdapterBuilder.newInstance()),
-                () -> new MessageApi(RetrofitAdapterBuilder.newInstance()),
-                () -> new LoginApi(RetrofitAdapterBuilder.newInstance()),
-                () -> new EventsApi(RetrofitAdapterBuilder.newInstance()));
+                () -> new AccountApi(RetrofitBuilder.newInstance()),
+                () -> new MessageApi(RetrofitBuilder.newInstance()),
+                () -> new LoginApi(RetrofitBuilder.newInstance()),
+                () -> new EventsApi(RetrofitBuilder.newInstance()));
     }
 
 

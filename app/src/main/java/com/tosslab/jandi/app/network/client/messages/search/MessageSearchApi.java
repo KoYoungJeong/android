@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.messages.search;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 
 import retrofit2.Call;
@@ -13,8 +13,8 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class MessageSearchApi extends ApiTemplate<MessageSearchApi.Api> {
-    public MessageSearchApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
-        super(Api.class, retrofitAdapterBuilder);
+    public MessageSearchApi(RetrofitBuilder retrofitBuilder) {
+        super(Api.class, retrofitBuilder);
     }
 
     public ResMessageSearch searchMessages(long teamId, String query, int page,

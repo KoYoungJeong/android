@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.publictopic;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
@@ -22,8 +22,8 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class ChannelApi extends ApiTemplate<ChannelApi.Api> {
-    public ChannelApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
-        super(Api.class, retrofitAdapterBuilder);
+    public ChannelApi(RetrofitBuilder retrofitBuilder) {
+        super(Api.class, retrofitBuilder);
     }
 
     // 채널 생성

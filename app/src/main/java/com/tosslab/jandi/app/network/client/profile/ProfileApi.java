@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.profile;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
@@ -19,8 +19,8 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public class ProfileApi extends ApiTemplate<ProfileApi.Api> {
-    public ProfileApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
-        super(Api.class, retrofitAdapterBuilder);
+    public ProfileApi(RetrofitBuilder retrofitBuilder) {
+        super(Api.class, retrofitBuilder);
     }
 
     public ResLeftSideMenu.User updateMemberProfile(long memberId, ReqUpdateProfile reqUpdateProfile) throws RetrofitException {

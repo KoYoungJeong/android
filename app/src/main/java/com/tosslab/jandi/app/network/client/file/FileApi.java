@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.file;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -25,8 +25,8 @@ import retrofit2.http.Query;
 
 public class FileApi extends ApiTemplate<FileApi.Api> {
 
-    public FileApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
-        super(Api.class, retrofitAdapterBuilder);
+    public FileApi(RetrofitBuilder retrofitBuilder) {
+        super(Api.class, retrofitBuilder);
     }
 
     public ResCommon deleteFile(long teamId, long fileId) throws RetrofitException {

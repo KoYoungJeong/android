@@ -49,7 +49,7 @@ import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.main.ConfigApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -823,7 +823,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
     private ResConfig getConfigInfo() {
         try {
-            return new ConfigApi(RetrofitAdapterBuilder.newInstance()).getConfig();
+            return new ConfigApi(RetrofitBuilder.newInstance()).getConfig();
         } catch (RetrofitException e) {
             e.printStackTrace();
         }

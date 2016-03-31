@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.teams;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -21,8 +21,8 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public class TeamApi extends ApiTemplate<TeamApi.Api> {
-    public TeamApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
-        super(Api.class, retrofitAdapterBuilder);
+    public TeamApi(RetrofitBuilder retrofitBuilder) {
+        super(Api.class, retrofitBuilder);
     }
 
     public ResTeamDetailInfo createNewTeam(ReqCreateNewTeam req) throws RetrofitException {

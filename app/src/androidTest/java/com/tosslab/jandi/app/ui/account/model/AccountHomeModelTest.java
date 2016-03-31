@@ -11,7 +11,7 @@ import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.main.LeftSideApi;
 import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -65,7 +65,7 @@ public class AccountHomeModelTest {
     public void testGetTeamInfos() throws Exception {
 
         // Given
-        List<ResPendingTeamInfo> pendingTeamInfo = new InvitationApi(RetrofitAdapterBuilder.newInstance()).getPedingTeamInfo();
+        List<ResPendingTeamInfo> pendingTeamInfo = new InvitationApi(RetrofitBuilder.newInstance()).getPedingTeamInfo();
         int pendingCount = 0;
         for (ResPendingTeamInfo resPendingTeamInfo : pendingTeamInfo) {
             if (TextUtils.equals(resPendingTeamInfo.getStatus(), "pending")) {
@@ -95,13 +95,13 @@ public class AccountHomeModelTest {
         accountHomeModel.updateAccountName(changedName);
 
         // Then
-        ResAccountInfo newAccountInfo = new AccountApi(RetrofitAdapterBuilder.newInstance()).getAccountInfo();
+        ResAccountInfo newAccountInfo = new AccountApi(RetrofitBuilder.newInstance()).getAccountInfo();
         String newName = newAccountInfo.getName();
 
         assertThat(originName, is(not(equalTo(newName))));
         assertThat(changedName, is(equalTo(newName)));
 
-        new AccountProfileApi(RetrofitAdapterBuilder.newInstance()).changeName(new ReqProfileName("Steve"));
+        new AccountProfileApi(RetrofitBuilder.newInstance()).changeName(new ReqProfileName("Steve"));
 
     }
 
@@ -159,7 +159,7 @@ public class AccountHomeModelTest {
         List<ResAccountInfo.UserTeam> accountTeams = AccountRepository.getRepository().getAccountTeams();
         long teamId = accountTeams.get(accountTeams.size() - 1).getTeamId();
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
-        ResLeftSideMenu leftSideMenu = new LeftSideApi(RetrofitAdapterBuilder.newInstance()).getInfosForSideMenu(teamId);
+        ResLeftSideMenu leftSideMenu = new LeftSideApi(RetrofitBuilder.newInstance()).getInfosForSideMenu(teamId);
 
         // When
         EntityManager entityManager = accountHomeModel.updateEntityInfo(JandiApplication.getContext(), leftSideMenu);

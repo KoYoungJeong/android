@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.publictopic.messages;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -21,8 +21,8 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class ChannelMessageApi extends ApiTemplate<ChannelMessageApi.Api> {
-    public ChannelMessageApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
-        super(Api.class, retrofitAdapterBuilder);
+    public ChannelMessageApi(RetrofitBuilder retrofitBuilder) {
+        super(Api.class, retrofitBuilder);
     }
 
     public ResMessages getPublicTopicMessages(long teamId, long channelId,

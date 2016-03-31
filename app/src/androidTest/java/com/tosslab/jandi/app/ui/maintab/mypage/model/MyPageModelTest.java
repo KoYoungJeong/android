@@ -4,7 +4,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
 
@@ -41,7 +41,7 @@ public class MyPageModelTest {
     @Before
     public void setup() throws Exception {
 
-        model = new MyPageModel(() -> new MessageApi(RetrofitAdapterBuilder.newInstance()));
+        model = new MyPageModel(() -> new MessageApi(RetrofitBuilder.newInstance()));
     }
 
     @Test

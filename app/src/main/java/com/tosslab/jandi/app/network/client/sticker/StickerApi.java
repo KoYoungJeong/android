@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.sticker;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 
@@ -16,8 +16,8 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class StickerApi extends ApiTemplate<StickerApi.Api> {
-    public StickerApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
-        super(Api.class, retrofitAdapterBuilder);
+    public StickerApi(RetrofitBuilder retrofitBuilder) {
+        super(Api.class, retrofitBuilder);
     }
 
     public ResCommon sendSticker(ReqSendSticker reqSendSticker) throws RetrofitException {

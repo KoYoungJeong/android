@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
@@ -69,7 +69,7 @@ public class TopicCreateModelTest {
             assertThat(entity.isAutoJoin(), is(true));
 
             // Restore
-            new ChannelApi(RetrofitAdapterBuilder.newInstance()).deleteTopic(topic.id, new ReqDeleteTopic(EntityManager.getInstance().getTeamId()));
+            new ChannelApi(RetrofitBuilder.newInstance()).deleteTopic(topic.id, new ReqDeleteTopic(EntityManager.getInstance().getTeamId()));
         }
 
         {
@@ -102,7 +102,7 @@ public class TopicCreateModelTest {
             assertThat(entity.isAutoJoin(), is(false));
 
             // Restore
-            new GroupApi(RetrofitAdapterBuilder.newInstance()).deleteGroup(EntityManager.getInstance().getTeamId(), topic.id);
+            new GroupApi(RetrofitBuilder.newInstance()).deleteGroup(EntityManager.getInstance().getTeamId(), topic.id);
         }
 
     }

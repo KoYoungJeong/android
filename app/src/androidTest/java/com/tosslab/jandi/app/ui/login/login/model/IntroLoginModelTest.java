@@ -6,7 +6,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -114,11 +114,11 @@ public class IntroLoginModelTest {
 
     @Test
     public void testSaveAccountInfo() throws Exception {
-        ResAccessToken accessToken = new LoginApi(RetrofitAdapterBuilder.newInstance()).getAccessToken(
+        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.newInstance()).getAccessToken(
                 ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_EMAIL, BaseInitUtil.TEST_PASSWORD));
 
         TokenUtil.saveTokenInfoByPassword(accessToken);
-        ResAccountInfo accountInfo = new AccountApi(RetrofitAdapterBuilder.newInstance()).getAccountInfo();
+        ResAccountInfo accountInfo = new AccountApi(RetrofitBuilder.newInstance()).getAccountInfo();
         boolean isSaved = introLoginModel.saveAccountInfo(accountInfo);
         assertThat(isSaved, is(true));
 
@@ -140,7 +140,7 @@ public class IntroLoginModelTest {
     @Test
     public void testGetAccountInfo_Has_Token() throws Exception {
 
-        ResAccessToken accessToken = new LoginApi(RetrofitAdapterBuilder.newInstance()).getAccessToken(
+        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.newInstance()).getAccessToken(
                 ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_EMAIL, BaseInitUtil.TEST_PASSWORD));
 
         TokenUtil.saveTokenInfoByPassword(accessToken);

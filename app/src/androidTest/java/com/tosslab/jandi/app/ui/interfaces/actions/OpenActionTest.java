@@ -5,7 +5,7 @@ import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.network.client.main.LoginApi;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -30,6 +30,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@Ignore
 @RunWith(AndroidJUnit4.class)
 public class OpenActionTest {
 
@@ -99,7 +100,6 @@ public class OpenActionTest {
         assertThat(accessToken.getTokenType(), is(TOKEN_TYPE_1));
     }
 
-    @Ignore
     @Test
     public void testExecute_Wrong_QueryParams() throws Exception {
 
@@ -125,7 +125,7 @@ public class OpenActionTest {
 
         boolean[] finished = getFinished();
 
-        ResAccessToken accessToken = new LoginApi(RetrofitAdapterBuilder.newInstance()).getAccessToken(
+        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.newInstance()).getAccessToken(
                 ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST1_EMAIL, BaseInitUtil.TEST_PASSWORD));
 
 

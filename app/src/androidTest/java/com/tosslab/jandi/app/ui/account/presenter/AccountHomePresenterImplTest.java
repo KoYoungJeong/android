@@ -7,7 +7,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
@@ -71,6 +71,8 @@ public class AccountHomePresenterImplTest {
 
         // Then
         verify(viewMock).invalidAccess();
+
+        BaseInitUtil.initData();
     }
 
     @Test
@@ -201,7 +203,7 @@ public class AccountHomePresenterImplTest {
         assertThat(newSavedName, is(not(equalTo(originName))));
         assertThat(newSavedName, is(equalTo(newName)));
 
-        new AccountProfileApi(RetrofitAdapterBuilder.newInstance()).changeName(new ReqProfileName(originName));
+        new AccountProfileApi(RetrofitBuilder.newInstance()).changeName(new ReqProfileName(originName));
     }
 
     @Ignore

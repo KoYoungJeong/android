@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.main;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 
@@ -14,8 +14,8 @@ import retrofit2.http.POST;
 
 public class LoginApi extends ApiTemplate<LoginApi.Api> {
 
-    public LoginApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
-        super(LoginApi.Api.class, retrofitAdapterBuilder);
+    public LoginApi(RetrofitBuilder retrofitBuilder) {
+        super(LoginApi.Api.class, retrofitBuilder);
     }
 
     public ResAccessToken getAccessToken(ReqAccessToken login) throws RetrofitException {

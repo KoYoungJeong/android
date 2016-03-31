@@ -11,11 +11,13 @@ public class SignOutUtil {
         ParseUpdateUtil.deleteChannelOnServer();
         OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
                 .clearAllData();
+        TokenUtil.clearTokenInfo();
     }
 
     public static void initSignData() {
         ParseUpdateUtil.deleteChannelOnServer();
         OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
                 .clearAllData();
+        TokenUtil.clearTokenInfo();
     }
 }

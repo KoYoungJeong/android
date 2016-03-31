@@ -2,18 +2,18 @@ package com.tosslab.jandi.app.network.client;
 
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 
 import retrofit2.Call;
 
 public class ApiTemplate<API> {
 
-    private final RetrofitAdapterBuilder retrofitAdapterBuilder;
+    private final RetrofitBuilder retrofitBuilder;
     private final Class<API> clazz;
 
-    public ApiTemplate(Class<API> clazz, RetrofitAdapterBuilder retrofitAdapterBuilder) {
+    public ApiTemplate(Class<API> clazz, RetrofitBuilder retrofitBuilder) {
         this.clazz = clazz;
-        this.retrofitAdapterBuilder = retrofitAdapterBuilder;
+        this.retrofitBuilder = retrofitBuilder;
     }
 
     public <RESPONSE> RESPONSE call(Action0<RESPONSE> action0) throws RetrofitException {
@@ -28,7 +28,7 @@ public class ApiTemplate<API> {
     }
 
     protected API getApi() {
-        return retrofitAdapterBuilder.create(clazz);
+        return retrofitBuilder.create(clazz);
     }
 
 

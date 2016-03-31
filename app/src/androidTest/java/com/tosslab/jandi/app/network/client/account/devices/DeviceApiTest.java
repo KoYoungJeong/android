@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.account.devices;
 import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqDeviceToken;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
@@ -40,7 +40,7 @@ public class DeviceApiTest {
 
     @Before
     public void setUp() throws Exception {
-        deviceApi = new DeviceApi(RetrofitAdapterBuilder.newInstance());
+        deviceApi = new DeviceApi(RetrofitBuilder.newInstance());
 
     }
 

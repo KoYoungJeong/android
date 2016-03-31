@@ -1,10 +1,8 @@
 package com.tosslab.jandi.app.ui.intro.presenter;
 
-import android.app.Application;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.ApplicationTestCase;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.models.ResConfig;
@@ -25,11 +23,7 @@ import static org.mockito.Mockito.when;
  * Created by tonyjs on 15. 11. 10..
  */
 @RunWith(AndroidJUnit4.class)
-public class IntroActivityPresenterTest extends ApplicationTestCase<Application> {
-
-    public IntroActivityPresenterTest() {
-        super(Application.class);
-    }
+public class IntroActivityPresenterTest {
 
     @Before
     public void init() throws Exception {

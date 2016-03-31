@@ -23,20 +23,21 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 22..
  */
-public class RetrofitAdapterBuilder {
+public class RetrofitBuilder {
 
     private static Retrofit retrofit;
 
 
-    private RetrofitAdapterBuilder() {}
+    private RetrofitBuilder() {}
 
-    public static RetrofitAdapterBuilder newInstance() {
-        return new RetrofitAdapterBuilder();
+    public static RetrofitBuilder newInstance() {
+        return new RetrofitBuilder();
     }
 
     private Retrofit getRestAdapter() {
@@ -66,10 +67,10 @@ public class RetrofitAdapterBuilder {
         }
 
         if (BuildConfig.DEBUG) {
-//            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-//            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-//
-//            okhttpClientBuilder.addInterceptor(logging);
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+            okhttpClientBuilder.addInterceptor(logging);
 
         }
 

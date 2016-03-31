@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.settings;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
@@ -16,8 +16,8 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class StarredEntityApi extends ApiTemplate<StarredEntityApi.Api> {
-    public StarredEntityApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
-        super(Api.class, retrofitAdapterBuilder);
+    public StarredEntityApi(RetrofitBuilder retrofitBuilder) {
+        super(Api.class, retrofitBuilder);
     }
 
     public ResCommon enableFavorite(ReqTeam reqTeam, long entityId) throws RetrofitException {

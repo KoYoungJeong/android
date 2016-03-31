@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.chat;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
@@ -16,8 +16,8 @@ import retrofit2.http.Headers;
 import retrofit2.http.Path;
 
 public class ChatApi extends ApiTemplate<ChatApi.Api> {
-    public ChatApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
-        super(Api.class, retrofitAdapterBuilder);
+    public ChatApi(RetrofitBuilder retrofitBuilder) {
+        super(Api.class, retrofitBuilder);
     }
 
     public List<ResChat> getChatList(long memberId) throws RetrofitException {

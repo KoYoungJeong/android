@@ -6,7 +6,7 @@ import com.tosslab.jandi.app.network.client.account.password.AccountPasswordApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
@@ -75,7 +75,7 @@ public class IntroLoginModel {
     }
 
     public ResCommon requestPasswordReset(String email) throws RetrofitException {
-        return new AccountPasswordApi(RetrofitAdapterBuilder.newInstance()).resetPassword(new ReqAccountEmail(email, LanguageUtil.getLanguage()));
+        return new AccountPasswordApi(RetrofitBuilder.newInstance()).resetPassword(new ReqAccountEmail(email, LanguageUtil.getLanguage()));
     }
 
     public void trackSignInSuccess() {

@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.teams.folder;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqCreateFolder;
 import com.tosslab.jandi.app.network.models.ReqRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ReqUpdateFolder;
@@ -26,8 +26,8 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public class FolderApi extends ApiTemplate<FolderApi.Api> {
-    public FolderApi(RetrofitAdapterBuilder retrofitAdapterBuilder) {
-        super(Api.class, retrofitAdapterBuilder);
+    public FolderApi(RetrofitBuilder retrofitBuilder) {
+        super(Api.class, retrofitBuilder);
     }
 
     public ResCreateFolder createFolder(long teamId, ReqCreateFolder reqCreateFolder) throws RetrofitException {

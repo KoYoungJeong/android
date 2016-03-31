@@ -5,10 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
@@ -17,6 +14,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -79,8 +77,7 @@ public class OpenAction implements Action {
 
         try {
 
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
-            helper.clearAllData();
+            SignOutUtil.removeSignData();
 
             TokenUtil.saveTokenInfoByRefresh(accessToken);
             ResAccountInfo accountInfo = accountApi.get().getAccountInfo();
