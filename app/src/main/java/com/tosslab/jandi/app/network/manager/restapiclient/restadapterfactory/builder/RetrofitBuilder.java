@@ -42,10 +42,13 @@ public class RetrofitBuilder {
 
     private Retrofit getRestAdapter() {
 
-        if (retrofit != null) {
-            return retrofit;
+        if (retrofit == null) {
+            retrofit = initRetrofit();
         }
+        return retrofit;
+    }
 
+    private Retrofit initRetrofit() {
         List<RestAdapterDecor> restAdapterDecors = new ArrayList<>();
         restAdapterDecors.add(new ResponseConverter());
 
@@ -78,8 +81,7 @@ public class RetrofitBuilder {
         for (RestAdapterDecor restAdapterDecor : restAdapterDecors) {
             retofitBuilder = restAdapterDecor.addRestAdapterProperty(retofitBuilder);
         }
-        retrofit = retofitBuilder.build();
-        return retrofit;
+        return retofitBuilder.build();
     }
 
     private SSLSocketFactory createSslSocketFactory() throws KeyManagementException, NoSuchAlgorithmException {
