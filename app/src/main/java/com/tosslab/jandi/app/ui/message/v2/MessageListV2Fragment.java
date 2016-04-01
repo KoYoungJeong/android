@@ -186,9 +186,9 @@ import rx.android.schedulers.AndroidSchedulers;
 @OptionsMenu(R.menu.message_list_menu_basic)
 @EFragment(R.layout.fragment_message_list)
 public class MessageListV2Fragment extends Fragment implements
+        MessageListV2Presenter.View,
         MessageListV2Activity.OnBackPressedListener,
-        MessageListV2Activity.OnKeyPressListener,
-        MessageListV2Presenter.View {
+        MessageListV2Activity.OnKeyPressListener {
 
     public static final String EXTRA_FILE_DELETE = "file_delete";
     public static final String EXTRA_FILE_ID = "file_id";
@@ -1565,9 +1565,9 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
 
-        if (TextUtils.equals(messageType, "topic_leave") ||
-                TextUtils.equals(messageType, "topic_join") ||
-                TextUtils.equals(messageType, "topic_invite")) {
+        if (TextUtils.equals(messageType, "topic_leave")
+                || TextUtils.equals(messageType, "topic_join")
+                || TextUtils.equals(messageType, "topic_invite")) {
 
             if (isForeground) {
                 initEmptyLayout();
@@ -1577,8 +1577,9 @@ public class MessageListV2Fragment extends Fragment implements
 
             updateMentionInfo();
         } else {
+            messageListPresenter.updateMarker();
+
             if (!isForeground) {
-                messageListPresenter.updateMarker();
                 return;
             }
 
@@ -1839,7 +1840,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private DummyMessageLink getDummyMessageLink(long localId) {
-        int position = messageAdapter.getDummeMessagePositionByLocalId(localId);
+        int position = messageAdapter.getDummyMessagePositionByLocalId(localId);
 
         return ((DummyMessageLink) messageAdapter.getItem(position));
     }

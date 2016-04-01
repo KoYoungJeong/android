@@ -94,6 +94,8 @@ public class MyPageFragment extends Fragment implements MyPageView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        isLaidOut = false;
+
         injectComponent();
 
         setHasOptionsMenu(true);

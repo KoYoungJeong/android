@@ -415,7 +415,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         return indexList;
     }
 
-    public int getDummeMessagePositionByLocalId(long localId) {
+    public int getDummyMessagePositionByLocalId(long localId) {
         if (localId <= 0) {
             return -1;
         }

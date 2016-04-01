@@ -99,6 +99,10 @@ public class TeamsPresenterImpl implements TeamsPresenter {
 
     @Override
     public void onTeamJoinAction(long teamId) {
+        if (model.isCurrentTeam(teamId)) {
+            return;
+        }
+
         view.showProgressWheel();
         model.getUpdateEntityInfoObservable(teamId)
                 .subscribeOn(Schedulers.io())

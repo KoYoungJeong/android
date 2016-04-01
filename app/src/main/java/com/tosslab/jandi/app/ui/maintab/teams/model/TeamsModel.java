@@ -210,4 +210,8 @@ public class TeamsModel {
 
         return errorMessage;
     }
+
+    public boolean isCurrentTeam(long teamId) {
+        return EntityManager.getInstance().getTeamId() == teamId;
+    }
 }
