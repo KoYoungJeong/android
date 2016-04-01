@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.TabClickEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
@@ -31,6 +32,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
+import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.folder.ExpandableTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.updated.UpdatedTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
@@ -464,6 +466,12 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     public void dismissProgressWheel() {
         if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
+        }
+    }
+
+    public void onEventMainThread(TabClickEvent event) {
+        if (event.getIndex() == MainTabPagerAdapter.TAB_TOPIC) {
+            lvMainTopic.scrollToPosition(0);
         }
     }
 

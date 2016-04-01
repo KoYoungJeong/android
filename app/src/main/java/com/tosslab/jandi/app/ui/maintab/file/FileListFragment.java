@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
+import com.tosslab.jandi.app.events.TabClickEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
@@ -48,6 +49,7 @@ import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
+import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
@@ -92,7 +94,7 @@ import rx.subjects.PublishSubject;
 public class FileListFragment extends Fragment implements SearchActivity.SearchSelectView {
 
     @ViewById(R.id.list_searched_files)
-    RecyclerView actualListView;
+    RecyclerView lvSearchFiles;
 
     @ViewById(R.id.layout_file_list_header)
     View headerView;
@@ -168,9 +170,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         setHasOptionsMenu(true);
 
         // Empty View를 가진 ListView 설정
-        actualListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        actualListView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
-        actualListView.setAdapter(searchedFileItemListAdapter);
+        lvSearchFiles.setLayoutManager(new LinearLayoutManager(getActivity()));
+        lvSearchFiles.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+        lvSearchFiles.setAdapter(searchedFileItemListAdapter);
 
         selectedTeamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
 
@@ -264,6 +266,12 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         SearchActivity_.intent(getActivity())
                 .isFromFiles(true)
                 .start();
+    }
+
+    public void onEventMainThread(TabClickEvent event) {
+        if (event.getIndex() == MainTabPagerAdapter.TAB_FILE) {
+            lvSearchFiles.scrollToPosition(0);
+        }
     }
 
     public void onEvent(RefreshOldFileEvent event) {
@@ -680,7 +688,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     @Override
     public void initSearchLayoutIfFirst() {
 
-        if (!isSearchLayoutFirst || headerView == null || actualListView == null) {
+        if (!isSearchLayoutFirst || headerView == null || lvSearchFiles == null) {
             return;
         }
 
@@ -698,7 +706,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         final int headerMinY = 0;
 
         int paddingTop = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48 + 64.5f, getResources().getDisplayMetrics());
-        actualListView.setPadding(actualListView.getPaddingLeft(), paddingTop, actualListView.getPaddingRight(), actualListView.getPaddingBottom());
+        lvSearchFiles.setPadding(lvSearchFiles.getPaddingLeft(), paddingTop, lvSearchFiles.getPaddingRight(), lvSearchFiles.getPaddingBottom());
 
         View uploadEmptyView = getActivity().findViewById(R.id.layout_file_list_empty);
         View searchEmptyView = getActivity().findViewById(R.id.layout_file_list_search_empty);
@@ -714,7 +722,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         loadingLayoutParams.topMargin = paddingTop;
         loadingView.setLayoutParams(loadingLayoutParams);
 
-        actualListView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        lvSearchFiles.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);

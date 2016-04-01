@@ -20,9 +20,11 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.TabClickEvent;
 import com.tosslab.jandi.app.events.messages.MentionToMeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
+import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.mypage.adapter.MyPageAdapter;
 import com.tosslab.jandi.app.ui.maintab.mypage.component.DaggerMyPageComponent;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
@@ -170,6 +172,14 @@ public class MyPageFragment extends Fragment implements MyPageView {
         }
 
         return super.onOptionsItemSelected(menuItem);
+    }
+
+    public void onEventMainThread(TabClickEvent event) {
+        if (event.getIndex() == MainTabPagerAdapter.TAB_MYPAGE) {
+            vgProfileLayout.animate()
+                    .translationY(0);
+            lvMyPage.scrollToPosition(0);
+        }
     }
 
     public void onEvent(MentionToMeEvent event) {

@@ -17,11 +17,13 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
+import com.tosslab.jandi.app.events.TabClickEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
+import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.team.adapter.TeamMemberListAdapter;
 import com.tosslab.jandi.app.ui.maintab.team.component.DaggerTeamComponent;
 import com.tosslab.jandi.app.ui.maintab.team.module.TeamModule;
@@ -232,6 +234,13 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
             return;
         }
         pbTeam.setVisibility(View.GONE);
+    }
+
+    public void onEventMainThread(TabClickEvent event) {
+        if (event.getIndex() == MainTabPagerAdapter.TAB_TEAM) {
+            changeToNormalMode();
+            lvTeam.scrollToPosition(0);
+        }
     }
 
     public void onEvent(TeamLeaveEvent event) {
