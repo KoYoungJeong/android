@@ -275,7 +275,10 @@ public class MessageListV2Presenter {
         }
 
         view.setMarkerInfo(roomId);
-        messagePointer.setLastReadLinkId(messageListModel.getLastReadLinkId(teamId, roomId));
+
+        long myId = EntityManager.getInstance().getMe().getId();
+        long lastReadLinkId = messageListModel.getLastReadLinkId(roomId, myId);
+        messagePointer.setLastReadLinkId(lastReadLinkId);
 
         messageListModel.updateMarkerInfo(teamId, roomId);
         messageListModel.setRoomId(roomId);
@@ -522,7 +525,6 @@ public class MessageListV2Presenter {
 
         boolean loadHistory = currentMessageState.loadHistory();
 
-
         if (loadHistory) {
             try {
                 newMessages = messageListModel.getNewMessage(lastUpdateLinkId);
@@ -553,16 +555,21 @@ public class MessageListV2Presenter {
             boolean hasMessages = firstCursorLinkId > 0 && hasMessages(firstCursorLinkId, currentItemCount);
             view.showEmptyView(!hasMessages);
 
+            messagePointer.setLastReadLinkId(-1);
+
             if (currentMessageState.isFirstLoadNewMessage()) {
                 currentMessageState.setIsFirstLoadNewMessage(false);
                 view.setUpLastReadLinkIdIfPosition();
-                view.saveCacheAndNotifyDataSetChanged(() -> view.moveLastReadLink());
+                view.saveCacheAndNotifyDataSetChanged(view::moveLastReadLink);
             }
             return;
         }
 
         boolean cacheMode = messageContainer.isCacheMode();
         if (cacheMode) {
+            LogUtil.w("tony", "size - " + newMessages.size());
+            Observable.from(newMessages)
+                    .subscribe(link -> LogUtil.d("tony", link.toString()));
             messageListModel.upsertMessages(roomId, newMessages);
         }
 
@@ -800,8 +807,8 @@ public class MessageListV2Presenter {
 
         if (localId > 0) {
             // insert to ui
-            view.saveCacheAndNotifyDataSetChanged(null);
-            view.moveLastPage();
+            view.saveCacheAndNotifyDataSetChanged(view::moveLastPage);
+
             // networking...
             SendingMessage sendingMessage = new SendingMessage(localId, reqSendMessage);
 
