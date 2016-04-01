@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.TabClickEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
@@ -32,7 +31,6 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
-import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.folder.ExpandableTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.updated.UpdatedTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
@@ -57,6 +55,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -88,7 +87,8 @@ import rx.android.schedulers.AndroidSchedulers;
  */
 @EFragment(R.layout.fragment_joined_topic_list)
 @OptionsMenu(R.menu.main_activity_menu)
-public class MainTopicListFragment extends Fragment implements MainTopicListPresenter.View {
+public class MainTopicListFragment extends Fragment
+        implements MainTopicListPresenter.View, ListScroller {
 
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
 
@@ -204,8 +204,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         mainTopicListPresenter.onInitViewList();
         FAButtonUtil.setFAButtonController(lvMainTopic, floatingActionMenu);
         hasOptionsMenu();
-
-
     }
 
     private void launchCreateTopicActivity() {
@@ -469,12 +467,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         }
     }
 
-    public void onEventMainThread(TabClickEvent event) {
-        if (event.getIndex() == MainTabPagerAdapter.TAB_TOPIC) {
-            lvMainTopic.scrollToPosition(0);
-        }
-    }
-
     public void onEvent(JoinableTopicCallEvent event) {
         JoinableTopicListActivity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -567,8 +559,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             }
         }
 
-        LogUtil.e("TopicList", "groupPosition = " + groupPosition + " childPosition = " + childPosition);
-
         if (groupPosition == -1) {
             expandableTopicAdapter.startAnimation();
             expandableTopicAdapter.notifyDataSetChanged();
@@ -582,11 +572,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         long packedPositionForChild =
                 RecyclerViewExpandableItemManager.getPackedPositionForChild(groupPosition, childPosition);
 
-        LogUtil.d("TopicList", "packedPositionForChild = " + packedPositionForChild);
-
         int flatPosition = expandableItemManager.getFlatPosition(packedPositionForChild);
-
-        LogUtil.i("TopicList", "flatPosition = " + flatPosition);
 
         int offset = lvMainTopic.getMeasuredHeight() / 2;
         if (offset <= 0) {
@@ -651,5 +637,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         ColoredToast.showWarning(getString(R.string.jandi_folder_alread_has_name));
     }
 
-
+    @Override
+    public void scrollToTop() {
+        lvMainTopic.scrollToPosition(0);
+    }
 }

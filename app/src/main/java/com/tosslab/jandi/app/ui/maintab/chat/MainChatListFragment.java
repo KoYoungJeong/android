@@ -10,7 +10,6 @@ import android.widget.ListView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
-import com.tosslab.jandi.app.events.TabClickEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
@@ -20,7 +19,6 @@ import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
-import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.chat.adapter.MainChatListAdapter;
 import com.tosslab.jandi.app.ui.maintab.chat.presenter.MainChatListPresenter;
 import com.tosslab.jandi.app.ui.maintab.chat.presenter.MainChatListPresenterImpl;
@@ -33,6 +31,7 @@ import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -53,7 +52,8 @@ import de.greenrobot.event.EventBus;
 
 @EFragment(R.layout.fragment_main_chat_list)
 @OptionsMenu(R.menu.main_activity_menu)
-public class MainChatListFragment extends Fragment implements MainChatListPresenter.View {
+public class MainChatListFragment extends Fragment
+        implements MainChatListPresenter.View, ListScroller {
 
     @Bean(MainChatListPresenterImpl.class)
     MainChatListPresenter mainChatListPresenter;
@@ -194,12 +194,6 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
         }
     }
 
-    public void onEventMainThread(TabClickEvent event) {
-        if (event.getIndex() == MainTabPagerAdapter.TAB_CHAT) {
-            lvChat.setSelectionFromTop(0, 0);
-        }
-    }
-
     public void onEventMainThread(ShowProfileEvent event) {
         if (foreground) {
             MemberProfileActivity_.intent(getActivity())
@@ -304,4 +298,8 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
         }
     }
 
+    @Override
+    public void scrollToTop() {
+        lvChat.setSelectionFromTop(0, 0);
+    }
 }

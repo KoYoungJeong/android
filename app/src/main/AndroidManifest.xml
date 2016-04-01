@@ -100,14 +100,14 @@
             android:name=".ui.maintab.MainTabActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullUser"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity
             android:name=".ui.message.v2.MessageListV2Activity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullUser"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity
@@ -250,8 +250,7 @@
 
         <activity
             android:name=".ui.profile.member.MemberProfileActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullUser"
             android:theme="@style/Jandi.NoTitle"/>
 
         <service android:name="com.parse.PushService"/>
@@ -401,12 +400,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.passcode.PassCodeActivity_"/>
+        <activity
+            android:name=".ui.passcode.PassCodeActivity_"
+            android:screenOrientation="fullUser"/>
         <activity android:name=".ui.web.PageNotFoundActivity_"/>
 
         <activity
             android:name=".ui.profile.defaultimage.ProfileImageSelectorActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="andorid.intent.action.VIEW"/>
@@ -426,7 +426,7 @@
 
         <activity
             android:name=".dummy.JandiDummyActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
         <activity
             android:name=".ui.entities.disabled.view.DisabledEntityChooseActivity_"

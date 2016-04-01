@@ -23,7 +23,6 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
-import com.tosslab.jandi.app.events.TabClickEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
@@ -49,7 +48,6 @@ import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
-import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
@@ -60,6 +58,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -91,7 +90,8 @@ import rx.subjects.PublishSubject;
  * Created by justinygchoi on 2014. 10. 13..
  */
 @EFragment(R.layout.fragment_file_list)
-public class FileListFragment extends Fragment implements SearchActivity.SearchSelectView {
+public class FileListFragment extends Fragment
+        implements SearchActivity.SearchSelectView, ListScroller {
 
     @ViewById(R.id.list_searched_files)
     RecyclerView lvSearchFiles;
@@ -132,7 +132,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @AfterInject
     void init() {
-        LogUtil.d("FileListFragment");
         mSearchQuery = new SearchQuery();
         if (entityIdForCategorizing >= 0) {
             mSearchQuery.setSharedEntity(entityIdForCategorizing);
@@ -153,8 +152,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @AfterViews
     void bindAdapter() {
-        LogUtil.d("FileListFragment AfterViews");
-
         if (getActivity() instanceof SearchActivity) {
             Sprinkler.with(JandiApplication.getContext())
                     .track(new FutureTrack.Builder()
@@ -266,12 +263,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         SearchActivity_.intent(getActivity())
                 .isFromFiles(true)
                 .start();
-    }
-
-    public void onEventMainThread(TabClickEvent event) {
-        if (event.getIndex() == MainTabPagerAdapter.TAB_FILE) {
-            lvSearchFiles.scrollToPosition(0);
-        }
     }
 
     public void onEvent(RefreshOldFileEvent event) {
@@ -822,6 +813,11 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             }
         }
 
+    }
+
+    @Override
+    public void scrollToTop() {
+        lvSearchFiles.scrollToPosition(0);
     }
 
     private static class OldFileResult {

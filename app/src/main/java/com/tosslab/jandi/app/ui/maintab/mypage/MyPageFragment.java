@@ -20,11 +20,9 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.TabClickEvent;
 import com.tosslab.jandi.app.events.messages.MentionToMeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
-import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.mypage.adapter.MyPageAdapter;
 import com.tosslab.jandi.app.ui.maintab.mypage.component.DaggerMyPageComponent;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
@@ -40,6 +38,7 @@ import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ViewSlider;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.spannable.OwnerSpannable;
 
 import java.util.Date;
@@ -55,7 +54,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tonyjs on 16. 3. 17..
  */
-public class MyPageFragment extends Fragment implements MyPageView {
+public class MyPageFragment extends Fragment implements MyPageView, ListScroller {
 
     @Inject
     MyPagePresenter presenter;
@@ -151,8 +150,9 @@ public class MyPageFragment extends Fragment implements MyPageView {
      */
     private void initMoreLoadingProgress() {
         pbMoreLoading.post(() -> {
+            ViewGroup.LayoutParams layoutParams = pbMoreLoading.getLayoutParams();
             int bottomMargin =
-                    ((ViewGroup.MarginLayoutParams) pbMoreLoading.getLayoutParams()).bottomMargin;
+                    ((ViewGroup.MarginLayoutParams) layoutParams).bottomMargin;
             int translationY = pbMoreLoading.getMeasuredHeight() + bottomMargin;
             pbMoreLoading.animate().translationY(translationY);
         });
@@ -172,14 +172,6 @@ public class MyPageFragment extends Fragment implements MyPageView {
         }
 
         return super.onOptionsItemSelected(menuItem);
-    }
-
-    public void onEventMainThread(TabClickEvent event) {
-        if (event.getIndex() == MainTabPagerAdapter.TAB_MYPAGE) {
-            vgProfileLayout.animate()
-                    .translationY(0);
-            lvMyPage.scrollToPosition(0);
-        }
     }
 
     public void onEvent(MentionToMeEvent event) {
@@ -254,7 +246,7 @@ public class MyPageFragment extends Fragment implements MyPageView {
         btnSetting.setOnClickListener(v -> ModifyProfileActivity_.intent(this).start());
 
         final long memberId = me.getId();
-        vgMyProfileWrapper.setOnClickListener(v -> {
+        ivProfile.setOnClickListener(v -> {
             MemberProfileActivity_.intent(getActivity())
                     .memberId(memberId)
                     .start();
@@ -353,6 +345,13 @@ public class MyPageFragment extends Fragment implements MyPageView {
 
     private boolean isFinishing() {
         return getActivity() == null || getActivity().isFinishing();
+    }
+
+    @Override
+    public void scrollToTop() {
+        vgProfileLayout.animate()
+                .translationY(0);
+        lvMyPage.scrollToPosition(0);
     }
 
     private class MentionMessageMoreRequestHandler implements MyPageAdapter.OnLoadMoreCallback {

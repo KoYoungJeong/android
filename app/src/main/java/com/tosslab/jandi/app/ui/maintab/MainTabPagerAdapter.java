@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
  */
 public class MainTabPagerAdapter extends FragmentPagerAdapter
         implements PagerSlidingTabStrip.ViewTabProvider {
+
     public static final int TAB_TOPIC = 0;
     public static final int TAB_CHAT = 1;
     public static final int TAB_FILE = 2;
