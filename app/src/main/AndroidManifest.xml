@@ -43,15 +43,20 @@
         -->
         <activity
             android:name=".ui.signup.account.SignUpActivity_"
-            android:label="@string/jandi_signup_title"/>
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/jandi_signup_title"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.signup.verify.SignUpVerifyActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_signup_verify_title"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden"/>
 
         <activity
             android:name=".ui.intro.IntroActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:logo="@drawable/jandi_symbol_launcher"
             android:screenOrientation="portrait">
@@ -66,127 +71,173 @@
 
         <activity
             android:name=".ui.login.IntroMainActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustUnspecified"/>
 
         <activity
             android:name=".services.upload.UploadNotificationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
             android:theme="@style/JandiTheme.PushIntro"/>
 
         <activity
             android:name=".ui.account.AccountHomeActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_select_team"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustUnspecified"/>
 
         <activity
             android:name=".ui.team.info.TeamDomainInfoActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/team_info"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity
             android:name=".ui.maintab.MainTabActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity
             android:name=".ui.message.v2.MessageListV2Activity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity
             android:name=".ui.maintab.file.FileListActivity_"
-            android:label="@string/jandi_tab_file"/>
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/jandi_tab_file"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.filedetail.FileDetailActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_file_detail"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity
             android:name=".ui.fileexplorer.FileExplorerActivity"
-            android:label="@string/jandi_title_activity_file_explorer"/>
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/jandi_title_activity_file_explorer"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.settings.main.SettingsActivity_"
-            android:label="@string/jandi_settings"/>
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/jandi_settings"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.settings.push.SettingPushActivity_"
-            android:label="@string/jandi_setting_push"/>
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/jandi_setting_push"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.settings.privacy.SettingPrivacyActivity_"/>
+        <activity
+            android:name=".ui.settings.privacy.SettingPrivacyActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.settings.account.SettingAccountActivity"/>
+        <activity
+            android:name=".ui.settings.account.SettingAccountActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.profile.modify.view.ModifyProfileActivity_"
-            android:label="@string/jandi_profile_actionb"/>
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/jandi_profile_actionb"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.invites.email.InviteEmailActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/menu_entity_invite"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan"/>
 
         <activity
             android:name=".ui.entities.EntityChooseActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity
             android:name=".ui.carousel.CarouselViewerActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
             android:theme="@style/JandiTheme.ActionBarOverlay"/>
 
         <activity
             android:name=".ui.photo.PhotoViewActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
             android:theme="@style/JandiTheme.ActionBarOverlay"/>
 
-        <activity android:name=".ui.term.TermActivity_"/>
+        <activity
+            android:name=".ui.term.TermActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.maintab.topic.views.create.TopicCreateActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_create_channel"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity
             android:name=".ui.message.detail.edit.TopicDescriptionEditActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity
             android:name=".ui.message.detail.TopicDetailActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize"/>
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.profile.email.EmailChooseActivity_"
-            android:label="@string/jandi_choose_email"/>
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/jandi_choose_email"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.members.MembersListActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_topic_paricipants"/>
+            android:label="@string/jandi_topic_paricipants"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.file.upload.preview.FileUploadPreviewActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize"/>
 
         <activity
             android:name=".ui.album.imagealbum.ImageAlbumActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize"/>
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.search.main.view.SearchActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_topic_paricipants"/>
+            android:label="@string/jandi_topic_paricipants"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.web.InternalWebActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize">
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 
@@ -199,7 +250,8 @@
 
         <activity
             android:name=".ui.profile.member.MemberProfileActivity_"
-            android:screenOrientation="fullUser"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
             android:theme="@style/Jandi.NoTitle"/>
 
         <service android:name="com.parse.PushService"/>
@@ -231,7 +283,10 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ui.interfaces.JandiInterfaceActivity_">
+        <activity
+            android:name=".ui.interfaces.JandiInterfaceActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 
@@ -245,12 +300,14 @@
         <activity
             android:name=".push.PushInterfaceActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
             android:theme="@style/JandiTheme.PushIntro"/>
 
         <activity
             android:name=".ui.share.MainShareActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
@@ -267,7 +324,8 @@
         <activity
             android:name=".ui.starmention.StarMentionListActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_starred_stars">
+            android:label="@string/jandi_starred_stars"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -277,7 +335,8 @@
         <activity
             android:name=".ui.maintab.topic.views.folderlist.TopicFolderSettingActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_folder_move_to">
+            android:label="@string/jandi_folder_move_to"
+            android:screenOrientation="portrait">
 
             <intent-filter>
                 <action android:name="andorid.intent.action.VIEW"/>
@@ -288,7 +347,8 @@
         <activity
             android:name=".ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_browse_other_topics">
+            android:label="@string/jandi_browse_other_topics"
+            android:screenOrientation="portrait">
 
             <intent-filter>
                 <action android:name="andorid.intent.action.VIEW"/>
@@ -299,7 +359,8 @@
         <activity
             android:name=".ui.share.views.ShareSelectRoomActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_share_to_jandi">
+            android:label="@string/jandi_share_to_jandi"
+            android:screenOrientation="portrait">
 
             <intent-filter>
                 <action android:name="andorid.intent.action.VIEW"/>
@@ -310,7 +371,8 @@
         <activity
             android:name=".ui.share.views.ShareSelectTeamActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_share_to_jandi">
+            android:label="@string/jandi_share_to_jandi"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="andorid.intent.action.VIEW"/>
                 <action android:name="android.intent.category.DEFAULT"/>
@@ -320,7 +382,8 @@
         <activity
             android:name=".ui.filedetail.views.FileShareActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_title_cdp_to_be_shared">
+            android:label="@string/jandi_title_cdp_to_be_shared"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="andorid.intent.action.VIEW"/>
                 <action android:name="android.intent.category.DEFAULT"/>
@@ -330,7 +393,8 @@
         <activity
             android:name=".ui.filedetail.views.FileSharedEntityChooseActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_title_cdp_to_be_unshared">
+            android:label="@string/jandi_title_cdp_to_be_unshared"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="andorid.intent.action.VIEW"/>
                 <action android:name="android.intent.category.DEFAULT"/>
@@ -342,6 +406,7 @@
 
         <activity
             android:name=".ui.profile.defaultimage.ProfileImageSelectorActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="andorid.intent.action.VIEW"/>
@@ -351,6 +416,7 @@
 
         <activity
             android:name=".ui.album.imagecrop.ImageCropPickerActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="andorid.intent.action.VIEW"/>
@@ -365,10 +431,12 @@
         <activity
             android:name=".ui.entities.disabled.view.DisabledEntityChooseActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_disabled_members"/>
+            android:label="@string/jandi_disabled_members"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.profile.insert.SetProfileActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"/>
 
         <service android:name=".services.socket.JandiSocketService"/>

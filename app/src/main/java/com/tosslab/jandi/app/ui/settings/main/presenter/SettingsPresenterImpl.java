@@ -109,6 +109,9 @@ public class SettingsPresenterImpl implements SettingsPresenter {
         onSetUpVersion();
     }
 
-
+    @Override
+    public void onLaunchHelpPage() {
+        view.launchHelpPage(SettingsModel.getSupportUrl());
+    }
 
 }

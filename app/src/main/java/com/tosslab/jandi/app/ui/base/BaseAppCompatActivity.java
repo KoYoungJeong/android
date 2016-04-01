@@ -6,7 +6,6 @@ import com.facebook.appevents.AppEventsLogger;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
-
 public class BaseAppCompatActivity extends AppCompatActivity {
 
     private boolean needUnLockPassCode = true;
