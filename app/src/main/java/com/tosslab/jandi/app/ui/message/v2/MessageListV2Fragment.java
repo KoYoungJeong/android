@@ -95,6 +95,7 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
+import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
@@ -382,6 +383,7 @@ public class MessageListV2Fragment extends Fragment implements
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Permissions.getResult()
+                .activity(getActivity())
                 .addRequestCode(REQ_STORAGE_PERMISSION)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         () -> Observable.just(1)
@@ -392,6 +394,9 @@ public class MessageListV2Fragment extends Fragment implements
                                             JandiPreference.getKeyboardHeight(JandiApplication.getContext());
                                     showUploadMenuSelectorIfNotShow(keyboardHeight);
                                 }, Throwable::printStackTrace))
+                .neverAskAgain(() -> {
+                    PermissionRetryDialog.showExternalPermissionDialog(getActivity());
+                })
                 .resultPermission(new OnRequestPermissionsResult(requestCode, permissions, grantResults));
     }
 
@@ -1345,6 +1350,7 @@ public class MessageListV2Fragment extends Fragment implements
         if (!uploadMenuViewModel.isShow()) {
             if (isCanDrawWindowOverlay()) {
                 Permissions.getChecker()
+                        .activity(getActivity())
                         .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         .hasPermission(() -> {
                             uploadMenuViewModel.showUploadSelector(height);

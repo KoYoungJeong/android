@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
@@ -41,6 +42,7 @@ import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
+import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -628,6 +630,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     void callIfHasPermission() {
         Permissions.getChecker()
+                .activity(MemberProfileActivity.this)
                 .permission(() -> Manifest.permission.CALL_PHONE)
                 .hasPermission(() -> {
                     call(EntityManager.getInstance().getEntityById(memberId).getUserPhoneNumber());
@@ -635,7 +638,9 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 })
                 .noPermission(() -> {
                     String[] permissions = {Manifest.permission.CALL_PHONE};
-                    requestPermissions(permissions, REQ_CALL_PERMISSION);
+                    ActivityCompat.requestPermissions(MemberProfileActivity.this,
+                            permissions,
+                            REQ_CALL_PERMISSION);
                 })
                 .check();
     }
@@ -643,11 +648,15 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Permissions.getResult()
+                .activity(MemberProfileActivity.this)
                 .addRequestCode(REQ_CALL_PERMISSION)
                 .addPermission(Manifest.permission.CALL_PHONE, () -> {
                     FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
                     call(member.getUserPhoneNumber());
                     AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Profile_Cellphone);
+                })
+                .neverAskAgain(() -> {
+                    PermissionRetryDialog.showCallPermissionDialog(MemberProfileActivity.this);
                 })
                 .resultPermission(Permissions.createPermissionResult(requestCode, permissions, grantResults));
     }

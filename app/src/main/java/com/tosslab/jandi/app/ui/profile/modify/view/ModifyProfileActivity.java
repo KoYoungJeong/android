@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
+import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenter;
@@ -246,6 +247,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     void getPicture() {
         // 프로필 사진
         Permissions.getChecker()
+                .activity(ModifyProfileActivity.this)
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .hasPermission(() -> {
                     showProfileChooseDialog();
@@ -262,8 +264,12 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Permissions.getResult()
+                .activity(ModifyProfileActivity.this)
                 .addRequestCode(REQ_STORAGE_PERMISSION)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::getPicture)
+                .neverAskAgain(() -> {
+                    PermissionRetryDialog.showExternalPermissionDialog(ModifyProfileActivity.this);
+                })
                 .resultPermission(new OnRequestPermissionsResult(requestCode, permissions, grantResults));
     }
 

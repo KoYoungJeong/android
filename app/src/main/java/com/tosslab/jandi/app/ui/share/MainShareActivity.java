@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -15,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
+import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
@@ -72,9 +74,13 @@ public class MainShareActivity extends BaseAppCompatActivity {
             setUpFragment(intent, intentType);
         } else {
             Permissions.getChecker()
+                    .activity(MainShareActivity.this)
                     .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     .hasPermission(() -> setUpFragment(intent, intentType))
-                    .noPermission(() -> requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_STORAGE_PERMISSION))
+                    .noPermission(() ->
+                            ActivityCompat.requestPermissions(MainShareActivity.this,
+                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                    REQ_STORAGE_PERMISSION))
                     .check();
         }
 
@@ -84,6 +90,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Permissions.getResult()
+                .activity(MainShareActivity.this)
                 .addRequestCode(REQ_STORAGE_PERMISSION)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, () -> {
                     new Handler().postDelayed(() -> {
@@ -91,6 +98,9 @@ public class MainShareActivity extends BaseAppCompatActivity {
                         setUpFragment(intent, mainShareModel.getIntentType(intent.getAction(), intent.getType()));
                     }, 300);
                 }, this::finish)
+                .neverAskAgain(() -> {
+                    PermissionRetryDialog.showExternalPermissionDialog(MainShareActivity.this);
+                })
                 .resultPermission(new OnRequestPermissionsResult(requestCode, permissions, grantResults));
     }
 

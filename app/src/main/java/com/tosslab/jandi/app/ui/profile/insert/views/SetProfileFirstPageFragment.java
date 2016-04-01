@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
+import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.profile.insert.presenter.SetProfileFirstPagePresenter;
 import com.tosslab.jandi.app.utils.AlertUtil;
@@ -96,10 +97,9 @@ public class SetProfileFirstPageFragment extends Fragment
     @Click(R.id.iv_edit_profile_picture)
     void onClickEditProfilePicture() {
         Permissions.getChecker()
+                .activity(getActivity())
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .hasPermission(() -> {
-                    showProfileChooseDialog();
-                })
+                .hasPermission(this::showProfileChooseDialog)
                 .noPermission(() -> {
                     String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
                     requestPermissions(permissions, REQ_STORAGE_PERMISSION);
@@ -280,8 +280,12 @@ public class SetProfileFirstPageFragment extends Fragment
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Permissions.getResult()
+                .activity(getActivity())
                 .addRequestCode(REQ_STORAGE_PERMISSION)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::onClickEditProfilePicture)
+                .neverAskAgain(() -> {
+                    PermissionRetryDialog.showExternalPermissionDialog(getActivity());
+                })
                 .resultPermission(new OnRequestPermissionsResult(requestCode, permissions, grantResults));
     }
 

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.album.imagealbum;
 import android.Manifest;
 import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
+import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.album.fragment.ImageAlbumFragment_;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
@@ -60,11 +62,14 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
         setupActionbar();
 
         Permissions.getChecker()
+                .activity(ImageAlbumActivity.this)
                 .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .hasPermission(this::initFragment)
                 .noPermission(() -> {
                     String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                    requestPermissions(permissions, REQ_STORAGE_PERMISSION);
+                    ActivityCompat.requestPermissions(ImageAlbumActivity.this,
+                            permissions,
+                            REQ_STORAGE_PERMISSION);
                 })
                 .check();
     }
@@ -72,8 +77,12 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Permissions.getResult()
+                .activity(ImageAlbumActivity.this)
                 .addRequestCode(REQ_STORAGE_PERMISSION)
-                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::initFragment, this::finish)
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::initFragment)
+                .neverAskAgain(() -> {
+                    PermissionRetryDialog.showExternalPermissionDialog(ImageAlbumActivity.this);
+                })
                 .resultPermission(Permissions.createPermissionResult(requestCode, permissions, grantResults));
     }
 

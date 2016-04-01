@@ -112,6 +112,7 @@
 	<string name="jandi_bot_status">"こんにちは、ミスターJと言います。"</string>
 	<string name="jandi_browse_other_topics">"未参加のトピック一覧"</string>
 	<string name="jandi_browse_team">"チームに移動"</string>
+	<string name="jandi_call_acess_permission">"通話を発信するには電話へのJANDIのアクセスを求めてください。"</string>
 	<string name="jandi_cancel">"戻る"</string>
 	<string name="jandi_cancel_invitation">"招待をキャンセル"</string>
 	<string name="jandi_canceled">"キャンセルされました"</string>
@@ -274,7 +275,7 @@
 	<string name="jandi_invite_success">"招待メールが送信されました"</string>
 	<string name="jandi_invite_to_dummy_account_again">"入力しましたメールアドレスはすでに他のメンバーが招待中です。
 招待メールを再送信しますか？"</string>
-	<string name="jandi_invite_to_team">"NEW KEY"</string>
+	<string name="jandi_invite_to_team">"チームに招待する"</string>
 	<string name="jandi_invite_wechat">"WeChat"</string>
 	<string name="jandi_invited_topic">"%1$sが %2$sさんを招待しました"</string>
 	<string name="jandi_is_newcomer">"初めてJANDIを使いますか？"</string>
@@ -482,6 +483,7 @@
 	<string name="jandi_starred_unstarred">"スターなし"</string>
 	<string name="jandi_start_direct_messages_1">"<b>メッセージ送ったり、これまでの会話履歴を見るには</b>"</string>
 	<string name="jandi_start_direct_messages_2">"以下のボタンを押してください"</string>
+	<string name="jandi_storage_access_permission">"ストレージにアクセスするにはアプリの権限を許可してください。"</string>
 	<string name="jandi_success_copy_clipboard_external_link">"共有リンクがクリップボードにコピーされました"</string>
 	<string name="jandi_success_disable_external_link">"共有用リンクが削除されました"</string>
 	<string name="jandi_success_kick_user_from_topic">"選択したメンバーがトピックから退室されました。"</string>
@@ -560,6 +562,7 @@
 	<string name="jandi_upload_menu_file">"ファイル"</string>
 	<string name="jandi_upload_menu_gallay">"写真"</string>
 	<string name="jandi_upload_menu_video">"動画"</string>
+	<string name="jandi_use_fingerprint">"指紋認証機能を使用"</string>
 	<string name="jandi_user_default_email">"プライマリメールアドレス"</string>
 	<string name="jandi_user_id">"メールアドレス"</string>
 	<string name="jandi_user_password">"パスワード"</string>

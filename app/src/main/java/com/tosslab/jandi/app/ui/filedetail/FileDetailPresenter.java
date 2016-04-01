@@ -16,7 +16,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.permissions.Permissions;
+import com.tosslab.jandi.app.permissions.Check;
 import com.tosslab.jandi.app.services.download.DownloadService;
 import com.tosslab.jandi.app.ui.filedetail.domain.FileStarredInfo;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
@@ -38,7 +38,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
-
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -241,22 +240,18 @@ public class FileDetailPresenter {
         if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
             String fileUrl = ImageUtil.getImageFileUrl(fileContent.fileUrl);
             view.startGoogleOrDropboxFileActivity(fileUrl);
-            return;
-        }
-
-        Permissions.getChecker()
-                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .hasPermission(() -> {
-                    DownloadService.start(fileId,
+        } else {
+            view.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    () -> DownloadService.start(fileId,
                             ImageUtil.getImageFileUrl(fileContent.fileUrl),
                             fileContent.title,
                             fileContent.ext,
-                            fileContent.type);
-                })
-                .noPermission(() -> {
-                    view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                }).check();
+                            fileContent.type),
+                    () -> view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE));
+        }
+
+
     }
 
     public void onExportFile(final ResMessages.FileMessage fileMessage,
@@ -272,27 +267,17 @@ public class FileDetailPresenter {
 
             return;
         }
-        Permissions.getChecker()
-                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .hasPermission(() ->
-                        downloadFileAndManage(FileManageType.EXPORT, fileMessage, progressDialog))
-                .noPermission(() -> {
-                    view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION_EXPORT,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                }).check();
+        view.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                () -> downloadFileAndManage(FileManageType.EXPORT, fileMessage, progressDialog),
+                () -> view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION_EXPORT, Manifest.permission.WRITE_EXTERNAL_STORAGE));
     }
 
     public void onOpenFile(final ResMessages.FileMessage fileMessage,
                            final ProgressDialog progressDialog) {
-        Permissions.getChecker()
-                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .hasPermission(() -> {
-                    downloadFileAndManage(FileManageType.OPEN, fileMessage, progressDialog);
-                })
-                .noPermission(() -> {
-                    view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                }).check();
+        view.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                () -> downloadFileAndManage(FileManageType.OPEN, fileMessage, progressDialog),
+                () -> view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE));
     }
 
     void downloadFileAndManage(final FileManageType type,
@@ -602,6 +587,8 @@ public class FileDetailPresenter {
         void deliverResultToMessageList();
 
         void finish();
+
+        void checkPermission(String persmissionString, Check.HasPermission hasPermission, Check.NoPermission noPermission);
     }
 
 }
