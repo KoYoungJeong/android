@@ -173,7 +173,7 @@
         <activity
             android:name=".ui.carousel.CarouselViewerActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullUser"
             android:theme="@style/JandiTheme.ActionBarOverlay"/>
 
         <activity
