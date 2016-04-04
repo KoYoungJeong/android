@@ -11,6 +11,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
+import com.tosslab.jandi.app.ui.maintab.topic.adapter.folder.ExpandableTopicAdapter;
+import com.tosslab.jandi.app.ui.maintab.topic.adapter.folder.viewholder.TopicJoinButtonViewHolder;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.views.FixedLinearLayout;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
@@ -20,7 +23,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class UpdatedTopicAdapter extends RecyclerView.Adapter<UpdatedTopicAdapter.UpdatedTopicItemViewHolder> {
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
+
+public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final Context context;
     private List<Topic> topicItemDataList;
@@ -33,10 +40,24 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<UpdatedTopicAdapte
     }
 
     @Override
-    public UpdatedTopicItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(context).inflate(R.layout.item_topic_list, parent, false);
-        return new UpdatedTopicItemViewHolder(view);
+        if (viewType != ExpandableTopicAdapter.TYPE_FOR_JOIN_TOPIC_BUTTON) {
+            View view = LayoutInflater.from(context).inflate(R.layout.item_topic_list, parent, false);
+            return new UpdatedTopicItemViewHolder(view);
+        } else {
+            View view = LayoutInflater.from(context).inflate(R.layout.item_join_topic, parent, false);
+            return new TopicJoinButtonViewHolder(view);
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position < getItemCount() - 1) {
+            return super.getItemViewType(position);
+        } else {
+            return ExpandableTopicAdapter.TYPE_FOR_JOIN_TOPIC_BUTTON;
+        }
     }
 
     public void addAll(List<Topic> topicItemDatas) {
@@ -57,61 +78,69 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<UpdatedTopicAdapte
     }
 
     @Override
-    public void onBindViewHolder(UpdatedTopicItemViewHolder holder, int position) {
-        Topic item = getItem(position);
-        holder.container.setBackgroundResource(R.drawable.bg_list_item);
-        holder.ivFolderItemUnderline.setVisibility(View.GONE);
-        holder.ivDefaultUnderline.setVisibility(View.VISIBLE);
-        holder.ivShadowUnderline.setVisibility(View.GONE);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (getItemViewType(position) == ExpandableTopicAdapter.TYPE_FOR_JOIN_TOPIC_BUTTON) {
+            holder.itemView.setOnClickListener(v -> {
+                EventBus.getDefault().post(new JoinableTopicCallEvent());
+            });
+            return;
+        }
 
-        holder.itemView.setClickable(true);
-        holder.tvTopicName.setText(item.getName());
+        UpdatedTopicItemViewHolder updatedHolder = (UpdatedTopicItemViewHolder) holder;
+        Topic item = getItem(position);
+        updatedHolder.container.setBackgroundResource(R.drawable.bg_list_item);
+        updatedHolder.ivFolderItemUnderline.setVisibility(View.GONE);
+        updatedHolder.ivDefaultUnderline.setVisibility(View.VISIBLE);
+        updatedHolder.ivShadowUnderline.setVisibility(View.GONE);
+
+        updatedHolder.itemView.setClickable(true);
+        updatedHolder.tvTopicName.setText(item.getName());
 
         if (item.getUnreadCount() > 0) {
-            holder.vgTopicBadge.setVisibility(View.VISIBLE);
-            holder.tvTopicBadge.setText(String.valueOf(item.getUnreadCount()));
+            updatedHolder.vgTopicBadge.setVisibility(View.VISIBLE);
+            updatedHolder.tvTopicBadge.setText(String.valueOf(item.getUnreadCount()));
         } else {
-            holder.vgTopicBadge.setVisibility(View.GONE);
+            updatedHolder.vgTopicBadge.setVisibility(View.GONE);
         }
         String memberCount = context.getString(R.string.jandi_count_with_brace, item.getMemberCount());
-        holder.tvTopicUserCnt.setText(memberCount);
+        updatedHolder.tvTopicUserCnt.setText(memberCount);
         if (!TextUtils.isEmpty(item.getDescription())) {
-            holder.tvTopicDescription.setVisibility(View.VISIBLE);
-            holder.tvTopicDescription.setText(item.getDescription());
+            updatedHolder.tvTopicDescription.setVisibility(View.VISIBLE);
+            updatedHolder.tvTopicDescription.setText(item.getDescription());
         } else {
-            holder.tvTopicDescription.setVisibility(View.GONE);
+            updatedHolder.tvTopicDescription.setVisibility(View.GONE);
         }
 
         if (item.isPublic()) {
             if (item.isStarred()) {
-                holder.ivTopicIcon.setImageResource(R.drawable.topiclist_icon_topic_fav);
+                updatedHolder.ivTopicIcon.setImageResource(R.drawable.topiclist_icon_topic_fav);
             } else {
-                holder.ivTopicIcon.setImageResource(R.drawable.topiclist_icon_topic);
+                updatedHolder.ivTopicIcon.setImageResource(R.drawable.topiclist_icon_topic);
             }
         } else {
             if (item.isStarred()) {
-                holder.ivTopicIcon.setImageResource(R.drawable.topiclist_icon_topic_private_fav);
+                updatedHolder.ivTopicIcon.setImageResource(R.drawable.topiclist_icon_topic_private_fav);
             } else {
-                holder.ivTopicIcon.setImageResource(R.drawable.topiclist_icon_topic_private);
+                updatedHolder.ivTopicIcon.setImageResource(R.drawable.topiclist_icon_topic_private);
             }
         }
 
         if (!item.isPushOn()) {
-            holder.vPushOff.setVisibility(View.VISIBLE);
+            updatedHolder.vPushOff.setVisibility(View.VISIBLE);
         } else {
-            holder.vPushOff.setVisibility(View.GONE);
+            updatedHolder.vPushOff.setVisibility(View.GONE);
         }
 
-        holder.itemView.setOnClickListener(v -> {
+        updatedHolder.itemView.setOnClickListener(v -> {
             if (onRecyclerItemClickListener != null) {
-                onRecyclerItemClickListener.onItemClick(holder.itemView,
+                onRecyclerItemClickListener.onItemClick(updatedHolder.itemView,
                         UpdatedTopicAdapter.this, position);
             }
         });
 
-        holder.itemView.setOnLongClickListener(v -> {
+        updatedHolder.itemView.setOnLongClickListener(v -> {
             if (onRecyclerItemLongClickListener != null) {
-                onRecyclerItemLongClickListener.onItemClick(holder.itemView,
+                onRecyclerItemLongClickListener.onItemClick(updatedHolder.itemView,
                         UpdatedTopicAdapter.this, position);
             }
             return false;
@@ -133,38 +162,39 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<UpdatedTopicAdapte
 
     static class UpdatedTopicItemViewHolder extends RecyclerView.ViewHolder {
 
+        @Bind(R.id.rl_topic_item_container)
         RelativeLayout container;
+        @Bind(R.id.v_entity_listitem_selector)
         View vTopicSelector;
+        @Bind(R.id.iv_entity_listitem_icon)
         ImageView ivTopicIcon;
+        @Bind(R.id.vg_entity_listitem_name)
         FixedLinearLayout vgTopicName;
+        @Bind(R.id.tv_entity_listitem_name)
         TextView tvTopicName;
+        @Bind(R.id.tv_entity_listitem_additional)
         TextView tvTopicUserCnt;
+        @Bind(R.id.v_push_off)
         View vPushOff;
+        @Bind(R.id.tv_entity_listitem_description)
         TextView tvTopicDescription;
+        @Bind(R.id.tv_entity_listitem_badge)
         TextView tvTopicBadge;
+        @Bind(R.id.iv_default_underline)
         ImageView ivDefaultUnderline;
+        @Bind(R.id.iv_folder_item_underline)
         ImageView ivFolderItemUnderline;
+        @Bind(R.id.iv_shadow_underline)
         ImageView ivShadowUnderline;
+        @Bind(R.id.vg_entity_listitem_badge)
         RelativeLayout vgTopicBadge;
+        @Bind(R.id.v_topic_item_animator)
         View vAnimator;
 
         public UpdatedTopicItemViewHolder(View itemView) {
             super(itemView);
-
-            container = (RelativeLayout) itemView.findViewById(R.id.rl_topic_item_container);
-            vTopicSelector = itemView.findViewById(R.id.v_entity_listitem_selector);
-            ivTopicIcon = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_icon);
-            vgTopicName = (FixedLinearLayout) itemView.findViewById(R.id.vg_entity_listitem_name);
-            tvTopicName = (TextView) itemView.findViewById(R.id.tv_entity_listitem_name);
-            tvTopicUserCnt = (TextView) itemView.findViewById(R.id.tv_entity_listitem_additional);
-            vPushOff = itemView.findViewById(R.id.v_push_off);
-            tvTopicDescription = (TextView) itemView.findViewById(R.id.tv_entity_listitem_description);
-            vgTopicBadge = (RelativeLayout) itemView.findViewById(R.id.vg_entity_listitem_badge);
-            tvTopicBadge = (TextView) itemView.findViewById(R.id.tv_entity_listitem_badge);
-            ivDefaultUnderline = (ImageView) itemView.findViewById(R.id.iv_default_underline);
-            ivFolderItemUnderline = (ImageView) itemView.findViewById(R.id.iv_folder_item_underline);
-            ivShadowUnderline = (ImageView) itemView.findViewById(R.id.iv_shadow_underline);
-            vAnimator = itemView.findViewById(R.id.v_topic_item_animator);
+            ButterKnife.bind(this, itemView);
         }
     }
+
 }
