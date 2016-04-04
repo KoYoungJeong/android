@@ -281,8 +281,7 @@ public class MainTopicListFragment extends Fragment
     }
 
     @Override
-    public void setUpdatedItems(List<Topic> topics) {
-        updatedTopicAdapter.clear();
+    public void addUpdatedItems(List<Topic> topics) {
         updatedTopicAdapter.addAll(topics);
         updatedTopicAdapter.notifyDataSetChanged();
     }
@@ -635,6 +634,11 @@ public class MainTopicListFragment extends Fragment
     @UiThread
     public void showAlreadyHasFolderToast() {
         ColoredToast.showWarning(getString(R.string.jandi_folder_alread_has_name));
+    }
+
+    @Override
+    public void clearUpdatedItems() {
+        updatedTopicAdapter.clear();
     }
 
     @Override
