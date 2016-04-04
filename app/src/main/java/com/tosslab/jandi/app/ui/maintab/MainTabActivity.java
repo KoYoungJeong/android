@@ -37,6 +37,7 @@ import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
+import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
@@ -68,6 +69,7 @@ import com.tosslab.jandi.app.ui.maintab.teams.module.TeamsModule;
 import com.tosslab.jandi.app.ui.maintab.teams.presenter.TeamsPresenter;
 import com.tosslab.jandi.app.ui.maintab.teams.view.TeamsView;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
+import com.tosslab.jandi.app.ui.profile.insert.SetProfileActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
@@ -514,7 +516,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                 .start();
 
         if (shouldOpenModifyProfileActivity) { // 초대 수락 또는 팀 생성 후
-            ModifyProfileActivity_.intent(this)
+            SetProfileActivity_.intent(this)
                     .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                     .start();
         }
@@ -530,6 +532,10 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     public void onEvent(TeamInviteAcceptEvent event) {
         teamsPopupWindow.dismiss();
         teamsPresenter.onTeamInviteAcceptAction(event.getTeam());
+    }
+
+    public void onEvent(TeamDeletedEvent event) {
+        teamsPresenter.reInitializeTeams();
     }
 
     @Override

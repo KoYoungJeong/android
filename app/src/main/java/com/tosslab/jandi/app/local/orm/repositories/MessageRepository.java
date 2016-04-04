@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.local.orm.repositories;
 
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
@@ -232,6 +233,7 @@ public class MessageRepository {
     public void updateUnshared(long fileId, long roomId) {
         lock.lock();
         try {
+            Log.e("tony2", "fileId = " + fileId + " & roomId = " + roomId);
             Dao<ResMessages.OriginalMessage.IntegerWrapper, Integer> dao = helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class);
             DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder = dao.deleteBuilder();
             deleteBuilder.where().eq("fileOf_id", fileId).and().eq("shareEntity", roomId);

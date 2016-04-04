@@ -20,7 +20,9 @@ public class OwnerSpannable extends ReplacementSpan {
     private String ownerText;
     private int textColor;
     private float textSize;
-    private int padding;
+    private int extraForCenterVertical;
+    private int paddingVertical;
+    private int paddingHorizontal;
     private Drawable background;
     private int marginLeftDp;
     public OwnerSpannable(String ownerText, int marginLeftDp) {
@@ -28,7 +30,9 @@ public class OwnerSpannable extends ReplacementSpan {
 
         Resources resources = JandiApplication.getContext().getResources();
         DisplayMetrics displayMetrics = resources.getDisplayMetrics();
-        padding = (int) (displayMetrics.density * 6);
+        paddingVertical = (int) (displayMetrics.density * 2);
+        paddingHorizontal = (int) (displayMetrics.density * 6);
+        extraForCenterVertical = (int) (displayMetrics.density * 1);
         textSize = displayMetrics.scaledDensity * 11f;
         textColor = resources.getColor(R.color.jandi_owner_badge_text);
         background = resources.getDrawable(R.drawable.admin_bg);
@@ -43,7 +47,7 @@ public class OwnerSpannable extends ReplacementSpan {
                        int start, int end,
                        Paint.FontMetricsInt fm) {
         paint.setTextSize(textSize);
-        return (int) ((padding * 2) + paint.measureText(ownerText)) + marginLeftDp;
+        return (int) ((paddingHorizontal * 2) + paint.measureText(ownerText)) + marginLeftDp;
     }
 
     @Override
@@ -58,15 +62,16 @@ public class OwnerSpannable extends ReplacementSpan {
         paint.setColor(textColor);
 
         int textWidth = (int) paint.measureText(ownerText);
-        int layoutWidth = textWidth + (padding * 2);
+        int layoutWidth = textWidth + (paddingHorizontal * 2);
 
         int left = (int) x + marginLeftDp;
-        background.setBounds(left, top, left + layoutWidth, bottom);
+
+        background.setBounds(left, top + paddingVertical, left + layoutWidth, bottom - paddingVertical);
         background.draw(canvas);
 
-        float newY = top + ((bottom - top) - (textSize / 2));
+        float newY = top + ((bottom - top) - (textSize / 2)) - extraForCenterVertical;
 
-        canvas.drawText(ownerText, x + padding + marginLeftDp, newY, paint);
+        canvas.drawText(ownerText, x + paddingHorizontal + marginLeftDp, newY, paint);
 
         canvas.restore();
 

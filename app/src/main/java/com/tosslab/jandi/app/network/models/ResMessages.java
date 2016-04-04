@@ -240,6 +240,19 @@ public class ResMessages {
             public void setTextOf(TextMessage textOf) {
                 this.textOf = textOf;
             }
+
+            @Override
+            public String toString() {
+                return "IntegerWrapper{" +
+                        "_id=" + _id +
+                        ", shareEntity=" + shareEntity +
+                        ", textOf=" + textOf +
+                        ", stickerOf=" + stickerOf +
+                        ", commentOf=" + commentOf +
+                        ", commentStickerOf=" + commentStickerOf +
+                        ", fileOf=" + fileOf +
+                        '}';
+            }
         }
     }
 

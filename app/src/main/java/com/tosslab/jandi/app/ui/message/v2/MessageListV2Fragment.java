@@ -1999,7 +1999,7 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
 
-        fileUploadController.selectFileSelector(event.type, this, entityId);
+        fileUploadController.selectFileSelector(event.type, this, room.getEntityId());
 
         AnalyticsValue.Action action;
         switch (event.type) {
@@ -2269,7 +2269,7 @@ public class MessageListV2Fragment extends Fragment implements
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void dismissStatusLayout() {
+    public void dismissUserStatusLayout() {
         vgMemberStatusAlert.setVisibility(View.GONE);
     }
 

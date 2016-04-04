@@ -10,6 +10,8 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.model.FileUploadModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Presenter;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -37,6 +39,7 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
 
         String entityName;
         long entityId;
+        LogUtil.e(MessageListV2Presenter.TAG, "entityId =" + selectedEntityIdToBeShared);
         if (fileUploadModel.isValid(selectedEntityIdToBeShared)) {
             entityName = fileUploadModel.getEntityString(selectedEntityIdToBeShared);
             entityId = selectedEntityIdToBeShared;
