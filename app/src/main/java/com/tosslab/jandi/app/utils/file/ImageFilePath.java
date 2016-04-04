@@ -11,6 +11,7 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
+import android.webkit.MimeTypeMap;
 
 import com.tosslab.jandi.app.services.download.model.DownloadModel;
 
@@ -154,13 +155,27 @@ public class ImageFilePath {
     private static String getGoogleFileInfo(Context context, Uri uri) {
 
         Cursor cursor = null;
-        final String displayNameCol = OpenableColumns.DISPLAY_NAME;
-        final String[] projection = {displayNameCol};
+        String displayNameCol = OpenableColumns.DISPLAY_NAME;
+        String mimeTypeCol = "mime_type";
+        String[] projection = {displayNameCol, mimeTypeCol};
 
         try {
             cursor = context.getContentResolver().query(uri, projection, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                return cursor.getString(0);
+                String mimeType = cursor.getString(1);
+                String fileExt;
+                if (!TextUtils.isEmpty(mimeType)
+                        && !TextUtils.equals("null", mimeType)) {
+                    String extensionFromMimeType = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+                    if (!TextUtils.isEmpty(extensionFromMimeType)) {
+                        fileExt = "." + extensionFromMimeType;
+                    } else {
+                        fileExt = "";
+                    }
+                } else {
+                    fileExt = "";
+                }
+                return cursor.getString(0) + fileExt;
             }
 
         } catch (Exception e) {

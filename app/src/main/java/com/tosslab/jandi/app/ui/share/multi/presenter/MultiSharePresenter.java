@@ -42,5 +42,9 @@ public interface MultiSharePresenter {
         void setFileTitle(String fileName);
 
         void moveRoom(long teamId, long roomId);
+
+        void showProgress();
+
+        void dismissProgress();
     }
 }
