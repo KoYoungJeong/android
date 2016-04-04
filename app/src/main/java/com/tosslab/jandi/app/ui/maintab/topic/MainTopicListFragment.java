@@ -258,6 +258,7 @@ public class MainTopicListFragment extends Fragment
         }
     }
 
+
     @Click(R.id.vg_main_topic_order_title)
     void onOrderTitleClick() {
         boolean currentFolder = isCurrentFolder();
@@ -281,7 +282,8 @@ public class MainTopicListFragment extends Fragment
     }
 
     @Override
-    public void addUpdatedItems(List<Topic> topics) {
+    public void setUpdatedItems(List<Topic> topics) {
+        updatedTopicAdapter.clear();
         updatedTopicAdapter.addAll(topics);
         updatedTopicAdapter.notifyDataSetChanged();
     }
@@ -634,11 +636,6 @@ public class MainTopicListFragment extends Fragment
     @UiThread
     public void showAlreadyHasFolderToast() {
         ColoredToast.showWarning(getString(R.string.jandi_folder_alread_has_name));
-    }
-
-    @Override
-    public void clearUpdatedItems() {
-        updatedTopicAdapter.clear();
     }
 
     @Override
