@@ -70,7 +70,6 @@ import com.tosslab.jandi.app.ui.maintab.teams.presenter.TeamsPresenter;
 import com.tosslab.jandi.app.ui.maintab.teams.view.TeamsView;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.profile.insert.SetProfileActivity_;
-import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
@@ -176,7 +175,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        LogUtil.d("tony", "onCreate");
         DaggerTeamsComponent.builder()
                 .teamsModule(new TeamsModule(this))
                 .build()
@@ -734,7 +732,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     public void onEvent(MessagePushEvent event) {
-        LogUtil.d("MainTabAcitivity.MessagePushEventCall");
         if (!TextUtils.equals(event.getEntityType(), PushTO.RoomType.CHAT.getName())) {
             getEntities();
         }

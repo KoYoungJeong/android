@@ -567,9 +567,6 @@ public class MessageListV2Presenter {
 
         boolean cacheMode = messageContainer.isCacheMode();
         if (cacheMode) {
-            LogUtil.w("tony", "size - " + newMessages.size());
-            Observable.from(newMessages)
-                    .subscribe(link -> LogUtil.d("tony", link.toString()));
             messageListModel.upsertMessages(roomId, newMessages);
         }
 

@@ -1,8 +1,5 @@
 package com.tosslab.jandi.app.local.orm.repositories;
 
-import android.os.SystemClock;
-import android.util.Log;
-
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
@@ -11,7 +8,6 @@ import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -233,7 +229,6 @@ public class MessageRepository {
     public void updateUnshared(long fileId, long roomId) {
         lock.lock();
         try {
-            Log.e("tony2", "fileId = " + fileId + " & roomId = " + roomId);
             Dao<ResMessages.OriginalMessage.IntegerWrapper, Integer> dao = helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class);
             DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder = dao.deleteBuilder();
             deleteBuilder.where().eq("fileOf_id", fileId).and().eq("shareEntity", roomId);
@@ -469,8 +464,6 @@ public class MessageRepository {
 
     public List<ResMessages.Link> getMessages(long roomId, long firstCursorLinkId, long toCursorLinkId) {
 
-        long start = SystemClock.currentThreadTimeMillis();
-
         lock.lock();
         try {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
@@ -491,8 +484,6 @@ public class MessageRepository {
         } finally {
             lock.unlock();
         }
-        long end = SystemClock.currentThreadTimeMillis();
-        LogUtil.e("time2", end - start + "");
         return new ArrayList<>(0);
     }
 

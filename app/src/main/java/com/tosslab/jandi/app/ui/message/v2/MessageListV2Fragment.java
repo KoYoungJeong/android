@@ -1999,7 +1999,7 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
 
-        fileUploadController.selectFileSelector(event.type, this, room.getEntityId());
+        fileUploadController.selectFileSelector(event.type, this, entityId);
 
         AnalyticsValue.Action action;
         switch (event.type) {

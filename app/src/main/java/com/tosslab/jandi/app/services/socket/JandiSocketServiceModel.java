@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.services.socket;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.StaleDataException;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;

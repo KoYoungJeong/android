@@ -16,7 +16,6 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi.Collapse
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi.CollapseLinkPreviewJandiBotViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi.JandiBotViewHolder;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
@@ -210,11 +209,9 @@ public class BodyViewFactory {
 
         } else if (currentMessage instanceof ResMessages.FileMessage) {
 
-
             boolean isSharedFile = false;
             ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) currentMessage;
             Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities = fileMessage.shareEntities;
-            LogUtil.d("tony", "size = " + shareEntities.size());
 
             // ArrayList로 나오는 경우 아직 DB에 기록되지 않은 경우 - object가 자동갱신되지 않는 문제 해결
             if (shareEntities instanceof ArrayList) {
@@ -222,9 +219,7 @@ public class BodyViewFactory {
                 shareEntities = file != null ? file.shareEntities : shareEntities;
             }
 
-            LogUtil.e("tony", "size = " + shareEntities.size());
             for (ResMessages.OriginalMessage.IntegerWrapper entity : shareEntities) {
-                LogUtil.d("tony", "entity = " + entity.toString());
                 if (entity.getShareEntity() == currentLink.roomId) {
                     isSharedFile = true;
                 }
@@ -237,8 +232,6 @@ public class BodyViewFactory {
                     && SourceTypeUtil.getSourceType(fileMessage.content.serverUrl) == MimeTypeUtil.SourceType.S3
                     && isSharedFile
                     && !TextUtils.equals(currentMessage.status, "archived");
-
-            LogUtil.i("tony", "isImage ? " + isImage);
 
             BodyViewHolder.Type defaultType;
             if (isImage) {
