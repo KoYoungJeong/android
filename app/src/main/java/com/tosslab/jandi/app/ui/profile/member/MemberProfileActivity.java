@@ -52,7 +52,7 @@ import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.LanguageUtil;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.transform.fresco.BlurPostprocessor;
@@ -145,6 +145,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     private boolean isFullSizeImageShowing = false;
     private boolean hasChangedProfileImage = true;
+    private ProgressWheel progressWheel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -520,11 +521,17 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
         try {
             RequestApiManager.getInstance().cancelInvitationUserByTeamApi(teamId, memberId);
-            showSuccessEmail(userEmail);
+            showSuccessToRejectEmail(userEmail);
+            finishOnUiThread();
         } catch (RetrofitError retrofitError) {
             showNetworkErrorToast();
             retrofitError.printStackTrace();
         }
+    }
+
+    @UiThread
+    void finishOnUiThread() {
+        finish();
     }
 
     @UiThread
@@ -533,13 +540,13 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     @UiThread
-    void showSuccessEmail(String userEmail) {
+    void showSuccessToRejectEmail(String userEmail) {
         ColoredToast.show(getString(R.string.jandi_success_to_cancel_invitation, userEmail));
     }
 
     @Background
     void requestReInvite() {
-
+        showProgress();
         long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
 
         List<String> invites = Arrays.asList(EntityManager.getInstance().getEntityById(memberId).getUserEmail());
@@ -551,6 +558,26 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             showNetworkErrorToast();
         }
 
+        dismissProgress();
+
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void dismissProgress() {
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void showProgress() {
+        if (progressWheel == null) {
+            progressWheel = new ProgressWheel(MemberProfileActivity.this);
+        }
+
+        if (!progressWheel.isShowing()) {
+            progressWheel.show();
+        }
     }
 
     @UiThread
