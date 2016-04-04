@@ -129,6 +129,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     public static final int REQUEST_TEAM_CREATE = 1603;
     @Extra
     boolean fromPush = false;
+    @Extra
+    int tabIndex = -1;
+
     @ViewById(R.id.vg_fab_menu)
     FloatingActionMenu floatingActionMenu;
     @Bean
@@ -252,6 +255,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
             if (entity == EntityManager.UNKNOWN_USER_ENTITY || entity.isUser()) {
                 vpMainTab.setCurrentItem(CHAT_INDEX);
             }
+        } else if (tabIndex > -1) {
+            vpMainTab.setCurrentItem(tabIndex);
         }
 
         mainTapStrip.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -861,8 +866,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                 })
                 .setNegativeButton(getString(R.string.jandi_cancel)
                         , (dialog, which) -> {
-                    JandiPreference.setVersionPopupLastTimeToCurrentTime(System.currentTimeMillis());
-                })
+                            JandiPreference.setVersionPopupLastTimeToCurrentTime(System.currentTimeMillis());
+                        })
                 .setCancelable(true);
         builder.create().show();
     }
