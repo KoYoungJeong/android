@@ -84,7 +84,6 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
-
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -173,6 +172,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     private PopupWindow teamsPopupWindow;
     private TeamsAdapter teamsAdapter;
     private ListScrollHandler listScrollHandler;
+    private boolean dontStopSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -524,6 +524,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                     .start();
         }
 
+        dontStopSocket = true;
+
         finish();
     }
 
@@ -650,7 +652,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @Override
     protected void onDestroy() {
         teamsPresenter.clearTeamInitializeQueue();
-        JandiSocketService.stopService(this);
+        if (!dontStopSocket) {
+            JandiSocketService.stopService(this);
+        }
         super.onDestroy();
     }
 
