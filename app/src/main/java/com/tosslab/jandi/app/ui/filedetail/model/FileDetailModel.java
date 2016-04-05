@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.filedetail.model;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
-import android.webkit.MimeTypeMap;
 
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
@@ -162,9 +161,9 @@ public class FileDetailModel {
                 .filter(formattedEntity -> formattedEntity.getId() != entityManager.getMe().getId())
                 .toSortedList((formattedEntity, formattedEntity2) -> {
                     if (formattedEntity.isUser() && formattedEntity2.isUser()) {
-                        return  StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
+                        return StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
                     } else if (!formattedEntity.isUser() && !formattedEntity2.isUser()) {
-                        return  StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
+                        return StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
                     } else {
                         if (formattedEntity.isUser()) {
                             return 1;
@@ -410,19 +409,6 @@ public class FileDetailModel {
 
     public boolean isDeletedFile(String status) {
         return status.equals("archived");
-    }
-
-    public String getFileType(File file, String fileType) {
-        String fileName = file.getName();
-        int idx = fileName.lastIndexOf(".");
-
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        if (idx >= 0) {
-            return mimeTypeMap.getMimeTypeFromExtension(
-                    fileName.substring(idx + 1, fileName.length()).toLowerCase());
-        } else {
-            return mimeTypeMap.getExtensionFromMimeType(fileType.toLowerCase());
-        }
     }
 
     public boolean isFileFromGoogleOrDropbox(ResMessages.FileContent fileContent) {

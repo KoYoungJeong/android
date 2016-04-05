@@ -318,8 +318,7 @@ public class FileDetailPresenter {
                                 if (type == FileManageType.EXPORT) {
                                     view.startExportedFileViewerActivity(result, mimeType);
                                 } else if (type == FileManageType.OPEN) {
-                                    String fileType = fileDetailModel.getFileType(result, mimeType);
-                                    view.startDownloadedFileViewerActivity(result, fileType);
+                                    view.startDownloadedFileViewerActivity(result, mimeType);
                                 }
                             } else {
                                 view.showUnexpectedErrorToast();
@@ -594,7 +593,7 @@ public class FileDetailPresenter {
 
         void startExportedFileViewerActivity(File file, String mimeType);
 
-        void startDownloadedFileViewerActivity(File file, String fileType);
+        void startDownloadedFileViewerActivity(File file, String mimeType);
 
         void moveToMessageListActivity(long entityId, int entityType, long roomId, boolean isStarred);
 
