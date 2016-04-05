@@ -12,8 +12,13 @@ import java.sql.SQLException;
  */
 public class AnnouncementRepository extends LockExecutorTemplate {
 
-    public static AnnouncementRepository getRepository() {
-        return new AnnouncementRepository();
+    private static AnnouncementRepository repository;
+
+    synchronized public static AnnouncementRepository getRepository() {
+        if (repository == null) {
+            repository = new AnnouncementRepository();
+        }
+        return repository;
     }
 
     public boolean upsertAnnounce(ResAnnouncement announcement) {

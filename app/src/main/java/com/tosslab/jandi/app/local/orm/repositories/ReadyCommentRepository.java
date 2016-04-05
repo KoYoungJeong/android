@@ -12,8 +12,13 @@ import java.sql.SQLException;
  */
 public class ReadyCommentRepository extends LockExecutorTemplate {
 
-    public static ReadyCommentRepository getRepository() {
-        return new ReadyCommentRepository();
+    private static ReadyCommentRepository repository;
+
+    synchronized public static ReadyCommentRepository getRepository() {
+        if (repository == null) {
+            repository = new ReadyCommentRepository();
+        }
+        return repository;
     }
 
     public boolean upsertReadyComment(ReadyComment readyMessage) {

@@ -14,8 +14,13 @@ import java.util.List;
  * Created by Steve SeongUg Jung on 15. 7. 27..
  */
 public class FileDetailRepository extends LockExecutorTemplate {
-    public static FileDetailRepository getRepository() {
-        return new FileDetailRepository();
+    private static FileDetailRepository repository;
+
+    synchronized public static FileDetailRepository getRepository() {
+        if (repository == null) {
+            repository = new FileDetailRepository();
+        }
+        return repository;
     }
 
     public boolean upsertFileDetail(FileDetail fileDetail) {

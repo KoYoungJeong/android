@@ -17,8 +17,13 @@ import java.util.List;
 public class TopicFolderRepository extends LockExecutorTemplate {
 
 
-    public static TopicFolderRepository getRepository() {
-        return new TopicFolderRepository();
+    private static TopicFolderRepository repository;
+
+    synchronized public static TopicFolderRepository getRepository() {
+        if (repository == null) {
+            repository = new TopicFolderRepository();
+        }
+        return repository;
     }
 
     public List<ResFolder> getFolders() {

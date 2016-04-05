@@ -14,8 +14,13 @@ import java.sql.SQLException;
  */
 public class LeftSideMenuRepository extends LockExecutorTemplate {
 
-    public static LeftSideMenuRepository getRepository() {
-        return new LeftSideMenuRepository();
+    private static LeftSideMenuRepository repository;
+
+    synchronized public static LeftSideMenuRepository getRepository() {
+        if (repository == null) {
+            repository = new LeftSideMenuRepository();
+        }
+        return repository;
     }
 
     public boolean upsertLeftSideMenu(ResLeftSideMenu leftSideMenu) {

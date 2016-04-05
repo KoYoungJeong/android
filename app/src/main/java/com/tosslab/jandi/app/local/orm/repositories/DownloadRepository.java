@@ -14,7 +14,7 @@ public class DownloadRepository extends LockExecutorTemplate {
 
     private static DownloadRepository repository;
 
-    public static DownloadRepository getInstance() {
+    synchronized public static DownloadRepository getInstance() {
         if (repository == null) {
             repository = new DownloadRepository();
         }
@@ -23,11 +23,11 @@ public class DownloadRepository extends LockExecutorTemplate {
     }
 
     public boolean upsertDownloadInfo(DownloadInfo downloadInfo) {
-        if (downloadInfo == null || downloadInfo.getNotificationId() <= 0) {
-            return false;
-        }
 
         return execute(() -> {
+            if (downloadInfo == null || downloadInfo.getNotificationId() <= 0) {
+                return false;
+            }
             try {
                 Dao<DownloadInfo, ?> dao = getHelper().getDao(DownloadInfo.class);
                 dao.createOrUpdate(downloadInfo);

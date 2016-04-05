@@ -14,9 +14,14 @@ import java.util.Collection;
  */
 public class MarkerRepository extends LockExecutorTemplate {
 
-    public static MarkerRepository getRepository() {
+    private static MarkerRepository repository;
 
-        return new MarkerRepository();
+    synchronized public static MarkerRepository getRepository() {
+
+        if (repository == null) {
+            repository = new MarkerRepository();
+        }
+        return repository;
     }
 
     public boolean upsertRoomInfo(ResRoomInfo roomInfo) {

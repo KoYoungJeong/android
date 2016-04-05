@@ -17,8 +17,13 @@ import java.util.List;
  */
 public class SendMessageRepository extends LockExecutorTemplate {
 
-    public static SendMessageRepository getRepository() {
-        return new SendMessageRepository();
+    private static SendMessageRepository repository;
+
+    synchronized public static SendMessageRepository getRepository() {
+        if (repository == null) {
+            repository = new SendMessageRepository();
+        }
+        return repository;
     }
 
     public boolean insertSendMessage(SendMessage sendMessage) {

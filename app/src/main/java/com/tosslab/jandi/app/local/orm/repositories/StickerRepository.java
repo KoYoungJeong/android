@@ -25,14 +25,18 @@ public class StickerRepository extends LockExecutorTemplate {
     public static final long DEFAULT_GROUP_ID_DAY = 101;
     public static final long DEFAULT_GROUP_ID_DAY_ZH_TW = 102;
     public static final long DEFAULT_MOZZI_COUNT = 26;
+    private static StickerRepository repository;
 
-    public StickerRepository() {
+    protected StickerRepository() {
         super();
         prepareStickerContent();
     }
 
-    public static StickerRepository getRepository() {
-        return new StickerRepository();
+    synchronized public static StickerRepository getRepository() {
+        if (repository == null) {
+            repository = new StickerRepository();
+        }
+        return repository;
     }
 
     public void removeRecentSticker() {

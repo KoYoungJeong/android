@@ -13,8 +13,13 @@ import java.sql.SQLException;
 public class ReadyMessageRepository extends LockExecutorTemplate {
 
 
-    public static ReadyMessageRepository getRepository() {
-        return new ReadyMessageRepository();
+    private static ReadyMessageRepository repository;
+
+    synchronized public static ReadyMessageRepository getRepository() {
+        if (repository == null) {
+            repository = new ReadyMessageRepository();
+        }
+        return repository;
     }
 
     public boolean upsertReadyMessage(ReadyMessage readyMessage) {
