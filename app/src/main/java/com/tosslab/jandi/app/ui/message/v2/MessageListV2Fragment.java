@@ -2269,7 +2269,7 @@ public class MessageListV2Fragment extends Fragment implements
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void dismissStatusLayout() {
+    public void dismissUserStatusLayout() {
         vgMemberStatusAlert.setVisibility(View.GONE);
     }
 
