@@ -27,14 +27,6 @@ public class InviteByEmailModel {
         return !FormatConverter.isInvalidEmailString(text);
     }
 
-    public List<ResInvitationMembers> inviteMembers(List<String> invites) throws RetrofitError {
-
-        long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
-
-        return RequestApiManager.getInstance().inviteToTeamByTeamApi(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage()));
-
-    }
-
     public Observable<String> getInviteMemberObservable(final String email) {
         return Observable.<String>create(subscriber -> {
             try {
