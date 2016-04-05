@@ -176,8 +176,10 @@ public class JandiSocketService extends Service {
         eventHashMap.put("topic_invite", entityRefreshListener);
 
         EventListener memberLeftListener = objects -> jandiSocketServiceModel.refreshLeaveMember(objects[0]);
-
         eventHashMap.put("team_left", memberLeftListener);
+
+        EventListener teamDeletedListener = objects -> jandiSocketServiceModel.refreshTeamDeleted(objects[0]);
+        eventHashMap.put("team_deleted", teamDeletedListener);
 
         EventListener chatLCloseListener = objects ->
                 jandiSocketServiceModel.refreshChatCloseListener(objects[0]);

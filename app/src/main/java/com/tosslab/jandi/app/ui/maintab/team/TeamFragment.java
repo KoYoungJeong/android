@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
+import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -31,6 +32,7 @@ import com.tosslab.jandi.app.ui.maintab.team.vo.Team;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.views.KeyboardVisibleChangeDetectView;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import java.util.List;
 
@@ -48,7 +50,8 @@ import rx.android.schedulers.AndroidSchedulers;
 /**
  * Created by tonyjs on 16. 3. 15..
  */
-public class TeamFragment extends Fragment implements TeamView, UiUtils.KeyboardHandler {
+public class TeamFragment extends Fragment
+        implements TeamView, UiUtils.KeyboardHandler, ListScroller {
 
     @Inject
     TeamPresenter presenter;
@@ -234,6 +237,10 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
         pbTeam.setVisibility(View.GONE);
     }
 
+    public void onEvent(RetrieveTopicListEvent event) {
+        presenter.onSearchMember(etSearch.getText().toString());
+    }
+
     public void onEvent(TeamLeaveEvent event) {
         presenter.reInitializeTeam();
     }
@@ -344,6 +351,12 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
 
     private boolean isFinishing() {
         return getActivity() == null || getActivity().isFinishing();
+    }
+
+    @Override
+    public void scrollToTop() {
+        changeToNormalMode();
+        lvTeam.scrollToPosition(0);
     }
 
     enum UiMode {

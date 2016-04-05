@@ -156,6 +156,8 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     public void checkEnabledUser(long entityId) {
         if (!messageListModel.isEnabledIfUser(entityId)) {
             view.setDisabledUser();
+        } else {
+            view.dismissUserStatusLayout();
         }
     }
 

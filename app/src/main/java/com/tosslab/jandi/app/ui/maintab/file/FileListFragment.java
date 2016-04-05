@@ -59,6 +59,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
@@ -88,10 +89,11 @@ import rx.subjects.PublishSubject;
  * Created by justinygchoi on 2014. 10. 13..
  */
 @EFragment(R.layout.fragment_file_list)
-public class FileListFragment extends Fragment implements SearchActivity.SearchSelectView {
+public class FileListFragment extends Fragment
+        implements SearchActivity.SearchSelectView, ListScroller {
 
     @ViewById(R.id.list_searched_files)
-    RecyclerView actualListView;
+    RecyclerView lvSearchFiles;
 
     @ViewById(R.id.layout_file_list_header)
     View headerView;
@@ -129,7 +131,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @AfterInject
     void init() {
-        LogUtil.d("FileListFragment");
         mSearchQuery = new SearchQuery();
         if (entityIdForCategorizing >= 0) {
             mSearchQuery.setSharedEntity(entityIdForCategorizing);
@@ -150,8 +151,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @AfterViews
     void bindAdapter() {
-        LogUtil.d("FileListFragment AfterViews");
-
         if (getActivity() instanceof SearchActivity) {
             AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                     .event(Event.ScreenView)
@@ -166,9 +165,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         setHasOptionsMenu(true);
 
         // Empty View를 가진 ListView 설정
-        actualListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        actualListView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
-        actualListView.setAdapter(searchedFileItemListAdapter);
+        lvSearchFiles.setLayoutManager(new LinearLayoutManager(getActivity()));
+        lvSearchFiles.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+        lvSearchFiles.setAdapter(searchedFileItemListAdapter);
 
         selectedTeamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
 
@@ -678,7 +677,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     @Override
     public void initSearchLayoutIfFirst() {
 
-        if (!isSearchLayoutFirst || headerView == null || actualListView == null) {
+        if (!isSearchLayoutFirst || headerView == null || lvSearchFiles == null) {
             return;
         }
 
@@ -696,7 +695,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         final int headerMinY = 0;
 
         int paddingTop = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48 + 64.5f, getResources().getDisplayMetrics());
-        actualListView.setPadding(actualListView.getPaddingLeft(), paddingTop, actualListView.getPaddingRight(), actualListView.getPaddingBottom());
+        lvSearchFiles.setPadding(lvSearchFiles.getPaddingLeft(), paddingTop, lvSearchFiles.getPaddingRight(), lvSearchFiles.getPaddingBottom());
 
         View uploadEmptyView = getActivity().findViewById(R.id.layout_file_list_empty);
         View searchEmptyView = getActivity().findViewById(R.id.layout_file_list_search_empty);
@@ -712,7 +711,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         loadingLayoutParams.topMargin = paddingTop;
         loadingView.setLayoutParams(loadingLayoutParams);
 
-        actualListView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        lvSearchFiles.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -812,6 +811,11 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             }
         }
 
+    }
+
+    @Override
+    public void scrollToTop() {
+        lvSearchFiles.scrollToPosition(0);
     }
 
     private static class OldFileResult {

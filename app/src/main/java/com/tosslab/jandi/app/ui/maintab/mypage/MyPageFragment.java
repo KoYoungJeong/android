@@ -38,6 +38,7 @@ import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ViewSlider;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.spannable.OwnerSpannable;
 
 import java.util.Date;
@@ -53,7 +54,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tonyjs on 16. 3. 17..
  */
-public class MyPageFragment extends Fragment implements MyPageView {
+public class MyPageFragment extends Fragment implements MyPageView, ListScroller {
 
     @Inject
     MyPagePresenter presenter;
@@ -149,8 +150,9 @@ public class MyPageFragment extends Fragment implements MyPageView {
      */
     private void initMoreLoadingProgress() {
         pbMoreLoading.post(() -> {
+            ViewGroup.LayoutParams layoutParams = pbMoreLoading.getLayoutParams();
             int bottomMargin =
-                    ((ViewGroup.MarginLayoutParams) pbMoreLoading.getLayoutParams()).bottomMargin;
+                    ((ViewGroup.MarginLayoutParams) layoutParams).bottomMargin;
             int translationY = pbMoreLoading.getMeasuredHeight() + bottomMargin;
             pbMoreLoading.animate().translationY(translationY);
         });
@@ -244,7 +246,7 @@ public class MyPageFragment extends Fragment implements MyPageView {
         btnSetting.setOnClickListener(v -> ModifyProfileActivity_.intent(this).start());
 
         final long memberId = me.getId();
-        vgMyProfileWrapper.setOnClickListener(v -> {
+        ivProfile.setOnClickListener(v -> {
             MemberProfileActivity_.intent(getActivity())
                     .memberId(memberId)
                     .start();
@@ -343,6 +345,13 @@ public class MyPageFragment extends Fragment implements MyPageView {
 
     private boolean isFinishing() {
         return getActivity() == null || getActivity().isFinishing();
+    }
+
+    @Override
+    public void scrollToTop() {
+        vgProfileLayout.animate()
+                .translationY(0);
+        lvMyPage.scrollToPosition(0);
     }
 
     private class MentionMessageMoreRequestHandler implements MyPageAdapter.OnLoadMoreCallback {

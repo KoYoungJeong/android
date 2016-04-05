@@ -8,7 +8,12 @@ import com.tosslab.jandi.app.utils.activity.ActivityHelper;
 
 public class BaseAppCompatActivity extends AppCompatActivity {
 
+    private boolean shouldSetOrientation = true;
     private boolean needUnLockPassCode = true;
+
+    public void setShouldSetOrientation(boolean shouldSetOrientation) {
+        this.shouldSetOrientation = shouldSetOrientation;
+    }
 
     public void setNeedUnLockPassCode(boolean needUnLockPassCode) {
         this.needUnLockPassCode = needUnLockPassCode;
@@ -18,7 +23,10 @@ public class BaseAppCompatActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         AppEventsLogger.activateApp(this);
-        ActivityHelper.setOrientation(this);
+
+        if (shouldSetOrientation) {
+            ActivityHelper.setOrientation(this);
+        }
 
         if (needUnLockPassCode) {
             UnLockPassCodeManager.getInstance().unLockPassCodeIfNeed(this);

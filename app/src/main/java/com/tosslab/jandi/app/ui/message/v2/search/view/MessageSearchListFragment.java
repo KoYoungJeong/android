@@ -789,6 +789,11 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     }
 
     @Override
+    public void dismissUserStatusLayout() {
+        vDisabledUser.setVisibility(View.GONE);
+    }
+
+    @Override
     public void setDisabledUser() {
         sendLayoutInvisible();
         vDisabledUser.setVisibility(View.VISIBLE);
