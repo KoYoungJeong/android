@@ -331,7 +331,9 @@ public class MainTopicListFragment extends Fragment
         int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()));
         EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
         setSelectedItem(selectedEntity);
-        scrollAndAnimateForSelectedItem();
+        if (isCurrentFolder()) {
+            scrollAndAnimateForSelectedItem();
+        }
 
         setFolderExpansion();
     }

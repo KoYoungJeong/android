@@ -250,15 +250,14 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     private void initMainTabStrip() {
         mainTapStrip.setViewPager(vpMainTab);
 
-        if (selectedEntity > 0) {
+        if (tabIndex > -1) {
+            vpMainTab.setCurrentItem(tabIndex);
+        } else if (selectedEntity > 0) {
             FormattedEntity entity = EntityManager.getInstance().getEntityById(selectedEntity);
             if (entity == EntityManager.UNKNOWN_USER_ENTITY || entity.isUser()) {
                 vpMainTab.setCurrentItem(CHAT_INDEX);
             }
-        } else if (tabIndex > -1) {
-            vpMainTab.setCurrentItem(tabIndex);
         }
-
         mainTapStrip.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
