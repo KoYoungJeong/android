@@ -5,8 +5,6 @@ import android.util.Log;
 import com.tosslab.jandi.lib.sprinkler.Logger;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 
-import java.io.IOException;
-
 import retrofit2.Retrofit;
 
 
@@ -38,19 +36,19 @@ final class RequestManager {
         return retofit.create(client);
     }
 
-    public <RESPONSE> RESPONSE request(Request<RESPONSE> request) throws IOException {
+    public <RESPONSE> RESPONSE request(Request<RESPONSE> request) throws Exception {
         RESPONSE response = null;
         try {
             response = request.performRequest();
             Logger.i(TAG, "Request success.");
-        } catch (IOException error) {
+        } catch (Exception error) {
             Logger.i(TAG, "Request fail");
             throw error;
         }
         return response;
     }
 
-    public <RESPONSE> RESPONSE requestWithRetry(Request<RESPONSE> request) throws IOException {
+    public <RESPONSE> RESPONSE requestWithRetry(Request<RESPONSE> request) throws Exception {
         RESPONSE response = null;
         int i = 0;
         while (i <= RETRY_COUNT) {
@@ -58,7 +56,7 @@ final class RequestManager {
                 response = request.performRequest();
                 Logger.i(TAG, "Request success.");
                 break;
-            } catch (IOException error) {
+            } catch (Exception error) {
                 if (isCanceled) {
                     Logger.i(TAG, "Request has cancelled.");
                     throw error;
@@ -88,7 +86,7 @@ final class RequestManager {
     }
 
     public interface Request<RESPONSE> {
-        RESPONSE performRequest() throws IOException;
+        RESPONSE performRequest() throws Exception;
     }
 
     interface RequestConfig {

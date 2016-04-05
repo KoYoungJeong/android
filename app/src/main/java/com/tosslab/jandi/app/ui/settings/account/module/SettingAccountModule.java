@@ -32,7 +32,6 @@ public class SettingAccountModule {
     }
 
     @Provides
-    @Singleton
     public SettingAccountModel provideSettingAccountModel(Lazy<AccountProfileApi> accountProfileApi) {
         return new SettingAccountModel(accountProfileApi);
     }

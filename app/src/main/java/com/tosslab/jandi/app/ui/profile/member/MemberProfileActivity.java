@@ -53,8 +53,6 @@ import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileLoader;
 import com.tosslab.jandi.app.ui.profile.member.model.ProfileLoader;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
-import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
-import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -537,7 +535,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
         try {
             teamApi.get().cancelInviteTeam(teamId, memberId);
-            showSuccessEmail(userEmail);
+            showSuccessToRejectEmail(userEmail);
             finishOnUiThread();
         } catch (RetrofitException retrofitError) {
             showNetworkErrorToast();
