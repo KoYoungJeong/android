@@ -15,26 +15,29 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
+import com.tosslab.jandi.app.utils.ColoredToast;
 
 /**
  * Created by Steve SeongUg Jung on 15. 7. 8..
  */
-public class UnjoinTopicDialog extends DialogFragment {
+public class TopicInfoDialog extends DialogFragment {
 
     private static final String ARGS_NAME = "name";
     private static final String ARGS_DESCRIPTION = "description";
     private static final String ARGS_CREATOR_ID = "creatorId";
     private static final String ARGS_MEMBER_COUNT = "memberCount";
+    private static final String ARGS_ENTITY_ID = "entityId";
+    private OnJoinClickListener onJoinClickListener;
+    private OnDismissListener onDismissListener;
 
-    private DialogInterface.OnClickListener onJoinClickListener;
-
-    public static UnjoinTopicDialog instantiate(Topic topic) {
-        UnjoinTopicDialog fragment = new UnjoinTopicDialog();
+    public static TopicInfoDialog instantiate(Topic topic) {
+        TopicInfoDialog fragment = new TopicInfoDialog();
         Bundle args = new Bundle();
 
         args.putString(ARGS_NAME, topic.getName());
         args.putString(ARGS_DESCRIPTION, topic.getDescription());
         args.putLong(ARGS_CREATOR_ID, topic.getCreatorId());
+        args.putLong(ARGS_ENTITY_ID, topic.getEntityId());
         args.putInt(ARGS_MEMBER_COUNT, topic.getMemberCount());
 
         fragment.setArguments(args);
@@ -49,7 +52,8 @@ public class UnjoinTopicDialog extends DialogFragment {
 
         String name = arguments.getString(ARGS_NAME);
         String description = arguments.getString(ARGS_DESCRIPTION);
-        long creatorId = arguments.getInt(ARGS_CREATOR_ID);
+        long creatorId = arguments.getLong(ARGS_CREATOR_ID);
+        final long entityId = arguments.getLong(ARGS_ENTITY_ID);
         int memberCount = arguments.getInt(ARGS_MEMBER_COUNT);
 
         View rootView = LayoutInflater.from(getActivity())
@@ -71,17 +75,43 @@ public class UnjoinTopicDialog extends DialogFragment {
             tvDescription.setText(description);
         }
 
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setView(rootView)
-                .setPositiveButton("Join", onJoinClickListener);
+                .setPositiveButton(R.string.jandi_join_topic, ((dialog, which) -> {
+                    if (onJoinClickListener != null) {
+                        onJoinClickListener.onJoinClick(entityId);
+                    }
+                }));
+        builder.setOnDismissListener(dialog -> {
 
+        });
         return builder.create();
     }
 
-    public void setOnJoinClickListener(DialogInterface.OnClickListener onJoinClickListener) {
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        if (onDismissListener != null) {
+            long entityId = getArguments().getLong(ARGS_ENTITY_ID, -1);
+            onDismissListener.onDismiss(entityId);
+        }
+        super.onDismiss(dialog);
+    }
+
+    public void setOnJoinClickListener(OnJoinClickListener onJoinClickListener) {
         this.onJoinClickListener = onJoinClickListener;
+    }
+
+    public void setOnDismissListener(OnDismissListener onDismissListener) {
+        this.onDismissListener = onDismissListener;
+    }
+
+    public interface OnJoinClickListener {
+        void onJoinClick(long topicEntityId);
+    }
+
+    public interface OnDismissListener {
+        void onDismiss(long topicEntityId);
     }
 
 }

@@ -1,63 +1,91 @@
 package com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
-import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.adapter.TopicRecyclerAdapter;
-import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.model.UnjoinTopicDialog;
+import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.adapter.JoinableTopicListAdapter;
+import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.component.DaggerJoinableTopicListComponent;
+import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.model.TopicInfoDialog;
+import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.module.JoinableTopicListModule;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.presenter.JoinableTopicListPresenter;
+import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.view.JoinableTopicDataView;
+import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.view.JoinableTopicListView;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
+import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnTextChanged;
 import de.greenrobot.event.EventBus;
-import rx.Observable;
 
 /**
  * Created by tee on 15. 8. 30..
  */
-
-@EActivity(R.layout.activity_unjoined_topic_list)
 public class JoinableTopicListActivity extends BaseAppCompatActivity
-        implements JoinableTopicListPresenter.View {
+        implements JoinableTopicListView {
 
-    @ViewById(R.id.rv_unjoined_topic)
-    RecyclerView lvUnjoinedTopic;
+    @Bind(R.id.lv_joinable_topics)
+    RecyclerView lvJoinableTopics;
 
-    @Bean
+    @Inject
     JoinableTopicListPresenter mainTopicListPresenter;
 
-    private TopicRecyclerAdapter adapter;
+    @Inject
+    JoinableTopicDataView joinableTopicDataView;
+
     private ProgressWheel progressWheel;
 
     private boolean isForeground = true;
+    private LinearLayoutManager layoutManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        JoinableTopicListAdapter adapter = new JoinableTopicListAdapter();
+        DaggerJoinableTopicListComponent.builder()
+                .joinableTopicListModule(new JoinableTopicListModule(this, adapter))
+                .build()
+                .inject(this);
+
+        setContentView(R.layout.activity_joinable_topic_list);
+        ButterKnife.bind(this);
+
         EventBus.getDefault().register(this);
+
+        progressWheel = new ProgressWheel(this);
+
+        setupActionBar();
+
+        initJoinableTopicListView(adapter);
+
+        mainTopicListPresenter.onInitJoinableTopics();
+
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.BrowseOtherTopics);
     }
 
     @Override
@@ -74,61 +102,25 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
 
     @Override
     public void onDestroy() {
+        mainTopicListPresenter.stopSearchTopicQueue();
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
-    @AfterInject
-    void initObject() {
+    void initJoinableTopicListView(final JoinableTopicListAdapter joinableTopicListAdapter) {
+        layoutManager = new LinearLayoutManager(getBaseContext());
+        lvJoinableTopics.setLayoutManager(layoutManager);
+        lvJoinableTopics.addItemDecoration(new SimpleDividerItemDecoration(getApplicationContext()));
+        lvJoinableTopics.setAdapter(joinableTopicListAdapter);
 
-        progressWheel = new ProgressWheel(this);
-        adapter = new TopicRecyclerAdapter(getApplicationContext());
-        adapter.setHasStableIds(true);
-
-        mainTopicListPresenter.setView(this);
-    }
-
-    @AfterViews
-    void initView() {
-
-        setupActionBar();
-
-        lvUnjoinedTopic.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        lvUnjoinedTopic.addItemDecoration(new SimpleDividerItemDecoration(getApplicationContext()));
-        lvUnjoinedTopic.setAdapter(adapter);
-
-        adapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
-            mainTopicListPresenter.onItemClick(adapter, position);
+        joinableTopicDataView.setOnTopicClickListener((view, adapter, position) -> {
+            mainTopicListPresenter.onTopicClick(position);
         });
-
-        adapter.setOnRecyclerItemLongClickListener((view, adapter, position) -> {
-            mainTopicListPresenter.onItemLongClick(adapter, position);
-            return true;
-        });
-
-        mainTopicListPresenter.onInitUnjoinedTopics();
-
-        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.BrowseOtherTopics);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void setEntities(Observable<Topic> unjoinEntities) {
-        adapter.clear();
-        unjoinEntities
-                .toSortedList((lhs, rhs) -> StringCompareUtil.compare(lhs.getName(), rhs.getName()))
-                .subscribe(entities -> {
-            if (entities.size() == 0) {
-                JoinableTopicListActivity.this.finish();
-                showToast(getString(R.string.jandi_no_topic_to_join));
-            } else {
-                adapter.addAll(entities);
-            }
-        });
-        adapter.notifyDataSetChanged();
     }
 
     @Override
-    public void moveToMessageActivity(long entityId, int entityType, boolean starred, long teamId, long lastReadLinkId) {
+    public void moveToMessageActivity(long entityId, int entityType, boolean starred, long teamId,
+                                      long lastReadLinkId) {
         MessageListV2Activity_.intent(this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityType(entityType)
@@ -143,45 +135,54 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
     }
 
     @Override
-    public void showUnjoinDialog(Topic item) {
+    public void showTopicInfoDialog(final Topic item) {
 
-        UnjoinTopicDialog dialog = UnjoinTopicDialog.instantiate(item);
-        dialog.setOnJoinClickListener(
-                (dialog1, which) -> {
-                    mainTopicListPresenter.onJoinTopic(getApplicationContext(), item);
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.BrowseOtherTopics, AnalyticsValue.Action.JoinTopic);
-                });
+        TopicInfoDialog dialog = TopicInfoDialog.instantiate(item);
         dialog.show(getSupportFragmentManager(), "dialog");
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.BrowseOtherTopics, AnalyticsValue.Action.ViewTopicInfo);
+        AnalyticsUtil.sendEvent(
+                AnalyticsValue.Screen.BrowseOtherTopics, AnalyticsValue.Action.ViewTopicInfo);
 
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    private void setTopicInfoDialogEventListeners(TopicInfoDialog topicInfoDialog) {
+        topicInfoDialog.setOnJoinClickListener((topicEntityId) -> {
+            mainTopicListPresenter.onJoinTopic(topicEntityId);
+            AnalyticsUtil.sendEvent(
+                    AnalyticsValue.Screen.BrowseOtherTopics, AnalyticsValue.Action.JoinTopic);
+        });
+
+        topicInfoDialog.setOnDismissListener(mainTopicListPresenter::onShouldShowSelectedTopic);
+    }
+
     @Override
-    public void notifyDatasetChanged() {
-        adapter.notifyDataSetChanged();
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if (fragment instanceof TopicInfoDialog) {
+            setTopicInfoDialogEventListeners((TopicInfoDialog) fragment);
+        }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void notifyDataSetChanged() {
+        joinableTopicDataView.notifyDataSetChanged();
+    }
+
     @Override
     public void showProgressWheel() {
         dismissProgressWheel();
         progressWheel.show();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showToast(String message) {
         ColoredToast.show(message);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showErrorToast(String message) {
         ColoredToast.showError(message);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissProgressWheel() {
         if (progressWheel != null && progressWheel.isShowing()) {
@@ -189,11 +190,47 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
         }
     }
 
+    @Override
+    public void showHasNoTopicToJoinErrorToast() {
+        ColoredToast.showError(R.string.jandi_no_topic_to_join);
+    }
+
+    @Override
+    public void showJoinToTopicErrorToast() {
+        ColoredToast.showError(R.string.err_entity_join);
+    }
+
+    @Override
+    public void showJoinToTopicToast(String topicName) {
+        ColoredToast.show(getString(R.string.jandi_message_join_entity, topicName));
+    }
+
+    @Override
+    public void showSelectedTopic(int position) {
+        final View viewByPosition = layoutManager.findViewByPosition(position);
+        if (viewByPosition == null) {
+            return;
+        }
+
+        Resources resources = getResources();
+        Integer colorFrom = resources.getColor(R.color.transparent);
+        Integer colorTo = resources.getColor(R.color.jandi_accent_color_1f);
+        final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnimation.setDuration(resources.getInteger(R.integer.highlight_animation_time));
+        colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
+        colorAnimation.setRepeatCount(1);
+        colorAnimation.addUpdateListener(animator ->
+                viewByPosition.setBackgroundColor((Integer) animator.getAnimatedValue()));
+
+        colorAnimation.start();
+
+    }
+
     public void onEvent(SocketTopicPushEvent event) {
         if (!isForeground) {
             return;
         }
-        mainTopicListPresenter.onInitUnjoinedTopics();
+        mainTopicListPresenter.onInitJoinableTopics();
     }
 
     private void setupActionBar() {
@@ -216,6 +253,11 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @OnTextChanged(R.id.et_joinable_topic_list_search)
+    void onSearchTopic(CharSequence query) {
+        mainTopicListPresenter.onSearchTopic(query);
     }
 
 }

@@ -281,6 +281,7 @@
 	<string name="jandi_is_newcomer">"잔디가 처음이신가요?"</string>
 	<string name="jandi_is_topic_required">"공개 여부"</string>
 	<string name="jandi_it_has_no_topic_description">"(토픽 설명이 없습니다)"</string>
+	<string name="jandi_join_topic">"참여하기"</string>
 	<string name="jandi_joined_team">"이미 %1$s의 멤버입니다. 팀 리스트를 확인해주세요."</string>
 	<string name="jandi_kicked_message">"%s에서 관리자에 의해 퇴장되었습니다."</string>
 	<string name="jandi_later">"나중에 하기"</string>
