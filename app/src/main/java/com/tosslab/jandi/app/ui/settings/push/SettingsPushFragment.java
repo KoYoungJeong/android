@@ -17,6 +17,8 @@ import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.settings.push.model.NotificationSoundDialog;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.app.views.settings.SettingsBodyCheckView;
 import com.tosslab.jandi.app.views.settings.SettingsBodyView;
@@ -127,6 +129,13 @@ public class SettingsPushFragment extends Fragment {
         setPushOnSummary(checked);
 
         setUpParseValue(checked);
+
+        sendAnalyticsEvent(AnalyticsValue.Action.Notifications, checked);
+    }
+
+    private void sendAnalyticsEvent(AnalyticsValue.Action action, boolean on) {
+        AnalyticsValue.Label label = on ? AnalyticsValue.Label.On : AnalyticsValue.Label.Off;
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, action, label);
     }
 
     private void setUpParseValue(boolean checked) {
@@ -171,6 +180,8 @@ public class SettingsPushFragment extends Fragment {
         setSoundSubVisible(checked);
         setSoundOnValue(checked);
         setSoundOnSummary(checked);
+
+        sendAnalyticsEvent(AnalyticsValue.Action.Sounds, checked);
     }
 
     private void setSoundOnValue(boolean checked) {
@@ -224,6 +235,8 @@ public class SettingsPushFragment extends Fragment {
         boolean checked = !sbcvVibration.isChecked();
         sbcvVibration.setChecked(checked);
         setVibrationOnValue(checked);
+
+        sendAnalyticsEvent(AnalyticsValue.Action.Vibrate, checked);
     }
 
     private void setVibrationOnValue(boolean checked) {
@@ -237,6 +250,8 @@ public class SettingsPushFragment extends Fragment {
         boolean checked = !sbcvLed.isChecked();
         sbcvLed.setChecked(checked);
         setLedOnValue(checked);
+
+        sendAnalyticsEvent(AnalyticsValue.Action.PhoneLed, checked);
     }
 
     private void setLedOnValue(boolean checked) {

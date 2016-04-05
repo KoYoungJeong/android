@@ -417,11 +417,15 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                     .startForResult(REQUEST_TEAM_CREATE);
 
             teamsPopupWindow.dismiss();
+
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.CreateNewTeam);
         });
         teamsAdapter.setOnTeamClickListener(team -> {
             teamsPresenter.onTeamJoinAction(team.getTeamId());
 
             teamsPopupWindow.dismiss();
+
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.ChooseTeam);
         });
         recyclerView.setAdapter(teamsAdapter);
 
@@ -458,6 +462,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     void showAnotherTeams() {
         int yoff = -tvTitle.getMeasuredHeight() - (int) UiUtils.getPixelFromDp(8) /* 조금 더 올리려고 */;
         teamsPopupWindow.showAsDropDown(tvTitle, 0, yoff);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.OpenTeamList);
     }
 
     @Override
@@ -532,11 +538,15 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     public void onEvent(TeamInviteIgnoreEvent event) {
         teamsPopupWindow.dismiss();
         teamsPresenter.onTeamInviteIgnoreAction(event.getTeam());
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.AcceptTeamInvitation);
     }
 
     public void onEvent(TeamInviteAcceptEvent event) {
         teamsPopupWindow.dismiss();
         teamsPresenter.onTeamInviteAcceptAction(event.getTeam());
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.IgnoreTeamInvitation);
     }
 
     public void onEvent(TeamDeletedEvent event) {
@@ -736,7 +746,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
 
     public void onEvent(RequestInviteMemberEvent event) {
-        invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_INVITE);
+        int from = event.getFrom() > 0 ? event.getFrom() : InvitationDialogExecutor.FROM_MAIN_INVITE;
+        invitationDialogExecutor.setFrom(from);
         invitationDialogExecutor.execute();
     }
 
