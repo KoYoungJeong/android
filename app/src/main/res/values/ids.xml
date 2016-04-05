@@ -18,4 +18,5 @@
     <item name="fab_button_2" type="id" />
     <item name="fab_button_3" type="id" />
     <item name="fab_button_4" type="id" />
+    <item name="fab_button_5" type="id" />
 </resources>

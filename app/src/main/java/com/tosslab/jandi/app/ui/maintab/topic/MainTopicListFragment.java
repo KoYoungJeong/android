@@ -169,6 +169,13 @@ public class MainTopicListFragment extends Fragment
                     }
                     showCreateNewFolderDialog();
                 });
+        floatingActionMenu.addItem(R.drawable.btn_fab_item_go_unjoined,
+                getResources().getString(R.string.jandi_browse_other_topics), () -> {
+                    if (floatingActionMenu.isOpened()) {
+                        floatingActionMenu.close();
+                    }
+                    onEvent(new JoinableTopicCallEvent());
+                });
         floatingActionMenu.addItem(R.drawable.btn_fab_item_create_topic,
                 getResources().getString(R.string.jandi_create_topic), () -> {
                     if (floatingActionMenu.isOpened()) {
@@ -176,6 +183,7 @@ public class MainTopicListFragment extends Fragment
                     }
                     launchCreateTopicActivity();
                 });
+
     }
 
     @AfterInject
