@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -51,7 +52,8 @@ import de.greenrobot.event.EventBus;
 
 @EFragment(R.layout.fragment_main_chat_list)
 @OptionsMenu(R.menu.main_activity_menu)
-public class MainChatListFragment extends Fragment implements MainChatListPresenter.View {
+public class MainChatListFragment extends Fragment
+        implements MainChatListPresenter.View, ListScroller {
 
     @Bean(MainChatListPresenterImpl.class)
     MainChatListPresenter mainChatListPresenter;
@@ -60,7 +62,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     long selectedEntity;
 
     @ViewById(R.id.lv_main_chat_list)
-    ListView chatListView;
+    ListView lvChat;
 
     @ViewById(R.id.layout_main_chat_list_empty)
     View emptyView;
@@ -79,10 +81,10 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
 
     @AfterViews
     void initViews() {
-        chatListView.setEmptyView(emptyView);
-        chatListView.setAdapter(mainChatListAdapter);
+        lvChat.setEmptyView(emptyView);
+        lvChat.setAdapter(mainChatListAdapter);
 
-        FAButtonUtil.setFAButtonController(chatListView, btnFAB);
+        FAButtonUtil.setFAButtonController(lvChat, btnFAB);
 
         mainChatListPresenter.initChatList(getActivity(), selectedEntity);
 
@@ -171,7 +173,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     @Override
     public void scrollToPosition(int selectedEntityPosition) {
         if (selectedEntityPosition > 0) {
-            chatListView.setSelection(selectedEntityPosition - 1);
+            lvChat.setSelection(selectedEntityPosition - 1);
         }
     }
 
@@ -191,7 +193,6 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
             mainChatListAdapter.notifyDataSetChanged();
         }
     }
-
 
     public void onEventMainThread(ShowProfileEvent event) {
         if (foreground) {
@@ -297,4 +298,8 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
         }
     }
 
+    @Override
+    public void scrollToTop() {
+        lvChat.setSelectionFromTop(0, 0);
+    }
 }

@@ -405,7 +405,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 .delay(200, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(integer -> {
-                    mentionControlViewModel.onConfigurationChanged();
+                    if (mentionControlViewModel != null) {
+                        mentionControlViewModel.onConfigurationChanged();
+                    }
                     adapter.notifyDataSetChanged();
                     stickerViewModel.onConfigurationChanged();
                 });

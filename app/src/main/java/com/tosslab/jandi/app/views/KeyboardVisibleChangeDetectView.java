@@ -15,8 +15,6 @@ public class KeyboardVisibleChangeDetectView extends View {
         void onKeyboardVisibleChange(boolean isShow, int height);
     }
 
-    private int initializedHeight;
-
     public KeyboardVisibleChangeDetectView(Context context) {
         super(context);
     }
@@ -42,13 +40,13 @@ public class KeyboardVisibleChangeDetectView extends View {
             return;
         }
 
-        if (oldw != w || initializedHeight == 0) {
-            initializedHeight = getMeasuredHeight();
+        if (oldw != w) {
+            isShowing = false;
             return;
         }
 
-        isShowing = initializedHeight != getMeasuredHeight();
-        onKeyboardVisibleChangeListener.onKeyboardVisibleChange(isShowing, h - oldh);
+        isShowing = h - oldh <= 0;
+        onKeyboardVisibleChangeListener.onKeyboardVisibleChange(isShowing, Math.abs(h - oldh));
     }
 
     public boolean isShowing() {

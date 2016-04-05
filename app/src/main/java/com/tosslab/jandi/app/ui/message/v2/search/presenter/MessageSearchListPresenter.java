@@ -112,5 +112,8 @@ public interface MessageSearchListPresenter {
         void showOldLoadingProgress();
 
         void dismissOldLoadingProgress();
+
+        void dismissUserStatusLayout();
+
     }
 }

@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.ui.settings.privacy.SettingPrivacyActivity_;
 import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
+import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -126,11 +127,22 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
     void onAccountClick() {
         Intent intent = new Intent(getActivity(), SettingAccountActivity.class);
         startActivity(intent);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.Account);
     }
 
     @Click(R.id.vg_settings_main_sign_out)
     void onSignOutClick() {
         settingsPresenter.onSignOut();
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.SignOut);
+    }
+
+    @Click(R.id.vg_settings_main_help)
+    void onHelpClick() {
+        settingsPresenter.onLaunchHelpPage();
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.Help);
     }
 
     private void showOrientationDialog() {
@@ -158,7 +170,7 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
     }
 
     @Override
-    public void showSignoutDialog() {
+    public void showSignOutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(R.string.jandi_setting_sign_out)
@@ -225,6 +237,16 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
     @Override
     public void setVersion(String version) {
         sbvVersion.setTitle(version);
+    }
+
+    @Override
+    public void launchHelpPage(String supportUrl) {
+        InternalWebActivity_.intent(getActivity())
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .url(supportUrl)
+                .hideActionBar(true)
+                .helpSite(true)
+                .start();
     }
 
     public void onEvent(SignOutEvent event) {

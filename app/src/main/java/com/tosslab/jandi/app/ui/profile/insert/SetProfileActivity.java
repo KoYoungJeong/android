@@ -7,11 +7,9 @@ import android.widget.ImageView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.insert.adapter.ProfilePagerAdapter;
-import com.tosslab.jandi.app.ui.profile.insert.presenter.SetProfileFirstPagePresenter;
 import com.tosslab.jandi.app.ui.profile.insert.views.SetProfileFirstPageFragment;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
@@ -21,10 +19,7 @@ import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_set_new_profile)
 public class SetProfileActivity extends BaseAppCompatActivity
-        implements ViewPager.OnPageChangeListener, SetProfileFirstPageFragment.FirstFragmentActivityListener {
-
-    @Bean(SetProfileFirstPagePresenter.class)
-    SetProfileFirstPagePresenter setNewProfilePresenter;
+        implements ViewPager.OnPageChangeListener, SetProfileFirstPageFragment.OnChangePageClickListener {
 
     @ViewById(R.id.iv_page_icon_first)
     ImageView ivPageIconFirst;
@@ -76,7 +71,7 @@ public class SetProfileActivity extends BaseAppCompatActivity
     }
 
     @Override
-    public void goNextPage() {
+    public void onClickChangePage() {
         if (viewPager != null) {
             viewPager.setCurrentItem(1);
         }

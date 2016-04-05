@@ -75,12 +75,14 @@ public class SetProfileFirstPageFragment extends Fragment
 
     private ProgressWheel progressWheel;
 
-    private FirstFragmentActivityListener firstFragmentActivityListener;
+    private OnChangePageClickListener onChangePageClickListener;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        firstFragmentActivityListener = (FirstFragmentActivityListener) context;
+        if (context instanceof OnChangePageClickListener) {
+            onChangePageClickListener = (OnChangePageClickListener) context;
+        }
     }
 
     @AfterInject
@@ -120,7 +122,9 @@ public class SetProfileFirstPageFragment extends Fragment
 
     @Click(R.id.iv_next_page)
     void onClickNextPage() {
-        firstFragmentActivityListener.goNextPage();
+        if (onChangePageClickListener != null) {
+            onChangePageClickListener.onClickChangePage();
+        }
     }
 
     @Override
@@ -132,6 +136,9 @@ public class SetProfileFirstPageFragment extends Fragment
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void updateLocalProfileImage(File tempPhotoFile) {
+        if (tempPhotoFile == null || !tempPhotoFile.exists()) {
+            return;
+        }
         ImageUtil.loadProfileImage(ivProfilePicture,
                 Uri.fromFile(tempPhotoFile), R.drawable.profile_img);
     }
@@ -252,15 +259,15 @@ public class SetProfileFirstPageFragment extends Fragment
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             photoFile = (File) savedInstanceState.getSerializable(EXTRA_NEW_PHOTO_FILE);
-            updateLocalProfileImage(photoFile);
         }
     }
-
 
     @Override
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
+
+        updateLocalProfileImage(photoFile);
     }
 
     @Override
@@ -338,7 +345,7 @@ public class SetProfileFirstPageFragment extends Fragment
         presenter.updateProfileName(event.inputMessage);
     }
 
-    public interface FirstFragmentActivityListener {
-        void goNextPage();
+    public interface OnChangePageClickListener {
+        void onClickChangePage();
     }
 }

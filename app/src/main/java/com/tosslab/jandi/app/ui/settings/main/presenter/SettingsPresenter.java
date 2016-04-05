@@ -14,9 +14,11 @@ public interface SettingsPresenter {
 
     void onInitViews();
 
+    void onLaunchHelpPage();
+
     interface View {
 
-        void showSignoutDialog();
+        void showSignOutDialog();
 
         void showCheckNetworkDialog();
 
@@ -35,5 +37,7 @@ public interface SettingsPresenter {
         void moveLoginActivity();
 
         void setVersion(String version);
+
+        void launchHelpPage(String supportUrl);
     }
 }

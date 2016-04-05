@@ -69,19 +69,18 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
 
     @Click(R.id.vg_setting_privacy_passcode)
     void setPassCode() {
-        boolean checked = switchPassCode.isChecked();
+        boolean checked = !switchPassCode.isChecked();
         if (checked) {
+            PassCodeActivity_.intent(this)
+                    .mode(PassCodeActivity.MODE_TO_SAVE_PASSCODE)
+                    .startForResult(REQUEST_SET_PASSCODE);
+        } else {
             JandiPreference.removePassCode(getApplicationContext());
             initPassCodeSwitch();
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SetPasscode, AnalyticsValue.Action.TurnOffPasscode);
-            return;
         }
 
-        PassCodeActivity_.intent(this)
-                .mode(PassCodeActivity.MODE_TO_SAVE_PASSCODE)
-                .startForResult(REQUEST_SET_PASSCODE);
-
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SetPasscode, AnalyticsValue.Action.TurnOnPasscode);
+        AnalyticsValue.Label label = checked ? AnalyticsValue.Label.On : AnalyticsValue.Label.Off;
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SetPasscode, AnalyticsValue.Action.SetPasscode, label);
     }
 
     @OnActivityResult(REQUEST_SET_PASSCODE)

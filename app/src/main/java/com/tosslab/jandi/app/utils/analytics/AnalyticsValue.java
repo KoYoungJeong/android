@@ -35,7 +35,8 @@ public class AnalyticsValue {
         Help,
         Setting,
         UserProfile,
-        InputPasscode, WrongPasscode, SetPasscode, MyProfile
+        InputPasscode, WrongPasscode, SetPasscode, MyProfile,
+        SwitchTeam, MypageTab, Account, TeamTab
     }
 
     public enum Action {
@@ -225,10 +226,13 @@ public class AnalyticsValue {
         SignOut,
         KickMember,
         ShowProfilePicture,
-        DirectMessage, TurnOffPasscode, TurnOnPasscode, ChangePasscode, ChangeTopicOrder, Call
+        DirectMessage, TurnOffPasscode, TurnOnPasscode, ChangePasscode, ChangeTopicOrder, Call,
+        CreateNewTeam, MemberSearch, ViewMyProfile,
+        Notifications, Sounds, Vibrate, PhoneLed,
+        Passcode, Account, SetPasscode, OpenTeamList
     }
 
     public enum Label {
-        Folder, UpdateDate
+        Folder, On, Off, UpdateDate
     }
 }

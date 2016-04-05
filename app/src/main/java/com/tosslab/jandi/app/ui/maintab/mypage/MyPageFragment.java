@@ -37,7 +37,10 @@ import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ViewSlider;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.spannable.OwnerSpannable;
 
 import java.util.Date;
@@ -53,7 +56,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tonyjs on 16. 3. 17..
  */
-public class MyPageFragment extends Fragment implements MyPageView {
+public class MyPageFragment extends Fragment implements MyPageView, ListScroller {
 
     @Inject
     MyPagePresenter presenter;
@@ -93,6 +96,8 @@ public class MyPageFragment extends Fragment implements MyPageView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        isLaidOut = false;
 
         injectComponent();
 
@@ -137,8 +142,10 @@ public class MyPageFragment extends Fragment implements MyPageView {
         lvMyPage.setAdapter(adapter);
 
         lvMyPage.addOnScrollListener(new ViewSlider(vgProfileLayout));
-
-        adapter.setOnMentionClickListener(presenter::onClickMention);
+        adapter.setOnMentionClickListener(mention -> {
+            presenter.onClickMention(mention);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.ChooseMention);
+        });
     }
 
     /**
@@ -147,8 +154,9 @@ public class MyPageFragment extends Fragment implements MyPageView {
      */
     private void initMoreLoadingProgress() {
         pbMoreLoading.post(() -> {
+            ViewGroup.LayoutParams layoutParams = pbMoreLoading.getLayoutParams();
             int bottomMargin =
-                    ((ViewGroup.MarginLayoutParams) pbMoreLoading.getLayoutParams()).bottomMargin;
+                    ((ViewGroup.MarginLayoutParams) layoutParams).bottomMargin;
             int translationY = pbMoreLoading.getMeasuredHeight() + bottomMargin;
             pbMoreLoading.animate().translationY(translationY);
         });
@@ -164,6 +172,7 @@ public class MyPageFragment extends Fragment implements MyPageView {
         if (menuItem.getItemId() == R.id.action_mypage_setting) {
             SettingsActivity_.intent(this)
                     .start();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.Setting);
             return true;
         }
 
@@ -201,6 +210,8 @@ public class MyPageFragment extends Fragment implements MyPageView {
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .extra("type", StarMentionListActivity.TYPE_STAR_LIST)
                 .start();
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.Stars);
     }
 
     @Override
@@ -239,13 +250,19 @@ public class MyPageFragment extends Fragment implements MyPageView {
 
         ImageUtil.loadProfileImage(ivProfile, me.getUserLargeProfileUrl(), R.drawable.profile_img);
 
-        btnSetting.setOnClickListener(v -> ModifyProfileActivity_.intent(this).start());
+        btnSetting.setOnClickListener(v -> {
+            ModifyProfileActivity_.intent(this).start();
+
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.EditProfile);
+        });
 
         final long memberId = me.getId();
-        vgMyProfileWrapper.setOnClickListener(v -> {
+        ivProfile.setOnClickListener(v -> {
             MemberProfileActivity_.intent(getActivity())
                     .memberId(memberId)
                     .start();
+
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.ViewMyProfile);
         });
     }
 
@@ -341,6 +358,13 @@ public class MyPageFragment extends Fragment implements MyPageView {
 
     private boolean isFinishing() {
         return getActivity() == null || getActivity().isFinishing();
+    }
+
+    @Override
+    public void scrollToTop() {
+        vgProfileLayout.animate()
+                .translationY(0);
+        lvMyPage.scrollToPosition(0);
     }
 
     private class MentionMessageMoreRequestHandler implements MyPageAdapter.OnLoadMoreCallback {

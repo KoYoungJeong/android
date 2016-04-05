@@ -69,6 +69,7 @@ public class MessageListV2Presenter {
     private MessageState currentMessageState;
     private Room room;
     private MessagePointer messagePointer;
+    private boolean isInitialized;
 
     public void setView(View view) {
         this.view = view;
@@ -127,7 +128,7 @@ public class MessageListV2Presenter {
         } else if (!messageListModel.isEnabledIfUser(room.getEntityId())) {
             view.showDisabledUserLayer();
         } else {
-            view.dismissStatusLayout();
+            view.dismissUserStatusLayout();
         }
     }
 
@@ -274,10 +275,15 @@ public class MessageListV2Presenter {
         }
 
         view.setMarkerInfo(roomId);
-        messagePointer.setLastReadLinkId(messageListModel.getLastReadLinkId(teamId, roomId));
+
+        long myId = EntityManager.getInstance().getMe().getId();
+        long lastReadLinkId = messageListModel.getLastReadLinkId(roomId, myId);
+        messagePointer.setLastReadLinkId(lastReadLinkId);
 
         messageListModel.updateMarkerInfo(teamId, roomId);
         messageListModel.setRoomId(roomId);
+
+        isInitialized = true;
 
         addQueue(oldMessageQueue);
         addQueue(newMessageQueue);
@@ -291,6 +297,9 @@ public class MessageListV2Presenter {
     }
 
     public void addNewMessageQueue(boolean cacheMode) {
+        if (!isInitialized) {
+            return;
+        }
         NewMessageContainer messageQueue = new NewMessageContainer(currentMessageState);
         messageQueue.setCacheMode(cacheMode);
         addQueue(messageQueue);
@@ -346,11 +355,7 @@ public class MessageListV2Presenter {
                     messageListModel.upsertMessages(resOldMessage);
                 }
             } else if (resOldMessage.records.size() < offset) {
-                resOldMessage = loadMoreOldMessagesFromServer(resOldMessage, offset);
-
-                if (isCacheMode) {
-                    messageListModel.upsertMessages(resOldMessage);
-                }
+                resOldMessage = loadMoreOldMessagesFromServer(resOldMessage, offset, isCacheMode);
             }
 
             if (resOldMessage == null
@@ -418,7 +423,9 @@ public class MessageListV2Presenter {
     }
 
     @NonNull
-    private ResMessages loadMoreOldMessagesFromServer(ResMessages resOldMessage, int offset)
+    private ResMessages loadMoreOldMessagesFromServer(ResMessages resOldMessage,
+                                                      int offset,
+                                                      boolean isCacheMode)
             throws RetrofitError {
         try {
             // 캐시된 데이터가 부족한 경우
@@ -426,6 +433,10 @@ public class MessageListV2Presenter {
                     resOldMessage.records.get(resOldMessage.records.size() - 1);
             ResMessages addOldMessage =
                     messageListModel.getOldMessage(firstLink.id, offset);
+
+            if (isCacheMode) {
+                messageListModel.upsertMessages(addOldMessage);
+            }
 
             addOldMessage.records.addAll(resOldMessage.records);
 
@@ -516,7 +527,6 @@ public class MessageListV2Presenter {
 
         boolean loadHistory = currentMessageState.loadHistory();
 
-
         if (loadHistory) {
             try {
                 newMessages = messageListModel.getNewMessage(lastUpdateLinkId);
@@ -543,21 +553,16 @@ public class MessageListV2Presenter {
             newMessages = getResUpdateMessages(lastUpdateLinkId);
         }
 
-
         if (newMessages == null || newMessages.isEmpty()) {
-            boolean hasMessages = hasMessages(firstCursorLinkId, currentItemCount);
+            boolean hasMessages = firstCursorLinkId > 0 && hasMessages(firstCursorLinkId, currentItemCount);
             view.showEmptyView(!hasMessages);
+
+            messagePointer.setLastReadLinkId(-1);
 
             if (currentMessageState.isFirstLoadNewMessage()) {
                 currentMessageState.setIsFirstLoadNewMessage(false);
                 view.setUpLastReadLinkIdIfPosition();
-                view.saveCacheAndNotifyDataSetChanged(new MainMessageListAdapter.NotifyDataSetChangedCallback() {
-                    @Override
-                    public void callBack() {
-                        view.moveLastReadLink();
-                    }
-                });
-
+                view.saveCacheAndNotifyDataSetChanged(view::moveLastReadLink);
             }
             return;
         }
@@ -801,8 +806,8 @@ public class MessageListV2Presenter {
 
         if (localId > 0) {
             // insert to ui
-            view.saveCacheAndNotifyDataSetChanged(null);
-            view.moveLastPage();
+            view.saveCacheAndNotifyDataSetChanged(view::moveLastPage);
+
             // networking...
             SendingMessage sendingMessage = new SendingMessage(localId, reqSendMessage);
 
@@ -1084,7 +1089,7 @@ public class MessageListV2Presenter {
 
         void modifyStarredInfo(long messageId, boolean isStarred);
 
-        void dismissStatusLayout();
+        void dismissUserStatusLayout();
     }
 
 }
