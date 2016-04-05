@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.ui.invites.email.component.DaggerInviteByEmailCompo
 import com.tosslab.jandi.app.ui.invites.email.module.InviteByEmailModule;
 import com.tosslab.jandi.app.ui.invites.email.presenter.InviteByEmailPresenter;
 import com.tosslab.jandi.app.ui.invites.email.view.InviteByEmailView;
+import com.tosslab.jandi.app.ui.invites.email.view.InvitedEmailView;
 import com.tosslab.jandi.app.utils.ColoredToast;
 
 import javax.inject.Inject;
@@ -41,6 +42,9 @@ public class InviteByEmailActivity extends BaseAppCompatActivity implements Invi
 
     @Inject
     InviteByEmailPresenter presenter;
+    @Inject
+    InvitedEmailView invitedEmailView;
+
     @Bind(R.id.btn_invite_send)
     Button btnInvite;
     @Bind(R.id.et_invite_email)
@@ -53,14 +57,13 @@ public class InviteByEmailActivity extends BaseAppCompatActivity implements Invi
     View vSuccessLayout;
     @Bind(R.id.tv_invite_success)
     TextView tvSuccess;
-    private InvitedEmailListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setNeedUnLockPassCode(false);
 
-        adapter = new InvitedEmailListAdapter();
+        InvitedEmailListAdapter adapter = new InvitedEmailListAdapter();
 
         DaggerInviteByEmailComponent.builder()
                 .inviteByEmailModule(new InviteByEmailModule(this, adapter))
@@ -139,22 +142,22 @@ public class InviteByEmailActivity extends BaseAppCompatActivity implements Invi
 
     @Override
     public void showAlreadyInTeamToast(String teamName) {
-        ColoredToast.showError(R.string.jandi_already_in_team);
+        ColoredToast.showError(getString(R.string.jandi_already_in_team, teamName));
     }
 
     @Override
     public void notifyDataSetChanged() {
-        adapter.notifyDataSetChanged();
+        invitedEmailView.notifyDataSetChanged();
     }
 
     @Override
     public void notifyItemChanged(int position) {
-        adapter.notifyItemChanged(position);
+        invitedEmailView.notifyItemChanged(position);
     }
 
     @Override
     public void notifyItemInserted(int position) {
-        adapter.notifyItemInserted(position);
+        invitedEmailView.notifyItemInserted(position);
     }
 
     @Override

@@ -7,4 +7,8 @@ public interface InvitedEmailView {
 
     void notifyDataSetChanged();
 
+    void notifyItemChanged(int position);
+
+    void notifyItemInserted(int position);
+
 }

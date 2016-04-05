@@ -37,11 +37,6 @@ public class InviteByEmailPresenterImpl implements InviteByEmailPresenter {
         if (searchedEmailVO == null) {
             if (!inviteByEmailModel.isInvitedEmail(email)) {
                 invite(email);
-//                EmailVO emailVO = EmailVO.create(email);
-//                int addedPosition = invitedEmailDataModel.add(emailVO);
-//                inviteByEmailView.notifyItemInserted(addedPosition);
-//                inviteByEmailView.moveToPosition(0);
-//                invite(emailVO);
             } else {
                 if (inviteByEmailModel.isInactivedUser(email)) {
                     inviteByEmailView.showInviteAgainDialog(email);

@@ -18,11 +18,12 @@ import dagger.Provides;
 public class InviteByEmailModule {
 
     private final InviteByEmailView inviteByEmailView;
-    private final InvitedEmailDataModel invitedEmailDataModel;
+    private final InvitedEmailListAdapter invitedEmailListAdapter;
+
     public InviteByEmailModule(InviteByEmailView inviteByEmailView,
-                               InvitedEmailDataModel invitedEmailDataModel) {
+                               InvitedEmailListAdapter invitedEmailListAdapter) {
         this.inviteByEmailView = inviteByEmailView;
-        this.invitedEmailDataModel = invitedEmailDataModel;
+        this.invitedEmailListAdapter = invitedEmailListAdapter;
     }
 
     @Provides
@@ -36,8 +37,13 @@ public class InviteByEmailModule {
     }
 
     @Provides
+    public InvitedEmailView provideInvitedEmailView() {
+        return invitedEmailListAdapter;
+    }
+
+    @Provides
     public InvitedEmailDataModel provideInvitedEmailDataModel() {
-        return invitedEmailDataModel;
+        return invitedEmailListAdapter;
     }
 
     @Provides
