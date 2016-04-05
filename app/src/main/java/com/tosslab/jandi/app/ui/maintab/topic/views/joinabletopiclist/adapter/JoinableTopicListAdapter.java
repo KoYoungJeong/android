@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,30 +14,32 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
+import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.model.JoinableTopicDataModel;
+import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.view.JoinableTopicDataView;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemLongClickListener;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * Created by Steve SeongUg Jung on 15. 7. 7..
  */
-public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdapter.TopicViewHolder> {
+public class JoinableTopicListAdapter extends RecyclerView.Adapter<JoinableTopicListAdapter.TopicViewHolder>
+    implements JoinableTopicDataModel, JoinableTopicDataView {
 
     private final Context context;
     private List<Topic> topicList;
 
-    private OnRecyclerItemClickListener onRecyclerItemClickListener;
-    private OnRecyclerItemLongClickListener onRecyclerItemLongClickListener;
+    private OnRecyclerItemClickListener onTopicClickListener;
+    private OnRecyclerItemLongClickListener onTopicLongClickListener;
     private int selectedEntity;
     private AnimStatus animStatus = AnimStatus.READY;
 
-    public TopicRecyclerAdapter(Context context) {
+    public JoinableTopicListAdapter(Context context) {
         this.context = context;
-        topicList = new ArrayList<Topic>();
+        topicList = new ArrayList<>();
     }
 
     @Override
@@ -90,23 +93,24 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
 
 
         holder.itemView.setOnClickListener(view -> {
-            if (onRecyclerItemClickListener != null) {
-                onRecyclerItemClickListener.onItemClick(holder.itemView, TopicRecyclerAdapter.this,
-                        position);
+            if (onTopicClickListener != null) {
+                onTopicClickListener.onItemClick(
+                        holder.itemView, JoinableTopicListAdapter.this, position);
             }
         });
 
         holder.itemView.setOnLongClickListener(view -> {
-            if (onRecyclerItemLongClickListener != null) {
-                return onRecyclerItemLongClickListener.onItemClick(holder.itemView,
-                        TopicRecyclerAdapter.this, position);
+            if (onTopicLongClickListener != null) {
+                return onTopicLongClickListener.onItemClick(
+                        holder.itemView, JoinableTopicListAdapter.this, position);
             }
-
             return false;
         });
 
     }
 
+    @Nullable
+    @Override
     public Topic getItem(int position) {
         if (getItemCount() <= position) {
             return null;
@@ -119,23 +123,17 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
         return topicList.size();
     }
 
-    public void addAll(List<Topic> topics) {
-        topicList.addAll(topics);
+    @Override
+    public void setOnTopicClickListener(OnRecyclerItemClickListener onTopicClickListener) {
+        this.onTopicClickListener = onTopicClickListener;
     }
 
-    public void setOnRecyclerItemClickListener(OnRecyclerItemClickListener onRecyclerItemClickListener) {
-        this.onRecyclerItemClickListener = onRecyclerItemClickListener;
+    @Override
+    public void setOnTopicLongClickListener(OnRecyclerItemLongClickListener onTopicLongClickListener) {
+        this.onTopicLongClickListener = onTopicLongClickListener;
     }
 
-    public List<Topic> getTopics() {
-        return Collections.unmodifiableList(topicList);
-    }
-
-    public void setOnRecyclerItemLongClickListener(OnRecyclerItemLongClickListener onRecyclerItemLongClickListener) {
-        this.onRecyclerItemLongClickListener = onRecyclerItemLongClickListener;
-    }
-
-
+    @Override
     public void clear() {
         topicList.clear();
     }
@@ -149,6 +147,11 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
         if (animStatus == AnimStatus.IDLE) {
             animStatus = AnimStatus.READY;
         }
+    }
+
+    @Override
+    public synchronized void setJoinableTopics(List<Topic> topics) {
+        topicList.addAll(topics);
     }
 
     private enum AnimStatus {
