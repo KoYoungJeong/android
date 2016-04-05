@@ -18,10 +18,12 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
+import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
+import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.team.adapter.TeamMemberListAdapter;
 import com.tosslab.jandi.app.ui.maintab.team.component.DaggerTeamComponent;
 import com.tosslab.jandi.app.ui.maintab.team.module.TeamModule;
@@ -30,7 +32,10 @@ import com.tosslab.jandi.app.ui.maintab.team.view.TeamView;
 import com.tosslab.jandi.app.ui.maintab.team.vo.Team;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.UiUtils;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.KeyboardVisibleChangeDetectView;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import java.util.List;
 
@@ -48,7 +53,8 @@ import rx.android.schedulers.AndroidSchedulers;
 /**
  * Created by tonyjs on 16. 3. 15..
  */
-public class TeamFragment extends Fragment implements TeamView, UiUtils.KeyboardHandler {
+public class TeamFragment extends Fragment
+        implements TeamView, UiUtils.KeyboardHandler, ListScroller {
 
     @Inject
     TeamPresenter presenter;
@@ -136,6 +142,7 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
 
         adapter.setOnMemberClickListener(member -> {
             showUserProfile(member.getId());
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.SelectMember);
         });
     }
 
@@ -201,6 +208,8 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
     void focusToSearch() {
         etSearch.requestFocus();
         inputMethodManager.showSoftInput(etSearch, 0);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.MemberSearch);
     }
 
     @OnTextChanged(R.id.et_team_member_search)
@@ -210,7 +219,8 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
 
     @OnClick(R.id.btn_team_info_invite)
     void inviteMember() {
-        EventBus.getDefault().post(new RequestInviteMemberEvent());
+        EventBus.getDefault().post(new RequestInviteMemberEvent(InvitationDialogExecutor.FROM_MAIN_TEAM));
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.InviteMember);
     }
 
     @Override
@@ -228,10 +238,14 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
 
     @Override
     public void hideProgress() {
-        if(isFinishing()) {
+        if (isFinishing()) {
             return;
         }
         pbTeam.setVisibility(View.GONE);
+    }
+
+    public void onEvent(RetrieveTopicListEvent event) {
+        presenter.onSearchMember(etSearch.getText().toString());
     }
 
     public void onEvent(TeamLeaveEvent event) {
@@ -239,7 +253,7 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
     }
 
     public void onEvent(ProfileChangeEvent profileChangeEvent) {
-        if(isFinishing()) {
+        if (isFinishing()) {
             return;
         }
         // adapter index 를 알아내야 돼서...
@@ -268,7 +282,7 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
 
     @Override
     public void initTeamInfo(Team team) {
-        if(isFinishing()) {
+        if (isFinishing()) {
             return;
         }
         tvTeamName.setText(team.getName());
@@ -297,7 +311,7 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
 
     @Override
     public void setSearchedMembers(String query, List<FormattedEntity> searchedMembers) {
-        if(isFinishing()) {
+        if (isFinishing()) {
             return;
         }
         adapter.clear();
@@ -344,6 +358,12 @@ public class TeamFragment extends Fragment implements TeamView, UiUtils.Keyboard
 
     private boolean isFinishing() {
         return getActivity() == null || getActivity().isFinishing();
+    }
+
+    @Override
+    public void scrollToTop() {
+        changeToNormalMode();
+        lvTeam.scrollToPosition(0);
     }
 
     enum UiMode {

@@ -112,6 +112,7 @@
 	<string name="jandi_bot_status">"你好，我是Mr.J！"</string>
 	<string name="jandi_browse_other_topics">"浏览其他议题"</string>
 	<string name="jandi_browse_team">"浏览团队"</string>
+	<string name="jandi_call_acess_permission">"欲直接拨话，请开启同意电话取用"</string>
 	<string name="jandi_cancel">"取消"</string>
 	<string name="jandi_cancel_invitation">"取消邀请"</string>
 	<string name="jandi_canceled">"取消了"</string>
@@ -480,6 +481,7 @@
 	<string name="jandi_starred_unstarred">"已取消标示"</string>
 	<string name="jandi_start_direct_messages_1">"<b>您所有私信的信息现在是隐藏的。</b>"</string>
 	<string name="jandi_start_direct_messages_2">"点击以下按键以开始或重新打开一个对话。"</string>
+	<string name="jandi_storage_access_permission">"JANDI存取外部数据的动作被拒绝"</string>
 	<string name="jandi_success_copy_clipboard_external_link">"共享链接已复制到剪贴板"</string>
 	<string name="jandi_success_disable_external_link">"共享链接已被删除"</string>
 	<string name="jandi_success_kick_user_from_topic">"该成员已被剔除出此议题"</string>

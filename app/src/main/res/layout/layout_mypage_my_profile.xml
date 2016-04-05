@@ -6,10 +6,9 @@
     android:orientation="vertical">
 
     <FrameLayout
-        android:background="@color/white"
         android:layout_width="match_parent"
-        android:layout_height="100dp">
-
+        android:layout_height="100dp"
+        android:background="@color/white">
 
         <RelativeLayout
             android:id="@+id/vg_mypage_my_profile_wrapper"
@@ -38,6 +37,7 @@
                     android:id="@+id/tv_mypage_my_profile_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:lineSpacingExtra="2dp"
                     android:maxLines="3"
                     android:textColor="@color/jandi_member_profile_user_name"
                     android:textSize="16dp"

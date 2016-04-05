@@ -8,6 +8,9 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
 import java.sql.SQLException;
+import java.util.Iterator;
+
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 8. 5..
@@ -30,17 +33,22 @@ public class FileMessageDaoImpl extends BaseDaoImpl<ResMessages.FileMessage, Int
     }
 
     private void upsertMessage(ConnectionSource connectionSource, ResMessages.FileMessage fileMessage) throws SQLException {
-        Dao<ResMessages.OriginalMessage.IntegerWrapper, ?> dao = DaoManager.createDao
-                (connectionSource, ResMessages.OriginalMessage.IntegerWrapper.class);
+        Dao<ResMessages.OriginalMessage.IntegerWrapper, ?> dao = DaoManager.createDao(
+                connectionSource, ResMessages.OriginalMessage.IntegerWrapper.class);
+
+        Iterator<ResMessages.OriginalMessage.IntegerWrapper> copiedIterator =
+                Observable.from(fileMessage.shareEntities)
+                        .toBlocking()
+                        .getIterator();
+
         DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder = dao.deleteBuilder();
         deleteBuilder.where().eq("fileOf_id", fileMessage.id);
         deleteBuilder.delete();
 
-        if (fileMessage.shareEntities != null && !fileMessage.shareEntities.isEmpty()) {
-            for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : fileMessage.shareEntities) {
-                shareEntity.setFileOf(fileMessage);
-                dao.create(shareEntity);
-            }
+        while (copiedIterator.hasNext()) {
+            ResMessages.OriginalMessage.IntegerWrapper shareEntity = copiedIterator.next();
+            shareEntity.setFileOf(fileMessage);
+            dao.create(shareEntity);
         }
 
         ResMessages.FileContent content = fileMessage.content;

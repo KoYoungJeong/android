@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
+import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -57,6 +58,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketMemberProfileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamLeaveEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
@@ -654,7 +656,9 @@ public class JandiSocketServiceModel {
                 Observable.just(socketTeamLeaveEvent)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(leaveEvent -> {
-                            String teamName = JandiApplication.getContext().getString(R.string.jandi_your_access_disabled, leaveEvent.getTeam().getName());
+                            SocketTeamLeaveEvent.Team team = leaveEvent.getTeam();
+                            String teamName = JandiApplication.getContext()
+                                    .getString(R.string.jandi_your_access_disabled, team.getName());
                             ColoredToast.showError(teamName);
                         });
                 AccountRepository.getRepository().removeSelectedTeamInfo();
@@ -665,6 +669,34 @@ public class JandiSocketServiceModel {
 
             JandiPreference.setSocketConnectedLastTime(socketTeamLeaveEvent.getTime().getTime());
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void refreshTeamDeleted(Object object) {
+        try {
+            SocketTeamDeletedEvent event = getObject(object.toString(), SocketTeamDeletedEvent.class);
+
+            long teamId = event.getTeam().getId();
+
+            long selectedTeamId = EntityManager.getInstance().getTeamId();
+
+            if (teamId != selectedTeamId) {
+                refreshEntity(new TeamDeletedEvent(teamId), true);
+            } else {
+                Observable.just(event)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(deletedEvent -> {
+                            String deletedTeam = JandiApplication.getContext()
+                                    .getString(R.string.jandi_deleted_team);
+                            ColoredToast.showError(deletedTeam);
+                        });
+                AccountRepository.getRepository().removeSelectedTeamInfo();
+                AccountHomeActivity_.intent(JandiApplication.getContext())
+                        .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .start();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

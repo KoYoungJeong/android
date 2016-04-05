@@ -7,8 +7,15 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.LanguageUtil;
 
 public class SettingsModel {
+
+    private static final String SUPPORT_URL_KO = "https://jandi.zendesk.com/hc/ko";
+    private static final String SUPPORT_URL_JA = "https://jandi.zendesk.com/hc/ja";
+    private static final String SUPPORT_URL_ZH_CN = "https://jandi.zendesk.com/hc/zh-cn";
+    private static final String SUPPORT_URL_ZH_TW = "https://jandi.zendesk.com/hc/zh-tw";
+    private static final String SUPPORT_URL_EN = "https://jandi.zendesk.com/hc/en-us";
 
     public static int getOrientationValue(String value) {
 
@@ -58,5 +65,20 @@ public class SettingsModel {
         } catch (PackageManager.NameNotFoundException e) {
             return "";
         }
+    }
+
+    public static String getSupportUrl() {
+        String currentLanguage = LanguageUtil.getLanguage();
+        if (TextUtils.equals(currentLanguage, LanguageUtil.LANG_KO)) {
+            return SUPPORT_URL_KO;
+        } else if (TextUtils.equals(currentLanguage, LanguageUtil.LANG_JA)) {
+            return SUPPORT_URL_EN; //일본어 컨텐츠가 없어서 영어버전 사용
+        } else if (TextUtils.equals(currentLanguage, LanguageUtil.LANG_ZH_CN)) {
+            return SUPPORT_URL_ZH_CN;
+        } else if (TextUtils.equals(currentLanguage, LanguageUtil.LANG_ZH_TW)) {
+            return SUPPORT_URL_ZH_TW;
+        }
+
+        return SUPPORT_URL_EN;
     }
 }

@@ -15,7 +15,7 @@
             android:gravity="center_horizontal"
             android:lineSpacingExtra="4dp"
             android:text="@string/jandi_profile_extra_introduce"
-            android:textSize="14dp" />
+            android:textSize="14dp"/>
 
         <TextView
             android:id="@+id/tv_email"
@@ -30,7 +30,7 @@
             android:paddingRight="15dp"
             android:singleLine="true"
             android:textColor="@color/jandi_profile_text"
-            android:textSize="14dp" />
+            android:textSize="14dp"/>
 
         <EditText
             android:id="@+id/et_department"
@@ -47,7 +47,7 @@
             android:paddingRight="15dp"
             android:singleLine="true"
             android:textColor="@color/jandi_profile_text"
-            android:textSize="14dp" />
+            android:textSize="14dp"/>
 
         <EditText
             android:id="@+id/et_positon"
@@ -64,7 +64,7 @@
             android:paddingRight="15dp"
             android:singleLine="true"
             android:textColor="@color/jandi_profile_text"
-            android:textSize="14dp" />
+            android:textSize="14dp"/>
 
         <EditText
             android:id="@+id/et_phone_number"
@@ -77,12 +77,13 @@
             android:background="@drawable/profile_text_input_bg"
             android:gravity="center"
             android:hint="@string/jandi_profile_phone_number_hint"
-            android:maxLength="60"
+            android:inputType="phone"
+            android:maxLength="20"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:singleLine="true"
             android:textColor="@color/jandi_profile_text"
-            android:textSize="14dp" />
+            android:textSize="14dp"/>
 
         <EditText
             android:id="@+id/et_status_message"
@@ -99,7 +100,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:textColor="@color/jandi_profile_text"
-            android:textSize="14dp" />
+            android:textSize="14dp"/>
 
     </LinearLayout>
 
@@ -114,7 +115,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/btn_profile_check" />
+            android:src="@drawable/btn_profile_check"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -124,7 +125,7 @@
             android:layout_marginTop="12dp"
             android:text="@string/jandi_browse_team"
             android:textColor="@color/jandi_text_light"
-            android:textSize="13dp" />
+            android:textSize="13dp"/>
 
     </LinearLayout>
 

@@ -112,6 +112,7 @@
 	<string name="jandi_bot_status">"안녕하세요? Mr.J입니다. "</string>
 	<string name="jandi_browse_other_topics">"참여하지 않은 토픽 목록 보기"</string>
 	<string name="jandi_browse_team">"팀으로 가기"</string>
+	<string name="jandi_call_acess_permission">"전화를 하기 위해 잔디가 전화를 사용할 수 있도록 해주세요."</string>
 	<string name="jandi_cancel">"취소"</string>
 	<string name="jandi_cancel_invitation">"초대 취소"</string>
 	<string name="jandi_canceled">"취소됨"</string>
@@ -484,6 +485,7 @@
 	<string name="jandi_starred_unstarred">"즐겨찾기 해제됨"</string>
 	<string name="jandi_start_direct_messages_1">"<b>현재 열려있는 대화방이 없습니다.</b>"</string>
 	<string name="jandi_start_direct_messages_2">"지금 팀 멤버들에게 메시지를 보내보세요."</string>
+	<string name="jandi_storage_access_permission">"저장소에 접근하려면 어플리케이션의 권한을 허용해주세요."</string>
 	<string name="jandi_success_copy_clipboard_external_link">"외부 공유용 링크가 클립보드에 복사되었습니다."</string>
 	<string name="jandi_success_disable_external_link">"외부 공유용 링크가 삭제되었습니다."</string>
 	<string name="jandi_success_kick_user_from_topic">"선택한 멤버를 내보냈습니다."</string>
