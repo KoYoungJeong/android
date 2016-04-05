@@ -273,8 +273,7 @@
 	<string name="jandi_invite_succes_copy_link">"The team invitation link has been copied to your clipboard. Use it to invite others to your team."</string>
 	<string name="jandi_invite_succes_send">"Invitations have been sent to:"</string>
 	<string name="jandi_invite_success">"Invitation has been sent successfully"</string>
-	<string name="jandi_invite_to_dummy_account_again">"Another team member has already sent an invitation to this address.
-Do you want to send it again?"</string>
+	<string name="jandi_invite_to_dummy_account_again">"Another team member has already sent an invitation to this team member. Do you want to send another?"</string>
 	<string name="jandi_invite_to_team">"Invite"</string>
 	<string name="jandi_invite_wechat">"WeChat"</string>
 	<string name="jandi_invited_topic">"%1$s invited %2$s"</string>

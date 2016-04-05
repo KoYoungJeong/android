@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -13,7 +14,6 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -65,17 +65,19 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     @Bean
     SignUpVerifyPresenter presenter;
 
-    @ViewById(R.id.btn_verify)
-    Button btnVerify;
-
     @ViewById(R.id.iv_signup_verify_code_cursor)
     ImageView ivFakeCursor;
 
     @ViewById(R.id.tv_resend_email)
     TextView tvResendEmail;
 
-    @ViewById(R.id.tv_signup_verify_code)
-    TextView tvVerifyCode;
+    @ViewsById(value = {
+            R.id.tv_signup_verify_code_1,
+            R.id.tv_signup_verify_code_2,
+            R.id.tv_signup_verify_code_3,
+            R.id.tv_signup_verify_code_4
+    })
+    List<TextView> tvVerifyCodes;
     @ViewById(R.id.tv_signup_verify_explain)
     TextView tvExplain;
 
@@ -172,19 +174,25 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         tvExplain.setText(invalidateText);
         int invalidTextColor = getResources().getColor(R.color.jandi_signup_invalid);
         tvExplain.setTextColor(invalidTextColor);
-        tvVerifyCode.setTextColor(invalidTextColor);
+        setVerifyCodeTextColor(invalidTextColor);
         Animation animation = AnimationUtils.loadAnimation(SignUpVerifyActivity.this, R.anim.shake);
         animation.setAnimationListener(new SimpleEndAnimationListener() {
             @Override
             public void onAnimationEnd(Animation animation) {
-                if (tvVerifyCode.length() == MAX_VERIFY_CODE) {
+                if (getVerifyCode().length() == MAX_VERIFY_CODE) {
                     // 애니메이션 도중 사용자가 수정할 경우...
-                    tvVerifyCode.setText("");
+                    clearVerifyCode();
                 }
-                tvVerifyCode.setTextColor(getResources().getColor(R.color.jandi_text));
+                setVerifyCodeTextColor(getResources().getColor(R.color.jandi_text));
             }
         });
-        tvVerifyCode.startAnimation(animation);
+        ((View) tvVerifyCodes.get(0).getParent()).startAnimation(animation);
+    }
+
+    private void setVerifyCodeTextColor(int color) {
+        for (TextView tvVerifyCode : tvVerifyCodes) {
+            tvVerifyCode.setTextColor(color);
+        }
     }
 
     @UiThread
@@ -208,10 +216,12 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         tvExplain.setText(R.string.jandi_signup_verification_code);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void clearVerifyCode() {
-        tvVerifyCode.setText("");
+        for (TextView tvVerifyCode : tvVerifyCodes) {
+            tvVerifyCode.setText("");
+        }
     }
 
     @UiThread
@@ -242,13 +252,22 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         finish();
     }
 
-    @Click(R.id.btn_verify)
     void verify() {
+        String verifyCode = getVerifyCode();
 
-        presenter.verifyCode(email, tvVerifyCode.getText().toString());
+        presenter.verifyCode(email, verifyCode);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.CodeVerification,
                 AnalyticsValue.Action.LaunchJandi);
+    }
+
+    @NonNull
+    private String getVerifyCode() {
+        StringBuilder builder = new StringBuilder();
+        for (TextView tvVerifyCode : tvVerifyCodes) {
+            builder.append(tvVerifyCode.getText().toString());
+        }
+        return builder.toString();
     }
 
     @Click(R.id.tv_resend_email)
@@ -277,20 +296,24 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         if (idx < 0) {
             return;
         }
-        if (tvVerifyCode.getText().length() < MAX_VERIFY_CODE) {
-            tvVerifyCode.append(String.valueOf(idx));
+        int verifyCodeLength = getVerifyCode().length();
+        if (verifyCodeLength < MAX_VERIFY_CODE) {
+            tvVerifyCodes.get(verifyCodeLength).setText(String.valueOf(idx));
+        }
+
+        if (getVerifyCode().length() == MAX_VERIFY_CODE) {
+            verify();
         }
     }
 
-    @TextChange(R.id.tv_signup_verify_code)
+    @TextChange(R.id.tv_signup_verify_code_1)
     void onVerifyCodeTextInput(TextView tv) {
-        int length = tv.length();
+        int length = getVerifyCode().length();
         boolean enabled = length == MAX_VERIFY_CODE;
-        btnVerify.setEnabled(enabled);
 
         if (!enabled) {
             // invalid -> 애니메이션 도중 사용자가 새로 입력을 하려는 경우에 대비
-            tvVerifyCode.setTextColor(getResources().getColor(R.color.jandi_text));
+            setVerifyCodeTextColor(getResources().getColor(R.color.jandi_text));
         }
 
         if (length > 0) {
@@ -314,17 +337,17 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
 
     @Click(R.id.iv_signup_verify_input_del)
     void onDelClick() {
-        String lastWord = tvVerifyCode.getText().toString();
+        String lastWord = getVerifyCode();
         if (lastWord.length() > 0) {
-            tvVerifyCode.setText(lastWord.substring(0, lastWord.length() - 1));
+            tvVerifyCodes.get(lastWord.length() - 1).setText("");
         }
     }
 
     @LongClick(R.id.iv_signup_verify_input_del)
     void onDelLongClick() {
-        String lastWord = tvVerifyCode.getText().toString();
+        String lastWord = getVerifyCode();
         if (lastWord.length() > 0) {
-            tvVerifyCode.setText("");
+            clearVerifyCode();
         }
     }
 
