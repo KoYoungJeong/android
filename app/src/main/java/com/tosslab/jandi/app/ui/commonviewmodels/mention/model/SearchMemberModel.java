@@ -103,7 +103,9 @@ public class SearchMemberModel {
             selectableMembersLinkedHashMap.put(searchedItemForAll.getId(), searchedItemForAll);
         }
 
-        if (EntityManager.getInstance().hasJandiBot()) {
+
+        if (selectableMembersLinkedHashMap.size() > 0
+                && EntityManager.getInstance().hasJandiBot()) {
             BotEntity botEntity = (BotEntity) EntityManager.getInstance().getJandiBot();
             if (botEntity.isEnabled()) {
                 SearchedItemVO jandiBot = new SearchedItemVO();

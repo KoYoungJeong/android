@@ -245,7 +245,7 @@ public class TeamFragment extends Fragment
     }
 
     public void onEvent(RetrieveTopicListEvent event) {
-        presenter.onSearchMember(etSearch.getText().toString());
+        presenter.reInitializeTeam();
     }
 
     public void onEvent(TeamLeaveEvent event) {
@@ -297,16 +297,23 @@ public class TeamFragment extends Fragment
             return;
         }
 
-        adapter.setRow(0, new MultiItemRecyclerAdapter.Row<>(
-                members.size(), TeamMemberListAdapter.VIEW_TYPE_MEMBER_COUNT));
+        MultiItemRecyclerAdapter.Row<Integer> memberCountRow =
+                new MultiItemRecyclerAdapter.Row<>(members.size(),
+                        TeamMemberListAdapter.VIEW_TYPE_MEMBER_COUNT);
 
-        Observable.from(members)
-                .subscribe(entity -> {
-                    adapter.addRow(new MultiItemRecyclerAdapter.Row<>(
-                            entity, TeamMemberListAdapter.VIEW_TYPE_MEMBER));
-                });
+        Observable
+                .concat(Observable.just(memberCountRow),
+                        Observable.from(members)
+                                .map(entity ->
+                                        new MultiItemRecyclerAdapter.Row<FormattedEntity>(entity,
+                                                TeamMemberListAdapter.VIEW_TYPE_MEMBER)))
+                .subscribe(adapter::addRow,
+                        Throwable::printStackTrace,
+                        () -> adapter.notifyDataSetChanged());
 
-        adapter.notifyDataSetChanged();
+        if (etSearch.length() > 0) {
+            presenter.onSearchMember(etSearch.getText().toString());
+        }
     }
 
     @Override

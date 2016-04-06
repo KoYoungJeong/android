@@ -221,16 +221,17 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
         offlineLayer = new OfflineLayer(vgOffline);
 
-        JandiPreference.setSocketReconnectDelay(0l);
+        JandiPreference.setSocketReconnectDelay(0L);
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
         // onResume -> AfterViews 로 이동
         // (소켓에서 필요한 갱신을 다 처리한다고 간주)
         if (NetworkCheckUtil.isConnected()) {
-            getEntities();
+            getEntities(true);
         }
 
         initializeTeamsView();
+
     }
 
     private void initMainTabViewPager() {
@@ -524,14 +525,19 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                 .start();
 
         if (shouldOpenModifyProfileActivity) { // 초대 수락 또는 팀 생성 후
-            SetProfileActivity_.intent(this)
-                    .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                    .start();
+            moveSetProfileActivity();
         }
 
         dontStopSocket = true;
 
         finish();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void moveSetProfileActivity() {
+        SetProfileActivity_.intent(this)
+                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .start();
     }
 
     public void onEvent(TeamInviteIgnoreEvent event) {
@@ -640,7 +646,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         long diffTime = System.currentTimeMillis() - JandiPreference.getSocketConnectedLastTime();
         if (diffTime > 1000 * 60 * 5) {
             LogUtil.d("refreshEntityIfNeed");
-            getEntities();
+            getEntities(false);
         }
 
     }
@@ -669,9 +675,11 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
     /**
      * 해당 사용자의 채널, DM, PG 리스트를 획득 (with 통신)
+     *
+     * @param setProfile
      */
     @Background(serial = "getEntities")
-    public void getEntities() {
+    public void getEntities(boolean setProfile) {
         try {
             ResLeftSideMenu resLeftSideMenu = entityClientManager.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
@@ -681,6 +689,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
             BadgeUtils.setBadge(getApplicationContext(), badgeCountRepository.getTotalBadgeCount());
             entityManager.refreshEntity();
             getEntitiesSucceed(resLeftSideMenu);
+            if (setProfile && !resLeftSideMenu.user.profileUpdated) {
+                moveSetProfileActivity();
+            }
         } catch (RetrofitError e) {
             e.printStackTrace();
             if (e.getResponse() != null) {
@@ -752,7 +763,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
     public void onEvent(MessagePushEvent event) {
         if (!TextUtils.equals(event.getEntityType(), PushTO.RoomType.CHAT.getName())) {
-            getEntities();
+            getEntities(false);
         }
     }
 
