@@ -44,13 +44,11 @@ public class TeamPresenterImpl implements TeamPresenter {
         searchQueryQueueSubscription =
                 searchQueryQueue
                         .throttleWithTimeout(300, TimeUnit.MILLISECONDS)
-                        .map(query -> {
-                            view.clearMembers();
-
-                            return Pair.create(query, model.getSearchedMembers(query));
-                        })
+                        .map(query -> Pair.create(query, model.getSearchedMembers(query)))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(pair -> {
+                            view.clearMembers();
+
                             List<FormattedEntity> members = pair.second;
                             if (members == null || members.isEmpty()) {
                                 String query = pair.first;
@@ -58,6 +56,7 @@ public class TeamPresenterImpl implements TeamPresenter {
                             } else {
                                 view.setSearchedMembers(members);
                             }
+
                             view.notifyDataSetChanged();
                         }, throwable -> {
                             LogUtil.e(Log.getStackTraceString(throwable));
@@ -73,8 +72,6 @@ public class TeamPresenterImpl implements TeamPresenter {
 
     @Override
     public void onInitializeTeam() {
-        view.clearMembers();
-
         view.showTeamLayout();
 
         view.showProgress();
@@ -86,6 +83,9 @@ public class TeamPresenterImpl implements TeamPresenter {
                     view.hideProgress();
 
                     view.initTeamInfo(team);
+
+                    view.clearMembers();
+
                     List<FormattedEntity> members = team.getMembers();
                     if (members != null && !members.isEmpty()) {
                         view.initTeamMembers(members);
