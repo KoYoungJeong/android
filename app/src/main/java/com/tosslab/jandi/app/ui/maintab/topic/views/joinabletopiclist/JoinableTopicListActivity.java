@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist;
 
 import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -21,7 +20,7 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.adapter.JoinableTopicListAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.component.DaggerJoinableTopicListComponent;
-import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.model.TopicInfoDialog;
+import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.view.TopicInfoDialog;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.module.JoinableTopicListModule;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.presenter.JoinableTopicListPresenter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.view.JoinableTopicDataView;
@@ -32,7 +31,6 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
 import javax.inject.Inject;
