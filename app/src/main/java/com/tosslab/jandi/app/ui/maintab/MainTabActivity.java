@@ -221,7 +221,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
         offlineLayer = new OfflineLayer(vgOffline);
 
-        JandiPreference.setSocketReconnectDelay(0l);
+        JandiPreference.setSocketReconnectDelay(0L);
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
         // onResume -> AfterViews 로 이동
@@ -231,6 +231,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         }
 
         initializeTeamsView();
+
     }
 
     private void initMainTabViewPager() {
