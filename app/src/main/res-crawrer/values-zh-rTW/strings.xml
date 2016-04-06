@@ -447,7 +447,7 @@
 	<string name="jandi_signup_confirm">"現在就註冊！"</string>
 	<string name="jandi_signup_expired_verification_code">"驗證碼已過期。重新寄發新的驗證碼？"</string>
 	<string name="jandi_signup_input_email">"主要電子郵件地址"</string>
-	<string name="jandi_signup_invalidate_code">"驗證碼不正確 (1/5)\n請重試一次"</string>
+	<string name="jandi_signup_invalidate_code">"驗證碼不正確 (%d/5)\n請重試一次"</string>
 	<string name="jandi_signup_required">"必須"</string>
 	<string name="jandi_signup_resend_email">"<![CDATA[尚未收到電子郵件? <font color=#00a4e6><u>重新傳送</u></font>]]>"</string>
 	<string name="jandi_signup_send_new_verification_code">"新的驗證碼已傳送至%s請收到新的驗證碼後，在此處輸入"</string>

@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
+import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.team.adapter.TeamMemberListAdapter;
 import com.tosslab.jandi.app.ui.maintab.team.component.DaggerTeamComponent;
 import com.tosslab.jandi.app.ui.maintab.team.module.TeamModule;
@@ -31,6 +32,8 @@ import com.tosslab.jandi.app.ui.maintab.team.view.TeamView;
 import com.tosslab.jandi.app.ui.maintab.team.vo.Team;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.UiUtils;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.KeyboardVisibleChangeDetectView;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 
@@ -139,6 +142,7 @@ public class TeamFragment extends Fragment
 
         adapter.setOnMemberClickListener(member -> {
             showUserProfile(member.getId());
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.SelectMember);
         });
     }
 
@@ -204,6 +208,8 @@ public class TeamFragment extends Fragment
     void focusToSearch() {
         etSearch.requestFocus();
         inputMethodManager.showSoftInput(etSearch, 0);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.MemberSearch);
     }
 
     @OnTextChanged(R.id.et_team_member_search)
@@ -213,7 +219,8 @@ public class TeamFragment extends Fragment
 
     @OnClick(R.id.btn_team_info_invite)
     void inviteMember() {
-        EventBus.getDefault().post(new RequestInviteMemberEvent());
+        EventBus.getDefault().post(new RequestInviteMemberEvent(InvitationDialogExecutor.FROM_MAIN_TEAM));
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.InviteMember);
     }
 
     @Override
@@ -238,7 +245,7 @@ public class TeamFragment extends Fragment
     }
 
     public void onEvent(RetrieveTopicListEvent event) {
-        presenter.onSearchMember(etSearch.getText().toString());
+        presenter.reInitializeTeam();
     }
 
     public void onEvent(TeamLeaveEvent event) {
@@ -290,16 +297,23 @@ public class TeamFragment extends Fragment
             return;
         }
 
-        adapter.setRow(0, new MultiItemRecyclerAdapter.Row<>(
-                members.size(), TeamMemberListAdapter.VIEW_TYPE_MEMBER_COUNT));
+        MultiItemRecyclerAdapter.Row<Integer> memberCountRow =
+                new MultiItemRecyclerAdapter.Row<>(members.size(),
+                        TeamMemberListAdapter.VIEW_TYPE_MEMBER_COUNT);
 
-        Observable.from(members)
-                .subscribe(entity -> {
-                    adapter.addRow(new MultiItemRecyclerAdapter.Row<>(
-                            entity, TeamMemberListAdapter.VIEW_TYPE_MEMBER));
-                });
+        Observable
+                .concat(Observable.just(memberCountRow),
+                        Observable.from(members)
+                                .map(entity ->
+                                        new MultiItemRecyclerAdapter.Row<FormattedEntity>(entity,
+                                                TeamMemberListAdapter.VIEW_TYPE_MEMBER)))
+                .subscribe(adapter::addRow,
+                        Throwable::printStackTrace,
+                        () -> adapter.notifyDataSetChanged());
 
-        adapter.notifyDataSetChanged();
+        if (etSearch.length() > 0) {
+            presenter.onSearchMember(etSearch.getText().toString());
+        }
     }
 
     @Override

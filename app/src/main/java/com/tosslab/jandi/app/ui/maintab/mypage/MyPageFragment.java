@@ -37,6 +37,8 @@ import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ViewSlider;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.spannable.OwnerSpannable;
@@ -140,8 +142,10 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
         lvMyPage.setAdapter(adapter);
 
         lvMyPage.addOnScrollListener(new ViewSlider(vgProfileLayout));
-
-        adapter.setOnMentionClickListener(presenter::onClickMention);
+        adapter.setOnMentionClickListener(mention -> {
+            presenter.onClickMention(mention);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.ChooseMention);
+        });
     }
 
     /**
@@ -168,6 +172,7 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
         if (menuItem.getItemId() == R.id.action_mypage_setting) {
             SettingsActivity_.intent(this)
                     .start();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.Setting);
             return true;
         }
 
@@ -205,6 +210,8 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .extra("type", StarMentionListActivity.TYPE_STAR_LIST)
                 .start();
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.Stars);
     }
 
     @Override
@@ -243,13 +250,19 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
 
         ImageUtil.loadProfileImage(ivProfile, me.getUserLargeProfileUrl(), R.drawable.profile_img);
 
-        btnSetting.setOnClickListener(v -> ModifyProfileActivity_.intent(this).start());
+        btnSetting.setOnClickListener(v -> {
+            ModifyProfileActivity_.intent(this).start();
+
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.EditProfile);
+        });
 
         final long memberId = me.getId();
         ivProfile.setOnClickListener(v -> {
             MemberProfileActivity_.intent(getActivity())
                     .memberId(memberId)
                     .start();
+
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.ViewMyProfile);
         });
     }
 

@@ -477,6 +477,12 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                             }));
         } else if (member.isInavtived()) {
             vgProfileTeamButtons.addView(
+                    getButton(R.drawable.icon_profile_mention,
+                            getString(R.string.jandi_mention_mentions), (v) -> {
+                                startStarMentionListActivity();
+                                AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Mentions);
+                            }));
+            vgProfileTeamButtons.addView(
                     getButton(R.drawable.icon_profile_mail,
                             getString(R.string.jandi_resend_invitation),
                             v -> {

@@ -1,133 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:overScrollMode="never">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:paddingLeft="35dp"
+        android:paddingRight="35dp">
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/vg_insert_profile_extras"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:lineSpacingExtra="4dp"
-            android:text="@string/jandi_profile_extra_introduce"
-            android:textSize="14dp"/>
+            android:layout_marginTop="32dp"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_email"
-            android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:layout_marginLeft="35dp"
-            android:layout_marginRight="35dp"
-            android:layout_marginTop="45dp"
-            android:background="@drawable/profile_text_input_bg"
-            android:gravity="center"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:singleLine="true"
-            android:textColor="@color/jandi_profile_text"
-            android:textSize="14dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:lineSpacingExtra="4dp"
+                android:text="@string/jandi_profile_extra_introduce"
+                android:textSize="14sp" />
 
-        <EditText
-            android:id="@+id/et_department"
-            android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:layout_marginLeft="35dp"
-            android:layout_marginRight="35dp"
-            android:layout_marginTop="26dp"
-            android:background="@drawable/profile_text_input_bg"
-            android:gravity="center"
-            android:hint="@string/jandi_profile_division_hint"
-            android:maxLength="60"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:singleLine="true"
-            android:textColor="@color/jandi_profile_text"
-            android:textSize="14dp"/>
+            <TextView
+                android:id="@+id/tv_email"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_marginTop="45dp"
+                android:background="@drawable/profile_text_input_bg"
+                android:gravity="center"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:singleLine="true"
+                android:textColor="@color/jandi_profile_text"
+                android:textSize="14sp" />
 
-        <EditText
-            android:id="@+id/et_positon"
-            android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:layout_marginLeft="35dp"
-            android:layout_marginRight="35dp"
-            android:layout_marginTop="26dp"
-            android:background="@drawable/profile_text_input_bg"
-            android:gravity="center"
-            android:hint="@string/jandi_profile_position_hint"
-            android:maxLength="60"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:singleLine="true"
-            android:textColor="@color/jandi_profile_text"
-            android:textSize="14dp"/>
+            <EditText
+                android:id="@+id/et_department"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_marginTop="26dp"
+                android:background="@drawable/profile_text_input_bg"
+                android:gravity="center"
+                android:hint="@string/jandi_profile_division_hint"
+                android:maxLength="60"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:singleLine="true"
+                android:textColor="@color/jandi_profile_text"
+                android:textSize="14sp" />
 
-        <EditText
-            android:id="@+id/et_phone_number"
-            android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="35dp"
-            android:layout_marginRight="35dp"
-            android:layout_marginTop="26dp"
-            android:background="@drawable/profile_text_input_bg"
-            android:gravity="center"
-            android:hint="@string/jandi_profile_phone_number_hint"
-            android:inputType="phone"
-            android:maxLength="20"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:singleLine="true"
-            android:textColor="@color/jandi_profile_text"
-            android:textSize="14dp"/>
+            <EditText
+                android:id="@+id/et_positon"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_marginTop="26dp"
+                android:background="@drawable/profile_text_input_bg"
+                android:gravity="center"
+                android:hint="@string/jandi_profile_position_hint"
+                android:maxLength="60"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:singleLine="true"
+                android:textColor="@color/jandi_profile_text"
+                android:textSize="14sp" />
 
-        <EditText
-            android:id="@+id/et_status_message"
+            <EditText
+                android:id="@+id/et_phone_number"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="26dp"
+                android:background="@drawable/profile_text_input_bg"
+                android:gravity="center"
+                android:hint="@string/jandi_profile_phone_number_hint"
+                android:inputType="phone"
+                android:maxLength="20"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:singleLine="true"
+                android:textColor="@color/jandi_profile_text"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/et_status_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="26dp"
+                android:background="@drawable/profile_text_input_bg"
+                android:gravity="center"
+                android:hint="@string/jandi_profile_status_message"
+                android:inputType="textMultiLine"
+                android:maxLength="60"
+                android:maxLines="3"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:textColor="@color/jandi_profile_text"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="35dp"
-            android:layout_marginRight="35dp"
-            android:layout_marginTop="26dp"
-            android:background="@drawable/profile_text_input_bg"
-            android:gravity="center"
-            android:hint="@string/jandi_profile_status_message"
-            android:maxLength="60"
-            android:maxLines="3"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:textColor="@color/jandi_profile_text"
-            android:textSize="14dp"/>
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/vg_insert_profile_extras"
+            android:layout_marginTop="32dp"
+            android:gravity="bottom"
+            android:orientation="vertical"
+            android:paddingBottom="38dp">
 
-    </LinearLayout>
+            <ImageView
+                android:id='@+id/iv_profile_check'
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/btn_profile_check" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="12dp"
+                android:text="@string/jandi_browse_team"
+                android:textColor="@color/jandi_text_light"
+                android:textSize="13sp" />
 
-        <ImageView
-            android:id='@+id/iv_profile_check'
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/btn_profile_check"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="38dp"
-            android:layout_marginTop="12dp"
-            android:text="@string/jandi_browse_team"
-            android:textColor="@color/jandi_text_light"
-            android:textSize="13dp"/>
-
-    </LinearLayout>
+        </LinearLayout>
 
 
-</RelativeLayout>
+    </RelativeLayout>
+</ScrollView>

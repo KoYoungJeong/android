@@ -150,6 +150,8 @@ public class InvitationDialogFragment extends DialogFragment {
                 return AnalyticsValue.Screen.TopicsTab;
             case InvitationDialogExecutor.FROM_CHAT_CHOOSE:
                 return AnalyticsValue.Screen.MessageTab;
+            case InvitationDialogExecutor.FROM_MAIN_TEAM:
+                return AnalyticsValue.Screen.TeamTab;
         }
     }
 
