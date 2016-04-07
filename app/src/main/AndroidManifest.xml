@@ -218,6 +218,12 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".ui.members.search.MemberSearchActivity"
+            android:windowSoftInputMode="stateAlwaysVisible"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name=".ui.file.upload.preview.FileUploadPreviewActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"

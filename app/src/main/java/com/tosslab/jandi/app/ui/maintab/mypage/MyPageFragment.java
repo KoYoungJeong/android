@@ -138,11 +138,7 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
     }
 
     private void initSwipeRefreshLayout() {
-        vgRefresh.setColorSchemeColors(
-                R.color.jandi_accent_color,
-                R.color.jandi_primary_color,
-                R.color.jandi_primary_dark_color,
-                R.color.jandi_primary_color);
+        vgRefresh.setColorSchemeResources(R.color.jandi_accent_color);
 
         vgRefresh.setOnRefreshListener(() -> {
             presenter.onInitializeMyPage(true);
@@ -300,14 +296,6 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
             return;
         }
         vEmptyLayout.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void showProfileLayout() {
-        if (isFinishing()) {
-            return;
-        }
-        vgProfileLayout.setTranslationY(0);
     }
 
     @Override
