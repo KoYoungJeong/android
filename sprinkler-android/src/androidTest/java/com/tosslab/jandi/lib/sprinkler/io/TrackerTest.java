@@ -2,16 +2,13 @@ package com.tosslab.jandi.lib.sprinkler.io;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 import android.widget.TextView;
-
-import com.tosslab.jandi.lib.sprinkler.SprinklerTestApplication;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -27,22 +24,14 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by tonyjs on 15. 7. 23..
- */
-@Config(
-        application = SprinklerTestApplication.class,
-        manifest = "src/main/AndroidManifest.xml",
-        sdk = 18
-)
-@RunWith(RobolectricTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class TrackerTest {
 
     Tracker tracker;
 
     @Before
     public void setup() throws Exception {
-        tracker = new Tracker(RuntimeEnvironment.application);
+        tracker = new Tracker(InstrumentationRegistry.getContext());
     }
 
     @Test
@@ -59,7 +48,7 @@ public class TrackerTest {
     @Test
     public void testMapToJSONFormat() throws Exception {
         Map<String, TextView> testMap1 = new Hashtable<>();
-        testMap1.put("h", new TextView(RuntimeEnvironment.application));
+        testMap1.put("h", new TextView(InstrumentationRegistry.getContext()));
         String test1 = tracker.getJSONFormatFromMap(testMap1);
 
         System.out.println("test1 = " + test1);

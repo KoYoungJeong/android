@@ -1,18 +1,15 @@
 package com.tosslab.jandi.lib.sprinkler.io;
 
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 import android.util.Pair;
 
 import com.google.gson.Gson;
-import com.tosslab.jandi.lib.sprinkler.SprinklerTestApplication;
 import com.tosslab.jandi.lib.sprinkler.io.model.Track;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
-import org.robolectric.shadows.httpclient.FakeHttp;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -27,22 +24,16 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by tonyjs on 15. 7. 23..
  */
-@Config(
-        application = SprinklerTestApplication.class,
-        manifest = "src/main/AndroidManifest.xml",
-        sdk =18
-)
-@RunWith(RobolectricTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class FlusherTest {
 
     private Flusher flusher;
     private Tracker tracker;
+
     @Before
     public void setup() throws Exception {
 
-        FakeHttp.getFakeHttpLayer().interceptHttpRequests(false);
-
-        tracker = new Tracker(RuntimeEnvironment.application);
+        tracker = new Tracker(InstrumentationRegistry.getContext());
 
         for (int i = 0; i < 30; i++) {
             final int index = i;
@@ -57,7 +48,7 @@ public class FlusherTest {
             tracker.insert(index + " event", identifiers, "android", identifiers, new Date().getTime());
         }
 
-        flusher = new Flusher(RuntimeEnvironment.application);
+        flusher = new Flusher(InstrumentationRegistry.getContext());
     }
 
     @Test

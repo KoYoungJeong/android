@@ -52,17 +52,21 @@ dependencies {
 
     repositories {
         jcenter()
-        maven { url 'https://maven.fabric.io/public' }
-        flatDir {
-            dirs 'aarLibs'
+        maven {
+            url 'https://maven.fabric.io/public'
         }
+
+        maven {
+            url 'http://nx.jandi.io:8081/nexus/content/repositories/thirdparty/'
+        }
+
     }
 
-    compile(name: 'photoview-expand-release_2015_1118_1108', ext: 'aar')
-//    compile(name: 'sprinkler-android-release_2016_0120_1510', ext: 'aar')
-    compile(name: 'android-image-zoom-crop-release_2016_0202_1747', ext: 'aar')
+    compile 'com.tosslab.jandi.lib:sprinkler-android:1.1'
+    compile 'com.tosslab.jandi.lib:photoview-expand:1.1'
+    compile 'com.tosslab.jandi.lib:android-image-zoom-crop:1.1'
 
-    compile project(':sprinkler-android')
+//    compile project(':sprinkler-android')
 //    compile project(':photoview-expand')
 
     apt "org.androidannotations:androidannotations:${rootProject.ext.androidAnnotationsVersion}"
@@ -119,13 +123,13 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:4.5.+'
 
     // Force usage of support annotations in the test app, since it is internally used by the runner module.
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test:rules:0.5'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
-    androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.2'
+    androidTestCompile "com.android.support.test:runner:${rootProject.ext.testRunnerVersion}"
+    androidTestCompile "com.android.support.test:rules:${rootProject.ext.testRunnerVersion}"
+    androidTestCompile "com.android.support.test.espresso:espresso-core:${rootProject.ext.espressoVersion}"
+    androidTestCompile "com.android.support.test.espresso:espresso-intents:${rootProject.ext.espressoVersion}"
     androidTestCompile "com.crittercism.dexmaker:dexmaker-mockito:${rootProject.ext.dexmakerVersion}"
     androidTestCompile "com.crittercism.dexmaker:dexmaker-dx:${rootProject.ext.dexmakerVersion}"
-    androidTestCompile 'com.jayway.awaitility:awaitility:1.7.+'
+    androidTestCompile "com.jayway.awaitility:awaitility:${rootProject.ext.awaitilityVersion}"
     androidTestCompile "com.squareup.assertj:assertj-android:${rootProject.ext.assertJAndroidVersion}"
     androidTestCompile "com.squareup.assertj:assertj-android-support-v4:${rootProject.ext.assertJAndroidVersion}@aar"
     androidTestCompile "com.squareup.assertj:assertj-android-appcompat-v7:${rootProject.ext.assertJAndroidVersion}@aar"
@@ -150,13 +154,13 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.2'
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         applicationId 'com.tosslab.jandi.app'
-        minSdkVersion 14
-        targetSdkVersion 23
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 126
         versionName '2.0.0'
 
@@ -258,10 +262,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    jacoco {
-        version = '0.7.2.201409121644'
     }
 
     dexOptions {
