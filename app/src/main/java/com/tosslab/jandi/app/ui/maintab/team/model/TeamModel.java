@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.team.model;
 
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.maintab.team.vo.Team;
@@ -21,11 +23,23 @@ public class TeamModel {
                 .map(ownerEntity -> {
                     long teamId = entityManager.getTeamId();
                     String teamName = entityManager.getTeamName();
-                    String teamDomain = entityManager.getTeamDomain();
+                    String teamDomain = getFullDomain(entityManager.getTeamDomain());
 
                     List<FormattedEntity> teamMembers = MembersModel.getEnabledTeamMember();
                     return Team.create(teamId, teamName, teamDomain, ownerEntity.getUser(), teamMembers);
                 });
+    }
+
+    public String getFullDomain(String domain) {
+        if (TextUtils.isEmpty(domain)) {
+            return "";
+        }
+
+        if (domain.contains(".jandi.com")) {
+            return domain;
+        }
+
+        return domain + ".jandi.com";
     }
 
 }
