@@ -809,7 +809,7 @@ public class JandiSocketServiceModel {
         if (ts > -1) {
             try {
                 ResEventHistory eventHistory =
-                        eventsApi.get().getEventHistory(ts, userId, "file_unshared", null);
+                        eventsApi.get().getEventHistory(ts, userId, "file_unshared");
                 Observable.from(eventHistory.records)
                         .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketFileUnsharedEvent)
                         .map(eventHistoryInfo -> (SocketFileUnsharedEvent) eventHistoryInfo)
