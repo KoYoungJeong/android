@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -91,12 +93,16 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @Extra
     long imageSize = -1;
 
-    ////
-
     @Bean(CarouselViewerPresenterImpl.class)
     CarouselViewerPresenter carouselViewerPresenter;
     CarouselViewerAdapter carouselViewerAdapter;
     private boolean isFullScreen = false;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setShouldSetOrientation(false);
+    }
 
     @AfterInject
     void initObject() {

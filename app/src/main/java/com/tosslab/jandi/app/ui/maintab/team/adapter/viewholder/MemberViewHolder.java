@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.utils.UiUtils;
+import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
@@ -43,7 +44,12 @@ public class MemberViewHolder extends BaseViewHolder<FormattedEntity> {
 
     @Override
     public void onBindView(FormattedEntity user) {
-        tvName.setText(user.getName());
+        boolean inavtived = user.isInavtived();
+        if (!inavtived) {
+            tvName.setText(user.getName());
+        } else {
+            tvName.setText(user.getUserEmail());
+        }
 
         String userStatusMessage = user.getUserStatusMessage();
         tvStatus.setVisibility(TextUtils.isEmpty(userStatusMessage) ? View.GONE : View.VISIBLE);
@@ -57,8 +63,14 @@ public class MemberViewHolder extends BaseViewHolder<FormattedEntity> {
         } else {
             ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(43f);
             ivProfile.setLayoutParams(ivProfileLayoutParams);
-            ImageUtil.loadProfileImage(
-                    ivProfile, user.getUserLargeProfileUrl(), R.drawable.profile_img);
+            if (!inavtived) {
+                ImageUtil.loadProfileImage(
+                        ivProfile, user.getUserLargeProfileUrl(), R.drawable.profile_img);
+            } else {
+                ImageUtil.loadProfileImage(ivProfile,
+                        UriFactory.getResourceUri(R.drawable.profile_img_dummyaccount_43),
+                        R.drawable.profile_img_dummyaccount_43);
+            }
         }
     }
 

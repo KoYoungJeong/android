@@ -233,7 +233,6 @@ public class BodyViewFactory {
                     && isSharedFile
                     && !TextUtils.equals(currentMessage.status, "archived");
 
-
             BodyViewHolder.Type defaultType;
             if (isImage) {
                 defaultType = BodyViewHolder.Type.Image;

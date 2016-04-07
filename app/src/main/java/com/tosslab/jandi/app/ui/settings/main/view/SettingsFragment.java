@@ -126,16 +126,22 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
     void onAccountClick() {
         Intent intent = new Intent(getActivity(), SettingAccountActivity.class);
         startActivity(intent);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.Account);
     }
 
     @Click(R.id.vg_settings_main_sign_out)
     void onSignOutClick() {
         settingsPresenter.onSignOut();
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.SignOut);
     }
 
     @Click(R.id.vg_settings_main_help)
     void onHelpClick() {
         settingsPresenter.onLaunchHelpPage();
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.Help);
     }
 
     private void showOrientationDialog() {
@@ -163,7 +169,7 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
     }
 
     @Override
-    public void showSignoutDialog() {
+    public void showSignOutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(R.string.jandi_setting_sign_out)

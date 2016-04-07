@@ -33,7 +33,7 @@ public class SettingsPresenterImpl implements SettingsPresenter {
     @Override
     public void onSignOut() {
         if (NetworkCheckUtil.isConnected()) {
-            view.showSignoutDialog();
+            view.showSignOutDialog();
         } else {
             view.showCheckNetworkDialog();
         }

@@ -41,6 +41,7 @@ public class InvitationDialogExecutor {
 
     public static final int FROM_MAIN_INVITE = 1;
     public static final int FROM_MAIN_MEMBER = 2;
+    public static final int FROM_MAIN_TEAM = 7;
     public static final int FROM_TOPIC_CHAT = 3;
     public static final int FROM_TOPIC_MEMBER = 4;
     public static final int FROM_MAIN_POPUP = 5;

@@ -55,6 +55,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -85,7 +86,8 @@ import rx.android.schedulers.AndroidSchedulers;
  */
 @EFragment(R.layout.fragment_joined_topic_list)
 @OptionsMenu(R.menu.main_activity_menu)
-public class MainTopicListFragment extends Fragment implements MainTopicListPresenter.View {
+public class MainTopicListFragment extends Fragment
+        implements MainTopicListPresenter.View, ListScroller {
 
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
 
@@ -200,8 +202,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         mainTopicListPresenter.onInitViewList();
         FAButtonUtil.setFAButtonController(lvMainTopic, floatingActionMenu);
         hasOptionsMenu();
-
-
     }
 
     private void launchCreateTopicActivity() {
@@ -329,7 +329,9 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()));
         EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
         setSelectedItem(selectedEntity);
-        scrollAndAnimateForSelectedItem();
+        if (isCurrentFolder()) {
+            scrollAndAnimateForSelectedItem();
+        }
 
         setFolderExpansion();
     }
@@ -557,8 +559,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             }
         }
 
-        LogUtil.e("TopicList", "groupPosition = " + groupPosition + " childPosition = " + childPosition);
-
         if (groupPosition == -1) {
             expandableTopicAdapter.startAnimation();
             expandableTopicAdapter.notifyDataSetChanged();
@@ -572,11 +572,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         long packedPositionForChild =
                 RecyclerViewExpandableItemManager.getPackedPositionForChild(groupPosition, childPosition);
 
-        LogUtil.d("TopicList", "packedPositionForChild = " + packedPositionForChild);
-
         int flatPosition = expandableItemManager.getFlatPosition(packedPositionForChild);
-
-        LogUtil.i("TopicList", "flatPosition = " + flatPosition);
 
         int offset = lvMainTopic.getMeasuredHeight() / 2;
         if (offset <= 0) {
@@ -641,5 +637,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         ColoredToast.showWarning(getString(R.string.jandi_folder_alread_has_name));
     }
 
-
+    @Override
+    public void scrollToTop() {
+        lvMainTopic.scrollToPosition(0);
+    }
 }

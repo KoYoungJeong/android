@@ -127,7 +127,7 @@ public class MessageListV2Presenter {
         } else if (!messageListModel.isEnabledIfUser(room.getEntityId())) {
             view.showDisabledUserLayer();
         } else {
-            view.dismissStatusLayout();
+            view.dismissUserStatusLayout();
         }
     }
 
@@ -354,11 +354,7 @@ public class MessageListV2Presenter {
                     messageListModel.upsertMessages(resOldMessage);
                 }
             } else if (resOldMessage.records.size() < offset) {
-                resOldMessage = loadMoreOldMessagesFromServer(resOldMessage, offset);
-
-                if (isCacheMode) {
-                    messageListModel.upsertMessages(resOldMessage);
-                }
+                resOldMessage = loadMoreOldMessagesFromServer(resOldMessage, offset, isCacheMode);
             }
 
             if (resOldMessage == null
@@ -426,7 +422,9 @@ public class MessageListV2Presenter {
     }
 
     @NonNull
-    private ResMessages loadMoreOldMessagesFromServer(ResMessages resOldMessage, int offset)
+    private ResMessages loadMoreOldMessagesFromServer(ResMessages resOldMessage,
+                                                      int offset,
+                                                      boolean isCacheMode)
             throws RetrofitException {
         try {
             // 캐시된 데이터가 부족한 경우
@@ -434,6 +432,10 @@ public class MessageListV2Presenter {
                     resOldMessage.records.get(resOldMessage.records.size() - 1);
             ResMessages addOldMessage =
                     messageListModel.getOldMessage(firstLink.id, offset);
+
+            if (isCacheMode) {
+                messageListModel.upsertMessages(addOldMessage);
+            }
 
             addOldMessage.records.addAll(resOldMessage.records);
 
@@ -564,9 +566,6 @@ public class MessageListV2Presenter {
 
         boolean cacheMode = messageContainer.isCacheMode();
         if (cacheMode) {
-            LogUtil.w("tony", "size - " + newMessages.size());
-            Observable.from(newMessages)
-                    .subscribe(link -> LogUtil.d("tony", link.toString()));
             messageListModel.upsertMessages(roomId, newMessages);
         }
 
@@ -1089,7 +1088,7 @@ public class MessageListV2Presenter {
 
         void modifyStarredInfo(long messageId, boolean isStarred);
 
-        void dismissStatusLayout();
+        void dismissUserStatusLayout();
     }
 
 }
