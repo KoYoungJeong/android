@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.maintab.team.vo.Team;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,16 +56,14 @@ public class TeamModel {
         }
 
         Observable.from(members)
-                .filter(entity -> entity instanceof BotEntity
-                        || TextUtils.equals(entity.getUser().status, "enabled"))
+                .filter(FormattedEntity::isEnabled)
                 .toSortedList((entity, entity2) -> {
                     if (entity instanceof BotEntity) {
                         return -1;
                     } else if (entity2 instanceof BotEntity) {
                         return 1;
                     } else {
-                        return entity.getName().toLowerCase()
-                                .compareTo(entity2.getName().toLowerCase());
+                        return StringCompareUtil.compare(entity.getName(), entity2.getName());
                     }
                 })
                 .subscribe(entities -> {

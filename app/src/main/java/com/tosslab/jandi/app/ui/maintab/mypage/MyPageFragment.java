@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
@@ -37,6 +38,8 @@ import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ViewSlider;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.spannable.OwnerSpannable;
@@ -58,6 +61,9 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
 
     @Inject
     MyPagePresenter presenter;
+
+    @Bind(R.id.vg_refresh)
+    SwipeRefreshLayout vgRefresh;
 
     @Bind(R.id.vg_mypage_profile)
     ViewGroup vgProfileLayout;
@@ -122,12 +128,31 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
         ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
 
-        initMentionListView();
+        initSwipeRefreshLayout();
 
+        initMentionListView();
         initMoreLoadingProgress();
 
         presenter.onRetrieveMyInfo();
-        presenter.onInitializeMyPage();
+        presenter.onInitializeMyPage(false);
+    }
+
+    private void initSwipeRefreshLayout() {
+        vgRefresh.setColorSchemeColors(
+                R.color.jandi_accent_color,
+                R.color.jandi_primary_color,
+                R.color.jandi_primary_dark_color,
+                R.color.jandi_primary_color);
+
+        vgRefresh.setOnRefreshListener(() -> {
+            presenter.onInitializeMyPage(true);
+        });
+
+        vgRefresh.post(() -> {
+            int start = lvMyPage.getPaddingTop();
+            int end = start + vgRefresh.getProgressCircleDiameter();
+            vgRefresh.setProgressViewOffset(false, start, end);
+        });
     }
 
     private void initMentionListView() {
@@ -140,8 +165,10 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
         lvMyPage.setAdapter(adapter);
 
         lvMyPage.addOnScrollListener(new ViewSlider(vgProfileLayout));
-
-        adapter.setOnMentionClickListener(presenter::onClickMention);
+        adapter.setOnMentionClickListener(mention -> {
+            presenter.onClickMention(mention);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.ChooseMention);
+        });
     }
 
     /**
@@ -168,6 +195,7 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
         if (menuItem.getItemId() == R.id.action_mypage_setting) {
             SettingsActivity_.intent(this)
                     .start();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.Setting);
             return true;
         }
 
@@ -205,6 +233,8 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .extra("type", StarMentionListActivity.TYPE_STAR_LIST)
                 .start();
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.Stars);
     }
 
     @Override
@@ -243,13 +273,19 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
 
         ImageUtil.loadProfileImage(ivProfile, me.getUserLargeProfileUrl(), R.drawable.profile_img);
 
-        btnSetting.setOnClickListener(v -> ModifyProfileActivity_.intent(this).start());
+        btnSetting.setOnClickListener(v -> {
+            ModifyProfileActivity_.intent(this).start();
+
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.EditProfile);
+        });
 
         final long memberId = me.getId();
         ivProfile.setOnClickListener(v -> {
             MemberProfileActivity_.intent(getActivity())
                     .memberId(memberId)
                     .start();
+
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.ViewMyProfile);
         });
     }
 
@@ -277,20 +313,11 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
     @Override
     public void clearMentions() {
         adapter.clear();
-
-        if (isFinishing()) {
-            return;
-        }
-        adapter.notifyDataSetChanged();
     }
 
     @Override
     public void addMentions(List<MentionMessage> mentions) {
         adapter.addAll(mentions);
-        if (isFinishing()) {
-            return;
-        }
-        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -341,6 +368,21 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
                 .lastReadLinkId(linkId)
                 .start();
 
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void hideRefreshProgress() {
+        vgRefresh.setRefreshing(false);
+    }
+
+    @Override
+    public void clearLoadMoreOffset() {
+        adapter.clearLoadMoreOffset();
     }
 
     private boolean isFinishing() {

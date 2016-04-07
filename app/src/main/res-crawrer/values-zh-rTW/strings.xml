@@ -112,6 +112,7 @@
 	<string name="jandi_bot_status">"你好，我是Mr.J！"</string>
 	<string name="jandi_browse_other_topics">"瀏覽其他議題"</string>
 	<string name="jandi_browse_team">"瀏覽團隊"</string>
+	<string name="jandi_call_acess_permission">"欲直接外撥，請開啟同意電話取用"</string>
 	<string name="jandi_cancel">"取消"</string>
 	<string name="jandi_cancel_invitation">"取消邀請"</string>
 	<string name="jandi_canceled">"取消了"</string>
@@ -273,7 +274,7 @@
 	<string name="jandi_invite_succes_send">"邀請信發送至："</string>
 	<string name="jandi_invite_success">"邀請已經成功送出"</string>
 	<string name="jandi_invite_to_dummy_account_again">"其他成員已寄發邀請信至該郵箱，你確定要在發送一次嗎？"</string>
-	<string name="jandi_invite_to_team">"NEW KEY"</string>
+	<string name="jandi_invite_to_team">"邀請加入團隊"</string>
 	<string name="jandi_invite_wechat">"微信"</string>
 	<string name="jandi_invited_topic">"%1$s邀請了%2$s"</string>
 	<string name="jandi_is_newcomer">"還沒使用過JANDI?"</string>
@@ -418,7 +419,7 @@
 	<string name="jandi_service_maintenance">"JANDI現在基於定期維護而無法使用。我們預計幾個小時内就可以恢復運作。感謝您的耐心等候。"</string>
 	<string name="jandi_set_passcode">"設定密碼"</string>
 	<string name="jandi_set_passcode_detail">"如果你忘記密碼，將無法解鎖。請重新安裝JANDI，再重新登入。"</string>
-	<string name="jandi_setting_account">"NEW KEY"</string>
+	<string name="jandi_setting_account">"帳戶設定"</string>
 	<string name="jandi_setting_account_email_info">"增加多個電子郵箱到您的JANDI帳號。您可以使用任何綁定的電子郵箱進行登入，或針對特定的團隊指定一個專屬的電子郵箱。"</string>
 	<string name="jandi_setting_display">"螢幕顯示"</string>
 	<string name="jandi_setting_folder">"管理議題資料夾"</string>
@@ -446,7 +447,7 @@
 	<string name="jandi_signup_confirm">"現在就註冊！"</string>
 	<string name="jandi_signup_expired_verification_code">"驗證碼已過期。重新寄發新的驗證碼？"</string>
 	<string name="jandi_signup_input_email">"主要電子郵件地址"</string>
-	<string name="jandi_signup_invalidate_code">"驗證碼不正確 (1/5)\n請重試一次"</string>
+	<string name="jandi_signup_invalidate_code">"驗證碼不正確 (%d/5)\n請重試一次"</string>
 	<string name="jandi_signup_required">"必須"</string>
 	<string name="jandi_signup_resend_email">"<![CDATA[尚未收到電子郵件? <font color=#00a4e6><u>重新傳送</u></font>]]>"</string>
 	<string name="jandi_signup_send_new_verification_code">"新的驗證碼已傳送至%s請收到新的驗證碼後，在此處輸入"</string>
@@ -480,6 +481,7 @@
 	<string name="jandi_starred_unstarred">"已取消標示"</string>
 	<string name="jandi_start_direct_messages_1">"<b>您所有私訊的訊息現在是隱藏的。</b>"</string>
 	<string name="jandi_start_direct_messages_2">"點擊以下按鍵以開始或重新打開一個對話。"</string>
+	<string name="jandi_storage_access_permission">"JANDI存取外部資料的動作被拒絕"</string>
 	<string name="jandi_success_copy_clipboard_external_link">"共享連結已複製至到剪貼簿"</string>
 	<string name="jandi_success_disable_external_link">"共享連結已被刪除"</string>
 	<string name="jandi_success_kick_user_from_topic">"該成員已被剔除出此議題"</string>
@@ -556,6 +558,7 @@
 	<string name="jandi_upload_menu_file">"檔案"</string>
 	<string name="jandi_upload_menu_gallay">"照片集"</string>
 	<string name="jandi_upload_menu_video">"影片"</string>
+	<string name="jandi_use_fingerprint">"使用指紋"</string>
 	<string name="jandi_user_default_email">"主要電子郵件地址"</string>
 	<string name="jandi_user_id">"電子郵件"</string>
 	<string name="jandi_user_password">"密碼"</string>

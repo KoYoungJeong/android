@@ -810,6 +810,7 @@ public class MessageListV2Fragment extends Fragment implements
         ivMemberStatusAlert.setImageResource(R.drawable.icon_disabled_members_bar);
         tvMemberStatusAlert.setText(R.string.jandi_disabled_user);
         setPreviewVisible(false);
+        vgMemberStatusAlert.setOnClickListener(null);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -820,6 +821,9 @@ public class MessageListV2Fragment extends Fragment implements
         vgMemberStatusAlert.setBackgroundColor(getResources().getColor(R.color.jandi_black_de));
         ivMemberStatusAlert.setImageResource(R.drawable.bar_icon_info);
         tvMemberStatusAlert.setText(R.string.jandi_this_member_is_pending_to_join);
+        vgMemberStatusAlert.setOnClickListener(v -> {
+            onEvent(new ShowProfileEvent(entityId, ShowProfileEvent.From.SystemMessage));
+        });
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -2269,7 +2273,7 @@ public class MessageListV2Fragment extends Fragment implements
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void dismissStatusLayout() {
+    public void dismissUserStatusLayout() {
         vgMemberStatusAlert.setVisibility(View.GONE);
     }
 

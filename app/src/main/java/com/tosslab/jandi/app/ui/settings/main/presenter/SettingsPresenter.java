@@ -18,7 +18,7 @@ public interface SettingsPresenter {
 
     interface View {
 
-        void showSignoutDialog();
+        void showSignOutDialog();
 
         void showCheckNetworkDialog();
 
