@@ -15,9 +15,17 @@ public interface TeamView {
 
     void initTeamInfo(Team team);
 
-    void setSearchedMembers(String query, List<FormattedEntity> searchedMembers);
-
     void showTeamLayout();
 
     void clearMembers();
+
+    void initTeamMembers(List<FormattedEntity> members);
+
+    void notifyDataSetChanged();
+
+    void setEmptySearchedMember(String query);
+
+    void setSearchedMembers(List<FormattedEntity> searchedMembers);
+
+    void doSearchIfNeed();
 }
