@@ -8,8 +8,13 @@ import java.sql.SQLException;
 
 public class UploadedFileInfoRepository extends LockExecutorTemplate {
 
-    public static UploadedFileInfoRepository getRepository() {
-        return new UploadedFileInfoRepository();
+    private static UploadedFileInfoRepository repository;
+
+    synchronized public static UploadedFileInfoRepository getRepository() {
+        if (repository == null) {
+            repository = new UploadedFileInfoRepository();
+        }
+        return repository;
     }
 
     public int insertFileInfo(UploadedFileInfo fileInfo) {

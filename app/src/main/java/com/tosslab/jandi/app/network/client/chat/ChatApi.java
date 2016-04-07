@@ -24,8 +24,8 @@ public class ChatApi extends ApiTemplate<ChatApi.Api> {
         return call(() -> getApi().getChatList(memberId));
     }
 
-    public ResCommon deleteChat(long teamId, long entityId) throws RetrofitException {
-        return call(() -> getApi().deleteChat(teamId, entityId));
+    public ResCommon deleteChat(long myMemberId, long entityId) throws RetrofitException {
+        return call(() -> getApi().deleteChat(myMemberId, entityId));
     }
 
     interface Api {
@@ -36,7 +36,7 @@ public class ChatApi extends ApiTemplate<ChatApi.Api> {
 
         @HTTP(path = "members/{memberId}/chats/{entityId}", hasBody = true, method = "DELETE")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResCommon> deleteChat(@Path("memberId") long teamId, @Path("entityId") long entityId);
+        Call<ResCommon> deleteChat(@Path("memberId") long myMemberId, @Path("entityId") long entityId);
 
     }
 }

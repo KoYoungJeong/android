@@ -13,9 +13,14 @@ import java.util.List;
 
 public class MessageRepository extends LockExecutorTemplate {
 
-    public static MessageRepository getRepository() {
+    private static MessageRepository repository;
 
-        return new MessageRepository();
+    synchronized public static MessageRepository getRepository() {
+
+        if (repository == null) {
+            repository = new MessageRepository();
+        }
+        return repository;
     }
 
     public boolean upsertMessages(List<ResMessages.Link> messages) {

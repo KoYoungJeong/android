@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -30,13 +29,9 @@ public class DirectMessageApi extends ApiTemplate<DirectMessageApi.Api> {
         return call(() -> getApi().getDirectMessages(userId, teamId, fromId, count));
     }
 
-    public ResMessages getDirectMessages(int teamId, int userId) throws RetrofitException {
+    @Deprecated
+    public ResMessages getDirectMessages(long teamId, long userId) throws RetrofitException {
         return call(() -> getApi().getDirectMessages(userId, teamId));
-    }
-
-    public ResUpdateMessages getDirectMessagesUpdated(int teamId, int userId,
-                                                      int timeAfter) throws RetrofitException {
-        return call(() -> getApi().getDirectMessagesUpdated(userId, timeAfter, teamId));
     }
 
     // Updated 된 Direct Message 리스트 정보 획득
@@ -63,8 +58,9 @@ public class DirectMessageApi extends ApiTemplate<DirectMessageApi.Api> {
     }
 
     // Direct Message 수정
+    @Deprecated
     public ResCommon modifyDirectMessage(ReqModifyMessage message,
-                                         int userId, int messageId) throws RetrofitException {
+                                         long userId, long messageId) throws RetrofitException {
         return call(() -> getApi().modifyDirectMessage(userId, messageId, message));
     }
 
@@ -83,11 +79,7 @@ public class DirectMessageApi extends ApiTemplate<DirectMessageApi.Api> {
 
         @GET("users/{userId}/messages?type=old")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResMessages> getDirectMessages(@Path("userId") int userId, @Query("teamId") int teamId);
-
-        @GET("users/{userId}/messages/update/{timeAfter}")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-        Call<ResUpdateMessages> getDirectMessagesUpdated(@Path("userId") int userId, @Path("timeAfter") int timeAfter, @Query("teamId") int teamId);
+        Call<ResMessages> getDirectMessages(@Path("userId") long userId, @Query("teamId") long teamId);
 
         // Updated 된 Direct Message 리스트 정보 획득
         @GET("users/{userId}/messages?type=new")
@@ -115,7 +107,7 @@ public class DirectMessageApi extends ApiTemplate<DirectMessageApi.Api> {
         // Direct Message 수정
         @PUT("users/{userId}/messages/{messageId}")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResCommon> modifyDirectMessage(@Path("userId") int userId, @Path("messageId") int messageId, @Body ReqModifyMessage message);
+        Call<ResCommon> modifyDirectMessage(@Path("userId") long userId, @Path("messageId") long messageId, @Body ReqModifyMessage message);
 
         // Direct Message 삭제
         @HTTP(path = "users/{userId}/messages/{messageId}", hasBody = true, method = "DELETE")

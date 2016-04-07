@@ -133,7 +133,7 @@ final class Flusher {
         try {
             requestManager.request(new RequestManager.Request<ResponseBody>() {
                 @Override
-                public ResponseBody performRequest() throws IOException {
+                public ResponseBody performRequest() throws Exception {
                     RequestClient client = requestManager.getClient(RequestClient.class);
                     return client.ping().clone().execute().body();
                 }
@@ -141,7 +141,7 @@ final class Flusher {
             Logger.d(TAG, "ping success");
             Logger.i(TAG, "ping end");
             return true;
-        } catch (IOException retrofitError) {
+        } catch (Exception retrofitError) {
             Logger.print(retrofitError);
             Logger.d(TAG, "ping fail");
             Logger.i(TAG, "ping end");
@@ -150,7 +150,7 @@ final class Flusher {
     }
 
     public ResponseBody flush(boolean retry, int num, String deviceId, long lastDate, List<Track> data)
-            throws IOException {
+            throws Exception {
         RequestManager.Request<ResponseBody> request = getRequest(num, deviceId, lastDate, data);
         if (retry) {
             return requestManager.requestWithRetry(request);

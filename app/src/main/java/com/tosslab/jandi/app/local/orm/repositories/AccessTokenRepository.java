@@ -15,8 +15,13 @@ import java.sql.SQLException;
  */
 public class AccessTokenRepository extends LockExecutorTemplate {
 
-    public static AccessTokenRepository getRepository() {
-        return new AccessTokenRepository();
+    private static AccessTokenRepository repository;
+
+    synchronized public static AccessTokenRepository getRepository() {
+        if (repository == null) {
+            repository = new AccessTokenRepository();
+        }
+        return repository;
     }
 
     public boolean upsertAccessToken(ResAccessToken newResAccessToken) {

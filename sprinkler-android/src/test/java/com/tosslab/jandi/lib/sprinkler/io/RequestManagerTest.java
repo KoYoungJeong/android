@@ -8,8 +8,6 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-
-
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -19,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 @Config(
         application = SprinklerTestApplication.class,
         manifest = "src/main/AndroidManifest.xml",
-        sdk =18
+        sdk = 18
 )
 @RunWith(RobolectricTestRunner.class)
 public class RequestManagerTest {
@@ -35,9 +33,9 @@ public class RequestManagerTest {
     public void testRequestPost() throws Exception {
         RequestManager.Request<ResponseBody> request = new RequestManager.Request<ResponseBody>() {
             @Override
-            public ResponseBody performRequest() throws IOException {
+            public ResponseBody performRequest() throws Exception {
                 RequestClient client = requestManager.getClient(RequestClient.class);
-                return client.post(new RequestBody(0, null, 0, null));
+                return client.post(new RequestBody(0, null, 0, null)).execute().body();
             }
         };
 
@@ -52,9 +50,9 @@ public class RequestManagerTest {
     public void testPing() throws Exception {
         RequestManager.Request<ResponseBody> request = new RequestManager.Request<ResponseBody>() {
             @Override
-            public ResponseBody performRequest() throws IOException {
+            public ResponseBody performRequest() throws Exception {
                 RequestClient client = requestManager.getClient(RequestClient.class);
-                return client.ping();
+                return client.ping().execute().body();
             }
         };
 

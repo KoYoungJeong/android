@@ -13,8 +13,13 @@ import java.util.List;
 public class BadgeCountRepository extends LockExecutorTemplate {
 
 
-    public static BadgeCountRepository getRepository() {
-        return new BadgeCountRepository();
+    private static BadgeCountRepository repository;
+
+    synchronized public static BadgeCountRepository getRepository() {
+        if (repository == null) {
+            repository = new BadgeCountRepository();
+        }
+        return repository;
     }
 
     public void upsertBadgeCount(long teamId, int badgeCount) {

@@ -15,8 +15,13 @@ import java.util.List;
  */
 public class ChatRepository extends LockExecutorTemplate {
 
-    public static ChatRepository getRepository() {
-        return new ChatRepository();
+    private static ChatRepository repository;
+
+    synchronized public static ChatRepository getRepository() {
+        if (repository == null) {
+            repository = new ChatRepository();
+        }
+        return repository;
     }
 
     public boolean upsertChats(List<ResChat> chats) {

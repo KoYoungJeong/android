@@ -68,9 +68,10 @@ public class BaseInitUtil {
 
     public static void turnOnWifi() {
         WifiManager wifiManager = (WifiManager) JandiApplication.getContext().getSystemService(Context.WIFI_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) JandiApplication.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         if (!wifiManager.isWifiEnabled()) {
             wifiManager.setWifiEnabled(true);
-            await().until(wifiManager::isWifiEnabled);
+            await().until(() -> wifiManager.isWifiEnabled() || connectivityManager.getActiveNetworkInfo().isConnected());
         }
     }
 

@@ -40,7 +40,7 @@ public class RetrofitBuilder {
         return new RetrofitBuilder();
     }
 
-    private Retrofit getRestAdapter() {
+    synchronized private Retrofit getRestAdapter() {
 
         if (retrofit == null) {
             retrofit = initRetrofit();
@@ -71,7 +71,7 @@ public class RetrofitBuilder {
 
         if (BuildConfig.DEBUG) {
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
 
             okhttpClientBuilder.addInterceptor(logging);
 

@@ -19,8 +19,13 @@ import java.util.List;
 public class AccountRepository extends LockExecutorTemplate {
 
 
-    public static AccountRepository getRepository() {
-        return new AccountRepository();
+    private static AccountRepository repository;
+
+    synchronized public static AccountRepository getRepository() {
+        if (repository == null) {
+            repository = new AccountRepository();
+        }
+        return repository;
     }
 
 

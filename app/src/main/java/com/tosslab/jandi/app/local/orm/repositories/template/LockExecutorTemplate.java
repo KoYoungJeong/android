@@ -12,7 +12,7 @@ public class LockExecutorTemplate {
 
     private Lock lock;
 
-    public LockExecutorTemplate() {
+    protected LockExecutorTemplate() {
         lock = new ReentrantLock();
         helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
     }
