@@ -48,6 +48,21 @@ public class TeamMemberListAdapter extends MultiItemRecyclerAdapter {
         }
     }
 
+    @Override
+    public synchronized void setRow(int position, Row<?> row) {
+        super.setRow(position, row);
+    }
+
+    @Override
+    public synchronized void addRow(Row<?> row) {
+        super.addRow(row);
+    }
+
+    @Override
+    public synchronized void clear() {
+        super.clear();
+    }
+
     public interface OnMemberClickListener {
         void onMemberClick(FormattedEntity member);
     }

@@ -13,7 +13,7 @@ public interface MyPagePresenter {
 
     void initializeMentionInitializeQueue();
 
-    void onInitializeMyPage();
+    void onInitializeMyPage(boolean isRefreshAction);
 
     void onRetrieveMyInfo();
 

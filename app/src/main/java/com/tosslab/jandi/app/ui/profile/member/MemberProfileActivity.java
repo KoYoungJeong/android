@@ -477,12 +477,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                             }));
         } else if (member.isInavtived()) {
             vgProfileTeamButtons.addView(
-                    getButton(R.drawable.icon_profile_mention,
-                            getString(R.string.jandi_mention_mentions), (v) -> {
-                                startStarMentionListActivity();
-                                AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Mentions);
-                            }));
-            vgProfileTeamButtons.addView(
                     getButton(R.drawable.icon_profile_mail,
                             getString(R.string.jandi_resend_invitation),
                             v -> {
@@ -495,6 +489,15 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                             getString(R.string.jandi_cancel_invitation),
                             v -> {
                                 showRejectInvitationAlert();
+                            }));
+            vgProfileTeamButtons.addView(
+                    getButton(R.drawable.icon_profile_message,
+                            getString(R.string.jandi_member_profile_dm), (v) -> {
+                                long teamId = entityManager.getTeamId();
+                                long entityId = member.getId();
+                                boolean isStarred = member.isStarred;
+                                startMessageListActivity(teamId, entityId, isStarred);
+                                AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.DirectMessage);
                             }));
         } else {
             final String userPhoneNumber = member.getUserPhoneNumber();
