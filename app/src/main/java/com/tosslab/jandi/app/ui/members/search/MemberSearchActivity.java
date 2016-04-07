@@ -141,7 +141,7 @@ public class MemberSearchActivity extends BaseAppCompatActivity implements Membe
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle(getString(R.string.jandi_action_search));
+        actionBar.setTitle(getString(R.string.jandi_team_member));
     }
 
     @Override
