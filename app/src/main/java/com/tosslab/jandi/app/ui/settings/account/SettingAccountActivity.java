@@ -21,6 +21,8 @@ import com.tosslab.jandi.app.ui.settings.account.presenter.SettingAccountPresent
 import com.tosslab.jandi.app.ui.settings.account.view.SettingAccountView;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.settings.SettingsBodyView;
 
 import javax.inject.Inject;
@@ -91,6 +93,8 @@ public class SettingAccountActivity extends BaseAppCompatActivity implements Set
         DialogFragment newFragment = EditTextDialogFragment.newInstance(
                 EditTextDialogFragment.ACTION_MODIFY_PROFILE_ACCOUNT_NAME, currentName);
         newFragment.show(getFragmentManager(), "dialog");
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Account, AnalyticsValue.Action.AccountName);
     }
 
     public void onEvent(ConfirmModifyProfileEvent event) {
@@ -101,6 +105,7 @@ public class SettingAccountActivity extends BaseAppCompatActivity implements Set
     void onClickAccountEmail() {
         EmailChooseActivity_.intent(this)
                 .startForResult(REQUEST_EMAIL_CHOOSE);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Account, AnalyticsValue.Action.ChooseAnEmail);
     }
 
     @Override

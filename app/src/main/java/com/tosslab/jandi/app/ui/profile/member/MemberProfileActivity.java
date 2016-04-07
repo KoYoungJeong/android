@@ -41,6 +41,8 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
+import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.model.InactivedMemberProfileLoader;
 import com.tosslab.jandi.app.ui.profile.member.model.JandiBotProfileLoader;
@@ -48,11 +50,9 @@ import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileLoader;
 import com.tosslab.jandi.app.ui.profile.member.model.ProfileLoader;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
-import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
-import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.LanguageUtil;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.transform.fresco.BlurPostprocessor;
@@ -145,6 +145,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     private boolean isFullSizeImageShowing = false;
     private boolean hasChangedProfileImage = true;
+    private ProgressWheel progressWheel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -475,6 +476,15 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                             v -> {
                                 showRejectInvitationAlert();
                             }));
+            vgProfileTeamButtons.addView(
+                    getButton(R.drawable.icon_profile_message,
+                            getString(R.string.jandi_member_profile_dm), (v) -> {
+                                long teamId = entityManager.getTeamId();
+                                long entityId = member.getId();
+                                boolean isStarred = member.isStarred;
+                                startMessageListActivity(teamId, entityId, isStarred);
+                                AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.DirectMessage);
+                            }));
         } else {
             final String userPhoneNumber = member.getUserPhoneNumber();
             if (!TextUtils.isEmpty(userPhoneNumber)) {
@@ -520,11 +530,17 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
         try {
             RequestApiManager.getInstance().cancelInvitationUserByTeamApi(teamId, memberId);
-            showSuccessEmail(userEmail);
+            showSuccessToRejectEmail(userEmail);
+            finishOnUiThread();
         } catch (RetrofitError retrofitError) {
             showNetworkErrorToast();
             retrofitError.printStackTrace();
         }
+    }
+
+    @UiThread
+    void finishOnUiThread() {
+        finish();
     }
 
     @UiThread
@@ -533,13 +549,13 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     @UiThread
-    void showSuccessEmail(String userEmail) {
+    void showSuccessToRejectEmail(String userEmail) {
         ColoredToast.show(getString(R.string.jandi_success_to_cancel_invitation, userEmail));
     }
 
     @Background
     void requestReInvite() {
-
+        showProgress();
         long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
 
         List<String> invites = Arrays.asList(EntityManager.getInstance().getEntityById(memberId).getUserEmail());
@@ -551,6 +567,26 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             showNetworkErrorToast();
         }
 
+        dismissProgress();
+
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void dismissProgress() {
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void showProgress() {
+        if (progressWheel == null) {
+            progressWheel = new ProgressWheel(MemberProfileActivity.this);
+        }
+
+        if (!progressWheel.isShowing()) {
+            progressWheel.show();
+        }
     }
 
     @UiThread
@@ -674,9 +710,9 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     private void startStarMentionListActivity() {
-        StarMentionListActivity_.intent(MemberProfileActivity.this)
+        MainTabActivity_.intent(this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .extra("type", StarMentionListActivity.TYPE_MENTION_LIST)
+                .tabIndex(MainTabPagerAdapter.TAB_MYPAGE)
                 .start();
     }
 
