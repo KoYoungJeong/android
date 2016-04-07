@@ -50,8 +50,6 @@ import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileLoader;
 import com.tosslab.jandi.app.ui.profile.member.model.ProfileLoader;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
-import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
-import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -477,6 +475,15 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                             getString(R.string.jandi_cancel_invitation),
                             v -> {
                                 showRejectInvitationAlert();
+                            }));
+            vgProfileTeamButtons.addView(
+                    getButton(R.drawable.icon_profile_message,
+                            getString(R.string.jandi_member_profile_dm), (v) -> {
+                                long teamId = entityManager.getTeamId();
+                                long entityId = member.getId();
+                                boolean isStarred = member.isStarred;
+                                startMessageListActivity(teamId, entityId, isStarred);
+                                AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.DirectMessage);
                             }));
         } else {
             final String userPhoneNumber = member.getUserPhoneNumber();
