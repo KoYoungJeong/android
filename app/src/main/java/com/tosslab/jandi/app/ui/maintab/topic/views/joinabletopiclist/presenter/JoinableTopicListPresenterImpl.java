@@ -48,6 +48,8 @@ public class JoinableTopicListPresenterImpl implements JoinableTopicListPresente
                         .flatMap(query -> joinableTopicListModel.getSearchedTopics(query))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(topics -> {
+                            view.dismissProgressWheel();
+
                             joinableTopicDataModel.clear();
                             if (topics == null || topics.isEmpty()) {
                                 view.notifyDataSetChanged();
@@ -56,6 +58,7 @@ public class JoinableTopicListPresenterImpl implements JoinableTopicListPresente
                             joinableTopicDataModel.setJoinableTopics(topics);
                             view.notifyDataSetChanged();
                         }, e -> {
+                            LogUtil.e(Log.getStackTraceString(e));
                             view.dismissProgressWheel();
                             view.showHasNoTopicToJoinErrorToast();
                             view.finish();
@@ -66,14 +69,6 @@ public class JoinableTopicListPresenterImpl implements JoinableTopicListPresente
     public void stopSearchTopicQueue() {
         if (!searchQueryQueueSubscription.isUnsubscribed()) {
             searchQueryQueueSubscription.unsubscribe();
-        }
-    }
-
-    @Override
-    public void onInitJoinableTopics() {
-        view.showProgressWheel();
-        if (!searchQueryQueueSubscription.isUnsubscribed()) {
-            searchQueryQueue.onNext("");
         }
     }
 
@@ -123,8 +118,14 @@ public class JoinableTopicListPresenterImpl implements JoinableTopicListPresente
     }
 
     @Override
-    public void onSearchTopic(CharSequence query) {
+    public void onSearchTopic(boolean withProgress, CharSequence query) {
+        if (withProgress) {
+            view.showProgressWheel();
+        }
         if (!searchQueryQueueSubscription.isUnsubscribed()) {
+            if (query == null) {
+                query = "";
+            }
             searchQueryQueue.onNext(query.toString());
         }
     }

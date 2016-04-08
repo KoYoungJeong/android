@@ -53,7 +53,7 @@ public class JoinableTopicListModel {
     }
 
     public Observable<List<Topic>> getSearchedTopics(final String query) {
-        List<FormattedEntity> unjoinedChannels = MembersModel.getEnabledTeamMember();
+        List<FormattedEntity> unjoinedChannels = EntityManager.getInstance().getUnjoinedChannels();
         return Observable.from(unjoinedChannels)
                 .map(formattedEntity -> {
                     long creatorId =

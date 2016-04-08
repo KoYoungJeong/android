@@ -13,8 +13,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
@@ -45,6 +47,9 @@ import de.greenrobot.event.EventBus;
  */
 public class JoinableTopicListActivity extends BaseAppCompatActivity
         implements JoinableTopicListView {
+
+    @Bind(R.id.et_joinable_topic_list_search)
+    EditText etSearch;
 
     @Bind(R.id.lv_joinable_topics)
     RecyclerView lvJoinableTopics;
@@ -81,7 +86,7 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
 
         initJoinableTopicListView(adapter);
 
-        mainTopicListPresenter.onInitJoinableTopics();
+        mainTopicListPresenter.onSearchTopic(true, "");
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.BrowseOtherTopics);
     }
@@ -228,7 +233,14 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
         if (!isForeground) {
             return;
         }
-        mainTopicListPresenter.onInitJoinableTopics();
+        mainTopicListPresenter.onSearchTopic(false, etSearch.getText());
+    }
+
+    public void onEvent(RetrieveTopicListEvent event) {
+        if (!isForeground) {
+            return;
+        }
+        mainTopicListPresenter.onSearchTopic(false, etSearch.getText());
     }
 
     private void setupActionBar() {
@@ -255,7 +267,7 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
 
     @OnTextChanged(R.id.et_joinable_topic_list_search)
     void onSearchTopic(CharSequence query) {
-        mainTopicListPresenter.onSearchTopic(query);
+        mainTopicListPresenter.onSearchTopic(false, query);
     }
 
 }

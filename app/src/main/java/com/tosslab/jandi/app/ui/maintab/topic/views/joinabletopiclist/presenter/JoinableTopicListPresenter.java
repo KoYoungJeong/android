@@ -9,13 +9,11 @@ public interface JoinableTopicListPresenter {
 
     void stopSearchTopicQueue();
 
-    void onInitJoinableTopics();
-
     void onJoinTopic(long topic);
 
     void onTopicClick(int position);
 
-    void onSearchTopic(CharSequence query);
+    void onSearchTopic(boolean withProgress, CharSequence query);
 
     void onShouldShowSelectedTopic(long topicEntityId);
 }
