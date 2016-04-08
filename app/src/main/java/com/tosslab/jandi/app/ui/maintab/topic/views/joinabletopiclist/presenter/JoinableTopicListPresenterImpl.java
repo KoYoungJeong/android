@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.view.Joina
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -46,11 +45,7 @@ public class JoinableTopicListPresenterImpl implements JoinableTopicListPresente
         searchQueryQueueSubscription =
                 searchQueryQueue.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
                         .onBackpressureBuffer()
-                        .map(query -> {
-                            List<Topic> joinableTopics =
-                                    joinableTopicListModel.getJoinableTopicsForSearch();
-                            return joinableTopicListModel.getSearchedTopics(query, joinableTopics);
-                        })
+                        .flatMap(query -> joinableTopicListModel.getSearchedTopics(query))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(topics -> {
                             joinableTopicDataModel.clear();
@@ -60,6 +55,10 @@ public class JoinableTopicListPresenterImpl implements JoinableTopicListPresente
                             }
                             joinableTopicDataModel.setJoinableTopics(topics);
                             view.notifyDataSetChanged();
+                        }, e -> {
+                            view.dismissProgressWheel();
+                            view.showHasNoTopicToJoinErrorToast();
+                            view.finish();
                         });
     }
 
@@ -73,33 +72,9 @@ public class JoinableTopicListPresenterImpl implements JoinableTopicListPresente
     @Override
     public void onInitJoinableTopics() {
         view.showProgressWheel();
-
-        joinableTopicDataModel.clear();
-        joinableTopicListModel.setJoinableTopicsForSearch(null);
-
-        view.notifyDataSetChanged();
-
-        EntityManager entityManager = EntityManager.getInstance();
-        joinableTopicListModel.getJoinableTopics(entityManager.getUnjoinedChannels())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(topics -> {
-                    view.dismissProgressWheel();
-
-                    if (topics == null || topics.isEmpty()) {
-                        view.showHasNoTopicToJoinErrorToast();
-                        view.finish();
-                    } else {
-                        joinableTopicDataModel.setJoinableTopics(topics);
-                        joinableTopicListModel.setJoinableTopicsForSearch(topics);
-
-                        view.notifyDataSetChanged();
-                    }
-                }, e -> {
-                    view.dismissProgressWheel();
-                    view.showHasNoTopicToJoinErrorToast();
-                    view.finish();
-                });
+        if (!searchQueryQueueSubscription.isUnsubscribed()) {
+            searchQueryQueue.onNext("");
+        }
     }
 
     @Override

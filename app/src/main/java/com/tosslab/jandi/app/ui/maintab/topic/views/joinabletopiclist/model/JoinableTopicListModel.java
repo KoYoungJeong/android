@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
+import com.tosslab.jandi.app.ui.members.model.MembersModel;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import java.util.ArrayList;
@@ -26,40 +27,10 @@ import rx.Observable;
 public class JoinableTopicListModel {
 
     private final EntityClientManager entityClientManager;
-    private List<Topic> joinableTopicsForSearch;
 
     @Inject
     public JoinableTopicListModel(EntityClientManager entityClientManager) {
         this.entityClientManager = entityClientManager;
-    }
-
-    public List<Topic> getJoinableTopicsForSearch() {
-        return joinableTopicsForSearch;
-    }
-
-    public void setJoinableTopicsForSearch(List<Topic> joinableTopics) {
-        this.joinableTopicsForSearch = joinableTopics;
-    }
-
-    public Observable<List<Topic>> getJoinableTopics(List<FormattedEntity> unjoinedChannels) {
-        return Observable.from(unjoinedChannels)
-                .map(formattedEntity -> {
-                    long creatorId =
-                            ((ResLeftSideMenu.Channel) formattedEntity.getEntity()).ch_creatorId;
-                    return new Topic.Builder()
-                            .entityId(formattedEntity.getId())
-                            .description(formattedEntity.getDescription())
-                            .isJoined(false)
-                            .creatorId(creatorId)
-                            .isPublic(formattedEntity.isPublicTopic())
-                            .isStarred(formattedEntity.isStarred)
-                            .memberCount(formattedEntity.getMemberCount())
-                            .name(formattedEntity.getName())
-                            .markerLinkId(formattedEntity.lastLinkId)
-                            .unreadCount(formattedEntity.alarmCount)
-                            .build();
-                })
-                .toSortedList((lhs, rhs) -> StringCompareUtil.compare(lhs.getName(), rhs.getName()));
     }
 
     public void joinPublicTopic(long id) throws RetrofitError {
@@ -81,23 +52,28 @@ public class JoinableTopicListModel {
         }
     }
 
-    public List<Topic> getSearchedTopics(final String query, List<Topic> joinableTopics) {
-        final List<Topic> searchedTopics = new ArrayList<>();
-        if (joinableTopics == null || joinableTopics.isEmpty()) {
-            return searchedTopics;
-        }
-
-        Observable.from(joinableTopics)
-                .filter(topic -> {
-                    if (TextUtils.isEmpty(query)) {
-                        return true;
-                    }
-
-                    return topic.getName().toLowerCase().contains(query.toLowerCase());
+    public Observable<List<Topic>> getSearchedTopics(final String query) {
+        List<FormattedEntity> unjoinedChannels = MembersModel.getEnabledTeamMember();
+        return Observable.from(unjoinedChannels)
+                .map(formattedEntity -> {
+                    long creatorId =
+                            ((ResLeftSideMenu.Channel) formattedEntity.getEntity()).ch_creatorId;
+                    return new Topic.Builder()
+                            .entityId(formattedEntity.getId())
+                            .description(formattedEntity.getDescription())
+                            .isJoined(false)
+                            .creatorId(creatorId)
+                            .isPublic(formattedEntity.isPublicTopic())
+                            .isStarred(formattedEntity.isStarred)
+                            .memberCount(formattedEntity.getMemberCount())
+                            .name(formattedEntity.getName())
+                            .markerLinkId(formattedEntity.lastLinkId)
+                            .unreadCount(formattedEntity.alarmCount)
+                            .build();
                 })
-                .toSortedList((lhs, rhs) -> StringCompareUtil.compare(lhs.getName(), rhs.getName()))
-                .subscribe(searchedTopics::addAll);
-        return searchedTopics;
+                .filter(topic -> TextUtils.isEmpty(query)
+                        || topic.getName().toLowerCase().contains(query.toLowerCase()))
+                .toSortedList((lhs, rhs) -> StringCompareUtil.compare(lhs.getName(), rhs.getName()));
     }
 
     public Observable<Topic> getJoinTopicObservable(final Topic topic) {

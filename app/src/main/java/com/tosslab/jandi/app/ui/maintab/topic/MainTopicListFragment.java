@@ -471,6 +471,7 @@ public class MainTopicListFragment extends Fragment
 
     public void onEvent(JoinableTopicCallEvent event) {
         Intent intent = new Intent(getActivity(), JoinableTopicListActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.BrowseOtherTopics);
