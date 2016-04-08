@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.maintab.team.adapter.viewholder;
+package com.tosslab.jandi.app.ui.members.adapter.searchable.viewholder;
 
 import android.view.LayoutInflater;
 import android.view.View;

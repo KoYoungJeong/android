@@ -19,8 +19,6 @@ public interface MyPageView {
 
     void showEmptyMentionView();
 
-    void showProfileLayout();
-
     void clearMentions();
 
     void setHasMore(boolean hasMore);
@@ -34,4 +32,11 @@ public interface MyPageView {
     void showUnknownEntityToast();
 
     void moveToMessageListActivity(long teamId, long entityId, int roomTypeId, long roomId, long linkId);
+
+    void notifyDataSetChanged();
+
+    void hideRefreshProgress();
+
+    void clearLoadMoreOffset();
+
 }

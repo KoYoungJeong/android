@@ -53,37 +53,46 @@ public class MyPagePresenterImpl implements MyPagePresenter {
                 mentionInitializeQueue.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
                         .onBackpressureBuffer()
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(o -> onInitializeMyPage());
+                        .subscribe(o -> onInitializeMyPage(false));
     }
 
     @Override
-    public void onInitializeMyPage() {
-        view.showProfileLayout();
+    public void onInitializeMyPage(final boolean isRefreshAction) {
+        view.clearLoadMoreOffset();
 
-        view.clearMentions();
-
-        view.showProgress();
-
+        if (!isRefreshAction) {
+            view.showProgress();
+        }
         model.getMentionsObservable(-1, MyPageModel.MENTION_LIST_LIMIT)
                 .concatMap(model::getConvertedMentionObservable)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(pair -> {
-                    view.hideProgress();
+                    if (isRefreshAction) {
+                        view.hideRefreshProgress();
+                    } else {
+                        view.hideProgress();
+                    }
 
                     view.setHasMore(pair.first);
+
+                    view.clearMentions();
 
                     List<MentionMessage> records = pair.second;
                     if (records == null || records.isEmpty()) {
                         view.showEmptyMentionView();
-                        return;
+                    } else {
+                        view.addMentions(records);
                     }
-
-                    view.addMentions(records);
                 }, throwable -> {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
                     view.hideProgress();
-                });
+                    if (isRefreshAction) {
+                        view.hideRefreshProgress();
+                    } else {
+                        view.hideProgress();
+                    }
+                }, view::notifyDataSetChanged);
     }
 
     @Override
@@ -110,6 +119,7 @@ public class MyPagePresenterImpl implements MyPagePresenter {
                     }
 
                     view.addMentions(records);
+                    view.notifyDataSetChanged();
                 }, throwable -> {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
                     view.hideMoreProgress();

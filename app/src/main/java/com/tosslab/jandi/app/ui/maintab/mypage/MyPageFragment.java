@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
@@ -60,6 +61,9 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
 
     @Inject
     MyPagePresenter presenter;
+
+    @Bind(R.id.vg_refresh)
+    SwipeRefreshLayout vgRefresh;
 
     @Bind(R.id.vg_mypage_profile)
     ViewGroup vgProfileLayout;
@@ -124,12 +128,27 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
         ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
 
-        initMentionListView();
+        initSwipeRefreshLayout();
 
+        initMentionListView();
         initMoreLoadingProgress();
 
         presenter.onRetrieveMyInfo();
-        presenter.onInitializeMyPage();
+        presenter.onInitializeMyPage(false);
+    }
+
+    private void initSwipeRefreshLayout() {
+        vgRefresh.setColorSchemeResources(R.color.jandi_accent_color);
+
+        vgRefresh.setOnRefreshListener(() -> {
+            presenter.onInitializeMyPage(true);
+        });
+
+        vgRefresh.post(() -> {
+            int start = lvMyPage.getPaddingTop();
+            int end = start + vgRefresh.getProgressCircleDiameter();
+            vgRefresh.setProgressViewOffset(false, start, end);
+        });
     }
 
     private void initMentionListView() {
@@ -280,30 +299,13 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
     }
 
     @Override
-    public void showProfileLayout() {
-        if (isFinishing()) {
-            return;
-        }
-        vgProfileLayout.setTranslationY(0);
-    }
-
-    @Override
     public void clearMentions() {
         adapter.clear();
-
-        if (isFinishing()) {
-            return;
-        }
-        adapter.notifyDataSetChanged();
     }
 
     @Override
     public void addMentions(List<MentionMessage> mentions) {
         adapter.addAll(mentions);
-        if (isFinishing()) {
-            return;
-        }
-        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -354,6 +356,21 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
                 .lastReadLinkId(linkId)
                 .start();
 
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void hideRefreshProgress() {
+        vgRefresh.setRefreshing(false);
+    }
+
+    @Override
+    public void clearLoadMoreOffset() {
+        adapter.clearLoadMoreOffset();
     }
 
     private boolean isFinishing() {

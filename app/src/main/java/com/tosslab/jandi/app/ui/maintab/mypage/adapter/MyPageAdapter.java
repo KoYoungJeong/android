@@ -23,7 +23,7 @@ public class MyPageAdapter extends RecyclerView.Adapter<BaseViewHolder<MentionMe
     private OnMentionClickListener onMentionClickListener;
 
     private OnLoadMoreCallback onLoadMoreCallback;
-    private long enqueueLoadMoreRequestMessageId;
+    private long loadMoreOffset;
 
     @Override
     public BaseViewHolder<MentionMessage> onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -84,13 +84,17 @@ public class MyPageAdapter extends RecyclerView.Adapter<BaseViewHolder<MentionMe
 
             long messageId = lastItem.getMessageId();
 
-            if (messageId == enqueueLoadMoreRequestMessageId) {
+            if (messageId == loadMoreOffset) {
                 return;
             }
 
-            enqueueLoadMoreRequestMessageId = messageId;
+            loadMoreOffset = messageId;
             onLoadMoreCallback.onLoadMore(messageId);
         }
+    }
+
+    public void clearLoadMoreOffset() {
+        loadMoreOffset = 0;
     }
 
     public void clear() {
