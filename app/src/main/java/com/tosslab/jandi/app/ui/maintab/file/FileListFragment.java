@@ -60,6 +60,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;

@@ -95,6 +95,7 @@ import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.MaxHeightRecyclerView;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;

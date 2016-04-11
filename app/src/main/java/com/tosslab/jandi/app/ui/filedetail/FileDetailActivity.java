@@ -58,6 +58,8 @@ import com.tosslab.jandi.app.local.orm.repositories.ReadyCommentRepository;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.permissions.Check;
+import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
@@ -941,11 +943,14 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Permissions.getResult()
+                .activity(FileDetailActivity.this)
                 .addRequestCode(REQ_STORAGE_PERMISSION)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::download)
                 .addRequestCode(REQ_STORAGE_PERMISSION_EXPORT)
-                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        this::export)
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,this::export)
+                .neverAskAgain(() -> {
+                    PermissionRetryDialog.showExternalPermissionDialog(FileDetailActivity.this);
+                })
                 .resultPermission(Permissions.createPermissionResult(requestCode,
                         permissions,
                         grantResults));
@@ -1301,5 +1306,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
+    }
+
+    @Override
+    public void checkPermission(String persmissionString, Check.HasPermission hasPermission, Check.NoPermission noPermission) {
+        Permissions.getChecker()
+                .activity(FileDetailActivity.this)
+                .permission(() -> persmissionString)
+                .hasPermission(hasPermission)
+                .noPermission(noPermission)
+                .check();
     }
 }

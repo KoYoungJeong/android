@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -21,7 +22,6 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Presenter;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.SdkUtils;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -223,6 +223,7 @@ public class KeyboardAreaController {
         if (!uploadMenuViewModel.isShow()) {
             if (isCanDrawWindowOverlay()) {
                 Permissions.getChecker()
+                        .activity(context)
                         .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         .hasPermission(() -> {
                             uploadMenuViewModel.showUploadSelector(keyboardHeight);
@@ -235,11 +236,12 @@ public class KeyboardAreaController {
                                     });
                             buttonAction = ButtonAction.UPLOAD;
                             setActionButtons();
-//                            presenter.sendAnalyticsEvent(AnalyticsValue.Action.Upload);
                         })
                         .noPermission(() -> {
                             String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                            context.requestPermissions(permissions, MessageListV2Fragment.REQ_STORAGE_PERMISSION);
+                            ActivityCompat.requestPermissions(context,
+                                    permissions,
+                                    MessageListV2Fragment.REQ_STORAGE_PERMISSION);
                         })
                         .check();
             } else {
@@ -309,7 +311,7 @@ public class KeyboardAreaController {
         return buttonAction;
     }
 
-    public void onConfigurationChanged(){
+    public void onConfigurationChanged() {
         stickerViewModel.onConfigurationChanged();
         uploadMenuViewModel.onConfigurationChanged();
     }

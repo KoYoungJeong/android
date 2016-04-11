@@ -1,12 +1,14 @@
 package com.tosslab.jandi.app.permissions;
 
-import com.tosslab.jandi.app.JandiApplication;
+import android.app.Activity;
+
 import com.tosslab.jandi.app.utils.SdkUtils;
 
 public class Check {
     private Permission permission;
     private HasPermission hasPermission;
     private NoPermission noPermission;
+    private Activity activity;
 
     public Check permission(Permission permission) {
         this.permission = permission;
@@ -23,12 +25,17 @@ public class Check {
         return this;
     }
 
+    public Check activity(Activity activity) {
+        this.activity = activity;
+        return this;
+    }
+
     public void check() {
         if (permission == null) {
             return;
         }
         String permissionString = permission.getPermission();
-        if (SdkUtils.hasPermission(JandiApplication.getContext(), permissionString)) {
+        if (SdkUtils.hasPermission(activity, permissionString)) {
             if (hasPermission != null) {
                 hasPermission.hasPermission();
             }
@@ -38,4 +45,13 @@ public class Check {
             }
         }
     }
+
+    public interface HasPermission {
+        void hasPermission();
+    }
+
+    public interface NoPermission {
+        void noPermission();
+    }
+
 }

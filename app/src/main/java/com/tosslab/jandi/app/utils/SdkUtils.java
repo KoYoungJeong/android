@@ -1,8 +1,11 @@
 package com.tosslab.jandi.app.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 public class SdkUtils {
 
@@ -14,9 +17,13 @@ public class SdkUtils {
 
     public static boolean hasPermission(Context context, String permission) {
         if (isMarshmallow()) {
-            return context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
+            return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
         } else {
             return true;
         }
+    }
+
+    public static boolean isDeniedPermanently(Activity activity, String permissionString) {
+        return !ActivityCompat.shouldShowRequestPermissionRationale(activity, permissionString);
     }
 }
