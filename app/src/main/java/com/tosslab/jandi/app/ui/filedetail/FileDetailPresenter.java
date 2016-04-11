@@ -157,36 +157,28 @@ public class FileDetailPresenter {
     public void onSendCommentWithSticker(long fileId, long stickerGroupId,
                                          String stickerId, String comment,
                                          List<MentionObject> mentions) {
-        view.showProgress();
         try {
             fileDetailModel.sendMessageCommentWithSticker(
                     fileId, stickerGroupId, stickerId, comment, mentions);
 
             retrieveFileDetail(fileId, false);
 
-            view.dismissProgress();
-
             view.scrollToLastComment();
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
-            view.dismissProgress();
         }
     }
 
     @Background(serial = "file_detail_background")
     public void onSendComment(long fileId, String message, List<MentionObject> mentions) {
-        view.showProgress();
         try {
             fileDetailModel.sendMessageComment(fileId, message, mentions);
 
             retrieveFileDetail(fileId, false);
 
-            view.dismissProgress();
-
             view.scrollToLastComment();
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
-            view.dismissProgress();
         }
     }
 
