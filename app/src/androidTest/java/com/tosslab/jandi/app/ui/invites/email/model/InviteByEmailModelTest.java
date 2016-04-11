@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.invites.email.model;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.network.client.teams.TeamApi;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +12,9 @@ import rx.Observable;
 import rx.observers.TestSubscriber;
 import setup.BaseInitUtil;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by tonyjs on 16. 4. 5..
@@ -23,7 +27,7 @@ public class InviteByEmailModelTest {
     public void setUp() throws Exception {
         BaseInitUtil.initData();
 
-        model = new InviteByEmailModel();
+        model = new InviteByEmailModel(() -> new TeamApi(RetrofitBuilder.newInstance()));
     }
 
     @Test

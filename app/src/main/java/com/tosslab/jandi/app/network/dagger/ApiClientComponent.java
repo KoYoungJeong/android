@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.interfaces.actions.OpenAction;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.invites.email.model.InviteEmailModel;
 import com.tosslab.jandi.app.ui.login.login.model.IntroLoginModel;
 import com.tosslab.jandi.app.ui.maintab.chat.model.MainChatListModel;
 import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
@@ -88,8 +87,6 @@ public interface ApiClientComponent {
     void inject(com.tosslab.jandi.app.ui.maintab.topic.dialog.model.TopicFolderSettingModel topicFolderSettingModel);
 
     void inject(StarMentionListModel starMentionListModel);
-
-    void inject(InviteEmailModel inviteEmailModel);
 
     void inject(InvitationDialogExecutor invitationDialogExecutor);
 

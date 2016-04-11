@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.invites.email.presenter;
 
+import com.tosslab.jandi.app.network.client.teams.TeamApi;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.ui.invites.email.model.InviteByEmailModel;
 import com.tosslab.jandi.app.ui.invites.email.model.InvitedEmailDataModel;
 import com.tosslab.jandi.app.ui.invites.email.model.bean.EmailVO;
@@ -9,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.jayway.awaitility.Awaitility.await;
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
@@ -33,7 +34,7 @@ public class InviteByEmailPresenterImplTest {
     public void setUp() throws Exception {
         view = mock(InviteByEmailView.class);
         invitedEmailDataModel = mock(InvitedEmailDataModel.class);
-        inviteByEmailModel = new InviteByEmailModel();
+        inviteByEmailModel = new InviteByEmailModel(() -> new TeamApi(RetrofitBuilder.newInstance()));
         inviteByEmailPresenter =
                 new InviteByEmailPresenterImpl(inviteByEmailModel, view, invitedEmailDataModel);
 

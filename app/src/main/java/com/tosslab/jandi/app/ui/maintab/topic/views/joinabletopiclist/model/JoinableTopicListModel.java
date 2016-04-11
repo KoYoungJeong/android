@@ -7,18 +7,16 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
-import com.tosslab.jandi.app.ui.members.model.MembersModel;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -33,7 +31,7 @@ public class JoinableTopicListModel {
         this.entityClientManager = entityClientManager;
     }
 
-    public void joinPublicTopic(long id) throws RetrofitError {
+    public void joinPublicTopic(long id) throws RetrofitException {
         entityClientManager.joinChannel(id);
     }
 
@@ -43,7 +41,7 @@ public class JoinableTopicListModel {
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             EntityManager.getInstance().refreshEntity();
             return true;
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             return false;
         } catch (Exception e) {
@@ -88,7 +86,7 @@ public class JoinableTopicListModel {
                         .getInstance(JandiApplication.getContext(), entityManager.getDistictId())
                         .trackJoinChannel();
                 subscriber.onNext(topic);
-            } catch (RetrofitError error) {
+            } catch (RetrofitException error) {
                 subscriber.onError(error);
             }
             subscriber.onCompleted();

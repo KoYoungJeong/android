@@ -55,7 +55,7 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        fingerprintManager = JandiApplication.getService(Context.FINGERPRINT_SERVICE);
+        fingerprintManager = (FingerprintManager) JandiApplication.getContext().getSystemService(Context.FINGERPRINT_SERVICE);
     }
 
     @Override

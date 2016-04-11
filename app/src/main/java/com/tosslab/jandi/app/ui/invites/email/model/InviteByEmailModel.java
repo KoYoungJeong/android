@@ -6,18 +6,13 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 
 import java.util.Arrays;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import dagger.Lazy;
 import rx.Observable;
@@ -27,8 +22,11 @@ import rx.Observable;
  */
 public class InviteByEmailModel {
 
-    @Inject
     Lazy<TeamApi> teamApi;
+
+    public InviteByEmailModel(Lazy<TeamApi> teamApi) {
+        this.teamApi = teamApi;
+    }
 
 
     public boolean isValidEmailFormat(String text) {
