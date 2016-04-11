@@ -279,6 +279,7 @@
 	<string name="jandi_is_newcomer">"New to JANDI?"</string>
 	<string name="jandi_is_topic_required">"Type*"</string>
 	<string name="jandi_it_has_no_topic_description">"(There is no topic description)"</string>
+	<string name="jandi_join_topic">"Join"</string>
 	<string name="jandi_joined_team">"You have already joined %1$s. Please check your team list."</string>
 	<string name="jandi_kicked_message">"You have been removed from %s."</string>
 	<string name="jandi_later">"Later"</string>
@@ -330,7 +331,8 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_my_files">"<b>My Files</b>"</string>
 	<string name="jandi_mypage">"My Page"</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
-	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic."</string>
+	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic.
+"</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>
 	<string name="jandi_next">"Next"</string>
 	<string name="jandi_no_invite_email">"Provide the email addresses of the team members you want to invite"</string>

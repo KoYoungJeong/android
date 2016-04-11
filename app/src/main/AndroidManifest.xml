@@ -350,8 +350,9 @@
         </activity>
 
         <activity
-            android:name=".ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity_"
+            android:name=".ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             android:label="@string/jandi_browse_other_topics"
             android:screenOrientation="portrait">
 

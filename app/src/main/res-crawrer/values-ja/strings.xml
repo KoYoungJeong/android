@@ -280,6 +280,7 @@
 	<string name="jandi_is_newcomer">"初めてJANDIを使いますか？"</string>
 	<string name="jandi_is_topic_required">"公開/非公開"</string>
 	<string name="jandi_it_has_no_topic_description">"（トピック説明なし）"</string>
+	<string name="jandi_join_topic">"参加"</string>
 	<string name="jandi_joined_team">"すでに%1$sのメンバーです。チームリストを確認してください"</string>
 	<string name="jandi_kicked_message">"%sの管理者からトピックから退出させられました。"</string>
 	<string name="jandi_later">"後で"</string>
