@@ -20,7 +20,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.members.adapter.MembersAdapter;
+import com.tosslab.jandi.app.ui.members.adapter.ModdableMemberListAdapter;
 import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment;
 import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment_;
 import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog;
@@ -94,17 +94,17 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     private ProgressWheel mProgressWheel;
 
-    private MembersAdapter topicMembersAdapter;
+    private ModdableMemberListAdapter topicModdableMemberListAdapter;
 
     @AfterInject
     void initObject() {
         int ownerType = (type == TYPE_MEMBERS_LIST_TOPIC || type == TYPE_ASSIGN_TOPIC_OWNER)
-                ? MembersAdapter.OWNER_TYPE_TOPIC : MembersAdapter.OWNER_TYPE_TEAM;
-        topicMembersAdapter = new MembersAdapter(getBaseContext(), ownerType);
+                ? ModdableMemberListAdapter.OWNER_TYPE_TOPIC : ModdableMemberListAdapter.OWNER_TYPE_TEAM;
+        topicModdableMemberListAdapter = new ModdableMemberListAdapter(getBaseContext(), ownerType);
         if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
-            topicMembersAdapter.setCheckMode();
+            topicModdableMemberListAdapter.setCheckMode();
         } else if (type == TYPE_ASSIGN_TOPIC_OWNER) {
-            topicMembersAdapter.setOnMemberClickListener(item ->
+            topicModdableMemberListAdapter.setOnMemberClickListener(item ->
                     membersListPresenter.onMemberClickForAssignOwner(entityId, item));
         }
 
@@ -143,7 +143,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         if (type != TYPE_MEMBERS_JOINABLE_TOPIC) {
             memberListView.addItemDecoration(new SimpleDividerItemDecoration(MembersListActivity.this));
         }
-        memberListView.setAdapter(topicMembersAdapter);
+        memberListView.setAdapter(topicModdableMemberListAdapter);
         initProgressWheel();
 
         memberListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -232,7 +232,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
             menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    List<Long> selectedCdp = topicMembersAdapter.getSelectedUserIds();
+                    List<Long> selectedCdp = topicModdableMemberListAdapter.getSelectedUserIds();
 
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMembers, AnalyticsValue.Action.Invite);
 
@@ -321,9 +321,9 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @UiThread
     @Override
     public void showListMembers(List<ChatChooseItem> members) {
-        final List<Long> selectedUserIds = topicMembersAdapter.getSelectedUserIds();
+        final List<Long> selectedUserIds = topicModdableMemberListAdapter.getSelectedUserIds();
 
-        topicMembersAdapter.clear();
+        topicModdableMemberListAdapter.clear();
 
         if (selectedUserIds != null && !selectedUserIds.isEmpty()) {
             Observable.from(members)
@@ -340,11 +340,11 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
                         member.setIsChooseItem(true);
                     });
         }
-        topicMembersAdapter.addAll(members);
-        topicMembersAdapter.notifyDataSetChanged();
+        topicModdableMemberListAdapter.addAll(members);
+        topicModdableMemberListAdapter.notifyDataSetChanged();
         if (type == TYPE_MEMBERS_LIST_TEAM
                 && tvSearch.getText().length() <= 0
-                && topicMembersAdapter.getCount() <= 1) {
+                && topicModdableMemberListAdapter.getCount() <= 1) {
             // 팀 멤버 검색 && 검색어 없음 && 나를 포함해서 1명이하인 경우
             vEmptyTeamMember.setVisibility(View.VISIBLE);
         } else {
@@ -398,16 +398,16 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setKickMode(boolean owner) {
-        topicMembersAdapter.setKickMode(owner);
+        topicModdableMemberListAdapter.setKickMode(owner);
 
         if (owner) {
-            topicMembersAdapter.setOnKickClickListener((adapter, viewHolder, position) -> {
-                ChatChooseItem item = ((MembersAdapter) adapter).getItem(position);
+            topicModdableMemberListAdapter.setOnKickClickListener((adapter, viewHolder, position) -> {
+                ChatChooseItem item = ((ModdableMemberListAdapter) adapter).getItem(position);
                 membersListPresenter.onKickMemberClick(entityId, item);
             });
         }
 
-        topicMembersAdapter.notifyDataSetChanged();
+        topicModdableMemberListAdapter.notifyDataSetChanged();
 
 
     }
@@ -431,10 +431,10 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void removeUser(long userEntityId) {
-        for (int idx = 0, size = topicMembersAdapter.getCount(); idx < size; idx++) {
-            if (topicMembersAdapter.getItem(idx).getEntityId() == userEntityId) {
-                topicMembersAdapter.remove(idx);
-                topicMembersAdapter.notifyDataSetChanged();
+        for (int idx = 0, size = topicModdableMemberListAdapter.getCount(); idx < size; idx++) {
+            if (topicModdableMemberListAdapter.getItem(idx).getEntityId() == userEntityId) {
+                topicModdableMemberListAdapter.remove(idx);
+                topicModdableMemberListAdapter.notifyDataSetChanged();
                 return;
             }
         }

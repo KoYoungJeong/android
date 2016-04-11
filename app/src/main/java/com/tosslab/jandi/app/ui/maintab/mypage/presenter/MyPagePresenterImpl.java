@@ -58,7 +58,6 @@ public class MyPagePresenterImpl implements MyPagePresenter {
 
     @Override
     public void onInitializeMyPage(final boolean isRefreshAction) {
-        view.showProfileLayout();
         view.clearLoadMoreOffset();
 
         if (!isRefreshAction) {

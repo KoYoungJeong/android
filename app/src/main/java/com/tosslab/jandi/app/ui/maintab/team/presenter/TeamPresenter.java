@@ -5,13 +5,8 @@ package com.tosslab.jandi.app.ui.maintab.team.presenter;
  */
 public interface TeamPresenter {
 
-    void initSearchQueue();
-
-    void stopSearchQueue();
-
     void onInitializeTeam();
 
     void reInitializeTeam();
 
-    void onSearchMember(String query);
 }

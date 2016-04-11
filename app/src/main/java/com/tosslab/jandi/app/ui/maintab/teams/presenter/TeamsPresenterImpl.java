@@ -66,7 +66,7 @@ public class TeamsPresenterImpl implements TeamsPresenter {
                     long selectedTeamId = myTeams.first;
                     List<Team> teams = myTeams.second;
 
-                    if (teams == null || teams.isEmpty()) {
+                    if (teams == null || teams.isEmpty() || teams.size() <= 1) {
                         view.clearTeams();
                     } else {
                         view.setTeams(teams);

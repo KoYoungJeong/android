@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqMember;
 import com.tosslab.jandi.app.network.models.ReqOwner;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -170,5 +171,32 @@ public class MembersModel {
         roomsApi.get().assignToTopicOwner(teamId, entityId, new ReqOwner(memberId));
     }
 
+    public static List<FormattedEntity> getEnabledTeamMember() {
+        List<FormattedEntity> members = new ArrayList<>();
+
+        EntityManager entityManager = EntityManager.getInstance();
+        members.addAll(entityManager.getFormattedUsers());
+        if (entityManager.hasJandiBot()) {
+            BotEntity botEntity = (BotEntity) entityManager.getJandiBot();
+            members.add(botEntity);
+        }
+
+        Observable.from(members)
+                .filter(FormattedEntity::isEnabled)
+                .toSortedList((entity, entity2) -> {
+                    if (entity instanceof BotEntity) {
+                        return -1;
+                    } else if (entity2 instanceof BotEntity) {
+                        return 1;
+                    } else {
+                        return StringCompareUtil.compare(entity.getName(), entity2.getName());
+                    }
+                })
+                .subscribe(entities -> {
+                    members.clear();
+                    members.addAll(entities);
+                });
+        return members;
+    }
 
 }

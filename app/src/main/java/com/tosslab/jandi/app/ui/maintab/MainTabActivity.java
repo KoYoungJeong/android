@@ -163,7 +163,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @Inject
     TeamsPresenter teamsPresenter;
 
-    private UiUtils.KeyboardHandler keyboardHandler;
     private OfflineLayer offlineLayer;
     private ProgressWheel progressWheel;
     private MainTabPagerAdapter mainTabPagerAdapter;
@@ -284,19 +283,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                         break;
                 }
 
-                hideKeyboardIfNeed(position);
-
                 listScrollHandler.setCurrentIndex(position);
-            }
-
-            void hideKeyboardIfNeed(int position) {
-                if (keyboardHandler == null) {
-                    return;
-                }
-
-                if (position != MainTabPagerAdapter.TAB_TEAM) {
-                    keyboardHandler.hideKeyboard();
-                }
             }
         });
 
@@ -599,14 +586,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
             offlineLayer.showOfflineView();
             ColoredToast.showGray(JandiApplication.getContext().getString(R
                     .string.jandi_msg_network_offline_warn));
-        }
-    }
-
-    @Override
-    public void onAttachFragment(Fragment fragment) {
-        super.onAttachFragment(fragment);
-        if (fragment instanceof UiUtils.KeyboardHandler) {
-            keyboardHandler = (UiUtils.KeyboardHandler) fragment;
         }
     }
 

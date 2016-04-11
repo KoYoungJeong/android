@@ -66,14 +66,4 @@ public class TeamModelTest {
 
         teamTestSubscriber.assertCompleted();
     }
-
-    @Test
-    public void testGetSearchedMembers() throws Exception {
-        testGetTeamObservable();
-
-        List<FormattedEntity> searchedMembers = model.getSearchedMembers("123");
-
-        assertTrue(searchedMembers != null);
-        assertEquals(searchedMembers.size(), 0);
-    }
 }

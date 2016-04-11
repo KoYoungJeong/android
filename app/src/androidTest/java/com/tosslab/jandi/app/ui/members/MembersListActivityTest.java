@@ -7,7 +7,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.ui.members.adapter.MembersAdapter;
+import com.tosslab.jandi.app.ui.members.adapter.ModdableMemberListAdapter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl_;
 
@@ -60,7 +60,7 @@ public class MembersListActivityTest {
         rule.runOnUiThread(() -> activity.removeUser(entityId));
 
         // Then
-        MembersAdapter adapter = (MembersAdapter) activity.memberListView.getAdapter();
+        ModdableMemberListAdapter adapter = (ModdableMemberListAdapter) activity.memberListView.getAdapter();
         for (int idx = 0; idx < adapter.getItemCount(); idx++) {
             long entityId1 = adapter.getItem(idx).getEntityId();
             if (entityId1 == entityId) {

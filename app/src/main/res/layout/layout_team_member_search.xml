@@ -18,19 +18,15 @@
             android:layout_marginLeft="20dp"
             android:background="@drawable/icon_search_bar"/>
 
-        <EditText
-            android:id="@+id/et_team_member_search"
-            android:singleLine="true"
-            android:inputType="text"
-            android:imeOptions="actionSearch"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="33dp"
             android:background="@null"
             android:gravity="center_vertical"
-            android:hint="@string/jandi_action_search"
-            android:textColor="@color/jandi_text"
-            android:textColorHint="@color/jandi_text_light"/>
+            android:singleLine="true"
+            android:text="@string/jandi_action_search"
+            android:textColor="@color/jandi_text_light"/>
 
     </LinearLayout>
 

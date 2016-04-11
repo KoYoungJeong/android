@@ -29,7 +29,7 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
-public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final int OWNER_TYPE_TEAM = 0;
     public static final int OWNER_TYPE_TOPIC = 1;
     private Context context;
@@ -40,7 +40,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private OnKickClickListener onKickClickListener;
     private OnMemberClickListener onMemberClickListener;
 
-    public MembersAdapter(Context context, int ownerType) {
+    public ModdableMemberListAdapter(Context context, int ownerType) {
         this.context = context;
         this.ownerType = ownerType;
         memberChooseItems = new ArrayList<>();
@@ -79,7 +79,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             long myId = EntityManager.getInstance().getMe().getId();
             ((MemberViewHolder) holder).bindView(item, ownerType, kickMode, myId, v -> {
                 if (onKickClickListener != null) {
-                    onKickClickListener.onKickClick(MembersAdapter.this, holder, position);
+                    onKickClickListener.onKickClick(ModdableMemberListAdapter.this, holder, position);
                 }
             });
         }
@@ -223,7 +223,7 @@ public class MembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
 
             Resources resources = tvOwnerBadge.getResources();
-            tvOwnerBadge.setText(ownerType == MembersAdapter.OWNER_TYPE_TEAM
+            tvOwnerBadge.setText(ownerType == ModdableMemberListAdapter.OWNER_TYPE_TEAM
                     ? resources.getString(R.string.jandi_team_owner)
                     : resources.getString(R.string.jandi_topic_owner));
 
