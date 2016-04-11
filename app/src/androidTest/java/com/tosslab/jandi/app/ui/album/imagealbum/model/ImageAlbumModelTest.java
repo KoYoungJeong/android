@@ -38,11 +38,11 @@ public class ImageAlbumModelTest {
     public static void tearDownClass() throws Exception {
         BaseInitUtil.releaseDatabase();
     }
+
     @Before
     public void setUp() throws Exception {
         imageAlbumModel = ImageAlbumModel_.getInstance_(JandiApplication.getContext());
     }
-
 
 
     @Test
@@ -51,7 +51,7 @@ public class ImageAlbumModelTest {
                 imageAlbumModel.getDefaultAlbumList(JandiApplication.getContext());
         assertNotNull(imageAlbums);
         if (imageAlbums.size() > 0) {
-            assertThat(imageAlbums.size(), Matchers.greaterThan(1));
+            assertThat(imageAlbums.size(), Matchers.greaterThan(0));
         }
     }
 
@@ -61,7 +61,7 @@ public class ImageAlbumModelTest {
                 imageAlbumModel.getDefaultAlbumList(JandiApplication.getContext());
         if (imageAlbums.size() > 0) {
             List<ImagePicture> imagePictures =
-                    imageAlbumModel.getPhotoList(JandiApplication.getContext(), imageAlbums.get(0).getBucketId(), imageAlbums.get(0).get_id());
+                    imageAlbumModel.getPhotoList(JandiApplication.getContext(), imageAlbums.get(0).getBucketId(), 0);
             assertNotNull(imagePictures);
             assertThat(imagePictures.size(), Matchers.greaterThan(0));
         }
@@ -112,7 +112,7 @@ public class ImageAlbumModelTest {
                 imageAlbumModel.getDefaultAlbumList(JandiApplication.getContext());
         if (imageAlbums.size() > 0) {
             List<ImagePicture> imagePictures = imageAlbumModel.getAllPhotoList(
-                    JandiApplication.getContext(), imageAlbums.get(0).get_id());
+                    JandiApplication.getContext(), 0);
             assertThat(imagePictures.size(), greaterThan(0));
         }
     }

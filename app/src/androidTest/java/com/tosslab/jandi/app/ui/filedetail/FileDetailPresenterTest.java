@@ -28,9 +28,7 @@ import setup.BaseInitUtil;
 import static com.jayway.awaitility.Awaitility.await;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -52,6 +50,7 @@ public class FileDetailPresenterTest {
     public static void tearDownClass() throws Exception {
         BaseInitUtil.releaseDatabase();
     }
+
     @Before
     public void setUp() throws Exception {
 
@@ -65,25 +64,16 @@ public class FileDetailPresenterTest {
     }
 
 
-
     @Test
     public void testOnExportFile() throws Exception {
         // Given
         ProgressDialog mockProgressDialog = mock(ProgressDialog.class);
-        doAnswer(invocationOnMock -> invocationOnMock).when(mockProgressDialog).setProgress(anyInt());
-        final boolean[] finish = {false};
-        doAnswer(invocationOnMock -> {
-            finish[0] = true;
-            return invocationOnMock;
-        }).when(mockProgressDialog).dismiss();
 
         // When
         fileDetailPresenter.onExportFile(fileMessage, mockProgressDialog);
 
-        await().until(() -> finish[0]);
-
         // Then
-        verify(mockView).startExportedFileViewerActivity(any(), anyString());
+        verify(mockView).checkPermission(any(), any(), any());
     }
 
     @Test

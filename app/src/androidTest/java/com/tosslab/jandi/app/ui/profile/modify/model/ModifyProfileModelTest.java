@@ -34,6 +34,7 @@ public class ModifyProfileModelTest {
 
     private ModifyProfileModel modifyProfileModel;
     private ResLeftSideMenu.User user;
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
@@ -43,6 +44,7 @@ public class ModifyProfileModelTest {
     public static void tearDownClass() throws Exception {
         BaseInitUtil.releaseDatabase();
     }
+
     @Before
     public void setUp() throws Exception {
         modifyProfileModel = ModifyProfileModel_.getInstance_(JandiApplication.getContext());
@@ -133,7 +135,7 @@ public class ModifyProfileModelTest {
 
     @Test
     public void testUpdateProfileName() throws Exception {
-        String newName = new Date().toString();
+        String newName = new Date().toString().replaceAll(" ", "");
         modifyProfileModel.updateProfileName(new ReqProfileName(newName));
 
         ResLeftSideMenu.User newProfile = modifyProfileModel.getProfile();
