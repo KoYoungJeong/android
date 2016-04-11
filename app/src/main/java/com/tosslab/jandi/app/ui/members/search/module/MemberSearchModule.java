@@ -37,7 +37,7 @@ public class MemberSearchModule {
     @Provides
     public InputMethodManager providesInputMethodManager() {
         InputMethodManager inputMethodManager =
-                JandiApplication.getService(Context.INPUT_METHOD_SERVICE);
+                (InputMethodManager) JandiApplication.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         return inputMethodManager;
     }
 

@@ -73,7 +73,7 @@ dependencies {
     compile "com.google.dagger:dagger:${rootProject.ext.dagger2Version}"
     provided 'javax.annotation:jsr250-api:1.0'
 
-    compile 'com.android.support:multidex:1.0.0'
+    compile 'com.android.support:multidex:1.0.1'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     // Google
@@ -85,6 +85,7 @@ dependencies {
     compile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibVersion}"
     compile "com.android.support:cardview-v7:${rootProject.ext.supportLibVersion}"
     compile "com.android.support:support-annotations:${rootProject.ext.supportLibVersion}"
+    compile "com.android.support:design:${rootProject.ext.supportLibVersion}"
 
     // UI
     compile 'com.github.johnpersano:supertoasts:1.3.4@aar'
@@ -151,7 +152,7 @@ dependencies {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.2'
+    buildToolsVersion '23.0.3'
 
     defaultConfig {
         applicationId 'com.tosslab.jandi.app'
@@ -295,54 +296,4 @@ apt {
 
 retrolambda {
     javaVersion JavaVersion.VERSION_1_7
-}
-
-// It references by http://chrisjenx.com/gradle-robolectric-jacoco-dagger
-apply plugin: "jacoco"
-
-def coverageSourceDirs = [
-        'src/main/java'
-]
-
-// This differs per what flavors buildTypes etc.
-// But this example shows the 'testDebug'
-// which is standard for Robolectric
-task jacocoTestReport(type: JacocoReport, dependsOn: "testDevDebugUnitTest") {
-    group = "Reporting"
-    description = "Generate Jacoco coverage reports after running tests."
-    reports {
-        xml.enabled = true // coveralls plugin depends on xml format report
-        html.enabled = true
-    }
-    // class R is used, but usage will not be covered, so ignore this class from report
-    // This differs per plugin version (0.10 -> 0.11)
-    // have very different fileTrees.
-    // I have added rules to Ignore Dagger/Butterknife
-    classDirectories = fileTree(
-            dir: 'build/intermediates/classes/dev/debug',
-            excludes: ['**/R.class',
-                       '**/*Presenter*.class',
-                       '**/*ViewModel*.class',
-                       '**/*_*.class',
-                       '**/android/support/v7/appcompat/*.class',
-                       '**/com/github/johnpersano/supertoasts/*.class',
-                       '**/com/google/android/gms/*.class',
-                       '**/com/mixpanel/android/*.class',
-                       '**/se/emilsjolander/stickylistheaders/*.class'])
-    sourceDirectories = files(coverageSourceDirs)
-    executionData = files('build/jacoco/testDevDebug.exec')
-    // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
-    // We iterate through the compiled .class tree and rename $$ to $.
-    doFirst {
-        new File('app/build/intermediates/classes/dev').eachFileRecurse { file ->
-            if (file.name.contains('$$')) {
-                file.renameTo(file.path.replace('$$', '$'))
-            }
-        }
-    }
-
-    afterEvaluate {
-        // just clean up coveralls dashboard, following reports are not of interest
-        testDevDebugUnitTest.reports.junitXml.enabled = false
-    }
 }
