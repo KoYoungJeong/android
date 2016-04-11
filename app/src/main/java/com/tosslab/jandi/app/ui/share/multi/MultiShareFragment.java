@@ -29,6 +29,7 @@ import com.tosslab.jandi.app.ui.share.multi.dagger.MultiShareModule;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenter;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
@@ -80,6 +81,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     ShareAdapterDataView shareAdapterDataView;
 
     private List<String> uris;
+    private ProgressWheel progressWheel;
 
     public static MultiShareFragment create(List<Uri> uris) {
         MultiShareFragment fragment = new MultiShareFragment();
@@ -247,6 +249,25 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         UploadNotificationActivity.startActivity(getActivity(), teamId, roomId);
 
         getActivity().finish();
+    }
+
+    @Override
+    public void showProgress() {
+        if (progressWheel == null) {
+            progressWheel = new ProgressWheel(getActivity());
+            progressWheel.setCancelable(false);
+            progressWheel.setCanceledOnTouchOutside(false);
+        }
+        if (!progressWheel.isShowing()) {
+            progressWheel.show();
+        }
+    }
+
+    @Override
+    public void dismissProgress() {
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
     }
 
     @Override
