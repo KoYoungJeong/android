@@ -280,6 +280,7 @@
 	<string name="jandi_is_newcomer">"还没使用过JANDI吗?"</string>
 	<string name="jandi_is_topic_required">"公开/私人"</string>
 	<string name="jandi_it_has_no_topic_description">"(无议题内容)"</string>
+	<string name="jandi_join_topic">"加入"</string>
 	<string name="jandi_joined_team">"你已加入%1$s，请再次确认团队列表。"</string>
 	<string name="jandi_kicked_message">"你已被移除出%s"</string>
 	<string name="jandi_later">"稍后再说"</string>

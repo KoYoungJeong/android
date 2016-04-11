@@ -43,7 +43,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.presenter.MainTopicListPresenter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.create.TopicCreateActivity_;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.TopicFolderSettingActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.TopicFolderSettingActivity_;
-import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity_;
+import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -167,6 +167,13 @@ public class MainTopicListFragment extends Fragment
                     }
                     showCreateNewFolderDialog();
                 });
+        floatingActionMenu.addItem(R.drawable.btn_fab_item_go_unjoined,
+                getResources().getString(R.string.jandi_browse_other_topics), () -> {
+                    if (floatingActionMenu.isOpened()) {
+                        floatingActionMenu.close();
+                    }
+                    onEvent(new JoinableTopicCallEvent());
+                });
         floatingActionMenu.addItem(R.drawable.btn_fab_item_create_topic,
                 getResources().getString(R.string.jandi_create_topic), () -> {
                     if (floatingActionMenu.isOpened()) {
@@ -174,6 +181,7 @@ public class MainTopicListFragment extends Fragment
                     }
                     launchCreateTopicActivity();
                 });
+
     }
 
     @AfterInject
@@ -255,6 +263,7 @@ public class MainTopicListFragment extends Fragment
             tvSortTitle.setText(R.string.jandi_sort_folder);
         }
     }
+
 
     @Click(R.id.vg_main_topic_order_title)
     void onOrderTitleClick() {
@@ -468,9 +477,10 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEvent(JoinableTopicCallEvent event) {
-        JoinableTopicListActivity_.intent(getActivity())
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .start();
+        Intent intent = new Intent(getActivity(), JoinableTopicListActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.BrowseOtherTopics);
     }
 

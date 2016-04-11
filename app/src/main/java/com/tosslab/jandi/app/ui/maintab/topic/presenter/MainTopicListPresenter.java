@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
@@ -30,6 +31,8 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -272,9 +275,15 @@ public class MainTopicListPresenter {
     }
 
     public void onRefreshUpdatedTopicList() {
+        List<Topic> topicList = new ArrayList<>();
         mainTopicModel.getUpdatedTopicList()
+                .concatWith(
+                        Observable.just(
+                                Arrays.asList(new Topic.Builder()
+                                        .name(JandiApplication.getContext().getString(R.string.jandi_entity_unjoined_topic))
+                                        .build())))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(view::setUpdatedItems, t -> {});
+                .subscribe(topicList::addAll, t -> {}, () -> view.setUpdatedItems(topicList));
 
     }
 
@@ -325,6 +334,7 @@ public class MainTopicListPresenter {
         void setFolderExpansion();
 
         void showAlreadyHasFolderToast();
+
     }
 
 }

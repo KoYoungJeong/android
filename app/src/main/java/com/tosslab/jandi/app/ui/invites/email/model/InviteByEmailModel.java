@@ -14,9 +14,7 @@ import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.EBean;
-
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,27 +25,31 @@ import rx.Observable;
 /**
  * Created by Steve SeongUg Jung on 14. 12. 27..
  */
-@EBean
-public class InviteEmailModel {
+public class InviteByEmailModel {
 
     @Inject
     Lazy<TeamApi> teamApi;
 
-    @AfterInject
-    void initObject() {
-        DaggerApiClientComponent.create().inject(this);
-    }
 
     public boolean isValidEmailFormat(String text) {
         return !FormatConverter.isInvalidEmailString(text);
     }
 
-    public List<ResInvitationMembers> inviteMembers(List<String> invites) throws RetrofitException {
+    public Observable<String> getInviteMemberObservable(final String email) {
+        return Observable.<String>create(subscriber -> {
+            try {
+                long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
 
-        long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
+                ReqInvitationMembers reqInvitationMembers =
+                        new ReqInvitationMembers(teamId, Arrays.asList(email), LanguageUtil.getLanguage());
 
-        return teamApi.get().inviteToTeam(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage()));
-
+                teamApi.get().inviteToTeam(teamId, reqInvitationMembers);
+                subscriber.onNext(email);
+            } catch (Exception e) {
+                subscriber.onError(e);
+            }
+            subscriber.onCompleted();
+        });
     }
 
     public boolean isInvitedEmail(String emailText) {

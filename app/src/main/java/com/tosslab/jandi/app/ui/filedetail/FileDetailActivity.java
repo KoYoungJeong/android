@@ -846,13 +846,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     public void onEvent(FileCommentRefreshEvent event) {
         if (roomId <= 0) {
-            reInitializeOnEvent(event.getFileId());
+            fileDetailPresenter.onInitializeFileDetail(event.getFileId(), false);
             return;
         }
 
-        // 소켓 이벤트로 넘어온 이벤트중 같은 roomId 만 처리
         if (event.getFileId() == fileId) {
-            reInitializeOnEvent(event.getFileId());
+            fileDetailPresenter.onInitializeFileDetail(event.getFileId(), false);
         }
     }
 
@@ -978,11 +977,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void startDownloadedFileViewerActivity(File file, String fileType) {
+    public void startDownloadedFileViewerActivity(File file, String mimeType) {
         try {
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(file), fileType);
+            intent.setDataAndType(Uri.fromFile(file), mimeType);
             startActivity(intent);
             showToast(getString(R.string.jandi_file_downloaded_into, file.getPath()), false);
         } catch (ActivityNotFoundException e) {

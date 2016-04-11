@@ -220,7 +220,7 @@ public class JandiSocketServiceModel {
             FileCommentRefreshEvent event = new FileCommentRefreshEvent(socketCommentEvent.getEvent(),
                     socketCommentEvent.getFile().getId(),
                     socketCommentEvent.getComment().getId(),
-                    TextUtils.equals(socketCommentEvent.getEvent(), "file_comment_created"));
+                    TextUtils.equals(socketCommentEvent.getEvent(), "file_comment_deleted"));
 
             List<SocketFileCommentDeleteEvent.Room> rooms = socketCommentEvent.getRooms();
             if (rooms != null && !rooms.isEmpty()) {

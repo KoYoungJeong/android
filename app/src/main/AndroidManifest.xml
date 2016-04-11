@@ -158,7 +158,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.invites.email.InviteEmailActivity_"
+            android:name=".ui.invites.email.InviteByEmailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/menu_entity_invite"
             android:screenOrientation="portrait"
@@ -306,7 +306,7 @@
             android:name=".push.PushInterfaceActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/JandiTheme.PushIntro"/>
+            android:theme="@style/JandiTheme.PushIntro" />
 
         <activity
             android:name=".ui.share.MainShareActivity_"
@@ -350,8 +350,9 @@
         </activity>
 
         <activity
-            android:name=".ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity_"
+            android:name=".ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             android:label="@string/jandi_browse_other_topics"
             android:screenOrientation="portrait">
 
@@ -557,6 +558,8 @@
 
     <!-- for download manager addCompletedDownload-->
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION"/>
+
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
 
 </manifest>
 

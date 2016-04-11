@@ -11,14 +11,13 @@
         android:layout_height="?attr/actionBarSize"
         android:visibility="visible" />
 
-
     <RelativeLayout
-        android:id="@+id/layout_invite_send_email"
+        android:id="@+id/vg_invite_send_email"
         android:layout_width="match_parent"
         android:layout_height="72dp">
 
         <EditText
-            android:id="@+id/edit_invite_email"
+            android:id="@+id/et_invite_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -28,12 +27,11 @@
             android:background="@drawable/edit_under_line"
             android:inputType="textEmailAddress" />
 
-
         <Button
             android:id="@+id/btn_invite_send"
             android:layout_width="72dp"
             android:layout_height="36dp"
-            android:layout_alignBottom="@+id/edit_invite_email"
+            android:layout_alignBottom="@+id/et_invite_email"
             android:layout_alignParentRight="true"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="16dp"
@@ -49,7 +47,7 @@
         android:background="@color/jandi_border_gray" />
 
     <LinearLayout
-        android:id="@+id/layout_invite_success_items"
+        android:id="@+id/vg_invite_success"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -57,7 +55,7 @@
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/invite_succes_text_display"
+            android:id="@+id/tv_invite_success"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
@@ -67,12 +65,10 @@
             android:text="@string/jandi_invite_succes_send"
             android:textColor="@color/jandi_black_89" />
 
-        <ListView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/lv_invite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="@null"
-            android:dividerHeight="0dp"
             android:paddingBottom="20dp" />
     </LinearLayout>
 
@@ -81,9 +77,8 @@
         android:layout_height="0.5dp"
         android:background="@color/jandi_border_gray" />
 
-
     <TextView
-        android:id="@+id/invite_footer_text"
+        android:id="@+id/tv_invite_large_group_support"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:lineSpacingExtra="4dp"
