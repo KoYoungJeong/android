@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.maintab.dialog.UsageInformationDialogFragment_;
 import com.tosslab.jandi.app.ui.members.adapter.searchable.SearchableMemberListAdapter;
 import com.tosslab.jandi.app.ui.maintab.team.component.DaggerTeamComponent;
 import com.tosslab.jandi.app.ui.maintab.team.module.TeamModule;
@@ -28,6 +29,7 @@ import com.tosslab.jandi.app.ui.maintab.team.vo.Team;
 import com.tosslab.jandi.app.ui.members.search.MemberSearchActivity;
 import com.tosslab.jandi.app.ui.members.view.MemberSearchableDataView;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
+import com.tosslab.jandi.app.utils.KnockListener;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
@@ -66,6 +68,7 @@ public class TeamFragment extends Fragment implements TeamView, ListScroller {
     MemberSearchableDataView memberSearchableDataView;
 
     private LinearLayoutManager layoutManager;
+    private KnockListener usageInformationKnockListener;
 
     @Nullable
     @Override
@@ -88,6 +91,8 @@ public class TeamFragment extends Fragment implements TeamView, ListScroller {
         EventBus.getDefault().register(this);
 
         initTeamMemberListView(adapter);
+
+        initUsageInformationKnockListener();
 
         presenter.onInitializeTeam();
     }
@@ -121,6 +126,23 @@ public class TeamFragment extends Fragment implements TeamView, ListScroller {
         MemberProfileActivity_.intent(getActivity())
                 .memberId(userId)
                 .start();
+    }
+
+    private void initUsageInformationKnockListener() {
+        usageInformationKnockListener = KnockListener.create()
+                .expectKnockCount(10)
+                .expectKnockedIn(5000)
+                .onKnocked(this::showBugReportDialog);
+    }
+
+    @OnClick(R.id.vg_team_info)
+    void onClickTeamInfo() {
+        usageInformationKnockListener.knock();
+    }
+
+    private void showBugReportDialog() {
+        UsageInformationDialogFragment_.builder().build()
+                .show(getFragmentManager(), "usageInformationKnock");
     }
 
     @OnClick(R.id.vg_team_member_search)

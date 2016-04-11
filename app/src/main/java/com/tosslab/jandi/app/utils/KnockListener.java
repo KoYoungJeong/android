@@ -9,7 +9,7 @@ public class KnockListener {
 
     private int expectKnockCount;
     private long expectKnockedIn;
-    private int knockedCount = 0;
+    private int knockedCount = 1;
     private long firstKnockedTime;
     private OnKnockedListener onKnockedListener;
 
@@ -39,7 +39,7 @@ public class KnockListener {
         if (knockedCount >= expectKnockCount
                 && System.currentTimeMillis() - firstKnockedTime < expectKnockedIn) {
             firstKnockedTime = 0;
-            knockedCount = 0;
+            knockedCount = 1;
             if (onKnockedListener != null) {
                 onKnockedListener.onKnocked();
             }
@@ -48,9 +48,10 @@ public class KnockListener {
 
         if (firstKnockedTime == 0) {
             firstKnockedTime = System.currentTimeMillis();
+            knockedCount++;
         } else if (System.currentTimeMillis() - firstKnockedTime >= expectKnockedIn) {
             firstKnockedTime = 0;
-            knockedCount = 0;
+            knockedCount = 1;
         } else {
             knockedCount++;
         }

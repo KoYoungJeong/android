@@ -62,7 +62,6 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
-import com.tosslab.jandi.app.ui.maintab.dialog.BugReportDialogFragment_;
 import com.tosslab.jandi.app.ui.maintab.teams.adapter.TeamsAdapter;
 import com.tosslab.jandi.app.ui.maintab.teams.component.DaggerTeamsComponent;
 import com.tosslab.jandi.app.ui.maintab.teams.module.TeamsModule;
@@ -79,7 +78,6 @@ import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.KnockListener;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
@@ -289,17 +287,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
         listScrollHandler = new ListScrollHandler();
 
-        final KnockListener knockListener = KnockListener.create()
-                .expectKnockCount(10)
-                .expectKnockedIn(3000)
-                .onKnocked(this::showBugReportDialog);
-
         mainTapStrip.setOnTabClickListener(index -> {
             listScrollHandler.onTabClick(index);
-
-            if (index == MainTabPagerAdapter.TAB_MYPAGE) {
-                knockListener.knock();
-            }
         });
     }
 
@@ -929,11 +918,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
     public FloatingActionMenu getFloatingActionMenu() {
         return floatingActionMenu;
-    }
-
-    private void showBugReportDialog() {
-        BugReportDialogFragment_.builder().build()
-                .show(getSupportFragmentManager(), "bugReportDialog");
     }
 
     private class ListScrollHandler implements PagerSlidingTabStrip.OnTabClickListener {
