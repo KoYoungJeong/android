@@ -14,7 +14,7 @@ ext {
     espressoVersion = "2.2.2"
     awaitilityVersion = "1.7.+"
     compileSdkVersion = 23
-    buildToolsVersion = "23.0.2"
+    buildToolsVersion = "23.0.3"
     minSdkVersion = 14
     targetSdkVersion = 23
     androidMavenGradlePlugin = "1.3"
