@@ -31,7 +31,7 @@ import rx.Observable;
  * Created by tonyjs on 16. 4. 1..
  */
 @EFragment
-public class BugReportDialogFragment extends DialogFragment {
+public class UsageInformationDialogFragment extends DialogFragment {
 
     @NonNull
     @Override
