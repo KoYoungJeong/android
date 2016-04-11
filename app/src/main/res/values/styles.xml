@@ -448,11 +448,11 @@
     </style>
 
     <style name="JandiSignUpVerify.Code.Text">
-        <item name="android:layout_width">121dp</item>
+        <item name="android:minWidth">30dp</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/jandi_text</item>
         <item name="android:textSize">40sp</item>
-        <item name="android:letterSpacing">0.175</item>
     </style>
 
     <style name="JandiSettingPrivacy" />
