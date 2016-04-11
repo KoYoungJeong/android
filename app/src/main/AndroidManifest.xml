@@ -507,6 +507,8 @@
         <!-- Download Service -->
         <service android:name=".services.download.DownloadService"/>
 
+        <service android:name="com.tosslab.jandi.lib.sprinkler.io.SprinklerService" />
+
         <receiver android:name=".services.download.receiver.DownloadStopProxyBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.tosslab.jandi.app.download.service.proxy.receiver"/>

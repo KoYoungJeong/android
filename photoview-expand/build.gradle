@@ -1,17 +1,84 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply from: "$rootDir/artifacts.gradle"
 
-android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.1'
+buildscript {
+    repositories {
+        jcenter()
+    }
 
-    defaultConfig {
-        minSdkVersion 4
-        targetSdkVersion 23
-        versionCode 124
-        versionName "1.2.4"
+    dependencies {
+        classpath "com.github.dcendents:android-maven-gradle-plugin:${rootProject.ext.androidMavenGradlePlugin}"
     }
 }
 
+group = "com.tosslab.jandi.lib"
+version = 1.1
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+
+    packagingOptions.excludes = [
+            'META-INF/DEPENDENCIES',
+            'META-INF/LICENSE',
+            'META-INF/LICENSE.txt',
+            'LICENSE.txt',
+            'LICENSE',
+            'META-INF/license.txt',
+            'META-INF/NOTICE',
+            'NOTICE',
+            'asm-license.txt',
+            'META-INF/NOTICE.txt',
+            'META-INF/notice.txt',
+            'META-INF/ASL2.0'
+    ]
+}
+
 dependencies {
-    compile "com.android.support:support-v4:23.0.1"
+    compile "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
+}
+
+install {
+    repositories.mavenInstaller.pom.project {
+        name "Sprinkler"
+        description "For Analytics"
+        packaging "aar"
+        url "https://github.com/tosslab/android_client"
+
+        licenses {
+            license {
+                distribution "repo"
+            }
+        }
+
+        scm {
+            url "scm:git:https://github.com/tosslab/android_client.git"
+            connection "scm:git:https://github.com/tosslab/android_client.git"
+        }
+
+        developers {
+            developer {
+                id 'tony.park'
+                name 'Tony Park'
+            }
+            developer {
+                id 'tee.kim'
+                name 'Tee Kim'
+            }
+            developer {
+                id 'steve.jung'
+                name 'Steve Jung'
+            }
+        }
+    }
 }
