@@ -41,6 +41,7 @@ public class JandiPreference {
     private static final String PREF_COACH_MARK_DIRECT_MESSAGE_LIST = "coach_mark_direct_messege_list";
     private static final String PREF_LAST_NETWORK_CONNECT = "last_network_connect_state";
     private static final String PREF_PASSCODE = "passcode";
+    private static final String PREF_USE_FINGERPRRINT = "fingerprint";
     // PARSE
     private static final String PREF_OLD_PARSE_CHANNEL_DELETED = "old_parse_channel_deleted";
     private static final String PREF_OLD_PARSE_FILE_CACHE_DELETED = "old_parse_file_cache_deleted";
@@ -273,6 +274,15 @@ public class JandiPreference {
     public static void removePassCode(Context context) {
         SharedPreferences pref = getSharedPreferences();
         pref.edit().remove(PREF_PASSCODE).commit();
+    }
+
+    public static boolean isUseFingerprint() {
+        return getSharedPreferences().getBoolean(PREF_USE_FINGERPRRINT, true);
+    }
+
+    public static void setUseFingerprint(boolean useFingerprint) {
+        SharedPreferences pref = getSharedPreferences();
+        pref.edit().putBoolean(PREF_USE_FINGERPRRINT, useFingerprint).commit();
     }
 
     /**

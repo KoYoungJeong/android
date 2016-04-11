@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.passcode.model;
 
+import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -82,5 +83,17 @@ public class PassCodeModel {
     public boolean isSetupMode(int mode) {
         return mode == PassCodeActivity.MODE_TO_SAVE_PASSCODE
                 || mode == PassCodeActivity.MODE_TO_MODIFY_PASSCODE;
+    }
+
+    public boolean isUserWantsFingerPrintToAuth() {
+        return JandiPreference.isUseFingerprint();
+    }
+
+    public boolean canUseFingerprintToAuth() {
+        FingerprintManagerCompat fingerprintManagerCompat =
+                FingerprintManagerCompat.from(JandiApplication.getContext());
+
+        return fingerprintManagerCompat.isHardwareDetected()
+                && fingerprintManagerCompat.hasEnrolledFingerprints();
     }
 }

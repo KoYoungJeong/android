@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.Vibrator;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -16,6 +18,8 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.passcode.adapter.PassCodeAdapter;
+import com.tosslab.jandi.app.ui.passcode.fingerprint.FingerprintAuthDialogFragment;
+import com.tosslab.jandi.app.ui.passcode.fingerprint.FingerprintAuthDialogFragment_;
 import com.tosslab.jandi.app.ui.passcode.presenter.PassCodePresenter;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -38,13 +42,13 @@ import java.util.List;
  * Created by tonyjs on 15. 10. 7..
  */
 @EActivity(R.layout.activity_passcode)
-public class PassCodeActivity extends BaseAppCompatActivity implements PassCodePresenter.View {
+public class PassCodeActivity extends BaseAppCompatActivity
+        implements PassCodePresenter.View, OnUnLockSuccessListener {
     public static final String KEY_CALLING_COMPONENT_NAME = "calling_component_name";
 
     public static final int MODE_TO_MODIFY_PASSCODE = 0;
     public static final int MODE_TO_SAVE_PASSCODE = 1;
     public static final int MODE_TO_UNLOCK = 2;
-    public static final int MODE_TO_VALIDATE = 3;
 
     @Extra
     int mode = MODE_TO_UNLOCK;
@@ -88,6 +92,11 @@ public class PassCodeActivity extends BaseAppCompatActivity implements PassCodeP
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (mode == MODE_TO_UNLOCK) {
+            presenter.onDetermineUseFingerprint();
+        }
+
         if (hasStopped) {
             presenter.clearPassCode();
         }
@@ -228,5 +237,20 @@ public class PassCodeActivity extends BaseAppCompatActivity implements PassCodeP
         }
 
         finish();
+    }
+
+    @Override
+    public void showUnLockFromFingerprintDialog() {
+        String tag = FingerprintAuthDialogFragment.class.getSimpleName();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
+        if (fragment == null) {
+            FingerprintAuthDialogFragment_.builder().build()
+                    .show(getSupportFragmentManager(), tag);
+        }
+    }
+
+    @Override
+    public void onUnLockSuccess() {
+        showSuccess();
     }
 }
