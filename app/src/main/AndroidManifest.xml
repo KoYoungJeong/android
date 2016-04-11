@@ -158,7 +158,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.invites.email.InviteEmailActivity_"
+            android:name=".ui.invites.email.InviteByEmailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/menu_entity_invite"
             android:screenOrientation="portrait"
@@ -306,7 +306,7 @@
             android:name=".push.PushInterfaceActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/JandiTheme.PushIntro"/>
+            android:theme="@style/JandiTheme.PushIntro" />
 
         <activity
             android:name=".ui.share.MainShareActivity_"

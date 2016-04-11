@@ -52,7 +52,6 @@ import rx.android.schedulers.AndroidSchedulers;
 @EFragment(R.layout.fragment_share_text)
 public class TextShareFragment extends Fragment implements MainShareActivity.Share, TextSharePresenter.View {
 
-
     @FragmentArg
     String subject;
 
@@ -168,7 +167,6 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
         long roomId = event.getRoomId();
         textSharePresenterImpl.setEntity(roomId);
     }
-
 
     @Override
     public void startShare() {
