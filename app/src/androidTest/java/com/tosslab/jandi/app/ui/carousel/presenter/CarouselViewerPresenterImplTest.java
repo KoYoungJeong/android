@@ -59,6 +59,7 @@ public class CarouselViewerPresenterImplTest {
     public static void tearDownClass() throws Exception {
         BaseInitUtil.releaseDatabase();
     }
+
     @Before
     public void setUp() throws Exception {
 
@@ -146,6 +147,7 @@ public class CarouselViewerPresenterImplTest {
         verify(mockView).addFileInfos(any());
     }
 
+    @Ignore
     @Test
     public void testOnFileDownload() throws Exception {
 
