@@ -39,7 +39,6 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by tee on 15. 8. 26..
@@ -115,7 +114,7 @@ public class MainTopicListPresenter {
                         return Pair.create(false, null);
                     }
 
-                }).subscribeOn(Schedulers.io())
+                })
                 .subscribe(data -> {
                     boolean isExecute = data.first;
                     if (isExecute) {
@@ -283,6 +282,18 @@ public class MainTopicListPresenter {
                                         .name(JandiApplication.getContext().getString(R.string.jandi_entity_unjoined_topic))
                                         .build())))
                 .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(topicList::addAll, t -> {}, () -> view.setUpdatedItems(topicList));
+
+    }
+
+    public void initUpdatedTopicList() {
+        List<Topic> topicList = new ArrayList<>();
+        mainTopicModel.getUpdatedTopicList()
+                .concatWith(
+                        Observable.just(
+                                Arrays.asList(new Topic.Builder()
+                                        .name(JandiApplication.getContext().getString(R.string.jandi_entity_unjoined_topic))
+                                        .build())))
                 .subscribe(topicList::addAll, t -> {}, () -> view.setUpdatedItems(topicList));
 
     }
