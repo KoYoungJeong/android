@@ -985,10 +985,13 @@ public class MessageListV2Presenter {
     }
 
     @Background
-    public void onRoomMarkerChange(long memberId, long lastLinkId) {
-        MarkerRepository.getRepository().upsertRoomMarker(
-                room.getTeamId(), room.getRoomId(), memberId, lastLinkId);
-        view.saveCacheAndNotifyDataSetChanged(null);
+    public void onRoomMarkerChange(long teamId, long roomId, long memberId, long lastLinkId) {
+        MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, memberId, lastLinkId);
+        //TODO Presenter 에 객체들이 initialize 되기 전에 Event 가 호출 되면서 NullPointerException 이 나는 경우가 있음.
+        // Presenter 전체적으로 개선해야 할 필요 있음.
+        if (view != null) {
+            view.saveCacheAndNotifyDataSetChanged(null);
+        }
     }
 
     @Background

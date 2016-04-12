@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -252,7 +253,8 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
             return;
         }
 
-        SpannableStringBuilder ssb = new SpannableStringBuilder(me.getName());
+        String name = TextUtils.isEmpty(me.getName()) ? "" : me.getName();
+        SpannableStringBuilder ssb = new SpannableStringBuilder(name);
         if (me.isTeamOwner()) {
             int start = ssb.length();
             String ownerText = JandiApplication.getContext()
@@ -265,9 +267,13 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
         }
         tvName.setText(ssb);
 
-        tvEmail.setText(me.getUserEmail());
+        String userEmail = TextUtils.isEmpty(me.getUserEmail()) ? "" : me.getUserEmail();
+        tvEmail.setText(userEmail);
 
-        ImageUtil.loadProfileImage(ivProfile, me.getUserLargeProfileUrl(), R.drawable.profile_img);
+        String userLargeProfileUrl = me.getUserLargeProfileUrl();
+        if (!TextUtils.isEmpty(userEmail)) {
+            ImageUtil.loadProfileImage(ivProfile, userLargeProfileUrl, R.drawable.profile_img);
+        }
 
         btnSetting.setOnClickListener(v -> {
             ModifyProfileActivity_.intent(this).start();
