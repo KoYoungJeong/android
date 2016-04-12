@@ -268,7 +268,7 @@ android {
     dexOptions {
         javaMaxHeapSize "2048M"
         incremental true
-        maxProcessCount Math.max(1, Runtime.getRuntime().availableProcessors() / 2)
+        maxProcessCount Math.max(1, ((int) (Runtime.getRuntime().availableProcessors() / 2)))
     }
 
     testOptions {
