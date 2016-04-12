@@ -308,8 +308,9 @@ public class FileDetailPresenter {
                 fileDetailModel.downloadFile(downloadUrl, downloadFilePath,
                         (downloaded, total) -> progressDialog.setProgress((int) (downloaded * 100 / total)),
                         (e, result) -> {
-                            progressDialog.dismiss();
-                            if (currentDownloadingFile.isCancelled()) {
+                            view.dismissDialog(progressDialog);
+
+                            if (currentDownloadingFile == null || currentDownloadingFile.isCancelled()) {
                                 currentDownloadingFile = null;
                                 return;
                             }
