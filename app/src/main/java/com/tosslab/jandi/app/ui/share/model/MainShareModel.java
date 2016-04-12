@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.share.model;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -19,31 +20,32 @@ import java.util.List;
 @EBean
 public class MainShareModel {
 
-    public String handleSendSubject(Intent intent) {
+    public String getShareSubject(Intent intent) {
         return intent.getStringExtra(Intent.EXTRA_SUBJECT);
     }
 
-    public String handleSendText(Intent intent) {
-        return intent.getStringExtra(Intent.EXTRA_TEXT);
+    public CharSequence getShareText(Intent intent) {
+        return intent.getCharSequenceExtra(Intent.EXTRA_TEXT);
     }
 
-    public Uri handleSendImage(Intent intent) {
+    public Uri getShareFile(Intent intent) {
         return (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
     }
 
-    public List<Uri> handleSendImages(Intent intent) {
+    public List<Uri> getShareFiles(Intent intent) {
         return intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
     }
 
     public MainShareActivity.IntentType getIntentType(String action, String type) {
-
+        Log.e("tony", "action = " + action);
+        Log.e("tony", "type = " + type);
         if (TextUtils.equals(action, Intent.ACTION_SEND) && !TextUtils.isEmpty(type)) {
-            if (type.startsWith("image/")) {
-                return MainShareActivity.IntentType.Image;
-            } else if (TextUtils.equals(type, "text/plain")) {
+            if (type.toLowerCase().matches("text/.*")
+                    || type.toLowerCase().matches("message/.*")) {
+                Log.e("tony", "type.toLowerCase().matches(\"text/(.*)\")");
                 return MainShareActivity.IntentType.Text;
             } else {
-                return MainShareActivity.IntentType.Etc;
+                return MainShareActivity.IntentType.File;
             }
         } else if (TextUtils.equals(action, Intent.ACTION_SEND_MULTIPLE)) {
             return MainShareActivity.IntentType.Multiple;

@@ -252,7 +252,7 @@
 	<string name="jandi_hi_apk_store">"Hi Apkストア"</string>
 	<string name="jandi_image_too_big">"画像が大きすぎです"</string>
 	<string name="jandi_incorrect_passcode">"パスコードが間違っています。"</string>
-	<string name="jandi_info">"NEW KEY"</string>
+	<string name="jandi_info">"JANDI情報"</string>
 	<string name="jandi_input_password">"選択したチームのパスワードを入力してください"</string>
 	<string name="jandi_input_search_keyword">"キーワードで検索"</string>
 	<string name="jandi_input_topic_name">"トピック名を入力してください"</string>
@@ -281,6 +281,7 @@
 	<string name="jandi_is_newcomer">"初めてJANDIを使いますか？"</string>
 	<string name="jandi_is_topic_required">"公開/非公開"</string>
 	<string name="jandi_it_has_no_topic_description">"（トピック説明なし）"</string>
+	<string name="jandi_join_topic">"参加"</string>
 	<string name="jandi_joined_team">"すでに%1$sのメンバーです。チームリストを確認してください"</string>
 	<string name="jandi_kicked_message">"%sの管理者からトピックから退出させられました。"</string>
 	<string name="jandi_later">"後で"</string>
@@ -421,7 +422,7 @@
 	<string name="jandi_service_maintenance">"JANDIは現在定期メンテナンス中のためご利用できません。定期メンテナンスは数時間で終了の予定です。ご不便をお掛けし申し訳ありません。"</string>
 	<string name="jandi_set_passcode">"パスコードロック設定"</string>
 	<string name="jandi_set_passcode_detail">"パスコードを忘れた場合はJANDIアプリを削除して再インストールしてください。"</string>
-	<string name="jandi_setting_account">"NEW KEY"</string>
+	<string name="jandi_setting_account">"アカウント設定"</string>
 	<string name="jandi_setting_account_email_info">"JANDIからのメールを受信するメールアドレスを一つ選択してください。メールアドレスを追加しチームごとに使い分けられます"</string>
 	<string name="jandi_setting_display">"画面表示"</string>
 	<string name="jandi_setting_folder">"フォルダ管理"</string>
@@ -553,6 +554,7 @@
 	<string name="jandi_unshared_file_in_dm">"このファイルは非共有化されました"</string>
 	<string name="jandi_unshared_message">"原本ファイルへのアクセス権がありません。"</string>
 	<string name="jandi_unstarred">"お気に入りから削除する"</string>
+	<string name="jandi_unsupported_share_contents">"NEW KEY"</string>
 	<string name="jandi_unsupported_type_picture">"サポートしていないファイル形式です。他の画像を選択してください。"</string>
 	<string name="jandi_update_message">"新しいバージョンのアプリが利用可能です"</string>
 	<string name="jandi_update_title">"古いバージョン"</string>
