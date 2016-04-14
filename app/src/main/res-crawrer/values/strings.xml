@@ -551,6 +551,7 @@ We combined everything you love about messaging apps and cloud storage with powe
 	<string name="jandi_unshared_file_in_dm">"This file has been unshared from this conversation."</string>
 	<string name="jandi_unshared_message">"You cannot access this item anymore."</string>
 	<string name="jandi_unstarred">"Unstar"</string>
+	<string name="jandi_unsupported_share_contents">"This file(or message) is not supported."</string>
 	<string name="jandi_unsupported_type_picture">"This image type is not supported. Please choose another."</string>
 	<string name="jandi_update_message">"A new version of JANDI is available"</string>
 	<string name="jandi_update_title">"Old Version"</string>

@@ -141,7 +141,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         memberListView.setLayoutManager(new LinearLayoutManager(MembersListActivity.this,
                 RecyclerView.VERTICAL, false));
         if (type != TYPE_MEMBERS_JOINABLE_TOPIC) {
-            memberListView.addItemDecoration(new SimpleDividerItemDecoration(MembersListActivity.this));
+            memberListView.addItemDecoration(new SimpleDividerItemDecoration());
         }
         memberListView.setAdapter(topicModdableMemberListAdapter);
         initProgressWheel();

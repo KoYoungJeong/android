@@ -252,7 +252,7 @@
 	<string name="jandi_hi_apk_store">"安卓市场"</string>
 	<string name="jandi_image_too_big">"图像过大无法加载"</string>
 	<string name="jandi_incorrect_passcode">"密码不吻合"</string>
-	<string name="jandi_info">"NEW KEY"</string>
+	<string name="jandi_info">"JANDI版本"</string>
 	<string name="jandi_input_password">"请为选择的团队输入您的密码"</string>
 	<string name="jandi_input_search_keyword">"按照关键词搜索您的信息"</string>
 	<string name="jandi_input_topic_name">"请输入议题群组名称"</string>
@@ -395,7 +395,7 @@
 	<string name="jandi_question_team_create">"您的团队还未使用JANDI吗？"</string>
 	<string name="jandi_r_u_sure_cancel_invitation">"你确定取消邀请？"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"你确认要删除这个电子邮件地址？"</string>
-	<string name="jandi_reorder_from_long_press">"초대 메일을 다시 전송했습니다."</string>
+	<string name="jandi_reorder_from_long_press">"长按并且拖拉资料夹更改排列顺序"</string>
 	<string name="jandi_resend_invitation">"重新寄发邀请"</string>
 	<string name="jandi_retry">"请再试一次"</string>
 	<string name="jandi_retry_voice_search">"没有接收清楚您刚才说的，麻烦再说一次"</string>
@@ -550,6 +550,7 @@
 	<string name="jandi_unshared_file_in_dm">"此文件已经从这个对话中取消分享"</string>
 	<string name="jandi_unshared_message">"无法存取该文件/信息"</string>
 	<string name="jandi_unstarred">"取消标记"</string>
+	<string name="jandi_unsupported_share_contents">"无法支持此文件(或信息)"</string>
 	<string name="jandi_unsupported_type_picture">"无法支持此类型图档，请选择其他图档"</string>
 	<string name="jandi_update_message">"现有新版的JANDI可用。"</string>
 	<string name="jandi_update_title">"旧版"</string>

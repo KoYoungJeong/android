@@ -63,7 +63,8 @@ public class InviteByEmailModel {
         List<FormattedEntity> users = EntityManager.getInstance().getFormattedUsersWithoutMe();
 
         Boolean isContain = Observable.from(users)
-                .filter(entity -> TextUtils.equals(entity.getUserEmail(), emailText))
+                .filter(entity -> TextUtils.equals(entity.getUserEmail(), emailText)
+                        && entity.isEnabled())
                 .map(entity -> true)
                 .firstOrDefault(false)
                 .toBlocking()

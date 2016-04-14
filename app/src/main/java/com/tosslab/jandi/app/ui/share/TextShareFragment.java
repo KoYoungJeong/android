@@ -13,11 +13,13 @@ import android.widget.TextView;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -276,5 +278,14 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
 
     }
 
+    public void onEvent(SelectedMemberInfoForMentionEvent event) {
+        if (mentionControlViewModel != null) {
+            SearchedItemVO searchedItemVO = new SearchedItemVO();
+            searchedItemVO.setId(event.getId());
+            searchedItemVO.setName(event.getName());
+            searchedItemVO.setType(event.getType());
+            mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
+        }
+    }
 
 }

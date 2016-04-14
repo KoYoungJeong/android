@@ -65,7 +65,7 @@ import rx.android.schedulers.AndroidSchedulers;
  * Created by Steve SeongUg Jung on 15. 2. 13..
  */
 @EFragment(R.layout.fragment_share_image)
-public class ImageShareFragment extends Fragment implements ImageSharePresenterImpl.View, MainShareActivity.Share {
+public class FileShareFragment extends Fragment implements ImageSharePresenterImpl.View, MainShareActivity.Share {
 
     @FragmentArg
     String uriString;
@@ -366,6 +366,9 @@ public class ImageShareFragment extends Fragment implements ImageSharePresenterI
     @UiThread
     @Override
     public void dismissDialog(ProgressDialog uploadProgress) {
+        if (getActivity() == null || getActivity().isFinishing()) {
+            return;
+        }
         if (uploadProgress != null && uploadProgress.isShowing()) {
             uploadProgress.dismiss();
         }

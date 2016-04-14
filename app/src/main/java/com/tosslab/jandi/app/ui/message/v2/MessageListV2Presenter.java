@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.v2;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
@@ -504,9 +505,8 @@ public class MessageListV2Presenter {
     }
 
     private void loadNewMessage(NewMessageContainer messageContainer) {
-
         MessageState data = messageContainer.getData();
-        final long lastUpdateLinkId = MessageRepository.getRepository()
+        long lastUpdateLinkId = MessageRepository.getRepository()
                 .getLastMessage(room.getRoomId()).id;
 
         long teamId = room.getTeamId();
@@ -516,8 +516,16 @@ public class MessageListV2Presenter {
                 .getMessagesCount(roomId, firstCursorLinkId);
 
         if (lastUpdateLinkId < 0) {
+            messageListModel.deleteAllDummyMessageAtDatabase(room.getRoomId());
+
             boolean firstLoadOldMessage = messageContainer.getData().isFirstLoadOldMessage();
             loadOldMessage(teamId, roomId, lastUpdateLinkId, firstLoadOldMessage, true);
+
+            lastUpdateLinkId = MessageRepository.getRepository()
+                    .getLastMessage(room.getRoomId()).id;
+
+            currentItemCount = MessageRepository.getRepository()
+                    .getMessagesCount(roomId, messagePointer.getFirstCursorLinkId());
         }
 
         List<ResMessages.Link> newMessages = null;
@@ -560,6 +568,8 @@ public class MessageListV2Presenter {
                 currentMessageState.setIsFirstLoadNewMessage(false);
                 view.setUpLastReadLinkIdIfPosition();
                 view.saveCacheAndNotifyDataSetChanged(view::moveLastReadLink);
+            } else {
+                view.saveCacheAndNotifyDataSetChanged(null);
             }
             return;
         }
@@ -602,11 +612,10 @@ public class MessageListV2Presenter {
 
     private boolean hasMessages(long firstCursorLinkId, int currentItemCount) {
         int eventMessageCount = getEventMessageCount(firstCursorLinkId);
-        return // event 메세지 외에 다른 메시지들이 있는 경우
-                (currentItemCount > 0
-                        && (currentItemCount - eventMessageCount > 0))
-                        // create 이벤트외에 다른 이벤트가 생성된 경우
-                        || eventMessageCount > 1;
+        // create 이벤트외에 다른 이벤트가 생성된 경우
+        return eventMessageCount > 1 || (currentItemCount > 0
+                // event 메세지 외에 다른 메시지들이 있는 경우
+                && (currentItemCount - eventMessageCount > 0));
     }
 
     private int getEventMessageCount(long firstCursorLinkId) {
@@ -628,6 +637,7 @@ public class MessageListV2Presenter {
 
     private List<ResMessages.Link> getResUpdateMessages(final long linkId) {
         List<ResMessages.Link> messages = new ArrayList<>();
+
 
         Observable.create(new Observable.OnSubscribe<ResMessages>() {
             @Override
@@ -781,6 +791,7 @@ public class MessageListV2Presenter {
         long roomId = room.getRoomId();
         long localId = messageListModel.insertSendingMessageIfCan(entityId, roomId, stickerInfo);
         if (localId > 0) {
+            view.showEmptyView(false);
             view.saveCacheAndNotifyDataSetChanged(() -> {
                 view.moveLastPage();
 
@@ -792,7 +803,6 @@ public class MessageListV2Presenter {
 
                 addQueue(messageQueue);
             });
-
         }
     }
 
@@ -805,14 +815,16 @@ public class MessageListV2Presenter {
 
         if (localId > 0) {
             // insert to ui
-            view.saveCacheAndNotifyDataSetChanged(view::moveLastPage);
+            view.showEmptyView(false);
+            view.saveCacheAndNotifyDataSetChanged(() -> {
+                view.moveLastPage();
 
-            // networking...
-            SendingMessage sendingMessage = new SendingMessage(localId, reqSendMessage);
+                SendingMessage sendingMessage = new SendingMessage(localId, reqSendMessage);
 
-            SendingMessageContainer messageQueue = new SendingMessageContainer(sendingMessage);
+                SendingMessageContainer messageQueue = new SendingMessageContainer(sendingMessage);
 
-            addQueue(messageQueue);
+                addQueue(messageQueue);
+            });
         }
     }
 
@@ -908,6 +920,8 @@ public class MessageListV2Presenter {
             view.dismissProgressWheel();
 
             view.deleteLinkByMessageId(messageId);
+
+            view.saveCacheAndNotifyDataSetChanged(null);
 
             messageListModel.trackMessageDeleteSuccess(messageId);
 

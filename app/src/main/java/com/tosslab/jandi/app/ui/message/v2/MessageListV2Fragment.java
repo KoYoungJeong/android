@@ -938,7 +938,7 @@ public class MessageListV2Fragment extends Fragment implements
     public void setUpNewMessage(List<ResMessages.Link> records, long myId,
                                 boolean isFirstLoad,
                                 boolean moveToLinkId) {
-        int location = records.size() - 1;
+        final int location = records.size() - 1;
         if (location < 0) {
             return;
         }
@@ -1061,7 +1061,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private void moveToMessage(long messageId, int firstVisibleItemTop) {
-        int itemPosition = messageAdapter.indexByMessageId(messageId);
+        int itemPosition = messageAdapter.getLastIndexByMessageId(messageId);
         layoutManager.scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
@@ -2239,7 +2239,6 @@ public class MessageListV2Fragment extends Fragment implements
     public void deleteLinkByMessageId(long messageId) {
         int position = messageAdapter.indexByMessageId(messageId);
         messageAdapter.remove(position);
-        saveCacheAndNotifyDataSetChanged(null);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

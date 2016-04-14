@@ -557,6 +557,10 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissDialog(Dialog dialog) {
+        if (isFinishing()) {
+            return;
+        }
+
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }

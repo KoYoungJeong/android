@@ -113,7 +113,7 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
     void initJoinableTopicListView(final JoinableTopicListAdapter joinableTopicListAdapter) {
         layoutManager = new LinearLayoutManager(getBaseContext());
         lvJoinableTopics.setLayoutManager(layoutManager);
-        lvJoinableTopics.addItemDecoration(new SimpleDividerItemDecoration(getApplicationContext()));
+        lvJoinableTopics.addItemDecoration(new SimpleDividerItemDecoration());
         lvJoinableTopics.setAdapter(joinableTopicListAdapter);
 
         joinableTopicDataView.setOnTopicClickListener((view, adapter, position) -> {

@@ -167,7 +167,7 @@ public class FileListFragment extends Fragment
 
         // Empty View를 가진 ListView 설정
         lvSearchFiles.setLayoutManager(new LinearLayoutManager(getActivity()));
-        lvSearchFiles.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+        lvSearchFiles.addItemDecoration(new SimpleDividerItemDecoration());
         lvSearchFiles.setAdapter(searchedFileItemListAdapter);
 
         selectedTeamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();

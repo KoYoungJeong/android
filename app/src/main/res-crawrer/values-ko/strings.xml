@@ -555,6 +555,7 @@
 	<string name="jandi_unshared_file_in_dm">"이 파일은 이 대화에서 공유 해제되어 더 이상 즐겨찾기를 하실 수 없습니다."</string>
 	<string name="jandi_unshared_message">"원본에 대한 접근 권한이 없습니다."</string>
 	<string name="jandi_unstarred">"즐겨찾기 해제"</string>
+	<string name="jandi_unsupported_share_contents">"공유할 수 없는 파일(메시지)입니다."</string>
 	<string name="jandi_unsupported_type_picture">"지원하지 않는 형식입니다. 다른 사진을 선택해주세요. "</string>
 	<string name="jandi_update_message">"JANDI의 새로운 버전이 있습니다."</string>
 	<string name="jandi_update_title">"새로운 버전"</string>
