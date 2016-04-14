@@ -94,16 +94,18 @@ public class SendMessageRepository extends LockExecutorTemplate {
     }
 
     public int deleteAllSendingMessage(long roomId) {
-        try {
-            Dao<SendMessage, ?> dao = helper.getDao(SendMessage.class);
-            DeleteBuilder<SendMessage, ?> deleteBuilder = dao.deleteBuilder();
-            deleteBuilder.where().eq("roomId", roomId);
-            return deleteBuilder.delete();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        return execute(() -> {
+            try {
+                Dao<SendMessage, ?> dao = getHelper().getDao(SendMessage.class);
+                DeleteBuilder<SendMessage, ?> deleteBuilder = dao.deleteBuilder();
+                deleteBuilder.where().eq("roomId", roomId);
+                return deleteBuilder.delete();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
-        return 0;
+            return 0;
+        });
     }
 
     public int updateSendMessageStatus(long id, SendMessage.Status status) {

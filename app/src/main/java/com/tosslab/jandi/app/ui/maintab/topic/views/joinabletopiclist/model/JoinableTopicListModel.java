@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -50,9 +51,14 @@ public class JoinableTopicListModel {
         }
     }
 
-    public Observable<List<Topic>> getSearchedTopics(final String query) {
+    public List<Topic> getSearchedTopics(final String query) {
+        final List<Topic> topics = new ArrayList<>();
         List<FormattedEntity> unjoinedChannels = EntityManager.getInstance().getUnjoinedChannels();
-        return Observable.from(unjoinedChannels)
+        if (unjoinedChannels == null || unjoinedChannels.isEmpty()) {
+            return topics;
+        }
+
+        Observable.from(unjoinedChannels)
                 .map(formattedEntity -> {
                     long creatorId =
                             ((ResLeftSideMenu.Channel) formattedEntity.getEntity()).ch_creatorId;
@@ -71,7 +77,10 @@ public class JoinableTopicListModel {
                 })
                 .filter(topic -> TextUtils.isEmpty(query)
                         || topic.getName().toLowerCase().contains(query.toLowerCase()))
-                .toSortedList((lhs, rhs) -> StringCompareUtil.compare(lhs.getName(), rhs.getName()));
+                .toSortedList((lhs, rhs) -> StringCompareUtil.compare(lhs.getName(), rhs.getName()))
+                .collect(() -> topics, List::addAll)
+                .subscribe();
+        return topics;
     }
 
     public Observable<Topic> getJoinTopicObservable(final Topic topic) {

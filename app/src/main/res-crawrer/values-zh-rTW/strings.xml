@@ -165,6 +165,7 @@
 	<string name="jandi_create">"建立"</string>
 	<string name="jandi_create_channel">"建立新議題"</string>
 	<string name="jandi_create_folder">"建立議題資料夾"</string>
+	<string name="jandi_create_new_topic">"建立新議題\m '%s'"</string>
 	<string name="jandi_create_privategroup">"建立新私人議題"</string>
 	<string name="jandi_create_team_message">"請提供您的電子郵件地址以免費地建立新的JANDI團隊!"</string>
 	<string name="jandi_create_topic">"建立議題"</string>
@@ -247,6 +248,7 @@
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_guide_to_assign_topic_owner">"此成員為議題管理員，欲剔除此成員，請先進入「議題資訊」將管理權限轉移給其他成員"</string>
 	<string name="jandi_has_joined">"%s已加入"</string>
+	<string name="jandi_has_no_search_result">"沒有符合 '%s' 的結果"</string>
 	<string name="jandi_has_no_searched_member">"沒有符合 <![CDATA[<b><font color=#404040>%s</font></b>]]> 的結果"</string>
 	<string name="jandi_have_an_account_already">"已經有團隊註冊了嗎?"</string>
 	<string name="jandi_help">"説明"</string>

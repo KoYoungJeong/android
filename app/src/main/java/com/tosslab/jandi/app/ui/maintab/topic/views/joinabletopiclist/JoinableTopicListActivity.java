@@ -11,15 +11,19 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
+import com.tosslab.jandi.app.ui.maintab.topic.views.create.TopicCreateActivity_;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.adapter.JoinableTopicListAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.component.DaggerJoinableTopicListComponent;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.view.TopicInfoDialog;
@@ -39,6 +43,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import de.greenrobot.event.EventBus;
 
@@ -54,14 +59,21 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
     @Bind(R.id.lv_joinable_topics)
     RecyclerView lvJoinableTopics;
 
+    @Bind(R.id.vg_joinable_topic_list_empty)
+    View vgEmptySearchedTopic;
+    @Bind(R.id.tv_joinable_topic_list_empty)
+    TextView tvEmptySearchedTopic;
+    @Bind(R.id.tv_joinable_topic_list_create_topic)
+    TextView tvCreateTopic;
+
     @Inject
     JoinableTopicListPresenter mainTopicListPresenter;
 
     @Inject
     JoinableTopicDataView joinableTopicDataView;
-
+    @Bind(R.id.btn_joinable_list_create_topic)
+    View btnCreateTopic;
     private ProgressWheel progressWheel;
-
     private boolean isForeground = true;
     private LinearLayoutManager layoutManager;
 
@@ -227,6 +239,34 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
 
         colorAnimation.start();
 
+    }
+
+    @Override
+    public void showEmptyQueryMessage(String query) {
+        vgEmptySearchedTopic.setVisibility(View.VISIBLE);
+
+        final String finalQuery = TextUtils.isEmpty(query) ? "" : query;
+
+        Resources resources = JandiApplication.getContext().getResources();
+        String hasNoSearchResult = resources.getString(R.string.jandi_has_no_search_result, finalQuery);
+        tvEmptySearchedTopic.setText(hasNoSearchResult);
+
+        String createNewTopic = resources.getString(R.string.jandi_create_new_topic, finalQuery);
+        tvCreateTopic.setText(createNewTopic);
+
+        btnCreateTopic.setOnClickListener(v -> {
+            TopicCreateActivity_
+                    .intent(this)
+                    .expectTopicName(finalQuery)
+                    .start();
+
+            overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
+        });
+    }
+
+    @Override
+    public void hideEmptyQueryMessage() {
+        vgEmptySearchedTopic.setVisibility(View.GONE);
     }
 
     public void onEvent(SocketTopicPushEvent event) {

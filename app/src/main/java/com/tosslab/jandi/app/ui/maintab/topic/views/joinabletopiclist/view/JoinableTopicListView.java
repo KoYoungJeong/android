@@ -31,4 +31,7 @@ public interface JoinableTopicListView {
 
     void showSelectedTopic(int position);
 
+    void showEmptyQueryMessage(String query);
+
+    void hideEmptyQueryMessage();
 }
