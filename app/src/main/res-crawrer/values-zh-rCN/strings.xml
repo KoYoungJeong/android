@@ -550,7 +550,7 @@
 	<string name="jandi_unshared_file_in_dm">"此文件已经从这个对话中取消分享"</string>
 	<string name="jandi_unshared_message">"无法存取该文件/信息"</string>
 	<string name="jandi_unstarred">"取消标记"</string>
-	<string name="jandi_unsupported_share_contents">"NEW KEY"</string>
+	<string name="jandi_unsupported_share_contents">"无法支持此文件(或信息)"</string>
 	<string name="jandi_unsupported_type_picture">"无法支持此类型图档，请选择其他图档"</string>
 	<string name="jandi_update_message">"现有新版的JANDI可用。"</string>
 	<string name="jandi_update_title">"旧版"</string>

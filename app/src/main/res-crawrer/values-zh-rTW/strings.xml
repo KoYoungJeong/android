@@ -551,7 +551,7 @@
 	<string name="jandi_unshared_file_in_dm">"此檔案已經從這個對話中取消分享"</string>
 	<string name="jandi_unshared_message">"無法存取該檔案/訊息"</string>
 	<string name="jandi_unstarred">"取消標記"</string>
-	<string name="jandi_unsupported_share_contents">"NEW KEY"</string>
+	<string name="jandi_unsupported_share_contents">"無法支援此檔案(或訊息)"</string>
 	<string name="jandi_unsupported_type_picture">"無法支援此類型圖檔，請選擇其他圖檔"</string>
 	<string name="jandi_update_message">"現有新版的JANDI可用。"</string>
 	<string name="jandi_update_title">"舊版"</string>

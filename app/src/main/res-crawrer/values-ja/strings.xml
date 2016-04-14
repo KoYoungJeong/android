@@ -554,7 +554,7 @@
 	<string name="jandi_unshared_file_in_dm">"このファイルは非共有化されました"</string>
 	<string name="jandi_unshared_message">"原本ファイルへのアクセス権がありません。"</string>
 	<string name="jandi_unstarred">"お気に入りから削除する"</string>
-	<string name="jandi_unsupported_share_contents">"NEW KEY"</string>
+	<string name="jandi_unsupported_share_contents">"共有できないファイル（メッセージ）です"</string>
 	<string name="jandi_unsupported_type_picture">"サポートしていないファイル形式です。他の画像を選択してください。"</string>
 	<string name="jandi_update_message">"新しいバージョンのアプリが利用可能です"</string>
 	<string name="jandi_update_title">"古いバージョン"</string>

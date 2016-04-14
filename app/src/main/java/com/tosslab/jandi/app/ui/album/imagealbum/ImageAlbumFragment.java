@@ -105,7 +105,7 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+        recyclerView.addItemDecoration(new SimpleDividerItemDecoration());
         recyclerView.setItemAnimator(null);
         DefaultAlbumAdapter adapter = new DefaultAlbumAdapter(getActivity(), defaultAlbumList);
 

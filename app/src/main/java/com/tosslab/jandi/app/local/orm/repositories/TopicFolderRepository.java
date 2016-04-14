@@ -287,10 +287,11 @@ public class TopicFolderRepository {
         lock.lock();
         try {
             Dao<ResFolderItem, ?> dao = helper.getDao(ResFolderItem.class);
-            return dao.queryBuilder()
+            ResFolderItem resFolderItem = dao.queryBuilder()
                     .where()
                     .eq("roomId", entityId)
                     .queryForFirst();
+            return resFolderItem == null ? new ResFolderItem() : resFolderItem;
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

@@ -694,4 +694,8 @@ public class MessageListModel {
     public boolean isInactiveUser(long entityId) {
         return EntityManager.getInstance().getEntityById(entityId).isInavtived();
     }
+
+    public void deleteAllDummyMessageAtDatabase(long roomId) {
+        SendMessageRepository.getRepository().deleteAllSendingMessage(roomId);
+    }
 }

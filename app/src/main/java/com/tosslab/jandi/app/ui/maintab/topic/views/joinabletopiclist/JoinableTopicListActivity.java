@@ -94,7 +94,7 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
         setupActionBar();
 
         lvUnjoinedTopic.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        lvUnjoinedTopic.addItemDecoration(new SimpleDividerItemDecoration(getApplicationContext()));
+        lvUnjoinedTopic.addItemDecoration(new SimpleDividerItemDecoration());
         lvUnjoinedTopic.setAdapter(adapter);
 
         adapter.setOnRecyclerItemClickListener((view, adapter, position) -> {

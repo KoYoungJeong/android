@@ -45,6 +45,8 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
     private OnBackPressedListener onBackPressedListener;
     private OnKeyPressListener onKeyPressListener;
 
+    private boolean isLaidOut;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +55,17 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
         JandiSocketService.startServiceIfNeed(this);
 
         initViews();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (isLaidOut) {
+            JandiSocketService.startServiceIfNeed(this);
+        }
+
+        isLaidOut = true;
     }
 
     void initViews() {

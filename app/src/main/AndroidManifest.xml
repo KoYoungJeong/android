@@ -506,6 +506,9 @@
         <!-- Download Service -->
         <service android:name=".services.download.DownloadService"/>
 
+        <!-- Process start Intent Service -->
+        <service android:name=".dummy.JandiProcessStartService"/>
+
         <receiver android:name=".services.download.receiver.DownloadStopProxyBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.tosslab.jandi.app.download.service.proxy.receiver"/>

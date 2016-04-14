@@ -83,7 +83,7 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
                 .mode(mode)
                 .build();
         fragmentTransaction.replace(R.id.vg_image_album_content, fragment);
-        fragmentTransaction.commit();
+        fragmentTransaction.commitAllowingStateLoss();
     }
 
     private void setupActionbar() {
