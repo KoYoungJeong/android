@@ -42,6 +42,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setNeedUnLockPassCode(false);
+        setShouldReconnectSocketService(false);
     }
 
     @AfterViews

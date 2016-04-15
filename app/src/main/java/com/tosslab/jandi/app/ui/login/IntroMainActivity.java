@@ -43,6 +43,7 @@ public class IntroMainActivity extends BaseAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setNeedUnLockPassCode(false);
+        setShouldReconnectSocketService(false);
     }
 
     @AfterViews

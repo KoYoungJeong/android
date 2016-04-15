@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecu
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
+import com.tosslab.jandi.app.services.socket.monitor.SocketServiceCloser;
 import com.tosslab.jandi.app.utils.ApplicationActivateDetector;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -225,6 +226,8 @@ public class JandiApplication extends MultiDexApplication {
         updatePlatformStatus(false);
 
         Sprinkler.with(this).stopAll();
+
+        SocketServiceCloser.getInstance().close();
     }
 
     public synchronized Tracker getTracker(TrackerName trackerId) {
