@@ -15,6 +15,7 @@ import android.support.v4.app.NotificationCompat;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.koushikdutta.ion.Ion;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
@@ -43,7 +44,6 @@ import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.SystemService;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.util.List;

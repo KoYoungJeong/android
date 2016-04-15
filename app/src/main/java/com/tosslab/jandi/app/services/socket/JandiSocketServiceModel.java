@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
@@ -74,8 +75,6 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-
-import org.codehaus.jackson.map.ObjectMapper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

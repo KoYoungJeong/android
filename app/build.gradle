@@ -101,7 +101,6 @@ dependencies {
     // Boilerplate
     compile 'de.greenrobot:eventbus:2.4.+'
     // Network
-    compile 'org.codehaus.jackson:jackson-mapper-asl:1.+'
     compile("io.socket:socket.io-client:${rootProject.ext.socketIoVersion}") {
         exclude group: 'org.json', module: 'json'
     }
@@ -147,6 +146,7 @@ dependencies {
     compile "com.squareup.retrofit2:retrofit:${rootProject.ext.retrofitVersion}"
     compile "com.squareup.okhttp3:okhttp:${rootProject.ext.okhttpVersion}"
     compile "com.squareup.okhttp3:okhttp-ws:${rootProject.ext.okhttpVersion}"
+    compile "com.fasterxml.jackson.core:jackson-databind:${rootProject.ext.jacksonDataBindVersion}"
     debugCompile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
 
     //LeakCanary

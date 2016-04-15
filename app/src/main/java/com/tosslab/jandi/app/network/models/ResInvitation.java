@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.models;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.List;
 

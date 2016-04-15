@@ -4,8 +4,7 @@ import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor.ResponseConverter;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor.RestAdapterDecor;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor.JacksonConverter;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 
@@ -14,8 +13,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -53,11 +50,10 @@ public class RetrofitBuilder {
     }
 
     private Retrofit initRetrofit() {
-        List<RestAdapterDecor> restAdapterDecors = new ArrayList<>();
-        restAdapterDecors.add(new ResponseConverter());
 
         Retrofit.Builder retofitBuilder = new Retrofit.Builder()
-                .baseUrl(JandiConstantsForFlavors.SERVICE_INNER_API_URL);
+                .baseUrl(JandiConstantsForFlavors.SERVICE_INNER_API_URL)
+                .addConverterFactory(JacksonConverter.create());
 
 
         OkHttpClient.Builder okhttpClientBuilder = new OkHttpClient.Builder()
@@ -82,9 +78,6 @@ public class RetrofitBuilder {
         }
 
         retofitBuilder.client(okhttpClientBuilder.build());
-        for (RestAdapterDecor restAdapterDecor : restAdapterDecors) {
-            retofitBuilder = restAdapterDecor.addRestAdapterProperty(retofitBuilder);
-        }
         return retofitBuilder.build();
     }
 
