@@ -31,16 +31,20 @@ import retrofit2.Retrofit;
  */
 public class RetrofitBuilder {
 
-    private static Retrofit retrofit;
+    private static RetrofitBuilder retrofitBuilder;
 
+    private Retrofit retrofit;
 
     private RetrofitBuilder() {}
 
-    public static RetrofitBuilder newInstance() {
-        return new RetrofitBuilder();
+    synchronized public static RetrofitBuilder newInstance() {
+        if (retrofitBuilder == null) {
+            retrofitBuilder = new RetrofitBuilder();
+        }
+        return retrofitBuilder;
     }
 
-    synchronized private Retrofit getRestAdapter() {
+    private Retrofit getRestAdapter() {
 
         if (retrofit == null) {
             retrofit = initRetrofit();
