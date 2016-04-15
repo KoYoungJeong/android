@@ -1,35 +1,42 @@
 package com.tosslab.jandi.app.ui.entities.chats.presenter;
 
 import android.text.TextUtils;
+import android.util.Pair;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapterDataModel;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
+import com.tosslab.jandi.app.ui.entities.chats.domain.DisableDummyItem;
+import com.tosslab.jandi.app.ui.entities.chats.domain.EmptyChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
-@EBean
 public class ChatChoosePresenterImpl implements ChatChoosePresenter {
-    @Bean
     ChatChooseModel chatChooseModel;
-    @Bean
     TeamDomainInfoModel teamDomainInfoModel;
-    @Bean
     InvitationDialogExecutor invitationDialogExecutor;
-    private View view;
+    View view;
+    private ChatChooseAdapterDataModel chatChooseAdapterDataModel;
+
+    public ChatChoosePresenterImpl(ChatChooseModel chatChooseModel, TeamDomainInfoModel teamDomainInfoModel, InvitationDialogExecutor invitationDialogExecutor, View view, ChatChooseAdapterDataModel chatChooseAdapterDataModel) {
+        this.chatChooseModel = chatChooseModel;
+        this.teamDomainInfoModel = teamDomainInfoModel;
+        this.invitationDialogExecutor = invitationDialogExecutor;
+        this.view = view;
+        this.chatChooseAdapterDataModel = chatChooseAdapterDataModel;
+        initObject();
+    }
+
     private PublishSubject<String> publishSubject;
 
-    @AfterInject
     void initObject() {
         publishSubject = PublishSubject.create();
         publishSubject
@@ -37,27 +44,37 @@ public class ChatChoosePresenterImpl implements ChatChoosePresenter {
                 .observeOn(Schedulers.io())
                 .map(name -> {
                     if (!TextUtils.isEmpty(name)) {
-                        return chatChooseModel.getChatListWithoutMe(name);
+                        return Pair.create(name, chatChooseModel.getChatListWithoutMe(name));
                     } else {
-                        return chatChooseModel.getUsers();
+                        return Pair.create(name, chatChooseModel.getUsers());
                     }
                 })
-                .subscribe((users) -> {
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((usersPair) -> {
                     if (view != null) {
-                        view.setUsers(users);
+                        chatChooseAdapterDataModel.clear();
+                        if (!usersPair.second.isEmpty()) {
+                            chatChooseAdapterDataModel.addAll(usersPair.second);
+                        } else {
+                            if (!TextUtils.isEmpty(usersPair.first)) {
+                                chatChooseAdapterDataModel.add(new EmptyChatChooseItem(usersPair.first));
+                            }
+                        }
+                        view.refresh();
                     }
                 });
     }
 
     @Override
-    public void setView(View view) {
-        this.view = view;
-    }
-
-    @Override
     public void initMembers() {
-        List<ChatChooseItem> users = chatChooseModel.getUsers();
-        view.setUsers(users);
+        chatChooseAdapterDataModel.clear();
+        Observable.from(chatChooseModel.getUsers())
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(chatChooseAdapterDataModel::add,
+                        Throwable::printStackTrace,
+                        view::refresh);
+
     }
 
     @Override
@@ -73,8 +90,24 @@ public class ChatChoosePresenterImpl implements ChatChoosePresenter {
 
     @Override
     public void onMoveChatMessage(long entityId) {
-        EntityManager entityManager = EntityManager.getInstance();
-        long teamId = entityManager.getTeamId();
-        view.moveChatMessage(teamId, entityId);
+        Observable.empty()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(o -> {}, Throwable::printStackTrace, () -> {
+                    EntityManager entityManager = EntityManager.getInstance();
+                    long teamId = entityManager.getTeamId();
+                    view.moveChatMessage(teamId, entityId);
+                });
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        ChatChooseItem chatChooseItem = chatChooseAdapterDataModel.getItem(position);
+        if (chatChooseItem instanceof DisableDummyItem) {
+            view.MoveDisabledEntityList();
+        } else if (chatChooseItem instanceof EmptyChatChooseItem) {
+            // do nothing.
+        } else {
+            onMoveChatMessage(chatChooseItem.getEntityId());
+        }
     }
 }

@@ -4,7 +4,10 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor_;
+import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel_;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -36,13 +39,12 @@ public class ChatChoosePresenterImplTest {
     public static void tearDownClass() throws Exception {
         BaseInitUtil.releaseDatabase();
     }
+
     @Before
     public void setUp() throws Exception {
-        presenter = ChatChoosePresenterImpl_.getInstance_(JandiApplication.getContext());
         mockView = mock(ChatChoosePresenter.View.class);
-        presenter.setView(mockView);
+        presenter = new ChatChoosePresenterImpl(new ChatChooseModel(), TeamDomainInfoModel_.getInstance_(JandiApplication.getContext()), InvitationDialogExecutor_.getInstance_(JandiApplication.getContext()), mockView, chatChooseAdapter);
     }
-
 
 
     @Test

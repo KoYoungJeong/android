@@ -49,11 +49,12 @@ public class ChatsChooseFragmentTest {
     public static void tearDownClass() throws Exception {
         BaseInitUtil.releaseDatabase();
     }
+
     @Before
     public void setUp() throws Exception {
         rule.launchActivity(null);
         activity = rule.getActivity();
-        fragment = ChatsChooseFragment_.builder().build();
+        fragment = new ChatsChooseFragment();
         activity.getSupportFragmentManager().beginTransaction()
                 .add(android.R.id.content, fragment)
                 .commit();
@@ -61,7 +62,6 @@ public class ChatsChooseFragmentTest {
 
         fragment.presenter = mock(ChatChoosePresenter.class);
     }
-
 
 
     @Test
