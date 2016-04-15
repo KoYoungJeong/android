@@ -454,6 +454,7 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="com.tosslab.jandi.app.services.SOCKET_SERVICE_RESTART"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </receiver>
         <receiver android:name=".services.upload.UploadStopBroadcastReceiver"/>
