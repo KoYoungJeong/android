@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 
+
+/*
+ 소스 추적은 getContentType 부터 따라가면 쉽게 파악할 수 있음.
+ */
 public class BodyViewFactory {
 
     // Flag 타입은 int 범위 상 총 32개 까지만 가능함.
@@ -310,15 +314,13 @@ public class BodyViewFactory {
             }
         }
 
-        if (nextLink == null || nextLink.message == null) {
-            return addViewType(type, TYPE_OPTION_HAS_BOTTOM_MARGIN);
-        }
-
-        if (hasOnlyBadgeFromNextLink(currentLink, nextLink)) {
-            return addViewType(type, TYPE_OPTION_HAS_ONLY_BADGE);
-        } else {
-            if (isPureFromNextLink(currentLink, nextLink)) {
-                return type;
+        if (nextLink != null && nextLink.message == null) {
+            if (hasOnlyBadgeFromNextLink(currentLink, nextLink)) {
+                return addViewType(type, TYPE_OPTION_HAS_ONLY_BADGE);
+            } else {
+                if (isPureFromNextLink(currentLink, nextLink)) {
+                    return type;
+                }
             }
         }
 
@@ -334,16 +336,16 @@ public class BodyViewFactory {
             type = TYPE_VIEW_DUMMY_STICKER;
         }
 
-        if (nextLink == null || nextLink.message == null) {
-            return addViewType(type, TYPE_OPTION_HAS_BOTTOM_MARGIN);
-        }
-        if (hasOnlyBadgeFromNextLink(currentLink, nextLink)) {
-            return addViewType(type, TYPE_OPTION_HAS_ONLY_BADGE);
-        } else {
-            if (isPureFromNextLink(currentLink, nextLink)) {
-                return type;
+        if (nextLink != null && nextLink.message != null) {
+            if (hasOnlyBadgeFromNextLink(currentLink, nextLink)) {
+                return addViewType(type, TYPE_OPTION_HAS_ONLY_BADGE);
+            } else {
+                if (isPureFromNextLink(currentLink, nextLink)) {
+                    return type;
+                }
             }
         }
+
         return addViewType(type, TYPE_OPTION_HAS_BOTTOM_MARGIN);
 
     }
@@ -378,7 +380,7 @@ public class BodyViewFactory {
         }
 
         if (isPreviousLinkFeedbackOrFile(previousLink, currentLink.feedbackId)) { // 1. previous Link가 같은 파일의 커맨트 이거나 파일일 때
-            if (isFileMessage(previousLink)) { // 2. previous Link가 파일 메세지 일때 파일 정보 없이 TAIL/PROFILE이 나와야됨
+            if (isFileMessage(previousLink)) { // 2. previous Link가 파일 메세지 일때 파일 정보 없이 Tail/Profile 이 나와야됨
                 type = addViewType(type, TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
                 type = addViewType(type, TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
                 if (!isSameDay(previousLink, currentLink)) { // 3. 이전 링크가 날짜가 다르면 파일 정보 추가
@@ -406,18 +408,17 @@ public class BodyViewFactory {
         }
 
         return getCommentBottomType(currentLink, nextLink, type);
-
     }
 
     private static int getCommentBottomType(ResMessages.Link currentLink,
                                             ResMessages.Link nextLink,
                                             int type) {
 
-        if (isSameFeedbackComment(currentLink, nextLink)) { // 다음 커멘트 링크가 있다면
-            if (isSameWriter(currentLink.message, nextLink.message)) { // 다음 Link의 작성자가 같다면
+        if (isSameFeedbackComment(currentLink, nextLink)) { // 다음 커멘트 링크가 연속되어야 한다면
+            if (isSameWriter(currentLink.message, nextLink.message)) { // 다음 Link의 작성자가 같다면 Semi Divider
                 type = addViewType(type, TYPE_OPTION_HAS_COMMENT_SEMI_DIVIDER);
                 return type;
-            } else { // 다음 Link의 작성자가 다르다면
+            } else { // 다음 Link의 작성자가 다르다면 Normal DIVIDER -> Default
                 return type;
             }
         }
@@ -480,7 +481,8 @@ public class BodyViewFactory {
 
         // ArrayList로 나오는 경우 아직 DB에 기록되지 않은 경우 - object가 자동갱신되지 않는 문제 해결
         if (shareEntities instanceof ArrayList) {
-            ResMessages.FileMessage file = MessageRepository.getRepository().getFileMessage(currentLink.message.id);
+            ResMessages.FileMessage file =
+                    MessageRepository.getRepository().getFileMessage(currentLink.message.id);
             shareEntities = file != null ? file.shareEntities : shareEntities;
         }
 
