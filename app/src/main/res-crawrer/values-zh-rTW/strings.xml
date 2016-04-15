@@ -595,4 +595,5 @@
 請注意您的團隊成員可以查看和使用這資料來提到、 搜尋或直接聯係您。"</string>
 	<string name="what_is_team_domain">"選擇團隊的網域(URL)供網頁登錄使用。網域名稱須為三個以上的字元並包含字母、數字、及連字符(-)。"</string>
 	<string name="로">"回到帳號首頁"</string>
+	<string name="view_comment_count">显示%s则留言	</string>
 </resources>

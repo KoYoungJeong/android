@@ -603,4 +603,5 @@
 	<string name="what_is_team_domain">"チームドメインはログイン用URLに使われます。
 具体的には、abc.jandi.comの”abcの部分を指し、<b>3文字以上</b>の英数字とハイフンが利用できます。覚えやすいドメイン名にすることをお勧めします"</string>
 	<string name="로">"ホームに戻る"</string>
+	<string name="view_comment_count">コメント%s件を全て表示</string>
 </resources>

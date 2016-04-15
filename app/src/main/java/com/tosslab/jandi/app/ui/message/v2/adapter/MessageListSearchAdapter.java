@@ -277,16 +277,16 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
 
         List<Integer> indexList = new ArrayList<Integer>();
 
-        int count = getItemCount();
-        for (int idx = 0; idx < count; idx++) {
-            int itemViewType = getItemViewType(idx);
-            if (itemViewType == BodyViewHolder.Type.FileComment.ordinal() || itemViewType == BodyViewHolder.Type.PureComment.ordinal()) {
-                ResMessages.Link item = getItem(idx);
-                if (item.message.feedbackId == messageId) {
-                    indexList.add(idx);
-                }
-            }
-        }
+//        int count = getItemCount();
+//        for (int idx = 0; idx < count; idx++) {
+//            int itemViewType = getItemViewType(idx);
+//            if (itemViewType == BodyViewHolder.Type.FileComment.ordinal() || itemViewType == BodyViewHolder.Type.PureComment.ordinal()) {
+//                ResMessages.Link item = getItem(idx);
+//                if (item.message.feedbackId == messageId) {
+//                    indexList.add(idx);
+//                }
+//            }
+//        }
 
         return indexList;
     }

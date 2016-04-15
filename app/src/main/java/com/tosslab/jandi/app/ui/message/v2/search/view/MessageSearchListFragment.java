@@ -66,7 +66,6 @@ import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListSearchAdapter;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPresenterImpl;
@@ -378,24 +377,24 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
             } catch (Exception e) {
             }
 
-            int itemViewType = adapter.getItemViewType(position);
-
-            BodyViewHolder.Type type = BodyViewHolder.Type.values()[itemViewType];
-            switch (type) {
-                case FileWithoutDivider:
-                case File:
-                    AnalyticsUtil.sendEvent(getScreen(entityId), AnalyticsValue.Action.FileView_ByFile);
-                    break;
-                case FileComment:
-                case FileStickerComment:
-                    break;
-                case CollapseStickerComment:
-                case CollapseComment:
-                case PureComment:
-                case PureStickerComment:
-                    AnalyticsUtil.sendEvent(getScreen(entityId), AnalyticsValue.Action.FileView_ByComment);
-                    break;
-            }
+//            int itemViewType = adapter.getItemViewType(position);
+//
+//            BodyViewHolder.Type type = BodyViewHolder.Type.values()[itemViewType];
+//            switch (type) {
+//                case FileWithoutDivider:
+//                case File:
+//                    AnalyticsUtil.sendEvent(getScreen(entityId), AnalyticsValue.Action.FileView_ByFile);
+//                    break;
+//                case FileComment:
+//                case FileStickerComment:
+//                    break;
+//                case CollapseStickerComment:
+//                case CollapseComment:
+//                case PureComment:
+//                case PureStickerComment:
+//                    AnalyticsUtil.sendEvent(getScreen(entityId), AnalyticsValue.Action.FileView_ByComment);
+//                    break;
+//            }
         });
 
         messageAdapter.setOnItemLongClickListener((adapter, position) -> {

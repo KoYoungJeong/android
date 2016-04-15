@@ -228,6 +228,18 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
         tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
     }
 
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        super.setOnItemClickListener(itemClickListener);
+        vgFileMessageContent.setOnClickListener(itemClickListener);
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        super.setOnItemLongClickListener(itemLongClickListener);
+        vgImageMessageContent.setOnLongClickListener(itemLongClickListener);
+    }
+
     public void setHasBottomMargin(boolean hasBottomMargin) {
         this.hasBottomMargin = hasBottomMargin;
     }

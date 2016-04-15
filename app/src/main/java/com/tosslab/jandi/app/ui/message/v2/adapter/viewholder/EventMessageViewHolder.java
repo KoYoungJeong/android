@@ -302,7 +302,7 @@ public class EventMessageViewHolder implements BodyViewHolder {
 
     @Override
     public int getLayoutId() {
-        return R.layout.item_message_event_v2;
+        return R.layout.item_message_event_v3;
     }
 
     @Override

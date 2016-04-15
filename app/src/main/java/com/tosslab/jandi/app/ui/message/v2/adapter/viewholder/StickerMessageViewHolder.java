@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
-import android.text.SpannableStringBuilder;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -13,11 +11,8 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.spannable.SpannableLookUp;
-import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import de.greenrobot.event.EventBus;
@@ -25,7 +20,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Steve SeongUg Jung on 15. 1. 21..
  */
-public class MessageViewHolder extends BaseMessageViewHolder {
+public class StickerMessageViewHolder extends BaseMessageViewHolder {
 
     protected Context context;
 
@@ -34,11 +29,8 @@ public class MessageViewHolder extends BaseMessageViewHolder {
     private TextView tvName;
     private View vDisableCover;
     private View vDisableLineThrough;
-
-    private TextView tvMessage;
-    private LinkPreviewViewModel linkPreviewViewModel;
-
     private boolean isPure = false;
+    private SimpleDraweeView ivSticker;
 
     @Override
     public void initView(View rootView) {
@@ -51,18 +43,15 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
 
-        tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
-
-        linkPreviewViewModel = new LinkPreviewViewModel(context);
-        linkPreviewViewModel.initView(rootView);
+        ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_sticker);
     }
 
     @Override
     protected void initObjects() {
         vgFileMessageContent.setVisibility(View.GONE);
         vgImageMessageContent.setVisibility(View.GONE);
-        vgMessageContent.setVisibility(View.VISIBLE);
-        vgStickerMessageContent.setVisibility(View.GONE);
+        vgMessageContent.setVisibility(View.GONE);
+        vgStickerMessageContent.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -74,58 +63,38 @@ public class MessageViewHolder extends BaseMessageViewHolder {
     }
 
     private void setMessage(ResMessages.Link link, long teamId, long roomId) {
-        EntityManager entityManager = EntityManager.getInstance();
-        ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
-
-        SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
-        messageStringBuilder.append(!TextUtils.isEmpty(textMessage.content.body) ? textMessage.content.body + '\u200e' : "");
-
-        long myId = entityManager.getMe().getId();
-
-        MentionAnalysisInfo mentionInfo = MentionAnalysisInfo.newBuilder(myId, textMessage.mentions)
-                .textSize(tvMessage.getTextSize())
-                .clickable(true)
-                .build();
-
-        SpannableLookUp.text(messageStringBuilder)
-                .hyperLink(false)
-                .markdown(false)
-                .webLink(false)
-                .telLink(false)
-                .emailLink(false)
-                .mention(mentionInfo, false)
-                .lookUp(tvMessage.getContext());
-
-        LinkifyUtil.setOnLinkClick(tvMessage);
-
-        int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
-
         if (!hasOnlyBadge) {
             tvMessageTime.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
         } else {
             tvMessageTime.setVisibility(View.GONE);
         }
+        int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
+                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
+
+        tvMessageBadge.setText(String.valueOf(unreadCount));
 
         if (unreadCount > 0) {
-            tvMessageBadge.setText(String.valueOf(unreadCount));
+            tvMessageBadge.setVisibility(View.VISIBLE);
+        } else {
+            tvMessageBadge.setVisibility(View.GONE);
         }
 
-        tvMessage.setText(messageStringBuilder);
-        linkPreviewViewModel.bindData(link);
+        ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) link.message;
+        ResMessages.StickerContent content = stickerMessage.content;
+
+        StickerManager.getInstance().loadStickerNoOption(ivSticker, content.groupId, content.stickerId);
     }
 
     @Override
     public void setOnItemClickListener(View.OnClickListener itemClickListener) {
         super.setOnItemClickListener(itemClickListener);
-        vgMessageContent.setOnClickListener(itemClickListener);
-
+        ivSticker.setOnClickListener(itemClickListener);
     }
 
     @Override
     public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
         super.setOnItemLongClickListener(itemLongClickListener);
-        vgMessageContent.setOnLongClickListener(itemLongClickListener);
+        ivSticker.setOnLongClickListener(itemLongClickListener);
     }
 
     public void setProfileInfos(ResMessages.Link link) {
@@ -151,8 +120,10 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         }
 
         tvName.setText(fromEntity.name);
-        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));
-        tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
+        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(
+                new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));
+        tvName.setOnClickListener(v -> EventBus.getDefault().post(
+                new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
     }
 
     public static class Builder {
@@ -175,8 +146,8 @@ public class MessageViewHolder extends BaseMessageViewHolder {
             return this;
         }
 
-        public MessageViewHolder build() {
-            MessageViewHolder messageViewHolder = new MessageViewHolder();
+        public StickerMessageViewHolder build() {
+            StickerMessageViewHolder messageViewHolder = new StickerMessageViewHolder();
             messageViewHolder.setHasOnlyBadge(hasOnlyBadge);
             messageViewHolder.setHasBottomMargin(hasBottomMargin);
             messageViewHolder.setHasProfile(hasProfile);

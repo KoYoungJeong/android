@@ -22,7 +22,8 @@ import java.util.Collection;
 
 public class BodyViewFactory {
 
-    // Flag 타입은 int 범위 상 총 31개 까지만 가능함.
+    // Flag 타입은 int 범위 상 총 32개 까지만 가능함.
+    public static final int TYPE_EMPTY = 1;
     public static final int TYPE_VIEW_NORMAL_MESSAGE = 1 << 1;
     public static final int TYPE_VIEW_STICKER_MESSAGE = 1 << 2;
     public static final int TYPE_VIEW_IMAGE_MESSAGE = 1 << 3;
@@ -34,7 +35,6 @@ public class BodyViewFactory {
     public static final int TYPE_VIEW_EVENT_MESSAGE = 1 << 9;
     public static final int TYPE_VIEW_JANDI_BOT_MESSAGE = 1 << 10;
     public static final int TYPE_VIEW_INTEGRATION_BOT_MESSAGE = 1 << 11;
-    public static final int TYPE_EMPTY = 1 << 12;
 
     public static final int TYPE_OPTION_PURE = 1 << 20;
     public static final int TYPE_OPTION_HAS_ONLY_BADGE = 1 << 21;
@@ -60,12 +60,29 @@ public class BodyViewFactory {
     }
 
     public static BodyViewHolder createViewHolder(int viewType) {
-
-        if (hasSubsetViewType(viewType, TYPE_VIEW_NORMAL_MESSAGE)
-                || hasSubsetViewType(viewType, TYPE_VIEW_STICKER_MESSAGE)) {
+        if (hasSubsetViewType(viewType, TYPE_VIEW_NORMAL_MESSAGE)) {
 
             MessageViewHolder.Builder builder =
                     new MessageViewHolder.Builder();
+
+            if (!hasSubsetViewType(viewType, TYPE_OPTION_PURE)) {
+                builder.setHasUserProfile(true);
+            }
+
+            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_ONLY_BADGE)) {
+                builder.setHasOnlyBadge(true);
+            }
+
+            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_BOTTOM_MARGIN)) {
+                builder.setHasBottomMargin(true);
+            }
+
+            return builder.build();
+
+        } else if (hasSubsetViewType(viewType, TYPE_VIEW_STICKER_MESSAGE)) {
+
+            StickerMessageViewHolder.Builder builder =
+                    new StickerMessageViewHolder.Builder();
 
             if (!hasSubsetViewType(viewType, TYPE_OPTION_PURE)) {
                 builder.setHasUserProfile(true);
@@ -231,7 +248,6 @@ public class BodyViewFactory {
     public static int getContentType(ResMessages.Link previousLink,
                                      ResMessages.Link currentLink,
                                      ResMessages.Link nextLink) {
-
         int type = TYPE_EMPTY;
 
         if (isEventMessage(currentLink)) {
@@ -258,18 +274,19 @@ public class BodyViewFactory {
         }
 
         return type;
-
     }
 
     private static int getEventMessageType(ResMessages.Link currentLink,
-                                           ResMessages.Link nextLink, int type) {
+                                           ResMessages.Link nextLink,
+                                           int type) {
         if (isNextLinkSerialEventMessage(currentLink, nextLink)) {
             return type;
         }
         return addViewType(type, TYPE_OPTION_HAS_BOTTOM_MARGIN);
     }
 
-    private static boolean isNextLinkSerialEventMessage(ResMessages.Link currentLink, ResMessages.Link nextLink) {
+    private static boolean isNextLinkSerialEventMessage(ResMessages.Link currentLink,
+                                                        ResMessages.Link nextLink) {
         return nextLink != null
                 && isSameDay(currentLink, nextLink)
                 && isEventMessage(nextLink);
@@ -279,17 +296,17 @@ public class BodyViewFactory {
         return TextUtils.equals(currentLink.status, "event");
     }
 
-    private static int getNormalMessageType(
-            ResMessages.Link currentLink, ResMessages.Link nextLink, int type) {
+    private static int getNormalMessageType(ResMessages.Link currentLink,
+                                            ResMessages.Link nextLink,
+                                            int type) {
+
         if (isDummyMessage(currentLink)) {
             type = TYPE_VIEW_DUMMY_NORMAL_MESSAGE;
         } else {
             if (isJandiBotMessage(currentLink)) {
                 type = TYPE_VIEW_JANDI_BOT_MESSAGE;
-                return addViewType(type, TYPE_OPTION_HAS_BOTTOM_MARGIN);
             } else if (isIntegrationBotMessage(currentLink)) {
                 type = TYPE_VIEW_INTEGRATION_BOT_MESSAGE;
-                return addViewType(type, TYPE_OPTION_HAS_BOTTOM_MARGIN);
             }
         }
 
@@ -306,10 +323,12 @@ public class BodyViewFactory {
         }
 
         return addViewType(type, TYPE_OPTION_HAS_BOTTOM_MARGIN);
+
     }
 
-    private static int getStickerMessageType(
-            ResMessages.Link currentLink, ResMessages.Link nextLink, int type) {
+    private static int getStickerMessageType(ResMessages.Link currentLink,
+                                             ResMessages.Link nextLink,
+                                             int type) {
 
         if (isDummyMessage(currentLink)) {
             type = TYPE_VIEW_DUMMY_STICKER;
@@ -326,17 +345,20 @@ public class BodyViewFactory {
             }
         }
         return addViewType(type, TYPE_OPTION_HAS_BOTTOM_MARGIN);
+
     }
 
 
-    private static boolean hasOnlyBadgeFromNextLink(ResMessages.Link currentLink, ResMessages.Link nextLink) {
+    private static boolean hasOnlyBadgeFromNextLink(ResMessages.Link currentLink,
+                                                    ResMessages.Link nextLink) {
         return DateComparatorUtil.isSameTime(
                 currentLink.message.createTime, nextLink.message.createTime) &&
                 isSameWriter(currentLink.message, nextLink.message)
                 && (isTextMessage(nextLink) || isStickerMessage(nextLink));
     }
 
-    private static boolean isPureFromNextLink(ResMessages.Link currentLink, ResMessages.Link nextLink) {
+    private static boolean isPureFromNextLink(ResMessages.Link currentLink,
+                                              ResMessages.Link nextLink) {
         return isSameWriter(currentLink.message, nextLink.message) &&
                 (isTextMessage(nextLink) || isStickerMessage(nextLink)) &&
                 DateComparatorUtil.isSince5min(
@@ -346,6 +368,7 @@ public class BodyViewFactory {
     private static int getCommentMessageType(ResMessages.Link previousLink,
                                              ResMessages.Link currentLink,
                                              ResMessages.Link nextLink) {
+
         int type;
 
         if (isCommentStickerMessage(currentLink)) {
@@ -387,7 +410,8 @@ public class BodyViewFactory {
     }
 
     private static int getCommentBottomType(ResMessages.Link currentLink,
-                                            ResMessages.Link nextLink, int type) {
+                                            ResMessages.Link nextLink,
+                                            int type) {
 
         if (isSameFeedbackComment(currentLink, nextLink)) { // 다음 커멘트 링크가 있다면
             if (isSameWriter(currentLink.message, nextLink.message)) { // 다음 Link의 작성자가 같다면
@@ -438,10 +462,12 @@ public class BodyViewFactory {
         return addViewType(type, TYPE_OPTION_HAS_BOTTOM_MARGIN);
     }
 
-    private static boolean hasNextLinkComment(ResMessages.Link currentLink, ResMessages.Link nextLink) {
+    private static boolean hasNextLinkComment(ResMessages.Link currentLink,
+                                              ResMessages.Link nextLink) {
         return nextLink != null &&
                 isSameDay(currentLink, nextLink) &&
-                isCommentMessage(nextLink);
+                isCommentMessage(nextLink) &&
+                nextLink.feedbackId == currentLink.messageId;
     }
 
     private static boolean isImageFileMessage(ResMessages.Link currentLink) {

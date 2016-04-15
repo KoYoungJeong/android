@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
+        android:clickable="false"
         android:focusable="true"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/jandi_messages_profile_margin_right"
@@ -22,6 +22,7 @@
             android:layout_width="@dimen/jandi_messages_profile_size"
             android:layout_height="@dimen/jandi_messages_profile_size"
             android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
+            android:clickable="false"
             fresco:backgroundImage="@drawable/comment_profile"
             fresco:roundAsCircle="true" />
 
@@ -31,9 +32,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_message_user_name"
             android:layout_marginRight="59dp"
-
             android:layout_toRightOf="@+id/iv_message_user_profile"
-            android:background="@drawable/bg_round_white_rect_for_message"
+            android:background="@drawable/bg_message_item_selector"
+            android:clickable="true"
             android:paddingBottom="8dp"
             android:paddingLeft="11dp"
             android:paddingRight="11dp"
@@ -131,15 +132,16 @@
             android:src="@drawable/comment_bubble_tail" />
 
         <LinearLayout
-            android:id="@+id/vg_all_comment"
+            android:id="@+id/vg_read_more"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_message_item_selector"
+            android:clickable="true"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="33dp"
-                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -151,6 +153,7 @@
                     android:src="@drawable/comment_more" />
 
                 <TextView
+                    android:id="@+id/tv_comment_read_more"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
@@ -173,7 +176,7 @@
             android:id="@+id/vg_profile_nested_comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_round_white_rect_for_message"
+            android:background="@drawable/bg_message_item_selector"
             android:clickable="true"
             android:focusable="true"
             android:orientation="horizontal"
@@ -250,7 +253,7 @@
             android:id="@+id/vg_profile_nested_comment_sticker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_round_white_rect_for_message"
+            android:background="@drawable/bg_message_item_selector"
             android:clickable="true"
             android:focusable="true"
             android:orientation="horizontal"

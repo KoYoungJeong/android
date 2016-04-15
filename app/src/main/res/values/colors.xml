@@ -281,4 +281,6 @@
 
     <color name="jandi_chat_list_default_background">#ffe1e6eb</color>
 
+    <color name="jandi_press_gray">#fff0f0f0</color>
+
 </resources>

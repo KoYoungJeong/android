@@ -600,4 +600,5 @@ We combined everything you love about messaging apps and cloud storage with powe
 	<string name="what_is_member_profile">"Enter the email address and profile name you want associated with this team. Please note that your teammates may view and use this information to mention, search, or directly contact you."</string>
 	<string name="what_is_team_domain">"Choose your team's domain (URL) for signing in on the web. It's up to you as long as it is <b>3+ characters</b> and includes only letters, numbers, and hyphens (-)."</string>
 	<string name="로">"Go to\nAccount Home"</string>
+	<string name="view_comment_count">Show %s previous comment(s)</string>
 </resources>

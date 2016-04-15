@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.text.style.StyleSpan;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -42,6 +43,7 @@ import de.greenrobot.event.EventBus;
  */
 public class StickerCommentViewHolder extends BaseCommentViewHolder {
 
+    private ViewGroup vgMessageCommonFile;
     private SimpleDraweeView ivMessageCommonFile;
     private TextView tvCommonFileOwner;
     private TextView tvMessageBadge;
@@ -58,10 +60,12 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
     private Context context;
     private boolean hasNestedProfile = false;
 
+
     @Override
     public void initView(View rootView) {
         super.initView(rootView);
         // 파일 정보
+        vgMessageCommonFile = (ViewGroup) rootView.findViewById(R.id.vg_message_common_file);
         ivMessageCommonFile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_common_file);
         tvMessageCommonFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
         tvCommonFileOwner = (TextView) rootView.findViewById(R.id.tv_common_file_type);
@@ -277,6 +281,20 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
                 }
             }
         }
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        super.setOnItemClickListener(itemClickListener);
+        vgMessageCommonFile.setOnClickListener(itemClickListener);
+        vgReadMore.setOnClickListener(itemClickListener);
+        vgProfileNestedCommentSticker.setOnClickListener(itemClickListener);
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        super.setOnItemLongClickListener(itemLongClickListener);
+        vgProfileNestedCommentSticker.setOnLongClickListener(itemLongClickListener);
     }
 
     private void setHasNestedProfile(boolean hasNestedProfile) {

@@ -78,8 +78,7 @@
             <RelativeLayout
                 android:id="@+id/vg_message_content"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/tv_message_content"
@@ -87,7 +86,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="59dp"
                     android:layout_marginTop="5dp"
-                    android:background="@drawable/bg_round_white_rect_for_message"
+                    android:background="@drawable/bg_message_item_selector"
+                    android:clickable="true"
                     android:focusable="false"
                     android:lineSpacingExtra="3dp"
                     android:minHeight="24dp"
@@ -125,8 +125,7 @@
             <RelativeLayout
                 android:id="@+id/vg_file_message_content"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
+                android:layout_height="wrap_content">
 
                 <RelativeLayout
                     android:id="@+id/vg_message_common_file"
@@ -134,7 +133,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="59dp"
                     android:layout_marginTop="5dp"
-                    android:background="@drawable/bg_round_white_rect_for_message"
+                    android:background="@drawable/bg_message_item_selector"
+                    android:clickable="true"
                     android:paddingBottom="8dp"
                     android:paddingLeft="11dp"
                     android:paddingRight="11dp"

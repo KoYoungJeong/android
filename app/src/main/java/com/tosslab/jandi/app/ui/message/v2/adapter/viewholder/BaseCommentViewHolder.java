@@ -3,7 +3,9 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
@@ -20,7 +22,7 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
     protected View vMargin;
     protected ViewGroup vgMessageLastRead;
     protected ImageView ivCommentBubbleTail;
-    protected ViewGroup vgAllComment;
+    protected ViewGroup vgReadMore;
 
     private boolean hasBottomMargin = false;
     private boolean hasSemiDivider = false;
@@ -32,7 +34,7 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
     public void initView(View rootView) {
         vgFileItem =
                 (ViewGroup) rootView.findViewById(R.id.vg_file_item);
-        vgAllComment = (ViewGroup) rootView.findViewById(R.id.vg_all_comment);
+        vgReadMore = (ViewGroup) rootView.findViewById(R.id.vg_read_more);
 
         vgProfileNestedComment =
                 (ViewGroup) rootView.findViewById(R.id.vg_profile_nested_comment);
@@ -67,9 +69,9 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
         }
 
         if (hasViewAllComment) {
-            vgAllComment.setVisibility(View.VISIBLE);
+            vgReadMore.setVisibility(View.VISIBLE);
         } else {
-            vgAllComment.setVisibility(View.GONE);
+            vgReadMore.setVisibility(View.GONE);
         }
 
         if (hasSemiDivider) {
@@ -96,6 +98,13 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
 
     @Override
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
+        if (hasViewAllComment) {
+            int count = link.feedback.commentCount;
+            String countString
+                    = JandiApplication.getContext().getResources().getString(R.string.view_comment_count, count);
+            TextView tvReadMore = (TextView) vgReadMore.findViewById(R.id.tv_comment_read_more);
+            tvReadMore.setText(countString);
+        }
     }
 
     @Override

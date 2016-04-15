@@ -250,6 +250,18 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         }
     }
 
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        super.setOnItemClickListener(itemClickListener);
+        vgImageMessageContent.setOnClickListener(itemClickListener);
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        super.setOnItemLongClickListener(itemLongClickListener);
+        vgImageMessageContent.setOnLongClickListener(itemLongClickListener);
+    }
+
     private int getPixelFromDp(int dp) {
         return (int) (dp * context.getResources().getDisplayMetrics().density);
     }

@@ -57,15 +57,17 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     private ImageView ivProfileNestedNameLineThrough;
     private TextView tvProfileNestedCommentContent;
     private TextView tvMessageCommonFileName;
+    private ViewGroup vgMessageCommonFile;
     private Context context;
 
     private boolean hasNestedProfile = false;
 
+
     @Override
     public void initView(View rootView) {
         super.initView(rootView);
-
         // 파일 정보
+        vgMessageCommonFile = (ViewGroup) rootView.findViewById(R.id.vg_message_common_file);
         ivMessageCommonFile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_common_file);
         tvMessageCommonFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
         tvCommonFileOwner = (TextView) rootView.findViewById(R.id.tv_common_file_type);
@@ -325,6 +327,20 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
     private void setHasNestedProfile(boolean hasNestedProfile) {
         this.hasNestedProfile = hasNestedProfile;
+    }
+
+    @Override
+    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+        super.setOnItemClickListener(itemClickListener);
+        vgMessageCommonFile.setOnClickListener(itemClickListener);
+        vgReadMore.setOnClickListener(itemClickListener);
+        vgProfileNestedComment.setOnClickListener(itemClickListener);
+    }
+
+    @Override
+    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
+        super.setOnItemLongClickListener(itemLongClickListener);
+        vgProfileNestedComment.setOnLongClickListener(itemLongClickListener);
     }
 
     public static class Builder {

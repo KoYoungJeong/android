@@ -156,12 +156,20 @@ public class DummyMessageViewHolder implements BodyViewHolder {
 
     @Override
     public void setOnItemClickListener(View.OnClickListener itemClickListener) {
-
+        if (ivSticker.getVisibility() == View.VISIBLE) {
+            ivSticker.setOnClickListener(itemClickListener);
+        } else {
+            tvMessage.setOnClickListener(itemClickListener);
+        }
     }
 
     @Override
     public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
-
+        if (ivSticker.getVisibility() == View.VISIBLE) {
+            ivSticker.setOnLongClickListener(itemLongClickListener);
+        } else {
+            tvMessage.setOnLongClickListener(itemLongClickListener);
+        }
     }
 
     public static class Builder {

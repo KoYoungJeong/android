@@ -20,24 +20,4 @@ public interface BodyViewHolder {
     void setOnItemClickListener(View.OnClickListener itemClickListener);
 
     void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener);
-
-    enum Type {
-        Message, MessageOnlyHasBadge, MessageHasBottomMargin,
-        PureMessage, PureMessageOnlyHasBadge, PureMessageHasBottomMargin,
-        PureLinkPreviewMessage,
-        Sticker, PureSticker,
-        File, FileWithoutDivider,
-        Image, ImageWithoutDivider,
-        FileComment, FileCommentWioutDivider,
-        PureComment, PureCommentWioutDivider,
-        CollapseComment, CollapseCommentWioutDivider,
-        FileStickerComment, FileStickerCommentWioutDivider,
-        PureStickerComment, PureStickerCommentWioutDivider,
-        CollapseStickerComment, CollapseStickerCommentWioutDivider,
-        Dummy, DummyPure, DummyHasBottomMargin, DummyPureHasBottomMargin,
-        Empty,
-        Event,
-        JandiBot, PureJandiBot, CollapseLinkPreviewJandiBot,
-        IntegrationBot, StickerOnlyHasBadge, StickerHasBottomMargin, PureStickerHasBottomMargin, PureStickerOnlyHasBadge, EventHasBottomMargin, FileHasBottomMargin, ImageHasBottomMargin, JandiBotHasBottomMargin, JandiBotOnlyHasBadge, PureJandiBotBottomMargin, PureJandiBotOnlyHasBadge, IntegrationBotHasBottomMargin, IntegrationBotOnlyHasBadge, PureIntegrationBotHasBottomMargin, PureIntegrationBotOnlyHasBadge, FileWithComment, FileWithStickerComment, FileWithCommentHasBottomMargin, FileWithStickerCommentHasBottomMargin, FileWithCommentHasSemiDivider, FileWithStickerCommentHasSemiDivider, FileWithCommentHasNormalDivider, FileWithStickerCommentHasNormalDivider, ProfileWithComment, ProfileWithCommentHasBottomMargin, ProfileWithCommentHasSemiDivider, ProfileWithCommentHasNormalDivider, ProfileWithStickerComment, ProfileWithStickerCommentHasBottomMargin, ProfileWithStickerCommentHasSemiDivider, ProfileWithStickerCommentHasNormalDivider, PureStickerCommentHasBottomMargin, PureStickerCommentHasSemiDivider, PureStickerCommentHasNormalDivider, PureCommentHasNormalDivider, PureCommentHasSemiDivider, PureCommentHasBottomMargin, ProfileWithCommentWithoutBubbleTail, ProfileWithCommentWithoutBubbleTailHasBottomMargin, ProfileWithCommentWithoutBubbleTailHasSemiDivider, ProfileWithCommentWithoutBubbleTailHasNormalDivider, ProfileWithStickerCommentWithoutBubbleTail, ProfileWithStickerCommentWithoutBubbleTailHasBottomMargin, ProfileWithStickerCommentWithoutBubbleTailHasSemiDivider, ProfileWithStickerCommentWithoutBubbleTailHasNormalDivider, PureIntegrationBot
-    }
 }
