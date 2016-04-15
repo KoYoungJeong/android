@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.message.v2;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
@@ -278,10 +277,11 @@ public class MessageListV2Presenter {
         view.setMarkerInfo(roomId);
 
         long myId = EntityManager.getInstance().getMe().getId();
-        long lastReadLinkId = messageListModel.getLastReadLinkId(roomId, myId);
-        messagePointer.setLastReadLinkId(lastReadLinkId);
 
         messageListModel.updateMarkerInfo(teamId, roomId);
+
+        long lastReadLinkId = messageListModel.getLastReadLinkId(roomId, myId);
+        messagePointer.setLastReadLinkId(lastReadLinkId);
         messageListModel.setRoomId(roomId);
 
         isInitialized = true;
@@ -464,7 +464,7 @@ public class MessageListV2Presenter {
         } else {
             // 첫 요청이라 판단
             // 마커 기준 위아래 값 요청
-            resOldMessage = messageListModel.getBeforeMarkerMessage(linkId);
+            resOldMessage = messageListModel.getBeforeMarkerMessage(messagePointer.getLastReadLinkId());
             if (resOldMessage != null
                     && resOldMessage.records != null
                     && resOldMessage.records.size() > 0) {
@@ -564,8 +564,6 @@ public class MessageListV2Presenter {
         if (newMessages == null || newMessages.isEmpty()) {
             boolean hasMessages = firstCursorLinkId > 0 && hasMessages(firstCursorLinkId, currentItemCount);
             view.showEmptyView(!hasMessages);
-
-            messagePointer.setLastReadLinkId(-1);
 
             if (currentMessageState.isFirstLoadNewMessage()) {
                 currentMessageState.setIsFirstLoadNewMessage(false);
