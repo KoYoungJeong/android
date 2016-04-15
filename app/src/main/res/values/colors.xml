@@ -122,6 +122,9 @@
     <color name="jandi_messages_file_content">#353535</color>
     <color name="jandi_messages_image_background">#FFF0F0F0</color>
     <color name="jandi_messages_image_bg">#FFA4AFBC</color>
+    <color name="jandi_messages_image_view_bg">#FFF0F0F0</color>
+    <color name="jandi_messages_big_size_image_view_bg">#FFC5E1D6</color>
+    <color name="jandi_messages_50_black_file_size">#80000000</color>
 
     <!-- Main panel -->
     <color name="jandi_messages_bottom_bg">#FFFFFF</color>
@@ -236,7 +239,9 @@
     <color name="jandi_carousel_file_size_ext_create_time">#FFCCCCCC</color>
     <color name="jandi_carousel_transparent_45">#45000000</color>
 
-    <color name="jandi_message_indicator">#D2D2D2</color>
+    <color name="jandi_message_indicator">#FF303030</color>
+
+    <color name="jandi_comment_divider">#FFE1E1E1</color>
 
 
     <!-- coach mark -->
@@ -273,5 +278,7 @@
     <color name="jandi_email_selector_item_text_color">#FF404040</color>
 
     <color name="jandi_profile_text">#333333</color>
+
+    <color name="jandi_chat_list_default_background">#ffe1e6eb</color>
 
 </resources>

@@ -716,6 +716,7 @@ public class MessageListV2Fragment extends Fragment implements
         StickyHeadersItemDecoration stickyHeadersItemDecoration = new StickyHeadersBuilder()
                 .setAdapter(messageAdapter)
                 .setRecyclerView(lvMessages)
+                .setSticky(false)
                 .setStickyHeadersAdapter(messageListHeaderAdapter, false)
                 .build();
 

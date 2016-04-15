@@ -124,7 +124,7 @@
                     android:textStyle="bold" />
                 <!-- 실제 댓글 내용 -->
                 <TextView
-                    android:id="@+id/tv_message_commented_content"
+                    android:id="@+id/tv_pure_comment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tv_message_commented_file_name"
@@ -153,7 +153,7 @@
                     android:background="#999999" />
 
                 <TextView
-                    android:id="@+id/tv_message_nested_comment_user_name"
+                    android:id="@+id/tv_profile_nested_comment_user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/divider_messages_nested_comment"
@@ -167,18 +167,18 @@
                     android:id="@+id/tv_message_commented_create_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@id/tv_message_nested_comment_user_name"
+                    android:layout_alignBaseline="@id/tv_profile_nested_comment_user_name"
                     android:layout_marginLeft="6dp"
-                    android:layout_toRightOf="@id/tv_message_nested_comment_user_name"
+                    android:layout_toRightOf="@id/tv_profile_nested_comment_user_name"
                     android:text="AM ??:??"
                     android:textColor="@color/jandi_messages_date"
                     android:textSize="@dimen/jandi_messages_date" />
 
                 <TextView
-                    android:id="@+id/tv_message_nested_comment_content"
+                    android:id="@+id/tv_profile_nested_comment_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/tv_message_nested_comment_user_name"
+                    android:layout_below="@id/tv_profile_nested_comment_user_name"
                     android:layout_marginTop="8dp"
                     android:text="Nested comment"
                     android:textColor="@color/jandi_messages_content"

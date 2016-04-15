@@ -5,50 +5,68 @@
     android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/vg_message_item"
+        android:id="@+id/vg_dummy_message_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
-        android:paddingBottom="10dp"
-        android:paddingLeft="58dp"
-        android:paddingTop="8dp">
+        android:paddingLeft="46dp"
+        android:paddingRight="@dimen/jandi_messages_padding_right"
+        android:paddingTop="3dp">
 
-        <com.tosslab.jandi.app.views.FrescoImageView
-            android:id="@+id/iv_message_sticker"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:focusable="false" />
-
-        <TextView
-            android:id="@+id/tv_message_create_date"
+        <RelativeLayout
+            android:id="@+id/vg_message_content"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/iv_message_sticker"
-            android:layout_marginLeft="6dp"
-            android:layout_toRightOf="@+id/iv_message_sticker"
-            android:text="AM ??:??"
-            android:textColor="@color/jandi_messages_date"
-            android:textSize="@dimen/jandi_messages_date" />
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/tv_entity_listitem_unread"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/tv_message_create_date"
-            android:layout_marginLeft="4dp"
-            android:layout_toRightOf="@+id/tv_message_create_date"
-            android:text="10"
-            android:textColor="@color/jandi_accent_color"
-            android:textSize="@dimen/jandi_text_size_smaller"
-            android:textStyle="bold" />
+            <com.tosslab.jandi.app.views.FrescoImageView
+                android:id="@+id/iv_message_sticker"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_marginRight="63dp"
+                android:layout_marginTop="6dp"
+                android:focusable="false" />
 
+            <LinearLayout
+                android:layout_width="59dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/iv_message_sticker"
+                android:layout_marginLeft="-59dp"
+                android:layout_toRightOf="@id/iv_message_sticker"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_entity_listitem_unread"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:text="1"
+                    android:textColor="#ff00ace9"
+                    android:textSize="9dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_message_create_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:layout_marginTop="-2dp"
+                    android:text="오전 11:30"
+                    android:textColor="#ff999999"
+                    android:textSize="10dp" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
 
     </RelativeLayout>
 
-    <include
-        android:id="@+id/vg_message_last_read"
-        layout="@layout/item_message_last_read_v2" />
+    <View
+        android:id="@+id/v_margin"
+        android:layout_width="match_parent"
+        android:layout_height="25dp" />
+
+    <include layout="@layout/item_message_last_read_v2" />
 
 </LinearLayout>

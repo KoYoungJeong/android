@@ -22,26 +22,41 @@ import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
-public class CollapseIntegrationBotViewHolder implements BodyViewHolder {
+public class PureIntegrationBotViewHolder implements BodyViewHolder {
 
     private View contentView;
     private TextView tvMessage;
     private View vConnectLine;
     private LinearLayout vgConnectInfo;
     private View vLastRead;
+    private TextView tvMessageTime;
+    private TextView tvMessageBadge;
+    private View vBottomMargin;
 
     private LinkPreviewViewModel linkPreviewViewModel;
 
+    private boolean hasBottomMargin = false;
+    private boolean hasOnlyBadge = false;
+
+
     @Override
     public void initView(View rootView) {
-        contentView = rootView.findViewById(R.id.vg_message_item);
+        contentView = rootView.findViewById(R.id.vg_dummy_message_item);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
         vConnectLine = rootView.findViewById(R.id.v_message_sub_menu_connect_color);
         vgConnectInfo = ((LinearLayout) rootView.findViewById(R.id.vg_message_sub_menu));
+        tvMessageTime = (TextView) rootView.findViewById(R.id.tv_message_time);
+        tvMessageBadge = (TextView) rootView.findViewById(R.id.tv_message_badge);
         vLastRead = rootView.findViewById(R.id.vg_message_last_read);
 
         linkPreviewViewModel = new LinkPreviewViewModel(rootView.getContext());
         linkPreviewViewModel.initView(rootView);
+        vBottomMargin = rootView.findViewById(R.id.v_margin);
+        if (hasBottomMargin) {
+            vBottomMargin.setVisibility(View.VISIBLE);
+        } else {
+            vBottomMargin.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -129,6 +144,37 @@ public class CollapseIntegrationBotViewHolder implements BodyViewHolder {
     public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
         if (contentView != null && itemLongClickListener != null) {
             contentView.setOnLongClickListener(itemLongClickListener);
+        }
+    }
+
+    public void setHasBottomMargin(boolean hasBottomMargin) {
+        this.hasBottomMargin = hasBottomMargin;
+    }
+
+    public void setHasOnlyBadge(boolean hasOnlyBadge) {
+        this.hasOnlyBadge = hasOnlyBadge;
+    }
+
+
+    public static class Builder {
+        private boolean hasBottomMargin = false;
+        private boolean hasOnlyBadge = false;
+
+        public Builder setHasBottomMargin(boolean hasBottomMargin) {
+            this.hasBottomMargin = hasBottomMargin;
+            return this;
+        }
+
+        public Builder setHasOnlyBadge(boolean hasOnlyBadge) {
+            this.hasOnlyBadge = hasOnlyBadge;
+            return this;
+        }
+
+        public PureIntegrationBotViewHolder build() {
+            PureIntegrationBotViewHolder collapseIntegrationBotViewHolder = new PureIntegrationBotViewHolder();
+            collapseIntegrationBotViewHolder.setHasOnlyBadge(hasOnlyBadge);
+            collapseIntegrationBotViewHolder.setHasBottomMargin(hasBottomMargin);
+            return collapseIntegrationBotViewHolder;
         }
     }
 }

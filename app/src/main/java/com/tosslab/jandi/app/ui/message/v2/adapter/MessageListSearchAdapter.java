@@ -18,7 +18,6 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.Divider;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
@@ -166,10 +165,6 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
         BodyViewHolder bodyViewHolder = viewHolder.getViewHolder();
         bodyViewHolder.bindData(item, teamId, roomId, entityId);
 
-        if (bodyViewHolder instanceof Divider) {
-            ((Divider) bodyViewHolder).setUpDividerVisible();
-        }
-
         if (item.id == lastMarker) {
             if (markerAnimState == MessageListSearchAdapter.AnimState.Idle) {
                 final View view = viewHolder.itemView;
@@ -242,7 +237,7 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
             nextLink = getItem(position + 1);
         }
 
-        return BodyViewFactory.getContentType(previousLink, currentLink, nextLink).ordinal();
+        return BodyViewFactory.getContentType(previousLink, currentLink, nextLink);
     }
 
     public ResMessages.Link getItem(int position) {
