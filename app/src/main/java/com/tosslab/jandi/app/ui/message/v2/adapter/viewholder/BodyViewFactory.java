@@ -58,19 +58,33 @@ public class BodyViewFactory {
         // Setting Option
         if (!TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_PURE)) {
             builder.setHasUserProfile(true);
-        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_ONLY_BADGE)) {
+        }
+
+        if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_ONLY_BADGE)) {
             builder.setHasOnlyBadge(true);
-        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN)) {
+        }
+
+        if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN)) {
             builder.setHasBottomMargin(true);
-        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO)) {
+        }
+
+        if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO)) {
             builder.setHasFileInfoView(true);
-        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL)) {
+        }
+
+        if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL)) {
             builder.setHasCommentBubbleTail(true);
-        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL)) {
+        }
+
+        if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL)) {
             builder.setHasViewAllComment(true);
-        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE)) {
+        }
+
+        if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE)) {
             builder.setHasNestedProfile(true);
-        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_SEMI_DIVIDER)) {
+        }
+
+        if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_SEMI_DIVIDER)) {
             builder.setHasSemiDivider(true);
         }
 
