@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.ProfileSpannable;
@@ -319,13 +320,13 @@ public class EventMessageViewHolder implements BodyViewHolder {
         this.hasBottomMargin = hasBottomMargin;
     }
 
-    public static class Builder {
-        private boolean hasBottomMargin = false;
-
-        public Builder setHasBottomMargin(boolean hasBottomMargin) {
-            this.hasBottomMargin = hasBottomMargin;
-            return this;
-        }
+    public static class Builder extends BaseViewHolderBuilder {
+//        private boolean hasBottomMargin = false;
+//
+//        public Builder setHasBottomMargin(boolean hasBottomMargin) {
+//            this.hasBottomMargin = hasBottomMargin;
+//            return this;
+//        }
 
         public EventMessageViewHolder build() {
             EventMessageViewHolder eventViewHolder = new EventMessageViewHolder();

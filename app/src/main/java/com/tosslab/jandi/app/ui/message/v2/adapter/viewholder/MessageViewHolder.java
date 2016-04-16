@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
@@ -155,25 +156,25 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
     }
 
-    public static class Builder {
-        private boolean hasBottomMargin = false;
-        private boolean hasOnlyBadge = false;
-        private boolean hasProfile = false;
-
-        public Builder setHasBottomMargin(boolean hasBottomMargin) {
-            this.hasBottomMargin = hasBottomMargin;
-            return this;
-        }
-
-        public Builder setHasOnlyBadge(boolean hasOnlyBadge) {
-            this.hasOnlyBadge = hasOnlyBadge;
-            return this;
-        }
-
-        public Builder setHasUserProfile(boolean hasProfile) {
-            this.hasProfile = hasProfile;
-            return this;
-        }
+    public static class Builder extends BaseViewHolderBuilder {
+//        private boolean hasBottomMargin = false;
+//        private boolean hasOnlyBadge = false;
+//        private boolean hasProfile = false;
+//
+//        public Builder setHasBottomMargin(boolean hasBottomMargin) {
+//            this.hasBottomMargin = hasBottomMargin;
+//            return this;
+//        }
+//
+//        public Builder setHasOnlyBadge(boolean hasOnlyBadge) {
+//            this.hasOnlyBadge = hasOnlyBadge;
+//            return this;
+//        }
+//
+//        public Builder setHasUserProfile(boolean hasProfile) {
+//            this.hasProfile = hasProfile;
+//            return this;
+//        }
 
         public MessageViewHolder build() {
             MessageViewHolder messageViewHolder = new MessageViewHolder();

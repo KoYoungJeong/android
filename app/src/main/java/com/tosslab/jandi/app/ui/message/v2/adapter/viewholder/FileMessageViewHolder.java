@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -244,13 +245,13 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
         this.hasBottomMargin = hasBottomMargin;
     }
 
-    public static class Builder {
-        private boolean hasBottomMargin = false;
-
-        public Builder setHasBottomMargin(boolean hasBottomMargin) {
-            this.hasBottomMargin = hasBottomMargin;
-            return this;
-        }
+    public static class Builder extends BaseViewHolderBuilder {
+//        private boolean hasBottomMargin = false;
+//
+//        public Builder setHasBottomMargin(boolean hasBottomMargin) {
+//            this.hasBottomMargin = hasBottomMargin;
+//            return this;
+//        }
 
         public FileMessageViewHolder build() {
             FileMessageViewHolder fileViewHolder = new FileMessageViewHolder();

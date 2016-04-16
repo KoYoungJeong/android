@@ -143,15 +143,15 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
         this.hasCommentBubbleTail = hasCommentBubbleTail;
     }
 
-    public void setHasViewAllComment(boolean hasViewAllComment) {
+    protected void setHasViewAllComment(boolean hasViewAllComment) {
         this.hasViewAllComment = hasViewAllComment;
     }
 
-    public void setHasFileInfoView(boolean hasFileInfoView) {
+    protected void setHasFileInfoView(boolean hasFileInfoView) {
         this.hasFileInfoView = hasFileInfoView;
     }
 
-    public boolean hasFileInfoView() {
+    protected boolean hasFileInfoView() {
         return hasFileInfoView;
     }
 }

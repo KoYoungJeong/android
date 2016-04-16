@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -343,43 +344,43 @@ public class CommentViewHolder extends BaseCommentViewHolder {
         vgProfileNestedComment.setOnLongClickListener(itemLongClickListener);
     }
 
-    public static class Builder {
-        private boolean hasBottomMargin = false;
-        private boolean hasSemiDivider = false;
-        private boolean hasFileInfoView = false;
-        private boolean hasCommentBubbleTail = false;
-        private boolean hasNestedProfile = false;
-        private boolean hasViewAllComment = false;
-
-        public Builder setHasBottomMargin(boolean hasBottomMargin) {
-            this.hasBottomMargin = hasBottomMargin;
-            return this;
-        }
-
-        public Builder setHasSemiDivider(boolean hasSemiDivider) {
-            this.hasSemiDivider = hasSemiDivider;
-            return this;
-        }
-
-        public Builder setHasFileInfoView(boolean hasFileInfoView) {
-            this.hasFileInfoView = hasFileInfoView;
-            return this;
-        }
-
-        public Builder setHasCommentBubbleTail(boolean hasCommentBubbleTail) {
-            this.hasCommentBubbleTail = hasCommentBubbleTail;
-            return this;
-        }
-
-        public Builder setHasNestedProfile(boolean hasNestedProfile) {
-            this.hasNestedProfile = hasNestedProfile;
-            return this;
-        }
-
-        public Builder setHasViewAllComment(boolean hasViewAllComment) {
-            this.hasViewAllComment = hasViewAllComment;
-            return this;
-        }
+    public static class Builder extends BaseViewHolderBuilder {
+//        private boolean hasBottomMargin = false;
+//        private boolean hasSemiDivider = false;
+//        private boolean hasFileInfoView = false;
+//        private boolean hasCommentBubbleTail = false;
+//        private boolean hasNestedProfile = false;
+//        private boolean hasViewAllComment = false;
+//
+//        public Builder setHasBottomMargin(boolean hasBottomMargin) {
+//            this.hasBottomMargin = hasBottomMargin;
+//            return this;
+//        }
+//
+//        public Builder setHasSemiDivider(boolean hasSemiDivider) {
+//            this.hasSemiDivider = hasSemiDivider;
+//            return this;
+//        }
+//
+//        public Builder setHasFileInfoView(boolean hasFileInfoView) {
+//            this.hasFileInfoView = hasFileInfoView;
+//            return this;
+//        }
+//
+//        public Builder setHasCommentBubbleTail(boolean hasCommentBubbleTail) {
+//            this.hasCommentBubbleTail = hasCommentBubbleTail;
+//            return this;
+//        }
+//
+//        public Builder setHasNestedProfile(boolean hasNestedProfile) {
+//            this.hasNestedProfile = hasNestedProfile;
+//            return this;
+//        }
+//
+//        public Builder setHasViewAllComment(boolean hasViewAllComment) {
+//            this.hasViewAllComment = hasViewAllComment;
+//            return this;
+//        }
 
         public CommentViewHolder build() {
             CommentViewHolder viewHolder = new CommentViewHolder();

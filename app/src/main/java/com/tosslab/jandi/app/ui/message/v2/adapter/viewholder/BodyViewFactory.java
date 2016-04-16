@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.IntegrationBotViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi.JandiBotViewHolder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
@@ -20,255 +21,75 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 
-
 /*
  소스 추적은 getContentType 부터 따라가면 쉽게 파악할 수 있음.
  */
 public class BodyViewFactory {
 
-    // Flag 타입은 int 범위 상 총 32개 까지만 가능함.
-    public static final int TYPE_EMPTY = 1;
-    public static final int TYPE_VIEW_NORMAL_MESSAGE = 1 << 1;
-    public static final int TYPE_VIEW_STICKER_MESSAGE = 1 << 2;
-    public static final int TYPE_VIEW_IMAGE_MESSAGE = 1 << 3;
-    public static final int TYPE_VIEW_FILE_MESSAGE = 1 << 4;
-    public static final int TYPE_VIEW_STICKER_COMMENT = 1 << 5;
-    public static final int TYPE_VIEW_MESSAGE_COMMENT = 1 << 6;
-    public static final int TYPE_VIEW_DUMMY_NORMAL_MESSAGE = 1 << 7;
-    public static final int TYPE_VIEW_DUMMY_STICKER = 1 << 8;
-    public static final int TYPE_VIEW_EVENT_MESSAGE = 1 << 9;
-    public static final int TYPE_VIEW_JANDI_BOT_MESSAGE = 1 << 10;
-    public static final int TYPE_VIEW_INTEGRATION_BOT_MESSAGE = 1 << 11;
-
-    public static final int TYPE_OPTION_PURE = 1 << 20;
-    public static final int TYPE_OPTION_HAS_ONLY_BADGE = 1 << 21;
-    public static final int TYPE_OPTION_HAS_BOTTOM_MARGIN = 1 << 22;
-    public static final int TYPE_OPTION_HAS_COMMENT_FILE_INFO = 1 << 23;
-    public static final int TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL = 1 << 24;
-    public static final int TYPE_OPTION_HAS_COMMENT_VIEW_ALL = 1 << 25;
-    public static final int TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE = 1 << 26;
-    public static final int TYPE_OPTION_HAS_COMMENT_SEMI_DIVIDER = 1 << 27;
-
-    // 인자 viewType에 flagType의 요소가 포함되어 있는지 검사
-    // ex) hasSubsetViewType(viewType, TYPE_VIEW_EVENT_MESSAGE) -> event 타입의 메세지
-    private static boolean hasSubsetViewType(int viewType, int flagType) {
-        if ((viewType & flagType) > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    // viewType에 flagType을 추가
-    private static int addViewType(int viewType, int flagType) {
-        return viewType | flagType;
-    }
-
     public static BodyViewHolder createViewHolder(int viewType) {
-        if (hasSubsetViewType(viewType, TYPE_VIEW_NORMAL_MESSAGE)) {
 
-            MessageViewHolder.Builder builder =
-                    new MessageViewHolder.Builder();
+        BaseViewHolderBuilder builder = new EmptyViewHolder.Builder();
 
-            if (!hasSubsetViewType(viewType, TYPE_OPTION_PURE)) {
-                builder.setHasUserProfile(true);
-            }
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_ONLY_BADGE)) {
-                builder.setHasOnlyBadge(true);
-            }
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_BOTTOM_MARGIN)) {
-                builder.setHasBottomMargin(true);
-            }
-
-            return builder.build();
-
-        } else if (hasSubsetViewType(viewType, TYPE_VIEW_STICKER_MESSAGE)) {
-
-            StickerMessageViewHolder.Builder builder =
-                    new StickerMessageViewHolder.Builder();
-
-            if (!hasSubsetViewType(viewType, TYPE_OPTION_PURE)) {
-                builder.setHasUserProfile(true);
-            }
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_ONLY_BADGE)) {
-                builder.setHasOnlyBadge(true);
-            }
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_BOTTOM_MARGIN)) {
-                builder.setHasBottomMargin(true);
-            }
-
-            return builder.build();
-
-        } else if (hasSubsetViewType(viewType, TYPE_VIEW_IMAGE_MESSAGE)) {
-
-            ImageMessageViewHolder.Builder builder =
-                    new ImageMessageViewHolder.Builder();
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_BOTTOM_MARGIN)) {
-                builder.setHasBottomMargin(true);
-            }
-
-            return builder.build();
-
-        } else if (hasSubsetViewType(viewType, TYPE_VIEW_FILE_MESSAGE)) {
-
-            FileMessageViewHolder.Builder builder =
-                    new FileMessageViewHolder.Builder();
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_BOTTOM_MARGIN)) {
-                builder.setHasBottomMargin(true);
-            }
-
-            return builder.build();
-
-        } else if (hasSubsetViewType(viewType, TYPE_VIEW_STICKER_COMMENT)) {
-
-            StickerCommentViewHolder.Builder builder =
-                    new StickerCommentViewHolder.Builder();
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_COMMENT_FILE_INFO)) {
-                builder.setHasFileInfoView(true);
-            }
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL)) {
-                builder.setHasCommentBubbleTail(true);
-            }
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_COMMENT_VIEW_ALL)) {
-                builder.setHasViewAllComment(true);
-            }
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE)) {
-                builder.setHasNestedProfile(true);
-            }
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_COMMENT_SEMI_DIVIDER)) {
-                builder.setHasSemiDivider(true);
-            }
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_BOTTOM_MARGIN)) {
-                builder.setHasBottomMargin(true);
-            }
-
-            return builder.build();
-
-        } else if (hasSubsetViewType(viewType, TYPE_VIEW_MESSAGE_COMMENT)) {
-
-            CommentViewHolder.Builder builder =
-                    new CommentViewHolder.Builder();
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_COMMENT_FILE_INFO)) {
-                builder.setHasFileInfoView(true);
-            }
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL)) {
-                builder.setHasCommentBubbleTail(true);
-            }
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_COMMENT_VIEW_ALL)) {
-                builder.setHasViewAllComment(true);
-            }
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE)) {
-                builder.setHasNestedProfile(true);
-            }
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_COMMENT_SEMI_DIVIDER)) {
-                builder.setHasSemiDivider(true);
-            }
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_BOTTOM_MARGIN)) {
-                builder.setHasBottomMargin(true);
-            }
-
-            return builder.build();
-
-        } else if (hasSubsetViewType(viewType, TYPE_VIEW_DUMMY_NORMAL_MESSAGE)
-                || hasSubsetViewType(viewType, TYPE_VIEW_DUMMY_STICKER)) {
-
-            DummyMessageViewHolder.Builder builder =
-                    new DummyMessageViewHolder.Builder();
-
-            if (!hasSubsetViewType(viewType, TYPE_OPTION_PURE)) {
-                builder.setHasProfile(true);
-            }
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_BOTTOM_MARGIN)) {
-                builder.setHasBottomMargin(true);
-            }
-
-            return builder.build();
-
-        } else if (hasSubsetViewType(viewType, TYPE_VIEW_EVENT_MESSAGE)) {
-
-            EventMessageViewHolder.Builder builder =
-                    new EventMessageViewHolder.Builder();
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_BOTTOM_MARGIN)) {
-                builder.setHasBottomMargin(true);
-            }
-
-            return builder.build();
-
-        } else if (hasSubsetViewType(viewType, TYPE_VIEW_JANDI_BOT_MESSAGE)) {
-
-            JandiBotViewHolder.Builder builder =
-                    new JandiBotViewHolder.Builder();
-
-
-            if (!hasSubsetViewType(viewType, TYPE_OPTION_PURE)) {
-                builder.setHasBotProfile(true);
-            }
-
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_BOTTOM_MARGIN)) {
-                builder.setHasBottomMargin(true);
-            }
-
-            return builder.build();
-
-
-        } else if (hasSubsetViewType(viewType, TYPE_VIEW_INTEGRATION_BOT_MESSAGE)) {
-
-            IntegrationBotViewHolder.Builder builder =
-                    new IntegrationBotViewHolder.Builder();
-
-            if (!hasSubsetViewType(viewType, TYPE_OPTION_PURE)) {
-                builder.setHasBotProfile(true);
-            }
-            if (hasSubsetViewType(viewType, TYPE_OPTION_HAS_BOTTOM_MARGIN)) {
-                builder.setHasBottomMargin(true);
-            }
-            return builder.build();
-
+        // Setting View TYPE
+        if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_NORMAL_MESSAGE)) {
+            builder = new MessageViewHolder.Builder();
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_STICKER_MESSAGE)) {
+            builder = new StickerMessageViewHolder.Builder();
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_IMAGE_MESSAGE)) {
+            builder = new ImageMessageViewHolder.Builder();
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_FILE_MESSAGE)) {
+            builder = new FileMessageViewHolder.Builder();
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_STICKER_COMMENT)) {
+            builder = new StickerMessageViewHolder.Builder();
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_MESSAGE_COMMENT)) {
+            builder = new FileMessageViewHolder.Builder();
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_DUMMY_NORMAL_MESSAGE)) {
+            builder = new DummyMessageViewHolder.Builder();
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_DUMMY_STICKER)) {
+            builder = new DummyMessageViewHolder.Builder();
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_EVENT_MESSAGE)) {
+            builder = new EventMessageViewHolder.Builder();
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_JANDI_BOT_MESSAGE)) {
+            builder = new JandiBotViewHolder.Builder();
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_INTEGRATION_BOT_MESSAGE)) {
+            builder = new IntegrationBotViewHolder.Builder();
         }
 
-        return new EmptyViewHolder();
+        // Setting Option
+        if (!TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_PURE)) {
+            builder.setHasUserProfile(true);
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_ONLY_BADGE)) {
+            builder.setHasOnlyBadge(true);
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN)) {
+            builder.setHasBottomMargin(true);
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO)) {
+            builder.setHasFileInfoView(true);
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL)) {
+            builder.setHasCommentBubbleTail(true);
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL)) {
+            builder.setHasViewAllComment(true);
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE)) {
+            builder.setHasNestedProfile(true);
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_SEMI_DIVIDER)) {
+            builder.setHasSemiDivider(true);
+        }
+
+        return builder.build();
 
     }
 
+    // first step
     public static int getContentType(ResMessages.Link previousLink,
                                      ResMessages.Link currentLink,
                                      ResMessages.Link nextLink) {
-        int type = TYPE_EMPTY;
 
+        int type = TypeUtil.TYPE_EMPTY;
         if (isEventMessage(currentLink)) {
-            type = TYPE_VIEW_EVENT_MESSAGE;
-            type = getEventMessageType(currentLink, nextLink, type);
+            type = getEventMessageType(currentLink, nextLink);
         } else if (isTextMessage(currentLink)) {
-            type = TYPE_VIEW_NORMAL_MESSAGE;
-            type = getNormalMessageType(currentLink, nextLink, type);
-            if (isPureMessage(previousLink, currentLink)) {
-                type = addViewType(type, TYPE_OPTION_PURE);
-            }
+            type = getNormalMessageType(previousLink, currentLink, nextLink);
         } else if (isStickerMessage(currentLink)) {
-            type = TYPE_VIEW_STICKER_MESSAGE;
-            type = getStickerMessageType(currentLink, nextLink, type);
-            if (isPureMessage(previousLink, currentLink)) {
-                type = addViewType(type, TYPE_OPTION_PURE);
-            }
+            type = getStickerMessageType(previousLink, currentLink, nextLink);
         } else if (isFileMessage(currentLink)) {
             type = getFileMessageType(currentLink, nextLink);
         } else if (isCommentMessage(currentLink)) {
@@ -276,17 +97,16 @@ public class BodyViewFactory {
         } else if (isCommentStickerMessage(currentLink)) {
             type = getCommentMessageType(previousLink, currentLink, nextLink);
         }
-
         return type;
     }
 
     private static int getEventMessageType(ResMessages.Link currentLink,
-                                           ResMessages.Link nextLink,
-                                           int type) {
+                                           ResMessages.Link nextLink) {
+        int type = TypeUtil.TYPE_VIEW_EVENT_MESSAGE;
         if (isNextLinkSerialEventMessage(currentLink, nextLink)) {
             return type;
         }
-        return addViewType(type, TYPE_OPTION_HAS_BOTTOM_MARGIN);
+        return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
     }
 
     private static boolean isNextLinkSerialEventMessage(ResMessages.Link currentLink,
@@ -300,45 +120,25 @@ public class BodyViewFactory {
         return TextUtils.equals(currentLink.status, "event");
     }
 
-    private static int getNormalMessageType(ResMessages.Link currentLink,
-                                            ResMessages.Link nextLink,
-                                            int type) {
+    private static int getNormalMessageType(ResMessages.Link previousLink,
+                                            ResMessages.Link currentLink,
+                                            ResMessages.Link nextLink) {
+
+        int type = TypeUtil.TYPE_VIEW_NORMAL_MESSAGE;
 
         if (isDummyMessage(currentLink)) {
-            type = TYPE_VIEW_DUMMY_NORMAL_MESSAGE;
+            type = TypeUtil.TYPE_VIEW_DUMMY_NORMAL_MESSAGE;
         } else {
             if (isJandiBotMessage(currentLink)) {
-                type = TYPE_VIEW_JANDI_BOT_MESSAGE;
+                type = TypeUtil.TYPE_VIEW_JANDI_BOT_MESSAGE;
             } else if (isIntegrationBotMessage(currentLink)) {
-                type = TYPE_VIEW_INTEGRATION_BOT_MESSAGE;
+                type = TypeUtil.TYPE_VIEW_INTEGRATION_BOT_MESSAGE;
             }
-        }
-
-        if (nextLink != null && nextLink.message == null) {
-            if (hasOnlyBadgeFromNextLink(currentLink, nextLink)) {
-                return addViewType(type, TYPE_OPTION_HAS_ONLY_BADGE);
-            } else {
-                if (isPureFromNextLink(currentLink, nextLink)) {
-                    return type;
-                }
-            }
-        }
-
-        return addViewType(type, TYPE_OPTION_HAS_BOTTOM_MARGIN);
-
-    }
-
-    private static int getStickerMessageType(ResMessages.Link currentLink,
-                                             ResMessages.Link nextLink,
-                                             int type) {
-
-        if (isDummyMessage(currentLink)) {
-            type = TYPE_VIEW_DUMMY_STICKER;
         }
 
         if (nextLink != null && nextLink.message != null) {
             if (hasOnlyBadgeFromNextLink(currentLink, nextLink)) {
-                return addViewType(type, TYPE_OPTION_HAS_ONLY_BADGE);
+                return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_ONLY_BADGE);
             } else {
                 if (isPureFromNextLink(currentLink, nextLink)) {
                     return type;
@@ -346,10 +146,41 @@ public class BodyViewFactory {
             }
         }
 
-        return addViewType(type, TYPE_OPTION_HAS_BOTTOM_MARGIN);
+        if (isPureMessage(previousLink, currentLink)) {
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
+        }
+
+        return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
 
     }
 
+    private static int getStickerMessageType(ResMessages.Link previousLink,
+                                             ResMessages.Link currentLink,
+                                             ResMessages.Link nextLink) {
+
+        int type = TypeUtil.TYPE_VIEW_STICKER_MESSAGE;
+
+        if (isDummyMessage(currentLink)) {
+            type = TypeUtil.TYPE_VIEW_DUMMY_STICKER;
+        }
+
+        if (nextLink != null && nextLink.message != null) {
+            if (hasOnlyBadgeFromNextLink(currentLink, nextLink)) {
+                return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_ONLY_BADGE);
+            } else {
+                if (isPureFromNextLink(currentLink, nextLink)) {
+                    return type;
+                }
+            }
+        }
+
+        if (isPureMessage(previousLink, currentLink)) {
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
+        }
+
+        return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
+
+    }
 
     private static boolean hasOnlyBadgeFromNextLink(ResMessages.Link currentLink,
                                                     ResMessages.Link nextLink) {
@@ -370,41 +201,47 @@ public class BodyViewFactory {
     private static int getCommentMessageType(ResMessages.Link previousLink,
                                              ResMessages.Link currentLink,
                                              ResMessages.Link nextLink) {
-
         int type;
 
         if (isCommentStickerMessage(currentLink)) {
-            type = TYPE_VIEW_STICKER_COMMENT;
+            type = TypeUtil.TYPE_VIEW_STICKER_COMMENT;
         } else {
-            type = TYPE_VIEW_MESSAGE_COMMENT;
+            type = TypeUtil.TYPE_VIEW_MESSAGE_COMMENT;
         }
 
-        if (isPreviousLinkFeedbackOrFile(previousLink, currentLink.feedbackId)) { // 1. previous Link가 같은 파일의 커맨트 이거나 파일일 때
-            if (isFileMessage(previousLink)) { // 2. previous Link가 파일 메세지 일때 파일 정보 없이 Tail/Profile 이 나와야됨
-                type = addViewType(type, TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
-                type = addViewType(type, TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
-                if (!isSameDay(previousLink, currentLink)) { // 3. 이전 링크가 날짜가 다르면 파일 정보 추가
-                    type = addViewType(type, TYPE_OPTION_HAS_COMMENT_FILE_INFO);
-                    type = addViewType(type, TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
+        if (isPreviousLinkFeedbackOrFile(previousLink, currentLink.feedbackId)) {
+        // 1. previous Link가 같은 파일의 커맨트 이거나 파일일 때
+            if (isFileMessage(previousLink)) {
+            // 2. previous Link가 파일 메세지 일때 파일 정보 없이 Tail/Profile 이 나와야됨
+                type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
+                type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
+                if (!isSameDay(previousLink, currentLink)) {
+                // 3. 이전 링크가 날짜가 다르면 파일 정보 추가
+                    type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
+                    type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
                 }
-            } else { // 2. previous Link가 Comment 메세지 일때
-                if (isSameWriter(previousLink.message, currentLink.message)) { // 3. 이전 comment 작성자가 같은 사람 일때
-                    if (!isSameDay(previousLink, currentLink)) { // 4. 이전 링크와 같은 날이라면 프로필이 없는 Pure
-                        // 4. 날짜가 다르다면 파일 정보를 추가해야 됨
-                        type = addViewType(type, TYPE_OPTION_HAS_COMMENT_FILE_INFO);
-                        type = addViewType(type, TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
-                        type = addViewType(type, TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
-                        type = addViewType(type, TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
+            } else {
+            // 2. previous Link가 Comment 메세지 일때
+                if (isSameWriter(previousLink.message, currentLink.message)) {
+                // 3. 이전 comment 작성자가 같은 사람 일때
+                    if (!isSameDay(previousLink, currentLink)) {
+                    // 4. 날짜가 다르다면 파일 정보를 추가해야 됨
+                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
+                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
+                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
+                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
                     }
-                } else { // 3. 이전 comment 작성자가 다른 사람 일때 프로필이 들어가야 함
-                    type = addViewType(type, TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
+                } else {
+                // 3. 이전 comment 작성자가 다른 사람 일때 프로필이 들어가야 함
+                    type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
                 }
             }
-        } else { // 1. previous Link가 같은 파일의 커맨트 이거나 파일이 아닐 때
-            type = addViewType(type, TYPE_OPTION_HAS_COMMENT_FILE_INFO);
-            type = addViewType(type, TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
-            type = addViewType(type, TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
-            type = addViewType(type, TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
+        } else {
+        // 1. previous Link가 같은 파일의 커맨트 이거나 파일이 아닐 때
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
         }
 
         return getCommentBottomType(currentLink, nextLink, type);
@@ -414,18 +251,20 @@ public class BodyViewFactory {
                                             ResMessages.Link nextLink,
                                             int type) {
 
-        if (isSameFeedbackComment(currentLink, nextLink)) { // 다음 커멘트 링크가 연속되어야 한다면
-            if (isSameWriter(currentLink.message, nextLink.message)) { // 다음 Link의 작성자가 같다면 Semi Divider
-                type = addViewType(type, TYPE_OPTION_HAS_COMMENT_SEMI_DIVIDER);
+        if (isSameFeedbackComment(currentLink, nextLink)) {
+        // 다음 커멘트 링크가 연속되어야 한다면
+            if (isSameWriter(currentLink.message, nextLink.message)) {
+            // 다음 Link의 작성자가 같다면 Semi Divider
+                type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_SEMI_DIVIDER);
                 return type;
-            } else { // 다음 Link의 작성자가 다르다면 Normal DIVIDER -> Default
+            } else {
+            // 다음 Link의 작성자가 다르다면 Normal DIVIDER -> Default
                 return type;
             }
         }
 
         // 나머지
-        return addViewType(type, TYPE_OPTION_HAS_BOTTOM_MARGIN);
-
+        return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
     }
 
     private static boolean isSameFeedbackComment(ResMessages.Link currentLink, ResMessages.Link nextLink) {
@@ -451,16 +290,16 @@ public class BodyViewFactory {
         int type;
 
         if (isImage) {
-            type = TYPE_VIEW_IMAGE_MESSAGE;
+            type = TypeUtil.TYPE_VIEW_IMAGE_MESSAGE;
         } else {
-            type = TYPE_VIEW_FILE_MESSAGE;
+            type = TypeUtil.TYPE_VIEW_FILE_MESSAGE;
         }
 
         if (hasNextLinkComment(currentLink, nextLink)) {
             return type;
         }
 
-        return addViewType(type, TYPE_OPTION_HAS_BOTTOM_MARGIN);
+        return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
     }
 
     private static boolean hasNextLinkComment(ResMessages.Link currentLink,
@@ -619,6 +458,12 @@ public class BodyViewFactory {
         public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
         }
 
+        public static class Builder extends BaseViewHolderBuilder {
+            @Override
+            public BodyViewHolder build() {
+                return new EmptyViewHolder();
+            }
+        }
     }
 
 }

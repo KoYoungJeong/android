@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 public class DummyMessageViewHolder implements BodyViewHolder {
@@ -143,7 +144,6 @@ public class DummyMessageViewHolder implements BodyViewHolder {
     @Override
     public int getLayoutId() {
         return R.layout.item_message_dummy_v3;
-
     }
 
     public void setHasBottomMargin(boolean hasBottomMargin) {
@@ -172,19 +172,19 @@ public class DummyMessageViewHolder implements BodyViewHolder {
         }
     }
 
-    public static class Builder {
-        private boolean hasProfile = false;
-        private boolean hasBottomMargin = false;
-
-        public Builder setHasBottomMargin(boolean hasBottomMargin) {
-            this.hasBottomMargin = hasBottomMargin;
-            return this;
-        }
-
-        public Builder setHasProfile(boolean hasProfile) {
-            this.hasProfile = hasProfile;
-            return this;
-        }
+    public static class Builder extends BaseViewHolderBuilder {
+//        private boolean hasProfile = false;
+//        private boolean hasBottomMargin = false;
+//
+//        public Builder setHasBottomMargin(boolean hasBottomMargin) {
+//            this.hasBottomMargin = hasBottomMargin;
+//            return this;
+//        }
+//
+//        public Builder setHasProfile(boolean hasProfile) {
+//            this.hasProfile = hasProfile;
+//            return this;
+//        }
 
         public DummyMessageViewHolder build() {
             DummyMessageViewHolder dummyViewHolder = new DummyMessageViewHolder();
