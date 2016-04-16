@@ -31,6 +31,9 @@ public class DummyMessageViewHolder implements BodyViewHolder {
     private boolean hasBottomMargin = false;
     private boolean hasProfile = false;
 
+    private DummyMessageViewHolder() {
+    }
+
     public void initView(View rootView) {
         ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
         vgName = (ViewGroup) rootView.findViewById(R.id.vg_message_profile_user_name);

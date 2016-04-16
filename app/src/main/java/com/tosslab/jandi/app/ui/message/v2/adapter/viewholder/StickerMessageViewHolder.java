@@ -33,6 +33,9 @@ public class StickerMessageViewHolder extends BaseMessageViewHolder {
     private boolean isPure = false;
     private SimpleDraweeView ivSticker;
 
+    private StickerMessageViewHolder() {
+    }
+
     @Override
     public void initView(View rootView) {
         super.initView(rootView);
@@ -146,10 +149,6 @@ public class StickerMessageViewHolder extends BaseMessageViewHolder {
 //            this.hasProfile = hasProfile;
 //            return this;
 //        }
-
-        private Builder setOnlyHasBadge(boolean hasBadge) {
-            return null;
-        }
 
         public StickerMessageViewHolder build() {
             StickerMessageViewHolder messageViewHolder = new StickerMessageViewHolder();

@@ -45,6 +45,9 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
     private TextView tvFileName;
     private TextView tvFileExtraInfo;
 
+    private FileMessageViewHolder() {
+    }
+
     @Override
     public void initView(View rootView) {
         super.initView(rootView);

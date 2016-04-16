@@ -63,6 +63,8 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
     private boolean hasNestedProfile = false;
 
+    private CommentViewHolder() {
+    }
 
     @Override
     public void initView(View rootView) {

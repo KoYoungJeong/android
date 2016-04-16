@@ -31,6 +31,9 @@ public class EventMessageViewHolder implements BodyViewHolder {
     private View vMargin;
     private boolean hasBottomMargin = false;
 
+    private EventMessageViewHolder() {
+    }
+
     @Override
     public void initView(View rootView) {
         tvEvent = ((TextView) rootView.findViewById(R.id.tv_message_event_title));

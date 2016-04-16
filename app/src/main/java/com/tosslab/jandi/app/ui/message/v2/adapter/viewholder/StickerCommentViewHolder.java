@@ -61,6 +61,8 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
     private Context context;
     private boolean hasNestedProfile = false;
 
+    private StickerCommentViewHolder() {
+    }
 
     @Override
     public void initView(View rootView) {

@@ -41,6 +41,9 @@ public class MessageViewHolder extends BaseMessageViewHolder {
 
     private boolean isPure = false;
 
+    private MessageViewHolder() {
+    }
+
     @Override
     public void initView(View rootView) {
         super.initView(rootView);

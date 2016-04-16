@@ -55,6 +55,9 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
     private RelativeLayout vgFileImageWrapper;
     private TextView tvFileSize;
 
+    private ImageMessageViewHolder() {
+    }
+
     @Override
     public void initView(View rootView) {
         super.initView(rootView);

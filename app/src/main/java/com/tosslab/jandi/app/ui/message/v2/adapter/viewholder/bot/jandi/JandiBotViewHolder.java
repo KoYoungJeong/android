@@ -46,6 +46,9 @@ public class JandiBotViewHolder implements BodyViewHolder {
     private boolean hasBotProfile;
     private ViewGroup vgUserName;
 
+    private JandiBotViewHolder() {
+    }
+
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_dummy_message_item);
@@ -77,8 +80,6 @@ public class JandiBotViewHolder implements BodyViewHolder {
             ivProfile.setVisibility(View.INVISIBLE);
             vgUserName.setVisibility(View.GONE);
         }
-
-
     }
 
     @Override

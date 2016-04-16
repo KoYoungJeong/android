@@ -53,6 +53,9 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
     private boolean hasBotProfile;
     private ViewGroup vgUserName;
 
+    private IntegrationBotViewHolder() {
+    }
+
 
     @Override
     public void initView(View rootView) {
@@ -203,7 +206,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
     }
 
 
-    public static class Builder extends BaseViewHolderBuilder{
+    public static class Builder extends BaseViewHolderBuilder {
 //        private boolean hasBottomMargin = false;
 //        private boolean hasOnlyBadge = false;
 //        private boolean hasProfile = false;

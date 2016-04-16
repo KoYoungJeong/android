@@ -128,22 +128,18 @@ public class BodyViewFactory {
 
         if (isDummyMessage(currentLink)) {
             type = TypeUtil.TYPE_VIEW_DUMMY_NORMAL_MESSAGE;
-        } else {
-            if (isJandiBotMessage(currentLink)) {
-                type = TypeUtil.TYPE_VIEW_JANDI_BOT_MESSAGE;
-            } else if (isIntegrationBotMessage(currentLink)) {
-                type = TypeUtil.TYPE_VIEW_INTEGRATION_BOT_MESSAGE;
-            }
+        } else if (isJandiBotMessage(currentLink)) {
+            type = TypeUtil.TYPE_VIEW_JANDI_BOT_MESSAGE;
+        } else if (isIntegrationBotMessage(currentLink)) {
+            type = TypeUtil.TYPE_VIEW_INTEGRATION_BOT_MESSAGE;
         }
 
-        if (nextLink != null && nextLink.message != null) {
-            if (hasOnlyBadgeFromNextLink(currentLink, nextLink)) {
-                return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_ONLY_BADGE);
-            } else {
-                if (isPureFromNextLink(currentLink, nextLink)) {
-                    return type;
-                }
-            }
+        if (isNextLinkSameWriterAndSameTime(currentLink, nextLink)) {
+            // Next Link와 같은 작성자인데 시간이 같다면 시간 생략
+            return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_ONLY_BADGE);
+        } else if (isNextLinkSameWriterAndCloseTime(currentLink, nextLink)) {
+            // Next Link와 같은 작성자인데 시간이 근접하다면 다음 메세지는 Pure 메세지 - 마진이 없음
+            return type;
         }
 
         if (isPureMessage(previousLink, currentLink)) {
@@ -152,6 +148,10 @@ public class BodyViewFactory {
 
         return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
 
+    }
+
+    private static boolean hasNextMessage(ResMessages.Link nextLink) {
+        return nextLink != null && nextLink.message != null;
     }
 
     private static int getStickerMessageType(ResMessages.Link previousLink,
@@ -164,14 +164,12 @@ public class BodyViewFactory {
             type = TypeUtil.TYPE_VIEW_DUMMY_STICKER;
         }
 
-        if (nextLink != null && nextLink.message != null) {
-            if (hasOnlyBadgeFromNextLink(currentLink, nextLink)) {
-                return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_ONLY_BADGE);
-            } else {
-                if (isPureFromNextLink(currentLink, nextLink)) {
-                    return type;
-                }
-            }
+        if (isNextLinkSameWriterAndSameTime(currentLink, nextLink)) {
+            // Next Link와 같은 작성자인데 시간이 같다면 시간 생략
+            return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_ONLY_BADGE);
+        } else if (isNextLinkSameWriterAndCloseTime(currentLink, nextLink)) {
+            // Next Link와 같은 작성자인데 시간이 근접하다면 다음 메세지는 Pure 메세지 - 마진이 없음
+            return type;
         }
 
         if (isPureMessage(previousLink, currentLink)) {
@@ -182,20 +180,22 @@ public class BodyViewFactory {
 
     }
 
-    private static boolean hasOnlyBadgeFromNextLink(ResMessages.Link currentLink,
-                                                    ResMessages.Link nextLink) {
-        return DateComparatorUtil.isSameTime(
-                currentLink.message.createTime, nextLink.message.createTime) &&
-                isSameWriter(currentLink.message, nextLink.message)
-                && (isTextMessage(nextLink) || isStickerMessage(nextLink));
+    private static boolean isNextLinkSameWriterAndSameTime(ResMessages.Link currentLink,
+                                                           ResMessages.Link nextLink) {
+        return hasNextMessage(nextLink) &&
+                DateComparatorUtil.isSameTime(
+                        currentLink.message.createTime, nextLink.message.createTime) &&
+                isSameWriter(currentLink.message, nextLink.message) &&
+                (isTextMessage(nextLink) || isStickerMessage(nextLink));
     }
 
-    private static boolean isPureFromNextLink(ResMessages.Link currentLink,
-                                              ResMessages.Link nextLink) {
-        return isSameWriter(currentLink.message, nextLink.message) &&
-                (isTextMessage(nextLink) || isStickerMessage(nextLink)) &&
+    private static boolean isNextLinkSameWriterAndCloseTime(ResMessages.Link currentLink,
+                                                            ResMessages.Link nextLink) {
+        return hasNextMessage(nextLink) &&
                 DateComparatorUtil.isSince5min(
-                        nextLink.message.createTime, currentLink.message.createTime);
+                        nextLink.message.createTime, currentLink.message.createTime) &&
+                isSameWriter(currentLink.message, nextLink.message) &&
+                (isTextMessage(nextLink) || isStickerMessage(nextLink));
     }
 
     private static int getCommentMessageType(ResMessages.Link previousLink,
@@ -210,34 +210,34 @@ public class BodyViewFactory {
         }
 
         if (isPreviousLinkFeedbackOrFile(previousLink, currentLink.feedbackId)) {
-        // 1. previous Link가 같은 파일의 커맨트 이거나 파일일 때
+            // 1. previous Link가 같은 파일의 커맨트 이거나 파일일 때
             if (isFileMessage(previousLink)) {
-            // 2. previous Link가 파일 메세지 일때 파일 정보 없이 Tail/Profile 이 나와야됨
+                // 2. previous Link가 파일 메세지 일때 파일 정보 없이 Tail/Profile 이 나와야됨
                 type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
                 type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
                 if (!isSameDay(previousLink, currentLink)) {
-                // 3. 이전 링크가 날짜가 다르면 파일 정보 추가
+                    // 3. 이전 링크가 날짜가 다르면 파일 정보 추가
                     type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
                     type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
                 }
             } else {
-            // 2. previous Link가 Comment 메세지 일때
+                // 2. previous Link가 Comment 메세지 일때
                 if (isSameWriter(previousLink.message, currentLink.message)) {
-                // 3. 이전 comment 작성자가 같은 사람 일때
+                    // 3. 이전 comment 작성자가 같은 사람 일때
                     if (!isSameDay(previousLink, currentLink)) {
-                    // 4. 날짜가 다르다면 파일 정보를 추가해야 됨
+                        // 4. 날짜가 다르다면 파일 정보를 추가해야 됨
                         type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
                         type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
                         type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
                         type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
                     }
                 } else {
-                // 3. 이전 comment 작성자가 다른 사람 일때 프로필이 들어가야 함
+                    // 3. 이전 comment 작성자가 다른 사람 일때 프로필이 들어가야 함
                     type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
                 }
             }
         } else {
-        // 1. previous Link가 같은 파일의 커맨트 이거나 파일이 아닐 때
+            // 1. previous Link가 같은 파일의 커맨트 이거나 파일이 아닐 때
             type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
             type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
             type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
@@ -252,13 +252,13 @@ public class BodyViewFactory {
                                             int type) {
 
         if (isSameFeedbackComment(currentLink, nextLink)) {
-        // 다음 커멘트 링크가 연속되어야 한다면
+            // 다음 커멘트 링크가 연속되어야 한다면
             if (isSameWriter(currentLink.message, nextLink.message)) {
-            // 다음 Link의 작성자가 같다면 Semi Divider
+                // 다음 Link의 작성자가 같다면 Semi Divider
                 type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_SEMI_DIVIDER);
                 return type;
             } else {
-            // 다음 Link의 작성자가 다르다면 Normal DIVIDER -> Default
+                // 다음 Link의 작성자가 다르다면 Normal DIVIDER -> Default
                 return type;
             }
         }
@@ -268,9 +268,9 @@ public class BodyViewFactory {
     }
 
     private static boolean isSameFeedbackComment(ResMessages.Link currentLink, ResMessages.Link nextLink) {
-        return (nextLink != null && nextLink.message != null)
+        return (hasNextMessage(nextLink))
                 && (isCommentMessage(nextLink) || isCommentStickerMessage(nextLink))
-                && currentLink.feedbackId == nextLink.feedbackId//피드백 아이디도 같다면
+                && currentLink.feedbackId == nextLink.feedbackId //피드백 아이디도 같다면
                 && isSameDay(currentLink, nextLink);
     }
 
@@ -286,6 +286,7 @@ public class BodyViewFactory {
     }
 
     private static int getFileMessageType(ResMessages.Link currentLink, ResMessages.Link nextLink) {
+
         boolean isImage = isImageFileMessage(currentLink);
         int type;
 
@@ -300,6 +301,7 @@ public class BodyViewFactory {
         }
 
         return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
+
     }
 
     private static boolean hasNextLinkComment(ResMessages.Link currentLink,
@@ -311,6 +313,7 @@ public class BodyViewFactory {
     }
 
     private static boolean isImageFileMessage(ResMessages.Link currentLink) {
+
         if (!isFileMessage(currentLink)) {
             return false;
         }
@@ -338,43 +341,56 @@ public class BodyViewFactory {
                 && SourceTypeUtil.getSourceType(fileMessage.content.serverUrl) == MimeTypeUtil.SourceType.S3
                 && isSharedFile
                 && !TextUtils.equals(currentLink.message.status, "archived");
+
     }
 
     private static boolean isTextMessage(ResMessages.Link link) {
+
         if (link == null) {
             return false;
         }
+
         return link.message instanceof ResMessages.TextMessage;
+
     }
 
     private static boolean isCommentMessage(ResMessages.Link link) {
+
         if (link == null) {
             return false;
         }
+
         return link.message instanceof ResMessages.CommentMessage;
+
     }
 
     private static boolean isFileMessage(ResMessages.Link link) {
+
         if (link == null) {
             return false;
         }
+
         return link.message instanceof ResMessages.FileMessage;
+
     }
 
     private static boolean isStickerMessage(ResMessages.Link link) {
+
         if (link == null) {
             return false;
         }
+
         return link.message instanceof ResMessages.StickerMessage;
     }
 
     private static boolean isCommentStickerMessage(ResMessages.Link link) {
+
         if (link == null) {
             return false;
         }
 
-        boolean f = link.message instanceof ResMessages.CommentStickerMessage;
-        return f;
+        return link.message instanceof ResMessages.CommentStickerMessage;
+
     }
 
     private static boolean isDummyMessage(ResMessages.Link link) {
