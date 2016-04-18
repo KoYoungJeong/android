@@ -56,7 +56,6 @@ public class AnalyticsValue {
         TopicSelect,
         TapComment,
         DeleteInputField,
-        GoSearch,
         ChooseSearchResult,
         GoToFilesSearch,
         GoToMsgSearch,
@@ -130,24 +129,10 @@ public class AnalyticsValue {
         MsgURL,
         Leave,
         OpenTopicFilter,
-        OpenTopicFilter_ChooseAllTopic,
-        OpenTopicFilter_ChooseTopic,
-        OpenTopicFilter_ChooseMember,
         CloseTopicFilter,
         OpenMemberFilter,
-        OpenMemberFilter_ChooseAllMember,
-        OpenMemberFilter_ChooseMember,
         CloseMemberFilter,
         OpenTypeFilter,
-        OpenTypeFilter_ChooseAllType,
-        OpenTypeFilter_GoogleDocs,
-        OpenTypeFilter_Words,
-        OpenTypeFilter_Presentations,
-        OpenTypeFilter_Spreadsheets,
-        OpenTypeFilter_PDFs,
-        OpenTypeFilter_Images,
-        OpenTypeFilter_Videos,
-        OpenTypeFilter_Audios,
         CloseTypeFilter,
         ChooseFilteredFile,
         ViewFile,
@@ -162,11 +147,8 @@ public class AnalyticsValue {
         TapSharedTopic,
         ViewProfile_FromComment,
         CommentLongTap,
-        CommentLongTap_Copy,
         CommentLongTap_Star,
         CommentLongTap_Unstar,
-        CommentLongTap_Delete,
-        MessageInputField,
         Sticker,
         Sticker_RecentTab,
         Sticker_StickerTab,
@@ -229,10 +211,13 @@ public class AnalyticsValue {
         DirectMessage, TurnOffPasscode, TurnOnPasscode, ChangePasscode, ChangeTopicOrder, Call,
         CreateNewTeam, MemberSearch, ViewMyProfile,
         Notifications, Sounds, Vibrate, PhoneLed,
-        Passcode, Account, SetPasscode, OpenTeamList
+        Passcode, Account, SetPasscode, ChooseTopicFilter, ChooseMemberFilter, ChooseTypeFilter, Star, OpenTeamList
     }
 
     public enum Label {
-        Folder, On, Off, UpdateDate
+        Folder, On, Off, UpdateDate,
+        AllTopic, Topic, Member,
+        AllMember,
+        AllType, GoogleDocs, Words, Presentations, Spreadsheets, PDFs, Images, Videos, Audios
     }
 }

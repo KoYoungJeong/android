@@ -262,13 +262,13 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         roomSelector.setOnRoomSelectListener(item -> {
             if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
                 EventBus.getDefault().post(new SelectEntityEvent(-1, getString(R.string.jandi_file_category_everywhere)));
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseAllTopic);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.ChooseTopicFilter, AnalyticsValue.Label.AllTopic);
             } else {
                 EventBus.getDefault().post(new SelectEntityEvent(item.getEntityId(), item.getName()));
                 if (item.isUser()) {
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseMember);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.ChooseTopicFilter, AnalyticsValue.Label.Member);
                 } else {
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseTopic);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.ChooseTopicFilter, AnalyticsValue.Label.Topic);
                 }
             }
             roomSelector.dismiss();
@@ -294,10 +294,10 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         userSelector.setOnUserSelectListener(item -> {
             if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
                 EventBus.getDefault().post(new SelectMemberEvent(-1, getString(R.string.jandi_file_category_everyone)));
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.ChooseMemberFilter, AnalyticsValue.Label.AllMember);
             } else {
                 EventBus.getDefault().post(new SelectMemberEvent(item.getEntityId(), item.getName()));
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.ChooseMemberFilter, AnalyticsValue.Label.Member);
             }
             userSelector.dismiss();
         });
