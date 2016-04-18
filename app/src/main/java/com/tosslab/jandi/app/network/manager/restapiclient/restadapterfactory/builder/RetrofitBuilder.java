@@ -1,10 +1,11 @@
 package com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder;
 
-import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor.ResponseConverter;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor.RestAdapterDecor;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.okhttp.LoggingAppender;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.okhttp.StethoAppender;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 
@@ -23,7 +24,6 @@ import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 
 /**
@@ -75,13 +75,8 @@ public class RetrofitBuilder {
             e.printStackTrace();
         }
 
-        if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
-
-            okhttpClientBuilder.addInterceptor(logging);
-
-        }
+        LoggingAppender.add(okhttpClientBuilder);
+        StethoAppender.add(okhttpClientBuilder);
 
         retofitBuilder.client(okhttpClientBuilder.build());
         for (RestAdapterDecor restAdapterDecor : restAdapterDecors) {

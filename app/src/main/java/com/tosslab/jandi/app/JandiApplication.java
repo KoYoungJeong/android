@@ -79,6 +79,7 @@ public class JandiApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
+        StethoInitializer.init(this);
 
         addLogConfigIfDebug();
 
