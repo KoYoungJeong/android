@@ -29,8 +29,8 @@ public class FileApi extends ApiTemplate<FileApi.Api> {
         super(Api.class, retrofitBuilder);
     }
 
-    public ResCommon deleteFile(long teamId, long fileId) throws RetrofitException {
-        return call(() -> getApi().deleteFile(teamId, fileId));
+    public ResCommon deleteFile(long fileId, long teamId) throws RetrofitException {
+        return call(() -> getApi().deleteFile(fileId, teamId));
     }
 
     public List<ResMessages.FileMessage> searchInitImageFile(long teamId
@@ -64,7 +64,7 @@ public class FileApi extends ApiTemplate<FileApi.Api> {
 
         @HTTP(path = "files/{fileId}", hasBody = true, method = "DELETE")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResCommon> deleteFile(@Query("teamId") long teamId, @Path("fileId") long fileId);
+        Call<ResCommon> deleteFile(@Path("fileId") long fileId, @Query("teamId") long teamId);
 
         @GET("teams/{teamId}/rooms/{roomId}/images")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
