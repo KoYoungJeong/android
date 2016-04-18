@@ -572,6 +572,7 @@ We combined everything you love about messaging apps and cloud storage with powe
 	<string name="jandi_verify_fingerprint">"Verify your fingerprint."</string>
 	<string name="jandi_vibrate">"Vibrate"</string>
 	<string name="jandi_view_all">"View All"</string>
+	<string name="jandi_view_comment_read_more">"Show %s previous comment(s)"</string>
 	<string name="jandi_welcome_message">"Welcome to JANDI"</string>
 	<string name="jandi_what_is_topic_type">"Topic type cannot be switched between public and private after creation"</string>
 	<string name="jandi_who_of_file">"\'s file"</string>
@@ -604,5 +605,4 @@ We combined everything you love about messaging apps and cloud storage with powe
 	<string name="what_is_member_profile">"Enter the email address and profile name you want associated with this team. Please note that your teammates may view and use this information to mention, search, or directly contact you."</string>
 	<string name="what_is_team_domain">"Choose your team's domain (URL) for signing in on the web. It's up to you as long as it is <b>3+ characters</b> and includes only letters, numbers, and hyphens (-)."</string>
 	<string name="로">"Go to\nAccount Home"</string>
-	<string name="view_comment_count">Show %s previous comment(s)</string>
 </resources>

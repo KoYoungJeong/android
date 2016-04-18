@@ -573,6 +573,7 @@
 	<string name="jandi_verify_fingerprint">"指紋を認証してください"</string>
 	<string name="jandi_vibrate">"バイブレート"</string>
 	<string name="jandi_view_all">"すべて表示"</string>
+	<string name="jandi_view_comment_read_more">"コメント%s 件を全て表示"</string>
 	<string name="jandi_welcome_message">"JANDIへようこそ!!"</string>
 	<string name="jandi_what_is_topic_type">"トピックを作成した後に、公開・非公開を変更することはできません"</string>
 	<string name="jandi_who_of_file">"さんのファイル"</string>
@@ -607,5 +608,4 @@
 	<string name="what_is_team_domain">"チームドメインはログイン用URLに使われます。
 具体的には、abc.jandi.comの”abcの部分を指し、<b>3文字以上</b>の英数字とハイフンが利用できます。覚えやすいドメイン名にすることをお勧めします"</string>
 	<string name="로">"ホームに戻る"</string>
-	<string name="view_comment_count">コメント%s件を全て表示</string>
 </resources>

@@ -60,6 +60,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
     private TextView tvMessageCommonFileName;
     private Context context;
     private boolean hasNestedProfile = false;
+    private boolean hasOnlyBadge;
 
     private StickerCommentViewHolder() {
     }
@@ -120,10 +121,15 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
 
         StickerManager.getInstance().loadStickerNoOption(ivProfileNestedCommentSticker, message.content.groupId, message.content.stickerId);
 
-        tvProfileNestedCommentStickerCreateDate.setText(DateTransformator.getTimeStringForSimple(message.createTime));
+        if (hasOnlyBadge) {
+            tvProfileNestedCommentStickerCreateDate.setVisibility(View.GONE);
+        } else {
+            tvProfileNestedCommentStickerCreateDate.setVisibility(View.VISIBLE);
+            tvProfileNestedCommentStickerCreateDate.setText(DateTransformator.getTimeStringForSimple(message.createTime));
+
+        }
         int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
                 link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
-
         if (unreadCount > 0) {
             tvProfileNestedCommentStickerUnread.setText(String.valueOf(unreadCount));
             tvProfileNestedCommentStickerUnread.setVisibility(View.VISIBLE);
@@ -304,6 +310,10 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
         this.hasNestedProfile = hasNestedProfile;
     }
 
+    public void setHasOnlyBadge(boolean hasOnlyBadge) {
+        this.hasOnlyBadge = hasOnlyBadge;
+    }
+
     public static class Builder extends BaseViewHolderBuilder {
 
         public StickerCommentViewHolder build() {
@@ -314,6 +324,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
             viewHolder.setHasCommentBubbleTail(hasCommentBubbleTail);
             viewHolder.setHasNestedProfile(hasNestedProfile);
             viewHolder.setHasViewAllComment(hasViewAllComment);
+            viewHolder.setHasOnlyBadge(hasOnlyBadge);
             return viewHolder;
         }
     }

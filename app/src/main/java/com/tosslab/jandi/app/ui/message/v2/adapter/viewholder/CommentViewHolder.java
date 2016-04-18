@@ -62,6 +62,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     private Context context;
 
     private boolean hasNestedProfile = false;
+    private boolean hasOnlyBadge;
 
     private CommentViewHolder() {
     }
@@ -143,16 +144,18 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
             LinkifyUtil.addLinks(context, builder);
 
-            int startIndex = builder.length();
-            builder.append(DateTransformator.getTimeStringForSimple(commentMessage.createTime));
-            int endIndex = builder.length();
+            if(!hasOnlyBadge) {
+                int startIndex = builder.length();
+                builder.append(DateTransformator.getTimeStringForSimple(commentMessage.createTime));
+                int endIndex = builder.length();
 
-            DateViewSpannable spannable =
-                    new DateViewSpannable(tvProfileNestedCommentContent.getContext(),
-                            DateTransformator.getTimeStringForSimple(commentMessage.createTime));
-            spannable.setTextColor(
-                    JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_date));
-            builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                DateViewSpannable spannable =
+                        new DateViewSpannable(tvProfileNestedCommentContent.getContext(),
+                                DateTransformator.getTimeStringForSimple(commentMessage.createTime));
+                spannable.setTextColor(
+                        JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_date));
+                builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
 
             int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
                     link.id, link.fromEntity, myId);
@@ -346,6 +349,10 @@ public class CommentViewHolder extends BaseCommentViewHolder {
         vgProfileNestedComment.setOnLongClickListener(itemLongClickListener);
     }
 
+    public void setHasOnlyBadge(boolean hasOnlyBadge) {
+        this.hasOnlyBadge = hasOnlyBadge;
+    }
+
     public static class Builder extends BaseViewHolderBuilder {
 
         public CommentViewHolder build() {
@@ -356,6 +363,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
             viewHolder.setHasCommentBubbleTail(hasCommentBubbleTail);
             viewHolder.setHasNestedProfile(hasNestedProfile);
             viewHolder.setHasViewAllComment(hasViewAllComment);
+            viewHolder.setHasOnlyBadge(hasOnlyBadge);
             return viewHolder;
         }
     }

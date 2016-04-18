@@ -101,7 +101,7 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
         if (hasViewAllComment) {
             int count = link.feedback.commentCount;
             String countString
-                    = JandiApplication.getContext().getResources().getString(R.string.view_comment_count, count);
+                    = JandiApplication.getContext().getResources().getString(R.string.jandi_view_comment_read_more, count);
             TextView tvReadMore = (TextView) vgReadMore.findViewById(R.id.tv_comment_read_more);
             tvReadMore.setText(countString);
         }
