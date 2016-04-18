@@ -199,14 +199,13 @@ public class BodyViewFactory {
     }
 
     private static boolean isNextLinkSameWriterAndCloseTime(ResMessages.Link currentLink,
-                                                               ResMessages.Link nextLink) {
+                                                            ResMessages.Link nextLink) {
         return hasNextMessage(nextLink) &&
                 DateComparatorUtil.isSince5min(
                         nextLink.message.createTime, currentLink.message.createTime) &&
                 isSameWriter(currentLink.message, nextLink.message) &&
                 (isTextMessage(nextLink) || isStickerMessage(nextLink));
     }
-
 
 
     private static int getCommentMessageType(ResMessages.Link previousLink,
@@ -257,7 +256,7 @@ public class BodyViewFactory {
 
         if (isNextCommentSameWriterAndSameTime(currentLink, nextLink)) {
             // Next Link와 같은 작성자인데 시간이 같다면 시간 생략
-            return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_ONLY_BADGE);
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_ONLY_BADGE);
         }
 
         return getCommentBottomType(currentLink, nextLink, type);
