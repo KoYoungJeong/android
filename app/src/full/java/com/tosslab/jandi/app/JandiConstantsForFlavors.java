@@ -10,7 +10,7 @@ public class JandiConstantsForFlavors {
     public static final String SERVICE_FILE_UPLOAD_URL = "https://upload.jandi.com/";
     public static final String SERVICE_BASE_URL = "https://www.jandi.com/";
     public static final String SOCKET_ROOT_URL = "https://ws.jandi.com/";
-    public static final String SERVICE_INNER_API_URL = SERVICE_ROOT_URL + "inner-api";
+    public static final String SERVICE_INNER_API_URL = SERVICE_ROOT_URL + "inner-api/";
     public static final String GA_TRACK_ID = "UA-53634725-3";
     public static final String MIXPANEL_MEMBER_TRACK_ID = "f72e67d5099ab4e0ba4a83da4a9cafe3";
     public static final String MIXPANEL_ACCOUNT_TRACK_ID = "fe754ed3c3b6fcf0c510ebcfd6244f3e";
