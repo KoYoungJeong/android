@@ -140,7 +140,7 @@ public class JandiSocketServiceModel {
 
         String token = TokenUtil.getAccessToken();
         return new ConnectTeam(token,
-                UserAgentUtil.getDefaultUserAgent(context),
+                UserAgentUtil.getDefaultUserAgent(),
                 selectedTeamInfo.getTeamId(),
                 selectedTeamInfo.getName(),
                 selectedTeamInfo.getMemberId(), me.getName());

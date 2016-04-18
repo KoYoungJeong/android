@@ -188,7 +188,7 @@ public class FilePickerModel {
                 .uploadProgressDialog(progressDialog)
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
                 .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
                 .setMultipartParameter("title", title)
                 .setMultipartParameter("share", String.valueOf(entityId))
                 .setMultipartParameter("permission", permissionCode)
@@ -263,7 +263,7 @@ public class FilePickerModel {
                 .load("PUT", requestURL)
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
                 .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
                 .setMultipartFile("photo", URLConnection.guessContentTypeFromName(file.getName()), file)
                 .asString()
                 .get();

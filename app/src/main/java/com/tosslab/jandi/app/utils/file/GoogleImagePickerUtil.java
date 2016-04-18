@@ -39,13 +39,13 @@ public class GoogleImagePickerUtil {
             return Ion.with(context)
                     .load(url)
                     .progressDialog(downloadProgress)
-                    .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
+                    .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
                     .write(new File(dir, downloadName))
                     .get();
         } else {
             return Ion.with(context)
                     .load(url)
-                    .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
+                    .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
                     .write(new File(dir, downloadName))
                     .get();
         }

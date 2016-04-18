@@ -101,7 +101,7 @@ public class FileUploadManager {
                 .uploadProgress(progressCallback)
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
                 .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
                 .setMultipartParameter("title", title)
                 .setMultipartParameter("share", String.valueOf(entityId))
                 .setMultipartParameter("permission", permissionCode)

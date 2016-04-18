@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder;
 
 import com.tosslab.jandi.app.BuildConfig;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor.ResponseConverter;
@@ -23,6 +22,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 
@@ -61,11 +61,13 @@ public class RetrofitBuilder {
 
 
         OkHttpClient.Builder okhttpClientBuilder = new OkHttpClient.Builder()
-                .authenticator((route, response) ->
-                        response.request().newBuilder()
-                                .header(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
-                                .header("User-Agent", UserAgentUtil.getDefaultUserAgent(JandiApplication.getContext()))
-                                .build());
+                .addInterceptor(chain -> {
+                    Request newRequest = chain.request().newBuilder()
+                            .header(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
+                            .header("User-Agent", UserAgentUtil.getDefaultUserAgent())
+                            .build();
+                    return chain.proceed(newRequest);
+                });
 
         try {
             okhttpClientBuilder.sslSocketFactory(createSslSocketFactory());
@@ -108,6 +110,4 @@ public class RetrofitBuilder {
     synchronized public <CLIENT> CLIENT create(Class<CLIENT> clazz) {
         return getRestAdapter().create(clazz);
     }
-
-
 }
