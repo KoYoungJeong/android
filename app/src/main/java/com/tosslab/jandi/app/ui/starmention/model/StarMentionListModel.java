@@ -4,18 +4,24 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.messages.MessageApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
+import javax.inject.Inject;
+
+import dagger.Lazy;
+
 
 /**
  * Created by tee on 15. 7. 30..
@@ -31,7 +37,15 @@ public class StarMentionListModel {
     protected boolean hasMore = false;
     protected boolean isEmpty = false;
 
-    public List<StarMentionVO> getStarMentionedMessages(String categoryType, int count) throws RetrofitError {
+    @Inject
+    Lazy<MessageApi> messageApi;
+
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent.create().inject(this);
+    }
+
+    public List<StarMentionVO> getStarMentionedMessages(String categoryType, int count) throws RetrofitException {
         int requestCount = Math.max(count, DEFAULT_COUNT);
 
         ResStarMentioned resStarMentioned = getRawDatas(categoryType, requestCount);
@@ -47,31 +61,27 @@ public class StarMentionListModel {
         return starMentionList;
     }
 
-    public void unregistStarredMessage(long teamId, long messageId) throws RetrofitError {
-        try {
-            RequestApiManager.getInstance().unregistStarredMessageByTeamApi(teamId, messageId);
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-        }
+    public void unregistStarredMessage(long teamId, long messageId) throws RetrofitException {
+        messageApi.get().unregistStarredMessage(teamId, messageId);
     }
 
-    protected ResStarMentioned getMentionRawDatas(long messageId, int count) throws RetrofitError {
+    protected ResStarMentioned getMentionRawDatas(long messageId, int count) throws RetrofitException {
         long teamId = getTeamId();
-        return RequestApiManager.getInstance().getMentionedMessagesByTeamApi(teamId, messageId, count);
+        return messageApi.get().getMentionedMessages(teamId, messageId, count);
     }
 
     protected ResStarMentioned getStarredRawDatas(String categoryType, long starredId,
-                                                  int count) throws RetrofitError {
+                                                  int count) throws RetrofitException {
         long teamId = getTeamId();
         if (categoryType.equals(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES)) {
-            return RequestApiManager.getInstance().getStarredMessagesByTeamApi(
+            return messageApi.get().getStarredMessages(
                     teamId, starredId, count, "file");
         }
-        return RequestApiManager.getInstance().getStarredMessagesByTeamApi(
+        return messageApi.get().getStarredMessages(
                 teamId, starredId, count, null);
     }
 
-    protected ResStarMentioned getRawDatas(String categoryType, int count) {
+    protected ResStarMentioned getRawDatas(String categoryType, int count) throws RetrofitException {
         ResStarMentioned resStarMentioned;
         if (categoryType.equals(StarMentionListActivity.TYPE_MENTION_LIST)) {
             if (isFirstDatas) {
@@ -174,7 +184,7 @@ public class StarMentionListModel {
         return messageId;
     }
 
-    public void refreshList() throws RetrofitError {
+    public void refreshList() throws RetrofitException {
         isFirstDatas = true;
         lastId = 0;
         hasMore = false;

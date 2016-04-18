@@ -4,13 +4,14 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPresenter;
 
-import retrofit.RetrofitError;
+
 
 public class MarkerNewMessageLoader implements NewsMessageLoader {
 
@@ -69,7 +70,7 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
             firstLoad = false;
 
 
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();

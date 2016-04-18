@@ -285,7 +285,7 @@ public class RecyclerViewExpandableItemManager {
     /**
      * Gets saved state object in order to restore the internal state.
      * <p>
-     * Call this method in Activity/Fragment's onSavedInstance() and save to the bundle.
+     * Action0 this method in Activity/Fragment's onSavedInstance() and save to the bundle.
      *
      * @return The Parcelable object which stores information need to restore the internal states.
      */

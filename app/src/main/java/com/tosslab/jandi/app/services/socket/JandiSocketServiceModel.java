@@ -20,23 +20,27 @@ import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
+import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
+import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.events.EventsApi;
+import com.tosslab.jandi.app.network.client.main.LoginApi;
+import com.tosslab.jandi.app.network.client.messages.MessageApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
-import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedSimpleRestApiClient;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
@@ -57,6 +61,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketMemberProfileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamLeaveEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
@@ -66,6 +71,7 @@ import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -77,8 +83,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import dagger.Lazy;
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -90,18 +96,29 @@ public class JandiSocketServiceModel {
 
     private final Context context;
     private final ObjectMapper objectMapper;
+    Lazy<AccountApi> accountApi;
+    Lazy<MessageApi> messageApi;
+    Lazy<LoginApi> loginApi;
+    Lazy<EventsApi> eventsApi;
     private EntitySocketModel entitySocketModel;
-
     private PublishSubject<SocketRoomMarkerEvent> markerPublishSubject;
     private PublishSubject<SocketMessageEvent> messagePublishSubject;
     private PublishSubject<Runnable> linkPreviewSubject;
-
     private Subscription markerSubscribe;
     private Subscription messageSubscribe;
     private Subscription linkPreviewSubscribe;
 
-    public JandiSocketServiceModel(Context context) {
+
+    public JandiSocketServiceModel(Context context,
+                                   Lazy<AccountApi> accountApi,
+                                   Lazy<MessageApi> messageApi,
+                                   Lazy<LoginApi> loginApi,
+                                   Lazy<EventsApi> eventsApi) {
         this.context = context;
+        this.accountApi = accountApi;
+        this.messageApi = messageApi;
+        this.loginApi = loginApi;
+        this.eventsApi = eventsApi;
         this.objectMapper = JacksonMapper.getInstance().getObjectMapper();
         entitySocketModel = new EntitySocketModel(context);
     }
@@ -121,9 +138,9 @@ public class JandiSocketServiceModel {
             return null;
         }
 
-        String token = AccessTokenRepository.getRepository().getAccessToken().getAccessToken();
+        String token = TokenUtil.getAccessToken();
         return new ConnectTeam(token,
-                UserAgentUtil.getDefaultUserAgent(context),
+                UserAgentUtil.getDefaultUserAgent(),
                 selectedTeamInfo.getTeamId(),
                 selectedTeamInfo.getName(),
                 selectedTeamInfo.getMemberId(), me.getName());
@@ -147,7 +164,7 @@ public class JandiSocketServiceModel {
 
     public void refreshAccountInfo() {
         try {
-            ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+            ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
             AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
             Collection<ResAccountInfo.UserTeam> teamList = resAccountInfo.getMemberships();
@@ -161,7 +178,7 @@ public class JandiSocketServiceModel {
             BadgeUtils.setBadge(JandiApplication.getContext(), BadgeCountRepository.getRepository().getTotalBadgeCount());
 
             postEvent(new TeamInfoChangeEvent());
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         }
 
@@ -203,7 +220,7 @@ public class JandiSocketServiceModel {
             FileCommentRefreshEvent event = new FileCommentRefreshEvent(socketCommentEvent.getEvent(),
                     socketCommentEvent.getFile().getId(),
                     socketCommentEvent.getComment().getId(),
-                    TextUtils.equals(socketCommentEvent.getEvent(), "file_comment_created"));
+                    TextUtils.equals(socketCommentEvent.getEvent(), "file_comment_deleted"));
 
             List<SocketFileCommentDeleteEvent.Room> rooms = socketCommentEvent.getRooms();
             if (rooms != null && !rooms.isEmpty()) {
@@ -395,17 +412,20 @@ public class JandiSocketServiceModel {
     }
 
     private boolean updateLinkPreview(int teamId, long messageId) {
-        ResMessages.OriginalMessage message =
-                RequestApiManager.getInstance().getMessage(teamId, messageId);
-
-        if (message instanceof ResMessages.TextMessage) {
-            ResMessages.TextMessage textMessage = (ResMessages.TextMessage) message;
-            ResMessages.LinkPreview linkPreview = textMessage.linkPreview;
-            if (linkPreview != null) {
-                MessageRepository.getRepository().upsertTextMessage(textMessage);
-                return true;
+        try {
+            ResMessages.OriginalMessage message = messageApi.get().getMessage(teamId, messageId);
+            if (message instanceof ResMessages.TextMessage) {
+                ResMessages.TextMessage textMessage = (ResMessages.TextMessage) message;
+                ResMessages.LinkPreview linkPreview = textMessage.linkPreview;
+                if (linkPreview != null) {
+                    MessageRepository.getRepository().upsertTextMessage(textMessage);
+                    return true;
+                }
             }
+        } catch (RetrofitException e) {
+            e.printStackTrace();
         }
+
         return false;
     }
 
@@ -421,7 +441,7 @@ public class JandiSocketServiceModel {
 
             postEvent(socketAnnouncementEvent);
             JandiPreference.setSocketConnectedLastTime(socketAnnouncementEvent.getTs());
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
@@ -440,7 +460,7 @@ public class JandiSocketServiceModel {
 
             postEvent(socketTopicPushEvent);
             JandiPreference.setSocketConnectedLastTime(socketTopicPushEvent.getTs());
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
@@ -485,7 +505,7 @@ public class JandiSocketServiceModel {
                             postEvent(new RetrieveTopicListEvent());
                         } else {
                             // 다른 팀의 내 마커가 갱신된 경우
-                            ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+                            ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
                             AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
                             Observable.from(resAccountInfo.getMemberships())
@@ -498,7 +518,7 @@ public class JandiSocketServiceModel {
                             postEvent(new MessageOfOtherTeamEvent());
                         }
 
-                    } catch (RetrofitError e) {
+                    } catch (RetrofitException e) {
                         e.printStackTrace();
                     }
 
@@ -519,17 +539,21 @@ public class JandiSocketServiceModel {
                 .onBackpressureBuffer()
                 .observeOn(Schedulers.io())
                 .subscribe(event -> {
-                    ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
-                    AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+                    try {
+                        ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+                        AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
-                    Observable.from(resAccountInfo.getMemberships())
-                            .subscribe(team -> {
-                                BadgeCountRepository.getRepository()
-                                        .upsertBadgeCount(team.getTeamId(), team.getUnread());
-                            });
-                    BadgeUtils.setBadge(context, BadgeCountRepository.getRepository().getTotalBadgeCount());
+                        Observable.from(resAccountInfo.getMemberships())
+                                .subscribe(team -> {
+                                    BadgeCountRepository.getRepository()
+                                            .upsertBadgeCount(team.getTeamId(), team.getUnread());
+                                });
+                        BadgeUtils.setBadge(context, BadgeCountRepository.getRepository().getTotalBadgeCount());
 
-                    postEvent(new MessageOfOtherTeamEvent());
+                        postEvent(new MessageOfOtherTeamEvent());
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                    }
                 }, Throwable::printStackTrace);
     }
 
@@ -553,11 +577,10 @@ public class JandiSocketServiceModel {
         }
     }
 
-    public ResAccessToken refreshToken() throws RetrofitError {
-        ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
-        String jandiRefreshToken = accessToken.getRefreshToken();
+    public ResAccessToken refreshToken() throws RetrofitException {
+        String jandiRefreshToken = TokenUtil.getRefreshToken();
         ReqAccessToken refreshReqToken = ReqAccessToken.createRefreshReqToken(jandiRefreshToken);
-        return new JacksonConvertedSimpleRestApiClient().getAccessTokenByMainRest(refreshReqToken);
+        return loginApi.get().getAccessToken(refreshReqToken);
     }
 
     public void createFile(Object object) {
@@ -654,7 +677,9 @@ public class JandiSocketServiceModel {
                 Observable.just(socketTeamLeaveEvent)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(leaveEvent -> {
-                            String teamName = JandiApplication.getContext().getString(R.string.jandi_your_access_disabled, leaveEvent.getTeam().getName());
+                            SocketTeamLeaveEvent.Team team = leaveEvent.getTeam();
+                            String teamName = JandiApplication.getContext()
+                                    .getString(R.string.jandi_your_access_disabled, team.getName());
                             ColoredToast.showError(teamName);
                         });
                 AccountRepository.getRepository().removeSelectedTeamInfo();
@@ -665,6 +690,34 @@ public class JandiSocketServiceModel {
 
             JandiPreference.setSocketConnectedLastTime(socketTeamLeaveEvent.getTime().getTime());
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void refreshTeamDeleted(Object object) {
+        try {
+            SocketTeamDeletedEvent event = getObject(object.toString(), SocketTeamDeletedEvent.class);
+
+            long teamId = event.getTeam().getId();
+
+            long selectedTeamId = EntityManager.getInstance().getTeamId();
+
+            if (teamId != selectedTeamId) {
+                refreshEntity(new TeamDeletedEvent(teamId), true);
+            } else {
+                Observable.just(event)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(deletedEvent -> {
+                            String deletedTeam = JandiApplication.getContext()
+                                    .getString(R.string.jandi_deleted_team);
+                            ColoredToast.showError(deletedTeam);
+                        });
+                AccountRepository.getRepository().removeSelectedTeamInfo();
+                AccountHomeActivity_.intent(JandiApplication.getContext())
+                        .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .start();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -744,6 +797,30 @@ public class JandiSocketServiceModel {
             refreshEntity(new RefreshConnectBotEvent(event.getData().getBot()), true);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    // 확장성 생각하여 추후 모듈로 빼내야 함.
+    public void updateEventHistory() {
+        long ts = JandiPreference.getSocketConnectedLastTime();
+        EntityManager entityManager = EntityManager.getInstance();
+        long userId = entityManager.getMe().getId();
+        LogUtil.e("ts", ts + "");
+        if (ts > -1) {
+            try {
+                ResEventHistory eventHistory =
+                        eventsApi.get().getEventHistory(ts, userId, "file_unshared");
+                Observable.from(eventHistory.records)
+                        .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketFileUnsharedEvent)
+                        .map(eventHistoryInfo -> (SocketFileUnsharedEvent) eventHistoryInfo)
+                        .subscribe(eventHistoryInfo -> {
+                            int fileId = eventHistoryInfo.getFile().getId();
+                            int roomId = eventHistoryInfo.room.id;
+                            MessageRepository.getRepository().updateUnshared(fileId, roomId);
+                        }, Throwable::printStackTrace);
+            } catch (RetrofitException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

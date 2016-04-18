@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
@@ -14,7 +15,11 @@ import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.main.ConfigApi;
+import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResConfig;
@@ -24,14 +29,17 @@ import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SystemService;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
+import javax.inject.Inject;
+
+import dagger.Lazy;
 import rx.Observable;
+
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 26..
@@ -39,11 +47,22 @@ import rx.Observable;
 @EBean
 public class JandiInterfaceModel {
 
-    @RootContext
-    Context context;
-
     @SystemService
     ActivityManager activityManager;
+
+    @Inject
+    Lazy<ConfigApi> configApi;
+    @Inject
+    Lazy<AccountApi> accountApi;
+    @Inject
+    Lazy<RoomsApi> roomsApi;
+
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent
+                .create()
+                .inject(this);
+    }
 
     public int getInstalledAppVersion(Context context) {
         try {
@@ -57,23 +76,23 @@ public class JandiInterfaceModel {
         }
     }
 
-    public ResConfig getConfigInfo() throws RetrofitError {
-        return RequestApiManager.getInstance().getConfigByMainRest();
+    public ResConfig getConfigInfo() throws RetrofitException {
+        return configApi.get().getConfig();
     }
 
-    public void refreshAccountInfo() throws RetrofitError {
-        ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+    public void refreshAccountInfo() throws RetrofitException {
+        ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
 
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
-        EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
+        EntityClientManager entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
 
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
         BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
         badgeCountRepository.upsertBadgeCount(totalEntitiesInfo.team.id, totalUnreadCount);
-        BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
+        BadgeUtils.setBadge(JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
     }
 
     public boolean hasBackStackActivity() {
@@ -96,7 +115,7 @@ public class JandiInterfaceModel {
                     return false;
                 }
 
-            } catch (RetrofitError e) {
+            } catch (RetrofitException e) {
                 e.printStackTrace();
                 return false;
             }
@@ -133,16 +152,16 @@ public class JandiInterfaceModel {
 
     private boolean getEntityInfo() {
         try {
-            EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
+            EntityClientManager entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
             ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
             badgeCountRepository.upsertBadgeCount(totalEntitiesInfo.team.id, totalUnreadCount);
-            BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
+            BadgeUtils.setBadge(JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
             EntityManager.getInstance().refreshEntity();
             return true;
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             return false;
         } catch (Exception e) {
@@ -208,8 +227,7 @@ public class JandiInterfaceModel {
         } else {
             // 서버로부터 요청
             try {
-                ResRoomInfo roomInfo = RequestApiManager.getInstance().getRoomInfoByRoomsApi(teamId,
-                        roomId);
+                ResRoomInfo roomInfo = roomsApi.get().getRoomInfo(teamId, roomId);
 
                 if (roomInfo != null) {
 
@@ -222,7 +240,7 @@ public class JandiInterfaceModel {
                     }
 
                 }
-            } catch (RetrofitError retrofitError) {
+            } catch (RetrofitException retrofitError) {
                 retrofitError.printStackTrace();
                 return -1;
             }

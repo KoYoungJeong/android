@@ -3,17 +3,19 @@ package com.tosslab.jandi.app.ui.account;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.matcher.IntentMatchers;
-import android.support.test.rule.ActivityTestRule;
+import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,6 +35,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isSelected;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.jayway.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
@@ -40,21 +43,26 @@ import static org.hamcrest.Matchers.is;
 public class AccountHomeActivityTest {
 
     @Rule
-    public ActivityTestRule<AccountHomeActivity_> rule = new ActivityTestRule<>(AccountHomeActivity_.class, true, false);
+    public IntentsTestRule<AccountHomeActivity_> rule = new IntentsTestRule<AccountHomeActivity_>(AccountHomeActivity_.class, false, false);
     private AccountHomeActivity activity;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
 
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         rule.launchActivity(null);
 
         activity = rule.getActivity();
-    }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
-
+        await().until(() -> activity.teamLayout.getChildCount() > 0);
     }
 
     @Test
@@ -80,12 +88,9 @@ public class AccountHomeActivityTest {
     @Ignore
     @Test
     public void testOnEmailEditClick() throws Throwable {
-        Intents.init();
 
         rule.runOnUiThread(() -> activity.onEmailEditClick());
         Intents.intending(IntentMatchers.hasComponent(EmailChooseActivity_.class.getName()));
-
-        Intents.release();
     }
 
     @Test
@@ -155,9 +160,7 @@ public class AccountHomeActivityTest {
     public void testMoveSelectedTeam() throws Throwable {
         rule.runOnUiThread(() -> activity.moveSelectedTeam(false));
         assertThat(activity.isFinishing(), is(true));
-        String name = AccountRepository.getRepository().getSelectedTeamInfo().getName();
-        onView(withText(name))
-                .check(matches(isDisplayed()));
+        Intents.intending(IntentMatchers.hasComponent(MainTabActivity_.class.getName()));
     }
 
     @Ignore

@@ -39,6 +39,11 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
     @ViewById(R.id.v_setting_privacy_divider_for_passcode_modify)
     View vModifyPassCodeDivider;
 
+    @ViewById(R.id.vg_setting_privacy_fingerprint)
+    ViewGroup vgUseFingerPrint;
+    @ViewById(R.id.switch_setting_privacy_fingerprint)
+    SwitchCompat switchFingerPrint;
+
     @ViewById(R.id.tv_setting_privacy_passcode_detail)
     TextView tvPassCodeDetail;
 
@@ -69,19 +74,18 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
 
     @Click(R.id.vg_setting_privacy_passcode)
     void setPassCode() {
-        boolean checked = switchPassCode.isChecked();
+        boolean checked = !switchPassCode.isChecked();
         if (checked) {
+            PassCodeActivity_.intent(this)
+                    .mode(PassCodeActivity.MODE_TO_SAVE_PASSCODE)
+                    .startForResult(REQUEST_SET_PASSCODE);
+        } else {
             JandiPreference.removePassCode(getApplicationContext());
             initPassCodeSwitch();
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SetPasscode, AnalyticsValue.Action.TurnOffPasscode);
-            return;
         }
 
-        PassCodeActivity_.intent(this)
-                .mode(PassCodeActivity.MODE_TO_SAVE_PASSCODE)
-                .startForResult(REQUEST_SET_PASSCODE);
-
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SetPasscode, AnalyticsValue.Action.TurnOnPasscode);
+        AnalyticsValue.Label label = checked ? AnalyticsValue.Label.On : AnalyticsValue.Label.Off;
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SetPasscode, AnalyticsValue.Action.SetPasscode, label);
     }
 
     @OnActivityResult(REQUEST_SET_PASSCODE)
@@ -99,6 +103,16 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
         tvPassCodeDetail.setVisibility(hasPassCode ? View.GONE : View.VISIBLE);
         vgModifyPassCode.setVisibility(hasPassCode ? View.VISIBLE : View.GONE);
         vModifyPassCodeDivider.setVisibility(hasPassCode ? View.VISIBLE : View.GONE);
+
+        vgUseFingerPrint.setVisibility(hasPassCode ? View.VISIBLE : View.GONE);
+        switchFingerPrint.setChecked(JandiPreference.isUseFingerprint());
+    }
+
+    @Click(R.id.vg_setting_privacy_fingerprint)
+    void setUseFingerprint() {
+        boolean checked = switchFingerPrint.isChecked();
+        switchFingerPrint.setChecked(!checked);
+        JandiPreference.setUseFingerprint(!checked);
     }
 
     @Click(R.id.vg_setting_privacy_passcode_modify)

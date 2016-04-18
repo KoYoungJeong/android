@@ -9,8 +9,9 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel_;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -32,19 +33,23 @@ public class TextSharePresenterImplTest {
     private TextSharePresenterImpl textSharePresenter;
     private TextSharePresenter.View mockView;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
+
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         textSharePresenter = TextSharePresenterImpl_.getInstance_(JandiApplication.getContext());
         mockView = mock(TextSharePresenter.View.class);
         textSharePresenter.setView(mockView);
         textSharePresenter.shareSelectModel = ShareSelectModel_.getInstance_(JandiApplication.getContext());
         textSharePresenter.shareSelectModel.initFormattedEntities(LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu());
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
     }
 
     @Test

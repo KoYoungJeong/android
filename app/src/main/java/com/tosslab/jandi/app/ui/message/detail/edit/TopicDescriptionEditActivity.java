@@ -11,9 +11,9 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -25,7 +25,7 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.ViewById;
 
-import retrofit.RetrofitError;
+
 
 @EActivity(R.layout.activity_topic_description_edit)
 @OptionsMenu(R.menu.topic_description_edit)
@@ -118,7 +118,7 @@ public class TopicDescriptionEditActivity extends BaseAppCompatActivity {
             setResult(RESULT_OK);
             finish();
 
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         }
     }

@@ -14,8 +14,9 @@ import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,9 +37,18 @@ public class TextShareFragmentTest {
     public ActivityTestRule<BaseAppCompatActivity> rule = new ActivityTestRule<>(BaseAppCompatActivity.class, false, false);
     private TextShareFragment textShareFragment;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
+
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         textShareFragment = TextShareFragment_.builder()
                 .text("text")
                 .subject("subject")
@@ -52,11 +62,6 @@ public class TextShareFragmentTest {
         await().until(() -> {
             return TextUtils.equals(textShareFragment.tvTeamName.getText().toString(), EntityManager.getInstance().getTeamName());
         });
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
     }
 
     @Test

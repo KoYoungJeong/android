@@ -4,18 +4,24 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqMember;
 import com.tosslab.jandi.app.network.models.ReqOwner;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import retrofit.RetrofitError;
+import javax.inject.Inject;
+
+import dagger.Lazy;
 import rx.Observable;
 
 /**
@@ -24,6 +30,13 @@ import rx.Observable;
 
 @EBean
 public class MembersModel {
+    @Inject
+    Lazy<RoomsApi> roomsApi;
+
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent.create().inject(this);
+    }
 
     public List<ChatChooseItem> getTopicMembers(long entityId) {
         final EntityManager entityManager = EntityManager.getInstance();
@@ -126,8 +139,8 @@ public class MembersModel {
 
     }
 
-    public void kickUser(long teamId, long topicId, long userEntityId) throws RetrofitError {
-        RequestApiManager.getInstance().kickUserFromTopic(teamId, topicId, new ReqMember(userEntityId));
+    public void kickUser(long teamId, long topicId, long userEntityId) throws RetrofitException {
+        roomsApi.get().kickUserFromTopic(teamId, topicId, new ReqMember(userEntityId));
     }
 
     public boolean isTeamOwner() {
@@ -155,8 +168,35 @@ public class MembersModel {
     }
 
     public void assignToTopicOwner(long teamId, long entityId, long memberId) throws Exception {
-        RequestApiManager.getInstance().assignToTopicOwner(teamId, entityId, new ReqOwner(memberId));
+        roomsApi.get().assignToTopicOwner(teamId, entityId, new ReqOwner(memberId));
     }
 
+    public static List<FormattedEntity> getEnabledTeamMember() {
+        List<FormattedEntity> members = new ArrayList<>();
+
+        EntityManager entityManager = EntityManager.getInstance();
+        members.addAll(entityManager.getFormattedUsers());
+        if (entityManager.hasJandiBot()) {
+            BotEntity botEntity = (BotEntity) entityManager.getJandiBot();
+            members.add(botEntity);
+        }
+
+        Observable.from(members)
+                .filter(FormattedEntity::isEnabled)
+                .toSortedList((entity, entity2) -> {
+                    if (entity instanceof BotEntity) {
+                        return -1;
+                    } else if (entity2 instanceof BotEntity) {
+                        return 1;
+                    } else {
+                        return StringCompareUtil.compare(entity.getName(), entity2.getName());
+                    }
+                })
+                .subscribe(entities -> {
+                    members.clear();
+                    members.addAll(entities);
+                });
+        return members;
+    }
 
 }

@@ -6,9 +6,12 @@ import android.text.TextUtils;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 public class AnalyticsUtil {
 
@@ -19,6 +22,9 @@ public class AnalyticsUtil {
     }
 
     public static void sendScreenName(String screenName) {
+
+        if (BuildConfig.DEBUG) return;
+
         try {
             Tracker tracker = ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER);
             tracker.setScreenName(screenName);
@@ -26,9 +32,11 @@ public class AnalyticsUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     public static void sendEvent(String category, String action, String label) {
+        if (BuildConfig.DEBUG) return;
         try {
             ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
                     .send(new HitBuilders.EventBuilder()
@@ -88,5 +96,21 @@ public class AnalyticsUtil {
                 break;
         }
         return action;
+    }
+
+    public static void trackSprinkler(FutureTrack futureTrack) {
+        if (BuildConfig.DEBUG) {
+            return;
+        }
+        Sprinkler.with(JandiApplication.getContext())
+                .track(futureTrack);
+    }
+
+    public static void flushSprinkler() {
+        if (BuildConfig.DEBUG) {
+            return;
+        }
+        Sprinkler.with(JandiApplication.getContext())
+                .flush();
     }
 }

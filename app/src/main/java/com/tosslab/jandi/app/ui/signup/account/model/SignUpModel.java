@@ -1,14 +1,15 @@
 package com.tosslab.jandi.app.ui.signup.account.model;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.main.SignUpApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.signup.account.to.CheckPointsHolder;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.PasswordChecker;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
@@ -16,7 +17,6 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 
-import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 24..
@@ -126,30 +126,28 @@ public class SignUpModel {
                 && mCheckPointsHolder.didAgreeAll == CheckPointsHolder.VALID);
     }
 
-    public ResCommon requestSignUp(String email, String password, String name, String lang) throws RetrofitError {
+    public ResCommon requestSignUp(String email, String password, String name, String lang) throws RetrofitException {
 
         ReqSignUpInfo signUpInfo = new ReqSignUpInfo(email, password, name, lang);
 
-        return RequestApiManager.getInstance().signUpAccountByMainRest(signUpInfo);
+        return new SignUpApi(RetrofitBuilder.newInstance()).signUpAccount(signUpInfo);
 
     }
 
     public void trackSendEmailSuccess(String email) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.SendAccountVerificationMail)
-                        .property(PropertyKey.ResponseSuccess, true)
-                        .property(PropertyKey.Email, email)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.SendAccountVerificationMail)
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.Email, email)
+                .build());
     }
 
     public void trackSendEmailFail(int errorCode) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.SendAccountVerificationMail)
-                        .property(PropertyKey.ResponseSuccess, false)
-                        .property(PropertyKey.ErrorCode, errorCode)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.SendAccountVerificationMail)
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
     }
 
 }

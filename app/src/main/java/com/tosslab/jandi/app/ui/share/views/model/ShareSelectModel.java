@@ -5,7 +5,11 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
+import com.tosslab.jandi.app.network.client.main.LeftSideApi;
+import com.tosslab.jandi.app.network.client.teams.folder.FolderApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
@@ -15,6 +19,7 @@ import com.tosslab.jandi.app.ui.share.views.domain.ExpandRoomData;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
@@ -25,7 +30,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import retrofit.RetrofitError;
+import javax.inject.Inject;
+
+import dagger.Lazy;
 import rx.Observable;
 
 /**
@@ -34,20 +41,30 @@ import rx.Observable;
 @EBean
 public class ShareSelectModel {
 
+    @Inject
+    Lazy<LeftSideApi> leftSideApi;
+    @Inject
+    Lazy<FolderApi> folderApi;
+    @Inject
+    Lazy<InvitationApi> invitationApi;
     private Map<Long, FormattedEntity> mJoinedTopics = new HashMap<>();
     private Map<Long, FormattedEntity> mUnjoinedTopics = new HashMap<>();
     private Map<Long, FormattedEntity> mUsers = new HashMap<>();
     private Map<Long, FormattedEntity> mJoinedUsers = new HashMap<>();
     private Map<Long, FormattedEntity> mGroups = new HashMap<>();
-
     private Map<Long, FormattedEntity> mStarredJoinedTopics = new HashMap<>();
     private Map<Long, FormattedEntity> mStarredUsers = new HashMap<>();
     private Map<Long, FormattedEntity> mStarredGroups = new HashMap<>();
     private ResLeftSideMenu.Team currentTeam;
     private ResLeftSideMenu.User mMe;
 
-    public ResLeftSideMenu getLeftSideMenu(long teamId) throws RetrofitError {
-        return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent.create().inject(this);
+    }
+
+    public ResLeftSideMenu getLeftSideMenu(long teamId) throws RetrofitException {
+        return leftSideApi.get().getInfosForSideMenu(teamId);
     }
 
     public void initFormattedEntities(ResLeftSideMenu resLeftSideMenu) {
@@ -114,20 +131,20 @@ public class ShareSelectModel {
     }
 
     // 폴더 정보 가져오기
-    public List<ResFolder> getTopicFolders(long teamId) throws RetrofitError {
+    public List<ResFolder> getTopicFolders(long teamId) {
         try {
-            return RequestApiManager.getInstance().getFoldersByTeamApi(teamId);
-        } catch (RetrofitError e) {
+            return folderApi.get().getFolders(teamId);
+        } catch (RetrofitException e) {
             e.printStackTrace();
             return new ArrayList<>();
         }
     }
 
     // 폴더 속 토픽 아이디 가져오기
-    public List<ResFolderItem> getTopicFolderItems(long teamId) throws RetrofitError {
+    public List<ResFolderItem> getTopicFolderItems(long teamId) {
         try {
-            return RequestApiManager.getInstance().getFolderItemsByTeamApi(teamId);
-        } catch (RetrofitError e) {
+            return folderApi.get().getFolderItems(teamId);
+        } catch (RetrofitException e) {
             e.printStackTrace();
             return new ArrayList<>();
         }
@@ -313,7 +330,7 @@ public class ShareSelectModel {
         return ret;
     }
 
-    public List<Team> getTeamInfos() throws RetrofitError {
+    public List<Team> getTeamInfos() throws RetrofitException {
 
         ArrayList<Team> teams = new ArrayList<>();
 
@@ -321,7 +338,7 @@ public class ShareSelectModel {
 
         teams.addAll(convertJoinedTeamList(userTeams));
 
-        List<ResPendingTeamInfo> pendingTeamInfo = RequestApiManager.getInstance().getPendingTeamInfoByInvitationApi();
+        List<ResPendingTeamInfo> pendingTeamInfo = invitationApi.get().getPedingTeamInfo();
         for (int idx = pendingTeamInfo.size() - 1; idx >= 0; idx--) {
             if (!TextUtils.equals(pendingTeamInfo.get(idx).getStatus(), "pending")) {
                 pendingTeamInfo.remove(idx);

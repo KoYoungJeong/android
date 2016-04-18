@@ -639,7 +639,7 @@ public class ResMessages {
 
         @DatabaseField
         public long invitorId;
-        @ForeignCollectionField
+        @ForeignCollectionField()
         public Collection<IntegerWrapper> inviteUsers;
 
         @DatabaseTable(tableName = "message_info_invite_user")
@@ -721,7 +721,7 @@ public class ResMessages {
         @JsonProperty("ch_isDefault")
         public boolean isDefault;
         @JsonProperty("ch_members")
-        @ForeignCollectionField
+        @ForeignCollectionField()
         public Collection<IntegerWrapper> members;
 
         @DatabaseTable(tableName = "message_info_create_topic_member")
@@ -778,7 +778,7 @@ public class ResMessages {
         @JsonProperty("pg_isDefault")
         public boolean isDefault;
         @JsonProperty("pg_members")
-        @ForeignCollectionField
+        @ForeignCollectionField()
         public Collection<IntegerWrapper> members;
 
         @DatabaseTable(tableName = "message_info_create_topic_member")

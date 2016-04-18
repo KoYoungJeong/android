@@ -89,14 +89,13 @@ import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
-import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
-import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
+import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
@@ -140,6 +139,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.TextCutter;
+import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
@@ -152,7 +152,6 @@ import com.tosslab.jandi.app.utils.transform.TransformConfig;
 import com.tosslab.jandi.app.views.BackPressCatchEditText;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.spannable.JandiURLSpan;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
@@ -384,6 +383,7 @@ public class MessageListV2Fragment extends Fragment implements
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Permissions.getResult()
+                .activity(getActivity())
                 .addRequestCode(REQ_STORAGE_PERMISSION)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         () -> Observable.just(1)
@@ -394,6 +394,9 @@ public class MessageListV2Fragment extends Fragment implements
                                             JandiPreference.getKeyboardHeight(JandiApplication.getContext());
                                     showUploadMenuSelectorIfNotShow(keyboardHeight);
                                 }, Throwable::printStackTrace))
+                .neverAskAgain(() -> {
+                    PermissionRetryDialog.showExternalPermissionDialog(getActivity());
+                })
                 .resultPermission(new OnRequestPermissionsResult(requestCode, permissions, grantResults));
     }
 
@@ -534,13 +537,12 @@ public class MessageListV2Fragment extends Fragment implements
         int screenView = entityType == JandiConstants.TYPE_PUBLIC_TOPIC
                 ? ScreenViewProperty.PUBLIC_TOPIC : ScreenViewProperty.PRIVATE_TOPIC;
 
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.ScreenView)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ScreenView, screenView)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.ScreenView)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ScreenView, screenView)
+                .build());
 
         AnalyticsValue.Screen screen = isInDirectMessage()
                 ? AnalyticsValue.Screen.Message : AnalyticsValue.Screen.TopicChat;
@@ -811,6 +813,7 @@ public class MessageListV2Fragment extends Fragment implements
         ivMemberStatusAlert.setImageResource(R.drawable.icon_disabled_members_bar);
         tvMemberStatusAlert.setText(R.string.jandi_disabled_user);
         setPreviewVisible(false);
+        vgMemberStatusAlert.setOnClickListener(null);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -821,6 +824,9 @@ public class MessageListV2Fragment extends Fragment implements
         vgMemberStatusAlert.setBackgroundColor(getResources().getColor(R.color.jandi_black_de));
         ivMemberStatusAlert.setImageResource(R.drawable.bar_icon_info);
         tvMemberStatusAlert.setText(R.string.jandi_this_member_is_pending_to_join);
+        vgMemberStatusAlert.setOnClickListener(v -> {
+            onEvent(new ShowProfileEvent(entityId, ShowProfileEvent.From.SystemMessage));
+        });
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -933,7 +939,7 @@ public class MessageListV2Fragment extends Fragment implements
     public void setUpNewMessage(List<ResMessages.Link> records, long myId,
                                 boolean isFirstLoad,
                                 boolean moveToLinkId) {
-        int location = records.size() - 1;
+        final int location = records.size() - 1;
         if (location < 0) {
             return;
         }
@@ -1056,7 +1062,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private void moveToMessage(long messageId, int firstVisibleItemTop) {
-        int itemPosition = messageAdapter.indexByMessageId(messageId);
+        int itemPosition = messageAdapter.getLastIndexByMessageId(messageId);
         layoutManager.scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
@@ -1349,6 +1355,7 @@ public class MessageListV2Fragment extends Fragment implements
         if (!uploadMenuViewModel.isShow()) {
             if (isCanDrawWindowOverlay()) {
                 Permissions.getChecker()
+                        .activity(getActivity())
                         .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         .hasPermission(() -> {
                             uploadMenuViewModel.showUploadSelector(height);
@@ -1633,7 +1640,8 @@ public class MessageListV2Fragment extends Fragment implements
 
         if (event.getRoom().getId() == room.getRoomId()) {
             SocketRoomMarkerEvent.Marker marker = event.getMarker();
-            messageListPresenter.onRoomMarkerChange(marker.getMemberId(), marker.getLastLinkId());
+            messageListPresenter.onRoomMarkerChange(
+                    room.getTeamId(), room.getRoomId(), marker.getMemberId(), marker.getLastLinkId());
         }
     }
 
@@ -1964,8 +1972,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     public void onEvent(SocketServiceStopEvent event) {
-        ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
-        if (!TextUtils.isEmpty(accessToken.getRefreshToken())) {
+        if (!TextUtils.isEmpty(TokenUtil.getRefreshToken())) {
             // 토큰이 없으면 개망..-o-
             JandiSocketService.startServiceForcily(getActivity());
         }
@@ -2233,7 +2240,6 @@ public class MessageListV2Fragment extends Fragment implements
     public void deleteLinkByMessageId(long messageId) {
         int position = messageAdapter.indexByMessageId(messageId);
         messageAdapter.remove(position);
-        saveCacheAndNotifyDataSetChanged(null);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -2270,7 +2276,7 @@ public class MessageListV2Fragment extends Fragment implements
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void dismissStatusLayout() {
+    public void dismissUserStatusLayout() {
         vgMemberStatusAlert.setVisibility(View.GONE);
     }
 

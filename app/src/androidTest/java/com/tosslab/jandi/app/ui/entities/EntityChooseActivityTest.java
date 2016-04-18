@@ -1,12 +1,14 @@
 package com.tosslab.jandi.app.ui.entities;
 
+import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.R;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,19 +29,25 @@ public class EntityChooseActivityTest {
     public ActivityTestRule<EntityChooseActivity_> rule = new ActivityTestRule<>(EntityChooseActivity_.class, false, false);
     private EntityChooseActivity_ activity;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
     @Before
     public void setUp() throws Exception {
 
-        BaseInitUtil.initData();
         rule.launchActivity(null);
         activity = rule.getActivity();
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
     }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
-    }
+
 
     @Test
     public void testInitActionBarTitle() throws Exception {

@@ -1,11 +1,12 @@
 package com.tosslab.jandi.app.ui.signup.verify.exception;
 
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-import retrofit.RetrofitError;
 
 /**
  * Created by tonyjs on 15. 6. 1..
@@ -18,12 +19,12 @@ public class VerifyNetworkException extends Exception {
     public String errReason;
     private int tryCount = NONE_TRY_COUNT;
 
-    public VerifyNetworkException(RetrofitError e) {
+    public VerifyNetworkException(RetrofitException e) {
+        errCode = e.getResponseCode();
+        errReason = e.getResponseMessage();
         try {
-            ExceptionData exceptionData = (ExceptionData) e.getBodyAs(ExceptionData.class);
-            LogUtil.d(exceptionData.toString());
-            errCode = exceptionData.code;
-            errReason = exceptionData.msg;
+            ExceptionData exceptionData = JacksonMapper.getInstance().getObjectMapper().readValue(e.getRawBody(), ExceptionData.class);
+            LogUtil.d(e.getRawBody());
             ExceptionData.TryData tryData = exceptionData.getData();
             tryCount = tryData != null ? tryData.getTryCount() : NONE_TRY_COUNT;
         } catch (Exception ex) {

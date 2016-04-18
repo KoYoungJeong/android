@@ -13,7 +13,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.profile.ForgotPasswordEvent;
-import com.tosslab.jandi.app.network.exception.ExceptionData;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -27,7 +27,6 @@ import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
@@ -42,7 +41,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.Touch;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
+
 
 /**
  * Created by justinygchoi on 14. 11. 13..
@@ -60,11 +59,10 @@ public class IntroLoginFragment extends Fragment implements UiUtils.KeyboardHand
 
     @AfterViews
     void init() {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.ScreenView)
-                        .property(PropertyKey.ScreenView, ScreenViewProperty.LOGIN_PAGE)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.ScreenView)
+                .property(PropertyKey.ScreenView, ScreenViewProperty.LOGIN_PAGE)
+                .build());
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.SignIn);
     }
@@ -79,13 +77,12 @@ public class IntroLoginFragment extends Fragment implements UiUtils.KeyboardHand
             accessToken = introLoginModel.login(email, password);
             introLoginModel.saveTokenInfo(accessToken);
 
-        } catch (RetrofitError error) {
+        } catch (RetrofitException error) {
 
             introLoginViewModel.dissmissProgressDialog();
-            if (error.getKind() == RetrofitError.Kind.HTTP) {
+            if (error.getStatusCode() < 500) {
                 try {
-                    ExceptionData exceptionData = (ExceptionData) error.getBodyAs(ExceptionData.class);
-                    switch (exceptionData.getCode()) {
+                    switch (error.getResponseCode()) {
                         case 40000:
                         case 40021:
                             introLoginViewModel.loginFail(R.string.err_login_invalid_id_or_password);

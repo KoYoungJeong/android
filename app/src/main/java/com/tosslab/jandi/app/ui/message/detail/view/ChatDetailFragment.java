@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.model.LeaveViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.TopicDetailModel;
@@ -34,7 +35,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
+
 
 @EFragment(R.layout.fragment_chat_detail)
 public class ChatDetailFragment extends Fragment {
@@ -137,8 +138,8 @@ public class ChatDetailFragment extends Fragment {
 
             setStarred(!isStarred);
 
-        } catch (RetrofitError e) {
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+        } catch (RetrofitException e) {
+            int errorCode = e.getStatusCode();
             if (isStarred) {
                 topicDetailModel.trackTopicUnStarFail(errorCode);
             } else {

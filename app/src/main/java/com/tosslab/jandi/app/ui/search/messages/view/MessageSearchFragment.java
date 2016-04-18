@@ -39,7 +39,6 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
@@ -102,13 +101,12 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
     @AfterViews
     void initObject() {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.ScreenView)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_SEARCH)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.ScreenView)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_SEARCH)
+                .build());
 
         messageSearchPresenter.setView(this);
 

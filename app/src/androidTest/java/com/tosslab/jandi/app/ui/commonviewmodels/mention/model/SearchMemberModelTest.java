@@ -5,7 +5,9 @@ import android.support.test.runner.AndroidJUnit4;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.main.LeftSideApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
@@ -13,7 +15,9 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
 import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel_;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -35,10 +39,17 @@ import static org.junit.Assert.assertThat;
 public class SearchMemberModelTest {
 
     SearchMemberModel searchMemberModel;
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
 
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
 
         List<ResAccountInfo.UserTeam> accountTeams = AccountRepository.getRepository().getAccountTeams();
         AccountRepository.getRepository().updateSelectedTeamInfo(accountTeams.get(0).getTeamId());
@@ -47,8 +58,12 @@ public class SearchMemberModelTest {
 
         Observable.from(accountTeams)
                 .subscribe(userTeam -> {
-                    ResLeftSideMenu leftSideMenu = shareSelectModel.getLeftSideMenu(userTeam.getTeamId());
-                    LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+                    try {
+                        ResLeftSideMenu leftSideMenu = shareSelectModel.getLeftSideMenu(userTeam.getTeamId());
+                        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                    }
                 });
 
         searchMemberModel = SearchMemberModel_.getInstance_(JandiApplication.getContext());
@@ -58,7 +73,7 @@ public class SearchMemberModelTest {
     public void testRefreshSelectableMembers() throws Exception {
 
         ResAccountInfo.UserTeam userTeam = AccountRepository.getRepository().getAccountTeams().get(0);
-        ResLeftSideMenu leftSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(userTeam.getTeamId());
+        ResLeftSideMenu leftSideMenu = new LeftSideApi(RetrofitBuilder.newInstance()).getInfosForSideMenu(userTeam.getTeamId());
 
         LinkedHashMap<Long, SearchedItemVO> searchedItemVOLinkedHashMap = searchMemberModel.refreshSelectableMembers(userTeam.getTeamId(), Arrays.asList(leftSideMenu.team.t_defaultChannelId), MentionControlViewModel.MENTION_TYPE_MESSAGE);
 

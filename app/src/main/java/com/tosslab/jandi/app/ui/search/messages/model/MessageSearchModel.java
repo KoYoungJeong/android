@@ -7,12 +7,13 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqMessageSearchQeury;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.search.messages.adapter.strategy.TextStrategy;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
@@ -25,7 +26,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 10..
@@ -36,7 +37,7 @@ public class MessageSearchModel {
     @RootContext
     Context context;
 
-    public ResMessageSearch requestSearchQuery(long teamId, String query, int page, int perPage, long entityId, long writerId) throws RetrofitError {
+    public ResMessageSearch requestSearchQuery(long teamId, String query, int page, int perPage, long entityId, long writerId) throws RetrofitException {
         ReqMessageSearchQeury reqMessageSearchQeury = new ReqMessageSearchQeury(teamId, query, page, perPage);
         reqMessageSearchQeury.entityId(entityId).writerId(writerId);
         return MessageSearchManager.newInstance(reqMessageSearchQeury).request();
@@ -117,26 +118,24 @@ public class MessageSearchModel {
             e.printStackTrace();
         }
 
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.MessageKeywordSearch)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, true)
-                        .property(PropertyKey.SearchKeyword, keyword)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.MessageKeywordSearch)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.SearchKeyword, keyword)
+                .build());
 
     }
 
     public void trackMessageKeywordSearchFail(int errorCode) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.MessageKeywordSearch)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, false)
-                        .property(PropertyKey.ErrorCode, errorCode)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.MessageKeywordSearch)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
 
     }
 

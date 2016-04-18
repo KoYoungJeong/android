@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
@@ -24,7 +25,7 @@ import org.androidannotations.annotations.EBean;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
+
 
 @EBean
 public class TextSharePresenterImpl implements TextSharePresenter {
@@ -119,7 +120,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
             shareModel.sendMessage(teamId, roomId, roomType, messageText, mentions);
             view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_share_succeed, messageText));
             view.finishOnUiThread();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
         } finally {
@@ -155,7 +156,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
             BadgeUtils.setBadge(JandiApplication.getContext(), totalUnreadCount);
             EntityManager.getInstance().refreshEntity();
             return true;
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             return false;
         } catch (Exception e) {

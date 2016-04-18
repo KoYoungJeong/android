@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.intro.presenter;
 import android.content.Context;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -14,7 +15,6 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
-import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 3..
@@ -82,10 +82,10 @@ public class IntroActivityPresenter {
                         try {
                             refreshAccountInfo();
                             moveNextActivity(context, initTime, startForInvite);
-                        } catch (RetrofitError retrofitError) {
+                        } catch (RetrofitException retrofitError) {
                             retrofitError.printStackTrace();
-                            if (retrofitError.getKind() != RetrofitError.Kind.HTTP
-                                    || retrofitError.getResponse().getStatus() != JandiConstants.NetworkError.UNAUTHORIZED) {
+                            if (retrofitError.getStatusCode() < 500
+                                    || retrofitError.getStatusCode() != JandiConstants.NetworkError.UNAUTHORIZED) {
                                 moveNextActivity(context, initTime, startForInvite);
                             }
                         }
@@ -93,10 +93,10 @@ public class IntroActivityPresenter {
                         try {
                             migrationAccountInfos(context, initTime, startForInvite);
                             moveNextActivity(context, initTime, startForInvite);
-                        } catch (RetrofitError retrofitError) {
+                        } catch (RetrofitException retrofitError) {
                             retrofitError.printStackTrace();
-                            if (retrofitError.getKind() != RetrofitError.Kind.HTTP
-                                    || retrofitError.getResponse().getStatus() != JandiConstants.NetworkError.UNAUTHORIZED) {
+                            if (retrofitError.getStatusCode() < 500
+                                    || retrofitError.getStatusCode() != JandiConstants.NetworkError.UNAUTHORIZED) {
                                 moveNextActivity(context, initTime, startForInvite);
                             }
                         }
@@ -107,14 +107,14 @@ public class IntroActivityPresenter {
                 }
             }
 
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             model.sleep(initTime, MAX_DELAY_MS);
 
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            int errorCode = e.getStatusCode();
             model.trackSignInFailAndFlush(errorCode);
 
             if (errorCode != -1
-                    && e.getResponse().getStatus() == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
+                    && e.getStatusCode() == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
                 view.showMaintenanceDialog();
             } else {
                 view.showCheckNetworkDialog();
@@ -139,7 +139,7 @@ public class IntroActivityPresenter {
         }
     }
 
-    private void migrationAccountInfos(Context context, long initTime, final boolean startForInvite) throws RetrofitError {
+    private void migrationAccountInfos(Context context, long initTime, final boolean startForInvite) throws RetrofitException {
         // v1.0.7 이전 설치자가 넘어온 경우
 
         model.refreshAccountInfo();
@@ -157,7 +157,7 @@ public class IntroActivityPresenter {
 
     }
 
-    void refreshAccountInfo() throws RetrofitError {
+    void refreshAccountInfo() throws RetrofitException {
         model.refreshAccountInfo();
     }
 

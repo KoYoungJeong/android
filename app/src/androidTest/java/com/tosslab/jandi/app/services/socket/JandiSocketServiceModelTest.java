@@ -3,6 +3,11 @@ package com.tosslab.jandi.app.services.socket;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.events.EventsApi;
+import com.tosslab.jandi.app.network.client.main.LoginApi;
+import com.tosslab.jandi.app.network.client.messages.MessageApi;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
 import org.junit.Before;
@@ -15,13 +20,17 @@ import static org.junit.Assert.assertThat;
 @RunWith(AndroidJUnit4.class)
 public class JandiSocketServiceModelTest {
 
-    private JandiSocketServiceModel jandiSocketServiceModel;
+    JandiSocketServiceModel jandiSocketServiceModel;
 
     @Before
     public void setUp() throws Exception {
-        jandiSocketServiceModel = new JandiSocketServiceModel(JandiApplication.getContext());
-
+        jandiSocketServiceModel = new JandiSocketServiceModel(JandiApplication.getContext(),
+                () -> new AccountApi(RetrofitBuilder.newInstance()),
+                () -> new MessageApi(RetrofitBuilder.newInstance()),
+                () -> new LoginApi(RetrofitBuilder.newInstance()),
+                () -> new EventsApi(RetrofitBuilder.newInstance()));
     }
+
 
     @Test
     public void testValidVersion() throws Exception {

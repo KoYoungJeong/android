@@ -1,10 +1,9 @@
 package com.tosslab.jandi.app.network.manager.token;
 
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
-import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedSimpleRestApiClient;
+import com.tosslab.jandi.app.network.client.main.LoginApi;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -14,7 +13,6 @@ import java.util.Date;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import retrofit.RetrofitError;
 
 public class TokenRequestManager {
     public static final String TAG = TokenRequestManager.class.getSimpleName();
@@ -42,7 +40,7 @@ public class TokenRequestManager {
         lock.lock();
 
         // DB에 토큰 정보가 저장이 안되어 있는 경우에 대한 방어코드
-        ResAccessToken savedResAccessToken = AccessTokenRepository.getRepository().getAccessToken();
+        ResAccessToken savedResAccessToken = TokenUtil.getTokenObject();
         if (savedResAccessToken == null || TextUtils.isEmpty(savedResAccessToken.getRefreshToken())) {
             LogUtil.e(TAG, "Token is empty");
             lock.unlock();
@@ -73,14 +71,8 @@ public class TokenRequestManager {
                 latestTokenInfo = new LatestTokenInfo(accessToken, new Date());
 
                 break;
-            } catch (RetrofitError e) {
-                if (e.getKind() == RetrofitError.Kind.NETWORK) {
-                    Log.e(TAG, "RefreshToken has failed by NETWORK. retry");
-                    loginRetryCount++;
-                } else {
-                    Log.e(TAG, "RefreshToken has failed by HTTP. end the request");
-                    break;
-                }
+            } catch (Exception e) {
+                loginRetryCount++;
             }
         }
 
@@ -88,9 +80,8 @@ public class TokenRequestManager {
         return accessToken;
     }
 
-    private ResAccessToken requestRefreshTokenAndSave(ReqAccessToken reqAccessToken) throws RetrofitError {
-        JacksonConvertedSimpleRestApiClient requestApiClient = new JacksonConvertedSimpleRestApiClient();
-        ResAccessToken accessToken = requestApiClient.getAccessTokenByMainRest(reqAccessToken);
+    private ResAccessToken requestRefreshTokenAndSave(ReqAccessToken reqAccessToken) throws Exception {
+        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.newInstance()).getAccessToken(reqAccessToken);
         TokenUtil.saveTokenInfoByRefresh(accessToken);
         return accessToken;
     }

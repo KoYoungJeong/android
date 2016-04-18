@@ -43,7 +43,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.presenter.MainTopicListPresenter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.create.TopicCreateActivity_;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.TopicFolderSettingActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.TopicFolderSettingActivity_;
-import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity_;
+import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -57,7 +57,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
@@ -137,13 +136,12 @@ public class MainTopicListFragment extends Fragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.ScreenView)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_PANEL)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.ScreenView)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_PANEL)
+                .build());
 
         layoutManager = new LinearLayoutManager(getActivity());
 
@@ -169,6 +167,13 @@ public class MainTopicListFragment extends Fragment
                     }
                     showCreateNewFolderDialog();
                 });
+        floatingActionMenu.addItem(R.drawable.btn_fab_item_go_unjoined,
+                getResources().getString(R.string.jandi_browse_other_topics), () -> {
+                    if (floatingActionMenu.isOpened()) {
+                        floatingActionMenu.close();
+                    }
+                    onEvent(new JoinableTopicCallEvent());
+                });
         floatingActionMenu.addItem(R.drawable.btn_fab_item_create_topic,
                 getResources().getString(R.string.jandi_create_topic), () -> {
                     if (floatingActionMenu.isOpened()) {
@@ -176,6 +181,7 @@ public class MainTopicListFragment extends Fragment
                     }
                     launchCreateTopicActivity();
                 });
+
     }
 
     @AfterInject
@@ -258,6 +264,7 @@ public class MainTopicListFragment extends Fragment
         }
     }
 
+
     @Click(R.id.vg_main_topic_order_title)
     void onOrderTitleClick() {
         boolean currentFolder = isCurrentFolder();
@@ -331,7 +338,9 @@ public class MainTopicListFragment extends Fragment
         int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()));
         EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
         setSelectedItem(selectedEntity);
-        scrollAndAnimateForSelectedItem();
+        if (isCurrentFolder()) {
+            scrollAndAnimateForSelectedItem();
+        }
 
         setFolderExpansion();
     }
@@ -386,7 +395,10 @@ public class MainTopicListFragment extends Fragment
     public void notifyDatasetChangedForFolder() {
         expandableTopicAdapter.notifyDataSetChanged();
         //빼먹지 말아야 함.
-        expandableItemManager.expandGroup(expandableTopicAdapter.getGroupCount() - 1);
+        int groupPosition = expandableTopicAdapter.getGroupCount() - 1;
+        if (groupPosition >= 0) {
+            expandableItemManager.expandGroup(groupPosition);
+        }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -468,9 +480,10 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEvent(JoinableTopicCallEvent event) {
-        JoinableTopicListActivity_.intent(getActivity())
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .start();
+        Intent intent = new Intent(getActivity(), JoinableTopicListActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.BrowseOtherTopics);
     }
 

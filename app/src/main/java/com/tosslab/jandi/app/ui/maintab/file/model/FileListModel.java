@@ -4,23 +4,24 @@ package com.tosslab.jandi.app.ui.maintab.file.model;
  * Created by Steve SeongUg Jung on 15. 1. 8..
  */
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.database.file.JandiFileDatabaseManager;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.file.FileApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -29,17 +30,24 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import retrofit.RetrofitError;
+import javax.inject.Inject;
+
+import dagger.Lazy;
+
 
 @EBean
 public class FileListModel {
 
-    @RootContext
-    Context context;
+    @Inject
+    Lazy<FileApi> fileApi;
 
-    public ResSearchFile searchFileList(ReqSearchFile reqSearchFile) throws RetrofitError {
-        ResSearchFile resSearchFile = RequestApiManager.getInstance().searchFileByMainRest(reqSearchFile);
-        return resSearchFile;
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent.create().inject(this);
+    }
+
+    public ResSearchFile searchFileList(ReqSearchFile reqSearchFile) throws RetrofitException {
+        return fileApi.get().searchFile(reqSearchFile);
     }
 
     public boolean isAllTypeFirstSearch(ReqSearchFile reqSearchFile) {
@@ -53,7 +61,7 @@ public class FileListModel {
     }
 
     public void saveOriginFirstItems(long teamId, ResSearchFile fileMessages) {
-        JandiFileDatabaseManager.getInstance(context).upsertFiles(teamId, fileMessages);
+        JandiFileDatabaseManager.getInstance(JandiApplication.getContext()).upsertFiles(teamId, fileMessages);
     }
 
     public List<ResMessages.OriginalMessage> descSortByCreateTime(List<ResMessages.OriginalMessage> links) {
@@ -96,24 +104,22 @@ public class FileListModel {
             e.printStackTrace();
         }
 
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.FileKeywordSearch)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, true)
-                        .property(PropertyKey.SearchKeyword, keyword)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.FileKeywordSearch)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.SearchKeyword, keyword)
+                .build());
     }
 
     public void trackFileKeywordSearchFail(int errorCode) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.FileKeywordSearch)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, false)
-                        .property(PropertyKey.ErrorCode, errorCode)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.FileKeywordSearch)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
     }
 }

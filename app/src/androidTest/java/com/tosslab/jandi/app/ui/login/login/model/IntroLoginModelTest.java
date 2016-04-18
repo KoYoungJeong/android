@@ -1,30 +1,29 @@
 package com.tosslab.jandi.app.ui.login.login.model;
 
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.main.LoginApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import retrofit.RetrofitError;
 import setup.BaseInitUtil;
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.IsEqual.equalTo;
 
@@ -34,18 +33,18 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @RunWith(AndroidJUnit4.class)
 public class IntroLoginModelTest {
 
-    @Rule
-    public ActivityTestRule<BaseAppCompatActivity> rule = new ActivityTestRule<BaseAppCompatActivity>(BaseAppCompatActivity.class);
     private IntroLoginModel introLoginModel;
 
     @Before
     public void setUp() throws Exception {
         introLoginModel = IntroLoginModel_.getInstance_(JandiApplication.getContext());
+        BaseInitUtil.clear();
+        TokenUtil.clearTokenInfo();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
     }
 
     @Test
@@ -57,9 +56,9 @@ public class IntroLoginModelTest {
             introLoginModel.login(wrongId, wrongPw);
             fail("성공하면 안되는 경우임 : 잘못된 ID 로 접근");
 
-        } catch (RetrofitError retrofitError) {
+        } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();
-            assertThat(retrofitError.getKind(), is(equalTo(RetrofitError.Kind.HTTP)));
+            assertThat(retrofitError.getStatusCode(), is(lessThan(500)));
         }
     }
 
@@ -71,9 +70,9 @@ public class IntroLoginModelTest {
         try {
             introLoginModel.login(rightId, wrongPw);
             fail("성공하면 안되는 경우임 : 잘못된 PW 로 접근");
-        } catch (RetrofitError retrofitError) {
+        } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();
-            assertThat(retrofitError.getKind(), is(equalTo(RetrofitError.Kind.HTTP)));
+            assertThat(retrofitError.getStatusCode(), is(lessThan(500)));
         }
     }
 
@@ -90,7 +89,7 @@ public class IntroLoginModelTest {
             assertThat(login.getTokenType(), is(notNullValue()));
             assertThat(login.getTokenType(), is(equalTo("bearer")));
 
-        } catch (RetrofitError retrofitError) {
+        } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();
             fail("실패할리가.... : 올바른 ID, PW 사용");
         }
@@ -104,7 +103,7 @@ public class IntroLoginModelTest {
         boolean isSaved = introLoginModel.saveTokenInfo(accessToken);
         assertThat(isSaved, is(true));
 
-        ResAccessToken savedToken = AccessTokenRepository.getRepository().getAccessToken();
+        ResAccessToken savedToken = TokenUtil.getTokenObject();
 
         assertThat(savedToken, is(notNullValue()));
         assertThat(accessToken.getAccessToken(), is(equalTo(savedToken.getAccessToken())));
@@ -115,11 +114,11 @@ public class IntroLoginModelTest {
 
     @Test
     public void testSaveAccountInfo() throws Exception {
-        ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
+        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.newInstance()).getAccessToken(
                 ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_EMAIL, BaseInitUtil.TEST_PASSWORD));
 
         TokenUtil.saveTokenInfoByPassword(accessToken);
-        ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+        ResAccountInfo accountInfo = new AccountApi(RetrofitBuilder.newInstance()).getAccountInfo();
         boolean isSaved = introLoginModel.saveAccountInfo(accountInfo);
         assertThat(isSaved, is(true));
 
@@ -131,7 +130,7 @@ public class IntroLoginModelTest {
     @Test
     public void testGetAccountInfo_No_Token() throws Exception {
         try {
-            ResAccountInfo accountInfo = introLoginModel.getAccountInfo();
+            introLoginModel.getAccountInfo();
             fail("토큰 정보 없는 상태이므로 성공하면 안됨");
         } catch (Exception e) {
             e.printStackTrace();
@@ -141,7 +140,7 @@ public class IntroLoginModelTest {
     @Test
     public void testGetAccountInfo_Has_Token() throws Exception {
 
-        ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
+        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.newInstance()).getAccessToken(
                 ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_EMAIL, BaseInitUtil.TEST_PASSWORD));
 
         TokenUtil.saveTokenInfoByPassword(accessToken);

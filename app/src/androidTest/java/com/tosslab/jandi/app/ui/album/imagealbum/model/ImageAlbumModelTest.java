@@ -7,8 +7,9 @@ import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.SelectPictures;
 
 import org.hamcrest.Matchers;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.List;
@@ -28,16 +29,21 @@ public class ImageAlbumModelTest {
 
     private ImageAlbumModel imageAlbumModel;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
+
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         imageAlbumModel = ImageAlbumModel_.getInstance_(JandiApplication.getContext());
     }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
-    }
 
     @Test
     public void testGetDefaultAlbumList() {
@@ -45,7 +51,7 @@ public class ImageAlbumModelTest {
                 imageAlbumModel.getDefaultAlbumList(JandiApplication.getContext());
         assertNotNull(imageAlbums);
         if (imageAlbums.size() > 0) {
-            assertThat(imageAlbums.size(), Matchers.greaterThan(1));
+            assertThat(imageAlbums.size(), Matchers.greaterThan(0));
         }
     }
 
@@ -55,9 +61,9 @@ public class ImageAlbumModelTest {
                 imageAlbumModel.getDefaultAlbumList(JandiApplication.getContext());
         if (imageAlbums.size() > 0) {
             List<ImagePicture> imagePictures =
-                    imageAlbumModel.getPhotoList(JandiApplication.getContext(), imageAlbums.get(0).getBucketId(), imageAlbums.get(0).get_id());
+                    imageAlbumModel.getPhotoList(JandiApplication.getContext(), imageAlbums.get(0).getBucketId(), 0);
             assertNotNull(imagePictures);
-            assertThat(imagePictures.size(), Matchers.greaterThan(1));
+            assertThat(imagePictures.size(), Matchers.greaterThan(0));
         }
     }
 
@@ -106,8 +112,8 @@ public class ImageAlbumModelTest {
                 imageAlbumModel.getDefaultAlbumList(JandiApplication.getContext());
         if (imageAlbums.size() > 0) {
             List<ImagePicture> imagePictures = imageAlbumModel.getAllPhotoList(
-                    JandiApplication.getContext(), imageAlbums.get(0).get_id());
-            assertThat(imagePictures.size(), greaterThan(1));
+                    JandiApplication.getContext(), 0);
+            assertThat(imagePictures.size(), greaterThan(0));
         }
     }
 

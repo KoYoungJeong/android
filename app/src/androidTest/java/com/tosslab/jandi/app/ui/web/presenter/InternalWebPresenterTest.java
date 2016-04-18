@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.support.test.rule.ActivityTestRule;
 
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 
 import org.junit.Assert;
@@ -11,8 +12,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import retrofit.RetrofitError;
 
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
@@ -49,7 +48,7 @@ public class InternalWebPresenterTest {
     }
 
     @Test
-    public void testSendMessage() {
+    public void testSendMessage() throws RetrofitException {
         // 본 테스트는 MessageManipulator에 대한 테스트가 완전하다고 가정하에 작성
 
         // Given
@@ -76,7 +75,7 @@ public class InternalWebPresenterTest {
 
         {
             // given 실패 케이스
-            Mockito.doThrow(RetrofitError.class).when(presenter).sendMessageToRoom(anyInt(), anyInt(), anyString(), anyObject());
+            Mockito.doThrow(RetrofitException.class).when(presenter).sendMessageToRoom(anyInt(), anyInt(), anyString(), anyObject());
 
             // When
             presenter.sendMessage(activity, title, url, shareSelectRoomEvent);

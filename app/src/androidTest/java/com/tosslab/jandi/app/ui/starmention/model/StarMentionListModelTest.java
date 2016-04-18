@@ -1,19 +1,20 @@
 package com.tosslab.jandi.app.ui.starmention.model;
 
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 
 import junit.framework.Assert;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
 import setup.BaseInitUtil;
 
 import static junit.framework.Assert.fail;
@@ -37,19 +38,24 @@ public class StarMentionListModelTest {
 
     public StarMentionListModel starMentionListModel;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
-        starMentionListModel = new StarMentionListModel();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        starMentionListModel = new StarMentionListModel();
+        starMentionListModel.initObject();
     }
 
     @Test
-    public void testGetRawDatas() {
+    public void testGetRawDatas() throws RetrofitException {
         ArgumentCaptor<Long> argumentCaptor = ArgumentCaptor.forClass(Long.class);
 
         //given
@@ -83,7 +89,7 @@ public class StarMentionListModelTest {
         try {
             ResStarMentioned resStarMentioned = starMentionListModel.getMentionRawDatas(-1, 10);
             assertNotNull(resStarMentioned);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             fail();
         }
     }
@@ -95,7 +101,7 @@ public class StarMentionListModelTest {
             ResStarMentioned resStarMentioned2 = starMentionListModel.getStarredRawDatas(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES, -1, 10);
             assertNotNull(resStarMentioned1);
             assertNotNull(resStarMentioned2);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             fail();
         }
     }
@@ -118,7 +124,7 @@ public class StarMentionListModelTest {
             List<StarMentionVO> starMentionVOList3 = starMentionListModel
                     .makeStarMentionList(StarMentionListActivity.TYPE_STAR_LIST_OF_FILES, resStarMentioned.getRecords());
             Assert.assertNotNull(starMentionVOList3);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             fail();
         }
     }

@@ -58,6 +58,8 @@ import com.tosslab.jandi.app.local.orm.repositories.ReadyCommentRepository;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.permissions.Check;
+import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
@@ -555,6 +557,10 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissDialog(Dialog dialog) {
+        if (isFinishing()) {
+            return;
+        }
+
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }
@@ -846,13 +852,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     public void onEvent(FileCommentRefreshEvent event) {
         if (roomId <= 0) {
-            reInitializeOnEvent(event.getFileId());
+            fileDetailPresenter.onInitializeFileDetail(event.getFileId(), false);
             return;
         }
 
-        // 소켓 이벤트로 넘어온 이벤트중 같은 roomId 만 처리
         if (event.getFileId() == fileId) {
-            reInitializeOnEvent(event.getFileId());
+            fileDetailPresenter.onInitializeFileDetail(event.getFileId(), false);
         }
     }
 
@@ -942,11 +947,14 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Permissions.getResult()
+                .activity(FileDetailActivity.this)
                 .addRequestCode(REQ_STORAGE_PERMISSION)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::download)
                 .addRequestCode(REQ_STORAGE_PERMISSION_EXPORT)
-                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        this::export)
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,this::export)
+                .neverAskAgain(() -> {
+                    PermissionRetryDialog.showExternalPermissionDialog(FileDetailActivity.this);
+                })
                 .resultPermission(Permissions.createPermissionResult(requestCode,
                         permissions,
                         grantResults));
@@ -978,11 +986,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void startDownloadedFileViewerActivity(File file, String fileType) {
+    public void startDownloadedFileViewerActivity(File file, String mimeType) {
         try {
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(file), fileType);
+            intent.setDataAndType(Uri.fromFile(file), mimeType);
             startActivity(intent);
             showToast(getString(R.string.jandi_file_downloaded_into, file.getPath()), false);
         } catch (ActivityNotFoundException e) {
@@ -1302,5 +1310,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
+    }
+
+    @Override
+    public void checkPermission(String persmissionString, Check.HasPermission hasPermission, Check.NoPermission noPermission) {
+        Permissions.getChecker()
+                .activity(FileDetailActivity.this)
+                .permission(() -> persmissionString)
+                .hasPermission(hasPermission)
+                .noPermission(noPermission)
+                .check();
     }
 }

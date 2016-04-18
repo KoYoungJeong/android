@@ -4,17 +4,21 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
+import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
@@ -29,15 +33,17 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsMenu;
 
+import java.util.List;
+
 /**
  * Created by Steve SeongUg Jung on 15. 2. 13..
  */
-
 @EActivity(R.layout.activity_main_share)
 @OptionsMenu(R.menu.share_menu)
 public class MainShareActivity extends BaseAppCompatActivity {
 
     public static final int REQ_STORAGE_PERMISSION = 101;
+    public static final String FRAGMENT_TAG = "share";
 
     @Bean
     MainShareModel mainShareModel;
@@ -56,8 +62,8 @@ public class MainShareActivity extends BaseAppCompatActivity {
         IntentType intentType = mainShareModel.getIntentType(action, type);
 
         if (intentType == null || used) {
-            // Check Shared Info Type
-            startIntro();
+            ColoredToast.show(R.string.jandi_unsupported_share_contents);
+            finish();
             return;
         }
 
@@ -65,6 +71,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
             // Check Login Info
             ColoredToast.show(getString(R.string.err_profile_get_info));
             startIntro();
+            finish();
             return;
         }
 
@@ -72,9 +79,13 @@ public class MainShareActivity extends BaseAppCompatActivity {
             setUpFragment(intent, intentType);
         } else {
             Permissions.getChecker()
+                    .activity(MainShareActivity.this)
                     .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     .hasPermission(() -> setUpFragment(intent, intentType))
-                    .noPermission(() -> requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_STORAGE_PERMISSION))
+                    .noPermission(() ->
+                            ActivityCompat.requestPermissions(MainShareActivity.this,
+                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                    REQ_STORAGE_PERMISSION))
                     .check();
         }
 
@@ -84,6 +95,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Permissions.getResult()
+                .activity(MainShareActivity.this)
                 .addRequestCode(REQ_STORAGE_PERMISSION)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, () -> {
                     new Handler().postDelayed(() -> {
@@ -91,45 +103,97 @@ public class MainShareActivity extends BaseAppCompatActivity {
                         setUpFragment(intent, mainShareModel.getIntentType(intent.getAction(), intent.getType()));
                     }, 300);
                 }, this::finish)
+                .neverAskAgain(() -> {
+                    PermissionRetryDialog.showExternalPermissionDialog(MainShareActivity.this);
+                })
                 .resultPermission(new OnRequestPermissionsResult(requestCode, permissions, grantResults));
     }
 
     private void setUpFragment(Intent intent, IntentType intentType) {
-        String fragmentTag = "share";
-
         FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentByTag(fragmentTag);
+        Fragment fragment = fragmentManager.findFragmentByTag(FRAGMENT_TAG);
 
         if (fragment != null) {
             return;
         }
 
-        Share share;
+        boolean attached = false;
         if (intentType == IntentType.Text) {
-            TextShareFragment textShareFragment = TextShareFragment_.builder()
-                    .subject(mainShareModel.handleSendSubject(intent))
-                    .text(mainShareModel.handleSendText(intent)).build();
-            fragment = textShareFragment;
-            share = textShareFragment;
+
+            attached = attachTextShareFragment(intent);
+
         } else if (intentType == IntentType.Multiple) {
-            MultiShareFragment multiShareFragment = MultiShareFragment
-                    .create(mainShareModel.handleSendImages(intent));
-            fragment = multiShareFragment;
-            share = multiShareFragment;
-        } else {
-            ImageShareFragment imageShareFragment = ImageShareFragment_.builder()
-                    .uriString(mainShareModel.handleSendImage(intent).toString())
-                    .build();
-            fragment = imageShareFragment;
-            share = imageShareFragment;
+
+            attached = attachMultiShareFragment(intent);
+
+        } else if (intentType == IntentType.File) {
+
+            attached = attachFileShareFragment(intent);
+
         }
 
-        this.share = share;
-        fragmentManager.beginTransaction()
-                .add(R.id.vg_share_container, fragment, fragmentTag)
+        if (attached) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.SharetoJandi);
+        } else {
+            ColoredToast.show(R.string.jandi_unsupported_share_contents);
+            finish();
+        }
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if (fragment instanceof Share) {
+            this.share = (Share) fragment;
+        }
+    }
+
+    private boolean attachTextShareFragment(Intent intent) {
+        String subject = mainShareModel.getShareSubject(intent);
+        CharSequence text = mainShareModel.getShareText(intent);
+        if (TextUtils.isEmpty(text)) {
+            return false;
+        }
+
+        TextShareFragment fragment = TextShareFragment_.builder()
+                .subject(subject)
+                .text(text.toString()).build();
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.vg_share_container, fragment, FRAGMENT_TAG)
                 .commit();
 
-        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.SharetoJandi);
+        return true;
+    }
+
+    private boolean attachFileShareFragment(Intent intent) {
+        Uri uri = mainShareModel.getShareFile(intent);
+        if (uri == null) {
+            return false;
+        }
+
+        FileShareFragment fragment = FileShareFragment_.builder()
+                .uriString(uri.toString())
+                .build();
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.vg_share_container, fragment, FRAGMENT_TAG)
+                .commit();
+
+        return true;
+    }
+
+    private boolean attachMultiShareFragment(Intent intent) {
+        List<Uri> uris = mainShareModel.getShareFiles(intent);
+        if (uris == null || uris.isEmpty()) {
+            return false;
+        }
+
+        MultiShareFragment fragment = MultiShareFragment.create(uris);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.vg_share_container, fragment, FRAGMENT_TAG)
+                .commit();
+        return true;
     }
 
     private void startIntro() {
@@ -177,7 +241,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
     }
 
     public enum IntentType {
-        Image, Text, Multiple, Etc
+        Text, Multiple, File
     }
 
     public interface Share {

@@ -1,10 +1,16 @@
 package com.tosslab.jandi.app.network.client;
 
-import android.content.Context;
-import android.util.Log;
-
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.file.FileApi;
+import com.tosslab.jandi.app.network.client.main.LeftSideApi;
+import com.tosslab.jandi.app.network.client.messages.MessageApi;
+import com.tosslab.jandi.app.network.client.messages.comments.CommentApi;
+import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
+import com.tosslab.jandi.app.network.client.profile.ProfileApi;
+import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
+import com.tosslab.jandi.app.network.client.settings.StarredEntityApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
@@ -26,11 +32,13 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
+import javax.inject.Inject;
+
+import dagger.Lazy;
+
 
 /**
  * Created by justinygchoi on 2014. 8. 27..
@@ -38,8 +46,22 @@ import retrofit.RetrofitError;
 @EBean
 public class EntityClientManager {
 
-    @RootContext
-    Context context;
+    @Inject
+    Lazy<LeftSideApi> leftSideApi;
+    @Inject
+    Lazy<ChannelApi> channelApi;
+    @Inject
+    Lazy<GroupApi> groupApi;
+    @Inject
+    Lazy<StarredEntityApi> starredEntityApi;
+    @Inject
+    Lazy<ProfileApi> profileApi;
+    @Inject
+    Lazy<MessageApi> messageApi;
+    @Inject
+    Lazy<CommentApi> commentApi;
+    @Inject
+    Lazy<FileApi> fileApi;
     private long selectedTeamId;
 
     @AfterInject
@@ -49,6 +71,11 @@ public class EntityClientManager {
             return;
         }
         selectedTeamId = selectedTeamInfo.getTeamId();
+
+        DaggerApiClientComponent
+                .builder()
+                .build()
+                .inject(this);
     }
 
     /**
@@ -57,192 +84,142 @@ public class EntityClientManager {
      * **********************************************************
      */
 
-    public ResLeftSideMenu getTotalEntitiesInfo() throws RetrofitError {
-        return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(selectedTeamId);
+    public ResLeftSideMenu getTotalEntitiesInfo() throws RetrofitException {
+        return leftSideApi.get().getInfosForSideMenu(selectedTeamId);
     }
 
-    public ResCommon createPublicTopic(String entityName, String topicDescription, boolean isAutojoin) throws RetrofitError {
+    public ResCommon createPublicTopic(String entityName, String topicDescription, boolean isAutojoin) throws RetrofitException {
         final ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
         reqCreateTopic.teamId = selectedTeamId;
         reqCreateTopic.name = entityName;
         reqCreateTopic.description = topicDescription;
         reqCreateTopic.autoJoin = isAutojoin;
-        return RequestApiManager.getInstance().createChannelByChannelApi(reqCreateTopic);
+        return channelApi.get().createChannel(selectedTeamId, reqCreateTopic);
     }
 
-    public ResCommon createPrivateGroup(String entityName, String topicDescription, boolean isAutojoin) throws RetrofitError {
+    public ResCommon createPrivateGroup(String entityName, String topicDescription, boolean isAutojoin) throws RetrofitException {
         final ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
         reqCreateTopic.teamId = selectedTeamId;
         reqCreateTopic.name = entityName;
         reqCreateTopic.description = topicDescription;
         reqCreateTopic.autoJoin = isAutojoin;
-        return RequestApiManager.getInstance().createPrivateGroupByGroupApi(reqCreateTopic);
+        return groupApi.get().createPrivateGroup(selectedTeamId, reqCreateTopic);
     }
 
-    public ResCommon joinChannel(long id) throws RetrofitError {
-        return RequestApiManager.getInstance().joinTopicByChannelApi(id, new ReqDeleteTopic(selectedTeamId));
+    public ResCommon joinChannel(long id) throws RetrofitException {
+        return channelApi.get().joinTopic(id, new ReqDeleteTopic(selectedTeamId));
     }
 
-    public ResCommon leaveChannel(final long id) throws RetrofitError {
-        return RequestApiManager.getInstance().leaveTopicByChannelApi(id, new ReqDeleteTopic(selectedTeamId));
+    public ResCommon leaveChannel(final long id) throws RetrofitException {
+        return channelApi.get().leaveTopic(id, new ReqDeleteTopic(selectedTeamId));
     }
 
-    public ResCommon leavePrivateGroup(final long id) throws RetrofitError {
-        return RequestApiManager.getInstance().leaveGroupByGroupApi(id, new ReqTeam(selectedTeamId));
+    public ResCommon leavePrivateGroup(final long id) throws RetrofitException {
+        return groupApi.get().leaveGroup(id, new ReqTeam(selectedTeamId));
     }
 
-    public ResCommon modifyChannelName(final long id, String name) throws RetrofitError {
+    public ResCommon modifyChannelName(final long id, String name) throws RetrofitException {
         ReqModifyTopicName entityInfo = new ReqModifyTopicName();
         entityInfo.teamId = selectedTeamId;
         entityInfo.name = name;
-        return RequestApiManager.getInstance().modifyPublicTopicNameByChannelApi(entityInfo, id);
+        return channelApi.get().modifyPublicTopicName(selectedTeamId, entityInfo, id);
     }
 
-    public ResCommon modifyPrivateGroupName(final long id, String name) throws RetrofitError {
+    public ResCommon modifyPrivateGroupName(final long id, String name) throws RetrofitException {
         ReqModifyTopicName entityInfo = new ReqModifyTopicName();
         entityInfo.teamId = selectedTeamId;
         entityInfo.name = name;
-        return RequestApiManager.getInstance().modifyGroupNameByGroupApi(entityInfo, id);
+        return groupApi.get().modifyGroupName(selectedTeamId, entityInfo, id);
     }
 
-    public ResCommon deleteChannel(final long id) throws RetrofitError {
-        return RequestApiManager.getInstance().deleteTopicByChannelApi(id, new ReqDeleteTopic(selectedTeamId));
+    public ResCommon deleteChannel(final long id) throws RetrofitException {
+        return channelApi.get().deleteTopic(id, new ReqDeleteTopic(selectedTeamId));
     }
 
-    public ResCommon deletePrivateGroup(final long id) throws RetrofitError {
-        return RequestApiManager.getInstance().deleteGroupByGroupApi(selectedTeamId, id);
+    public ResCommon deletePrivateGroup(final long id) throws RetrofitException {
+        return groupApi.get().deleteGroup(selectedTeamId, id);
     }
 
-    public ResCommon inviteChannel(final long id, final List<Long> invitedUsers) throws RetrofitError {
-        return RequestApiManager.getInstance().invitePublicTopicByChannelApi(id, new ReqInviteTopicUsers(invitedUsers, selectedTeamId));
+    public ResCommon inviteChannel(final long id, final List<Long> invitedUsers) throws RetrofitException {
+        return channelApi.get().invitePublicTopic(id, new ReqInviteTopicUsers(invitedUsers, selectedTeamId));
     }
 
-    public ResCommon invitePrivateGroup(final long id, final List<Long> invitedUsers) throws RetrofitError {
-        return RequestApiManager.getInstance().inviteGroupByGroupApi(id, new ReqInviteTopicUsers(invitedUsers, selectedTeamId));
+    public ResCommon invitePrivateGroup(final long id, final List<Long> invitedUsers) throws RetrofitException {
+        return groupApi.get().inviteGroup(id, new ReqInviteTopicUsers(invitedUsers, selectedTeamId));
     }
 
-    /**
-     * *********************************************************
-     * Entity 즐겨찾기 등록 / 해제
-     * **********************************************************
-     */
-    public ResCommon enableFavorite(final long entityId) throws RetrofitError {
-        return RequestApiManager.getInstance().enableFavoriteByStarredEntityApi(new ReqTeam(selectedTeamId), entityId);
+    public ResCommon enableFavorite(final long entityId) throws RetrofitException {
+        return starredEntityApi.get().enableFavorite(new ReqTeam(selectedTeamId), entityId);
     }
 
-    public ResCommon disableFavorite(final long entityId) throws RetrofitError {
-        return RequestApiManager.getInstance().disableFavoriteByStarredEntityApi(selectedTeamId, entityId);
+    public ResCommon disableFavorite(final long entityId) throws RetrofitException {
+        return starredEntityApi.get().disableFavorite(selectedTeamId, entityId);
     }
 
-    /**
-     * *********************************************************
-     * 사용자 프로필
-     * **********************************************************
-     */
-    public ResLeftSideMenu.User getUserProfile(final long entityId) throws RetrofitError {
-        return RequestApiManager.getInstance().getMemberProfileByTeamApi(selectedTeamId, entityId);
+    public ResLeftSideMenu.User getUserProfile(final long entityId) throws RetrofitException {
+        return profileApi.get().getMemberProfile(selectedTeamId, entityId);
     }
 
-    public ResLeftSideMenu.User updateUserProfile(final long entityId, final ReqUpdateProfile reqUpdateProfile) throws RetrofitError {
-        return RequestApiManager.getInstance().updateMemberProfileByProfileApi(entityId, reqUpdateProfile);
+    public ResLeftSideMenu.User updateUserProfile(final long entityId, final ReqUpdateProfile reqUpdateProfile) throws RetrofitException {
+        return profileApi.get().updateMemberProfile(entityId, reqUpdateProfile);
     }
 
-    public ResCommon updateMemberName(final long entityId, final ReqProfileName profileName) throws RetrofitError {
-        return RequestApiManager.getInstance().updateMemberNameByProfileApi(entityId, profileName);
+    public ResCommon updateMemberName(final long entityId, final ReqProfileName profileName) throws RetrofitException {
+        return profileApi.get().updateMemberName(entityId, profileName);
     }
 
-    public ResLeftSideMenu.User updateMemberEmail(long entityId, String email) throws RetrofitError {
-        return RequestApiManager.getInstance().updateMemberEmailByProfileApi(entityId, new ReqAccountEmail(email));
+    public ResLeftSideMenu.User updateMemberEmail(long entityId, String email) throws RetrofitException {
+        return profileApi.get().updateMemberEmail(entityId, new ReqAccountEmail(email));
     }
 
-//    /**
-//     * *********************************************************
-//     * Push Notification Token
-//     * **********************************************************
-//     */
-//    @Deprecated
-//    public ResAccountInfo registerNotificationToken(String oldDevToken, String newDevToken) throws RetrofitError {
-//        ReqNotificationRegister req = new ReqNotificationRegister("android", newDevToken);
-//        return RequestApiManager.getInstance().registerNotificationTokenByAccountDeviceApi(req);
-//    }
-//
-//    @Deprecated
-//    public ResAccountInfo deleteNotificationToken(String regId) throws RetrofitError {
-//        return RequestApiManager.getInstance().deleteNotificationTokenByAccountDeviceApi(new ReqDeviceToken(regId));
-//    }
-//
-//    @Deprecated
-//    public ResAccountInfo subscribeNotification(final String regId, final boolean isSubscribe) throws RetrofitError {
-//        ReqNotificationSubscribe req = new ReqNotificationSubscribe(isSubscribe);
-//        return RequestApiManager.getInstance().subscribeStateNotificationByAccountDeviceApi(new ReqSubscibeToken(regId, isSubscribe));
-//    }
-
-    /**
-     * *********************************************************
-     * File 관련
-     * **********************************************************
-     */
-    public ResFileDetail getFileDetail(final long messageId) throws RetrofitError {
-        return RequestApiManager.getInstance().getFileDetailByMessagesApiAuth(selectedTeamId, messageId);
+    public ResFileDetail getFileDetail(final long messageId) throws RetrofitException {
+        return messageApi.get().getFileDetail(selectedTeamId, messageId);
     }
 
-    public ResCommon sendMessageComment(final long messageId, String comment, List<MentionObject> mentions) throws RetrofitError {
-
-        final ReqSendComment reqSendComment = new ReqSendComment(comment, mentions);
-
-        Log.e("reqSendComment", reqSendComment.toString());
-
-        return RequestApiManager.getInstance().sendMessageCommentByCommentsApi(messageId, selectedTeamId,
-                reqSendComment);
+    public ResCommon sendMessageComment(final long messageId, String comment, List<MentionObject> mentions) throws RetrofitException {
+        ReqSendComment reqSendComment = new ReqSendComment(comment, mentions);
+        return commentApi.get().sendMessageComment(messageId, selectedTeamId, reqSendComment);
     }
 
-    public ResCommon shareMessage(final long messageId, long cdpIdToBeShared) throws RetrofitError {
+    public ResCommon shareMessage(final long messageId, long cdpIdToBeShared) throws RetrofitException {
         final ReqShareMessage reqShareMessage = new ReqShareMessage();
         reqShareMessage.shareEntity = cdpIdToBeShared;
         reqShareMessage.teamId = selectedTeamId;
-        return RequestApiManager.getInstance().shareMessageByMessagesApiAuth(reqShareMessage, messageId);
+        return messageApi.get().shareMessage(reqShareMessage, messageId);
     }
 
-    public ResCommon unshareMessage(final long messageId, long cdpIdToBeunshared) throws RetrofitError {
+    public ResCommon unshareMessage(final long messageId, long cdpIdToBeunshared) throws RetrofitException {
         final ReqUnshareMessage reqUnshareMessage = new ReqUnshareMessage(selectedTeamId, cdpIdToBeunshared);
-        return RequestApiManager.getInstance().unshareMessageByMessagesApiAuth(reqUnshareMessage, messageId);
+        return messageApi.get().unshareMessage(reqUnshareMessage, messageId);
     }
 
-//    public ResCommon modifyMessageComment(final long messageId, String comment, final long feedbackId)
-//            throws RetrofitError {
-//        final ReqSendComment reqModifyComment = new ReqSendComment();
-//        reqModifyComment.teamId = selectedTeamId;
-//        reqModifyComment.comment = comment;
-//        return RequestApiManager.getInstance().modifyMessageCommentByCommentsApi(reqModifyComment, feedbackId, messageId);
-//    }
-
-    public ResCommon deleteMessageComment(final long messageId, final long feedbackId) throws RetrofitError {
-        return RequestApiManager.getInstance().deleteMessageCommentByCommentsApi(selectedTeamId, feedbackId, messageId);
+    public ResCommon deleteMessageComment(final long messageId, final long feedbackId) throws RetrofitException {
+        return commentApi.get().deleteMessageComment(selectedTeamId, feedbackId, messageId);
     }
 
-    public ResCommon deleteFile(final long fileId) throws RetrofitError {
-        return RequestApiManager.getInstance().deleteFileByFileApi(selectedTeamId, fileId);
+    public ResCommon deleteFile(final long fileId) throws RetrofitException {
+        return fileApi.get().deleteFile(selectedTeamId, fileId);
     }
 
-    public ResCommon modifyChannelDescription(long entityId, String description) throws RetrofitError {
+    public ResCommon modifyChannelDescription(long entityId, String description) throws RetrofitException {
         ReqModifyTopicDescription entityInfo = new ReqModifyTopicDescription();
         entityInfo.teamId = selectedTeamId;
         entityInfo.description = description;
-        return RequestApiManager.getInstance().modifyPublicTopicDescriptionByChannelApi(entityInfo, entityId);
+        return channelApi.get().modifyPublicTopicDescription(selectedTeamId, entityInfo, entityId);
     }
 
-    public ResCommon modifyPrivateGroupDescription(long entityId, String description) throws RetrofitError {
+    public ResCommon modifyPrivateGroupDescription(long entityId, String description) throws RetrofitException {
         ReqModifyTopicDescription entityInfo = new ReqModifyTopicDescription();
         entityInfo.teamId = selectedTeamId;
         entityInfo.description = description;
-        return RequestApiManager.getInstance().modifyGroupDescriptionByGroupApi(entityInfo, entityId);
+        return groupApi.get().modifyGroupDescription(selectedTeamId, entityInfo, entityId);
     }
 
-    public ResCommon modifyChannelAutoJoin(long entityId, boolean autoJoin) {
+    public ResCommon modifyChannelAutoJoin(long entityId, boolean autoJoin) throws RetrofitException {
         ReqModifyTopicAutoJoin topicAutoJoin = new ReqModifyTopicAutoJoin();
         topicAutoJoin.teamId = selectedTeamId;
         topicAutoJoin.autoJoin = autoJoin;
-        return RequestApiManager.getInstance().modifyPublicTopicAutoJoinByChannelApi(topicAutoJoin, entityId);
+        return channelApi.get().modifyPublicTopicAutoJoin(selectedTeamId, topicAutoJoin, entityId);
     }
 
     public long getSelectedTeamId() {

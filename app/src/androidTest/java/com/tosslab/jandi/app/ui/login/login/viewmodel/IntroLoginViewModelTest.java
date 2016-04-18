@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.ui.login.login.IntroLoginFragment;
 import com.tosslab.jandi.app.ui.login.login.IntroLoginFragment_;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -163,6 +164,7 @@ public class IntroLoginViewModelTest {
         assertThat(introLoginViewModel.getPasswordText(), is(equalTo("password")));
     }
 
+    @Ignore
     @Test
     public void testHideKeypad() throws Exception {
         introLoginViewModel.hideKeypad();

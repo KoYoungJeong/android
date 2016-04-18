@@ -86,6 +86,18 @@ public class PassCodePresenter {
         view.clearPassCodeChecker();
     }
 
+    public void onDetermineUseFingerprint() {
+        if (!model.isUserWantsFingerPrintToAuth()) {
+            return;
+        }
+
+        if (model.canUseFingerprintToAuth()) {
+
+            view.showUnLockFromFingerprintDialog();
+
+        }
+    }
+
     public interface View {
         void checkPassCode(int passCodeLength);
 
@@ -98,6 +110,9 @@ public class PassCodePresenter {
         void showFail();
 
         void showSuccess();
+
+        void showUnLockFromFingerprintDialog();
+
     }
 
 }

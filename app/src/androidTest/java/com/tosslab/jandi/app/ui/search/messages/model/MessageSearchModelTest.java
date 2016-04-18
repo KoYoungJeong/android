@@ -6,7 +6,9 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -22,9 +24,18 @@ public class MessageSearchModelTest {
 
     MessageSearchModel searchModel;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
+
     @Before
     public void setup() throws Exception {
-        BaseInitUtil.initData();
         searchModel = MessageSearchModel_.getInstance_(JandiApplication.getContext());
     }
 

@@ -4,8 +4,9 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -21,18 +22,24 @@ public class DisabledEntityChoosePresenterImplTest {
     private DisabledEntityChoosePresenterImpl presenter;
     private DisabledEntityChoosePresenter.View mockView;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
+
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         presenter = DisabledEntityChoosePresenterImpl_.getInstance_(JandiApplication.getContext());
         mockView = mock(DisabledEntityChoosePresenter.View.class);
         presenter.setView(mockView);
     }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
-    }
+
 
     @Test
     public void testInitDisabledMembers() throws Exception {

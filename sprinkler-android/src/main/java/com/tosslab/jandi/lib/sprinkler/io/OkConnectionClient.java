@@ -1,6 +1,5 @@
 package com.tosslab.jandi.lib.sprinkler.io;
 
-import com.squareup.okhttp.OkHttpClient;
 import com.tosslab.jandi.lib.sprinkler.Logger;
 
 import java.security.GeneralSecurityException;
@@ -14,37 +13,29 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import retrofit.client.OkClient;
+import okhttp3.OkHttpClient;
 
 /**
  * Created by tonyjs on 15. 11. 23..
  */
-final class OkConnectionClient extends OkClient {
+final class OkConnectionClient {
     private static final String TAG = "OkConnectionClient";
 
     private static final int CONNECTION_TIMEOUT = 7 * 1000;
     private static final int READ_TIMEOUT = 7 * 1000;
 
-    public OkConnectionClient() {
-        this(getDefaultClient());
+    private OkConnectionClient() {
     }
 
-    public OkConnectionClient(OkHttpClient client) {
-        super(client);
-        Logger.i(TAG, String.format(
-                "initialize(connectionTimeOut:%s, readTimeOut:%d)",
-                client.getConnectTimeout(), client.getReadTimeout()));
-    }
-
-    private static OkHttpClient getDefaultClient() {
-        OkHttpClient client = new OkHttpClient();
-        client.setConnectTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
-        client.setReadTimeout(READ_TIMEOUT, TimeUnit.MILLISECONDS);
+    public static OkHttpClient getDefaultClient() {
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+        clientBuilder.connectTimeout(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
+        clientBuilder.readTimeout(READ_TIMEOUT, TimeUnit.MILLISECONDS);
         SSLSocketFactory sslSocketFactory = getDefaultSSLSocketFactory();
         if (sslSocketFactory != null) {
-            client.setSslSocketFactory(sslSocketFactory);
+            clientBuilder.sslSocketFactory(sslSocketFactory);
         }
-        return client;
+        return clientBuilder.build();
     }
 
     private static SSLSocketFactory getDefaultSSLSocketFactory() {

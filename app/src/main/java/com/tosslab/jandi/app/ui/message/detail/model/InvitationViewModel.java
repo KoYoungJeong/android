@@ -17,13 +17,14 @@ import com.tosslab.jandi.app.lists.entities.UnjoinedUserListAdapter;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
@@ -37,7 +38,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -77,12 +77,12 @@ public class InvitationViewModel {
         PublishSubject<String> publishSubject = PublishSubject.create();
         Subscription subscribe = publishSubject.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
                 .flatMap(s -> Observable.from(getUnjoinedEntities(entityId))
-                        .filter(formattedEntity -> {
-                            String searchTarget = s.toLowerCase();
-                            return formattedEntity.getName().toLowerCase()
-                                    .contains(searchTarget);
-                        })
-                        .toSortedList((formattedEntity, formattedEntity2) -> StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName()))
+                                .filter(formattedEntity -> {
+                                    String searchTarget = s.toLowerCase();
+                                    return formattedEntity.getName().toLowerCase()
+                                            .contains(searchTarget);
+                                })
+                                .toSortedList((formattedEntity, formattedEntity2) -> StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName()))
                 )
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(adapter::setUnjoinedEntities);
@@ -174,8 +174,8 @@ public class InvitationViewModel {
 
             trackTopicMemberInviteSuccess(invitedUsers.size(), entityId);
             inviteSucceed(context, invitedUsers.size());
-        } catch (RetrofitError e) {
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+        } catch (RetrofitException e) {
+            int errorCode = e.getStatusCode();
             trackTopicMemberInviteFail(errorCode);
             LogUtil.e("fail to invite entity");
             inviteFailed(context, context.getString(R.string.err_entity_invite));
@@ -186,27 +186,25 @@ public class InvitationViewModel {
     }
 
     private void trackTopicMemberInviteSuccess(int memberCount, long entityId) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.TopicMemberInvite)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, true)
-                        .property(PropertyKey.TopicId, entityId)
-                        .property(PropertyKey.MemberCount, memberCount)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.TopicMemberInvite)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.TopicId, entityId)
+                .property(PropertyKey.MemberCount, memberCount)
+                .build());
 
     }
 
     private void trackTopicMemberInviteFail(int errorCode) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.TopicMemberInvite)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, false)
-                        .property(PropertyKey.ErrorCode, errorCode)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.TopicMemberInvite)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
 
     }
 

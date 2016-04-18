@@ -7,10 +7,13 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -33,10 +36,18 @@ public class ShareSelectModelTest {
 
     ShareSelectModel shareSelectModel;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
+
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
-
         List<ResAccountInfo.UserTeam> accountTeams = AccountRepository.getRepository().getAccountTeams();
         AccountRepository.getRepository().updateSelectedTeamInfo(accountTeams.get(0).getTeamId());
 
@@ -44,8 +55,12 @@ public class ShareSelectModelTest {
 
         Observable.from(accountTeams)
                 .subscribe(userTeam -> {
-                    ResLeftSideMenu leftSideMenu = shareSelectModel.getLeftSideMenu(userTeam.getTeamId());
-                    LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+                    try {
+                        ResLeftSideMenu leftSideMenu = shareSelectModel.getLeftSideMenu(userTeam.getTeamId());
+                        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                    }
                 });
     }
 

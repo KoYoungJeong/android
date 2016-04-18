@@ -1,10 +1,12 @@
 package com.tosslab.jandi.app.ui.share.multi.presenter;
 
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
@@ -70,12 +72,18 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
         Observable
                 .create((Subscriber<? super ShareSelectModel> subscriber) -> {
                     if (!shareModel.hasLeftSideMenu(shareTarget.getTeamId())) {
-                        ResLeftSideMenu leftSideMenu = shareModel.getLeftSideMenu(teamId);
-                        shareModel.updateLeftSideMenu(leftSideMenu);
+                        try {
+                            ResLeftSideMenu leftSideMenu = shareModel.getLeftSideMenu(teamId);
+                            shareModel.updateLeftSideMenu(leftSideMenu);
+                        } catch (RetrofitException e) {
+                            subscriber.onError(e);
+                        }
                     }
 
                     shareSelectModel = shareModel.getShareSelectModel(teamId);
                     subscriber.onNext(shareSelectModel);
+                    subscriber.onCompleted();
+
                     subscriber.onCompleted();
                 })
                 .subscribeOn(Schedulers.io())
@@ -97,13 +105,21 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     @Override
     public void initShareData(List<String> uris) {
         shareAdapterDataModel.clear();
-        Observable.from(uris)
-                .observeOn(Schedulers.io())
-                .map(uri -> {
+        view.showProgress();
+        Observable.create(new Observable.OnSubscribe<FileShareData>() {
+            @Override
+            public void call(Subscriber<? super FileShareData> subscriber) {
+                for (String uri : uris) {
                     Uri paredUri = Uri.parse(uri);
                     String path = ImageFilePath.getPath(JandiApplication.getContext(), paredUri);
-                    return new FileShareData(path);
-                })
+                    if (!TextUtils.isEmpty(path)) {
+                        subscriber.onNext(new FileShareData(path));
+                    }
+                }
+                subscriber.onCompleted();
+            }
+        })
+                .subscribeOn(Schedulers.io())
                 .map(fileShareData -> {
                     String path = fileShareData.getData();
                     if (path.startsWith("http")) {
@@ -128,6 +144,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                     String fileName = getFileName(item.getData());
                     view.setFileTitle(fileName);
                     view.updateFiles(shareAdapterDataModel.size());
+                    view.dismissProgress();
                 });
 
     }

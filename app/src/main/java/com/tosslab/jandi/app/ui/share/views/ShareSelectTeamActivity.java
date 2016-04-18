@@ -9,6 +9,7 @@ import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.share.views.adapter.ShareTeamsAdapter;
@@ -69,14 +70,18 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
 
     @Background
     void initTeams() {
-        List<Team> teams = shareSelectModel.getTeamInfos();
-        ResAccountInfo.UserTeam selectedTeam = shareSelectModel.getSelectedTeamInfo();
-        for (Team team : teams) {
-            if (selectedTeam != null && selectedTeam.getTeamId() == team.getTeamId()) {
-                team.setSelected(true);
+        try {
+            List<Team> teams = shareSelectModel.getTeamInfos();
+            ResAccountInfo.UserTeam selectedTeam = shareSelectModel.getSelectedTeamInfo();
+            for (Team team : teams) {
+                if (selectedTeam != null && selectedTeam.getTeamId() == team.getTeamId()) {
+                    team.setSelected(true);
+                }
             }
+            showTeamList(teams);
+        } catch (RetrofitException e) {
+            e.printStackTrace();
         }
-        showTeamList(teams);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

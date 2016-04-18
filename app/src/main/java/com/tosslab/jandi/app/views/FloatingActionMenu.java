@@ -34,7 +34,7 @@ public class FloatingActionMenu extends FrameLayout {
     private static final int ANIMATION_DURATION = 300;
 
     // MAX 카운트를 수정하기 위해서 ids.xml에 아이디를 추가하도록 한다.
-    private static final int ITEM_MAX_COUNT = 4;
+    private static final int ITEM_MAX_COUNT = 5;
 
     RelativeLayout rootView;
     private int buttonCnt = 0;
@@ -199,6 +199,8 @@ public class FloatingActionMenu extends FrameLayout {
                 return R.id.fab_button_3;
             case 4:
                 return R.id.fab_button_4;
+            case 5:
+                return R.id.fab_button_5;
         }
         return -1;
     }

@@ -1,13 +1,11 @@
 package com.tosslab.jandi.app.ui.account.presenter;
 
-import android.content.Context;
-
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
-import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -22,12 +20,9 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -41,9 +36,6 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
-
-    @RootContext
-    Context context;
 
     View view;
 
@@ -89,14 +81,14 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         try {
             accountHomeModel.updateSelectTeam(teamId);
             ResLeftSideMenu entityInfo = accountHomeModel.getEntityInfo(teamId);
-            accountHomeModel.updateEntityInfo(context, entityInfo);
+            accountHomeModel.updateEntityInfo(JandiApplication.getContext(), entityInfo);
             view.dismissProgressWheel();
 
             // Track Team List Sign In (with flush)
             accountHomeModel.trackLaunchTeamSuccess(teamId);
             view.moveSelectedTeam(firstJoin);
-        } catch (RetrofitError e) {
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+        } catch (RetrofitException e) {
+            int errorCode = e.getResponseCode();
             accountHomeModel.trackLaunchTeamFail(errorCode);
             view.dismissProgressWheel();
             e.printStackTrace();
@@ -123,23 +115,20 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         view.showProgressWheel();
         try {
             ResAccountInfo resAccountInfo = accountHomeModel.updateAccountName(newName);
-            accountHomeModel.trackChangeAccountNameSuccess(context, resAccountInfo.getId());
+            accountHomeModel.trackChangeAccountNameSuccess(JandiApplication.getContext(), resAccountInfo.getId());
 
             AccountRepository.getRepository().updateAccountName(newName);
             view.dismissProgressWheel();
             view.setAccountName(newName);
-            view.showSuccessToast(context.getString(R.string.jandi_success_update_account_profile));
-        } catch (RetrofitError e) {
-            int errorCode = -1;
-            if (e.getResponse() != null) {
-                errorCode = e.getResponse().getStatus();
-            }
+            view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_success_update_account_profile));
+        } catch (RetrofitException e) {
+            int errorCode = e.getResponseCode();
 
             accountHomeModel.trackChangeAccountNameFail(errorCode);
 
             view.dismissProgressWheel();
-            if (e.getCause() instanceof ConnectionNotFoundException) {
-                view.showErrorToast(context.getResources().getString(R.string.err_network));
+            if (e.getStatusCode() >= 500) {
+                view.showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_network));
             }
             e.printStackTrace();
         } catch (Exception e) {
@@ -178,13 +167,13 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             accountHomeModel.acceptOrDeclineInvite(
                     selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.ACCEPT.getType());
             teamDomainInfoModel.updateTeamInfo(selectedTeam.getTeamId());
-            MixpanelMemberAnalyticsClient.getInstance(context, null)
+            MixpanelMemberAnalyticsClient.getInstance(JandiApplication.getContext(), null)
                     .pageViewMemberCreateSuccess();
 
             view.removePendingTeamView(selectedTeam);
             view.dismissProgressWheel();
             view.moveAfterInvitaionAccept();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             view.dismissProgressWheel();
             e.printStackTrace();
 
@@ -199,27 +188,27 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         }
     }
 
-    private String getJoinErrorMessage(Team selectedTeam, RetrofitError e) {
-        int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+    private String getJoinErrorMessage(Team selectedTeam, RetrofitException e) {
+        int errorCode = e.getResponseCode();
         String alertText;
         switch (errorCode) {
             case JandiConstants.TeamInviteErrorCode.NOT_AVAILABLE_INVITATION_CODE:
-                alertText = context.getResources().getString(R.string.jandi_expired_invitation_link);
+                alertText = JandiApplication.getContext().getResources().getString(R.string.jandi_expired_invitation_link);
                 break;
             case JandiConstants.TeamInviteErrorCode.DISABLED_MEMBER:
-                alertText = context.getResources().getString(R.string.jandi_disabled_team, selectedTeam.getName());
+                alertText = JandiApplication.getContext().getResources().getString(R.string.jandi_disabled_team, selectedTeam.getName());
                 break;
             case JandiConstants.TeamInviteErrorCode.REMOVED_TEAM:
-                alertText = context.getResources().getString(R.string.jandi_deleted_team);
+                alertText = JandiApplication.getContext().getResources().getString(R.string.jandi_deleted_team);
                 break;
             case JandiConstants.TeamInviteErrorCode.TEAM_INVITATION_DISABLED:
-                alertText = context.getResources().getString(R.string.jandi_invite_disabled, "");
+                alertText = JandiApplication.getContext().getResources().getString(R.string.jandi_invite_disabled, "");
                 break;
             case JandiConstants.TeamInviteErrorCode.ENABLED_MEMBER:
-                alertText = context.getResources().getString(R.string.jandi_joined_team, selectedTeam.getName());
+                alertText = JandiApplication.getContext().getResources().getString(R.string.jandi_joined_team, selectedTeam.getName());
                 break;
             default:
-                alertText = context.getResources().getString(R.string.err_network);
+                alertText = JandiApplication.getContext().getResources().getString(R.string.err_network);
                 break;
 
         }
@@ -236,7 +225,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
                     selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.DECLINE.getType());
             view.dismissProgressWheel();
             view.removePendingTeamView(selectedTeam);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             view.dismissProgressWheel();
             if (showErrorToast) {
                 view.showErrorToast(getJoinErrorMessage(selectedTeam, e));
@@ -254,7 +243,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @Background
     void getTeamInfo() {
-        refreshAccountInfo();
+        accountHomeModel.refreshAccountInfo();
 
         try {
             List<Team> teamList = accountHomeModel.getTeamInfos();
@@ -266,21 +255,12 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
                                 .upsertBadgeCount(team.getTeamId(), team.getUnread());
                     });
 
-            BadgeUtils.setBadge(context, BadgeCountRepository.getRepository().getTotalBadgeCount());
+            BadgeUtils.setBadge(JandiApplication.getContext(), BadgeCountRepository.getRepository().getTotalBadgeCount());
 
             ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo();
-            view.setTeamInfo((ArrayList<Team>) teamList, selectedTeamInfo);
-        } catch (RetrofitError e) {
-            view.showErrorToast(context.getString(R.string.err_network));
-        }
-    }
-
-    private void refreshAccountInfo() {
-        try {
-            ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
-            AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
-        } catch (RetrofitError retrofitError) {
-            retrofitError.printStackTrace();
+            view.setTeamInfo(teamList, selectedTeamInfo);
+        } catch (RetrofitException e) {
+            view.showErrorToast(JandiApplication.getContext().getString(R.string.err_network));
         }
     }
 

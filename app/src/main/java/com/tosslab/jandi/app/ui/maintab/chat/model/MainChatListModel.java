@@ -8,17 +8,22 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.chat.ChatApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
+import javax.inject.Inject;
+
+import dagger.Lazy;
 import rx.Observable;
 
 /**
@@ -26,6 +31,14 @@ import rx.Observable;
  */
 @EBean
 public class MainChatListModel {
+
+    @Inject
+    Lazy<ChatApi> chatApi;
+
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent.create().inject(this);
+    }
 
     public boolean hasAlarmCount(List<ChatItem> chatItems) {
 
@@ -48,8 +61,12 @@ public class MainChatListModel {
         return EntityManager.getInstance().getTeamId();
     }
 
-    public List<ResChat> getChatList(long memberId) throws RetrofitError {
-        return RequestApiManager.getInstance().getChatListByChatApi(memberId);
+    public List<ResChat> getChatList(long memberId) {
+        try {
+            return chatApi.get().getChatList(memberId);
+        } catch (RetrofitException e) {
+            return new ArrayList<>();
+        }
     }
 
     public List<ChatItem> convertChatItems(Context context, long teamId, List<ResChat> chatList) {

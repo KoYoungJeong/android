@@ -3,16 +3,16 @@ package com.tosslab.jandi.app.network.manager.apiexecutor;
 import android.support.v4.util.Pools;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
+import com.tosslab.jandi.app.network.exception.ExceptionData;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.manager.token.TokenRequestManager;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
-import com.tosslab.jandi.app.services.SignOutService;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
-import retrofit.RetrofitError;
-import retrofit.mime.TypedByteArray;
+import java.io.IOException;
+
+import retrofit2.Response;
 
 /**
  * Created by tee on 15. 6. 20..
@@ -37,65 +37,84 @@ public class PoolableRequestApiExecutor {
         sExecutorPool.release(this);
     }
 
-    public <RESULT> RESULT execute(IExecutor<RESULT> apiExecutor) {
+    public <RESULT> RESULT execute(Executor<Response<RESULT>> apiExecutor) throws RetrofitException {
 
         try {
-            RESULT object = apiExecutor.execute();
-            retryCnt = 0;
-            return object;
-        } catch (RetrofitError e) {
-            return handleException(e, apiExecutor);
+            Response<RESULT> response = apiExecutor.execute();
+            if (response.isSuccessful()) {
+                RESULT object = response.body();
+                retryCnt = 0;
+                return object;
+            } else {
+                return handleException(apiExecutor, response, null);
+            }
+        } catch (Exception e) {
+            return handleException(apiExecutor, null, e);
         }
 
     }
 
-    private <RESULT> RESULT handleException(RetrofitError e, IExecutor<RESULT> apiExecutor) {
+    private <RESULT> RESULT handleException(Executor<Response<RESULT>> apiExecutor, Response response, Exception e) throws RetrofitException {
 
         // 현재(2015/6) 시나리오엔 존재하지 않지만 Client측의 Network Connection에러를 UI단에 던지기 위한 코드 추가
         if (!isActiveNetwork()) {
-            LogUtil.e("Disconnect Network : " + e.getUrl());
-            throw RetrofitError.unexpectedError(JandiConstantsForFlavors.SERVICE_INNER_API_URL,
-                    new ConnectionNotFoundException());
+            if (response != null) {
+                throw RetrofitException.create(response.code(), e);
+            } else {
+                throw RetrofitException.create(503, e);
+            }
         }
 
-        if (e.getKind() == RetrofitError.Kind.NETWORK) {
+        if (e instanceof RuntimeException) {
+            throw RetrofitException.create(400, e);
+        } else if (e instanceof IOException) {
             if (retryCnt < RETRY_COUNT) {
                 retryCnt++;
                 return execute(apiExecutor);
             } else {
                 retryCnt = 0;
-                throw e;
+                throw RetrofitException.create(503, e);
             }
-        } else if (e.getKind() == RetrofitError.Kind.HTTP) {
-            if (e.getResponse().getBody() != null) {
-                LogUtil.e("HTTP Error : " + new String(((TypedByteArray) e.getResponse().getBody()).getBytes()));
+        } else if (response == null) {
+            if (e instanceof RetrofitException) {
+                throw (RetrofitException) e;
+            } else {
+                throw RetrofitException.create(503, e);
             }
-            int status = e.getResponse().getStatus();
+        } else {
+            int status = response.code();
             if (status == JandiConstants.NetworkError.UNAUTHORIZED) {
-                LogUtil.e("UNAUTHORIZED : " + e.getUrl());
                 ResAccessToken accessToken = TokenRequestManager.getInstance().refreshToken();
                 if (accessToken != null) {
-                    LogUtil.i("Refresh Token Success : " + e.getUrl());
                     try {
-                        return apiExecutor.execute();
-                    } catch (RetrofitError e1) {
+                        return apiExecutor.execute().body();
+                    } catch (Exception e1) {
                         // unknown exception
-                        LogUtil.e("Retry Fail : " + e.getUrl());
-                        throw e1;
+                        throw RetrofitException.create(401, e1);
                     }
                 } else {
                     // unauthorized exception
-                    LogUtil.e("Refresh Token Fail : " + e.getUrl());
-                    SignOutService.start();
-                    throw e;
+                    throw RetrofitException.create(response.code(), e);
                 }
             } else {
                 // exception, not unauthorized
-                LogUtil.e("Request Fail : " + e.getUrl());
-                throw e;
+                String errorBody;
+                int responseCode;
+                String responseMsg;
+                try {
+                    errorBody = response.errorBody().string();
+                    ExceptionData exceptionData = JacksonMapper.getInstance().getObjectMapper().readValue(errorBody, ExceptionData.class);
+                    responseCode = exceptionData.getCode();
+                    responseMsg = exceptionData.getMsg();
+                    throw RetrofitException.create(response.code(), responseCode, responseMsg, errorBody, e);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                    errorBody = "";
+                    responseCode = response.code() * 100;
+                    responseMsg = "";
+                    throw RetrofitException.create(response.code(), responseCode, responseMsg, errorBody, e1);
+                }
             }
-        } else {
-            throw e;
         }
     }
 

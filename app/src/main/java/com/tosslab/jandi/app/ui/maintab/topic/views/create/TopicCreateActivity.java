@@ -28,6 +28,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.OptionsMenuItem;
@@ -44,6 +45,9 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
 
     public static final int TITLE_MAX_LENGTH = 60;
     public static final int DESCRIPTION_MAX_LENGTH = 300;
+
+    @Extra
+    String expectTopicName;
 
     @Bean(TopicCreatePresenterImpl.class)
     TopicCreatePresenter topicCreatePresenter;
@@ -85,6 +89,10 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
     void initViews() {
         setupActionBar();
         setTopicType(true);
+
+        if (!TextUtils.isEmpty(expectTopicName)) {
+            tvTitle.setText(expectTopicName);
+        }
 
         progressWheel = new ProgressWheel(TopicCreateActivity.this);
 

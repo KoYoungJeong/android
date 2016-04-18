@@ -243,6 +243,7 @@
 
     <color name="jandi_comment_divider">#FFE1E1E1</color>
 
+    <color name="jandi_create_topic">#FF00ABE8</color>
 
     <!-- coach mark -->
     <color name="jandi_coach_mark_text">#FF19c1ff</color>

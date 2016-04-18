@@ -18,8 +18,8 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.services.download.domain.DownloadFileInfo;
 import com.tosslab.jandi.app.services.download.model.DownloadModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
@@ -188,14 +188,13 @@ public class DownloadController {
 
     void trackFileDownloadSuccess(long fileId, String fileType, String fileExt, int fileSize) {
         Context context = JandiApplication.getContext();
-        Sprinkler.with(context)
-                .track(new FutureTrack.Builder()
-                        .event(Event.FileDownload)
-                        .accountId(AccountUtil.getAccountId(context))
-                        .memberId(AccountUtil.getMemberId(context))
-                        .property(PropertyKey.ResponseSuccess, true)
-                        .property(PropertyKey.FileId, fileId)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.FileDownload)
+                .accountId(AccountUtil.getAccountId(context))
+                .memberId(AccountUtil.getMemberId(context))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.FileId, fileId)
+                .build());
 
         try {
             EntityManager entityManager = EntityManager.getInstance();

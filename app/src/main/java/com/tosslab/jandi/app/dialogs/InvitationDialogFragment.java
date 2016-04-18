@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.invites.email.InviteEmailActivity_;
+import com.tosslab.jandi.app.ui.invites.email.InviteByEmailActivity;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
@@ -150,6 +150,8 @@ public class InvitationDialogFragment extends DialogFragment {
                 return AnalyticsValue.Screen.TopicsTab;
             case InvitationDialogExecutor.FROM_CHAT_CHOOSE:
                 return AnalyticsValue.Screen.MessageTab;
+            case InvitationDialogExecutor.FROM_MAIN_TEAM:
+                return AnalyticsValue.Screen.TeamTab;
         }
     }
 
@@ -190,9 +192,9 @@ public class InvitationDialogFragment extends DialogFragment {
                 break;
             default:
             case TYPE_INVITATION_EMAIL:
-                return InviteEmailActivity_
-                        .intent(getActivity())
-                        .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP).get();
+                Intent intent = new Intent(getActivity(), InviteByEmailActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                return intent;
         }
 
         Intent intent = new Intent(Intent.ACTION_SEND);

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -15,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
@@ -218,7 +220,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     }
 
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void addFileInfos(List<CarouselFileInfo> fileInfoList) {
 
@@ -227,7 +229,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
 
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void addFileInfos(int position, List<CarouselFileInfo> imageFiles) {
 
@@ -237,14 +239,14 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         viewPager.setCurrentItem(imageFiles.size(), false);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setInitFail() {
         ColoredToast.showWarning(getString(R.string.err_download));
         finish();
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void movePosition(int startLinkPosition) {
         viewPager.setCurrentItem(startLinkPosition, false);
@@ -266,7 +268,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         tvFileWriterName.setText(fileWriterName);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setFileCreateTime(String fileCreateTime) {
         tvFileCreateTime.setText(fileCreateTime);
@@ -316,22 +318,27 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         if (fileInfo != null) {
 
             Permissions.getChecker()
+                    .activity(CarouselViewerActivity.this)
                     .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    .hasPermission(() -> {
-                        carouselViewerPresenter.onFileDownload(fileInfo);
-                    })
+                    .hasPermission(() -> carouselViewerPresenter.onFileDownload(fileInfo))
                     .noPermission(() -> {
-                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        ActivityCompat.requestPermissions(CarouselViewerActivity.this,
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                                 REQ_STORAGE_PERMISSION);
-                    }).check();
+                    })
+                    .check();
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Permissions.getResult()
+                .activity(CarouselViewerActivity.this)
                 .addRequestCode(REQ_STORAGE_PERMISSION)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::onFileDownload)
+                .neverAskAgain(() -> {
+                    PermissionRetryDialog.showExternalPermissionDialog(CarouselViewerActivity.this);
+                })
                 .resultPermission(Permissions.createPermissionResult(requestCode,
                         permissions,
                         grantResults));
@@ -346,7 +353,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         }
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showFailToast(String message) {
         ColoredToast.showError(message);

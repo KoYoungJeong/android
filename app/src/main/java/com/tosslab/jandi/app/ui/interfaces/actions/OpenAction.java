@@ -5,17 +5,16 @@ import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -23,6 +22,10 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
+
+import javax.inject.Inject;
+
+import dagger.Lazy;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 28..
@@ -34,10 +37,15 @@ public class OpenAction implements Action {
     Activity activity;
 
     ProgressWheel progressWheel;
+    @Inject
+    Lazy<AccountApi> accountApi;
 
     @AfterInject
     void initObject() {
         progressWheel = new ProgressWheel(activity);
+        DaggerApiClientComponent
+                .create()
+                .inject(this);
     }
 
     @Override
@@ -69,11 +77,10 @@ public class OpenAction implements Action {
 
         try {
 
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
-            helper.clearAllData();
+            SignOutUtil.removeSignData();
 
             TokenUtil.saveTokenInfoByRefresh(accessToken);
-            ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+            ResAccountInfo accountInfo = accountApi.get().getAccountInfo();
 
             AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
 

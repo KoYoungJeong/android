@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
@@ -40,7 +41,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -156,6 +156,8 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     public void checkEnabledUser(long entityId) {
         if (!messageListModel.isEnabledIfUser(entityId)) {
             view.setDisabledUser();
+        } else {
+            view.dismissUserStatusLayout();
         }
     }
 
@@ -375,9 +377,9 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
             messageListModel.trackMessageDeleteSuccess(messageId);
 
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             LogUtil.e("deleteMessageInBackground : FAILED", e);
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            int errorCode = e.getStatusCode();
             messageListModel.trackMessageDeleteFail(errorCode);
         } catch (Exception e) {
             LogUtil.e("deleteMessageInBackground : FAILED", e);
@@ -395,8 +397,8 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
             view.modifyEntitySucceed(topicName);
             messageListModel.trackChangingEntityName(entityType);
             EntityManager.getInstance().getEntityById(entityId).getEntity().name = topicName;
-        } catch (RetrofitError e) {
-            if (e.getResponse() != null && e.getResponse().getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
+        } catch (RetrofitException e) {
+            if (e.getStatusCode() == JandiConstants.NetworkError.DUPLICATED_NAME) {
                 view.showFailToast(JandiApplication.getContext().getString(R.string.err_entity_duplicated_name));
             } else {
                 view.showFailToast(JandiApplication.getContext().getString(R.string.err_entity_modify));
@@ -416,7 +418,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
             view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_message_starred));
             view.modifyStarredInfo(messageId, true);
             EventBus.getDefault().post(new StarredInfoChangeEvent());
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         }
 
@@ -430,7 +432,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
             view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_unpinned_message));
             view.modifyStarredInfo(messageId, false);
             EventBus.getDefault().post(new StarredInfoChangeEvent());
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         }
     }

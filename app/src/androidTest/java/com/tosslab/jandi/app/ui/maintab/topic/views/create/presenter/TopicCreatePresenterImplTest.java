@@ -4,10 +4,13 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -34,9 +37,18 @@ public class TopicCreatePresenterImplTest {
     private TopicCreatePresenter topicCreatePresenter;
     private TopicCreatePresenter.View mockView;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
+
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         topicCreatePresenter = TopicCreatePresenterImpl_.getInstance_(JandiApplication.getContext());
         mockView = Mockito.mock(TopicCreatePresenter.View.class);
 
@@ -87,9 +99,9 @@ public class TopicCreatePresenterImplTest {
         verify(mockView, times(1)).showProgressWheel();
         if (teamId[0] > 0) {
             verify(mockView, times(1)).createTopicSuccess(eq(teamId[0]), eq(topicId[0]), eq(topicName), eq(true));
+            // restore
+            new ChannelApi(RetrofitBuilder.newInstance()).deleteTopic(topicId[0], new ReqDeleteTopic(teamId[0]));
         }
 
-        // restore
-        RequestApiManager.getInstance().deleteTopicByChannelApi(topicId[0], new ReqDeleteTopic(teamId[0]));
     }
 }

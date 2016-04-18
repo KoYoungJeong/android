@@ -72,14 +72,14 @@ public class StarMentionListPresentorTest {
     }
 
     @Test
-    public void testEecuteLongClickEvent() {
+    public void testEecuteLongClickEvent() throws Exception {
         StarMentionVO starMentionVO = mock(StarMentionVO.class);
         starMentionListPresentor.executeLongClickEvent(starMentionVO, 1);
         verify(mockView).onShowDialog(anyInt(), anyInt(), anyInt());
     }
 
     @Test
-    public void testUnregistStarredMessage() {
+    public void testUnregistStarredMessage() throws Exception {
         starMentionListPresentor.starMentionListModel = mockStarMentionListModel;
         starMentionListPresentor.unregistStarredMessage(1, 1, 1);
         verify(mockStarMentionListModel).unregistStarredMessage(anyInt(), anyInt());
@@ -88,7 +88,7 @@ public class StarMentionListPresentorTest {
     }
 
     @Test
-    public void testRefreshList() {
+    public void testRefreshList() throws Exception {
         StarMentionListPresentor starMentionListPresentor1 = spy(starMentionListPresentor);
         doNothing().when(starMentionListPresentor1).addStarMentionMessagesToList(anyString());
         starMentionListPresentor1.starMentionListModel = mockStarMentionListModel;
@@ -97,7 +97,7 @@ public class StarMentionListPresentorTest {
     }
 
     @Test
-    public void testReloadList() {
+    public void testReloadList() throws Exception {
         StarMentionListPresentor starMentionListPresentor1 = spy(starMentionListPresentor);
         doNothing().when(starMentionListPresentor1).addStarMentionMessagesToList(anyString(), anyInt());
         starMentionListPresentor1.starMentionListModel = mockStarMentionListModel;

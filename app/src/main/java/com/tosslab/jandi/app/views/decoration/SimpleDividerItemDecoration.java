@@ -6,14 +6,17 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.tosslab.jandi.app.JandiApplication;
+
 /**
  * Created by Steve SeongUg Jung on 15. 5. 12..
  */
 public class SimpleDividerItemDecoration extends RecyclerView.ItemDecoration {
     private Drawable mDivider;
 
-    public SimpleDividerItemDecoration(Context context) {
-        mDivider = context.getResources().getDrawable(android.R.drawable.divider_horizontal_bright);
+    public SimpleDividerItemDecoration() {
+        mDivider = JandiApplication.getContext()
+                .getResources().getDrawable(android.R.drawable.divider_horizontal_bright);
     }
 
     @Override

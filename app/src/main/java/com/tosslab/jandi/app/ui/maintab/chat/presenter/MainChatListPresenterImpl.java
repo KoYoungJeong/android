@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -120,8 +119,6 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
             EventBus.getDefault().post(new ChatBadgeEvent(unreadCount > 0, unreadCount));
 
-        } catch (RetrofitError e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }

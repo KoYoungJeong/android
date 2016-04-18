@@ -87,7 +87,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         lvStarMention.setVerticalScrollBarEnabled(true);
         lvStarMention.setLayoutManager(layoutManager);
-        lvStarMention.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+        lvStarMention.addItemDecoration(new SimpleDividerItemDecoration());
         starMentionListAdapter = new StarMentionListAdapter();
         starMentionListAdapter.setListType(listType);
         starMentionListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {

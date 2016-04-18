@@ -1,23 +1,47 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply from: "$rootDir/artifacts.gradle"
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath "com.github.dcendents:android-maven-gradle-plugin:${rootProject.ext.androidMavenGradlePlugin}"
+    }
+}
+
+group = "com.tosslab.jandi.lib"
+version = 1.1
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '21.1.2'
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion rootProject.ext.minSdkVersion
     }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
+    lintOptions {
+        abortOnError false
     }
+
+
+    packagingOptions.excludes = [
+            'META-INF/DEPENDENCIES',
+            'META-INF/LICENSE',
+            'META-INF/LICENSE.txt',
+            'LICENSE.txt',
+            'LICENSE',
+            'META-INF/license.txt',
+            'META-INF/NOTICE',
+            'NOTICE',
+            'asm-license.txt',
+            'META-INF/NOTICE.txt',
+            'META-INF/notice.txt',
+            'META-INF/ASL2.0'
+    ]
 }
 
 dependencies {
@@ -25,10 +49,54 @@ dependencies {
         jcenter()
     }
 
-    compile 'com.squareup.okhttp:okhttp:2.5.0'
-    compile 'com.squareup.retrofit:retrofit:1.9.0'
-    testCompile 'org.robolectric:robolectric:3.0'
-    testCompile 'org.robolectric:shadows-httpclient:3.0'
-    testCompile 'com.jayway.awaitility:awaitility:1.6.+'
-    testCompile 'junit:junit:4.12'
+    compile "com.squareup.retrofit2:retrofit:${rootProject.ext.retrofitVersion}"
+    compile "com.squareup.retrofit2:converter-gson:${rootProject.ext.retrofitVersion}"
+    androidTestCompile "com.android.support.test:runner:${rootProject.ext.testRunnerVersion}"
+    androidTestCompile "com.android.support.test:rules:${rootProject.ext.testRunnerVersion}"
+    androidTestCompile "com.android.support.test.espresso:espresso-core:${rootProject.ext.espressoVersion}"
+    androidTestCompile "com.android.support.test.espresso:espresso-intents:${rootProject.ext.espressoVersion}"
+    androidTestCompile "com.crittercism.dexmaker:dexmaker-mockito:${rootProject.ext.dexmakerVersion}"
+    androidTestCompile "com.crittercism.dexmaker:dexmaker-dx:${rootProject.ext.dexmakerVersion}"
+    androidTestCompile "com.jayway.awaitility:awaitility:${rootProject.ext.awaitilityVersion}"
+    androidTestCompile "com.squareup.assertj:assertj-android:${rootProject.ext.assertJAndroidVersion}"
+    androidTestCompile "com.squareup.assertj:assertj-android-support-v4:${rootProject.ext.assertJAndroidVersion}@aar"
+    androidTestCompile "com.squareup.assertj:assertj-android-appcompat-v7:${rootProject.ext.assertJAndroidVersion}@aar"
+    androidTestCompile "com.squareup.assertj:assertj-android-recyclerview-v7:${rootProject.ext.assertJAndroidVersion}@aar"
+
+}
+
+
+install {
+    repositories.mavenInstaller.pom.project {
+        name "Sprinkler"
+        description "For Analytics"
+        packaging "aar"
+        url "https://github.com/tosslab/android_client"
+
+        licenses {
+            license {
+                distribution "repo"
+            }
+        }
+
+        scm {
+            url "scm:git:https://github.com/tosslab/android_client.git"
+            connection "scm:git:https://github.com/tosslab/android_client.git"
+        }
+
+        developers {
+            developer {
+                id 'tony.park'
+                name 'Tony Park'
+            }
+            developer {
+                id 'tee.kim'
+                name 'Tee Kim'
+            }
+            developer {
+                id 'steve.jung'
+                name 'Steve Jung'
+            }
+        }
+    }
 }

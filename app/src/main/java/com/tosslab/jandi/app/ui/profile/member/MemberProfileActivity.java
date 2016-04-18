@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
@@ -37,22 +38,26 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
+import com.tosslab.jandi.app.network.client.teams.TeamApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
+import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
+import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.profile.member.dagger.DaggerMemberProfileComponent;
 import com.tosslab.jandi.app.ui.profile.member.model.InactivedMemberProfileLoader;
 import com.tosslab.jandi.app.ui.profile.member.model.JandiBotProfileLoader;
 import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileLoader;
 import com.tosslab.jandi.app.ui.profile.member.model.ProfileLoader;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
-import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
-import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.LanguageUtil;
-import com.tosslab.jandi.app.utils.activity.ActivityHelper;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.transform.fresco.BlurPostprocessor;
@@ -72,7 +77,9 @@ import org.androidannotations.annotations.ViewById;
 import java.util.Arrays;
 import java.util.List;
 
-import retrofit.RetrofitError;
+import javax.inject.Inject;
+
+import dagger.Lazy;
 import uk.co.senab.photoview.PhotoView;
 
 /**
@@ -142,14 +149,20 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     SimpleDraweeView ivProfileImageSmall;
 
     ProfileLoader profileLoader;
-
+    @Inject
+    Lazy<TeamApi> teamApi;
+    @Inject
+    Lazy<InvitationApi> invitationApi;
     private boolean isFullSizeImageShowing = false;
     private boolean hasChangedProfileImage = true;
+    private ProgressWheel progressWheel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         overridePendingTransition(R.anim.slide_in_bottom_with_alpha, 0);
         super.onCreate(savedInstanceState);
+
+        DaggerMemberProfileComponent.create().inject(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getDecorView().setSystemUiVisibility(
@@ -432,13 +445,17 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     @Background
     void postStar(boolean star) {
-        if (star) {
-            entityClientManager.enableFavorite(memberId);
-        } else {
-            entityClientManager.disableFavorite(memberId);
-        }
+        try {
+            if (star) {
+                entityClientManager.enableFavorite(memberId);
+            } else {
+                entityClientManager.disableFavorite(memberId);
+            }
 
-        EntityManager.getInstance().getEntityById(memberId).isStarred = star;
+            EntityManager.getInstance().getEntityById(memberId).isStarred = star;
+        } catch (RetrofitException e) {
+            e.printStackTrace();
+        }
     }
 
     private void addButtons(final FormattedEntity member) {
@@ -474,6 +491,15 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                             getString(R.string.jandi_cancel_invitation),
                             v -> {
                                 showRejectInvitationAlert();
+                            }));
+            vgProfileTeamButtons.addView(
+                    getButton(R.drawable.icon_profile_message,
+                            getString(R.string.jandi_member_profile_dm), (v) -> {
+                                long teamId = entityManager.getTeamId();
+                                long entityId = member.getId();
+                                boolean isStarred = member.isStarred;
+                                startMessageListActivity(teamId, entityId, isStarred);
+                                AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.DirectMessage);
                             }));
         } else {
             final String userPhoneNumber = member.getUserPhoneNumber();
@@ -519,12 +545,17 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         String userEmail = EntityManager.getInstance().getEntityById(memberId).getUserEmail();
         long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
         try {
-            RequestApiManager.getInstance().cancelInvitationUserByTeamApi(teamId, memberId);
-            showSuccessEmail(userEmail);
-        } catch (RetrofitError retrofitError) {
+            teamApi.get().cancelInviteTeam(teamId, memberId);
+            showSuccessToRejectEmail(userEmail);
+            finishOnUiThread();
+        } catch (RetrofitException retrofitError) {
             showNetworkErrorToast();
-            retrofitError.printStackTrace();
         }
+    }
+
+    @UiThread
+    void finishOnUiThread() {
+        finish();
     }
 
     @UiThread
@@ -533,24 +564,44 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     @UiThread
-    void showSuccessEmail(String userEmail) {
+    void showSuccessToRejectEmail(String userEmail) {
         ColoredToast.show(getString(R.string.jandi_success_to_cancel_invitation, userEmail));
     }
 
     @Background
     void requestReInvite() {
-
+        showProgress();
         long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
 
         List<String> invites = Arrays.asList(EntityManager.getInstance().getEntityById(memberId).getUserEmail());
         try {
-            RequestApiManager.getInstance().inviteToTeamByTeamApi(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage()));
+            teamApi.get().inviteToTeam(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage()));
             showSuccessReinvite();
-        } catch (RetrofitError retrofitError) {
-            retrofitError.printStackTrace();
+        } catch (RetrofitException e) {
+            e.printStackTrace();
             showNetworkErrorToast();
         }
 
+        dismissProgress();
+
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void dismissProgress() {
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void showProgress() {
+        if (progressWheel == null) {
+            progressWheel = new ProgressWheel(MemberProfileActivity.this);
+        }
+
+        if (!progressWheel.isShowing()) {
+            progressWheel.show();
+        }
     }
 
     @UiThread
@@ -616,6 +667,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     void callIfHasPermission() {
         Permissions.getChecker()
+                .activity(MemberProfileActivity.this)
                 .permission(() -> Manifest.permission.CALL_PHONE)
                 .hasPermission(() -> {
                     call(EntityManager.getInstance().getEntityById(memberId).getUserPhoneNumber());
@@ -623,7 +675,9 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 })
                 .noPermission(() -> {
                     String[] permissions = {Manifest.permission.CALL_PHONE};
-                    requestPermissions(permissions, REQ_CALL_PERMISSION);
+                    ActivityCompat.requestPermissions(MemberProfileActivity.this,
+                            permissions,
+                            REQ_CALL_PERMISSION);
                 })
                 .check();
     }
@@ -631,11 +685,15 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Permissions.getResult()
+                .activity(MemberProfileActivity.this)
                 .addRequestCode(REQ_CALL_PERMISSION)
                 .addPermission(Manifest.permission.CALL_PHONE, () -> {
                     FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
                     call(member.getUserPhoneNumber());
                     AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Profile_Cellphone);
+                })
+                .neverAskAgain(() -> {
+                    PermissionRetryDialog.showCallPermissionDialog(MemberProfileActivity.this);
                 })
                 .resultPermission(Permissions.createPermissionResult(requestCode, permissions, grantResults));
     }
@@ -674,9 +732,9 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     private void startStarMentionListActivity() {
-        StarMentionListActivity_.intent(MemberProfileActivity.this)
+        MainTabActivity_.intent(this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .extra("type", StarMentionListActivity.TYPE_MENTION_LIST)
+                .tabIndex(MainTabPagerAdapter.TAB_MYPAGE)
                 .start();
     }
 

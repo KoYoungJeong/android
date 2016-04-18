@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -27,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -39,12 +39,12 @@ public class ModifyProfileModel {
     @Bean
     EntityClientManager entityClientManager;
 
-    public ResLeftSideMenu.User getProfile() throws RetrofitError {
+    public ResLeftSideMenu.User getProfile() throws RetrofitException {
         EntityManager entityManager = EntityManager.getInstance();
         return entityClientManager.getUserProfile(entityManager.getMe().getId());
     }
 
-    public ResLeftSideMenu.User updateProfile(ReqUpdateProfile reqUpdateProfile) throws RetrofitError {
+    public ResLeftSideMenu.User updateProfile(ReqUpdateProfile reqUpdateProfile) throws RetrofitException {
         EntityManager entityManager = EntityManager.getInstance();
         return entityClientManager.updateUserProfile(entityManager.getMe().getId(), reqUpdateProfile);
     }
@@ -61,13 +61,13 @@ public class ModifyProfileModel {
                 .load("PUT", requestURL)
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
                 .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
                 .setMultipartFile("photo", URLConnection.guessContentTypeFromName(file.getName()), file)
                 .asString()
                 .get();
     }
 
-    public com.tosslab.jandi.app.network.models.ResCommon updateProfileName(ReqProfileName reqProfileName) throws RetrofitError {
+    public com.tosslab.jandi.app.network.models.ResCommon updateProfileName(ReqProfileName reqProfileName) throws RetrofitException {
         EntityManager entityManager = EntityManager.getInstance();
         return entityClientManager.updateMemberName(entityManager.getMe().getId(), reqProfileName);
     }
@@ -101,7 +101,7 @@ public class ModifyProfileModel {
 
     }
 
-    public ResLeftSideMenu.User updateProfileEmail(String email) throws RetrofitError {
+    public ResLeftSideMenu.User updateProfileEmail(String email) throws RetrofitException {
         EntityManager entityManager = EntityManager.getInstance();
         return entityClientManager.updateMemberEmail(entityManager.getMe().getId(), email);
     }

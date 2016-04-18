@@ -1,11 +1,12 @@
 package com.tosslab.jandi.app.ui.settings.account.model;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
-import retrofit.RetrofitError;
+import dagger.Lazy;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
@@ -13,6 +14,10 @@ import rx.schedulers.Schedulers;
  * Created by tonyjs on 16. 3. 23..
  */
 public class SettingAccountModel {
+
+    private Lazy<AccountProfileApi> accountProfileApi;
+
+    public SettingAccountModel(Lazy<AccountProfileApi> accountProfileApi) {this.accountProfileApi = accountProfileApi;}
 
     public Observable<ResAccountInfo> getAccountInfoObservable() {
         return Observable.just(AccountRepository.getRepository().getAccountInfo())
@@ -31,9 +36,9 @@ public class SettingAccountModel {
             try {
                 ReqProfileName reqProfileName = new ReqProfileName(newName);
                 ResAccountInfo resAccountInfo =
-                        RequestApiManager.getInstance().changeNameByAccountProfileApi(reqProfileName);
+                        accountProfileApi.get().changeName(reqProfileName);
                 subscriber.onNext(resAccountInfo);
-            } catch (RetrofitError error) {
+            } catch (RetrofitException error) {
                 subscriber.onError(error);
             }
             subscriber.onCompleted();

@@ -6,12 +6,14 @@ import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,18 +42,21 @@ public class AccountHomePresenterImplTest {
     private AccountHomePresenterImpl accountHomePresenter;
     private AccountHomePresenter.View viewMock;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
+
     @Before
     public void setUp() throws Exception {
         accountHomePresenter = AccountHomePresenterImpl_.getInstance_(JandiApplication.getContext());
         viewMock = mock(AccountHomePresenter.View.class);
         accountHomePresenter.setView(viewMock);
-
-        BaseInitUtil.initData();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
 
     }
 
@@ -66,6 +71,8 @@ public class AccountHomePresenterImplTest {
 
         // Then
         verify(viewMock).invalidAccess();
+
+        BaseInitUtil.initData();
     }
 
     @Test
@@ -113,18 +120,25 @@ public class AccountHomePresenterImplTest {
 
     @Test
     public void testOnJoinedTeamSelect_Wrong_TeamId() throws Exception {
-        final boolean[] finish = {false};
-        doAnswer(invocationOnMock -> {
-            finish[0] = true;
-            return invocationOnMock;
-        }).when(viewMock).dismissProgressWheel();
 
-        accountHomePresenter.onJoinedTeamSelect(-1, false);
+        long originSelectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
 
-        Awaitility.await().until(() -> finish[0]);
+        try {
+            final boolean[] finish = {false};
+            doAnswer(invocationOnMock -> {
+                finish[0] = true;
+                return invocationOnMock;
+            }).when(viewMock).dismissProgressWheel();
 
-        verify(viewMock).dismissProgressWheel();
+            accountHomePresenter.onJoinedTeamSelect(-1, false);
 
+            Awaitility.await().until(() -> finish[0]);
+
+            verify(viewMock).dismissProgressWheel();
+
+        } finally {
+            AccountRepository.getRepository().updateSelectedTeamInfo(originSelectedTeamId);
+        }
     }
 
     @Test
@@ -189,7 +203,7 @@ public class AccountHomePresenterImplTest {
         assertThat(newSavedName, is(not(equalTo(originName))));
         assertThat(newSavedName, is(equalTo(newName)));
 
-        RequestApiManager.getInstance().changeNameByAccountProfileApi(new ReqProfileName(originName));
+        new AccountProfileApi(RetrofitBuilder.newInstance()).changeName(new ReqProfileName(originName));
     }
 
     @Ignore

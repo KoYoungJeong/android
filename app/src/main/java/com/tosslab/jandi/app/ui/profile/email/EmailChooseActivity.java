@@ -12,7 +12,7 @@ import com.tosslab.jandi.app.events.profile.DeleteEmailEvent;
 import com.tosslab.jandi.app.events.profile.NewEmailEvent;
 import com.tosslab.jandi.app.events.profile.RetryNewEmailEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.exception.ExceptionData;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.email.model.EmailChooseModel;
@@ -29,11 +29,10 @@ import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 12..
@@ -91,13 +90,11 @@ public class EmailChooseActivity extends BaseAppCompatActivity {
             emailChooseModel.trackChangeAccountEmailSuccess(accountId);
 
             emailChoosePresenter.finishWithResultOK();
-        } catch (RetrofitError e) {
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+        } catch (RetrofitException e) {
+            int errorCode = e.getStatusCode();
             emailChooseModel.trackChangeAccountEmailFail(errorCode);
             e.printStackTrace();
             emailChoosePresenter.showFailToast(getString(R.string.err_network));
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             emailChoosePresenter.dismissProgressWheel();
         }
@@ -116,9 +113,7 @@ public class EmailChooseActivity extends BaseAppCompatActivity {
             AccountRepository.getRepository().upsertUserEmail(accountInfo.getEmails());
             List<AccountEmail> accountEmails = emailChooseModel.getAccountEmails();
             emailChoosePresenter.refreshEmails(accountEmails);
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
         }
     }
@@ -213,11 +208,9 @@ public class EmailChooseActivity extends BaseAppCompatActivity {
             ResAccountInfo resAccountInfo = emailChooseModel.requestDeleteEmail(email);
             AccountRepository.getRepository().upsertUserEmail(resAccountInfo.getEmails());
             emailChoosePresenter.refreshEmails(emailChooseModel.getAccountEmails());
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             emailChoosePresenter.showFailToast(getString(R.string.err_network));
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             emailChoosePresenter.dismissProgressWheel();
         }
@@ -234,19 +227,10 @@ public class EmailChooseActivity extends BaseAppCompatActivity {
 
             emailChoosePresenter.refreshEmails(emailChooseModel.getAccountEmails());
             emailChoosePresenter.showSuccessToast(getString(R.string.sent_auth_email));
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
 
-            int errorCode = -1;
-            try {
-                ExceptionData exceptionData = (ExceptionData) e.getBodyAs(ExceptionData.class);
-                errorCode = exceptionData.getCode();
-            } catch (RuntimeException conversionException) {
-                conversionException.printStackTrace();
-                if (e.getResponse() != null) {
-                    errorCode = e.getResponse().getStatus();
-                }
-            }
+            int errorCode = e.getResponseCode();
             emailChooseModel.trackRequestVerifyEmailFail(errorCode);
 
             String errorMessage = getString(R.string.err_team_creation_failed);
@@ -254,8 +238,6 @@ public class EmailChooseActivity extends BaseAppCompatActivity {
                 errorMessage = getString(R.string.err_email_exists);
             }
             emailChoosePresenter.showFailToast(errorMessage);
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             emailChoosePresenter.dismissProgressWheel();
         }

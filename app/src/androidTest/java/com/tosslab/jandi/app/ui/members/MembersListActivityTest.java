@@ -1,12 +1,13 @@
 package com.tosslab.jandi.app.ui.members;
 
 import android.content.Intent;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.ui.members.adapter.MembersAdapter;
+import com.tosslab.jandi.app.ui.members.adapter.ModdableMemberListAdapter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl_;
 
@@ -40,6 +41,7 @@ public class MembersListActivityTest {
         i.putExtra("type", MembersListActivity.TYPE_MEMBERS_LIST_TOPIC);
         rule.launchActivity(i);
         activity = rule.getActivity();
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
         membersListPresenter = MembersListPresenterImpl_.getInstance_(activity);
         membersListPresenter.setView(activity);
     }
@@ -58,7 +60,7 @@ public class MembersListActivityTest {
         rule.runOnUiThread(() -> activity.removeUser(entityId));
 
         // Then
-        MembersAdapter adapter = (MembersAdapter) activity.memberListView.getAdapter();
+        ModdableMemberListAdapter adapter = (ModdableMemberListAdapter) activity.memberListView.getAdapter();
         for (int idx = 0; idx < adapter.getItemCount(); idx++) {
             long entityId1 = adapter.getItem(idx).getEntityId();
             if (entityId1 == entityId) {

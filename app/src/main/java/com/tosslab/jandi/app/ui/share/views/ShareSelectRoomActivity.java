@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -39,7 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
+
 
 @EActivity(R.layout.layout_room_selector)
 public class ShareSelectRoomActivity extends BaseAppCompatActivity implements ShareRoomsAdapter.OnItemClickListener {
@@ -117,7 +118,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
             }
             shareSelectModel.initFormattedEntities(leftSideMenu);
             getTopics();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             String errorMessage = getApplicationContext().getResources().getString(R.string.err_network);
             showError(errorMessage);

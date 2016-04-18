@@ -165,6 +165,7 @@
 	<string name="jandi_create">"Create"</string>
 	<string name="jandi_create_channel">"Create New Topic"</string>
 	<string name="jandi_create_folder">"Create a folder"</string>
+	<string name="jandi_create_new_topic">"Create a new topic named \n'%s'"</string>
 	<string name="jandi_create_privategroup">"Create New Private Topic"</string>
 	<string name="jandi_create_team_message">"Provide your email address below to create a JANDI team for free!"</string>
 	<string name="jandi_create_topic">"Create a topic"</string>
@@ -246,6 +247,7 @@
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_guide_to_assign_topic_owner">"Please designate another member to transfer the topic admin permission to before you remove this member from this topic."</string>
 	<string name="jandi_has_joined">"%s has joined"</string>
+	<string name="jandi_has_no_search_result">" '%s' has no matches."</string>
 	<string name="jandi_has_no_searched_member">"<![CDATA[<b><font color=#404040>%s</font></b>]]> has no matches."</string>
 	<string name="jandi_have_an_account_already">"Already have an account?"</string>
 	<string name="jandi_help">"Help"</string>
@@ -273,14 +275,14 @@
 	<string name="jandi_invite_succes_copy_link">"The team invitation link has been copied to your clipboard. Use it to invite others to your team."</string>
 	<string name="jandi_invite_succes_send">"Invitations have been sent to:"</string>
 	<string name="jandi_invite_success">"Invitation has been sent successfully"</string>
-	<string name="jandi_invite_to_dummy_account_again">"Another team member has already sent an invitation to this address.
-Do you want to send it again?"</string>
+	<string name="jandi_invite_to_dummy_account_again">"Another team member has already sent an invitation to this team member. Do you want to send another?"</string>
 	<string name="jandi_invite_to_team">"Invite"</string>
 	<string name="jandi_invite_wechat">"WeChat"</string>
 	<string name="jandi_invited_topic">"%1$s invited %2$s"</string>
 	<string name="jandi_is_newcomer">"New to JANDI?"</string>
 	<string name="jandi_is_topic_required">"Type*"</string>
 	<string name="jandi_it_has_no_topic_description">"(There is no topic description)"</string>
+	<string name="jandi_join_topic">"Join"</string>
 	<string name="jandi_joined_team">"You have already joined %1$s. Please check your team list."</string>
 	<string name="jandi_kicked_message">"You have been removed from %s."</string>
 	<string name="jandi_later">"Later"</string>
@@ -332,7 +334,8 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_my_files">"<b>My Files</b>"</string>
 	<string name="jandi_mypage">"My Page"</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
-	<string name="jandi_need_to_assign_topic_owner">" "</string>
+	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic.
+"</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>
 	<string name="jandi_next">"Next"</string>
 	<string name="jandi_no_invite_email">"Provide the email addresses of the team members you want to invite"</string>
@@ -486,7 +489,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_success_copy_clipboard_external_link">"Public link has been copied to clipboard."</string>
 	<string name="jandi_success_disable_external_link">"Public link has been deleted."</string>
 	<string name="jandi_success_kick_user_from_topic">"Member has been removed from this topic."</string>
-	<string name="jandi_success_to_cancel_invitation">"%'s invitation has been canceled."</string>
+	<string name="jandi_success_to_cancel_invitation">"%s's invitation has been canceled."</string>
 	<string name="jandi_success_update_account_profile">"Account has bean updated successfully"</string>
 	<string name="jandi_success_web_token">"Sign-in was successful"</string>
 	<string name="jandi_switch_team">"Switch Teams"</string>
@@ -552,6 +555,7 @@ We combined everything you love about messaging apps and cloud storage with powe
 	<string name="jandi_unshared_file_in_dm">"This file has been unshared from this conversation."</string>
 	<string name="jandi_unshared_message">"You cannot access this item anymore."</string>
 	<string name="jandi_unstarred">"Unstar"</string>
+	<string name="jandi_unsupported_share_contents">"This file(or message) is not supported."</string>
 	<string name="jandi_unsupported_type_picture">"This image type is not supported. Please choose another."</string>
 	<string name="jandi_update_message">"A new version of JANDI is available"</string>
 	<string name="jandi_update_title">"Old Version"</string>

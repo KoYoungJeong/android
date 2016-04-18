@@ -5,7 +5,9 @@ import android.support.test.runner.AndroidJUnit4;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -23,10 +25,18 @@ public class TopicDetailModelTest {
 
     private TopicDetailModel topicDetailModel;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
+
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
-
         topicDetailModel = TopicDetailModel_.getInstance_(JandiApplication.getContext());
     }
 

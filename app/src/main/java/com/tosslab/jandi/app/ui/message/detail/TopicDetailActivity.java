@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.message.detail.view.ChatDetailFragment_;
 import com.tosslab.jandi.app.ui.message.detail.view.TopicDetailFragment_;
 
-
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 

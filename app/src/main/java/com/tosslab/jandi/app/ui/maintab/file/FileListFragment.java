@@ -35,11 +35,12 @@ import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
-import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
+import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
@@ -82,7 +83,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -153,13 +153,12 @@ public class FileListFragment extends Fragment
     @AfterViews
     void bindAdapter() {
         if (getActivity() instanceof SearchActivity) {
-            Sprinkler.with(JandiApplication.getContext())
-                    .track(new FutureTrack.Builder()
-                            .event(Event.ScreenView)
-                            .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                            .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                            .property(PropertyKey.ScreenView, ScreenViewProperty.FILE_SEARCH)
-                            .build());
+            AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                    .event(Event.ScreenView)
+                    .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                    .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                    .property(PropertyKey.ScreenView, ScreenViewProperty.FILE_SEARCH)
+                    .build());
 
             AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.FilesSearch);
         }
@@ -168,7 +167,7 @@ public class FileListFragment extends Fragment
 
         // Empty View를 가진 ListView 설정
         lvSearchFiles.setLayoutManager(new LinearLayoutManager(getActivity()));
-        lvSearchFiles.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+        lvSearchFiles.addItemDecoration(new SimpleDividerItemDecoration());
         lvSearchFiles.setAdapter(searchedFileItemListAdapter);
 
         selectedTeamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
@@ -313,7 +312,7 @@ public class FileListFragment extends Fragment
                 searchedFileItemListAdapter.setReadyMore();
             }
 
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             LogUtil.e("fail to get searched files.", e);
             fileListPresenter.showErrorToast(JandiApplication.getContext().getString(R.string.err_file_search));
@@ -531,8 +530,8 @@ public class FileListFragment extends Fragment
             }
 
             searchSucceed(resSearchFile);
-        } catch (RetrofitError e) {
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+        } catch (RetrofitException e) {
+            int errorCode = e.getStatusCode();
             fileListModel.trackFileKeywordSearchFail(errorCode);
             e.printStackTrace();
             LogUtil.e("fail to get searched files.", e);

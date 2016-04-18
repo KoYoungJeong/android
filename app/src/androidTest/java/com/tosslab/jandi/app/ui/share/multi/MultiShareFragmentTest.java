@@ -18,7 +18,10 @@ import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,13 +43,21 @@ import static org.hamcrest.core.IsNull.notNullValue;
 public class MultiShareFragmentTest {
 
     @Rule
-    public IntentsTestRule<BaseAppCompatActivity> rule = new IntentsTestRule<>(BaseAppCompatActivity.class, false, false);
+    public IntentsTestRule<BaseAppCompatActivity> rule = new IntentsTestRule<>(BaseAppCompatActivity.class);
     private MultiShareFragment fragment;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
 
     @Before
     public void setUp() throws Throwable {
-        BaseInitUtil.initData();
-        rule.launchActivity(null);
 
         ArrayList<Uri> uris = new ArrayList<>();
         Observable.from(getImagePathList(2))
@@ -62,7 +73,7 @@ public class MultiShareFragmentTest {
                     .commit();
         });
 
-        await().until(() -> fragment.tvTitle.getText().length() > 0);
+        await().until(() -> fragment.tvTitle.length() > 0 && fragment.tvTeamName.length() > 0);
 
         rule.runOnUiThread(() -> {
             fragment.multiSharePresenter.onFilePageChanged(1, "hello1");
@@ -119,10 +130,10 @@ public class MultiShareFragmentTest {
         assertThat(fragment.vpShare.getAdapter(), is(notNullValue()));
     }
 
+    @Ignore
     @Test
     public void testMoveIntro() throws Throwable {
         rule.runOnUiThread(fragment::moveIntro);
-
         Intents.intending(IntentMatchers.hasComponent(IntroActivity_.class.getName()));
 
     }

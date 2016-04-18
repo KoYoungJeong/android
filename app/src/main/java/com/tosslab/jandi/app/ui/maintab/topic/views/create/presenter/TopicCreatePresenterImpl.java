@@ -5,6 +5,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.maintab.topic.views.create.model.TopicCreateModel;
@@ -15,9 +16,6 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.json.JSONException;
-
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -67,12 +65,11 @@ public class TopicCreatePresenterImpl implements TopicCreatePresenter {
             topicCreateModel.trackTopicCreateSuccess(topic.id);
 
             view.createTopicSuccess(teamId, topic.id, topicTitle, isPublic);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             view.dismissProgressWheel();
-            final Response response = e.getResponse();
-            int errorCode = response != null ? response.getStatus() : -1;
+            int errorCode = e.getResponseCode();
             topicCreateModel.trackTopicCreateFail(errorCode);
-            if (response != null && response.getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
+            if (e.getStatusCode() == JandiConstants.NetworkError.DUPLICATED_NAME) {
                 view.createTopicFailed(R.string.err_entity_duplicated_name);
             } else {
                 view.createTopicFailed(R.string.err_entity_create);

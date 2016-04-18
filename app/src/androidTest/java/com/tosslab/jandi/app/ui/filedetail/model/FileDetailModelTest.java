@@ -7,7 +7,9 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.file.FileApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
@@ -15,7 +17,9 @@ import com.tosslab.jandi.app.utils.file.FileUtil;
 
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsEqual;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -41,9 +45,18 @@ public class FileDetailModelTest {
     private FileDetailModel fileDetailModel;
     private ResMessages.FileMessage fileMessage;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
+
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         fileDetailModel = FileDetailModel_.getInstance_(JandiApplication.getContext());
         fileMessage = getFileMessage();
     }
@@ -58,7 +71,7 @@ public class FileDetailModelTest {
 
     }
 
-    private ResMessages.FileMessage getFileMessage() {
+    private ResMessages.FileMessage getFileMessage() throws RetrofitException {
         ReqSearchFile reqSearchFile = new ReqSearchFile();
         reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
         reqSearchFile.listCount = ReqSearchFile.MAX;
@@ -70,7 +83,7 @@ public class FileDetailModelTest {
         reqSearchFile.startMessageId = -1;
         reqSearchFile.keyword = "";
         reqSearchFile.teamId = EntityManager.getInstance().getTeamId();
-        ResSearchFile resSearchFile = RequestApiManager.getInstance().searchFileByMainRest(reqSearchFile);
+        ResSearchFile resSearchFile = new FileApi(RetrofitBuilder.newInstance()).searchFile(reqSearchFile);
 
         ResMessages.OriginalMessage originalMessage = resSearchFile.files.get(0);
 
@@ -181,7 +194,7 @@ public class FileDetailModelTest {
 
     }
 
-    private ResMessages.FileContent createFileContent() throws java.sql.SQLException {
+    private ResMessages.FileContent createFileContent() throws Exception {
         ResMessages.FileMessage fileMessage = getFileMessage();
         MessageRepository.getRepository().upsertFileMessage(fileMessage);
         return fileMessage.content;

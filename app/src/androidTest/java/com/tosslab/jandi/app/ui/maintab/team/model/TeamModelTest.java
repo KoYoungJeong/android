@@ -6,7 +6,9 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.maintab.team.vo.Team;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -27,9 +29,18 @@ public class TeamModelTest {
 
     private TeamModel model;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
+
     @Before
     public void setup() throws Exception {
-        BaseInitUtil.initData();
 
         model = new TeamModel();
     }
@@ -54,15 +65,5 @@ public class TeamModelTest {
         assertEquals(team.getMembers().size(), 3 + 1 /* JandiBot */);
 
         teamTestSubscriber.assertCompleted();
-    }
-
-    @Test
-    public void testGetSearchedMembers() throws Exception {
-        testGetTeamObservable();
-
-        List<FormattedEntity> searchedMembers = model.getSearchedMembers("123");
-
-        assertTrue(searchedMembers != null);
-        assertEquals(searchedMembers.size(), 0);
     }
 }

@@ -2,18 +2,24 @@ package com.tosslab.jandi.app.ui.carousel.model;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.file.FileApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
+import javax.inject.Inject;
+
+import dagger.Lazy;
 import rx.Observable;
 
 /**
@@ -22,19 +28,27 @@ import rx.Observable;
 @EBean
 public class CarouselViewerModel {
 
+    @Inject
+    Lazy<FileApi> fileApi;
+
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent.create().inject(this);
+    }
+
     public List<ResMessages.FileMessage> searchInitFileList(long teamId, long roomId, long messageId)
-            throws RetrofitError {
-        return RequestApiManager.getInstance().searchInitImageFileByFileApi(teamId, roomId,
+            throws RetrofitException {
+        return fileApi.get().searchInitImageFile(teamId, roomId,
                 messageId, 20);
     }
 
-    public List<ResMessages.FileMessage> searchBeforeFileList(long teamId, long roomId, long fileLinkId, int count) {
-        return RequestApiManager.getInstance().searchOldImageFileByFileApi(teamId, roomId,
+    public List<ResMessages.FileMessage> searchBeforeFileList(long teamId, long roomId, long fileLinkId, int count) throws RetrofitException {
+        return fileApi.get().searchOldImageFile(teamId, roomId,
                 fileLinkId, count);
     }
 
-    public List<ResMessages.FileMessage> searchAfterFileList(long teamId, long roomId, long fileLinkId, int count) {
-        return RequestApiManager.getInstance().searchNewImageFileByFileApi(teamId, roomId,
+    public List<ResMessages.FileMessage> searchAfterFileList(long teamId, long roomId, long fileLinkId, int count) throws RetrofitException {
+        return fileApi.get().searchNewImageFile(teamId, roomId,
                 fileLinkId, count);
     }
 
@@ -64,7 +78,12 @@ public class CarouselViewerModel {
     }
 
     public long getTeamId() {
-        return AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
+        if (selectedTeamInfo != null) {
+            return selectedTeamInfo.getTeamId();
+        } else {
+            return -1;
+        }
     }
 
     public int findLinkPosition(List<CarouselFileInfo> imageFiles, long fileId) {

@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
@@ -20,7 +21,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
@@ -86,7 +86,7 @@ public class EntitySocketModel {
                     .subscribe(eventWrapper -> postHandledEvent(eventWrapper.event));
 
 
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
         }
     }
 

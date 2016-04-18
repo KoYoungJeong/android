@@ -37,6 +37,7 @@ import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
+import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
@@ -47,7 +48,9 @@ import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.main.ConfigApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -61,14 +64,13 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
-import com.tosslab.jandi.app.ui.maintab.dialog.BugReportDialogFragment_;
 import com.tosslab.jandi.app.ui.maintab.teams.adapter.TeamsAdapter;
 import com.tosslab.jandi.app.ui.maintab.teams.component.DaggerTeamsComponent;
 import com.tosslab.jandi.app.ui.maintab.teams.module.TeamsModule;
 import com.tosslab.jandi.app.ui.maintab.teams.presenter.TeamsPresenter;
 import com.tosslab.jandi.app.ui.maintab.teams.view.TeamsView;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
-import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
+import com.tosslab.jandi.app.ui.profile.insert.SetProfileActivity_;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
@@ -78,12 +80,10 @@ import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.KnockListener;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
-
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -115,7 +115,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -128,6 +127,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     public static final int REQUEST_TEAM_CREATE = 1603;
     @Extra
     boolean fromPush = false;
+    @Extra
+    int tabIndex = -1;
+
     @ViewById(R.id.vg_fab_menu)
     FloatingActionMenu floatingActionMenu;
     @Bean
@@ -160,7 +162,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @Inject
     TeamsPresenter teamsPresenter;
 
-    private UiUtils.KeyboardHandler keyboardHandler;
     private OfflineLayer offlineLayer;
     private ProgressWheel progressWheel;
     private MainTabPagerAdapter mainTabPagerAdapter;
@@ -169,12 +170,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     private PopupWindow teamsPopupWindow;
     private TeamsAdapter teamsAdapter;
     private ListScrollHandler listScrollHandler;
+    private boolean dontStopSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        LogUtil.d("tony", "onCreate");
         DaggerTeamsComponent.builder()
                 .teamsModule(new TeamsModule(this))
                 .build()
@@ -218,16 +219,17 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
         offlineLayer = new OfflineLayer(vgOffline);
 
-        JandiPreference.setSocketReconnectDelay(0l);
+        JandiPreference.setSocketReconnectDelay(0L);
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
         // onResume -> AfterViews 로 이동
         // (소켓에서 필요한 갱신을 다 처리한다고 간주)
         if (NetworkCheckUtil.isConnected()) {
-            getEntities();
+            getEntities(true);
         }
 
         initializeTeamsView();
+
     }
 
     private void initMainTabViewPager() {
@@ -247,13 +249,14 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     private void initMainTabStrip() {
         mainTapStrip.setViewPager(vpMainTab);
 
-        if (selectedEntity > 0) {
+        if (tabIndex > -1) {
+            vpMainTab.setCurrentItem(tabIndex);
+        } else if (selectedEntity > 0) {
             FormattedEntity entity = EntityManager.getInstance().getEntityById(selectedEntity);
             if (entity == EntityManager.UNKNOWN_USER_ENTITY || entity.isUser()) {
                 vpMainTab.setCurrentItem(CHAT_INDEX);
             }
         }
-
         mainTapStrip.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -279,35 +282,14 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                         break;
                 }
 
-                hideKeyboardIfNeed(position);
-
                 listScrollHandler.setCurrentIndex(position);
-            }
-
-            void hideKeyboardIfNeed(int position) {
-                if (keyboardHandler == null) {
-                    return;
-                }
-
-                if (position != MainTabPagerAdapter.TAB_TEAM) {
-                    keyboardHandler.hideKeyboard();
-                }
             }
         });
 
         listScrollHandler = new ListScrollHandler();
 
-        final KnockListener knockListener = KnockListener.create()
-                .expectKnockCount(10)
-                .expectKnockedIn(3000)
-                .onKnocked(this::showBugReportDialog);
-
         mainTapStrip.setOnTabClickListener(index -> {
             listScrollHandler.onTabClick(index);
-
-            if (index == MainTabPagerAdapter.TAB_MYPAGE) {
-                knockListener.knock();
-            }
         });
     }
 
@@ -412,11 +394,15 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                     .startForResult(REQUEST_TEAM_CREATE);
 
             teamsPopupWindow.dismiss();
+
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.CreateNewTeam);
         });
         teamsAdapter.setOnTeamClickListener(team -> {
             teamsPresenter.onTeamJoinAction(team.getTeamId());
 
             teamsPopupWindow.dismiss();
+
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.ChooseTeam);
         });
         recyclerView.setAdapter(teamsAdapter);
 
@@ -453,6 +439,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     void showAnotherTeams() {
         int yoff = -tvTitle.getMeasuredHeight() - (int) UiUtils.getPixelFromDp(8) /* 조금 더 올리려고 */;
         teamsPopupWindow.showAsDropDown(tvTitle, 0, yoff);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.OpenTeamList);
     }
 
     @Override
@@ -514,22 +502,37 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                 .start();
 
         if (shouldOpenModifyProfileActivity) { // 초대 수락 또는 팀 생성 후
-            ModifyProfileActivity_.intent(this)
-                    .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                    .start();
+            moveSetProfileActivity();
         }
 
+        dontStopSocket = true;
+
         finish();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void moveSetProfileActivity() {
+        SetProfileActivity_.intent(this)
+                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .start();
     }
 
     public void onEvent(TeamInviteIgnoreEvent event) {
         teamsPopupWindow.dismiss();
         teamsPresenter.onTeamInviteIgnoreAction(event.getTeam());
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.AcceptTeamInvitation);
     }
 
     public void onEvent(TeamInviteAcceptEvent event) {
         teamsPopupWindow.dismiss();
         teamsPresenter.onTeamInviteAcceptAction(event.getTeam());
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.IgnoreTeamInvitation);
+    }
+
+    public void onEvent(TeamDeletedEvent event) {
+        teamsPresenter.reInitializeTeams();
     }
 
     @Override
@@ -577,14 +580,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     @Override
-    public void onAttachFragment(Fragment fragment) {
-        super.onAttachFragment(fragment);
-        if (fragment instanceof UiUtils.KeyboardHandler) {
-            keyboardHandler = (UiUtils.KeyboardHandler) fragment;
-        }
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         // Entity의 리스트를 획득하여 저장한다.
@@ -620,7 +615,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         long diffTime = System.currentTimeMillis() - JandiPreference.getSocketConnectedLastTime();
         if (diffTime > 1000 * 60 * 5) {
             LogUtil.d("refreshEntityIfNeed");
-            getEntities();
+            getEntities(false);
         }
 
     }
@@ -641,15 +636,19 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @Override
     protected void onDestroy() {
         teamsPresenter.clearTeamInitializeQueue();
-        JandiSocketService.stopService(this);
+        if (!dontStopSocket) {
+            JandiSocketService.stopService(this);
+        }
         super.onDestroy();
     }
 
     /**
      * 해당 사용자의 채널, DM, PG 리스트를 획득 (with 통신)
+     *
+     * @param setProfile
      */
     @Background(serial = "getEntities")
-    public void getEntities() {
+    public void getEntities(boolean setProfile) {
         try {
             ResLeftSideMenu resLeftSideMenu = entityClientManager.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
@@ -659,20 +658,21 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
             BadgeUtils.setBadge(getApplicationContext(), badgeCountRepository.getTotalBadgeCount());
             entityManager.refreshEntity();
             getEntitiesSucceed(resLeftSideMenu);
-        } catch (RetrofitError e) {
+            if (setProfile && !resLeftSideMenu.user.profileUpdated) {
+                moveSetProfileActivity();
+            }
+        } catch (RetrofitException e) {
             e.printStackTrace();
-            if (e.getResponse() != null) {
-                if (e.getResponse().getStatus() == JandiConstants.NetworkError.UNAUTHORIZED) {
+            if (e.getStatusCode() == JandiConstants.NetworkError.UNAUTHORIZED) {
 
-                    SignOutUtil.removeSignData();
+                SignOutUtil.removeSignData();
 
-                    getEntitiesFailed(getString(R.string.err_expired_session));
-                    stopJandiServiceInMainThread();
-                } else if (e.getResponse().getStatus() == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
-                    EventBus.getDefault().post(new ServiceMaintenanceEvent());
-                } else {
-                    getEntitiesFailed(getString(R.string.err_service_connection));
-                }
+                getEntitiesFailed(getString(R.string.err_expired_session));
+                stopJandiServiceInMainThread();
+            } else if (e.getStatusCode() == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
+                EventBus.getDefault().post(new ServiceMaintenanceEvent());
+            } else {
+                getEntitiesFailed(getString(R.string.err_service_connection));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -723,14 +723,14 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
 
     public void onEvent(RequestInviteMemberEvent event) {
-        invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_INVITE);
+        int from = event.getFrom() > 0 ? event.getFrom() : InvitationDialogExecutor.FROM_MAIN_INVITE;
+        invitationDialogExecutor.setFrom(from);
         invitationDialogExecutor.execute();
     }
 
     public void onEvent(MessagePushEvent event) {
-        LogUtil.d("MainTabAcitivity.MessagePushEventCall");
         if (!TextUtils.equals(event.getEntityType(), PushTO.RoomType.CHAT.getName())) {
-            getEntities();
+            getEntities(false);
         }
     }
 
@@ -811,34 +811,17 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
         AnalyticsUtil.sendScreenName(screen);
 
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.ScreenView)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ScreenView, screenView)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.ScreenView)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ScreenView, screenView)
+                .build());
     }
 
     @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
         return false;
-    }
-
-    @Background
-    public void showDialogIfNotLastestVersion() {
-        if (!NetworkCheckUtil.isConnected())
-            return;
-
-        ResConfig configInfo = getConfigInfo();
-        if (configInfo != null && configInfo.latestVersions != null &&
-                (getCurrentAppVersionCode() < configInfo.latestVersions.android)) {
-            final long oneDayMillis = 1000 * 60 * 60 * 24;
-            long timeFromLastPopup = System.currentTimeMillis() - JandiPreference.getVersionPopupLastTime();
-            if (timeFromLastPopup > oneDayMillis) {
-                showUpdateVersionDialog(configInfo);
-            }
-        }
     }
 
     @UiThread
@@ -858,20 +841,36 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                 })
                 .setNegativeButton(getString(R.string.jandi_cancel)
                         , (dialog, which) -> {
-                    JandiPreference.setVersionPopupLastTimeToCurrentTime(System.currentTimeMillis());
-                })
+                            JandiPreference.setVersionPopupLastTimeToCurrentTime(System.currentTimeMillis());
+                        })
                 .setCancelable(true);
         builder.create().show();
     }
 
-    public ResConfig getConfigInfo() {
-        ResConfig resConfig = null;
+    @Background
+    public void showDialogIfNotLastestVersion() {
+        if (!NetworkCheckUtil.isConnected())
+            return;
+
+        ResConfig configInfo = getConfigInfo();
+        if (configInfo != null && configInfo.latestVersions != null &&
+                (getCurrentAppVersionCode() < configInfo.latestVersions.android)) {
+            final long oneDayMillis = 1000 * 60 * 60 * 24;
+            long timeFromLastPopup = System.currentTimeMillis() - JandiPreference.getVersionPopupLastTime();
+            if (timeFromLastPopup > oneDayMillis) {
+                showUpdateVersionDialog(configInfo);
+            }
+        }
+    }
+
+
+    private ResConfig getConfigInfo() {
         try {
-            resConfig = RequestApiManager.getInstance().getConfigByMainRest();
-        } catch (RetrofitError e) {
+            return new ConfigApi(RetrofitBuilder.newInstance()).getConfig();
+        } catch (RetrofitException e) {
             e.printStackTrace();
         }
-        return resConfig;
+        return null;
     }
 
     public int getCurrentAppVersionCode() {
@@ -917,11 +916,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
     public FloatingActionMenu getFloatingActionMenu() {
         return floatingActionMenu;
-    }
-
-    private void showBugReportDialog() {
-        BugReportDialogFragment_.builder().build()
-                .show(getSupportFragmentManager(), "bugReportDialog");
     }
 
     private class ListScrollHandler implements PagerSlidingTabStrip.OnTabClickListener {

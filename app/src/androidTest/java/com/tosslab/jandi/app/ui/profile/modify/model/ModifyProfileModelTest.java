@@ -6,18 +6,19 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Date;
 
-import retrofit.RetrofitError;
 import rx.Observable;
 import rx.observers.TestSubscriber;
 import setup.BaseInitUtil;
@@ -34,16 +35,20 @@ public class ModifyProfileModelTest {
     private ModifyProfileModel modifyProfileModel;
     private ResLeftSideMenu.User user;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
-        modifyProfileModel = ModifyProfileModel_.getInstance_(JandiApplication.getContext());
-        user = EntityManager.getInstance().getMe().getUser();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        modifyProfileModel = ModifyProfileModel_.getInstance_(JandiApplication.getContext());
+        user = EntityManager.getInstance().getMe().getUser();
     }
 
     @Test
@@ -130,7 +135,7 @@ public class ModifyProfileModelTest {
 
     @Test
     public void testUpdateProfileName() throws Exception {
-        String newName = new Date().toString();
+        String newName = new Date().toString().replaceAll(" ", "");
         modifyProfileModel.updateProfileName(new ReqProfileName(newName));
 
         ResLeftSideMenu.User newProfile = modifyProfileModel.getProfile();
@@ -160,7 +165,7 @@ public class ModifyProfileModelTest {
             String email = "fail@fail.com";
             modifyProfileModel.updateProfileEmail(email);
             fail("성공할 수 없는 이메일인데.. : " + email);
-        } catch (RetrofitError retrofitError) {
+        } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();
         }
     }

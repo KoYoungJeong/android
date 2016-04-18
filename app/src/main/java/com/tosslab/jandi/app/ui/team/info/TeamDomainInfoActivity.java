@@ -19,7 +19,6 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
@@ -58,12 +57,11 @@ public class TeamDomainInfoActivity extends BaseAppCompatActivity implements Tea
         progressWheel = new ProgressWheel(TeamDomainInfoActivity.this);
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.CreateaTeam);
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.ScreenView)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_CREATE)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.ScreenView)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_CREATE)
+                .build());
 
         MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
                 .pageViewTeamCreate();

@@ -15,8 +15,12 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.MessageManipulator_;
+import com.tosslab.jandi.app.network.client.main.LeftSideApi;
+import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
+import com.tosslab.jandi.app.network.client.teams.TeamApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -29,6 +33,7 @@ import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.json.JSONException;
 
@@ -38,23 +43,34 @@ import java.net.URLConnection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import retrofit.RetrofitError;
+import javax.inject.Inject;
 
-/**
- * Created by Steve SeongUg Jung on 15. 2. 13..
- */
+import dagger.Lazy;
+
 @EBean
 public class ShareModel {
 
-    public ResRoomInfo getEntityById(long teamId, long roomId) {
-        return RequestApiManager.getInstance().getRoomInfoByRoomsApi(teamId, roomId);
+    @Inject
+    Lazy<RoomsApi> roomsApi;
+    @Inject
+    Lazy<TeamApi> teamApi;
+    @Inject
+    Lazy<LeftSideApi> leftSideApi;
+
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent.create().inject(this);
     }
 
-    public ResTeamDetailInfo.InviteTeam getTeamInfoById(long teamId) {
-        return RequestApiManager.getInstance().getTeamInfoByTeamApi(teamId);
+    public ResRoomInfo getEntityById(long teamId, long roomId) throws RetrofitException {
+        return roomsApi.get().getRoomInfo(teamId, roomId);
     }
 
-    public ResCommon sendMessage(long teamId, long entityId, int entityType, String messageText, List<MentionObject> mention) throws RetrofitError {
+    public ResTeamDetailInfo.InviteTeam getTeamInfoById(long teamId) throws RetrofitException {
+        return teamApi.get().getTeamInfo(teamId);
+    }
+
+    public ResCommon sendMessage(long teamId, long entityId, int entityType, String messageText, List<MentionObject> mention) throws RetrofitException {
 
         MessageManipulator messageManipulator = MessageManipulator_.getInstance_(JandiApplication.getContext());
 
@@ -86,7 +102,7 @@ public class ShareModel {
                 })
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
                 .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(JandiApplication.getContext()))
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
                 .setMultipartParameter("title", titleText)
                 .setMultipartParameter("share", "" + entityId)
                 .setMultipartParameter("permission", permissionCode)
@@ -129,8 +145,8 @@ public class ShareModel {
         return LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId) != null;
     }
 
-    public ResLeftSideMenu getLeftSideMenu(long teamId) {
-        return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
+    public ResLeftSideMenu getLeftSideMenu(long teamId) throws RetrofitException {
+        return leftSideApi.get().getInfosForSideMenu(teamId);
     }
 
     public boolean updateLeftSideMenu(ResLeftSideMenu leftSideMenu) {

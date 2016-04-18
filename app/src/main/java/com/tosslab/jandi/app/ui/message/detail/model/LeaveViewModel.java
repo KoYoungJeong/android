@@ -10,24 +10,30 @@ import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.chat.ChatApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
 import org.json.JSONException;
 
+import javax.inject.Inject;
+
+import dagger.Lazy;
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 10..
@@ -38,9 +44,16 @@ public class LeaveViewModel {
     @Bean
     EntityClientManager entityClientManager;
 
+    @Inject
+    Lazy<ChatApi> chatApi;
     private Context context;
 
     private long entityId;
+
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent.create().inject(this);
+    }
 
     public void initData(Context context, long entityId) {
         this.context = context;
@@ -78,7 +91,7 @@ public class LeaveViewModel {
                 entityClientManager.leavePrivateGroup(entityId);
             } else if (entity.isUser() || EntityManager.getInstance().isBot(entityId)) {
                 long memberId = EntityManager.getInstance().getMe().getId();
-                RequestApiManager.getInstance().deleteChatByChatApi(memberId, entityId);
+                chatApi.get().deleteChat(memberId, entityId);
             }
             trackLeavingEntity(entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity
                     .isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE);
@@ -87,8 +100,8 @@ public class LeaveViewModel {
 
             EventBus.getDefault().post(new TopicLeaveEvent());
 
-        } catch (RetrofitError e) {
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+        } catch (RetrofitException e) {
+            int errorCode = e.getStatusCode();
             trackTopicLeaveFail(errorCode);
             e.printStackTrace();
             leaveEntityFailed(context.getString(R.string.err_entity_leave));
@@ -111,26 +124,24 @@ public class LeaveViewModel {
     }
 
     private void trackTopicLeaveSuccess(long entityId) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.TopicLeave)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, true)
-                        .property(PropertyKey.TopicId, entityId)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.TopicLeave)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.TopicId, entityId)
+                .build());
 
     }
 
     private void trackTopicLeaveFail(int errorCode) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.TopicLeave)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, false)
-                        .property(PropertyKey.ErrorCode, errorCode)
-                        .build());
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(Event.TopicLeave)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
 
     }
 

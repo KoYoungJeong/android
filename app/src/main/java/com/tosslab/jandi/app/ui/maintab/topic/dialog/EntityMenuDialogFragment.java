@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.EntityMenuDialogModel;
 import com.tosslab.jandi.app.ui.settings.main.SettingsActivity_;
 import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
@@ -33,7 +34,7 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
+
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 7..
@@ -201,7 +202,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
             EventBus.getDefault().post(new RetrieveTopicListEvent());
 
             dismiss();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             dismissProgressWheel();
             dismiss();
@@ -308,7 +309,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
             EventBus.getDefault().post(new RetrieveTopicListEvent());
 
             dismiss();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             showErrorToast(getString(R.string.err_entity_leave));
             e.printStackTrace();
 

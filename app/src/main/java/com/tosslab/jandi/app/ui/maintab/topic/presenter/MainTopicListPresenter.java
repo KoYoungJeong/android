@@ -5,12 +5,13 @@ import android.support.v7.widget.RecyclerView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
-import com.tosslab.jandi.app.network.models.ResCommonError;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
@@ -30,10 +31,11 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -84,7 +86,7 @@ public class MainTopicListPresenter {
                             List<ResFolder> topicFolders = mainTopicModel.getTopicFolders();
                             subscriber.onNext(topicFolders);
                             subscriber.onCompleted();
-                        } catch (RetrofitError retrofitError) {
+                        } catch (RetrofitException retrofitError) {
                             subscriber.onError(retrofitError);
                         }
                     }
@@ -95,7 +97,7 @@ public class MainTopicListPresenter {
                             List<ResFolderItem> topicFolderItems = mainTopicModel.getTopicFolderItems();
                             subscriber.onNext(topicFolderItems);
                             subscriber.onCompleted();
-                        } catch (RetrofitError retrofitError) {
+                        } catch (RetrofitException retrofitError) {
                             subscriber.onError(retrofitError);
                         }
                     }
@@ -265,25 +267,23 @@ public class MainTopicListPresenter {
         try {
             topicFolderChooseModel.createFolder(title);
             view.notifyDatasetChangedForFolder();
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            if (e.getResponse() != null) {
-                try {
-                    ResCommonError error = (ResCommonError) e.getBodyAs(ResCommonError.class);
-                    if (error.getCode() == 40008) {
-                        view.showAlreadyHasFolderToast();
-                    }
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
+        } catch (RetrofitException e) {
+            if (e.getResponseCode() == 40008) {
+                view.showAlreadyHasFolderToast();
             }
         }
     }
 
     public void onRefreshUpdatedTopicList() {
+        List<Topic> topicList = new ArrayList<>();
         mainTopicModel.getUpdatedTopicList()
+                .concatWith(
+                        Observable.just(
+                                Arrays.asList(new Topic.Builder()
+                                        .name(JandiApplication.getContext().getString(R.string.jandi_entity_unjoined_topic))
+                                        .build())))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(view::setUpdatedItems, t -> {});
+                .subscribe(topicList::addAll, t -> {}, () -> view.setUpdatedItems(topicList));
 
     }
 
@@ -334,6 +334,7 @@ public class MainTopicListPresenter {
         void setFolderExpansion();
 
         void showAlreadyHasFolderToast();
+
     }
 
 }

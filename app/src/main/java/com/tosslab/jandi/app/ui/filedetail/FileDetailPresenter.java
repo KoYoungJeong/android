@@ -12,10 +12,11 @@ import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.permissions.Permissions;
+import com.tosslab.jandi.app.permissions.Check;
 import com.tosslab.jandi.app.services.download.DownloadService;
 import com.tosslab.jandi.app.ui.filedetail.domain.FileStarredInfo;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
@@ -37,7 +38,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -97,7 +97,7 @@ public class FileDetailPresenter {
         ResFileDetail fileDetail = null;
         try {
             fileDetail = fileDetailModel.getFileDetailFromServer(fileId);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
             view.showUnexpectedErrorToast();
             view.finish();
@@ -157,36 +157,28 @@ public class FileDetailPresenter {
     public void onSendCommentWithSticker(long fileId, long stickerGroupId,
                                          String stickerId, String comment,
                                          List<MentionObject> mentions) {
-        view.showProgress();
         try {
             fileDetailModel.sendMessageCommentWithSticker(
                     fileId, stickerGroupId, stickerId, comment, mentions);
 
             retrieveFileDetail(fileId, false);
 
-            view.dismissProgress();
-
             view.scrollToLastComment();
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
-            view.dismissProgress();
         }
     }
 
     @Background(serial = "file_detail_background")
     public void onSendComment(long fileId, String message, List<MentionObject> mentions) {
-        view.showProgress();
         try {
             fileDetailModel.sendMessageComment(fileId, message, mentions);
 
             retrieveFileDetail(fileId, false);
 
-            view.dismissProgress();
-
             view.scrollToLastComment();
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
-            view.dismissProgress();
         }
     }
 
@@ -206,7 +198,7 @@ public class FileDetailPresenter {
             }
             view.setFilesStarredState(starred);
             view.notifyDataSetChanged();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             Log.getStackTraceString(e);
         }
     }
@@ -226,7 +218,7 @@ public class FileDetailPresenter {
             view.modifyCommentStarredState(messageId, starred);
 
             EventBus.getDefault().post(new StarredInfoChangeEvent());
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
         }
     }
@@ -240,22 +232,18 @@ public class FileDetailPresenter {
         if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
             String fileUrl = ImageUtil.getImageFileUrl(fileContent.fileUrl);
             view.startGoogleOrDropboxFileActivity(fileUrl);
-            return;
-        }
-
-        Permissions.getChecker()
-                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .hasPermission(() -> {
-                    DownloadService.start(fileId,
+        } else {
+            view.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    () -> DownloadService.start(fileId,
                             ImageUtil.getImageFileUrl(fileContent.fileUrl),
                             fileContent.title,
                             fileContent.ext,
-                            fileContent.type);
-                })
-                .noPermission(() -> {
-                    view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                }).check();
+                            fileContent.type),
+                    () -> view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE));
+        }
+
+
     }
 
     public void onExportFile(final ResMessages.FileMessage fileMessage,
@@ -271,27 +259,17 @@ public class FileDetailPresenter {
 
             return;
         }
-        Permissions.getChecker()
-                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .hasPermission(() ->
-                        downloadFileAndManage(FileManageType.EXPORT, fileMessage, progressDialog))
-                .noPermission(() -> {
-                    view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION_EXPORT,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                }).check();
+        view.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                () -> downloadFileAndManage(FileManageType.EXPORT, fileMessage, progressDialog),
+                () -> view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION_EXPORT, Manifest.permission.WRITE_EXTERNAL_STORAGE));
     }
 
     public void onOpenFile(final ResMessages.FileMessage fileMessage,
                            final ProgressDialog progressDialog) {
-        Permissions.getChecker()
-                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .hasPermission(() -> {
-                    downloadFileAndManage(FileManageType.OPEN, fileMessage, progressDialog);
-                })
-                .noPermission(() -> {
-                    view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                }).check();
+        view.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                () -> downloadFileAndManage(FileManageType.OPEN, fileMessage, progressDialog),
+                () -> view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE));
     }
 
     void downloadFileAndManage(final FileManageType type,
@@ -308,8 +286,9 @@ public class FileDetailPresenter {
                 fileDetailModel.downloadFile(downloadUrl, downloadFilePath,
                         (downloaded, total) -> progressDialog.setProgress((int) (downloaded * 100 / total)),
                         (e, result) -> {
-                            progressDialog.dismiss();
-                            if (currentDownloadingFile.isCancelled()) {
+                            view.dismissDialog(progressDialog);
+
+                            if (currentDownloadingFile == null || currentDownloadingFile.isCancelled()) {
                                 currentDownloadingFile = null;
                                 return;
                             }
@@ -318,8 +297,7 @@ public class FileDetailPresenter {
                                 if (type == FileManageType.EXPORT) {
                                     view.startExportedFileViewerActivity(result, mimeType);
                                 } else if (type == FileManageType.OPEN) {
-                                    String fileType = fileDetailModel.getFileType(result, mimeType);
-                                    view.startDownloadedFileViewerActivity(result, fileType);
+                                    view.startDownloadedFileViewerActivity(result, mimeType);
                                 }
                             } else {
                                 view.showUnexpectedErrorToast();
@@ -369,10 +347,10 @@ public class FileDetailPresenter {
             view.dismissProgress();
 
             view.showMoveToSharedTopicDialog(entityId);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            int errorCode = e.getStatusCode();
             fileDetailModel.trackFileShareFail(errorCode);
             view.dismissProgress();
             view.showShareErrorToast();
@@ -400,10 +378,10 @@ public class FileDetailPresenter {
             view.dismissProgress();
 
             view.showUnshareSuccessToast();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            int errorCode = e.getStatusCode();
             fileDetailModel.trackFileUnShareFail(errorCode);
             view.dismissProgress();
             view.showUnshareErrorToast();
@@ -429,10 +407,10 @@ public class FileDetailPresenter {
             view.showDeleteSuccessToast();
 
             view.deliverResultToMessageList();
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            int errorCode = e.getStatusCode();
             fileDetailModel.trackFileDeleteFail(errorCode);
 
             view.dismissProgress();
@@ -594,13 +572,15 @@ public class FileDetailPresenter {
 
         void startExportedFileViewerActivity(File file, String mimeType);
 
-        void startDownloadedFileViewerActivity(File file, String fileType);
+        void startDownloadedFileViewerActivity(File file, String mimeType);
 
         void moveToMessageListActivity(long entityId, int entityType, long roomId, boolean isStarred);
 
         void deliverResultToMessageList();
 
         void finish();
+
+        void checkPermission(String persmissionString, Check.HasPermission hasPermission, Check.NoPermission noPermission);
     }
 
 }

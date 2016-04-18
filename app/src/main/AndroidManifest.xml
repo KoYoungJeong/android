@@ -158,7 +158,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.invites.email.InviteEmailActivity_"
+            android:name=".ui.invites.email.InviteByEmailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/menu_entity_invite"
             android:screenOrientation="portrait"
@@ -215,6 +215,12 @@
             android:name=".ui.members.MembersListActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_topic_paricipants"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.members.search.MemberSearchActivity"
+            android:windowSoftInputMode="stateAlwaysVisible"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"/>
 
         <activity
@@ -300,7 +306,7 @@
             android:name=".push.PushInterfaceActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/JandiTheme.PushIntro"/>
+            android:theme="@style/JandiTheme.PushIntro" />
 
         <activity
             android:name=".ui.share.MainShareActivity_"
@@ -344,8 +350,9 @@
         </activity>
 
         <activity
-            android:name=".ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity_"
+            android:name=".ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             android:label="@string/jandi_browse_other_topics"
             android:screenOrientation="portrait">
 
@@ -500,6 +507,11 @@
         <!-- Download Service -->
         <service android:name=".services.download.DownloadService"/>
 
+        <service android:name="com.tosslab.jandi.lib.sprinkler.io.SprinklerService" />
+
+        <!-- Process start Intent Service -->
+        <service android:name=".dummy.JandiProcessStartService"/>
+
         <receiver android:name=".services.download.receiver.DownloadStopProxyBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.tosslab.jandi.app.download.service.proxy.receiver"/>
@@ -551,6 +563,8 @@
 
     <!-- for download manager addCompletedDownload-->
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION"/>
+
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
 
 </manifest>
 

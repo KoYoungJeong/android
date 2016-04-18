@@ -4,7 +4,8 @@ import android.util.Pair;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.messages.MessageApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
@@ -12,7 +13,7 @@ import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
+import dagger.Lazy;
 import rx.Observable;
 
 /**
@@ -21,6 +22,11 @@ import rx.Observable;
 public class MyPageModel {
 
     public static final int MENTION_LIST_LIMIT = 20;
+    private final Lazy<MessageApi> messageApi;
+
+    public MyPageModel(Lazy<MessageApi> messageApi) {
+        this.messageApi = messageApi;
+    }
 
     public FormattedEntity getMe() {
         return EntityManager.getInstance().getMe();
@@ -32,11 +38,10 @@ public class MyPageModel {
         Observable.OnSubscribe<ResStarMentioned> requestMentionsSubscriber = subscriber -> {
             try {
                 ResStarMentioned resStarMentioned =
-                        RequestApiManager.getInstance()
-                                .getMentionedMessagesByTeamApi(teamId, offset, limit);
+                        messageApi.get().getMentionedMessages(teamId, offset, limit);
 
                 subscriber.onNext(resStarMentioned);
-            } catch (RetrofitError error) {
+            } catch (RetrofitException error) {
                 subscriber.onError(error);
             }
             subscriber.onCompleted();

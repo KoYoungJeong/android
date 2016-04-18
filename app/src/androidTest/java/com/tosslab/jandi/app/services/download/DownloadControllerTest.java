@@ -82,24 +82,33 @@ public class DownloadControllerTest {
         assertEquals(true, (file != null && file.exists()));
     }
 
+    @Ignore
     @Test
     public void testGetDownloadTargetFileWhenDuplicated() throws Exception {
 
-        File dir = DownloadModel.makeDirIfNotExistsAndGet();
-        for (File file : dir.listFiles()) {
-            file.delete();
-        }
         String fileName = "heh_heh_redo__by_a_dawg13-d5acuoq.gif";
-        File testFile = new File(dir, fileName);
-        testFile.createNewFile();
-
         String fileName2 = "heh_heh_redo__by_a_dawg13-d5acuoq(1).gif";
+        try {
+            File dir = DownloadModel.makeDirIfNotExistsAndGet();
+            for (File file : dir.listFiles()) {
+                file.delete();
+            }
+            File testFile = new File(dir, fileName);
+            testFile.createNewFile();
 
-        // When
-        File downloadTargetFile = DownloadModel.getDownloadTargetFile(dir, fileName, "gif");
 
-        // Then
-        System.out.println(downloadTargetFile.getName());
-        assertEquals(true, (!downloadTargetFile.exists() && downloadTargetFile.getName().equals(fileName2)));
+            // When
+            File downloadTargetFile = DownloadModel.getDownloadTargetFile(dir, fileName, "gif");
+
+            // Then
+            System.out.println(downloadTargetFile.getName());
+            assertEquals(true, (!downloadTargetFile.exists() && downloadTargetFile.getName().equals(fileName2)));
+        } finally {
+            File dir = DownloadModel.makeDirIfNotExistsAndGet();
+            new File(dir, fileName).delete();
+            new File(dir, fileName2).delete();
+        }
+
+
     }
 }

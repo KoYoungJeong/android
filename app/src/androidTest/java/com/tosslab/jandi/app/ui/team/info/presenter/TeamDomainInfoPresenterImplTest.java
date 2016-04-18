@@ -3,20 +3,21 @@ package com.tosslab.jandi.app.ui.team.info.presenter;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModelTest;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.concurrent.TimeUnit;
 
-import retrofit.RestAdapter;
+import retrofit2.Retrofit;
 import rx.Observable;
 import setup.BaseInitUtil;
 
@@ -33,17 +34,21 @@ public class TeamDomainInfoPresenterImplTest {
     private TeamDomainInfoPresenter presenter;
     private TeamDomainInfoPresenter.View mockView;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
+
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         presenter = TeamDomainInfoPresenterImpl_.getInstance_(JandiApplication.getContext());
         mockView = mock(TeamDomainInfoPresenter.View.class);
         presenter.setView(mockView);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
     }
 
     @Test
@@ -59,6 +64,7 @@ public class TeamDomainInfoPresenterImplTest {
 
     }
 
+    @Ignore
     @Test
     public void testCreateTeam() throws Exception {
 
@@ -82,12 +88,10 @@ public class TeamDomainInfoPresenterImplTest {
         verify(mockView, times(1)).showProgressWheel();
         verify(mockView, times(1)).successCreateTeam(teamName);
 
-        new RestAdapter.Builder()
-                .setEndpoint(JandiConstantsForFlavors.SERVICE_INNER_API_URL)
-                .setRequestInterceptor(request -> request.addHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication()))
-                .setLogLevel(RestAdapter.LogLevel.HEADERS_AND_ARGS)
+        new Retrofit.Builder()
+                .baseUrl(JandiConstantsForFlavors.SERVICE_INNER_API_URL)
                 .build()
                 .create(TeamDomainInfoModelTest.Team.class)
-                .deleteTeam(AccountRepository.getRepository().getSelectedTeamId(), new TeamDomainInfoModelTest.ReqDeleteTeam());
+                .deleteTeam(TokenUtil.getRequestAuthentication(), AccountRepository.getRepository().getSelectedTeamId(), new TeamDomainInfoModelTest.ReqDeleteTeam());
     }
 }

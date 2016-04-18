@@ -39,11 +39,11 @@ public class ResAccountInfo {
     @DatabaseField
     private String status;
 
-    @ForeignCollectionField
+    @ForeignCollectionField()
     private Collection<UserDevice> devices;
-    @ForeignCollectionField
+    @ForeignCollectionField()
     private Collection<UserTeam> memberships;
-    @ForeignCollectionField
+    @ForeignCollectionField()
     private Collection<UserEmail> emails;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, foreignAutoCreate = true)

@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.view.ChatsChooseFragment;
 import com.tosslab.jandi.app.ui.entities.disabled.presenter.DisabledEntityChoosePresenter;
 import com.tosslab.jandi.app.ui.entities.disabled.presenter.DisabledEntityChoosePresenterImpl;
+
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;

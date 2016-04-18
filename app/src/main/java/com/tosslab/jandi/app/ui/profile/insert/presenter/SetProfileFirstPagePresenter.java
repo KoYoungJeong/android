@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.files.upload.ProfileFileUploadControllerImpl;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
@@ -18,8 +19,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import java.io.File;
-
-import retrofit.RetrofitError;
 
 /**
  * Created by tee on 16. 3. 16..
@@ -50,7 +49,7 @@ public class SetProfileFirstPagePresenter {
             view.setTeamName(EntityManager.getInstance().getTeamName());
             view.displayProfileImage(me);
             view.displayProfileName(me.name);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             LogUtil.e("get profile failed", e);
             view.dismissProgressWheel();
             view.showFailProfile();
@@ -67,7 +66,7 @@ public class SetProfileFirstPagePresenter {
         try {
             model.updateProfileName(new ReqProfileName(name));
             view.displayProfileName(name);
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             view.updateProfileFailed();
         } finally {

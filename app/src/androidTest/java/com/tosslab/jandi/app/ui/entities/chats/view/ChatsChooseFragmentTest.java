@@ -13,8 +13,9 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.entities.chats.presenter.ChatChoosePresenter;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,9 +40,17 @@ public class ChatsChooseFragmentTest {
     private BaseAppCompatActivity activity;
     private ChatsChooseFragment fragment;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
     @Before
     public void setUp() throws Exception {
-        BaseInitUtil.initData();
         rule.launchActivity(null);
         activity = rule.getActivity();
         fragment = ChatsChooseFragment_.builder().build();
@@ -53,10 +62,7 @@ public class ChatsChooseFragmentTest {
         fragment.presenter = mock(ChatChoosePresenter.class);
     }
 
-    @After
-    public void tearDown() throws Exception {
-        BaseInitUtil.clear();
-    }
+
 
     @Test
     public void testSetUsers() throws Throwable {

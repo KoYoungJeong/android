@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.TypeUtil;
 import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
@@ -72,7 +74,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     public void saveCacheAndNotifyDataSetChanged(NotifyDataSetChangedCallback callback) {
         Runnable saveCacheRunnable = () -> {
             if (roomId == -1 || messagePointer.getFirstCursorLinkId() == -1) {
-                clear();
+                clearAndNotifyDataSetChanged(callback);
                 return;
             }
 
@@ -103,7 +105,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     public void saveCacheAndNotifyDataSetChangedForAdding(NotifyDataSetChangedCallback callback) {
         Runnable saveCacheRunnable = () -> {
             if (roomId == -1 || messagePointer.getFirstCursorLinkId() == -1) {
-                clear();
+                clearAndNotifyDataSetChanged(callback);
                 return;
             }
 
@@ -131,6 +133,19 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         };
 
         threadPool.execute(saveCacheRunnable);
+    }
+
+    private void clearAndNotifyDataSetChanged(NotifyDataSetChangedCallback callback) {
+        clear();
+
+        Observable.just(0)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(i -> {
+                    MainMessageListAdapter.this.notifyDataSetChanged();
+                    if (callback != null) {
+                        callback.callBack();
+                    }
+                });
     }
 
     @Override
@@ -336,6 +351,8 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
         try {
             links.remove(position);
+        } catch (Exception e) {
+            LogUtil.e(Log.getStackTraceString(e));
         } finally {
             lock.unlock();
         }
@@ -375,6 +392,17 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
                 return idx;
         }
         return -1;
+    }
+
+    public int getLastIndexByMessageId(long messageId) {
+        int lastIndex = -1;
+        int count = getItemCount();
+        for (int idx = 0; idx < count; idx++) {
+            if (getItem(idx).messageId == messageId){
+                lastIndex = idx;
+            }
+        }
+        return lastIndex;
     }
 
     public int indexOfLinkId(long linkId) {
@@ -520,7 +548,12 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     @Override
     public Date getItemDate(int position) {
-        return getItem(position).time;
+        if (position >= getItemCount()) {
+            return null;
+        }
+
+        ResMessages.Link item = getItem(position);
+        return item != null ? item.time : null;
     }
 
     public void setMessagePointer(MessagePointer messagPointer) {

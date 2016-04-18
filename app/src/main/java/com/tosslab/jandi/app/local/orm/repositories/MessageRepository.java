@@ -1,36 +1,21 @@
 package com.tosslab.jandi.app.local.orm.repositories;
 
-import android.os.SystemClock;
-
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
-import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
+import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
-public class MessageRepository {
+public class MessageRepository extends LockExecutorTemplate {
 
     private static MessageRepository repository;
-    private final OrmDatabaseHelper helper;
-    private final Lock lock;
 
-    private MessageRepository() {
-        helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
-        lock = new ReentrantLock();
-
-    }
-
-    public static MessageRepository getRepository() {
+    synchronized public static MessageRepository getRepository() {
 
         if (repository == null) {
             repository = new MessageRepository();
@@ -38,326 +23,324 @@ public class MessageRepository {
         return repository;
     }
 
-    /**
-     * It's for Only TestCode.
-     */
-    public static void release() {
-        repository = null;
-    }
-
     public boolean upsertMessages(List<ResMessages.Link> messages) {
-        lock.lock();
-        try {
+        return execute(() -> {
+            try {
 
-            Dao<ResMessages.Link, ?> dao = helper.getDao(ResMessages.Link.class);
+                Dao<ResMessages.Link, ?> dao = getHelper().getDao(ResMessages.Link.class);
 
-            // 내부에서 트랜잭션 commit 컨트롤을 함
-            dao.callBatchTasks(() -> {
-                for (ResMessages.Link message : messages) {
-                    dao.createOrUpdate(message);
-                }
-                return null;
-            });
+                // 내부에서 트랜잭션 commit 컨트롤을 함
+                dao.callBatchTasks(() -> {
+                    for (ResMessages.Link message : messages) {
+                        dao.createOrUpdate(message);
+                    }
+                    return null;
+                });
 
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
-        return false;
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return false;
+
+        });
     }
 
     public boolean upsertMessage(ResMessages.Link message) {
-        lock.lock();
-        try {
-            Dao<ResMessages.Link, ?> dao = helper.getDao(ResMessages.Link.class);
-            dao.createOrUpdate(message);
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
-        return false;
+        return execute(() -> {
+            try {
+                Dao<ResMessages.Link, ?> dao = getHelper().getDao(ResMessages.Link.class);
+                dao.createOrUpdate(message);
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+
+        });
     }
 
     public int deleteMessage(long messageId) {
+        return execute(() -> {
+            if (messageId <= 0) {
+                // 이벤트는 삭제하지 않기 위함
+                return 0;
+            }
 
-        if (messageId <= 0) {
-            // 이벤트는 삭제하지 않기 위함
+
+            try {
+                Dao<ResMessages.Link, ?> linkDao = getHelper().getDao(ResMessages.Link.class);
+                DeleteBuilder<ResMessages.Link, ?> deleteBuilder = linkDao.deleteBuilder();
+                deleteBuilder
+                        .where()
+                        .eq("messageId", messageId);
+                return deleteBuilder.delete();
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
             return 0;
-        }
 
-        lock.lock();
-
-        try {
-            Dao<ResMessages.Link, ?> linkDao = helper.getDao(ResMessages.Link.class);
-            DeleteBuilder<ResMessages.Link, ?> deleteBuilder = linkDao.deleteBuilder();
-            deleteBuilder
-                    .where()
-                    .eq("messageId", messageId);
-            return deleteBuilder.delete();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
-
-        return 0;
+        });
 
     }
 
     public List<ResMessages.Link> getMessages(int roomId) {
 
-        try {
-            long teamId = AccountRepository.getRepository().getSelectedTeamId();
-            return helper.getDao(ResMessages.Link.class)
-                    .queryBuilder()
-                    .orderBy("time", false)
-                    .where()
-                    .eq("teamId", teamId)
-                    .and()
-                    .eq("roomId", roomId)
-                    .query();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        return execute(() -> {
+            try {
+                long teamId = AccountRepository.getRepository().getSelectedTeamId();
+                return getHelper().getDao(ResMessages.Link.class)
+                        .queryBuilder()
+                        .orderBy("time", false)
+                        .where()
+                        .eq("teamId", teamId)
+                        .and()
+                        .eq("roomId", roomId)
+                        .query();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
-        return new ArrayList<>();
+            return new ArrayList<ResMessages.Link>();
+
+        });
     }
 
     public ResMessages.Link getLastMessage(long roomId) {
+        return execute(() -> {
+            ResMessages.Link link = null;
+            try {
+                long teamId = AccountRepository.getRepository().getSelectedTeamId();
+                link = getHelper().getDao(ResMessages.Link.class)
+                        .queryBuilder()
+                        .orderBy("time", false)
+                        .where()
+                        .eq("teamId", teamId)
+                        .and()
+                        .eq("roomId", roomId)
+                        .queryForFirst();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
-        ResMessages.Link link = null;
-        try {
-            long teamId = AccountRepository.getRepository().getSelectedTeamId();
-            link = helper.getDao(ResMessages.Link.class)
-                    .queryBuilder()
-                    .orderBy("time", false)
-                    .where()
-                    .eq("teamId", teamId)
-                    .and()
-                    .eq("roomId", roomId)
-                    .queryForFirst();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+            if (link == null) {
+                link = new ResMessages.Link();
+                link.id = -1;
+            }
+            return link;
 
-        if (link == null) {
-            link = new ResMessages.Link();
-            link.id = -1;
-        }
-        return link;
+        });
     }
 
     public List<ResMessages.Link> getOldMessages(long roomId, long lastLinkId, int count) {
-        try {
-            long teamId = AccountRepository.getRepository().getSelectedTeamId();
-            return helper.getDao(ResMessages.Link.class)
-                    .queryBuilder()
-                    .limit(count)
-                    .orderBy("time", false)
-                    .where()
-                    .eq("teamId", teamId)
-                    .and()
-                    .eq("roomId", roomId)
-                    .and()
-                    .lt("id", lastLinkId > 0 ? lastLinkId : Integer.MAX_VALUE)
-                    .query();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        return execute(() -> {
+            try {
+                long teamId = AccountRepository.getRepository().getSelectedTeamId();
+                return getHelper().getDao(ResMessages.Link.class)
+                        .queryBuilder()
+                        .limit(count)
+                        .orderBy("time", false)
+                        .where()
+                        .eq("teamId", teamId)
+                        .and()
+                        .eq("roomId", roomId)
+                        .and()
+                        .lt("id", lastLinkId > 0 ? lastLinkId : Integer.MAX_VALUE)
+                        .query();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
-        return new ArrayList<>();
+            return new ArrayList<ResMessages.Link>();
 
+        });
     }
 
     public int updateStarred(long messageId, boolean isStarred) {
-        lock.lock();
-        try {
-            Dao<ResMessages.TextMessage, Long> textMessageDao = helper.getDao(ResMessages
-                    .TextMessage.class);
+        return execute(() -> {
+            try {
+                Dao<ResMessages.TextMessage, Long> textMessageDao = getHelper().getDao(ResMessages
+                        .TextMessage.class);
 
-            if (textMessageDao.idExists(messageId)) {
-                UpdateBuilder<ResMessages.TextMessage, Long> updateBuilder = textMessageDao.updateBuilder();
-                updateBuilder.updateColumnValue("isStarred", isStarred);
-                updateBuilder
-                        .where()
-                        .eq("id", messageId);
-                return updateBuilder.update();
+                if (textMessageDao.idExists(messageId)) {
+                    UpdateBuilder<ResMessages.TextMessage, Long> updateBuilder = textMessageDao.updateBuilder();
+                    updateBuilder.updateColumnValue("isStarred", isStarred);
+                    updateBuilder
+                            .where()
+                            .eq("id", messageId);
+                    return updateBuilder.update();
+                }
+
+                Dao<ResMessages.CommentMessage, Long> commentMessageDao
+                        = getHelper().getDao(ResMessages.CommentMessage.class);
+
+                if (commentMessageDao.idExists(messageId)) {
+                    UpdateBuilder<ResMessages.CommentMessage, Long> updateBuilder = commentMessageDao.updateBuilder();
+                    updateBuilder.updateColumnValue("isStarred", isStarred);
+                    updateBuilder.where()
+                            .eq("id", messageId);
+                    return updateBuilder.update();
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
+            return 0;
 
-            Dao<ResMessages.CommentMessage, Long> commentMessageDao
-                    = helper.getDao(ResMessages.CommentMessage.class);
-
-            if (commentMessageDao.idExists(messageId)) {
-                UpdateBuilder<ResMessages.CommentMessage, Long> updateBuilder = commentMessageDao.updateBuilder();
-                updateBuilder.updateColumnValue("isStarred", isStarred);
-                updateBuilder.where()
-                        .eq("id", messageId);
-                return updateBuilder.update();
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
-        return 0;
+        });
     }
 
     public void updateStatus(long fileId, String archived) {
-        lock.lock();
-        try {
-            Dao<ResMessages.FileMessage, Long> dao = helper.getDao(ResMessages.FileMessage
-                    .class);
-            if (dao.idExists(fileId)) {
-                UpdateBuilder<ResMessages.FileMessage, Long> updateBuilder = dao.updateBuilder();
-                updateBuilder.updateColumnValue("status", archived);
-                updateBuilder.where()
-                        .eq("id", fileId);
-                updateBuilder.update();
+        execute(() -> {
+            try {
+                Dao<ResMessages.FileMessage, Long> dao = getHelper().getDao(ResMessages.FileMessage
+                        .class);
+                if (dao.idExists(fileId)) {
+                    UpdateBuilder<ResMessages.FileMessage, Long> updateBuilder = dao.updateBuilder();
+                    updateBuilder.updateColumnValue("status", archived);
+                    updateBuilder.where()
+                            .eq("id", fileId);
+                    updateBuilder.update();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
+            return 0;
+        });
     }
 
     public void updateUnshared(long fileId, long roomId) {
-        lock.lock();
-        try {
-            Dao<ResMessages.OriginalMessage.IntegerWrapper, Integer> dao = helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class);
-            DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder = dao.deleteBuilder();
-            deleteBuilder.where().eq("fileOf_id", fileId).and().eq("shareEntity", roomId);
-            deleteBuilder.delete();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
+        execute(() -> {
+            try {
+                Dao<ResMessages.OriginalMessage.IntegerWrapper, Integer> dao = getHelper().getDao(ResMessages.OriginalMessage.IntegerWrapper.class);
+                DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder = dao.deleteBuilder();
+                deleteBuilder.where().eq("fileOf_id", fileId).and().eq("shareEntity", roomId);
+                deleteBuilder.delete();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return 0;
+        });
     }
 
     public void upsertFileMessage(ResMessages.FileMessage fileMessage) {
-        lock.lock();
-        try {
-            Dao<ResMessages.FileMessage, ?> dao = helper.getDao(ResMessages.FileMessage.class);
-            dao.createOrUpdate(fileMessage);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
+        execute(() -> {
+            try {
+                Dao<ResMessages.FileMessage, ?> dao = getHelper().getDao(ResMessages.FileMessage.class);
+                dao.createOrUpdate(fileMessage);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return 0;
+        });
     }
 
     public boolean upsertTextMessage(ResMessages.TextMessage textMessage) {
-        lock.lock();
-        try {
-            Dao<ResMessages.TextMessage, ?> dao = helper.getDao(ResMessages.TextMessage.class);
-            dao.createOrUpdate(textMessage);
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
+        return execute(() -> {
+            try {
+                Dao<ResMessages.TextMessage, ?> dao = getHelper().getDao(ResMessages.TextMessage.class);
+                dao.createOrUpdate(textMessage);
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
-        return false;
+            return false;
+
+        });
     }
 
     public int deleteLinkByMessageId(long messageId) {
-        lock.lock();
-        try {
-            Dao<ResMessages.Link, ?> dao = helper.getDao(ResMessages.Link.class);
+        return execute(() -> {
+            try {
+                Dao<ResMessages.Link, ?> dao = getHelper().getDao(ResMessages.Link.class);
 
-            DeleteBuilder<ResMessages.Link, ?> deleteBuilder = dao.deleteBuilder();
-            deleteBuilder.where().eq("messageId", messageId);
+                DeleteBuilder<ResMessages.Link, ?> deleteBuilder = dao.deleteBuilder();
+                deleteBuilder.where().eq("messageId", messageId);
 
-            return deleteBuilder.delete();
+                return deleteBuilder.delete();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
-        return 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return 0;
+
+        });
     }
 
     public ResMessages.FileMessage getFileMessage(long fileId) {
-        lock.lock();
+        return execute(() -> {
+            try {
 
-        try {
+                Dao<ResMessages.FileMessage, ?> dao = getHelper().getDao(ResMessages.FileMessage.class);
 
-            Dao<ResMessages.FileMessage, ?> dao = helper.getDao(ResMessages.FileMessage.class);
+                return dao.queryBuilder()
+                        .where()
+                        .eq("id", fileId)
+                        .queryForFirst();
 
-            return dao.queryBuilder()
-                    .where()
-                    .eq("id", fileId)
-                    .queryForFirst();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return null;
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
-        return null;
+        });
     }
 
     public ResMessages.TextMessage getTextMessage(long messageId) {
-        lock.lock();
-        try {
-            Dao<ResMessages.TextMessage, ?> dao = helper.getDao(ResMessages.TextMessage.class);
+        return execute(() -> {
+            try {
+                Dao<ResMessages.TextMessage, ?> dao = getHelper().getDao(ResMessages.TextMessage.class);
 
-            return dao.queryBuilder()
-                    .where()
-                    .eq("id", messageId)
-                    .queryForFirst();
+                return dao.queryBuilder()
+                        .where()
+                        .eq("id", messageId)
+                        .queryForFirst();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
-        return null;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return null;
+
+        });
     }
 
     public List<ResMessages.CommentMessage> getCommentMessages(long fileId) {
-        lock.lock();
-        try {
-            Dao<ResMessages.CommentMessage, ?> dao = helper.getDao(ResMessages.CommentMessage.class);
-            return dao.queryBuilder()
-                    .where()
-                    .eq("feedbackId", fileId)
-                    .query();
+        return execute(() -> {
+            try {
+                Dao<ResMessages.CommentMessage, ?> dao = getHelper().getDao(ResMessages.CommentMessage.class);
+                return dao.queryBuilder()
+                        .where()
+                        .eq("feedbackId", fileId)
+                        .query();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
-        return null;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return new ArrayList<ResMessages.CommentMessage>();
+
+        });
     }
 
     public List<ResMessages.CommentStickerMessage> getStickerCommentMessages(long fileId) {
-        lock.lock();
-        try {
-            Dao<ResMessages.CommentStickerMessage, ?> dao =
-                    helper.getDao(ResMessages.CommentStickerMessage.class);
-            return dao.queryBuilder()
-                    .where()
-                    .eq("feedbackId", fileId)
-                    .query();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
-        return null;
+        return execute(() -> {
+            try {
+                Dao<ResMessages.CommentStickerMessage, ?> dao =
+                        getHelper().getDao(ResMessages.CommentStickerMessage.class);
+                return dao.queryBuilder()
+                        .where()
+                        .eq("feedbackId", fileId)
+                        .query();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return new ArrayList<ResMessages.CommentStickerMessage>();
+
+        });
     }
 
     /**
@@ -366,154 +349,148 @@ public class MessageRepository {
      * @return
      */
     public List<ResMessages.TextMessage> getTextMessages() {
-        lock.lock();
-        try {
-            Dao<ResMessages.TextMessage, ?> dao = helper.getDao(ResMessages.TextMessage.class);
+        return execute(() -> {
+            try {
+                Dao<ResMessages.TextMessage, ?> dao = getHelper().getDao(ResMessages.TextMessage.class);
 
-            return dao.queryForAll();
+                return dao.queryForAll();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
-        return new ArrayList<>(0);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return new ArrayList<ResMessages.TextMessage>();
 
+        });
     }
 
     public int clearLinks(long teamId, long roomId) {
-        lock.lock();
-        try {
-            Dao<ResMessages.Link, ?> dao = helper.getDao(ResMessages.Link.class);
-            DeleteBuilder<ResMessages.Link, ?> deleteBuilder = dao.deleteBuilder();
-            deleteBuilder.where()
-                    .eq("teamId", teamId)
-                    .and()
-                    .eq("roomId", roomId);
-            return deleteBuilder.delete();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
-        return 0;
+        return execute(() -> {
+            try {
+                Dao<ResMessages.Link, ?> dao = getHelper().getDao(ResMessages.Link.class);
+                DeleteBuilder<ResMessages.Link, ?> deleteBuilder = dao.deleteBuilder();
+                deleteBuilder.where()
+                        .eq("teamId", teamId)
+                        .and()
+                        .eq("roomId", roomId);
+                return deleteBuilder.delete();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return 0;
+
+        });
     }
 
     public int deleteAllLink() {
-        lock.lock();
-        Dao<ResMessages.Link, ?> dao;
-        try {
-            dao = helper.getDao(ResMessages.Link.class);
-            DeleteBuilder<ResMessages.Link, ?> deleteBuilder = dao.deleteBuilder();
-            return deleteBuilder.delete();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
+        return execute(() -> {
+            Dao<ResMessages.Link, ?> dao;
+            try {
+                dao = getHelper().getDao(ResMessages.Link.class);
+                DeleteBuilder<ResMessages.Link, ?> deleteBuilder = dao.deleteBuilder();
+                return deleteBuilder.delete();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
-        return 0;
+            return 0;
+
+        });
     }
 
     public int getMessagesCount(long roomId, long startLinkId) {
-        lock.lock();
-        try {
-            long teamId = AccountRepository.getRepository().getSelectedTeamId();
-            return (Long.valueOf(helper.getDao(ResMessages.Link.class)
-                    .queryBuilder()
-                    .orderBy("time", true)
-                    .where()
-                    .eq("teamId", teamId)
-                    .and()
-                    .eq("roomId", roomId)
-                    .and()
-                    .ge("id", startLinkId)
-                    .countOf())).intValue();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
+        return execute(() -> {
+            try {
+                long teamId = AccountRepository.getRepository().getSelectedTeamId();
+                return (Long.valueOf(getHelper().getDao(ResMessages.Link.class)
+                        .queryBuilder()
+                        .orderBy("time", true)
+                        .where()
+                        .eq("teamId", teamId)
+                        .and()
+                        .eq("roomId", roomId)
+                        .and()
+                        .ge("id", startLinkId)
+                        .countOf())).intValue();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
 
-        return 0;
+            return 0;
+
+        });
     }
 
     public int getMessagesCount(long roomId, long startLinkId, long endLinkId) {
-        lock.lock();
-        try {
-            long teamId = AccountRepository.getRepository().getSelectedTeamId();
-            return (Long.valueOf(helper.getDao(ResMessages.Link.class)
-                    .queryBuilder()
-                    .orderBy("time", true)
-                    .where()
-                    .eq("teamId", teamId)
-                    .and()
-                    .eq("roomId", roomId)
-                    .and()
-                    .ge("id", startLinkId)
-                    .and()
-                    .lt("id", endLinkId)
-                    .countOf())).intValue();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
+        return execute(() -> {
+            try {
+                long teamId = AccountRepository.getRepository().getSelectedTeamId();
+                return (Long.valueOf(getHelper().getDao(ResMessages.Link.class)
+                        .queryBuilder()
+                        .orderBy("time", true)
+                        .where()
+                        .eq("teamId", teamId)
+                        .and()
+                        .eq("roomId", roomId)
+                        .and()
+                        .ge("id", startLinkId)
+                        .and()
+                        .lt("id", endLinkId)
+                        .countOf())).intValue();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
 
-        return 0;
+            return 0;
+
+        });
     }
 
     public List<ResMessages.Link> getMessages(long roomId, long firstCursorLinkId, long toCursorLinkId) {
+        return execute(() -> {
+            try {
+                long teamId = AccountRepository.getRepository().getSelectedTeamId();
+                return getHelper().getDao(ResMessages.Link.class)
+                        .queryBuilder()
+                        .orderBy("time", true)
+                        .where()
+                        .eq("teamId", teamId)
+                        .and()
+                        .eq("roomId", roomId)
+                        .and()
+                        .ge("id", firstCursorLinkId)
+                        .and()
+                        .lt("id", toCursorLinkId)
+                        .query();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return new ArrayList<ResMessages.Link>(0);
 
-        long start = SystemClock.currentThreadTimeMillis();
-
-        lock.lock();
-        try {
-            long teamId = AccountRepository.getRepository().getSelectedTeamId();
-            return helper.getDao(ResMessages.Link.class)
-                    .queryBuilder()
-                    .orderBy("time", true)
-                    .where()
-                    .eq("teamId", teamId)
-                    .and()
-                    .eq("roomId", roomId)
-                    .and()
-                    .ge("id", firstCursorLinkId)
-                    .and()
-                    .lt("id", toCursorLinkId)
-                    .query();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
-        long end = SystemClock.currentThreadTimeMillis();
-        LogUtil.e("time2", end - start + "");
-        return new ArrayList<>(0);
+        });
     }
 
     public boolean hasLinkOfMessageId(long messageId) {
-        if (messageId <= 0) {
+        return execute(() -> {
+            if (messageId <= 0) {
+                return false;
+            }
+
+            try {
+                Dao<ResMessages.Link, ?> linkDao = getHelper().getDao(ResMessages.Link.class);
+                QueryBuilder<ResMessages.Link, ?> queryBuilder = linkDao.queryBuilder();
+                return queryBuilder
+                        .where()
+                        .eq("messageId", messageId)
+                        .countOf() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
             return false;
-        }
 
-        lock.lock();
-        try {
-            Dao<ResMessages.Link, ?> linkDao = helper.getDao(ResMessages.Link.class);
-            QueryBuilder<ResMessages.Link, ?> queryBuilder = linkDao.queryBuilder();
-            return queryBuilder
-                    .where()
-                    .eq("messageId", messageId)
-                    .countOf() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            lock.unlock();
-        }
-
-
-        return false;
+        });
     }
 }

@@ -8,7 +8,9 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.teams.TeamApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AlertUtil;
@@ -16,6 +18,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -24,7 +27,9 @@ import org.androidannotations.annotations.UiThread;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
+import javax.inject.Inject;
+
+import dagger.Lazy;
 import rx.Observable;
 
 /**
@@ -36,6 +41,7 @@ public class InvitationDialogExecutor {
 
     public static final int FROM_MAIN_INVITE = 1;
     public static final int FROM_MAIN_MEMBER = 2;
+    public static final int FROM_MAIN_TEAM = 7;
     public static final int FROM_TOPIC_CHAT = 3;
     public static final int FROM_TOPIC_MEMBER = 4;
     public static final int FROM_MAIN_POPUP = 5;
@@ -46,10 +52,16 @@ public class InvitationDialogExecutor {
 
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
-
+    @Inject
+    Lazy<TeamApi> teamApi;
     private int from;
     private ProgressWheel progressWheel;
     private EntityManager entityManager;
+
+    @AfterInject
+    void initObject() {
+        DaggerApiClientComponent.create().inject(this);
+    }
 
     @Background
     public void execute() {
@@ -78,7 +90,7 @@ public class InvitationDialogExecutor {
                     showTextDialog(activity.getResources().getString(R.string.jandi_invite_disabled, getOwnerName()));
                     break;
             }
-        } catch (RetrofitError e) {
+        } catch (RetrofitException e) {
             e.printStackTrace();
             showErrorToast(activity.getResources().getString(R.string.err_network));
         } catch (Exception e) {
@@ -89,9 +101,8 @@ public class InvitationDialogExecutor {
         dismissProgressWheel();
     }
 
-    private ResTeamDetailInfo.InviteTeam getTeamInfo(long teamId) throws RetrofitError {
-        ResTeamDetailInfo.InviteTeam resTeamDetailInfo = RequestApiManager.getInstance().getTeamInfoByTeamApi(teamId);
-        return resTeamDetailInfo;
+    private ResTeamDetailInfo.InviteTeam getTeamInfo(long teamId) throws RetrofitException {
+        return teamApi.get().getTeamInfo(teamId);
     }
 
 

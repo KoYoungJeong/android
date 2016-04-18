@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
@@ -27,7 +28,6 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscription;
 import rx.subjects.PublishSubject;
@@ -220,8 +219,8 @@ public class MembersListPresenterImpl implements MembersListPresenter {
             EventBus.getDefault().post(new InvitationSuccessEvent());
             trackTopicMemberInviteSuccess(invitedUsers.size(), entityId);
             view.showInviteSucceed(invitedUsers.size());
-        } catch (RetrofitError e) {
-            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+        } catch (RetrofitException e) {
+            int errorCode = e.getStatusCode();
             trackTopicMemberInviteFail(errorCode);
             LogUtil.e("fail to invite entity");
             view.showInviteFailed(JandiApplication.getContext().getString(R.string.err_entity_invite));
@@ -269,7 +268,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
             EventBus.getDefault().post(new RetrieveTopicListEvent());
             view.removeUser(userEntityId);
             view.showKickSuccessToast();
-        } catch (RetrofitError retrofitError) {
+        } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();
             // 실패시 화면 다시 갱신토록 변경
             view.refreshMemberList();
@@ -323,8 +322,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     }
 
     private void trackTopicMemberInviteSuccess(int memberCount, long entityId) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                         .event(Event.TopicMemberInvite)
                         .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
@@ -335,8 +333,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     }
 
     private void trackTopicMemberInviteFail(int errorCode) {
-        Sprinkler.with(JandiApplication.getContext())
-                .track(new FutureTrack.Builder()
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                         .event(Event.TopicMemberInvite)
                         .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))

@@ -11,7 +11,10 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
+import com.tosslab.jandi.app.network.client.main.LeftSideApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -23,14 +26,24 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.util.List;
 
-import retrofit.RetrofitError;
+import dagger.Lazy;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by tonyjs on 16. 3. 21..
- */
 public class TeamsModel {
+
+    Lazy<AccountApi> accountApi;
+    Lazy<LeftSideApi> leftSideApi;
+    Lazy<InvitationApi> invitationApi;
+
+    public TeamsModel(Lazy<AccountApi> accountApi,
+                      Lazy<LeftSideApi> leftSideApi,
+                      Lazy<InvitationApi> invitationApi) {
+
+        this.accountApi = accountApi;
+        this.leftSideApi = leftSideApi;
+        this.invitationApi = invitationApi;
+    }
 
     public boolean isNetworkConnected() {
         return NetworkCheckUtil.isConnected();
@@ -39,10 +52,10 @@ public class TeamsModel {
     public Observable<Object> getRefreshAccountInfoObservable() {
         return Observable.create(subscriber -> {
             try {
-                ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+                ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
                 AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
                 subscriber.onNext(new Object());
-            } catch (RetrofitError retrofitError) {
+            } catch (RetrofitException retrofitError) {
                 subscriber.onError(retrofitError);
             }
             subscriber.onCompleted();
@@ -59,11 +72,11 @@ public class TeamsModel {
         Observable.OnSubscribe<List<ResPendingTeamInfo>> subscribe = subscriber -> {
             try {
                 List<ResPendingTeamInfo> pendingTeamInfoByInvitationApi =
-                        RequestApiManager.getInstance().getPendingTeamInfoByInvitationApi();
+                        invitationApi.get().getPedingTeamInfo();
 
                 subscriber.onNext(pendingTeamInfoByInvitationApi);
 
-            } catch (RetrofitError error) {
+            } catch (RetrofitException error) {
                 subscriber.onError(error);
             }
             subscriber.onCompleted();
@@ -110,8 +123,6 @@ public class TeamsModel {
                 updateEntityInfo(teamId);
 
                 subscriber.onNext(new Object());
-            } catch (RetrofitError error) {
-                subscriber.onError(error);
             } catch (Exception error) {
                 subscriber.onError(error);
             }
@@ -125,7 +136,7 @@ public class TeamsModel {
 
     private void updateEntityInfo(long teamId) throws Exception {
         ResLeftSideMenu leftSideMenu =
-                RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
+                leftSideApi.get().getInfosForSideMenu(teamId);
 
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(leftSideMenu);
@@ -145,11 +156,11 @@ public class TeamsModel {
         return Observable.<ResTeamDetailInfo>create(subscriber -> {
             try {
                 ReqInvitationAcceptOrIgnore requestBody = new ReqInvitationAcceptOrIgnore(type);
-                ResTeamDetailInfo resTeamDetailInfo = RequestApiManager.getInstance().
-                        acceptOrDeclineInvitationByInvitationApi(invitationId, requestBody);
+                ResTeamDetailInfo resTeamDetailInfo = invitationApi.get().
+                        acceptOrDeclineInvitation(invitationId, requestBody);
 
                 subscriber.onNext(resTeamDetailInfo);
-            } catch (RetrofitError error) {
+            } catch (RetrofitException error) {
                 subscriber.onError(error);
             }
             subscriber.onCompleted();
@@ -161,7 +172,7 @@ public class TeamsModel {
         return Observable.create(subscriber -> {
             try {
                 ResAccountInfo resAccountInfo =
-                        RequestApiManager.getInstance().getAccountInfoByMainRest();
+                        accountApi.get().getAccountInfo();
 
                 AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
                 AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
@@ -174,11 +185,11 @@ public class TeamsModel {
         }).subscribeOn(Schedulers.io());
     }
 
-    public String getTeamInviteErrorMessage(RetrofitError e, String teamName) {
+    public String getTeamInviteErrorMessage(RetrofitException e, String teamName) {
         Resources resources = JandiApplication.getContext().getResources();
         String errorMessage = resources.getString(R.string.err_network);
 
-        int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+        int errorCode = e.getResponseCode();
         switch (errorCode) {
             case JandiConstants.TeamInviteErrorCode.NOT_AVAILABLE_INVITATION_CODE:
                 resources.getString(R.string.jandi_expired_invitation_link);
