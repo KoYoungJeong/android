@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
+import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.file.FileUtil;
@@ -96,7 +97,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
     @Override
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
         setProfileInfos(link);
-        bindFileImage(link);
+        bindFileImage(link, teamId, roomId);
     }
 
     public void setProfileInfos(ResMessages.Link link) {
@@ -126,10 +127,27 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
     }
 
-    private void bindFileImage(ResMessages.Link link) {
+    private void bindFileImage(ResMessages.Link link, long teamId, long roomId) {
         if (!(link.message instanceof ResMessages.FileMessage)) {
             return;
         }
+
+        long fromEntityId = link.fromEntity;
+
+        EntityManager entityManager = EntityManager.getInstance();
+
+        int unreadCount = UnreadCountUtil.getUnreadCount(
+                teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
+
+        tvMessageBadge.setText(String.valueOf(unreadCount));
+
+        if (unreadCount <= 0) {
+            tvMessageBadge.setVisibility(View.GONE);
+        } else {
+            tvMessageBadge.setVisibility(View.VISIBLE);
+        }
+
+        tvMessageTime.setText(DateTransformator.getTimeStringForSimple(link.time));
 
         ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
         ResMessages.FileContent fileContent = fileMessage.content;
