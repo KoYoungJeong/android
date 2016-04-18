@@ -40,9 +40,9 @@ public class BodyViewFactory {
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_FILE_MESSAGE)) {
             builder = new FileMessageViewHolder.Builder();
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_STICKER_COMMENT)) {
-            builder = new StickerMessageViewHolder.Builder();
+            builder = new StickerCommentViewHolder.Builder();
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_MESSAGE_COMMENT)) {
-            builder = new FileMessageViewHolder.Builder();
+            builder = new CommentViewHolder.Builder();
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_DUMMY_NORMAL_MESSAGE)) {
             builder = new DummyMessageViewHolder.Builder();
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_DUMMY_STICKER)) {
@@ -96,7 +96,6 @@ public class BodyViewFactory {
     public static int getContentType(ResMessages.Link previousLink,
                                      ResMessages.Link currentLink,
                                      ResMessages.Link nextLink) {
-
         int type = TypeUtil.TYPE_EMPTY;
         if (isEventMessage(currentLink)) {
             type = getEventMessageType(currentLink, nextLink);
@@ -137,8 +136,11 @@ public class BodyViewFactory {
     private static int getNormalMessageType(ResMessages.Link previousLink,
                                             ResMessages.Link currentLink,
                                             ResMessages.Link nextLink) {
-
         int type = TypeUtil.TYPE_VIEW_NORMAL_MESSAGE;
+
+        if (isPureMessage(previousLink, currentLink)) {
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
+        }
 
         if (isDummyMessage(currentLink)) {
             type = TypeUtil.TYPE_VIEW_DUMMY_NORMAL_MESSAGE;
@@ -156,12 +158,7 @@ public class BodyViewFactory {
             return type;
         }
 
-        if (isPureMessage(previousLink, currentLink)) {
-            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
-        }
-
         return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
-
     }
 
     private static boolean hasNextMessage(ResMessages.Link nextLink) {
@@ -171,8 +168,11 @@ public class BodyViewFactory {
     private static int getStickerMessageType(ResMessages.Link previousLink,
                                              ResMessages.Link currentLink,
                                              ResMessages.Link nextLink) {
-
         int type = TypeUtil.TYPE_VIEW_STICKER_MESSAGE;
+
+        if (isPureMessage(previousLink, currentLink)) {
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
+        }
 
         if (isDummyMessage(currentLink)) {
             type = TypeUtil.TYPE_VIEW_DUMMY_STICKER;
@@ -186,12 +186,7 @@ public class BodyViewFactory {
             return type;
         }
 
-        if (isPureMessage(previousLink, currentLink)) {
-            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
-        }
-
         return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
-
     }
 
     private static boolean isNextLinkSameWriterAndSameTime(ResMessages.Link currentLink,
@@ -494,6 +489,7 @@ public class BodyViewFactory {
                 return new EmptyViewHolder();
             }
         }
+
     }
 
 }

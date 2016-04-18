@@ -324,12 +324,6 @@ public class EventMessageViewHolder implements BodyViewHolder {
     }
 
     public static class Builder extends BaseViewHolderBuilder {
-//        private boolean hasBottomMargin = false;
-//
-//        public Builder setHasBottomMargin(boolean hasBottomMargin) {
-//            this.hasBottomMargin = hasBottomMargin;
-//            return this;
-//        }
 
         public EventMessageViewHolder build() {
             EventMessageViewHolder eventViewHolder = new EventMessageViewHolder();

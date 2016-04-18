@@ -249,12 +249,6 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
     }
 
     public static class Builder extends BaseViewHolderBuilder {
-//        private boolean hasBottomMargin = false;
-//
-//        public Builder setHasBottomMargin(boolean hasBottomMargin) {
-//            this.hasBottomMargin = hasBottomMargin;
-//            return this;
-//        }
 
         public FileMessageViewHolder build() {
             FileMessageViewHolder fileViewHolder = new FileMessageViewHolder();

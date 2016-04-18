@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.TypeUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
@@ -277,16 +278,17 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
 
         List<Integer> indexList = new ArrayList<Integer>();
 
-//        int count = getItemCount();
-//        for (int idx = 0; idx < count; idx++) {
-//            int itemViewType = getItemViewType(idx);
-//            if (itemViewType == BodyViewHolder.Type.FileComment.ordinal() || itemViewType == BodyViewHolder.Type.PureComment.ordinal()) {
-//                ResMessages.Link item = getItem(idx);
-//                if (item.message.feedbackId == messageId) {
-//                    indexList.add(idx);
-//                }
-//            }
-//        }
+        int count = getItemCount();
+        for (int idx = 0; idx < count; idx++) {
+            int itemViewType = getItemViewType(idx);
+            if (TypeUtil.hasTypeElement(itemViewType, TypeUtil.TYPE_VIEW_MESSAGE_COMMENT)
+                    || TypeUtil.hasTypeElement(itemViewType, TypeUtil.TYPE_VIEW_STICKER_COMMENT)) {
+                ResMessages.Link item = getItem(idx);
+                if (item.message.feedbackId == messageId) {
+                    indexList.add(idx);
+                }
+            }
+        }
 
         return indexList;
     }

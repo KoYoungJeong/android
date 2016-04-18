@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.TypeUtil;
 import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
@@ -134,7 +135,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     @Override
     public RecyclerBodyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
         BodyViewHolder viewHolder = BodyViewFactory.createViewHolder(viewType);
         View convertView = LayoutInflater.from(context).inflate(viewHolder.getLayoutId(), parent, false);
         viewHolder.initView(convertView);
@@ -391,7 +391,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
         List<Integer> indexList = new ArrayList<Integer>();
 
-//        int count = getItemCount();
+        int count = getItemCount();
 //        for (int idx = 0; idx < count; idx++) {
 //            int itemViewType = getItemViewType(idx);
 //            if (itemViewType == BodyViewHolder.Type.FileComment.ordinal()
@@ -406,6 +406,17 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 //                }
 //            }
 //        }
+        for (int idx = 0; idx < count; idx++) {
+            int itemViewType = getItemViewType(idx);
+            if (TypeUtil.hasTypeElement(itemViewType, TypeUtil.TYPE_VIEW_MESSAGE_COMMENT)
+                    || TypeUtil.hasTypeElement(itemViewType, TypeUtil.TYPE_VIEW_STICKER_COMMENT)) {
+                ResMessages.Link item = getItem(idx);
+                if (item.message.feedbackId == messageId) {
+                    indexList.add(idx);
+                }
+            }
+        }
+
 
         return indexList;
     }

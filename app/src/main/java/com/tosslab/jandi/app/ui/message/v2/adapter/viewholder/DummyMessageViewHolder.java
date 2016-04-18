@@ -176,18 +176,6 @@ public class DummyMessageViewHolder implements BodyViewHolder {
     }
 
     public static class Builder extends BaseViewHolderBuilder {
-//        private boolean hasProfile = false;
-//        private boolean hasBottomMargin = false;
-//
-//        public Builder setHasBottomMargin(boolean hasBottomMargin) {
-//            this.hasBottomMargin = hasBottomMargin;
-//            return this;
-//        }
-//
-//        public Builder setHasProfile(boolean hasProfile) {
-//            this.hasProfile = hasProfile;
-//            return this;
-//        }
 
         public DummyMessageViewHolder build() {
             DummyMessageViewHolder dummyViewHolder = new DummyMessageViewHolder();
