@@ -20,14 +20,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
-
 import setup.BaseInitUtil;
 
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -65,12 +61,6 @@ public class ChatsChooseFragmentTest {
 
 
     @Test
-    public void testSetUsers() throws Throwable {
-        rule.runOnUiThread(() -> fragment.setUsers(new ArrayList<>()));
-        assertThat(fragment.chatChooseAdapter.getCount(), is(equalTo(0)));
-    }
-
-    @Test
     public void testMoveChatMessage() throws Throwable {
         Intents.init();
 
@@ -79,14 +69,6 @@ public class ChatsChooseFragmentTest {
         assertThat(activity.isFinishing(), is(true));
 
         Intents.release();
-
-    }
-
-    @Test
-    public void testOnEntitySelect() throws Throwable {
-
-        rule.runOnUiThread(() -> fragment.onEntitySelect(0));
-        verify(fragment.presenter).onMoveChatMessage(anyLong());
 
     }
 
