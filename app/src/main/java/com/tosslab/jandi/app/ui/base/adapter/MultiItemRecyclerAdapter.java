@@ -27,6 +27,13 @@ public abstract class MultiItemRecyclerAdapter extends RecyclerView.Adapter<Base
         return (ITEM) rows.get(position).getItem();
     }
 
+    public void addRow(int position, Row<?> row) {
+        if (getItemCount() - 1 < position) {
+            return;
+        }
+        this.rows.add(position, row);
+    }
+
     public void addRow(Row<?> row) {
         this.rows.add(row);
     }
@@ -52,6 +59,10 @@ public abstract class MultiItemRecyclerAdapter extends RecyclerView.Adapter<Base
             return;
         }
         this.rows.remove(position);
+    }
+
+    public List<Row<?>> getRows() {
+        return rows;
     }
 
     public void remove(Row<?> row) {
