@@ -6,6 +6,8 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 public class TypeUtil {
 
     // Flag 타입은 int 범위 상 총 32개 까지만 가능함.
+    // 그럴리는 없어야겠지만 32개가 넘어간다면 좀 더 복잡한 비트 마스크 연산이 필요.
+    // -> 상수와 메서드 내용물만 바뀌므로 고민할 필요는 없음.
     public static final int TYPE_EMPTY = 1;
     public static final int TYPE_VIEW_NORMAL_MESSAGE = 1 << 1;
     public static final int TYPE_VIEW_STICKER_MESSAGE = 1 << 2;
@@ -28,8 +30,10 @@ public class TypeUtil {
     public static final int TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE = 1 << 26;
     public static final int TYPE_OPTION_HAS_COMMENT_SEMI_DIVIDER = 1 << 27;
 
-    // 인자 viewType에 flagType의 요소가 포함되어 있는지 검사
-    // ex) isElementType(viewType, TYPE_VIEW_EVENT_MESSAGE) -> event 타입의 메세지
+
+    /* 인자 viewType에 flagType의 요소가 포함되어 있는지 검사
+     * ex) isElementType(viewType, TYPE_VIEW_EVENT_MESSAGE) -> event 타입의 메세지
+     */
     public static boolean hasTypeElement(int viewType, int flagType) {
         if ((viewType & flagType) > 0) {
             return true;
@@ -37,7 +41,7 @@ public class TypeUtil {
         return false;
     }
 
-    // viewType에 flagType을 추가
+    /* viewType에 flagType을 추가 */
     public static int addType(int viewType, int flagType) {
         return viewType | flagType;
     }

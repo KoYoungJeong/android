@@ -69,7 +69,6 @@
                     android:id="@+id/v_entity_listitem_warning"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="#99ffffff"
                     android:visibility="visible" />
             </RelativeLayout>
             <!-- Profile 이름 끝 -->
