@@ -1623,8 +1623,6 @@ public class MessageListV2Fragment extends Fragment implements
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void notifyDataSetChanged() {
         messageAdapter.notifyDataSetChanged();
-
-        ColoredToast.show("Hello World!");
     }
 
     public void onEvent(LinkPreviewUpdateEvent event) {
