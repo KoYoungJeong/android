@@ -108,7 +108,7 @@ dependencies {
 
     // Cache
     compile 'com.koushikdutta.ion:ion:2.1.+'
-    compile 'com.facebook.fresco:fresco:0.8.0+'
+    compile 'com.facebook.fresco:fresco:0.9.0'
 
     // Sliqte ORM
     compile 'com.j256.ormlite:ormlite-android:4.+'
