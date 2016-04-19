@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
@@ -30,8 +31,10 @@ import org.androidannotations.annotations.SystemService;
 
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 26..
@@ -123,6 +126,19 @@ public class JandiInterfaceModel {
 
             try {
                 EntityManager.getInstance();
+
+                Observable.just(getEntityInfo())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(entityRefreshed -> {
+                            if (!entityRefreshed) {
+                                return;
+                            }
+                            EventBus eventBus = EventBus.getDefault();
+                            if (eventBus.hasSubscriberForEvent(EntitiesUpdatedEvent.class)) {
+                                eventBus.post(EntitiesUpdatedEvent.class);
+                            }
+                        });
+
                 return true;
             } catch (Exception e) {
                 return getEntityInfo();
@@ -131,7 +147,7 @@ public class JandiInterfaceModel {
         }
     }
 
-    private boolean getEntityInfo() {
+    public boolean getEntityInfo() {
         try {
             EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
             ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();

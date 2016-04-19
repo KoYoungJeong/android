@@ -93,6 +93,8 @@ import rx.subjects.PublishSubject;
 public class FileListFragment extends Fragment
         implements SearchActivity.SearchSelectView, ListScroller {
 
+    public static final String KEY_COMMENT_COUNT = "comment_count";
+    public static final String KEY_FILE_ID = "file_id";
     @ViewById(R.id.list_searched_files)
     RecyclerView lvSearchFiles;
 
@@ -219,41 +221,6 @@ public class FileListFragment extends Fragment
         FragmentActivity activity = getActivity();
         if (activity instanceof MainTabActivity) {
             activity.getMenuInflater().inflate(R.menu.main_activity_menu, menu);
-        } else if (activity instanceof FileListActivity) {
-            activity.getMenuInflater().inflate(R.menu.file_list_actionbar_menu, menu);
-
-            MenuItem searchMenu = menu.findItem(R.id.action_file_list_search);
-            SearchView searchView = ((SearchView) searchMenu.getActionView());
-
-            MenuItemCompat.setOnActionExpandListener(searchMenu, new MenuItemCompat.OnActionExpandListener() {
-
-                @Override
-                public boolean onMenuItemActionExpand(MenuItem item) {
-                    return true;
-                }
-
-                @Override
-                public boolean onMenuItemActionCollapse(MenuItem item) {
-                    inputMethodManager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
-                    onNewQuery("");
-                    return true;
-                }
-            });
-
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String s) {
-                    inputMethodManager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
-                    onNewQuery(s);
-                    return true;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String s) {
-                    return false;
-                }
-            });
-
         }
 
     }
@@ -606,6 +573,30 @@ public class FileListFragment extends Fragment
                     .singleUpload(true)
                     .realFilePathList(new ArrayList<>(filePath))
                     .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
+        }
+    }
+
+    @OnActivityResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH)
+    void onFileDetailShowResult(int resultCode, Intent intent) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        int fileId = intent.getIntExtra(KEY_FILE_ID, -1);
+        int commentCount = intent.getIntExtra(KEY_COMMENT_COUNT, -1);
+        if (fileId <= 0 || commentCount < 0) {
+            return;
+        }
+
+        int position = searchedFileItemListAdapter.findPositionByFileId(fileId);
+        if (position < 0) {
+            return;
+        }
+
+        ResMessages.FileMessage item = searchedFileItemListAdapter.getItem(position);
+        if (item != null) {
+            item.commentCount = commentCount;
+            searchedFileItemListAdapter.notifyDataSetChanged();
         }
     }
 
