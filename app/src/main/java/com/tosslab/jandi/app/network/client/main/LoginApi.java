@@ -27,7 +27,7 @@ public class LoginApi extends ApiTemplate<LoginApi.Api> {
         // 로그인
         @POST("token")
         @Headers({"Content-Type : application/json",
-                "Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT})
+                "Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3})
         Call<ResAccessToken> getAccessToken(@Body ReqAccessToken login);
 
 

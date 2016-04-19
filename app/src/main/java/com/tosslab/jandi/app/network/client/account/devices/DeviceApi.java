@@ -4,19 +4,16 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
-import com.tosslab.jandi.app.network.models.ReqDeviceToken;
-import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
-import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
-import com.tosslab.jandi.app.network.models.ReqSubscibeToken;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ReqPushToken;
+import com.tosslab.jandi.app.network.models.ReqSubscribeToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.HTTP;
+import retrofit2.http.DELETE;
 import retrofit2.http.Headers;
-import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Path;
 
 public class DeviceApi extends ApiTemplate<DeviceApi.Api> {
 
@@ -24,45 +21,31 @@ public class DeviceApi extends ApiTemplate<DeviceApi.Api> {
         super(Api.class, retrofitBuilder);
     }
 
-    public ResAccountInfo registerNotificationToken(ReqNotificationRegister reqNotificationRegister) throws RetrofitException {
-        return call(() -> getApi().registerNotificationToken(reqNotificationRegister));
+    public ResCommon updatePushToken(String deviceId, ReqPushToken reqPushToken) throws RetrofitException {
+        return call(() -> getApi().updatePushToken(deviceId, reqPushToken));
     }
 
-    ResAccountInfo deleteNotificationToken(ReqDeviceToken reqDeviceToken) throws RetrofitException {
-        return call(() -> getApi().deleteNotificationToken(reqDeviceToken));
+    public ResCommon updateSubscribe(String deviceId, ReqSubscribeToken subscibeToken) throws RetrofitException {
+        return call(() -> getApi().updateSubScribe(deviceId, subscibeToken));
     }
 
-    ResAccountInfo subscribeStateNotification(ReqSubscibeToken reqDeviceToken) throws RetrofitException {
-        return call(() -> getApi().subscribeStateNotification(reqDeviceToken));
-    }
-
-    @Deprecated
-    ResCommon getNotificationBadge(ReqNotificationTarget reqNotificationTarget) throws RetrofitException {
-        return call(() -> getApi().getNotificationBadge(reqNotificationTarget));
+    public ResCommon deleteDevice(String deviceId) throws RetrofitException {
+        return call(() -> getApi().deleteDevice(deviceId));
     }
 
     interface Api {
 
-        // Notification Token 등록
-        @POST("account/devices")
+        @PUT("devices/{deviceId}/pushToken")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResAccountInfo> registerNotificationToken(@Body ReqNotificationRegister reqNotificationRegister);
+        Call<ResCommon> updatePushToken(@Path("deviceId") String deviceId, @Body ReqPushToken reqPushToken);
 
-        // Notification Token 삭제
-        @HTTP(path = "account/devices", method = "DELETE", hasBody = true)
+        @PUT("devices/{deviceId}/subscribe")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResAccountInfo> deleteNotificationToken(@Body ReqDeviceToken reqDeviceToken);
+        Call<ResCommon> updateSubScribe(@Path("deviceId") String deviceId, @Body ReqSubscribeToken subscribe);
 
-        // Notification 켜고 끄기
-        @PUT("account/devices")
+        @DELETE("devices/{deviceId}")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResAccountInfo> subscribeStateNotification(@Body ReqSubscibeToken reqDeviceToken);
-
-        // ios 뱃지
-        @PUT("account/devices/badge")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        @Deprecated
-        Call<ResCommon> getNotificationBadge(@Body ReqNotificationTarget reqNotificationTarget);
+        Call<ResCommon> deleteDevice(@Path("deviceId") String deviceId);
 
     }
 }

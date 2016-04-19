@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.domain.UploadedFileInfo;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.upgrade.UpgradeChecker;
+import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
@@ -56,7 +57,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_DOWNLOAD_INFO = 10;
     private static final int DATABASE_VERSION_ADD_INTEGRATION = 11;
     private static final int DATABASE_VERSION_MODIFY_DATE_TYPE = 12;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_MODIFY_DATE_TYPE;
+    private static final int DATABASE_VERSION_PUSH_TOKEN = 13;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_PUSH_TOKEN;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -134,6 +136,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, ResAccessToken.class);
 
             createTable(connectionSource, DownloadInfo.class);
+            createTable(connectionSource, PushToken.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -218,6 +221,11 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, UploadedFileInfo.class);
 
                         MessageRepository.getRepository().deleteAllLink();
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_PUSH_TOKEN, () -> {
+                        createTable(connectionSource, PushToken.class);
+                        Dao<ResAccessToken, ?> dao = DaoManager.createDao(connectionSource, ResAccessToken.class);
+                        dao.executeRawNoArgs("ALTER TABLE `token` ADD COLUMN deviceId VARCHAR;");
                     }));
 
 
@@ -295,6 +303,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
         clearTable(getConnectionSource(), BadgeCount.class);
         clearTable(getConnectionSource(), ResAccessToken.class);
+        clearTable(getConnectionSource(), PushToken.class);
     }
 
     private void clearTable(ConnectionSource connectionSource, Class<?> dataClass) {

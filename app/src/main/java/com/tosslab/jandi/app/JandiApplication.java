@@ -32,7 +32,6 @@ import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.image.BitmapMemoryCacheSupplier;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 
 import org.androidannotations.api.BackgroundExecutor;
@@ -86,12 +85,6 @@ public class JandiApplication extends MultiDexApplication {
         JandiApplication.setContext(this);
         FacebookSdk.sdkInitialize(this);
 
-        boolean oldParseFileCacheDeleted = JandiPreference.isOldParseFileCacheDeleted(this);
-        if (!oldParseFileCacheDeleted) {
-            ParseUpdateUtil.removeFileAndCacheIfNeed(this);
-            JandiPreference.setOldParseFileCacheDeleted(this, true);
-        }
-
         // For Parse Push Notification
         if (BuildConfig.DEBUG) {
             Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
@@ -106,12 +99,6 @@ public class JandiApplication extends MultiDexApplication {
                 Executors.newScheduledThreadPool(PoolableRequestApiExecutor.MAX_POOL_SIZE));
 
         Sprinkler.initialize(this, BuildConfig.FLAVOR.contains("dev"), BuildConfig.DEBUG);
-
-        boolean oldParseChannelDeleted = JandiPreference.isOldParseChannelDeleted(this);
-        if (!oldParseChannelDeleted) {
-            ParseUpdateUtil.refreshChannelOnServer();
-            JandiPreference.setOldParseChannelDeleted(this, true);
-        }
 
         migrationTokenIfNeed();
 

@@ -216,6 +216,7 @@ android {
         }
 
         main.res.srcDirs += 'src/main/res-crawrer'
+        main.java.srcDirs += 'src/main/java-push'
     }
 
     packagingOptions.excludes = [

@@ -1,9 +1,6 @@
 package com.tosslab.jandi.app.push.model;
 
 import android.app.ActivityManager;
-import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -27,6 +24,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.push.to.PushTO;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 
 import org.androidannotations.annotations.AfterInject;
@@ -64,16 +62,8 @@ public class JandiInterfaceModel {
                 .inject(this);
     }
 
-    public int getInstalledAppVersion(Context context) {
-        try {
-            PackageManager packageManager = context.getPackageManager();
-            String packageName = context.getPackageName();
-            PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
-            return packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            return 0;
-        }
+    public int getInstalledAppVersion() {
+        return ApplicationUtil.getAppVersionCode();
     }
 
     public ResConfig getConfigInfo() throws RetrofitException {

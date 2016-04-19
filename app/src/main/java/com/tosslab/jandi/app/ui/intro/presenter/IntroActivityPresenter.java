@@ -61,7 +61,7 @@ public class IntroActivityPresenter {
         try {
             ResConfig config = model.getConfigInfo();
 
-            int installedAppVersion = model.getInstalledAppVersion(context);
+            int installedAppVersion = model.getInstalledAppVersion();
 
             if (config.maintenance != null && config.maintenance.status) {
                 view.showMaintenanceDialog();

@@ -3,11 +3,8 @@ package com.tosslab.jandi.app.ui.maintab;
 import android.animation.ValueAnimator;
 import android.content.ActivityNotFoundException;
 import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -93,7 +90,6 @@ import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.MaxHeightRecyclerView;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
@@ -874,16 +870,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     public int getCurrentAppVersionCode() {
-        try {
-            Context context = JandiApplication.getContext();
-            PackageManager packageManager = context.getPackageManager();
-            String packageName = context.getPackageName();
-            PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
-            return packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            return 0;
-        }
+        return ApplicationUtil.getAppVersionCode();
     }
 
     public void setFABMenuVisibility(boolean visibility) {

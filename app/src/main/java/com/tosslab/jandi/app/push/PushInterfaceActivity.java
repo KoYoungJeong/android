@@ -80,7 +80,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
         try {
             ResConfig config = jandiInterfaceModel.getConfigInfo();
 
-            int installedAppVersion = jandiInterfaceModel.getInstalledAppVersion(getApplicationContext());
+            int installedAppVersion = jandiInterfaceModel.getInstalledAppVersion();
 
             LogUtil.i(TAG, "installedAppVersion - " + installedAppVersion
                     + " config.versions.android - " + config.versions.android);
