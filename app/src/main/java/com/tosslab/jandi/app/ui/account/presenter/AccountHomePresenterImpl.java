@@ -16,7 +16,6 @@ import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -39,9 +38,14 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     View view;
 
-    @AfterViews
-    void initViews() {
+    @Override
+    public void setView(View view) {
+        this.view = view;
+    }
 
+    @Background
+    @Override
+    public void onInitialize(boolean shouldRefreshAccountInfo) {
         if (!accountHomeModel.checkAccount()) {
             view.invalidAccess();
             return;
@@ -50,11 +54,14 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         getAccountInfo();
 
         if (NetworkCheckUtil.isConnected()) {
-            getTeamInfo();
+            if (shouldRefreshAccountInfo) {
+                accountHomeModel.refreshAccountInfo();
+            }
+
+            initTeamInfo();
         } else {
             view.showCheckNetworkDialog();
         }
-
     }
 
     private void getAccountInfo() {
@@ -66,11 +73,6 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         if (accountEmail != null) {
             view.setUserEmailText(accountEmail.getId());
         }
-    }
-
-    @Override
-    public void setView(View view) {
-        this.view = view;
     }
 
     //TODO 진입 시점에 네트워크 체킹 ?
@@ -241,10 +243,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         view.showHelloDialog();
     }
 
-    @Background
-    void getTeamInfo() {
-        accountHomeModel.refreshAccountInfo();
-
+    void initTeamInfo() {
         try {
             List<Team> teamList = accountHomeModel.getTeamInfos();
 

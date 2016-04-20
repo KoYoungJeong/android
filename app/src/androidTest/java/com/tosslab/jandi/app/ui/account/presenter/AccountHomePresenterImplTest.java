@@ -67,7 +67,7 @@ public class AccountHomePresenterImplTest {
         BaseInitUtil.clear();
 
         // When
-        accountHomePresenter.initViews();
+        accountHomePresenter.onInitialize(true);
 
         // Then
         verify(viewMock).invalidAccess();
@@ -81,7 +81,7 @@ public class AccountHomePresenterImplTest {
         // Given
         BaseInitUtil.disconnectWifi();
         // When
-        accountHomePresenter.initViews();
+        accountHomePresenter.onInitialize(true);
 
         // Then
         verify(viewMock).showCheckNetworkDialog();
@@ -102,7 +102,7 @@ public class AccountHomePresenterImplTest {
         }).when(viewMock).setTeamInfo(any(), any());
 
         // When
-        accountHomePresenter.initViews();
+        accountHomePresenter.onInitialize(true);
 
         verify(viewMock).setAccountName(anyString());
 
@@ -256,7 +256,7 @@ public class AccountHomePresenterImplTest {
             return invocationOnMock;
         }).when(viewMock).setTeamInfo(any(), any());
 
-        accountHomePresenter.getTeamInfo();
+        accountHomePresenter.initTeamInfo();
 
         Awaitility.await().until(() -> finish[0]);
 
