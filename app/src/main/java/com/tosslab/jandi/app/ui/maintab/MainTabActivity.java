@@ -659,7 +659,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
             entityManager.refreshEntity();
             getEntitiesSucceed(resLeftSideMenu);
             if (setProfile && !resLeftSideMenu.user.profileUpdated) {
-                moveSetProfileActivity();
+//                moveSetProfileActivity();
             }
         } catch (RetrofitException e) {
             e.printStackTrace();
