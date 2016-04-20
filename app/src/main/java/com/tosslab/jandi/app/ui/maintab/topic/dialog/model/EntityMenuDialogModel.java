@@ -16,7 +16,6 @@ import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
-import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -73,8 +72,6 @@ public class EntityMenuDialogModel {
     public void refreshEntities() throws RetrofitException {
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-        BadgeUtils.setBadge(JandiApplication.getContext(), totalUnreadCount);
         EntityManager.getInstance().refreshEntity();
     }
 

@@ -346,7 +346,7 @@ public class JandiPushReceiverModel {
         String notificationTitle = writerName;
         if (isMentionMessage) {
             notificationTitle =
-                    context.getResources().getString(R.string.jandi_mention_push_message, writerName);
+                    context.getString(R.string.jandi_mention_push_message, writerName);
         }
 
         int badgeCount = pushInfo.getBadgeCount();

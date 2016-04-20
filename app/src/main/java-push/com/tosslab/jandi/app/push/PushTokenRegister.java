@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.push;
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.network.client.account.devices.DeviceApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -10,6 +9,7 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ReqPushToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -34,23 +34,21 @@ public class PushTokenRegister {
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.io())
                 .filter(o -> {
-                    ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
+                    ResAccessToken accessToken = TokenUtil.getTokenObject();
                     return accessToken != null
                             && !TextUtils.isEmpty(accessToken.getAccessToken())
                             && !TextUtils.isEmpty(accessToken.getDeviceId());
                 })
                 .filter(o -> !PushTokenRepository.getInstance().getPushTokenList().isEmpty())
-                .map(o -> AccessTokenRepository.getRepository().getAccessToken())
+                .map(o -> TokenUtil.getTokenObject())
                 .subscribe(accessToken -> {
                     String deviceId = accessToken.getDeviceId();
                     List<PushToken> pushTokenList = PushTokenRepository.getInstance().getPushTokenList();
-                    if (!pushTokenList.isEmpty()) {
-                        try {
-                            ReqPushToken reqPushToken = new ReqPushToken(pushTokenList);
-                            deviceApi.get().updatePushToken(deviceId, reqPushToken);
-                        } catch (RetrofitException e) {
-                            e.printStackTrace();
-                        }
+                    try {
+                        ReqPushToken reqPushToken = new ReqPushToken(pushTokenList);
+                        deviceApi.get().updatePushToken(deviceId, reqPushToken);
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
                     }
                 });
     }

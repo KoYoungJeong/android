@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
-import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.io.IOException;
@@ -66,8 +65,6 @@ public class EntitySocketModel {
 
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
 
-            setBadgeCount(context, resLeftSideMenu);
-
             EntityManager.getInstance().refreshEntity();
 
             Observable.from(eventWrappers)
@@ -94,11 +91,6 @@ public class EntitySocketModel {
         if (eventBus.hasSubscriberForEvent(event.getClass())) {
             eventBus.post(event);
         }
-    }
-
-    private void setBadgeCount(Context context, ResLeftSideMenu resLeftSideMenu) {
-        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
-        BadgeUtils.setBadge(context, totalUnreadCount);
     }
 
     private void postRetrieveTopicEvent() {

@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.network.client.account.devices.DeviceApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSubscribeToken;
@@ -23,6 +22,7 @@ import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.settings.push.dagger.DaggerSettingsPushComponent;
 import com.tosslab.jandi.app.ui.settings.push.model.NotificationSoundDialog;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.settings.SettingsBodyCheckView;
@@ -166,7 +166,7 @@ public class SettingsPushFragment extends Fragment {
 
     private void setUpParseValue(boolean checked) {
         Observable.just(1)
-                .map(value -> AccessTokenRepository.getRepository().getAccessToken())
+                .map(value -> TokenUtil.getTokenObject())
                 .observeOn(Schedulers.io())
                 .doOnNext(accessToken -> {
                     ReqSubscribeToken subscibeToken = new ReqSubscribeToken(checked);

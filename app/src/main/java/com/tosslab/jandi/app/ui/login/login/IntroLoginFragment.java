@@ -27,6 +27,7 @@ import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
@@ -76,6 +77,7 @@ public class IntroLoginFragment extends Fragment implements UiUtils.KeyboardHand
         try {
             accessToken = introLoginModel.login(email, password);
             introLoginModel.saveTokenInfo(accessToken);
+            ParseUpdateUtil.registPush();
 
         } catch (RetrofitException error) {
 

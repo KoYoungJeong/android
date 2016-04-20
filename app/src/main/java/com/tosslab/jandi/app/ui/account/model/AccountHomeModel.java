@@ -22,7 +22,6 @@ import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -147,9 +146,6 @@ public class AccountHomeModel {
 
     public EntityManager updateEntityInfo(Context context, ResLeftSideMenu entityInfo) {
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(entityInfo);
-        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entityInfo);
-        BadgeUtils.setBadge(context, totalUnreadCount);
-
         EntityManager entityManager = EntityManager.getInstance();
         entityManager.refreshEntity();
         return entityManager;

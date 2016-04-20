@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.receiver.JandiPushReceiverModel_;
 import com.tosslab.jandi.app.push.to.PushInfo;
 import com.tosslab.jandi.app.push.to.PushRoomType;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 
 import java.util.concurrent.TimeUnit;
 
@@ -41,9 +42,7 @@ public class PushHandler {
         pushSubject
                 .onBackpressureBuffer()
                 .filter(pushInfo -> PushHistoryRepository.getRepository().isLatestPush(pushInfo.getMessageId()))
-                .doOnNext(pushInfo -> {
-                    PushHistoryRepository.getRepository().insertPushHistory(pushInfo.getMessageId());
-                })
+                .doOnNext(pushInfo -> PushHistoryRepository.getRepository().insertPushHistory(pushInfo.getMessageId()))
                 .buffer(300, TimeUnit.MILLISECONDS)
                 .filter(pushTOs -> pushTOs != null && !pushTOs.isEmpty())
                 .subscribe(pushTOs -> {
@@ -57,7 +56,7 @@ public class PushHandler {
                                 }
                             })
                             .subscribe(pushInfo -> {
-                                PushHistoryRepository.getRepository().insertPushHistory(pushInfo.getMessageId());
+                                BadgeUtils.setBadge(JandiApplication.getContext(), pushInfo.getBadgeCount());
                                 notifyPush(JandiApplication.getContext(), pushInfo);
                             });
 

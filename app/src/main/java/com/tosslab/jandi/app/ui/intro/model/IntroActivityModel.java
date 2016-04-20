@@ -124,8 +124,6 @@ public class IntroActivityModel {
             ResLeftSideMenu totalEntitiesInfo =
                     leftSideApi.get().getInfosForSideMenu(selectedTeamId);
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-            BadgeUtils.setBadge(context, totalUnreadCount);
             EntityManager.getInstance().refreshEntity();
             return true;
         } catch (RetrofitException e) {

@@ -494,8 +494,6 @@ public class JandiSocketServiceModel {
                             EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
                             ResLeftSideMenu entitiesInfo = entityClientManager.getTotalEntitiesInfo();
                             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(entitiesInfo);
-                            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
-                            BadgeUtils.setBadge(context, totalUnreadCount);
 
                             EntityManager.getInstance().refreshEntity();
 

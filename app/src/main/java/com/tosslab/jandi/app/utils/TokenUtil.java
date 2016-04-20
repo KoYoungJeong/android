@@ -82,7 +82,6 @@ public class TokenUtil {
                 }
 
                 if (!TextUtils.isEmpty(newToken.getAccessToken())) {
-
                     cachedToken.setAccessToken(newToken.getAccessToken());
                 }
 
@@ -91,6 +90,10 @@ public class TokenUtil {
                 }
                 if (!TextUtils.isEmpty(newToken.getExpireTime())) {
                     cachedToken.setExpireTime(newToken.getExpireTime());
+                }
+
+                if (!TextUtils.isEmpty(newToken.getDeviceId())) {
+                    cachedToken.setDeviceId(newToken.getDeviceId());
                 }
 
                 return true;

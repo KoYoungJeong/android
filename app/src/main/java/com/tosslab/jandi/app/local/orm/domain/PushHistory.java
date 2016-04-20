@@ -8,6 +8,8 @@ public class PushHistory {
     @DatabaseField(id = true)
     private long messageId;
 
+    public PushHistory() {}
+
     public PushHistory(long messageId) {this.messageId = messageId;}
 
     public long getMessageId() {

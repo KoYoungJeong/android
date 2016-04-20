@@ -25,7 +25,6 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
-import com.tosslab.jandi.app.utils.BadgeUtils;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -33,10 +32,10 @@ import org.androidannotations.annotations.SystemService;
 
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
 import javax.inject.Inject;
 
 import dagger.Lazy;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
@@ -81,8 +80,6 @@ public class JandiInterfaceModel {
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
 
-        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-        BadgeUtils.setBadge(JandiApplication.getContext(), totalUnreadCount);
     }
 
     public boolean hasBackStackActivity() {
@@ -158,8 +155,6 @@ public class JandiInterfaceModel {
             EntityClientManager entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
             ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-            BadgeUtils.setBadge(JandiApplication.getContext(), totalUnreadCount);
             EntityManager.getInstance().refreshEntity();
             return true;
         } catch (RetrofitException e) {

@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.account.devices.DeviceApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
@@ -18,6 +17,7 @@ import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.SignOutUtil;
+import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
@@ -49,7 +49,7 @@ public class SettingsPresenterImpl implements SettingsPresenter {
 
             Context context = JandiApplication.getContext();
             new DeviceApi(RetrofitBuilder.newInstance())
-                    .deleteDevice(AccessTokenRepository.getRepository().getAccessToken().getDeviceId());
+                    .deleteDevice(TokenUtil.getTokenObject().getDeviceId());
 
             ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
             MixpanelAccountAnalyticsClient
