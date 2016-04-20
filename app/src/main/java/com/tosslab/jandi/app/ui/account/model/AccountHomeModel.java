@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
@@ -149,9 +148,7 @@ public class AccountHomeModel {
     public EntityManager updateEntityInfo(Context context, ResLeftSideMenu entityInfo) {
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(entityInfo);
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entityInfo);
-        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-        badgeCountRepository.upsertBadgeCount(entityInfo.team.id, totalUnreadCount);
-        BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
+        BadgeUtils.setBadge(context, totalUnreadCount);
 
         EntityManager entityManager = EntityManager.getInstance();
         entityManager.refreshEntity();

@@ -168,7 +168,7 @@ public class IntroActivityPresenter {
         model.sleep(initTime, MAX_DELAY_MS);
 
         if (model.hasSelectedTeam() && !startForInvite) {
-            ParseUpdateUtil.addChannelOnServer();
+            ParseUpdateUtil.registPush();
 
             if (!model.hasLeftSideMenu() && NetworkCheckUtil.isConnected()) {
                 // LeftSideMenu 가 없는 경우 대비

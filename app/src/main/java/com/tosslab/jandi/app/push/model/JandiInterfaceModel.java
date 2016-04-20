@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
@@ -23,7 +22,7 @@ import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
-import com.tosslab.jandi.app.push.to.PushTO;
+import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 
@@ -80,9 +79,7 @@ public class JandiInterfaceModel {
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
 
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-        badgeCountRepository.upsertBadgeCount(totalEntitiesInfo.team.id, totalUnreadCount);
-        BadgeUtils.setBadge(JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
+        BadgeUtils.setBadge(JandiApplication.getContext(), totalUnreadCount);
     }
 
     public boolean hasBackStackActivity() {
@@ -146,9 +143,7 @@ public class JandiInterfaceModel {
             ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-            badgeCountRepository.upsertBadgeCount(totalEntitiesInfo.team.id, totalUnreadCount);
-            BadgeUtils.setBadge(JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
+            BadgeUtils.setBadge(JandiApplication.getContext(), totalUnreadCount);
             EntityManager.getInstance().refreshEntity();
             return true;
         } catch (RetrofitException e) {
@@ -166,9 +161,9 @@ public class JandiInterfaceModel {
             getEntityInfo();
             if (hasEntity(roomId)) {
                 if (!EntityManager.getInstance().getEntityById(roomId).isUser()) {
-                    roomType = PushTO.RoomType.CHANNEL.getName();
+                    roomType = PushRoomType.CHANNEL.getName();
                 } else {
-                    roomType = PushTO.RoomType.CHAT.getName();
+                    roomType = PushRoomType.CHAT.getName();
                 }
             } else {
                 return roomId;
@@ -196,7 +191,7 @@ public class JandiInterfaceModel {
     }
 
     private boolean isKnowRoomType(String roomTypeRaw) {
-        return Observable.from(PushTO.RoomType.values())
+        return Observable.from(PushRoomType.values())
                 .filter(roomType -> TextUtils.equals(roomTypeRaw, roomType.getName()))
                 .map(roomType1 -> true)
                 .firstOrDefault(false)
@@ -239,7 +234,7 @@ public class JandiInterfaceModel {
     }
 
     private boolean isChatType(String roomType) {
-        return TextUtils.equals(roomType, PushTO.RoomType.CHAT.getName());
+        return TextUtils.equals(roomType, PushRoomType.CHAT.getName());
     }
 
     public long getCachedLastLinkId(int roomId) {

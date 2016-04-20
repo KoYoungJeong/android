@@ -5,7 +5,6 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
@@ -99,9 +98,7 @@ public class EntitySocketModel {
 
     private void setBadgeCount(Context context, ResLeftSideMenu resLeftSideMenu) {
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
-        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-        badgeCountRepository.upsertBadgeCount(resLeftSideMenu.team.id, totalUnreadCount);
-        BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
+        BadgeUtils.setBadge(context, totalUnreadCount);
     }
 
     private void postRetrieveTopicEvent() {

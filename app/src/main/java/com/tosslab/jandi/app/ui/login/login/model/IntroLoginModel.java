@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.login.login.model;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.account.devices.DeviceApi;
 import com.tosslab.jandi.app.network.client.account.password.AccountPasswordApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
@@ -9,6 +10,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
+import com.tosslab.jandi.app.network.models.ReqSubscribeToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -39,6 +41,9 @@ public class IntroLoginModel {
 
     @Inject
     Lazy<AccountApi> accountApi;
+
+    @Inject
+    Lazy<DeviceApi> deviceApi;
 
     @AfterInject
     void initObect() {
@@ -80,20 +85,28 @@ public class IntroLoginModel {
 
     public void trackSignInSuccess() {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                        .event(Event.SignIn)
-                        .property(PropertyKey.ResponseSuccess, true)
-                        .property(PropertyKey.AutoSignIn, false)
-                        .build());
+                .event(Event.SignIn)
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.AutoSignIn, false)
+                .build());
         AnalyticsUtil.flushSprinkler();
     }
 
     public void trackSignInFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                        .event(Event.SignIn)
-                        .property(PropertyKey.ResponseSuccess, false)
-                        .property(PropertyKey.ErrorCode, errorCode)
-                        .build());
+                .event(Event.SignIn)
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
         AnalyticsUtil.flushSprinkler();
 
+    }
+
+    public void subscribePush(String deviceId) {
+        try {
+            deviceApi.get().updateSubscribe(deviceId, new ReqSubscribeToken(true));
+        } catch (RetrofitException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,65 +1,91 @@
 package com.tosslab.jandi.app.ui.settings.push;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.preference.PreferenceManager;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
+import com.tosslab.jandi.app.network.client.account.devices.DeviceApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.ReqSubscribeToken;
 import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
+import com.tosslab.jandi.app.ui.settings.push.dagger.DaggerSettingsPushComponent;
 import com.tosslab.jandi.app.ui.settings.push.model.NotificationSoundDialog;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.app.views.settings.SettingsBodyCheckView;
 import com.tosslab.jandi.app.views.settings.SettingsBodyView;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
 
 import java.util.Arrays;
+
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import dagger.Lazy;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 @EFragment(R.layout.fragment_settings_push)
 public class SettingsPushFragment extends Fragment {
 
-    @ViewById(R.id.vg_settings_push_notification)
+    @Bind(R.id.vg_settings_push_notification)
     SettingsBodyCheckView sbcvPush;
-    @ViewById(R.id.vg_settings_push_sound)
+    @Bind(R.id.vg_settings_push_sound)
     SettingsBodyCheckView sbcvSound;
-    @ViewById(R.id.vg_settings_push_sound_sub)
+    @Bind(R.id.vg_settings_push_sound_sub)
     LinearLayout vgSoundSub;
-    @ViewById(R.id.vg_settings_push_sound_sub_topic_message)
+    @Bind(R.id.vg_settings_push_sound_sub_topic_message)
     SettingsBodyView sbcvSoundSubTopic;
-    @ViewById(R.id.vg_settings_push_sound_sub_direct_message)
+    @Bind(R.id.vg_settings_push_sound_sub_direct_message)
     SettingsBodyView sbcvSoundSubDirectMessage;
-    @ViewById(R.id.vg_settings_push_sound_sub_mentions)
+    @Bind(R.id.vg_settings_push_sound_sub_mentions)
     SettingsBodyView sbcvSoundSubMentions;
-    @ViewById(R.id.vg_settings_push_vibration)
+    @Bind(R.id.vg_settings_push_vibration)
     SettingsBodyCheckView sbcvVibration;
-    @ViewById(R.id.vg_settings_push_led)
+    @Bind(R.id.vg_settings_push_led)
     SettingsBodyCheckView sbcvLed;
-    @ViewById(R.id.vg_settings_push_preview)
+    @Bind(R.id.vg_settings_push_preview)
     SettingsBodyView sbvPreview;
-    private SharedPreferences sharedPreferences;
+    @Inject
+    SharedPreferences sharedPreferences;
+    @Inject
+    Lazy<DeviceApi> deviceApi;
 
-    @AfterInject
-    void initObject() {
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_settings_push, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
-    @AfterViews
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        DaggerSettingsPushComponent.builder()
+                .build()
+                .inject(this);
+        initViews();
+    }
+
     void initViews() {
         boolean pushOn = sharedPreferences.getBoolean(Settings.SETTING_PUSH_AUTO_ALARM, true);
         boolean soundOn = sharedPreferences.getBoolean(Settings.SETTING_PUSH_ALARM_SOUND, true);
@@ -120,7 +146,7 @@ public class SettingsPushFragment extends Fragment {
         sbcvSoundSubMentions.setEnabled(pushOn);
     }
 
-    @Click(R.id.vg_settings_push_notification)
+    @OnClick(R.id.vg_settings_push_notification)
     void onNotificationClick() {
         boolean checked = !sbcvPush.isChecked();
         sbcvPush.setChecked(checked);
@@ -139,26 +165,26 @@ public class SettingsPushFragment extends Fragment {
     }
 
     private void setUpParseValue(boolean checked) {
-        String value = checked ? ParseUpdateUtil.PARSE_ACTIVATION_ON : ParseUpdateUtil.PARSE_ACTIVATION_OFF;
-        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-        if (installation.containsKey(ParseUpdateUtil.PARSE_ACTIVATION)) {
-            String isPushOn = (String) installation.get(ParseUpdateUtil.PARSE_ACTIVATION);
-            if (TextUtils.equals(isPushOn, value)) {
-                return;
-            }
-        }
-
-        installation.put(ParseUpdateUtil.PARSE_ACTIVATION, value);
-        installation.saveEventually(e -> {
-            Activity activity = getActivity();
-            if (activity != null && !(activity.isFinishing())) {
-                if (checked) {
-                    ColoredToast.show(activity.getString(R.string.jandi_setting_push_subscription_ok));
-                } else {
-                    ColoredToast.show(activity.getString(R.string.jandi_setting_push_subscription_cancel));
-                }
-            }
-        });
+        Observable.just(1)
+                .map(value -> AccessTokenRepository.getRepository().getAccessToken())
+                .observeOn(Schedulers.io())
+                .doOnNext(accessToken -> {
+                    ReqSubscribeToken subscibeToken = new ReqSubscribeToken(checked);
+                    try {
+                        deviceApi.get().updateSubscribe(accessToken.getDeviceId(), subscibeToken);
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(accessToken -> {
+                    Context context = JandiApplication.getContext();
+                    if (checked) {
+                        ColoredToast.show(context.getString(R.string.jandi_setting_push_subscription_ok));
+                    } else {
+                        ColoredToast.show(context.getString(R.string.jandi_setting_push_subscription_cancel));
+                    }
+                });
     }
 
     private void setPushOnSummary(boolean checked) {
@@ -173,7 +199,7 @@ public class SettingsPushFragment extends Fragment {
                 .apply();
     }
 
-    @Click(R.id.vg_settings_push_sound)
+    @OnClick(R.id.vg_settings_push_sound)
     void onSoundClick() {
         boolean checked = !sbcvSound.isChecked();
         sbcvSound.setChecked(checked);
@@ -194,7 +220,7 @@ public class SettingsPushFragment extends Fragment {
         sbcvSound.setSummary(checked ? R.string.jandi_on : R.string.jandi_off);
     }
 
-    @Click(R.id.vg_settings_push_sound_sub_topic_message)
+    @OnClick(R.id.vg_settings_push_sound_sub_topic_message)
     void onTopicSoundClick() {
         int topicSoundIdx = sharedPreferences.getInt(Settings.SETTING_PUSH_ALARM_SOUND_TOPIC, 0);
         NotificationSoundDialog.showNotificationSound(getActivity(), topicSoundIdx,
@@ -206,7 +232,7 @@ public class SettingsPushFragment extends Fragment {
                 });
     }
 
-    @Click(R.id.vg_settings_push_sound_sub_direct_message)
+    @OnClick(R.id.vg_settings_push_sound_sub_direct_message)
     void onDirectMessageSoundClick() {
         int topicSoundIdx = sharedPreferences.getInt(Settings.SETTING_PUSH_ALARM_SOUND_DM, 0);
         NotificationSoundDialog.showNotificationSound(getActivity(), topicSoundIdx,
@@ -218,7 +244,7 @@ public class SettingsPushFragment extends Fragment {
                 });
     }
 
-    @Click(R.id.vg_settings_push_sound_sub_mentions)
+    @OnClick(R.id.vg_settings_push_sound_sub_mentions)
     void onMentionSoundClick() {
         int topicSoundIdx = sharedPreferences.getInt(Settings.SETTING_PUSH_ALARM_SOUND_MENTION, 0);
         NotificationSoundDialog.showNotificationSound(getActivity(), topicSoundIdx,
@@ -230,7 +256,7 @@ public class SettingsPushFragment extends Fragment {
                 });
     }
 
-    @Click(R.id.vg_settings_push_vibration)
+    @OnClick(R.id.vg_settings_push_vibration)
     void onVibrationClick() {
         boolean checked = !sbcvVibration.isChecked();
         sbcvVibration.setChecked(checked);
@@ -245,7 +271,7 @@ public class SettingsPushFragment extends Fragment {
                 .apply();
     }
 
-    @Click(R.id.vg_settings_push_led)
+    @OnClick(R.id.vg_settings_push_led)
     void onLedClick() {
         boolean checked = !sbcvLed.isChecked();
         sbcvLed.setChecked(checked);
@@ -261,7 +287,7 @@ public class SettingsPushFragment extends Fragment {
     }
 
 
-    @Click(R.id.vg_settings_push_preview)
+    @OnClick(R.id.vg_settings_push_preview)
     void onPreviewClick() {
         String value = sharedPreferences.getString(Settings.SETTING_PUSH_PREVIEW, "0");
         String[] values = getResources().getStringArray(R.array.jandi_pref_push_preview_values);

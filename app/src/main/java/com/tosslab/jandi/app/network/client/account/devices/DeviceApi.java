@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 import com.tosslab.jandi.app.network.models.ReqPushToken;
 import com.tosslab.jandi.app.network.models.ReqSubscribeToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResDeviceSubscribe;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -25,11 +26,11 @@ public class DeviceApi extends ApiTemplate<DeviceApi.Api> {
         return call(() -> getApi().updatePushToken(deviceId, reqPushToken));
     }
 
-    public ResCommon updateSubscribe(String deviceId, ReqSubscribeToken subscibeToken) throws RetrofitException {
+    public ResDeviceSubscribe updateSubscribe(String deviceId, ReqSubscribeToken subscibeToken) throws RetrofitException {
         return call(() -> getApi().updateSubScribe(deviceId, subscibeToken));
     }
 
-    public ResCommon deleteDevice(String deviceId) throws RetrofitException {
+    public ResDeviceSubscribe deleteDevice(String deviceId) throws RetrofitException {
         return call(() -> getApi().deleteDevice(deviceId));
     }
 
@@ -41,11 +42,11 @@ public class DeviceApi extends ApiTemplate<DeviceApi.Api> {
 
         @PUT("devices/{deviceId}/subscribe")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResCommon> updateSubScribe(@Path("deviceId") String deviceId, @Body ReqSubscribeToken subscribe);
+        Call<ResDeviceSubscribe> updateSubScribe(@Path("deviceId") String deviceId, @Body ReqSubscribeToken subscribe);
 
         @DELETE("devices/{deviceId}")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResCommon> deleteDevice(@Path("deviceId") String deviceId);
+        Call<ResDeviceSubscribe> deleteDevice(@Path("deviceId") String deviceId);
 
     }
 }

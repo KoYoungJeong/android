@@ -261,7 +261,7 @@
 
         <receiver android:name=".push.receiver.JandiBroadcastReceiver">
             <intent-filter>
-                <action android:name="com.tosslab.jandi.app.Push"/>
+                <action android:name="com.tosslab.jandi.app.push"/>
             </intent-filter>
         </receiver>
 

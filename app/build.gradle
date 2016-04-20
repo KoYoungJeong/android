@@ -269,13 +269,15 @@ android {
         incremental true
     }
 
-    testOptions {
-
-    }
-
     configurations.all {
         resolutionStrategy {
             force "com.android.support:support-annotations:${rootProject.ext.supportLibVersion}"
+        }
+    }
+
+    testOptions.unitTests.all {
+        testLogging {
+            events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
         }
     }
 }

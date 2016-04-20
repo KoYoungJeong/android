@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.DatabaseConsts;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
@@ -83,12 +82,12 @@ public class IntroActivityModel {
         Collection<ResAccountInfo.UserTeam> teamList = resAccountInfo.getMemberships();
 
         Observable.from(teamList)
-                .subscribe(team -> {
-                    BadgeCountRepository.getRepository()
-                            .upsertBadgeCount(team.getTeamId(), team.getUnread());
+                .map(ResAccountInfo.UserTeam::getUnread)
+                .reduce((prev, current) -> prev + current)
+                .subscribe(total -> {
+                    BadgeUtils.setBadge(JandiApplication.getContext(), total);
                 });
 
-        BadgeUtils.setBadge(JandiApplication.getContext(), BadgeCountRepository.getRepository().getTotalBadgeCount());
     }
 
     public void sleep(long initTime, long maxDelayMs) {
@@ -126,9 +125,7 @@ public class IntroActivityModel {
                     leftSideApi.get().getInfosForSideMenu(selectedTeamId);
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-            badgeCountRepository.upsertBadgeCount(totalEntitiesInfo.team.id, totalUnreadCount);
-            BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
+            BadgeUtils.setBadge(context, totalUnreadCount);
             EntityManager.getInstance().refreshEntity();
             return true;
         } catch (RetrofitException e) {

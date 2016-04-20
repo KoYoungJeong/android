@@ -13,7 +13,6 @@ public class PushMonitor {
 
     private ConcurrentHashMap<Long, PushEntity> pushMap;
 
-    private String lastNotifiedCreatedAt;
     private NotificationCompat.Builder lastNotificationBuilder;
 
     private PushMonitor() {
@@ -38,14 +37,6 @@ public class PushMonitor {
 
     public boolean hasEntityId(long entityId) {
         return pushMap.containsKey(entityId);
-    }
-
-    public String getLastNotifiedCreatedAt() {
-        return lastNotifiedCreatedAt;
-    }
-
-    public void setLastNotifiedCreatedAt(String lastNotifiedCreatedAt) {
-        this.lastNotifiedCreatedAt = lastNotifiedCreatedAt;
     }
 
     public void setLastNotificationBuilder(NotificationCompat.Builder notificationBuilder) {

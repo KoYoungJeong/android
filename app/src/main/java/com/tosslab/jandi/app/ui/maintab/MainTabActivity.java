@@ -52,7 +52,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.PushInterfaceActivity;
-import com.tosslab.jandi.app.push.to.PushTO;
+import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
@@ -85,7 +85,6 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.MaxHeightRecyclerView;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
@@ -182,7 +181,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @AfterViews
     void initView() {
         showDialogIfNotLastestVersion();
-        ParseUpdateUtil.addChannelOnServer();
 
         entityManager = EntityManager.getInstance();
         new MixpanelAnalytics().trackSigningIn(entityManager);
@@ -491,8 +489,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         JandiSocketService.stopService(this);
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
-        ParseUpdateUtil.addChannelOnServer();
-
         MainTabActivity_.intent(this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
@@ -725,7 +721,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     public void onEvent(MessagePushEvent event) {
-        if (!TextUtils.equals(event.getEntityType(), PushTO.RoomType.CHAT.getName())) {
+        if (!TextUtils.equals(event.getEntityType(), PushRoomType.CHAT.getName())) {
             getEntities(false);
         }
     }

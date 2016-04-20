@@ -13,6 +13,7 @@ import android.util.Log;
 import com.baidu.android.pushservice.PushServiceReceiver;
 import com.baidu.android.pushservice.message.PublicMsg;
 import com.baidu.android.pushservice.util.h;
+import com.tosslab.jandi.app.push.receiver.JandiPushIntentService;
 
 public class CustomPushReceiver extends PushServiceReceiver {
 
@@ -39,7 +40,7 @@ public class CustomPushReceiver extends PushServiceReceiver {
                 String messageId = intent.getStringExtra("message_id");
                 String appId = intent.getStringExtra("app_id");
                 showNotification(context, pushServicePackageName, serviceName, publicMsg, messageId, appId);
-                insertReceivedPush(publicMsg);
+                insertReceivedPush(context, publicMsg);
 
             } else if ("rich_media".equals(notifyType)) {
             }
@@ -50,11 +51,13 @@ public class CustomPushReceiver extends PushServiceReceiver {
         abortBroadcast();
     }
 
-    private void insertReceivedPush(PublicMsg publicMsg) {
+    private void insertReceivedPush(Context context, PublicMsg publicMsg) {
 
-        String title = publicMsg.mTitle;
-        String body = publicMsg.mDescription;
+        String mCustomContent = publicMsg.mCustomContent;
 
+        Intent intent = new Intent(context, JandiPushIntentService.class);
+        intent.putExtra("content", mCustomContent);
+        context.startService(intent);
     }
 
     private void showNotification(Context context, String pushServicePackageName, String serviceName, PublicMsg publicMsg, String messageId, String appId) {

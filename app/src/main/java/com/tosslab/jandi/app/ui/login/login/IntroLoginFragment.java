@@ -107,6 +107,7 @@ public class IntroLoginFragment extends Fragment implements UiUtils.KeyboardHand
             try {
                 ResAccountInfo accountInfo = introLoginModel.getAccountInfo();
                 introLoginModel.saveAccountInfo(accountInfo);
+                introLoginModel.subscribePush(accessToken.getDeviceId());
 
                 introLoginViewModel.loginSuccess(email);
                 JandiPreference.setFirstLogin(getActivity());

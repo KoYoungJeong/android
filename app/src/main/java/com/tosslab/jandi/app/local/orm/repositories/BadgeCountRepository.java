@@ -7,9 +7,6 @@ import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplat
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * Created by Steve SeongUg Jung on 15. 7. 24..
- */
 public class BadgeCountRepository extends LockExecutorTemplate {
 
 

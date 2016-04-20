@@ -26,7 +26,6 @@ import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
@@ -170,12 +169,12 @@ public class JandiSocketServiceModel {
             Collection<ResAccountInfo.UserTeam> teamList = resAccountInfo.getMemberships();
 
             Observable.from(teamList)
-                    .subscribe(team -> {
-                        BadgeCountRepository.getRepository()
-                                .upsertBadgeCount(team.getTeamId(), team.getUnread());
+                    .map(ResAccountInfo.UserTeam::getUnread)
+                    .reduce((prev, current) -> prev + current)
+                    .subscribe(totalUnreadCount -> {
+                        BadgeUtils.setBadge(JandiApplication.getContext(), totalUnreadCount);
                     });
 
-            BadgeUtils.setBadge(JandiApplication.getContext(), BadgeCountRepository.getRepository().getTotalBadgeCount());
 
             postEvent(new TeamInfoChangeEvent());
         } catch (RetrofitException e) {
@@ -496,9 +495,7 @@ public class JandiSocketServiceModel {
                             ResLeftSideMenu entitiesInfo = entityClientManager.getTotalEntitiesInfo();
                             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(entitiesInfo);
                             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
-                            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-                            badgeCountRepository.upsertBadgeCount(entitiesInfo.team.id, totalUnreadCount);
-                            BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
+                            BadgeUtils.setBadge(context, totalUnreadCount);
 
                             EntityManager.getInstance().refreshEntity();
 
@@ -509,11 +506,11 @@ public class JandiSocketServiceModel {
                             AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
                             Observable.from(resAccountInfo.getMemberships())
-                                    .subscribe(team -> {
-                                        BadgeCountRepository.getRepository()
-                                                .upsertBadgeCount(team.getTeamId(), team.getUnread());
+                                    .map(ResAccountInfo.UserTeam::getUnread)
+                                    .reduce((prev, current) -> prev + current)
+                                    .subscribe(totalUnreadCount -> {
+                                        BadgeUtils.setBadge(context, totalUnreadCount);
                                     });
-                            BadgeUtils.setBadge(context, BadgeCountRepository.getRepository().getTotalBadgeCount());
 
                             postEvent(new MessageOfOtherTeamEvent());
                         }
@@ -544,11 +541,11 @@ public class JandiSocketServiceModel {
                         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
                         Observable.from(resAccountInfo.getMemberships())
-                                .subscribe(team -> {
-                                    BadgeCountRepository.getRepository()
-                                            .upsertBadgeCount(team.getTeamId(), team.getUnread());
+                                .map(ResAccountInfo.UserTeam::getUnread)
+                                .reduce((prev, current) -> prev + current)
+                                .subscribe(totalUnreadCount -> {
+                                    BadgeUtils.setBadge(context, totalUnreadCount);
                                 });
-                        BadgeUtils.setBadge(context, BadgeCountRepository.getRepository().getTotalBadgeCount());
 
                         postEvent(new MessageOfOtherTeamEvent());
                     } catch (RetrofitException e) {

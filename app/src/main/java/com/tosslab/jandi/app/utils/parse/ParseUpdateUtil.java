@@ -15,12 +15,11 @@ import com.tosslab.jandi.app.push.gcm.register.RegistrationIntentService;
 public class ParseUpdateUtil {
     public static final String TAG = "JANDI.ParseUpdateUtils";
 
-    public static final String PARSE_CHANNELS = "channels";
     public static final String PARSE_ACTIVATION = "activate";
     public static final String PARSE_ACTIVATION_ON = "on";
     public static final String PARSE_ACTIVATION_OFF = "off";
 
-    public static void addChannelOnServer() {
+    public static void registPush() {
         Intent service = new Intent(JandiApplication.getContext(), RegistrationIntentService.class);
         JandiApplication.getContext().startService(service);
 

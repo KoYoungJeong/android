@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.push;
 
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.local.orm.repositories.AccessTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.network.client.account.devices.DeviceApi;
@@ -31,8 +33,15 @@ public class PushTokenRegister {
                 .throttleLast(200, TimeUnit.MILLISECONDS)
                 .onBackpressureBuffer()
                 .subscribeOn(Schedulers.io())
-                .subscribe(o -> {
+                .filter(o -> {
                     ResAccessToken accessToken = AccessTokenRepository.getRepository().getAccessToken();
+                    return accessToken != null
+                            && !TextUtils.isEmpty(accessToken.getAccessToken())
+                            && !TextUtils.isEmpty(accessToken.getDeviceId());
+                })
+                .filter(o -> !PushTokenRepository.getInstance().getPushTokenList().isEmpty())
+                .map(o -> AccessTokenRepository.getRepository().getAccessToken())
+                .subscribe(accessToken -> {
                     String deviceId = accessToken.getDeviceId();
                     List<PushToken> pushTokenList = PushTokenRepository.getInstance().getPushTokenList();
                     if (!pushTokenList.isEmpty()) {
