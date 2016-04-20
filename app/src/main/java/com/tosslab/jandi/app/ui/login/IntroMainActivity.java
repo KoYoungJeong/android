@@ -45,7 +45,7 @@ public class IntroMainActivity extends BaseAppCompatActivity {
         super.onCreate(savedInstanceState);
         setNeedUnLockPassCode(false);
         ParseUpdateUtil.registPush();
-
+        setShouldReconnectSocketService(false);
     }
 
     @AfterViews

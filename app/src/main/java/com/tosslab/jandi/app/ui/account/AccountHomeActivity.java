@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -104,6 +106,12 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.jadi_account_home);
 
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setShouldReconnectSocketService(false);
     }
 
     @Override

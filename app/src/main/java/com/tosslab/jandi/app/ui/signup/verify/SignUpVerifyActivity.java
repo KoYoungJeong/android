@@ -103,6 +103,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setNeedUnLockPassCode(false);
+        setShouldReconnectSocketService(false);
     }
 
     @AfterViews
