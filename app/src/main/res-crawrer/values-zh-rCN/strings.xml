@@ -569,6 +569,7 @@
 	<string name="jandi_verify_fingerprint">"指纹验证"</string>
 	<string name="jandi_vibrate">"振动"</string>
 	<string name="jandi_view_all">"查看全部"</string>
+	<string name="jandi_view_comment_read_more">"显示%s 则留言"</string>
 	<string name="jandi_welcome_message">"欢迎使用JANDI!"</string>
 	<string name="jandi_what_is_topic_type">"議題一旦建立將無法在公開或私人兩種類別之間自由轉換"</string>
 	<string name="jandi_who_of_file">"共享文件"</string>

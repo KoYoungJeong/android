@@ -334,8 +334,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_my_files">"<b>My Files</b>"</string>
 	<string name="jandi_mypage">"My Page"</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
-	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic.
-"</string>
+	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic."</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>
 	<string name="jandi_next">"Next"</string>
 	<string name="jandi_no_invite_email">"Provide the email addresses of the team members you want to invite"</string>
@@ -514,7 +513,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_team_switch">"Switch Teams"</string>
 	<string name="jandi_term_of_service">"Terms of Service"</string>
 	<string name="jandi_this_is_disabled_user_explain">"This member has been temporarily disabled. Please contact the team administrator for more information."</string>
-	<string name="jandi_this_member_is_pending_to_join">"This member hasn't accepted the invitation yet"</string>
+	<string name="jandi_this_member_is_pending_to_join">"This member has an open invitation."</string>
 	<string name="jandi_title_activity_file_explorer">"File Explore"</string>
 	<string name="jandi_title_cdp_to_be_shared">"Select where to share in"</string>
 	<string name="jandi_title_cdp_to_be_unshared">"Select where to unshare from"</string>
@@ -572,6 +571,7 @@ We combined everything you love about messaging apps and cloud storage with powe
 	<string name="jandi_verify_fingerprint">"Verify your fingerprint."</string>
 	<string name="jandi_vibrate">"Vibrate"</string>
 	<string name="jandi_view_all">"View All"</string>
+	<string name="jandi_view_comment_read_more">"Show %s previous comment(s)"</string>
 	<string name="jandi_welcome_message">"Welcome to JANDI"</string>
 	<string name="jandi_what_is_topic_type">"Topic type cannot be switched between public and private after creation"</string>
 	<string name="jandi_who_of_file">"\'s file"</string>

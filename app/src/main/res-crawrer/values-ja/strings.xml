@@ -573,6 +573,7 @@
 	<string name="jandi_verify_fingerprint">"指紋を認証してください"</string>
 	<string name="jandi_vibrate">"バイブレート"</string>
 	<string name="jandi_view_all">"すべて表示"</string>
+	<string name="jandi_view_comment_read_more">"コメント%s 件を全て表示"</string>
 	<string name="jandi_welcome_message">"JANDIへようこそ!!"</string>
 	<string name="jandi_what_is_topic_type">"トピックを作成した後に、公開・非公開を変更することはできません"</string>
 	<string name="jandi_who_of_file">"さんのファイル"</string>
