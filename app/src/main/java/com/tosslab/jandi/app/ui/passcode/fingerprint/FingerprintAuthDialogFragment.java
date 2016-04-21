@@ -21,6 +21,7 @@ import android.view.View;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.passcode.OnUnLockSuccessListener;
 import com.tosslab.jandi.app.ui.passcode.fingerprint.presneter.FingerprintAuthPresenter;
@@ -190,6 +191,9 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
         Permissions.getResult()
                 .addRequestCode(REQUEST_USE_FINGERPRINT)
                 .addPermission(Manifest.permission.USE_FINGERPRINT, this::startFingerprintAuth)
+                .neverAskAgain(() -> {
+                    PermissionRetryDialog.showExternalPermissionDialog(getActivity());
+                })
                 .resultPermission(
                         Permissions.createPermissionResult(requestCode,
                                 permissions,
