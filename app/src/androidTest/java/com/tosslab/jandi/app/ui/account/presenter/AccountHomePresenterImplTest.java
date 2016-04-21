@@ -65,9 +65,16 @@ public class AccountHomePresenterImplTest {
 
         // Given
         BaseInitUtil.clear();
+        final boolean[] finish = {false};
+        doAnswer(invocationOnMock -> {
+            finish[0] = true;
+            return invocationOnMock;
+        }).when(viewMock).invalidAccess();
 
         // When
         accountHomePresenter.onInitialize(true);
+
+        Awaitility.await().until(() -> finish[0]);
 
         // Then
         verify(viewMock).invalidAccess();
@@ -80,8 +87,16 @@ public class AccountHomePresenterImplTest {
 
         // Given
         BaseInitUtil.disconnectWifi();
+
+        final boolean[] finish = {false};
+        doAnswer(invocationOnMock -> {
+            finish[0] = true;
+            return invocationOnMock;
+        }).when(viewMock).showCheckNetworkDialog();
         // When
         accountHomePresenter.onInitialize(true);
+
+        Awaitility.await().until(() -> finish[0]);
 
         // Then
         verify(viewMock).showCheckNetworkDialog();
@@ -104,13 +119,12 @@ public class AccountHomePresenterImplTest {
         // When
         accountHomePresenter.onInitialize(true);
 
-        verify(viewMock).setAccountName(anyString());
-
         Awaitility.await().until(() -> finish[0]);
 
         // Then
+        verify(viewMock).setAccountName(anyString());
+        verify(viewMock).setUserEmailText(anyString());
         verify(viewMock).setTeamInfo(any(), anyObject());
-
     }
 
     @Test
