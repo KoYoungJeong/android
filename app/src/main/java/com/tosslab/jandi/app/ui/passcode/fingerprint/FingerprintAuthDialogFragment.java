@@ -51,6 +51,9 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
     private CancellationSignal cancellationSignal;
     private AlertDialog helpDialog;
     private AlertDialog errorDialog;
+    private OnFingerPrintErrorListener onFingerPrintErrorListener;
+
+    private int tryCount = 1;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -133,6 +136,7 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
 
     @Override
     public void showFingerprintAuthFailed() {
+        ++tryCount;
         getDialog().setTitle(R.string.jandi_please_retry);
 
         float startX = -UiUtils.getPixelFromDp(5);
@@ -170,12 +174,20 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
 
     @Override
     public void showAuthenticationError(final int errorCode, CharSequence errString) {
+        if (onFingerPrintErrorListener != null) {
+            onFingerPrintErrorListener.call();
+        }
+        if (tryCount <= 1) {
+            // TODO Show error message it cannot use period time.
+            dismiss();
+        }
         if (errorDialog != null && !errorDialog.isShowing()) {
             String confirm = JandiApplication.getContext()
                     .getResources().getString(R.string.jandi_confirm);
             errorDialog.setButton(DialogInterface.BUTTON_POSITIVE, confirm,
                     (dialog, which) -> {
                         if (errorCode == FingerprintManager.FINGERPRINT_ERROR_LOCKOUT) {
+                            // TODO message use pin
                             FingerprintAuthDialogFragment.this.dismiss();
                         }
                     });
@@ -199,5 +211,13 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
                                 permissions,
                                 grantResults));
 
+    }
+
+    public void setOnFingerPrintErrorListener(OnFingerPrintErrorListener onFingerPrintErrorListener) {
+        this.onFingerPrintErrorListener = onFingerPrintErrorListener;
+    }
+
+    public interface OnFingerPrintErrorListener {
+        void call();
     }
 }

@@ -227,6 +227,7 @@
 	<string name="jandi_file_upload_state">"파일 업로드 중 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"파일이 업로드 되었습니다"</string>
 	<string name="jandi_file_uploading">"업로드..."</string>
+	<string name="jandi_fingerprint_cannot_do_temporary">"지문 인식을 잠시 사용할 수 없습니다."</string>
 	<string name="jandi_folder_alread_has_name">"이미 존재하는 이름입니다"</string>
 	<string name="jandi_folder_ask_delete">"폴더를 정말 삭제하시겠습니까?"</string>
 	<string name="jandi_folder_choose">"이동할 폴더를 선택해주세요."</string>

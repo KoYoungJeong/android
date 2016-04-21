@@ -227,6 +227,7 @@
 	<string name="jandi_file_upload_state">"ファイルアップロード中 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"アップロード完了"</string>
 	<string name="jandi_file_uploading">"アップロード中..."</string>
+	<string name="jandi_fingerprint_cannot_do_temporary">"しばらく指紋認証が使用できません。"</string>
 	<string name="jandi_folder_alread_has_name">"その名前は既に使用されています"</string>
 	<string name="jandi_folder_ask_delete">"本当にこのフォルダを削除しますか？"</string>
 	<string name="jandi_folder_choose">"フォルダを選択してください"</string>
