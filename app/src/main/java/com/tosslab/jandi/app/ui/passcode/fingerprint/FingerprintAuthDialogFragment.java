@@ -93,6 +93,7 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
         super.onResume();
 
         Permissions.getChecker()
+                .activity(getActivity())
                 .permission(() -> Manifest.permission.USE_FINGERPRINT)
                 .hasPermission(this::startFingerprintAuth)
                 .noPermission(() -> {
