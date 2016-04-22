@@ -227,6 +227,7 @@
 	<string name="jandi_file_upload_state">"파일 업로드 중 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"파일이 업로드 되었습니다"</string>
 	<string name="jandi_file_uploading">"업로드..."</string>
+	<string name="jandi_fingerprint_cannot_do_temporary">"지문 인식을 잠시 사용할 수 없습니다."</string>
 	<string name="jandi_folder_alread_has_name">"이미 존재하는 이름입니다"</string>
 	<string name="jandi_folder_ask_delete">"폴더를 정말 삭제하시겠습니까?"</string>
 	<string name="jandi_folder_choose">"이동할 폴더를 선택해주세요."</string>
@@ -574,6 +575,7 @@
 	<string name="jandi_verify_fingerprint">"지문을 인식해주세요."</string>
 	<string name="jandi_vibrate">"진동"</string>
 	<string name="jandi_view_all">"전체보기"</string>
+	<string name="jandi_view_comment_read_more">"%s 개의 댓글 모두 보기"</string>
 	<string name="jandi_welcome_message">"JANDI에 오신 것을 환영합니다."</string>
 	<string name="jandi_what_is_topic_type">"공개 여부 설정은 토픽 생성 이후에 변경할 수 없습니다."</string>
 	<string name="jandi_who_of_file">"님의 파일"</string>
