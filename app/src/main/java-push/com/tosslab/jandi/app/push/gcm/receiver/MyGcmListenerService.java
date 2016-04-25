@@ -18,6 +18,7 @@ package com.tosslab.jandi.app.push.gcm.receiver;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.google.android.gms.gcm.GcmListenerService;
 import com.tosslab.jandi.app.push.receiver.JandiPushIntentService;
@@ -30,9 +31,13 @@ public class MyGcmListenerService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
         String dataPayload = data.getString("data");
+        if (!TextUtils.isEmpty(dataPayload)) {
+            // Old type Push
+            return;
+        }
 
         Intent intent = new Intent(MyGcmListenerService.this, JandiPushIntentService.class);
-        intent.putExtra("content", dataPayload);
+        intent.putExtras(data);
         startService(intent);
 
     }

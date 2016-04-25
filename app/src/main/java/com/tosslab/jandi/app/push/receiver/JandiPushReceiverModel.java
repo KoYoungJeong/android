@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.SpannableStringBuilder;
@@ -24,7 +25,6 @@ import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.main.LeftSideApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
@@ -40,9 +40,7 @@ import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.SystemService;
-import org.codehaus.jackson.map.ObjectMapper;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -125,19 +123,14 @@ public class JandiPushReceiverModel {
         return pushInfo.getAccountId() == AccountRepository.getRepository().getAccountInfo().getId();
     }
 
-    public PushInfo parsingPushTO(String content) {
-        if (TextUtils.isEmpty(content)) {
+    public PushInfo parsingPushTO(Bundle content) {
+        if (content.size() == 0) {
             LogUtil.e(TAG, "extras has not data.");
             return null;
         }
 
-        try {
-            ObjectMapper mapper = JacksonMapper.getInstance().getObjectMapper();
-            return mapper.readValue(content, PushInfo.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+
+        return new PushInfo();
     }
 
     public void convertPlainMarkdownContent(Context context, PushInfo pushInfo) {

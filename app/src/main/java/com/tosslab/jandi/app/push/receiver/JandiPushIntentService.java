@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.push.receiver;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
@@ -38,9 +39,9 @@ public class JandiPushIntentService extends IntentService {
             return;
         }
 
-        String content = intent.getStringExtra("content");
+        Bundle extras = intent.getExtras();
 
-        PushInfo pushInfo = jandiPushReceiverModel.parsingPushTO(content);
+        PushInfo pushInfo = jandiPushReceiverModel.parsingPushTO(extras);
         if (pushInfo == null) {
             LogUtil.e(TAG, "pushInfo == null");
             return;
