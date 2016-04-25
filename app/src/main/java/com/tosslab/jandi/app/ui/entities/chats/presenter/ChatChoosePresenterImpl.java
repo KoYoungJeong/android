@@ -12,10 +12,13 @@ import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -67,11 +70,14 @@ public class ChatChoosePresenterImpl implements ChatChoosePresenter {
 
     @Override
     public void initMembers() {
-        chatChooseAdapterDataModel.clear();
         Observable.from(chatChooseModel.getUsers())
                 .subscribeOn(Schedulers.computation())
+                .collect((Func0<List<ChatChooseItem>>) ArrayList::new, List::add)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(chatChooseAdapterDataModel::add,
+                .subscribe((chatListWithoutMe) -> {
+                            chatChooseAdapterDataModel.clear();
+                            chatChooseAdapterDataModel.addAll(chatListWithoutMe);
+                        },
                         Throwable::printStackTrace,
                         view::refresh);
 
