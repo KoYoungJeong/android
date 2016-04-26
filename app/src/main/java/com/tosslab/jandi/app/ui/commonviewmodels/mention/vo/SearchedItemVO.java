@@ -14,6 +14,7 @@ public class SearchedItemVO {
     private boolean enabled;
     private boolean starred;
     private boolean bot;
+    private boolean inactive;
 
     public String getName() {
         return name;
@@ -94,5 +95,14 @@ public class SearchedItemVO {
 
     public boolean isBot() {
         return bot;
+    }
+
+    public boolean isInactive() {
+        return inactive;
+    }
+
+    public SearchedItemVO setInactive(boolean inactive) {
+        this.inactive = inactive;
+        return this;
     }
 }

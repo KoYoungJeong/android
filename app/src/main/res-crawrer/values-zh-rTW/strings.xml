@@ -223,11 +223,11 @@
 	<string name="jandi_file_search_user">"按成員篩選搜尋結果"</string>
 	<string name="jandi_file_size_large_error">"無法上傳大於300MB的檔案"</string>
 	<string name="jandi_file_upload_finish">"檔案已成功上傳"</string>
-	<string name="jandi_file_upload_go_topic">"
-點擊進入JANDI瀏覽"</string>
+	<string name="jandi_file_upload_go_topic">"點擊進入JANDI瀏覽"</string>
 	<string name="jandi_file_upload_state">"上傳檔案中 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"檔案上傳成功"</string>
 	<string name="jandi_file_uploading">"上傳"</string>
+	<string name="jandi_fingerprint_cannot_do_temporary">"NEW KEY"</string>
 	<string name="jandi_folder_alread_has_name">"這名稱已被使用"</string>
 	<string name="jandi_folder_ask_delete">"你確定要刪除此資料夾？"</string>
 	<string name="jandi_folder_choose">"選擇資料夾"</string>
@@ -570,6 +570,7 @@
 	<string name="jandi_verify_fingerprint">"指紋驗證"</string>
 	<string name="jandi_vibrate">"振動"</string>
 	<string name="jandi_view_all">"檢視全部"</string>
+	<string name="jandi_view_comment_read_more">"顯示%s 則留言"</string>
 	<string name="jandi_welcome_message">"歡迎使用JANDI!"</string>
 	<string name="jandi_what_is_topic_type">"議題群組一經建立將無法在公開或私人兩種類別之間自由轉換"</string>
 	<string name="jandi_who_of_file">"共享檔案"</string>

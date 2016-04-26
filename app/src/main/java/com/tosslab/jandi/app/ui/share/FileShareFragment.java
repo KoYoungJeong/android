@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -134,6 +136,10 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
         setOnScrollMode();
 
         imageSharePresenter.initView(uriString);
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(getString(R.string.jandi_share_to_jandi) + " (1/1)");
+        }
     }
 
     private void setOnScrollMode() {

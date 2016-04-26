@@ -102,7 +102,7 @@ public class ShareModel {
                 })
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
                 .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(JandiApplication.getContext()))
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
                 .setMultipartParameter("title", titleText)
                 .setMultipartParameter("share", "" + entityId)
                 .setMultipartParameter("permission", permissionCode)
