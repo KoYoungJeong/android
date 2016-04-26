@@ -3,9 +3,9 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration;
 import android.content.Context;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -22,14 +22,13 @@ import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.UnreadCountUtil;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.util.IntegrationBotUtil;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.transform.TransformConfig;
-import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
-import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 public class IntegrationBotViewHolder implements BodyViewHolder {
 
@@ -41,17 +40,32 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
     private View vDisableCover;
     private View vDisableLineThrough;
     private View vConnectLine;
+    private TextView tvMessageTime;
+    private TextView tvMessageBadge;
     private LinearLayout vgConnectInfo;
     private View vLastRead;
+    private View vBottomMargin;
+
+    private boolean hasBottomMargin = false;
+    private boolean hasOnlyBadge = false;
 
     private LinkPreviewViewModel linkPreviewViewModel;
+    private boolean hasBotProfile;
+    private ViewGroup vgUserName;
+
+    private IntegrationBotViewHolder() {
+    }
+
 
     @Override
     public void initView(View rootView) {
-        contentView = rootView.findViewById(R.id.vg_message_item);
+        contentView = rootView.findViewById(R.id.vg_dummy_message_item);
         ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
+        vgUserName = (ViewGroup) rootView.findViewById(R.id.vg_message_profile_user_name);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
+        tvMessageTime = (TextView) rootView.findViewById(R.id.tv_message_time);
+        tvMessageBadge = (TextView) rootView.findViewById(R.id.tv_message_badge);
         vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         vConnectLine = rootView.findViewById(R.id.v_message_sub_menu_connect_color);
@@ -60,6 +74,23 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
         linkPreviewViewModel = new LinkPreviewViewModel(rootView.getContext());
         linkPreviewViewModel.initView(rootView);
+
+        vBottomMargin = rootView.findViewById(R.id.v_margin);
+
+        if (hasBottomMargin) {
+            vBottomMargin.setVisibility(View.VISIBLE);
+        } else {
+            vBottomMargin.setVisibility(View.GONE);
+        }
+
+        if (hasBotProfile) {
+            ivProfile.setVisibility(View.VISIBLE);
+            vgUserName.setVisibility(View.VISIBLE);
+        } else {
+            ivProfile.setVisibility(View.INVISIBLE);
+            vgUserName.setVisibility(View.GONE);
+        }
+
     }
 
     @Override
@@ -112,32 +143,18 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
         LinkifyUtil.setOnLinkClick(tvMessage);
 
-        messageStringBuilder.append(" ");
-
-        int startIndex = messageStringBuilder.length();
-        messageStringBuilder.append(
-                DateTransformator.getTimeStringForSimple(link.message.createTime));
-        int endIndex = messageStringBuilder.length();
-
-        DateViewSpannable spannable =
-                new DateViewSpannable(tvMessage.getContext(),
-                        DateTransformator.getTimeStringForSimple(link.message.createTime));
-        messageStringBuilder.setSpan(spannable,
-                startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
         int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
                 link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
 
+        if (!hasOnlyBadge) {
+            tvMessageTime.setVisibility(View.VISIBLE);
+            tvMessageTime.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
+        } else {
+            tvMessageTime.setVisibility(View.GONE);
+        }
+
         if (unreadCount > 0) {
-            NameSpannable unreadCountSpannable =
-                    new NameSpannable(
-                            context.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_small)
-                            , context.getResources().getColor(R.color.jandi_accent_color));
-            int beforeLength = messageStringBuilder.length();
-            messageStringBuilder.append(" ");
-            messageStringBuilder.append(String.valueOf(unreadCount))
-                    .setSpan(unreadCountSpannable, beforeLength, messageStringBuilder.length(),
-                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            tvMessageBadge.setText(String.valueOf(unreadCount));
         }
 
         tvMessage.setText(messageStringBuilder);
@@ -159,7 +176,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
     @Override
     public int getLayoutId() {
-        return R.layout.item_message_integration_bot_msg_v2;
+        return R.layout.item_message_integration_bot_msg_v3;
     }
 
     @Override
@@ -175,4 +192,47 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
             contentView.setOnLongClickListener(itemLongClickListener);
         }
     }
+
+    public void setHasBottomMargin(boolean hasBottomMargin) {
+        this.hasBottomMargin = hasBottomMargin;
+    }
+
+    public void setHasOnlyBadge(boolean hasOnlyBadge) {
+        this.hasOnlyBadge = hasOnlyBadge;
+    }
+
+    public void setHasBotProfile(boolean hasBotProfile) {
+        this.hasBotProfile = hasBotProfile;
+    }
+
+
+    public static class Builder extends BaseViewHolderBuilder {
+//        private boolean hasBottomMargin = false;
+//        private boolean hasOnlyBadge = false;
+//        private boolean hasProfile = false;
+//
+//        public Builder setHasBottomMargin(boolean hasBottomMargin) {
+//            this.hasBottomMargin = hasBottomMargin;
+//            return this;
+//        }
+//
+//        public Builder setHasOnlyBadge(boolean hasOnlyBadge) {
+//            this.hasOnlyBadge = hasOnlyBadge;
+//            return this;
+//        }
+//
+//        public Builder setHasBotProfile(boolean hasProfile) {
+//            this.hasProfile = hasProfile;
+//            return this;
+//        }
+
+        public IntegrationBotViewHolder build() {
+            IntegrationBotViewHolder integrationBotViewHolder = new IntegrationBotViewHolder();
+            integrationBotViewHolder.setHasOnlyBadge(hasOnlyBadge);
+            integrationBotViewHolder.setHasBottomMargin(hasBottomMargin);
+            integrationBotViewHolder.setHasBotProfile(hasProfile);
+            return integrationBotViewHolder;
+        }
+    }
+
 }

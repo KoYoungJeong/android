@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ly_message_date_devider"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp">
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/vg_message_header_wrapper"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:background="@color/jandi_text_white"
-        android:foreground="?android:attr/selectableItemBackground"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="visible">
-
-        <View
-            android:layout_width="50dp"
-            android:layout_height="1dp"
-            android:layout_marginBottom="4dp"
-            android:background="@color/jandi_accent_color" />
 
         <TextView
             android:id="@+id/txt_message_date_devider"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_round_for_message_header"
+            android:paddingBottom="6dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="6dp"
             android:text="When"
-            android:textColor="@color/jandi_accent_color"
-            android:textSize="@dimen/jandi_messages_date_divider"
+            android:textColor="@color/white"
+            android:textSize="11dp"
             android:textStyle="bold" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="25dp" />
+
 </LinearLayout>

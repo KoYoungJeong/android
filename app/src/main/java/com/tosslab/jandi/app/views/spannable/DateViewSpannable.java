@@ -14,24 +14,26 @@ import com.tosslab.jandi.app.R;
 public class DateViewSpannable extends ReplacementSpan {
 
     private final String date;
-    private final int textColor;
     private final int textSize;
+    private int textColor;
 
     public DateViewSpannable(Context context, String date) {
 
         super();
         this.date = date;
         Resources resources = context.getResources();
-        textColor = resources.getColor(R.color.jandi_file_detail_date);
-        textSize = resources.getDimensionPixelSize(R.dimen.jandi_file_detail_comment_date_text);
-
-
+        textColor = resources.getColor(R.color.white);
+        textSize = resources.getDimensionPixelSize(R.dimen.jandi_system_message_content);
     }
 
     @Override
     public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
         paint.setTextSize(textSize);
         return (int) paint.measureText(date);
+    }
+
+    public void setTextColor(int color) {
+        this.textColor = color;
     }
 
     @Override

@@ -31,6 +31,7 @@
         android:layout_above="@+id/v_messages_divider"
         android:layout_alignWithParentIfMissing="true"
         android:layout_below="@+id/vg_messages_member_status_alert"
+        android:background="@color/jandi_chat_list_default_background"
         android:scrollbars="vertical" />
 
     <LinearLayout

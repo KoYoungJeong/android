@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.ProfileSpannable;
@@ -22,20 +23,28 @@ import com.tosslab.jandi.app.views.spannable.ProfileSpannable;
 import java.util.Collection;
 import java.util.Iterator;
 
-/**
- * Created by Steve SeongUg Jung on 15. 2. 9..
- */
-public class EventViewHolder implements BodyViewHolder {
+public class EventMessageViewHolder implements BodyViewHolder {
 
     private TextView tvEvent;
     private Context context;
     private View vLastRead;
+    private View vMargin;
+    private boolean hasBottomMargin = false;
+
+    private EventMessageViewHolder() {
+    }
 
     @Override
     public void initView(View rootView) {
         tvEvent = ((TextView) rootView.findViewById(R.id.tv_message_event_title));
         context = rootView.getContext();
         vLastRead = rootView.findViewById(R.id.vg_message_last_read);
+        vMargin = rootView.findViewById(R.id.v_margin);
+        if (hasBottomMargin) {
+            vMargin.setVisibility(View.VISIBLE);
+        } else {
+            vMargin.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -77,9 +86,10 @@ public class EventViewHolder implements BodyViewHolder {
 
         builder.append(" ");
         int eventTextSize = context.getResources()
-                .getDimensionPixelSize(R.dimen.jandi_messages_content);
+                .getDimensionPixelSize(R.dimen.jandi_system_message_content);
         ColorStateList eventTextColor = ColorStateList.valueOf(
-                context.getResources().getColor(R.color.jandi_messages_date));
+                context.getResources().getColor(R.color.white));
+
         int eventLength = builder.length();
         TextAppearanceSpan eventTextAppearance =
                 new TextAppearanceSpan(null, Typeface.NORMAL,
@@ -296,7 +306,7 @@ public class EventViewHolder implements BodyViewHolder {
 
     @Override
     public int getLayoutId() {
-        return R.layout.item_message_event_v2;
+        return R.layout.item_message_event_v3;
     }
 
     @Override
@@ -307,6 +317,19 @@ public class EventViewHolder implements BodyViewHolder {
     @Override
     public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
 
+    }
+
+    public void setHasBottomMargin(boolean hasBottomMargin) {
+        this.hasBottomMargin = hasBottomMargin;
+    }
+
+    public static class Builder extends BaseViewHolderBuilder {
+
+        public EventMessageViewHolder build() {
+            EventMessageViewHolder eventViewHolder = new EventMessageViewHolder();
+            eventViewHolder.setHasBottomMargin(hasBottomMargin);
+            return eventViewHolder;
+        }
     }
 
 }

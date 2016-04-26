@@ -1,14 +1,13 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
-import android.graphics.drawable.Drawable;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.ImageSpan;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -18,28 +17,45 @@ import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
-/**
- * Created by Steve SeongUg Jung on 15. 2. 4..
- */
-public class DummyViewHolder implements BodyViewHolder {
-
+public class DummyMessageViewHolder implements BodyViewHolder {
     private SimpleDraweeView ivProfile;
+    private ViewGroup vgName;
     private TextView tvName;
     private TextView tvMessage;
-    private View contentView;
     private SimpleDraweeView ivSticker;
-    private ImageView ivStickerStatus;
+    private ImageView ivStatus;
 
-    @Override
+    private boolean hasBottomMargin = false;
+    private boolean hasProfile = false;
+
+    private DummyMessageViewHolder() {
+    }
+
     public void initView(View rootView) {
-        contentView = rootView.findViewById(R.id.vg_message_item);
         ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
-        tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
-        tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
-        ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_sticker);
-        ivStickerStatus = (ImageView) rootView.findViewById(R.id.iv_message_send_status);
+        vgName = (ViewGroup) rootView.findViewById(R.id.vg_message_profile_user_name);
+        tvName = (TextView) rootView.findViewById(R.id.tv_message_profile_user_name);
+        tvMessage = (TextView) rootView.findViewById(R.id.tv_dummy_message_content);
+        ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_dummy_message_sticker);
+        ivStatus = (ImageView) rootView.findViewById(R.id.iv_dummy_send_status);
+        View vBottomMargin = rootView.findViewById(R.id.v_margin);
+
+        if (hasBottomMargin) {
+            vBottomMargin.setVisibility(View.VISIBLE);
+        } else {
+            vBottomMargin.setVisibility(View.GONE);
+        }
+
+        if (hasProfile) {
+            ivProfile.setVisibility(View.VISIBLE);
+            vgName.setVisibility(View.VISIBLE);
+        } else {
+            ivProfile.setVisibility(View.INVISIBLE);
+            vgName.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -62,10 +78,11 @@ public class DummyViewHolder implements BodyViewHolder {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
             builder.append(textMessage.content.body);
             ivSticker.setVisibility(View.GONE);
-            ivStickerStatus.setVisibility(View.GONE);
+            ivStatus.setVisibility(View.VISIBLE);
+            ivStatus.setVisibility(View.GONE);
             tvMessage.setVisibility(View.VISIBLE);
 
-            setTextSendingStatus(dummyMessageLink, builder);
+            setTextSendingStatus(dummyMessageLink);
 
             long myId = EntityManager.getInstance().getMe().getId();
             MentionAnalysisInfo mentionAnalysisInfo =
@@ -76,13 +93,14 @@ public class DummyViewHolder implements BodyViewHolder {
             SpannableLookUp.text(builder)
                     .markdown(false)
                     .mention(mentionAnalysisInfo, false)
-                    .lookUp(contentView.getContext());
+                    .lookUp(JandiApplication.getContext());
 
             tvMessage.setText(builder);
         } else if (link.message instanceof ResMessages.StickerMessage) {
             ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) link.message;
             ivSticker.setVisibility(View.VISIBLE);
-            ivStickerStatus.setVisibility(View.VISIBLE);
+            ivStatus.setVisibility(View.GONE);
+            ivStatus.setVisibility(View.VISIBLE);
             tvMessage.setVisibility(View.GONE);
 
             ResMessages.StickerContent content = stickerMessage.content;
@@ -97,55 +115,27 @@ public class DummyViewHolder implements BodyViewHolder {
     private void setStickerSendingStatus(DummyMessageLink dummyMessageLink) {
         SendMessage.Status status = SendMessage.Status.valueOf(dummyMessageLink.getStatus());
         switch (status) {
-
             case COMPLETE:
             case SENDING:
-                ivStickerStatus.setImageResource(R.drawable.icon_message_sending);
+                ivStatus.setImageResource(R.drawable.icon_message_sending);
                 break;
             case FAIL:
-                ivStickerStatus.setImageResource(R.drawable.icon_message_failure);
+                ivStatus.setImageResource(R.drawable.icon_message_failure);
                 break;
         }
     }
 
-    private void setTextSendingStatus(DummyMessageLink dummyMessageLink, SpannableStringBuilder builder) {
+    private void setTextSendingStatus(DummyMessageLink dummyMessageLink) {
         SendMessage.Status status = SendMessage.Status.valueOf(dummyMessageLink.getStatus());
-        int textColor = tvName.getContext().getResources().getColor(R.color.jandi_messages_name);
         switch (status) {
-            case FAIL: {
-                builder.append("  ");
-                int beforLenghth = builder.length();
-                Drawable drawable = tvMessage.getContext().getResources()
-                        .getDrawable(R.drawable.icon_message_failure);
-                drawable.setBounds(0, 0,
-                        drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-                builder.append(" ")
-                        .setSpan(
-                                new ImageSpan(drawable,
-                                        ImageSpan.ALIGN_BASELINE),
-                                beforLenghth, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                tvName.setTextColor(textColor);
-                tvMessage.setTextColor(textColor);
-                break;
-            }
             case COMPLETE:
             case SENDING: {
-                builder.append("  ");
-                int beforLenghth = builder.length();
-                Drawable drawable = tvMessage.getContext().getResources()
-                        .getDrawable(R.drawable.icon_message_sending);
-                drawable.setBounds(0, 0,
-                        drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-                builder.append(" ")
-                        .setSpan(
-                                new ImageSpan(drawable,
-                                        ImageSpan.ALIGN_BASELINE),
-                                beforLenghth, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                tvMessage.setTextColor(textColor);
-                tvName.setTextColor(textColor);
-                tvMessage.setTextColor(textColor);
+                ivStatus.setImageResource(R.drawable.icon_message_sending);
                 break;
             }
+            case FAIL:
+                ivStatus.setImageResource(R.drawable.icon_message_failure);
+                break;
         }
     }
 
@@ -156,21 +146,42 @@ public class DummyViewHolder implements BodyViewHolder {
 
     @Override
     public int getLayoutId() {
-        return R.layout.item_message_dummy_v2;
+        return R.layout.item_message_dummy_v3;
+    }
 
+    public void setHasBottomMargin(boolean hasBottomMargin) {
+        this.hasBottomMargin = hasBottomMargin;
+    }
+
+    public void setHasProfile(boolean hasProfile) {
+        this.hasProfile = hasProfile;
     }
 
     @Override
     public void setOnItemClickListener(View.OnClickListener itemClickListener) {
-        if (contentView != null && itemClickListener != null) {
-            contentView.setOnClickListener(itemClickListener);
+        if (ivSticker.getVisibility() == View.VISIBLE) {
+            ivSticker.setOnClickListener(itemClickListener);
+        } else {
+            tvMessage.setOnClickListener(itemClickListener);
         }
     }
 
     @Override
     public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
-        if (contentView != null && itemLongClickListener != null) {
-            contentView.setOnLongClickListener(itemLongClickListener);
+        if (ivSticker.getVisibility() == View.VISIBLE) {
+            ivSticker.setOnLongClickListener(itemLongClickListener);
+        } else {
+            tvMessage.setOnLongClickListener(itemLongClickListener);
+        }
+    }
+
+    public static class Builder extends BaseViewHolderBuilder {
+
+        public DummyMessageViewHolder build() {
+            DummyMessageViewHolder dummyViewHolder = new DummyMessageViewHolder();
+            dummyViewHolder.setHasProfile(hasProfile);
+            dummyViewHolder.setHasBottomMargin(hasBottomMargin);
+            return dummyViewHolder;
         }
     }
 
