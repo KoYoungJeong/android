@@ -60,11 +60,19 @@ public class OpenAction implements Action {
             if (TextUtils.isEmpty(access_token) || TextUtils.isEmpty(refresh_token)) {
                 startIntroActivity();
             } else {
+                access_token = removeSpecialChar(access_token);
+                refresh_token = removeSpecialChar(refresh_token);
+
                 checkSession(access_token, refresh_token);
             }
         } else {
             startIntroActivity();
         }
+    }
+
+    String removeSpecialChar(String access_token) {
+        access_token = access_token.replaceAll("[^a-zA-Z0-9]", "");
+        return access_token;
     }
 
     @Background

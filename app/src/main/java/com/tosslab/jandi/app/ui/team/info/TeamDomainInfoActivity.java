@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.team.info;
 
 import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -46,6 +48,12 @@ public class TeamDomainInfoActivity extends BaseAppCompatActivity implements Tea
 
     @Bean(TeamDomainInfoPresenterImpl.class)
     TeamDomainInfoPresenter teamDomainInfoPresenter;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setShouldReconnectSocketService(false);
+    }
 
     @AfterViews
     void initView() {

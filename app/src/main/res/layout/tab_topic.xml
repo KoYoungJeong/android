@@ -24,14 +24,10 @@
 
     <TextView
         android:id="@+id/tab_badge_topic_new"
+        style="@style/JandiMainTabBadge.Text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/tab_icon_topic"
-        android:layout_marginTop="-3dp"
-        android:background="@drawable/topiclist_unread_badge"
-        android:gravity="center"
-        android:textColor="@color/jandi_text_white"
-        android:textSize="11sp"
         android:visibility="gone"/>
 </RelativeLayout>

@@ -47,7 +47,6 @@ public class EmailChooseActivity extends BaseAppCompatActivity {
     @Bean
     EmailChooseModel emailChooseModel;
 
-
     @AfterViews
     void initView() {
 
@@ -120,8 +119,9 @@ public class EmailChooseActivity extends BaseAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        EventBus.getDefault().register(this);
         super.onCreate(savedInstanceState);
+        setShouldReconnectSocketService(false);
+        EventBus.getDefault().register(this);
     }
 
     @Override

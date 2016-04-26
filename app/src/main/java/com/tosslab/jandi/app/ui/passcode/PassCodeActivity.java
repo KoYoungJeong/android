@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.Vibrator;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -244,8 +243,13 @@ public class PassCodeActivity extends BaseAppCompatActivity
         String tag = FingerprintAuthDialogFragment.class.getSimpleName();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
         if (fragment == null) {
-            FingerprintAuthDialogFragment_.builder().build()
-                    .show(getSupportFragmentManager(), tag);
+            FingerprintAuthDialogFragment fragment1 = FingerprintAuthDialogFragment_.builder().build();
+            fragment1.show(getSupportFragmentManager(), tag);
+            fragment1.setOnFingerPrintErrorListener(() -> {
+                vibrator.vibrate(500);
+                vgPassCodeChecker.startAnimation(shakeAnimation);
+                tvSubTitle.setText(R.string.jandi_fingerprint_cannot_do_temporary);
+            });
         }
     }
 
