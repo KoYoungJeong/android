@@ -93,7 +93,6 @@ import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.MaxHeightRecyclerView;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
@@ -256,6 +255,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
             if (entity == EntityManager.UNKNOWN_USER_ENTITY || entity.isUser()) {
                 vpMainTab.setCurrentItem(CHAT_INDEX);
             }
+        } else {
+            vpMainTab.setCurrentItem(JandiPreference.getLastSelectedTab());
         }
         mainTapStrip.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
@@ -283,6 +284,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                 }
 
                 listScrollHandler.setCurrentIndex(position);
+                JandiPreference.setLastSelectedTab(position);
             }
         });
 
