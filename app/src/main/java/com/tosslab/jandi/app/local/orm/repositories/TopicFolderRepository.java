@@ -275,10 +275,11 @@ public class TopicFolderRepository extends LockExecutorTemplate {
         return execute(() -> {
             try {
                 Dao<ResFolderItem, ?> dao = getHelper().getDao(ResFolderItem.class);
-                return dao.queryBuilder()
+                ResFolderItem resFolderItem = dao.queryBuilder()
                         .where()
                         .eq("roomId", entityId)
                         .queryForFirst();
+                return resFolderItem == null ? new ResFolderItem() : resFolderItem;
             } catch (SQLException e) {
                 e.printStackTrace();
             }

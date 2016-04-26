@@ -276,10 +276,11 @@ public class MessageListV2Presenter {
         view.setMarkerInfo(roomId);
 
         long myId = EntityManager.getInstance().getMe().getId();
-        long lastReadLinkId = messageListModel.getLastReadLinkId(roomId, myId);
-        messagePointer.setLastReadLinkId(lastReadLinkId);
 
         messageListModel.updateMarkerInfo(teamId, roomId);
+
+        long lastReadLinkId = messageListModel.getLastReadLinkId(roomId, myId);
+        messagePointer.setLastReadLinkId(lastReadLinkId);
         messageListModel.setRoomId(roomId);
 
         isInitialized = true;
@@ -462,7 +463,7 @@ public class MessageListV2Presenter {
         } else {
             // 첫 요청이라 판단
             // 마커 기준 위아래 값 요청
-            resOldMessage = messageListModel.getBeforeMarkerMessage(linkId);
+            resOldMessage = messageListModel.getBeforeMarkerMessage(messagePointer.getLastReadLinkId());
             if (resOldMessage != null
                     && resOldMessage.records != null
                     && resOldMessage.records.size() > 0) {
@@ -504,9 +505,8 @@ public class MessageListV2Presenter {
     }
 
     private void loadNewMessage(NewMessageContainer messageContainer) {
-
         MessageState data = messageContainer.getData();
-        final long lastUpdateLinkId = MessageRepository.getRepository()
+        long lastUpdateLinkId = MessageRepository.getRepository()
                 .getLastMessage(room.getRoomId()).id;
 
         long teamId = room.getTeamId();
@@ -516,8 +516,18 @@ public class MessageListV2Presenter {
                 .getMessagesCount(roomId, firstCursorLinkId);
 
         if (lastUpdateLinkId < 0) {
+            messageListModel.deleteAllDummyMessageAtDatabase(room.getRoomId());
+
             boolean firstLoadOldMessage = messageContainer.getData().isFirstLoadOldMessage();
             loadOldMessage(teamId, roomId, lastUpdateLinkId, firstLoadOldMessage, true);
+
+            lastUpdateLinkId = MessageRepository.getRepository()
+                    .getLastMessage(room.getRoomId()).id;
+
+            firstCursorLinkId = messagePointer.getFirstCursorLinkId();
+            currentItemCount = MessageRepository.getRepository()
+                    .getMessagesCount(roomId, messagePointer.getFirstCursorLinkId());
+
         }
 
         List<ResMessages.Link> newMessages = null;
@@ -554,12 +564,12 @@ public class MessageListV2Presenter {
             boolean hasMessages = firstCursorLinkId > 0 && hasMessages(firstCursorLinkId, currentItemCount);
             view.showEmptyView(!hasMessages);
 
-            messagePointer.setLastReadLinkId(-1);
-
             if (currentMessageState.isFirstLoadNewMessage()) {
                 currentMessageState.setIsFirstLoadNewMessage(false);
                 view.setUpLastReadLinkIdIfPosition();
                 view.saveCacheAndNotifyDataSetChanged(view::moveLastReadLink);
+            } else {
+                view.saveCacheAndNotifyDataSetChanged(null);
             }
             return;
         }
@@ -602,11 +612,10 @@ public class MessageListV2Presenter {
 
     private boolean hasMessages(long firstCursorLinkId, int currentItemCount) {
         int eventMessageCount = getEventMessageCount(firstCursorLinkId);
-        return // event 메세지 외에 다른 메시지들이 있는 경우
-                (currentItemCount > 0
-                        && (currentItemCount - eventMessageCount > 0))
-                        // create 이벤트외에 다른 이벤트가 생성된 경우
-                        || eventMessageCount > 1;
+        // create 이벤트외에 다른 이벤트가 생성된 경우
+        return eventMessageCount > 1 || (currentItemCount > 0
+                // event 메세지 외에 다른 메시지들이 있는 경우
+                && (currentItemCount - eventMessageCount > 0));
     }
 
     private int getEventMessageCount(long firstCursorLinkId) {
@@ -628,6 +637,7 @@ public class MessageListV2Presenter {
 
     private List<ResMessages.Link> getResUpdateMessages(final long linkId) {
         List<ResMessages.Link> messages = new ArrayList<>();
+
 
         Observable.create(new Observable.OnSubscribe<ResMessages>() {
             @Override
@@ -781,6 +791,7 @@ public class MessageListV2Presenter {
         long roomId = room.getRoomId();
         long localId = messageListModel.insertSendingMessageIfCan(entityId, roomId, stickerInfo);
         if (localId > 0) {
+            view.showEmptyView(false);
             view.saveCacheAndNotifyDataSetChanged(() -> {
                 view.moveLastPage();
 
@@ -792,7 +803,6 @@ public class MessageListV2Presenter {
 
                 addQueue(messageQueue);
             });
-
         }
     }
 
@@ -805,14 +815,16 @@ public class MessageListV2Presenter {
 
         if (localId > 0) {
             // insert to ui
-            view.saveCacheAndNotifyDataSetChanged(view::moveLastPage);
+            view.showEmptyView(false);
+            view.saveCacheAndNotifyDataSetChanged(() -> {
+                view.moveLastPage();
 
-            // networking...
-            SendingMessage sendingMessage = new SendingMessage(localId, reqSendMessage);
+                SendingMessage sendingMessage = new SendingMessage(localId, reqSendMessage);
 
-            SendingMessageContainer messageQueue = new SendingMessageContainer(sendingMessage);
+                SendingMessageContainer messageQueue = new SendingMessageContainer(sendingMessage);
 
-            addQueue(messageQueue);
+                addQueue(messageQueue);
+            });
         }
     }
 
@@ -909,6 +921,8 @@ public class MessageListV2Presenter {
 
             view.deleteLinkByMessageId(messageId);
 
+            view.saveCacheAndNotifyDataSetChanged(null);
+
             messageListModel.trackMessageDeleteSuccess(messageId);
 
         } catch (RetrofitException e) {
@@ -984,10 +998,13 @@ public class MessageListV2Presenter {
     }
 
     @Background
-    public void onRoomMarkerChange(long memberId, long lastLinkId) {
-        MarkerRepository.getRepository().upsertRoomMarker(
-                room.getTeamId(), room.getRoomId(), memberId, lastLinkId);
-        view.saveCacheAndNotifyDataSetChanged(null);
+    public void onRoomMarkerChange(long teamId, long roomId, long memberId, long lastLinkId) {
+        MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, memberId, lastLinkId);
+        //TODO Presenter 에 객체들이 initialize 되기 전에 Event 가 호출 되면서 NullPointerException 이 나는 경우가 있음.
+        // Presenter 전체적으로 개선해야 할 필요 있음.
+        if (view != null) {
+            view.saveCacheAndNotifyDataSetChanged(null);
+        }
     }
 
     @Background

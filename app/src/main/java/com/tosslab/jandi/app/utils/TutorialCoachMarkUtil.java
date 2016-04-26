@@ -71,41 +71,41 @@ public class TutorialCoachMarkUtil {
         }
 
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        dialog.show();
+//        dialog.show();
         return dialog;
     }
 
     public static void showCoachMarkTopicListIfNotShown(Context context) {
         if (!JandiPreference.isAleadyShowCoachMarkTopicList(context.getApplicationContext())) {
-            showCoachMarkDialog(context, COACH_MARK_TOPIC_LIST);
+//            showCoachMarkDialog(context, COACH_MARK_TOPIC_LIST);
         }
     }
 
     public static void showCoachMarkDirectMessageListIfNotShown(Context context) {
         if (!JandiPreference.isAleadyShowCoachMarkDirectMessageList(context.getApplicationContext())) {
-            showCoachMarkDialog(context, COACH_MARK_DIRECT_MESSAGE_LIST);
+//            showCoachMarkDialog(context, COACH_MARK_DIRECT_MESSAGE_LIST);
         }
     }
 
     public static void showCoachMarkFileListIfNotShown(Context context) {
         if (!JandiPreference.isAleadyShowCoachMarkFileList(context.getApplicationContext())) {
-            showCoachMarkDialog(context, COACH_MARK_FILE_LIST);
+//            showCoachMarkDialog(context, COACH_MARK_FILE_LIST);
         }
     }
 
     public static void showCoachMarkMoreIfNotShown(Context context) {
         if (!JandiPreference.isAleadyShowCoachMarkMore(context.getApplicationContext())) {
-            showCoachMarkDialog(context, COACH_MARK_MORE);
+//            showCoachMarkDialog(context, COACH_MARK_MORE);
         }
     }
 
     public static void showCoachMarkTopicIfNotShown(boolean user, Context context) {
         if (!JandiPreference.isAleadyShowCoachMarkTopic(context.getApplicationContext())) {
-            Dialog dialog = showCoachMarkDialog(context, COACH_MARK_TOPIC);
-            if (user) {
-                dialog.findViewById(R.id.tv_topic_sticker_guide).setVisibility(View.GONE);
-                dialog.findViewById(R.id.iv_topic_sticker_guide_icon).setVisibility(View.GONE);
-            }
+//            Dialog dialog = showCoachMarkDialog(context, COACH_MARK_TOPIC);
+//            if (user) {
+//                dialog.findViewById(R.id.tv_topic_sticker_guide).setVisibility(View.GONE);
+//                dialog.findViewById(R.id.iv_topic_sticker_guide_icon).setVisibility(View.GONE);
+//            }
         }
     }
 

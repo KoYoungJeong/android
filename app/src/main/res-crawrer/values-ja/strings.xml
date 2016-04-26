@@ -112,6 +112,7 @@
 	<string name="jandi_bot_status">"こんにちは、ミスターJと言います。"</string>
 	<string name="jandi_browse_other_topics">"未参加のトピック一覧"</string>
 	<string name="jandi_browse_team">"チームに移動"</string>
+	<string name="jandi_call_acess_permission">"通話を発信するには電話へのJANDIのアクセスを求めてください。"</string>
 	<string name="jandi_cancel">"戻る"</string>
 	<string name="jandi_cancel_invitation">"招待をキャンセル"</string>
 	<string name="jandi_canceled">"キャンセルされました"</string>
@@ -164,6 +165,7 @@
 	<string name="jandi_create">"作成"</string>
 	<string name="jandi_create_channel">"新規トピックを作成する"</string>
 	<string name="jandi_create_folder">"フォルダ作成"</string>
+	<string name="jandi_create_new_topic">" '%s'\nという新規トピックを作成する"</string>
 	<string name="jandi_create_privategroup">"新規プライベートグループを作成する"</string>
 	<string name="jandi_create_team_message">"メールアドレスを入力してください。チームの作成方法をお送りします"</string>
 	<string name="jandi_create_topic">"トピック作成"</string>
@@ -225,6 +227,7 @@
 	<string name="jandi_file_upload_state">"ファイルアップロード中 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"アップロード完了"</string>
 	<string name="jandi_file_uploading">"アップロード中..."</string>
+	<string name="jandi_fingerprint_cannot_do_temporary">"しばらく指紋認証が使用できません。"</string>
 	<string name="jandi_folder_alread_has_name">"その名前は既に使用されています"</string>
 	<string name="jandi_folder_ask_delete">"本当にこのフォルダを削除しますか？"</string>
 	<string name="jandi_folder_choose">"フォルダを選択してください"</string>
@@ -245,13 +248,14 @@
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_guide_to_assign_topic_owner">"トピックメニューから次の管理者を指定してからトピックから退出させられます。"</string>
 	<string name="jandi_has_joined">"%sさんが参加しました"</string>
+	<string name="jandi_has_no_search_result">" '%s'に一致する結果がありません"</string>
 	<string name="jandi_has_no_searched_member">"<![CDATA[<b><font color=#404040>%s</font></b>]]>に一致する結果がありません"</string>
 	<string name="jandi_have_an_account_already">"すでにJANDIに登録済みの方はこちら"</string>
 	<string name="jandi_help">"ヘルプ"</string>
 	<string name="jandi_hi_apk_store">"Hi Apkストア"</string>
 	<string name="jandi_image_too_big">"画像が大きすぎです"</string>
 	<string name="jandi_incorrect_passcode">"パスコードが間違っています。"</string>
-	<string name="jandi_info">"NEW KEY"</string>
+	<string name="jandi_info">"JANDI情報"</string>
 	<string name="jandi_input_password">"選択したチームのパスワードを入力してください"</string>
 	<string name="jandi_input_search_keyword">"キーワードで検索"</string>
 	<string name="jandi_input_topic_name">"トピック名を入力してください"</string>
@@ -274,7 +278,7 @@
 	<string name="jandi_invite_success">"招待メールが送信されました"</string>
 	<string name="jandi_invite_to_dummy_account_again">"入力しましたメールアドレスはすでに他のメンバーが招待中です。
 招待メールを再送信しますか？"</string>
-	<string name="jandi_invite_to_team">"NEW KEY"</string>
+	<string name="jandi_invite_to_team">"チームに招待する"</string>
 	<string name="jandi_invite_wechat">"WeChat"</string>
 	<string name="jandi_invited_topic">"%1$sが %2$sさんを招待しました"</string>
 	<string name="jandi_is_newcomer">"初めてJANDIを使いますか？"</string>
@@ -421,7 +425,7 @@
 	<string name="jandi_service_maintenance">"JANDIは現在定期メンテナンス中のためご利用できません。定期メンテナンスは数時間で終了の予定です。ご不便をお掛けし申し訳ありません。"</string>
 	<string name="jandi_set_passcode">"パスコードロック設定"</string>
 	<string name="jandi_set_passcode_detail">"パスコードを忘れた場合はJANDIアプリを削除して再インストールしてください。"</string>
-	<string name="jandi_setting_account">"NEW KEY"</string>
+	<string name="jandi_setting_account">"アカウント設定"</string>
 	<string name="jandi_setting_account_email_info">"JANDIからのメールを受信するメールアドレスを一つ選択してください。メールアドレスを追加しチームごとに使い分けられます"</string>
 	<string name="jandi_setting_display">"画面表示"</string>
 	<string name="jandi_setting_folder">"フォルダ管理"</string>
@@ -483,6 +487,7 @@
 	<string name="jandi_starred_unstarred">"スターなし"</string>
 	<string name="jandi_start_direct_messages_1">"<b>メッセージ送ったり、これまでの会話履歴を見るには</b>"</string>
 	<string name="jandi_start_direct_messages_2">"以下のボタンを押してください"</string>
+	<string name="jandi_storage_access_permission">"ストレージにアクセスするにはアプリの権限を許可してください。"</string>
 	<string name="jandi_success_copy_clipboard_external_link">"共有リンクがクリップボードにコピーされました"</string>
 	<string name="jandi_success_disable_external_link">"共有用リンクが削除されました"</string>
 	<string name="jandi_success_kick_user_from_topic">"選択したメンバーがトピックから退室されました。"</string>
@@ -552,6 +557,7 @@
 	<string name="jandi_unshared_file_in_dm">"このファイルは非共有化されました"</string>
 	<string name="jandi_unshared_message">"原本ファイルへのアクセス権がありません。"</string>
 	<string name="jandi_unstarred">"お気に入りから削除する"</string>
+	<string name="jandi_unsupported_share_contents">"共有できないファイル（メッセージ）です"</string>
 	<string name="jandi_unsupported_type_picture">"サポートしていないファイル形式です。他の画像を選択してください。"</string>
 	<string name="jandi_update_message">"新しいバージョンのアプリが利用可能です"</string>
 	<string name="jandi_update_title">"古いバージョン"</string>
@@ -561,13 +567,14 @@
 	<string name="jandi_upload_menu_file">"ファイル"</string>
 	<string name="jandi_upload_menu_gallay">"写真"</string>
 	<string name="jandi_upload_menu_video">"動画"</string>
-	<string name="jandi_use_fingerprint">"NEW KEY"</string>
+	<string name="jandi_use_fingerprint">"指紋認証機能を使用"</string>
 	<string name="jandi_user_default_email">"プライマリメールアドレス"</string>
 	<string name="jandi_user_id">"メールアドレス"</string>
 	<string name="jandi_user_password">"パスワード"</string>
 	<string name="jandi_verify_fingerprint">"指紋を認証してください"</string>
 	<string name="jandi_vibrate">"バイブレート"</string>
 	<string name="jandi_view_all">"すべて表示"</string>
+	<string name="jandi_view_comment_read_more">"コメント%s 件を全て表示"</string>
 	<string name="jandi_welcome_message">"JANDIへようこそ!!"</string>
 	<string name="jandi_what_is_topic_type">"トピックを作成した後に、公開・非公開を変更することはできません"</string>
 	<string name="jandi_who_of_file">"さんのファイル"</string>

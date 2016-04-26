@@ -32,6 +32,8 @@ public class SearchedFileItemView extends RelativeLayout {
     TextView tvDate;
     @ViewById(R.id.iv_searched_file_type)
     SimpleDraweeView ivFileType;
+    @ViewById(R.id.v_searched_file_round)
+    View vFileRound;
     @ViewById(R.id.v_searched_file_name_line_through)
     View vLineThrough;
 
@@ -91,7 +93,7 @@ public class SearchedFileItemView extends RelativeLayout {
         String thumbnailUrl =
                 ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
         ImageUtil.setResourceIconOrLoadImage(
-                ivFileType, null,
+                ivFileType, vFileRound,
                 fileUrl, thumbnailUrl,
                 serverUrl, fileType);
     }

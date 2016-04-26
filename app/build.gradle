@@ -108,7 +108,7 @@ dependencies {
 
     // Cache
     compile 'com.koushikdutta.ion:ion:2.1.+'
-    compile 'com.facebook.fresco:fresco:0.8.0+'
+    compile 'com.facebook.fresco:fresco:0.9.0'
 
     // Sliqte ORM
     compile 'com.j256.ormlite:ormlite-android:4.+'
@@ -149,9 +149,7 @@ dependencies {
     compile "com.squareup.okhttp3:okhttp-ws:${rootProject.ext.okhttpVersion}"
     debugCompile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
 
-    //LeakCanary
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3.1'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3.1'
+    debugCompile 'com.facebook.stetho:stetho-okhttp3:1.3.1'
 }
 
 android {
@@ -160,9 +158,9 @@ android {
 
     defaultConfig {
         applicationId 'com.tosslab.jandi.app'
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 128
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode 137
         versionName '2.0.0'
 
         // for Ui Testing

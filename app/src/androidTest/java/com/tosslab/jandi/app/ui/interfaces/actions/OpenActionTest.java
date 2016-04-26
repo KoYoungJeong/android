@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
+import org.assertj.core.api.Assertions;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -70,6 +71,23 @@ public class OpenActionTest {
         }).when(action.progressWheel).dismiss();
 
         return finish;
+    }
+
+    @Test
+    public void testRemoveSpecialChar() throws Exception {
+        String origin = "akljdfhlkajshdflk";
+        String replace = action.removeSpecialChar(origin+ "_)(*&^%$#@!~`[]{}';:\"/.,<>?_=+\\|");
+
+        Assertions.assertThat(replace)
+                .isNotNull()
+                .isNotEmpty()
+                .isEqualTo(origin);
+        String origin2 = "1!2@3#4$5%6^7&8*9(0)_";
+        String replace2 = action.removeSpecialChar(origin2);
+        Assertions.assertThat(replace2)
+                .isNotNull()
+                .isNotEmpty()
+                .isEqualTo("1234567890");
     }
 
     @Test

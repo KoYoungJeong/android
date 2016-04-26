@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -19,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -73,6 +75,7 @@ import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity_;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity_;
+import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
@@ -557,6 +560,10 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissDialog(Dialog dialog) {
+        if (isFinishing()) {
+            return;
+        }
+
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }
@@ -672,8 +679,13 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void showCheckNetworkDialog() {
-        AlertUtil.showCheckNetworkDialog(this, (dialog, which) -> finish());
+    public void showCheckNetworkDialog(boolean shouldFinishWhenConfirm) {
+        DialogInterface.OnClickListener confirmListener = null;
+        if (shouldFinishWhenConfirm) {
+            confirmListener = (dialog, which) -> finish();
+        }
+
+        AlertUtil.showCheckNetworkDialog(this, confirmListener);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -1299,11 +1311,55 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
     }
 
+    @Override
+    public Pair<Integer, ResMessages.OriginalMessage> getCommentInfo(long messageId) {
+        int itemCount = adapter.getItemCount();
+        for (int i = 0; i < itemCount; i++) {
+            Object item = adapter.getItem(i);
+            if (item instanceof ResMessages.OriginalMessage) {
+                ResMessages.OriginalMessage comment = (ResMessages.OriginalMessage) item;
+                if (comment.id == messageId) {
+                    return Pair.create(i, comment);
+                }
+            }
+        }
+
+        return Pair.create(-1, new ResMessages.OriginalMessage());
+    }
+
+    @Override
+    public void removeComment(int position) {
+        adapter.remove(position);
+    }
+
+    @Override
+    public void showCommentDeleteErrorToast() {
+        showToast(getString(R.string.err_entity_delete), true /* isError */);
+    }
+
+    @Override
+    public void addComment(int adapterPosition, ResMessages.OriginalMessage comment) {
+        boolean isSticker = !(comment instanceof ResMessages.CommentMessage);
+        int viewType = isSticker
+                ? FileDetailAdapter.VIEW_TYPE_STICKER
+                : FileDetailAdapter.VIEW_TYPE_COMMENT;
+        adapter.addRow(adapterPosition, new FileDetailAdapter.Row<>(comment, viewType));
+    }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @OptionsItem(android.R.id.home)
     @Override
     public void finish() {
+        // FileListFragment 로 부터 시작된
+        if (roomId <= 0) {
+            int commentCount = getCommentCount();
+            if (commentCount >= 0) {
+                Intent intent = new Intent();
+                intent.putExtra(FileListFragment.KEY_FILE_ID, fileId);
+                intent.putExtra(FileListFragment.KEY_COMMENT_COUNT, commentCount);
+                setResult(RESULT_OK, intent);
+            }
+        }
         super.finish();
         overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
     }
@@ -1317,4 +1373,21 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 .noPermission(noPermission)
                 .check();
     }
+
+    private int getCommentCount() {
+        int[] commentCount = {-1};
+
+        Observable.from(adapter.getRows())
+                .filter(row -> {
+                    Object item = row.getItem();
+                    return item instanceof ResMessages.CommentMessage
+                            || item instanceof ResMessages.CommentStickerMessage;
+                })
+                .toList()
+                .subscribe(rows -> {
+                    commentCount[0] = rows.size();
+                });
+        return commentCount[0];
+    }
+
 }

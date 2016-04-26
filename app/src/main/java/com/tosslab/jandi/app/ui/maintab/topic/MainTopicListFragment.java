@@ -402,7 +402,10 @@ public class MainTopicListFragment extends Fragment
     public void notifyDatasetChangedForFolder() {
         expandableTopicAdapter.notifyDataSetChanged();
         //빼먹지 말아야 함.
-        expandableItemManager.expandGroup(expandableTopicAdapter.getGroupCount() - 1);
+        int groupPosition = expandableTopicAdapter.getGroupCount() - 1;
+        if (groupPosition >= 0) {
+            expandableItemManager.expandGroup(groupPosition);
+        }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

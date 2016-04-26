@@ -160,11 +160,12 @@
 	<string name="jandi_confirm_new_passcode">"비밀번호를 한번 더 입력해주세요."</string>
 	<string name="jandi_confirm_passcode">"비밀번호 재입력"</string>
 	<string name="jandi_copied_to_clipboard">"클립보드에 복사되었습니다."</string>
-	<string name="jandi_copy_link">"링크 복사"</string>
+	<string name="jandi_copy_link">"주소 복사하기"</string>
 	<string name="jandi_count_with_brace">"(%d)"</string>
 	<string name="jandi_create">"생성하기"</string>
 	<string name="jandi_create_channel">"토픽 생성"</string>
 	<string name="jandi_create_folder">"폴더 만들기"</string>
+	<string name="jandi_create_new_topic">" '%s'\n(이)라는 이름의 새로운 토픽을 생성하기"</string>
 	<string name="jandi_create_privategroup">"비공개 토픽 생성"</string>
 	<string name="jandi_create_team_message">"팀 생성 메일을 수신할 이메일 주소를 작성해주세요."</string>
 	<string name="jandi_create_topic">"토픽 만들기"</string>
@@ -226,6 +227,7 @@
 	<string name="jandi_file_upload_state">"파일 업로드 중 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"파일이 업로드 되었습니다"</string>
 	<string name="jandi_file_uploading">"업로드..."</string>
+	<string name="jandi_fingerprint_cannot_do_temporary">"지문 인식을 잠시 사용할 수 없습니다."</string>
 	<string name="jandi_folder_alread_has_name">"이미 존재하는 이름입니다"</string>
 	<string name="jandi_folder_ask_delete">"폴더를 정말 삭제하시겠습니까?"</string>
 	<string name="jandi_folder_choose">"이동할 폴더를 선택해주세요."</string>
@@ -246,6 +248,7 @@
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_guide_to_assign_topic_owner">"토픽 상세보기 > 토픽 관리자 변경하기에서 다음 관리자를 지정한 후 토픽에서 내보낼 수 있습니다."</string>
 	<string name="jandi_has_joined">"%s님이 참여하였습니다"</string>
+	<string name="jandi_has_no_search_result">" '%s'의 검색 결과가 없습니다."</string>
 	<string name="jandi_has_no_searched_member">"<![CDATA[<b><font color=#404040>%s</font></b>]]>의 검색 결과가 없습니다."</string>
 	<string name="jandi_have_an_account_already">"이미 계정이 있으신가요?"</string>
 	<string name="jandi_help">"도움말"</string>
@@ -555,6 +558,7 @@
 	<string name="jandi_unshared_file_in_dm">"이 파일은 이 대화에서 공유 해제되어 더 이상 즐겨찾기를 하실 수 없습니다."</string>
 	<string name="jandi_unshared_message">"원본에 대한 접근 권한이 없습니다."</string>
 	<string name="jandi_unstarred">"즐겨찾기 해제"</string>
+	<string name="jandi_unsupported_share_contents">"공유할 수 없는 파일(메시지)입니다."</string>
 	<string name="jandi_unsupported_type_picture">"지원하지 않는 형식입니다. 다른 사진을 선택해주세요. "</string>
 	<string name="jandi_update_message">"JANDI의 새로운 버전이 있습니다."</string>
 	<string name="jandi_update_title">"새로운 버전"</string>
@@ -571,6 +575,7 @@
 	<string name="jandi_verify_fingerprint">"지문을 인식해주세요."</string>
 	<string name="jandi_vibrate">"진동"</string>
 	<string name="jandi_view_all">"전체보기"</string>
+	<string name="jandi_view_comment_read_more">"%s 개의 댓글 모두 보기"</string>
 	<string name="jandi_welcome_message">"JANDI에 오신 것을 환영합니다."</string>
 	<string name="jandi_what_is_topic_type">"공개 여부 설정은 토픽 생성 이후에 변경할 수 없습니다."</string>
 	<string name="jandi_who_of_file">"님의 파일"</string>

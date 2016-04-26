@@ -68,7 +68,7 @@ public class FileDetailPresenter {
                 .subscribe(pair -> {
                     boolean isNetworkConnected = fileDetailModel.isNetworkConneted();
                     if (!isNetworkConnected) {
-                        view.showCheckNetworkDialog();
+                        view.showCheckNetworkDialog(true);
                         return;
                     }
 
@@ -286,8 +286,9 @@ public class FileDetailPresenter {
                 fileDetailModel.downloadFile(downloadUrl, downloadFilePath,
                         (downloaded, total) -> progressDialog.setProgress((int) (downloaded * 100 / total)),
                         (e, result) -> {
-                            progressDialog.dismiss();
-                            if (currentDownloadingFile.isCancelled()) {
+                            view.dismissDialog(progressDialog);
+
+                            if (currentDownloadingFile == null || currentDownloadingFile.isCancelled()) {
                                 currentDownloadingFile = null;
                                 return;
                             }
@@ -425,7 +426,21 @@ public class FileDetailPresenter {
 
     @Background
     public void onDeleteComment(int messageType, long messageId, long feedbackId) {
-        view.showProgress();
+        if (!fileDetailModel.isNetworkConneted()) {
+            view.showCheckNetworkDialog(false);
+            return;
+        }
+
+        // 추후 List 데이터 모델로 치환 하도록
+        Pair<Integer, ResMessages.OriginalMessage>
+                commentInfoFromAdapter = view.getCommentInfo(messageId);
+        Integer adapterPosition = commentInfoFromAdapter.first;
+        ResMessages.OriginalMessage comment = commentInfoFromAdapter.second;
+        if (adapterPosition > 0) {
+            view.removeComment(adapterPosition);
+            view.notifyDataSetChanged();
+        }
+
         try {
             if (messageType == MessageItem.TYPE_STICKER_COMMNET) {
                 fileDetailModel.deleteStickerComment(messageId, MessageItem.TYPE_STICKER_COMMNET);
@@ -435,7 +450,14 @@ public class FileDetailPresenter {
 
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
-            view.dismissProgress();
+
+            view.showCommentDeleteErrorToast();
+
+            if (adapterPosition > 0 && comment != null && comment.id > 0) {
+                view.addComment(adapterPosition, comment);
+                view.notifyDataSetChanged();
+            }
+
         }
     }
 
@@ -539,7 +561,7 @@ public class FileDetailPresenter {
 
         void showMoveToSharedTopicDialog(long entityId);
 
-        void showCheckNetworkDialog();
+        void showCheckNetworkDialog(boolean shouldFinishWhenConfirm);
 
         void showKeyboard();
 
@@ -580,6 +602,14 @@ public class FileDetailPresenter {
         void finish();
 
         void checkPermission(String persmissionString, Check.HasPermission hasPermission, Check.NoPermission noPermission);
+
+        Pair<Integer, ResMessages.OriginalMessage> getCommentInfo(long messageId);
+
+        void removeComment(int position);
+
+        void showCommentDeleteErrorToast();
+
+        void addComment(int adapterPosition, ResMessages.OriginalMessage comment);
     }
 
 }

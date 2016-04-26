@@ -28,6 +28,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.OptionsMenuItem;
@@ -44,6 +45,9 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
 
     public static final int TITLE_MAX_LENGTH = 60;
     public static final int DESCRIPTION_MAX_LENGTH = 300;
+
+    @Extra
+    String expectTopicName;
 
     @Bean(TopicCreatePresenterImpl.class)
     TopicCreatePresenter topicCreatePresenter;
@@ -86,6 +90,11 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
         setupActionBar();
         setTopicType(true);
 
+        if (!TextUtils.isEmpty(expectTopicName)) {
+            tvTitle.setText(expectTopicName);
+            tvTitle.setSelection(tvTitle.length());
+        }
+
         progressWheel = new ProgressWheel(TopicCreateActivity.this);
 
     }
@@ -109,9 +118,18 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
         finish();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        onTitleTextChange(tvTitle);
+        return true;
+    }
+
     @TextChange(R.id.et_topic_create_title)
     void onTitleTextChange(TextView textView) {
         // NullPointer 가 될 수 있음...?
+        setTitleCount(textView.length());
+
         if (menuCreatTopic == null) {
             return;
         }
@@ -123,7 +141,6 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
             menuCreatTopic.setEnabled(true);
         }
 
-        setTitleCount(textView.length());
     }
 
     @TextChange(R.id.et_topic_create_description)

@@ -53,6 +53,7 @@ import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
+import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
@@ -938,7 +939,7 @@ public class MessageListV2Fragment extends Fragment implements
     public void setUpNewMessage(List<ResMessages.Link> records, long myId,
                                 boolean isFirstLoad,
                                 boolean moveToLinkId) {
-        int location = records.size() - 1;
+        final int location = records.size() - 1;
         if (location < 0) {
             return;
         }
@@ -1061,7 +1062,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private void moveToMessage(long messageId, int firstVisibleItemTop) {
-        int itemPosition = messageAdapter.indexByMessageId(messageId);
+        int itemPosition = messageAdapter.getLastIndexByMessageId(messageId);
         layoutManager.scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
@@ -1614,6 +1615,19 @@ public class MessageListV2Fragment extends Fragment implements
         }
     }
 
+    public void onEvent(EntitiesUpdatedEvent event) {
+        if (messageAdapter == null || !isForeground) {
+            return;
+        }
+
+        notifyDataSetChanged();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void notifyDataSetChanged() {
+        messageAdapter.notifyDataSetChanged();
+    }
+
     public void onEvent(LinkPreviewUpdateEvent event) {
         long messageId = event.getMessageId();
 
@@ -1639,7 +1653,8 @@ public class MessageListV2Fragment extends Fragment implements
 
         if (event.getRoom().getId() == room.getRoomId()) {
             SocketRoomMarkerEvent.Marker marker = event.getMarker();
-            messageListPresenter.onRoomMarkerChange(marker.getMemberId(), marker.getLastLinkId());
+            messageListPresenter.onRoomMarkerChange(
+                    room.getTeamId(), room.getRoomId(), marker.getMemberId(), marker.getLastLinkId());
         }
     }
 
@@ -2238,7 +2253,6 @@ public class MessageListV2Fragment extends Fragment implements
     public void deleteLinkByMessageId(long messageId) {
         int position = messageAdapter.indexByMessageId(messageId);
         messageAdapter.remove(position);
-        saveCacheAndNotifyDataSetChanged(null);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

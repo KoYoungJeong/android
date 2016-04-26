@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.presenter;
 
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -12,6 +14,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.view.Joina
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -45,16 +48,29 @@ public class JoinableTopicListPresenterImpl implements JoinableTopicListPresente
         searchQueryQueueSubscription =
                 searchQueryQueue.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
                         .onBackpressureBuffer()
-                        .flatMap(query -> joinableTopicListModel.getSearchedTopics(query))
+                        .map(query -> Pair.create(query,
+                                joinableTopicListModel.getSearchedTopics(query)))
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(topics -> {
+                        .subscribe(pair -> {
                             view.dismissProgressWheel();
 
+                            String query = pair.first;
+                            List<Topic> topics = pair.second;
+
                             joinableTopicDataModel.clear();
+
                             if (topics == null || topics.isEmpty()) {
                                 view.notifyDataSetChanged();
+                                if (TextUtils.isEmpty(query)) {
+                                    view.showHasNoTopicToJoinErrorToast();
+                                    view.finish();
+                                } else {
+                                    view.showEmptyQueryMessage(query);
+                                }
                                 return;
                             }
+
+                            view.hideEmptyQueryMessage();
                             joinableTopicDataModel.setJoinableTopics(topics);
                             view.notifyDataSetChanged();
                         }, e -> {
