@@ -370,7 +370,7 @@ public class FileDetailModel {
         return Ion.with(JandiApplication.getContext())
                 .load(downloadUrl)
                 .progressHandler(progressCallback)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(JandiApplication.getContext()))
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
                 .write(new File(downloadPath)).setCallback(callback);
     }

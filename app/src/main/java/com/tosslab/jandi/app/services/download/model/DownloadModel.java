@@ -61,7 +61,7 @@ public class DownloadModel {
         return Ion.with(JandiApplication.getContext())
                 .load(downloadUrl)
                 .progress(downloadCallback)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(JandiApplication.getContext()))
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
                 .write(downloadTargetFile);
     }

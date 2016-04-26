@@ -53,6 +53,7 @@ import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
+import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
@@ -1612,6 +1613,19 @@ public class MessageListV2Fragment extends Fragment implements
         if (room.getRoomId() > 0) {
             messageListPresenter.addOldMessageQueue(true);
         }
+    }
+
+    public void onEvent(EntitiesUpdatedEvent event) {
+        if (messageAdapter == null || !isForeground) {
+            return;
+        }
+
+        notifyDataSetChanged();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void notifyDataSetChanged() {
+        messageAdapter.notifyDataSetChanged();
     }
 
     public void onEvent(LinkPreviewUpdateEvent event) {

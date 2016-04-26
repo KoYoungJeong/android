@@ -92,7 +92,7 @@ public class ResLeftSideMenu {
         public List<MessageMarker> u_messageMarkers;
         public List<Long> u_starredEntities;
         public List<Long> u_joinEntities;
-        public boolean profileUpdated;
+        public boolean profileUpdated = true;
         public List<Long> u_starredMessages;
         public String status;
     }

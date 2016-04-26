@@ -198,7 +198,7 @@ public class EntityClientManager {
     }
 
     public ResCommon deleteFile(final long fileId) throws RetrofitException {
-        return fileApi.get().deleteFile(selectedTeamId, fileId);
+        return fileApi.get().deleteFile(fileId, selectedTeamId);
     }
 
     public ResCommon modifyChannelDescription(long entityId, String description) throws RetrofitException {

@@ -139,7 +139,7 @@ public class JandiSocketServiceModel {
 
         String token = TokenUtil.getAccessToken();
         return new ConnectTeam(token,
-                UserAgentUtil.getDefaultUserAgent(context),
+                UserAgentUtil.getDefaultUserAgent(),
                 selectedTeamInfo.getTeamId(),
                 selectedTeamInfo.getName(),
                 selectedTeamInfo.getMemberId(), me.getName());
@@ -219,7 +219,7 @@ public class JandiSocketServiceModel {
             FileCommentRefreshEvent event = new FileCommentRefreshEvent(socketCommentEvent.getEvent(),
                     socketCommentEvent.getFile().getId(),
                     socketCommentEvent.getComment().getId(),
-                    TextUtils.equals(socketCommentEvent.getEvent(), "file_comment_deleted"));
+                    false /* isAdded */);
 
             List<SocketFileCommentDeleteEvent.Room> rooms = socketCommentEvent.getRooms();
             if (rooms != null && !rooms.isEmpty()) {

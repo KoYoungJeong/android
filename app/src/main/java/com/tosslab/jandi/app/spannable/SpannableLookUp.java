@@ -72,7 +72,7 @@ public class SpannableLookUp {
         try {
             RuleAnalysis ruleAnalysis = SpannableRule.Mention.getAnalysisClass().newInstance();
             ((MentionAnalysis) ruleAnalysis).setMentionAnalysisInfo(mentionAnalysisInfo);
-            ruleAnalysisList.add(Pair.create(ruleAnalysis, isPlainText));
+            ruleAnalysisList.add(0, Pair.create(ruleAnalysis, isPlainText));
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
         }

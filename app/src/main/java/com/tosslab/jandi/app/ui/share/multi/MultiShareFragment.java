@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -140,7 +142,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     @OnPageChange(R.id.vp_multi_share)
     void onFilePageSelected(int position) {
         multiSharePresenter.onFilePageChanged(position, etComment.getText().toString());
-
+        setActionbarTitle(position, vpShare.getAdapter().getCount());
     }
 
     @Override
@@ -197,6 +199,18 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         shareAdapterDataView.refresh();
 
         setUpScrollButton(0, pageCount);
+        setActionbarTitle(0, vpShare.getAdapter().getCount());
+    }
+
+    private void setActionbarTitle(int index, int childCount) {
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar == null) return;
+
+        String title = String.format("%s (%d/%d)",
+                getString(R.string.jandi_share_to_jandi),
+                index + 1,
+                childCount);
+        actionBar.setTitle(title);
     }
 
     @Override

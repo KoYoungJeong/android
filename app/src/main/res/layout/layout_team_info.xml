@@ -15,6 +15,7 @@
 
         <TextView
             android:id="@+id/tv_team_info_name"
+            android:singleLine="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/jandi_member_profile_user_name"
@@ -23,6 +24,9 @@
 
         <TextView
             android:id="@+id/tv_team_info_domain"
+            android:singleLine="true"
+            android:layout_below="@id/tv_team_info_name"
+            android:gravity="bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/tv_team_info_owner"
@@ -33,6 +37,7 @@
 
         <TextView
             android:id="@+id/tv_team_info_owner"
+            android:singleLine="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
