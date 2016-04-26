@@ -14,7 +14,7 @@
         app:navigationIcon="@drawable/actionbar_icon_remove"
         android:visibility="visible" />
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/lv_disabled_choose"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

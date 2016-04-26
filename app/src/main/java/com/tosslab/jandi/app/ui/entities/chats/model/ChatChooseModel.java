@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.entities.chats.model;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.BotEntity;
@@ -11,20 +10,13 @@ import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.domain.DisableDummyItem;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
 import rx.functions.Func2;
 
-@EBean
 public class ChatChooseModel {
-
-    @RootContext
-    Context context;
 
     private Func2<ChatChooseItem, ChatChooseItem, Integer> getChatItemComparator() {
         return (lhs, rhs) -> {
@@ -121,6 +113,7 @@ public class ChatChooseModel {
                             .enabled(formattedEntity.isEnabled())
                             .inactive(formattedEntity.isInavtived())
                             .email(formattedEntity.getUserEmail())
+                            .owner(formattedEntity.isTeamOwner())
                             .photoUrl(formattedEntity.getUserLargeProfileUrl());
 
                     return chatChooseItem;

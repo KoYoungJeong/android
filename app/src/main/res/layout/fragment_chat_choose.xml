@@ -37,8 +37,8 @@
 
     </RelativeLayout>
 
-    <ListView
-        android:id="@+id/list_chat_choose"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/lv_chat_choose"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/layout_search_bar"
@@ -47,8 +47,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/list_chat_choose"
-        android:layout_alignTop="@+id/list_chat_choose"
+        android:layout_alignBottom="@+id/lv_chat_choose"
+        android:layout_alignTop="@+id/lv_chat_choose"
         android:gravity="center">
 
         <include

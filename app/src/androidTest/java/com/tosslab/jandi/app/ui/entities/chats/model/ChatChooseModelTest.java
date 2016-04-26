@@ -38,7 +38,7 @@ public class ChatChooseModelTest {
     }
     @Before
     public void setUp() throws Exception {
-        chatChooseModel = ChatChooseModel_.getInstance_(JandiApplication.getContext());
+        chatChooseModel = new ChatChooseModel();
     }
 
 

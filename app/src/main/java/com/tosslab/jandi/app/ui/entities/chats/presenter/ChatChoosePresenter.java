@@ -1,12 +1,6 @@
 package com.tosslab.jandi.app.ui.entities.chats.presenter;
 
-import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
-
-import java.util.List;
-
 public interface ChatChoosePresenter {
-
-    void setView(View view);
 
     void initMembers();
 
@@ -16,10 +10,14 @@ public interface ChatChoosePresenter {
 
     void onMoveChatMessage(long entityId);
 
+    void onItemClick(int position);
+
     interface View {
 
-        void setUsers(List<ChatChooseItem> users);
-
         void moveChatMessage(long teamId, long entityId);
+
+        void refresh();
+
+        void MoveDisabledEntityList();
     }
 }
