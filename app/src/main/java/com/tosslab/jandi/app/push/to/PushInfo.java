@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.push.to;
 
+import com.tosslab.jandi.app.network.models.ResMessages;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -8,9 +10,7 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class PushInfo {
-    @JsonProperty("push_type")
-    private String pushType;
+public class PushInfo extends BasePushInfo {
     @JsonProperty("account_id")
     private String accountId;
     @JsonProperty("badge_count")
@@ -30,7 +30,7 @@ public class PushInfo {
     @JsonProperty("message_type")
     private String messageType;
     @JsonProperty("message_content")
-    private String messageContent;
+    private MessageContent messageContent;
     @JsonProperty("message_mentions")
     private List<Mention> mentions;
     @JsonProperty("message_feedback_id")
@@ -43,14 +43,6 @@ public class PushInfo {
     private String writerType;
     @JsonProperty("writer_thumb")
     private String writerThumb;
-
-    public String getPushType() {
-        return pushType;
-    }
-
-    public void setPushType(String pushType) {
-        this.pushType = pushType;
-    }
 
     public String getAccountId() {
         return accountId;
@@ -146,11 +138,11 @@ public class PushInfo {
         this.messageType = messageType;
     }
 
-    public String getMessageContent() {
+    public MessageContent getMessageContent() {
         return messageContent;
     }
 
-    public void setMessageContent(String messageContent) {
+    public void setMessageContent(MessageContent messageContent) {
         this.messageContent = messageContent;
     }
 
@@ -251,6 +243,29 @@ public class PushInfo {
                     ", offset=" + offset +
                     ", length=" + length +
                     '}';
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    public static class MessageContent {
+        private String body;
+        private List<ResMessages.ConnectInfo> connectInfos;
+
+        public String getBody() {
+            return body;
+        }
+
+        public void setBody(String body) {
+            this.body = body;
+        }
+
+        public List<ResMessages.ConnectInfo> getConnectInfos() {
+            return connectInfos;
+        }
+
+        public void setConnectInfos(List<ResMessages.ConnectInfo> connectInfos) {
+            this.connectInfos = connectInfos;
         }
     }
 }

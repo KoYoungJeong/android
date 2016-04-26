@@ -3,12 +3,13 @@ package com.tosslab.jandi.app.push.receiver;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.queue.PushHandler;
+import com.tosslab.jandi.app.push.to.BasePushInfo;
+import com.tosslab.jandi.app.push.to.MarkerPushInfo;
 import com.tosslab.jandi.app.push.to.PushInfo;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -17,11 +18,19 @@ import de.greenrobot.event.EventBus;
 
 public class JandiPushIntentService extends IntentService {
     public static final String TAG = "JANDI.JandiPushIntentService";
+    private static final String EXTRA_CONTENT = "content";
     private JandiPushReceiverModel jandiPushReceiverModel;
     private PushHandler pushHandler;
 
     public JandiPushIntentService() {
         super(TAG);
+    }
+
+    public static void startService(Context context, String customContent) {
+        Intent intent = new Intent(context, JandiPushIntentService.class);
+        intent.putExtra(EXTRA_CONTENT, customContent);
+
+        context.startService(intent);
     }
 
     @Override
@@ -39,13 +48,20 @@ public class JandiPushIntentService extends IntentService {
             return;
         }
 
-        Bundle extras = intent.getExtras();
+        String content = intent.getStringExtra(EXTRA_CONTENT);
 
-        PushInfo pushInfo = jandiPushReceiverModel.parsingPushTO(extras);
-        if (pushInfo == null) {
+        BasePushInfo basePushInfo = jandiPushReceiverModel.parsingPushTO(content);
+        if (basePushInfo == null) {
             LogUtil.e(TAG, "pushInfo == null");
             return;
         }
+
+        if (basePushInfo instanceof MarkerPushInfo) {
+            LogUtil.e(TAG, "except MarkderPushInfo");
+            return;
+        }
+
+        PushInfo pushInfo = (PushInfo) basePushInfo;
 
         if (!jandiPushReceiverModel.isPushForMyAccountId(pushInfo)) {
             LogUtil.e(TAG, "Push is not for me.");
@@ -63,7 +79,6 @@ public class JandiPushIntentService extends IntentService {
             return;
         }
 
-        long teamId = pushInfo.getTeamId();
         long roomId = pushInfo.getRoomId();
 
         boolean isShowingEntity = PushMonitor.getInstance().hasEntityId(roomId);

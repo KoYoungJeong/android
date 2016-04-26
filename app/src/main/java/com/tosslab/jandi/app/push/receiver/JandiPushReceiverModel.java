@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.SpannableStringBuilder;
@@ -25,10 +24,12 @@ import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.main.LeftSideApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
+import com.tosslab.jandi.app.push.to.BasePushInfo;
 import com.tosslab.jandi.app.push.to.PushInfo;
 import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
@@ -41,6 +42,7 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.SystemService;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -120,26 +122,32 @@ public class JandiPushReceiverModel {
     }
 
     public boolean isPushForMyAccountId(PushInfo pushInfo) {
-        return pushInfo.getAccountId() == AccountRepository.getRepository().getAccountInfo().getId();
+        return TextUtils.equals(pushInfo.getAccountId(), AccountRepository.getRepository().getAccountInfo().getId());
     }
 
-    public PushInfo parsingPushTO(Bundle content) {
-        if (content.size() == 0) {
+    public BasePushInfo parsingPushTO(String content) {
+        if (TextUtils.isEmpty(content)) {
             LogUtil.e(TAG, "extras has not data.");
             return null;
         }
 
+        try {
+            return JacksonMapper.getInstance().getObjectMapper().readValue(content, BasePushInfo.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        return new PushInfo();
+        return new BasePushInfo();
     }
 
     public void convertPlainMarkdownContent(Context context, PushInfo pushInfo) {
-        String content = pushInfo.getMessageContent();
+        PushInfo.MessageContent messageContent = pushInfo.getMessageContent();
+        String content = messageContent.getBody();
         SpannableStringBuilder contentWrapper = new SpannableStringBuilder(content);
         SpannableLookUp.text(contentWrapper)
                 .markdown(true)
                 .lookUp(context);
-        pushInfo.setMessageContent(contentWrapper.toString());
+        messageContent.setBody(contentWrapper.toString());
     }
 
     public ResLeftSideMenu getLeftSideMenuFromDB(long teamId) {
@@ -333,6 +341,7 @@ public class JandiPushReceiverModel {
                         .asBitmap()
                         .get();
             } catch (Exception e) {
+                LogUtil.e("Failed Notification Image", e);
             }
         }
 
@@ -348,7 +357,7 @@ public class JandiPushReceiverModel {
         int roomTypeInt = getEntityType(roomType);
         String roomName = getRoomName(context, pushInfo, roomTypeInt);
 
-        String message = pushInfo.getMessageContent();
+        String message = pushInfo.getMessageContent().getBody();
         String outMessage = getOutMessage(roomTypeInt, message);
 
 

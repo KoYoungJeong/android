@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.push.baidu.register;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.baidu.android.pushservice.PushMessageReceiver;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
@@ -41,10 +40,6 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
     @Override
     public void onBind(Context context, int errorCode, String appid,
                        String userId, String channelId, String requestId) {
-        String responseString = "onBind errorCode=" + errorCode + " appid="
-                + appid + " userId=" + userId + " channelId=" + channelId
-                + " requestId=" + requestId;
-        Log.d(TAG, responseString);
 
         if (errorCode == 0) {
             // channelId = push key
@@ -56,6 +51,8 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
     @Override
     public void onMessage(Context context, String message,
                           String customContentString) {
+
+
     }
 
     @Override
@@ -66,7 +63,6 @@ public class MyPushMessageReceiver extends PushMessageReceiver {
     @Override
     public void onNotificationArrived(Context context, String title,
                                       String description, String customContentString) {
-
     }
 
     @Override

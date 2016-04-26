@@ -38,7 +38,7 @@ public class PushHistoryRepository extends LockExecutorTemplate {
                 Dao<PushHistory, ?> dao = getHelper().getDao(PushHistory.class);
                 return dao.queryBuilder()
                         .where()
-                        .gt("messageId", messageId)
+                        .ge("messageId", messageId)
                         .countOf() <= 0;
             } catch (SQLException e) {
                 e.printStackTrace();
