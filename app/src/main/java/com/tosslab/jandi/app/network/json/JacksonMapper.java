@@ -1,10 +1,7 @@
 package com.tosslab.jandi.app.network.json;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-/**
- * Created by Steve SeongUg Jung on 15. 4. 13..
- */
 public class JacksonMapper {
     private static JacksonMapper jacksonMapper;
 
@@ -14,7 +11,7 @@ public class JacksonMapper {
         objectMapper = new ObjectMapper();
     }
 
-    public static JacksonMapper getInstance() {
+    synchronized public static JacksonMapper getInstance() {
         if (jacksonMapper == null) {
             jacksonMapper = new JacksonMapper();
         }

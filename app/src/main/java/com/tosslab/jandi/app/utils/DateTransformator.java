@@ -2,9 +2,8 @@ package com.tosslab.jandi.app.utils;
 
 import android.text.TextUtils;
 
+import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.tosslab.jandi.app.JandiApplication;
-
-import org.codehaus.jackson.map.util.ISO8601DateFormat;
 
 import java.text.DateFormat;
 import java.text.ParseException;

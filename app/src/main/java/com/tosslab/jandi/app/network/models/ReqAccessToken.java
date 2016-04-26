@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.models;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 11..
