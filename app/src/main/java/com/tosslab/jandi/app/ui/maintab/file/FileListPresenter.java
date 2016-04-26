@@ -138,44 +138,46 @@ public class FileListPresenter {
 
             fileSelector.dismiss();
 
-            AnalyticsValue.Action action;
-
+            AnalyticsValue.Label label;
             switch (position) {
                 default:
                 case 0:
-                    action = AnalyticsValue.Action.OpenTypeFilter_ChooseAllType;
+                    label = AnalyticsValue.Label.AllType;
                     break;
                 case 1:
-                    action = AnalyticsValue.Action.OpenTypeFilter_GoogleDocs;
+                    label = AnalyticsValue.Label.GoogleDocs;
                     break;
                 case 2:
-                    action = AnalyticsValue.Action.OpenTypeFilter_Words;
+                    label = AnalyticsValue.Label.Words;
                     break;
                 case 3:
-                    action = AnalyticsValue.Action.OpenTypeFilter_Presentations;
+                    label = AnalyticsValue.Label.Presentations;
                     break;
                 case 4:
-                    action = AnalyticsValue.Action.OpenTypeFilter_Spreadsheets;
+                    label = AnalyticsValue.Label.Spreadsheets;
                     break;
                 case 5:
-                    action = AnalyticsValue.Action.OpenTypeFilter_PDFs;
+                    label = AnalyticsValue.Label.PDFs;
                     break;
                 case 6:
-                    action = AnalyticsValue.Action.OpenTypeFilter_Images;
+                    label = AnalyticsValue.Label.Images;
                     break;
                 case 7:
-                    action = AnalyticsValue.Action.OpenTypeFilter_Videos;
+                    label = AnalyticsValue.Label.Videos;
                     break;
                 case 8:
-                    action = AnalyticsValue.Action.OpenTypeFilter_Audios;
+                    label = AnalyticsValue.Label.Audios;
                     break;
             }
 
+            AnalyticsValue.Screen screen;
             if (context instanceof SearchActivity) {
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, action);
+                screen = AnalyticsValue.Screen.FilesSearch;
             } else {
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, action);
+                screen = AnalyticsValue.Screen.FilesTab;
             }
+            AnalyticsValue.Action action = AnalyticsValue.Action.ChooseTypeFilter;
+            AnalyticsUtil.sendEvent(screen, action, label);
 
         });
 
@@ -220,18 +222,17 @@ public class FileListPresenter {
             }
             userSelector.dismiss();
 
+            AnalyticsValue.Screen screen;
             if (context instanceof SearchActivity) {
-                if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
-                } else {
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
-                }
+                screen = AnalyticsValue.Screen.FilesSearch;
             } else {
-                if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenMemberFilter_ChooseAllMember);
-                } else {
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenMemberFilter_ChooseMember);
-                }
+                screen = AnalyticsValue.Screen.FilesTab;
+            }
+
+            if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
+                AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseMemberFilter, AnalyticsValue.Label.AllMember);
+            } else {
+                AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseMemberFilter, AnalyticsValue.Label.Member);
             }
         });
 
@@ -285,22 +286,19 @@ public class FileListPresenter {
             EventBus.getDefault().post(new CategorizingAsEntity(sharedEntityId));
             roomSelector.dismiss();
 
+            AnalyticsValue.Screen screen;
             if (context instanceof SearchActivity) {
-                if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseAllTopic);
-                } else if (item.isUser()) {
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseMember);
-                } else {
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter_ChooseTopic);
-                }
+                screen = AnalyticsValue.Screen.FilesSearch;
             } else {
-                if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseAllTopic);
-                } else if (item.isUser()) {
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseMember);
-                } else {
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter_ChooseTopic);
-                }
+                screen = AnalyticsValue.Screen.FilesTab;
+            }
+
+            if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
+                AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseTopicFilter, AnalyticsValue.Label.AllTopic);
+            } else if (item.isUser()) {
+                AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseTopicFilter, AnalyticsValue.Label.Member);
+            } else {
+                AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseTopicFilter, AnalyticsValue.Label.Topic);
             }
         });
 

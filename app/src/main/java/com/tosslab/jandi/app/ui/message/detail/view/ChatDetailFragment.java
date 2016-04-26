@@ -124,11 +124,11 @@ public class ChatDetailFragment extends Fragment {
                 entityClientManager.disableFavorite(entityId);
 
                 topicDetailModel.trackTopicUnStarSuccess(entityId);
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.TurnOnStar);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.Off);
 
             } else {
                 entityClientManager.enableFavorite(entityId);
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.TurnOnStar);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.On);
 
                 topicDetailModel.trackTopicStarSuccess(entityId);
                 showSuccessToast(getString(R.string.jandi_message_starred));
