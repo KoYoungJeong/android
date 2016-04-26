@@ -14,6 +14,8 @@ public interface AccountHomePresenter {
 
     void setView(View view);
 
+    void onInitialize(boolean shouldRefreshAccountInfo);
+
     void onJoinedTeamSelect(long teamId, boolean firstJoin);
 
     void onCreateTeamSelect();

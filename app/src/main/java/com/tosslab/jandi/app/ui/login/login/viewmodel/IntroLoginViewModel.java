@@ -94,6 +94,7 @@ public class IntroLoginViewModel {
     @SupposeUiThread
     void moveToTeamSelectionActivity(String myEmailId) {
         AccountHomeActivity_.intent(activity)
+                .shouldRefreshAccountInfo(false)
                 .start();
         activity.overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
         activity.finish();
