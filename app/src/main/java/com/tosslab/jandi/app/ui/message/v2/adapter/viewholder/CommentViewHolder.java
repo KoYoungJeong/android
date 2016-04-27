@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -31,6 +30,7 @@ import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
@@ -49,7 +49,8 @@ import de.greenrobot.event.EventBus;
 public class CommentViewHolder extends BaseCommentViewHolder {
 
     private SimpleDraweeView ivMessageCommonFile;
-    private TextView tvCommonFileOwner;
+    private TextView tvFileUploaderName;
+    private TextView tvCommonFileSize;
     private TextView tvMessageBadge;
     private TextView tvMessageTime;
     private SimpleDraweeView ivProfileNestedCommentUserProfile;
@@ -64,6 +65,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     private boolean hasNestedProfile = false;
     private boolean hasOnlyBadge;
 
+
     private CommentViewHolder() {
     }
 
@@ -74,7 +76,8 @@ public class CommentViewHolder extends BaseCommentViewHolder {
         vgMessageCommonFile = (ViewGroup) rootView.findViewById(R.id.vg_message_common_file);
         ivMessageCommonFile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_common_file);
         tvMessageCommonFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
-        tvCommonFileOwner = (TextView) rootView.findViewById(R.id.tv_common_file_type);
+        tvFileUploaderName = (TextView) rootView.findViewById(R.id.tv_uploader_name);
+        tvCommonFileSize = (TextView) rootView.findViewById(R.id.tv_common_file_size);
         tvMessageBadge = (TextView) rootView.findViewById(R.id.tv_message_badge);
         tvMessageTime = (TextView) rootView.findViewById(R.id.tv_message_time);
         tvMessageBadge.setVisibility(View.GONE);
@@ -144,7 +147,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
             LinkifyUtil.addLinks(context, builder);
 
-            if(!hasOnlyBadge) {
+            if (!hasOnlyBadge) {
                 int startIndex = builder.length();
                 builder.append(DateTransformator.getTimeStringForSimple(commentMessage.createTime));
                 int endIndex = builder.length();
@@ -220,9 +223,13 @@ public class CommentViewHolder extends BaseCommentViewHolder {
         ResLeftSideMenu.User feedbackUser =
                 feedbackEntityById != EntityManager.UNKNOWN_USER_ENTITY ? feedbackEntityById.getUser() : null;
 
-        Spanned fileOwner = Html.fromHtml(
-                JandiApplication.getContext().getResources().getString(R.string.jandi_commented_on, feedbackUser.name));
-        tvCommonFileOwner.setText(fileOwner);
+        tvFileUploaderName.setText(feedbackUser.name);
+
+        ResMessages.FileContent fileContent = link.feedback.content;
+
+        String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
+
+        tvCommonFileSize.setText(fileSize);
 
         tvMessageTime.setText(DateTransformator.getTimeStringForSimple(link.time));
 
