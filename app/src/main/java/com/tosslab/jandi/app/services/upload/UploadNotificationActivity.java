@@ -31,7 +31,6 @@ public class UploadNotificationActivity extends BaseAppCompatActivity {
         Intent intent = new Intent(context, UploadNotificationActivity.class);
         intent.putExtra(EXTRA_TEAM_ID, teamId);
         intent.putExtra(EXTRA_ENTITY_ID, entityId);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);
     }
 

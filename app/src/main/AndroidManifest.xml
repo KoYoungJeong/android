@@ -80,6 +80,7 @@
             android:name=".services.upload.UploadNotificationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
+            android:launchMode="singleInstance"
             android:theme="@style/JandiTheme.PushIntro"/>
 
         <activity
