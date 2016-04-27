@@ -68,15 +68,38 @@
                     android:textSize="14dp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tv_common_file_type"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/tv_message_common_file_name"
                     android:layout_marginTop="6dp"
-                    android:text="file type"
-                    android:textColor="#999999"
-                    android:textSize="11dp" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_uploader_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="tee"
+                        android:textColor="#333333"
+                        android:textSize="11dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:text="|"
+                        android:textColor="#999999"
+                        android:textSize="11dp" />
+
+                    <TextView
+                        android:id="@+id/tv_common_file_size"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="file size"
+                        android:textColor="#999999"
+                        android:textSize="11dp" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

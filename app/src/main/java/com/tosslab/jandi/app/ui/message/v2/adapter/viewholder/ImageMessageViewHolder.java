@@ -194,7 +194,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             final ViewGroup.LayoutParams layoutParams = ivFileImage.getLayoutParams();
 
             ImageLoader.Builder imageRequestBuilder = ImageLoader.newBuilder();
-            imageRequestBuilder.error(R.drawable.preview_no_img, ScalingUtils.ScaleType.FIT_XY);
+            imageRequestBuilder.error(R.drawable.preview_no_img, ScalingUtils.ScaleType.CENTER_INSIDE);
 
             // 유효한 확장자가 아닌 경우, Local File Path 도 없고 Thumbnail Path 도 없는 경우
             boolean shouldSupportImageExtensions =
