@@ -169,7 +169,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     private PopupWindow teamsPopupWindow;
     private TeamsAdapter teamsAdapter;
     private ListScrollHandler listScrollHandler;
-    private boolean dontStopSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -507,8 +506,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
             moveSetProfileActivity();
         }
 
-        dontStopSocket = true;
-
         finish();
     }
 
@@ -638,9 +635,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @Override
     protected void onDestroy() {
         teamsPresenter.clearTeamInitializeQueue();
-        if (!dontStopSocket) {
-            JandiSocketService.stopService(this);
-        }
         super.onDestroy();
     }
 
