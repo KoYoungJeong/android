@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
-import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -31,7 +30,7 @@ public class UploadNotificationActivity extends BaseAppCompatActivity {
         Intent intent = new Intent(context, UploadNotificationActivity.class);
         intent.putExtra(EXTRA_TEAM_ID, teamId);
         intent.putExtra(EXTRA_ENTITY_ID, entityId);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);
     }
 
@@ -88,14 +87,12 @@ public class UploadNotificationActivity extends BaseAppCompatActivity {
                 .fromPush(true)
                 .start();
 
-        Intent intent = MessageListV2Activity_.intent(UploadNotificationActivity.this)
+        MessageListV2Activity_.intent(UploadNotificationActivity.this)
                 .teamId(teamId)
                 .entityId(entityId)
                 .isFromPush(false)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .get();
-
-        UnLockPassCodeManager.getInstance().unLockPassCodeFirstIfNeed(this, intent);
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
+                .start();
 
         finish();
 
