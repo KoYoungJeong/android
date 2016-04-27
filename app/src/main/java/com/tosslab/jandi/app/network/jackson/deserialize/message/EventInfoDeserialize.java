@@ -2,13 +2,12 @@ package com.tosslab.jandi.app.network.jackson.deserialize.message;
 
 import android.text.TextUtils;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tosslab.jandi.app.network.models.ResMessages;
-
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.JsonDeserializer;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -37,26 +36,26 @@ public class EventInfoDeserialize extends JsonDeserializer<ResMessages.EventInfo
         switch (eventType) {
 
             case AnnounceCreate:
-                return mapper.readValue(root, ResMessages.AnnouncementCreateEvent.class);
+                return mapper.treeToValue(root, ResMessages.AnnouncementCreateEvent.class);
             case AnnounceDelete:
-                return mapper.readValue(root, ResMessages.AnnouncementDeleteEvent.class);
+                return mapper.treeToValue(root, ResMessages.AnnouncementDeleteEvent.class);
             case AnnounceStatusUpdate:
-                return mapper.readValue(root, ResMessages.AnnouncementUpdateEvent.class);
+                return mapper.treeToValue(root, ResMessages.AnnouncementUpdateEvent.class);
             case Create:
-                return mapper.readValue(root, ResMessages.CreateEvent.class);
+                return mapper.treeToValue(root, ResMessages.CreateEvent.class);
             case Invite:
-                return mapper.readValue(root, ResMessages.InviteEvent.class);
+                return mapper.treeToValue(root, ResMessages.InviteEvent.class);
             case Leave:
-                return mapper.readValue(root, ResMessages.LeaveEvent.class);
+                return mapper.treeToValue(root, ResMessages.LeaveEvent.class);
             case Join:
-                return mapper.readValue(root, ResMessages.JoinEvent.class);
+                return mapper.treeToValue(root, ResMessages.JoinEvent.class);
             default:
                 return new ResMessages.EventInfo();
         }
     }
 
     public String getEventTypeValue(JsonNode root) {
-        Iterator<Map.Entry<String, JsonNode>> fields = root.getFields();
+        Iterator<Map.Entry<String, JsonNode>> fields = root.fields();
 
         String key;
         while (fields.hasNext()) {
@@ -64,7 +63,7 @@ public class EventInfoDeserialize extends JsonDeserializer<ResMessages.EventInfo
 
             key = next.getKey();
             if (TextUtils.equals(key, "eventType")) {
-                return next.getValue().getTextValue();
+                return next.getValue().textValue();
             }
         }
         return "";

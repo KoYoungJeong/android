@@ -1,13 +1,11 @@
 package com.tosslab.jandi.app.network.jackson.deserialize.message;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tosslab.jandi.app.network.models.ResMessages;
-
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.JsonDeserializer;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 
@@ -16,11 +14,11 @@ import java.io.IOException;
  */
 public class LinkShareEntityDeserializer extends JsonDeserializer<ResMessages.OriginalMessage.IntegerWrapper> {
     @Override
-    public ResMessages.OriginalMessage.IntegerWrapper deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public ResMessages.OriginalMessage.IntegerWrapper deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         ObjectMapper mapper = (ObjectMapper) jp.getCodec();
         JsonNode root = mapper.readTree(jp);
         ResMessages.OriginalMessage.IntegerWrapper integerWrapper = new ResMessages.OriginalMessage.IntegerWrapper();
-        integerWrapper.setShareEntity(root.getLongValue());
+        integerWrapper.setShareEntity(root.longValue());
         return integerWrapper;
     }
 }

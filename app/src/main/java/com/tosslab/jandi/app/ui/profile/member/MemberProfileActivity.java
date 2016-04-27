@@ -506,7 +506,10 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             if (!TextUtils.isEmpty(userPhoneNumber)) {
                 vgProfileTeamButtons.addView(
                         getButton(R.drawable.icon_profile_mobile,
-                                getString(R.string.jandi_member_profile_call), v -> callIfHasPermission()));
+                                getString(R.string.jandi_member_profile_call), v -> {
+                                    callIfHasPermission();
+                                    AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Call);
+                                }));
             }
 
             final String userEmail = member.getUserEmail();
@@ -671,7 +674,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 .permission(() -> Manifest.permission.CALL_PHONE)
                 .hasPermission(() -> {
                     call(EntityManager.getInstance().getEntityById(memberId).getUserPhoneNumber());
-                    AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Profile_Cellphone);
                 })
                 .noPermission(() -> {
                     String[] permissions = {Manifest.permission.CALL_PHONE};

@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -33,7 +32,6 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageLis
     @Override
     public HeaderViewHolder onCreateViewHolder(ViewGroup viewGroup) {
         View convertView = LayoutInflater.from(context).inflate(R.layout.item_message_header, viewGroup, false);
-
         return new HeaderViewHolder(convertView);
     }
 
@@ -48,7 +46,8 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageLis
             viewHolder.dateTextView.setText(DateTransformator.getTimeStringForDivider(headerId));
         }
 
-        viewHolder.vgHeaderWrapper.setBackgroundColor(Color.WHITE);
+        viewHolder.vgHeaderWrapper.setBackgroundColor(
+                context.getResources().getColor(R.color.transparent));
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.models;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Created by justinygchoi on 2014. 5. 28..

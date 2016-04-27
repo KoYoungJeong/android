@@ -247,9 +247,9 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
 
         if (checked) {
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TurnOnNotifications);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Notifications, AnalyticsValue.Label.On);
         } else {
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TurnOffNotifications);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Notifications, AnalyticsValue.Label.Off);
         }
     }
 

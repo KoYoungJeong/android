@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 
 public class MultiSharePresenterImpl implements MultiSharePresenter {
@@ -104,7 +105,6 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
 
     @Override
     public void initShareData(List<String> uris) {
-        shareAdapterDataModel.clear();
         view.showProgress();
         Observable.create(new Observable.OnSubscribe<FileShareData>() {
             @Override
@@ -138,8 +138,12 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                 })
                 .observeOn(Schedulers.computation())
                 .doOnNext(shareData -> comments.add(""))
+                .collect((Func0<List<ShareData>>) ArrayList::new, List::add)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(shareAdapterDataModel::add, t -> view.moveIntro(), () -> {
+                .subscribe(shareDatas -> {
+                    shareAdapterDataModel.clear();
+                    shareAdapterDataModel.addAll(shareDatas);
+                }, t -> view.moveIntro(), () -> {
                     ShareData item = shareAdapterDataModel.getShareData(0);
                     String fileName = getFileName(item.getData());
                     view.setFileTitle(fileName);

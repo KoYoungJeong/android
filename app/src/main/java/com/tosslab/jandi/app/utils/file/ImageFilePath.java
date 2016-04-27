@@ -162,12 +162,14 @@ public class ImageFilePath {
         try {
             cursor = context.getContentResolver().query(uri, projection, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
+                String fileName = cursor.getString(0);
                 String mimeType = cursor.getString(1);
                 String fileExt;
                 if (!TextUtils.isEmpty(mimeType)
                         && !TextUtils.equals("null", mimeType)) {
                     String extensionFromMimeType = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
-                    if (!TextUtils.isEmpty(extensionFromMimeType)) {
+                    if (!TextUtils.isEmpty(extensionFromMimeType)
+                            && fileName.lastIndexOf(extensionFromMimeType) <= 0) {
                         fileExt = "." + extensionFromMimeType;
                     } else {
                         fileExt = "";
@@ -175,7 +177,7 @@ public class ImageFilePath {
                 } else {
                     fileExt = "";
                 }
-                return cursor.getString(0) + fileExt;
+                return fileName + fileExt;
             }
 
         } catch (Exception e) {
@@ -234,11 +236,6 @@ public class ImageFilePath {
     private static String copyFileFromGoogleImage(Context context, Uri uri, String fileInfo) {
 
         String fileName = fileInfo;
-
-        StringBuilder filePathBuilder = new StringBuilder();
-        filePathBuilder.append(FileUtil.getDownloadPath())
-                .append("/")
-                .append(fileName);
 
         String filePath;
         InputStream inputStream = null;

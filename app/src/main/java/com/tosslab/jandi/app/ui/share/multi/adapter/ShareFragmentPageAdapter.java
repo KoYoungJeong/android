@@ -62,6 +62,11 @@ public class ShareFragmentPageAdapter extends FragmentStatePagerAdapter implemen
     }
 
     @Override
+    public void addAll(List<ShareData> shareDatas) {
+        this.shareDatas.addAll(shareDatas);
+    }
+
+    @Override
     public void refresh() {
         notifyDataSetChanged();
     }

@@ -6,13 +6,14 @@
 
     <RelativeLayout
         android:id="@+id/vg_linkpreview_thumb"
-        android:layout_width="@dimen/jandi_messages_link_preview_thumb_max_width"
-        android:layout_height="110dp">
+        android:layout_width="wrap_content"
+        android:layout_height="120dp">
 
         <com.tosslab.jandi.app.views.FrescoImageView
             android:id="@+id/iv_linkpreview_thumb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+
             freco:backgroundImage="@color/jandi_linkpreview_thumb_background" />
 
         <View
@@ -21,40 +22,35 @@
             android:background="@drawable/bg_rect_gray" />
     </RelativeLayout>
 
-    <View
-        android:id="@+id/v_snippet_line"
-        android:layout_width="5dp"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/vg_snippet_summary"
-        android:layout_alignTop="@+id/vg_snippet_summary"
-        android:layout_below="@id/vg_linkpreview_thumb"
-        android:background="@color/jandi_light_gray_border" />
-
     <LinearLayout
         android:id="@+id/vg_snippet_summary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/vg_linkpreview_thumb"
         android:layout_below="@id/vg_linkpreview_thumb"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_toRightOf="@id/v_snippet_line"
-        android:orientation="vertical">
+        android:layout_marginTop="6dp"
+        android:background="@drawable/bg_round_bottom_white_for_message"
+        android:orientation="vertical"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp">
 
         <TextView
             android:id="@+id/tv_linkpreview_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
+            android:lineSpacingExtra="1dp"
             android:maxLines="2"
             android:text="Rock Formation Image, Galapagos Islands - National bla blaa bla bla bla blab albalblablblbla"
             android:textColor="@android:color/black"
-            android:textSize="17dp"
+            android:textSize="14dp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_linkpreview_domain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:ellipsize="end"
             android:singleLine="true"
             android:text="National Geographic"
@@ -65,11 +61,13 @@
             android:id="@+id/tv_linkpreview_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="9dp"
             android:ellipsize="end"
             android:singleLine="true"
             android:text="Sunlight paints a rock formation in the world"
             android:textColor="@android:color/black"
-            android:textSize="13dp" />
+            android:textSize="11dp" />
 
     </LinearLayout>
 </RelativeLayout>

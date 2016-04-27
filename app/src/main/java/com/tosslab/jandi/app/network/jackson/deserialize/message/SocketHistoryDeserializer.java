@@ -2,23 +2,18 @@ package com.tosslab.jandi.app.network.jackson.deserialize.message;
 
 import android.text.TextUtils;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.JsonDeserializer;
-import org.codehaus.jackson.map.ObjectMapper;
-
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
-
-/**
- * Created by tee on 15. 11. 19..
- */
 
 public class SocketHistoryDeserializer extends JsonDeserializer<ResEventHistory.EventHistoryInfo> {
 
@@ -36,7 +31,7 @@ public class SocketHistoryDeserializer extends JsonDeserializer<ResEventHistory.
     }
 
     public String getEventTypeValue(JsonNode root) {
-        Iterator<Map.Entry<String, JsonNode>> fields = root.getFields();
+        Iterator<Map.Entry<String, JsonNode>> fields = root.fields();
 
         String key;
         while (fields.hasNext()) {
@@ -44,7 +39,7 @@ public class SocketHistoryDeserializer extends JsonDeserializer<ResEventHistory.
 
             key = next.getKey();
             if (TextUtils.equals(key, "event")) {
-                return next.getValue().getTextValue();
+                return next.getValue().textValue();
             }
         }
         return "";
@@ -73,7 +68,7 @@ public class SocketHistoryDeserializer extends JsonDeserializer<ResEventHistory.
         LogUtil.e("eventType", eventType.getRawType());
         switch (eventType) {
             case FileUnshared:
-                return mapper.readValue(root, SocketFileUnsharedEvent.class);
+                return mapper.treeToValue(root, SocketFileUnsharedEvent.class);
             default:
                 return new ResEventHistory.EventHistoryInfo();
         }

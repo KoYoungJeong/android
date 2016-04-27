@@ -5,6 +5,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,11 +20,11 @@ import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.UnreadCountUtil;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
-import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 import de.greenrobot.event.EventBus;
 
@@ -37,20 +38,48 @@ public class JandiBotViewHolder implements BodyViewHolder {
     private LinkPreviewViewModel linkPreviewViewModel;
     private View vLastRead;
     private View contentView;
+    private boolean hasOnlyBadge;
+    private boolean hasBottomMargin;
+    private View vMargin;
+    private TextView tvMessageTime;
+    private TextView tvMessageBadge;
+    private boolean hasBotProfile;
+    private ViewGroup vgUserName;
+
+    private JandiBotViewHolder() {
+    }
 
     @Override
     public void initView(View rootView) {
-        contentView = rootView.findViewById(R.id.vg_message_item);
+        contentView = rootView.findViewById(R.id.vg_dummy_message_item);
         ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
+        vgUserName = (ViewGroup) rootView.findViewById(R.id.vg_message_profile_user_name);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
         vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+        vMargin = rootView.findViewById(R.id.v_margin);
+        tvMessageTime = (TextView) rootView.findViewById(R.id.tv_message_time);
+        tvMessageBadge = (TextView) rootView.findViewById(R.id.tv_message_badge);
         context = rootView.getContext();
 
         linkPreviewViewModel = new LinkPreviewViewModel(context);
         linkPreviewViewModel.initView(rootView);
         vLastRead = rootView.findViewById(R.id.vg_message_last_read);
+
+        if (hasBottomMargin) {
+            vMargin.setVisibility(View.VISIBLE);
+        } else {
+            vMargin.setVisibility(View.GONE);
+        }
+
+        if (hasBotProfile) {
+            ivProfile.setVisibility(View.VISIBLE);
+            vgUserName.setVisibility(View.VISIBLE);
+        } else {
+            ivProfile.setVisibility(View.INVISIBLE);
+            vgUserName.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -80,6 +109,7 @@ public class JandiBotViewHolder implements BodyViewHolder {
         }
 
         tvName.setText(bot.name);
+
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
@@ -119,21 +149,19 @@ public class JandiBotViewHolder implements BodyViewHolder {
             int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
                     link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
 
-            if (unreadCount > 0) {
-                NameSpannable unreadCountSpannable =
-                        new NameSpannable(
-                                context.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_small)
-                                , context.getResources().getColor(R.color.jandi_accent_color));
-                int beforeLength = messageStringBuilder.length();
-                messageStringBuilder.append(" ");
-                messageStringBuilder.append(String.valueOf(unreadCount))
-                        .setSpan(unreadCountSpannable, beforeLength, messageStringBuilder.length(),
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if (!hasOnlyBadge) {
+                tvMessageTime.setVisibility(View.VISIBLE);
+                tvMessageTime.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
+            } else {
+                tvMessageTime.setVisibility(View.GONE);
             }
 
-            tvMessage.setText(messageStringBuilder);
+            if (unreadCount > 0) {
+                tvMessageBadge.setText(String.valueOf(unreadCount));
+            }
 
         }
+
         ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(bot.id, ShowProfileEvent.From.Image)));
         tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(bot.id, ShowProfileEvent.From.Name)));
 
@@ -151,7 +179,7 @@ public class JandiBotViewHolder implements BodyViewHolder {
 
     @Override
     public int getLayoutId() {
-        return R.layout.item_message_jandi_bot_msg_v2;
+        return R.layout.item_message_jandi_bot_msg_v3;
     }
 
     @Override
@@ -167,4 +195,47 @@ public class JandiBotViewHolder implements BodyViewHolder {
             contentView.setOnLongClickListener(itemLongClickListener);
         }
     }
+
+    public void setHasOnlyBadge(boolean hasOnlyBadge) {
+        this.hasOnlyBadge = hasOnlyBadge;
+    }
+
+    public void setHasBottomMargin(boolean hasBottomMargin) {
+        this.hasBottomMargin = hasBottomMargin;
+    }
+
+    public void setHasBotProfile(boolean hasBotProfile) {
+        this.hasBotProfile = hasBotProfile;
+    }
+
+    public static class Builder extends BaseViewHolderBuilder {
+//        private boolean hasBottomMargin = false;
+//        private boolean hasOnlyBadge = false;
+//        private boolean hasProfile = false;
+//
+//        public Builder setHasBottomMargin(boolean hasBottomMargin) {
+//            this.hasBottomMargin = hasBottomMargin;
+//            return this;
+//        }
+//
+//        public Builder setHasOnlyBadge(boolean hasOnlyBadge) {
+//            this.hasOnlyBadge = hasOnlyBadge;
+//            return this;
+//        }
+//
+//        public Builder setHasBotProfile(boolean hasProfile) {
+//            this.hasProfile = hasProfile;
+//            return this;
+//        }
+
+
+        public JandiBotViewHolder build() {
+            JandiBotViewHolder jandiBotViewHolder = new JandiBotViewHolder();
+            jandiBotViewHolder.setHasOnlyBadge(hasOnlyBadge);
+            jandiBotViewHolder.setHasBottomMargin(hasBottomMargin);
+            jandiBotViewHolder.setHasBotProfile(hasProfile);
+            return jandiBotViewHolder;
+        }
+    }
+
 }

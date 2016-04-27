@@ -48,6 +48,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
@@ -68,6 +69,9 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
     private static final int REQ_TEAM_CREATE = 101;
     private static final int REQ_EMAIL_CHOOSE = 201;
     private static final int REQ_TEAM_JOIN = 301;
+
+    @Extra
+    boolean shouldRefreshAccountInfo = true;
 
     @Bean(AccountHomePresenterImpl.class)
     AccountHomePresenter accountHomePresenter;
@@ -94,6 +98,8 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
 
         progressWheel = new ProgressWheel(AccountHomeActivity.this);
         setUpActionBar();
+
+        accountHomePresenter.onInitialize(shouldRefreshAccountInfo);
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.AccountHome);
     }
@@ -286,6 +292,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
                 .startForResult(REQ_EMAIL_CHOOSE);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setUserEmailText(String email) {
         tvEmail.setText(email);
@@ -336,6 +343,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
                 .create().show();
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void invalidAccess() {
         finish();

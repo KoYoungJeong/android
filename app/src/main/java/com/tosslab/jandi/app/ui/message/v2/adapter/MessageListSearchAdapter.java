@@ -18,8 +18,8 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.Divider;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.TypeUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
@@ -166,10 +166,6 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
         BodyViewHolder bodyViewHolder = viewHolder.getViewHolder();
         bodyViewHolder.bindData(item, teamId, roomId, entityId);
 
-        if (bodyViewHolder instanceof Divider) {
-            ((Divider) bodyViewHolder).setUpDividerVisible();
-        }
-
         if (item.id == lastMarker) {
             if (markerAnimState == MessageListSearchAdapter.AnimState.Idle) {
                 final View view = viewHolder.itemView;
@@ -242,7 +238,7 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
             nextLink = getItem(position + 1);
         }
 
-        return BodyViewFactory.getContentType(previousLink, currentLink, nextLink).ordinal();
+        return BodyViewFactory.getContentType(previousLink, currentLink, nextLink);
     }
 
     public ResMessages.Link getItem(int position) {
@@ -285,7 +281,8 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
         int count = getItemCount();
         for (int idx = 0; idx < count; idx++) {
             int itemViewType = getItemViewType(idx);
-            if (itemViewType == BodyViewHolder.Type.FileComment.ordinal() || itemViewType == BodyViewHolder.Type.PureComment.ordinal()) {
+            if (TypeUtil.hasTypeElement(itemViewType, TypeUtil.TYPE_VIEW_MESSAGE_COMMENT)
+                    || TypeUtil.hasTypeElement(itemViewType, TypeUtil.TYPE_VIEW_STICKER_COMMENT)) {
                 ResMessages.Link item = getItem(idx);
                 if (item.message.feedbackId == messageId) {
                     indexList.add(idx);

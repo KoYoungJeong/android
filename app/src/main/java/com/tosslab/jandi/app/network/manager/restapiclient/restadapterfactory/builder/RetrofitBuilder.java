@@ -2,10 +2,8 @@ package com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.b
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor.ResponseConverter;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor.RestAdapterDecor;
-import java.util.ArrayList;
-import java.util.List;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor.JacksonConverter;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 
@@ -37,18 +35,14 @@ public class RetrofitBuilder {
     }
 
     private Retrofit initRetrofit() {
-        List<RestAdapterDecor> restAdapterDecors = new ArrayList<>();
-        restAdapterDecors.add(new ResponseConverter());
 
         Retrofit.Builder retofitBuilder = new Retrofit.Builder()
-                .baseUrl(JandiConstantsForFlavors.SERVICE_INNER_API_URL);
+                .baseUrl(JandiConstantsForFlavors.SERVICE_INNER_API_URL)
+                .addConverterFactory(JacksonConverter.create());
 
         OkHttpClient okHttpClient = JandiApplication.getOkHttpClient();
-
         retofitBuilder.client(okHttpClient);
-        for (RestAdapterDecor restAdapterDecor : restAdapterDecors) {
-            retofitBuilder = restAdapterDecor.addRestAdapterProperty(retofitBuilder);
-        }
+
         return retofitBuilder.build();
     }
 

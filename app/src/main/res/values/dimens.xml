@@ -29,18 +29,19 @@
 
     <!-- Messages -->
     <!--// 글씨 크기-->
-    <dimen name="jandi_messages_user_name">18sp</dimen>
-    <dimen name="jandi_messages_date_divider">14sp</dimen>
+    <dimen name="jandi_messages_user_name">13sp</dimen>
+    <dimen name="jandi_messages_date_divider">12sp</dimen>
     <dimen name="jandi_messages_date">12sp</dimen>
     <dimen name="jandi_messages_content">14sp</dimen>
+    <dimen name="jandi_system_message_content">11dp</dimen>
     <dimen name="jandi_messages_joined_cdp">12sp</dimen>
     <!--// 이미지 및 간격-->
     <dimen name="jandi_messages_profile_size">32dp</dimen>
     <dimen name="jandi_messages_padding_left">15dp</dimen>
     <dimen name="jandi_messages_padding_right">16dp</dimen>
-    <dimen name="jandi_messages_profile_margin_right">11dp</dimen>
+    <dimen name="jandi_messages_profile_margin_right">7dp</dimen>
     <dimen name="jandi_messages_date_margin_left">6dp</dimen>
-    <dimen name="jandi_messages_default_margin_bottom">12dp</dimen>
+    <dimen name="jandi_messages_default_margin_bottom">5dp</dimen>
     <!--// 사진 파일일 경우-->
     <dimen name="jandi_messages_image_size">50dp</dimen>
     <dimen name="jandi_messages_file_icon_width">24dp</dimen>
@@ -113,6 +114,7 @@
     <dimen name="jandi_text_size_large">16sp</dimen>
     <dimen name="jandi_text_size_medium">14sp</dimen>
     <dimen name="jandi_text_size_small">12sp</dimen>
+    <dimen name="jandi_comment_text_size">11dp</dimen>
     <dimen name="jandi_text_size_11sp">11sp</dimen>
     <dimen name="jandi_text_size_smaller">10sp</dimen>
     <dimen name="jandi_progress_size">20dp</dimen>
@@ -140,6 +142,7 @@
     <dimen name="jandi_mention_edit_text_item_font_size">18sp</dimen>
     <dimen name="jandi_mention_message_item_font_size">15sp</dimen>
     <dimen name="jandi_mention_comment_item_font_size">12sp</dimen>
+    <dimen name="jandi_mention_message_view_comment_item_font_size">11dp</dimen>
     <dimen name="jandi_mention_star_list_item_font_size">13sp</dimen>
 
     <!-- star list -->

@@ -1,6 +1,11 @@
 package com.tosslab.jandi.app.ui.maintab.topic.adapter.updated;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -33,6 +38,11 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<Topic> topicItemDataList;
     private OnRecyclerItemClickListener onRecyclerItemClickListener;
     private OnRecyclerItemLongClickListener onRecyclerItemLongClickListener;
+    private long selectedEntity = -1;
+
+    private AnimStatus animStatus = AnimStatus.READY;
+    private ValueAnimator colorAnimator;
+
 
     public UpdatedTopicAdapter(Context context) {
         this.context = context;
@@ -58,14 +68,6 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else {
             return TYPE_JOIN_TOPIC;
         }
-    }
-
-    public void addAll(List<Topic> topicItemDatas) {
-        topicItemDataList.addAll(topicItemDatas);
-    }
-
-    public void clear() {
-        topicItemDataList.clear();
     }
 
     public Topic getItem(int position) {
@@ -146,6 +148,10 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return false;
         });
 
+        boolean isSelectedEntity = item.getEntityId() == selectedEntity;
+        if (isSelectedEntity && animStatus == AnimStatus.READY) {
+            animateForSelectedEntity(updatedHolder.vAnimator);
+        }
     }
 
     public void setOnRecyclerItemClickListener(OnRecyclerItemClickListener onRecyclerItemClickListener) {
@@ -159,6 +165,67 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public List<Topic> getItems() {
         return Collections.unmodifiableList(topicItemDataList);
     }
+
+    public void setSelectedEntity(long selectedEntity) {
+        this.selectedEntity = selectedEntity;
+        animStatus = AnimStatus.IDLE;
+    }
+
+    private void animateForSelectedEntity(final View targetView) {
+        Context context = targetView.getContext();
+
+        animStatus = AnimStatus.IN_ANIM;
+        Integer colorFrom = Color.TRANSPARENT;
+        Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_1f);
+
+        colorAnimator = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnimator.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
+        colorAnimator.setRepeatMode(ValueAnimator.REVERSE);
+        colorAnimator.setRepeatCount(1);
+        colorAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                animStatus = AnimStatus.FINISH;
+                targetView.setBackgroundColor(Color.TRANSPARENT);
+                colorAnimator.removeAllListeners();
+            }
+        });
+        colorAnimator.addUpdateListener(animation ->
+                targetView.setBackgroundColor((Integer) animation.getAnimatedValue()));
+        colorAnimator.start();
+    }
+
+
+    public void startAnimation() {
+        if (animStatus == AnimStatus.IDLE) {
+            animStatus = AnimStatus.READY;
+        }
+    }
+
+    public boolean isIdleOfAnim() {
+        return animStatus == AnimStatus.IDLE;
+    }
+
+    public long getSelectedEntity() {
+        return selectedEntity;
+    }
+
+    public int indexOfEntity(long entityId) {
+        int itemCount = getItemCount();
+        for (int idx = 0; idx < itemCount; idx++) {
+            Topic item = getItem(idx);
+            if (item != null
+                    && item.getEntityId() == entityId) {
+                return idx;
+            }
+        }
+        return -1;
+    }
+
+    public void setItems(List<Topic> topics) {
+        this.topicItemDataList = topics;
+    }
+
 
     static class UpdatedTopicItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -195,6 +262,10 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    private enum AnimStatus {
+        READY, IN_ANIM, FINISH, IDLE
     }
 
 }

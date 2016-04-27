@@ -39,4 +39,20 @@ public class DateComparatorUtil {
         return time.before(before30days);
 
     }
+
+    public static boolean isSameTime(Date time1, Date time2) {
+        if (time1 == null) {
+            return false;
+        }
+
+        if (time2 == null) {
+            return false;
+        }
+
+        if (time1.getTime() / (1000l * 60l) == time2.getTime() / (1000l * 60l)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
