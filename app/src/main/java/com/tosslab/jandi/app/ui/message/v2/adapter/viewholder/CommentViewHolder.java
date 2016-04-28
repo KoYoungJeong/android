@@ -257,8 +257,6 @@ public class CommentViewHolder extends BaseCommentViewHolder {
                 }
             }
 
-            tvMessageCommonFileName.setTypeface(null, Typeface.BOLD);
-
             final Resources resources = tvMessageCommonFileName.getResources();
             if (TextUtils.equals(link.feedback.status, "archived")) {
                 tvMessageCommonFileName.setText(R.string.jandi_deleted_file);
@@ -309,7 +307,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
                             .into(ivMessageCommonFile);
                 } else {
                     tvMessageCommonFileName.setText(content.title);
-                    tvMessageCommonFileName.setTextColor(resources.getColor(R.color.jandi_messages_file_name));
+                    tvMessageCommonFileName.setTextColor(resources.getColor(R.color.dark_gray));
 
                     String serverUrl = content.serverUrl;
                     String fileType = content.icon;
