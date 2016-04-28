@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.presenter.IntroActivityPresenter;
@@ -42,6 +41,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setNeedUnLockPassCode(false);
+        setShouldReconnectSocketService(false);
     }
 
     @AfterViews
@@ -78,8 +78,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     @Override
     public void moveToIntroTutorialActivity() {
         // Move TutorialActivity
-        JandiSocketService.stopService(IntroActivity.this);
-
         IntroMainActivity_
                 .intent(IntroActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)

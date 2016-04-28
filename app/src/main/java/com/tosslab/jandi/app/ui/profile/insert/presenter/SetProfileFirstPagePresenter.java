@@ -64,8 +64,8 @@ public class SetProfileFirstPagePresenter {
     public void updateProfileName(String name) {
         view.showProgressWheel();
         try {
-            model.updateProfileName(new ReqProfileName(name));
             view.displayProfileName(name);
+            model.updateProfileName(new ReqProfileName(name));
         } catch (RetrofitException e) {
             e.printStackTrace();
             view.updateProfileFailed();

@@ -6,7 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
-import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel_;
+import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -71,6 +71,6 @@ public class DisabledEntityChooseActivityTest {
     }
 
     private List<ChatChooseItem> getEnabledUsers() {
-        return ChatChooseModel_.getInstance_(JandiApplication.getContext()).getUsers();
+        return new ChatChooseModel().getUsers();
     }
 }

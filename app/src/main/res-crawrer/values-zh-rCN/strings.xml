@@ -227,6 +227,7 @@
 	<string name="jandi_file_upload_state">"上传文件中 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"文件上传成功"</string>
 	<string name="jandi_file_uploading">"上传"</string>
+	<string name="jandi_fingerprint_cannot_do_temporary">"NEW KEY"</string>
 	<string name="jandi_folder_alread_has_name">"这名称已被使用"</string>
 	<string name="jandi_folder_ask_delete">"你确定要删除此文件夹？"</string>
 	<string name="jandi_folder_choose">"选择文件夹"</string>

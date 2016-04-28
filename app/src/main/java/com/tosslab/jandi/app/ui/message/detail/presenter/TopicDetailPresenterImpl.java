@@ -110,13 +110,13 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
                 topicDetailModel.trackTopicUnStarSuccess(entityId);
                 view.showSuccessToast(context.getString(R.string.jandi_starred_unstarred));
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TurnOffStar);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.Off);
             } else {
                 entityClientManager.enableFavorite(entityId);
 
                 topicDetailModel.trackTopicStarSuccess(entityId);
                 view.showSuccessToast(context.getString(R.string.jandi_message_starred));
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TurnOnStar);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.On);
             }
 
             EntityManager.getInstance().getEntityById(entityId).isStarred = !isStarred;

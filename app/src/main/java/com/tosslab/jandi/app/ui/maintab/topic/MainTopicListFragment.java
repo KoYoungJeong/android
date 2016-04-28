@@ -90,6 +90,7 @@ public class MainTopicListFragment extends Fragment
         implements MainTopicListPresenter.View, ListScroller {
 
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
+    private static final int MOVE_MESSAGE_ACTIVITY = 702;
 
     @FragmentArg
     long selectedEntity = -2;
@@ -107,7 +108,6 @@ public class MainTopicListFragment extends Fragment
 
 
     private ProgressWheel progressWheel;
-    private boolean hasOnResumed = false;
     private FloatingActionMenu floatingActionMenu;
 
     private AlertDialog createFolderDialog;
@@ -152,7 +152,46 @@ public class MainTopicListFragment extends Fragment
         progressWheel = new ProgressWheel(getActivity());
     }
 
-    public void setFloatingActionMenu() {
+    @AfterInject
+    void initObjects() {
+        mainTopicListPresenter.setView(this);
+    }
+
+    @AfterViews
+    void initViews() {
+        lvMainTopic.setLayoutManager(layoutManager);
+        initUpdatedTopicAdapter();
+        mainTopicListPresenter.onLoadList();
+        mainTopicListPresenter.initUpdatedTopicList();
+        mainTopicListPresenter.onInitViewList();
+        if (selectedEntity > 0) {
+            setSelectedItem(selectedEntity);
+            if (isCurrentFolder()) {
+                scrollAndAnimateForSelectedItem();
+            } else {
+                scrollForUpdate();
+            }
+        }
+        FAButtonUtil.setFAButtonController(lvMainTopic, floatingActionMenu);
+    }
+
+    private void initUpdatedTopicAdapter() {
+        updatedTopicAdapter = new UpdatedTopicAdapter(getActivity());
+        updatedTopicAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
+            Topic item = ((UpdatedTopicAdapter) adapter).getItem(position);
+            mainTopicListPresenter.onUpdatedTopicClick(item);
+            updatedTopicAdapter.notifyDataSetChanged();
+        });
+
+        updatedTopicAdapter.setOnRecyclerItemLongClickListener((view, adapter, position) -> {
+            Topic item = ((UpdatedTopicAdapter) adapter).getItem(position);
+            mainTopicListPresenter.onUpdatedTopicLongClick(item);
+            updatedTopicAdapter.notifyDataSetChanged();
+            return false;
+        });
+    }
+
+    private void setFloatingActionMenu() {
         floatingActionMenu.addItem(R.drawable.btn_fab_item_folder_setting,
                 getResources().getString(R.string.jandi_setting_folder), () -> {
                     if (floatingActionMenu.isOpened()) {
@@ -184,34 +223,6 @@ public class MainTopicListFragment extends Fragment
 
     }
 
-    @AfterInject
-    void initObjects() {
-        mainTopicListPresenter.setView(this);
-        updatedTopicAdapter = new UpdatedTopicAdapter(getActivity());
-        updatedTopicAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
-            Topic item = ((UpdatedTopicAdapter) adapter).getItem(position);
-            mainTopicListPresenter.onUpdatedTopicClick(item);
-            updatedTopicAdapter.notifyDataSetChanged();
-        });
-
-        updatedTopicAdapter.setOnRecyclerItemLongClickListener((view, adapter, position) -> {
-            Topic item = ((UpdatedTopicAdapter) adapter).getItem(position);
-            mainTopicListPresenter.onUpdatedTopicLongClick(item);
-            updatedTopicAdapter.notifyDataSetChanged();
-            return false;
-        });
-    }
-
-    @AfterViews
-    void initViews() {
-        lvMainTopic.setLayoutManager(layoutManager);
-        mainTopicListPresenter.onLoadList();
-        mainTopicListPresenter.onRefreshUpdatedTopicList();
-        mainTopicListPresenter.onInitViewList();
-        FAButtonUtil.setFAButtonController(lvMainTopic, floatingActionMenu);
-        hasOptionsMenu();
-    }
-
     private void launchCreateTopicActivity() {
         Observable.just(1)
                 .delay(250, TimeUnit.MILLISECONDS)
@@ -227,7 +238,6 @@ public class MainTopicListFragment extends Fragment
                 });
     }
 
-
     private void launchFolderSettionActivity() {
         Observable.just(1)
                 .delay(250, TimeUnit.MILLISECONDS)
@@ -242,6 +252,7 @@ public class MainTopicListFragment extends Fragment
                 });
     }
 
+
     @OptionsItem(R.id.action_main_search)
     void onSearchOptionSelect() {
         SearchActivity_.intent(getActivity())
@@ -254,16 +265,13 @@ public class MainTopicListFragment extends Fragment
     public void changeTopicSort(boolean currentFolder, boolean changeToFolder) {
         if (currentFolder && !changeToFolder) {
             lvMainTopic.setAdapter(updatedTopicAdapter);
-            mainTopicListPresenter.onRefreshUpdatedTopicList();
             tvSortTitle.setText(R.string.jandi_sort_updated);
         } else if (!currentFolder && changeToFolder) {
             lvMainTopic.setAdapter(wrappedAdapter);  // requires *wrapped* expandableTopicAdapter
             lvMainTopic.setHasFixedSize(false);
-            mainTopicListPresenter.refreshList();
             tvSortTitle.setText(R.string.jandi_sort_folder);
         }
     }
-
 
     @Click(R.id.vg_main_topic_order_title)
     void onOrderTitleClick() {
@@ -282,6 +290,7 @@ public class MainTopicListFragment extends Fragment
         }
     }
 
+
     private boolean isCurrentFolder() {
         RecyclerView.Adapter adapter = lvMainTopic.getAdapter();
         return adapter != null && !(adapter instanceof UpdatedTopicAdapter);
@@ -289,8 +298,8 @@ public class MainTopicListFragment extends Fragment
 
     @Override
     public void setUpdatedItems(List<Topic> topics) {
-        updatedTopicAdapter.clear();
-        updatedTopicAdapter.addAll(topics);
+        LogUtil.d("MainTopicListFragment.setUpdatedItems()");
+        updatedTopicAdapter.setItems(topics);
         updatedTopicAdapter.notifyDataSetChanged();
     }
 
@@ -337,11 +346,6 @@ public class MainTopicListFragment extends Fragment
 
         int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()));
         EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
-        setSelectedItem(selectedEntity);
-        if (isCurrentFolder()) {
-            scrollAndAnimateForSelectedItem();
-        }
-
         setFolderExpansion();
     }
 
@@ -352,17 +356,6 @@ public class MainTopicListFragment extends Fragment
                 .seq(seq)
                 .build()
                 .show(getFragmentManager(), "dialog");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (expandableTopicAdapter != null
-                && isCurrentFolder()
-                && hasOnResumed) {
-            scrollAndAnimateForSelectedItem();
-        }
-        hasOnResumed = true;
     }
 
     @Override
@@ -379,7 +372,7 @@ public class MainTopicListFragment extends Fragment
 
     @Override
     public void moveToMessageActivity(long entityId, int entityType, boolean starred, long teamId, long lastReadLinkId) {
-        MessageListV2Activity_.intent(getActivity())
+        MessageListV2Activity_.intent(MainTopicListFragment.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityType(entityType)
                 .entityId(entityId)
@@ -387,7 +380,21 @@ public class MainTopicListFragment extends Fragment
                 .roomId(entityId)
                 .lastReadLinkId(lastReadLinkId)
                 .isFavorite(starred)
-                .start();
+                .startForResult(MOVE_MESSAGE_ACTIVITY);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MOVE_MESSAGE_ACTIVITY) {
+            setSelectedItem(selectedEntity);
+            if (isCurrentFolder()) {
+                expandableTopicAdapter.startAnimation();
+                expandableTopicAdapter.notifyDataSetChanged();
+            } else {
+                updatedTopicAdapter.startAnimation();
+                updatedTopicAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -531,7 +538,13 @@ public class MainTopicListFragment extends Fragment
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setSelectedItem(long selectedEntity) {
         this.selectedEntity = selectedEntity;
-        expandableTopicAdapter.setSelectedEntity(selectedEntity);
+        if (expandableTopicAdapter != null) {
+            expandableTopicAdapter.setSelectedEntity(selectedEntity);
+        }
+
+        if (updatedTopicAdapter != null) {
+            updatedTopicAdapter.setSelectedEntity(selectedEntity);
+        }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -587,7 +600,7 @@ public class MainTopicListFragment extends Fragment
 
         int flatPosition = expandableItemManager.getFlatPosition(packedPositionForChild);
 
-        int offset = lvMainTopic.getMeasuredHeight() / 2;
+        int offset = lvMainTopic.getMeasuredHeight() / 3;
         if (offset <= 0) {
             offset = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                     100f,
@@ -599,6 +612,28 @@ public class MainTopicListFragment extends Fragment
         lvMainTopic.postDelayed(() -> {
             expandableTopicAdapter.startAnimation();
             expandableTopicAdapter.notifyDataSetChanged();
+        }, 300);
+    }
+
+    private void scrollForUpdate() {
+
+        int position = updatedTopicAdapter.indexOfEntity(selectedEntity);
+        if (position < 0) {
+            return;
+        }
+        int offset = lvMainTopic.getMeasuredHeight() / 3;
+        if (offset <= 0) {
+            offset = JandiApplication.getContext()
+                    .getResources()
+                    .getDisplayMetrics()
+                    .heightPixels / 3;
+        }
+
+
+        layoutManager.scrollToPositionWithOffset(position, offset);
+
+        lvMainTopic.postDelayed(() -> {
+            updatedTopicAdapter.startAnimation();
         }, 300);
     }
 

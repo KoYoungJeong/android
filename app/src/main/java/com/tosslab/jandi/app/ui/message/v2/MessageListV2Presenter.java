@@ -524,8 +524,10 @@ public class MessageListV2Presenter {
             lastUpdateLinkId = MessageRepository.getRepository()
                     .getLastMessage(room.getRoomId()).id;
 
+            firstCursorLinkId = messagePointer.getFirstCursorLinkId();
             currentItemCount = MessageRepository.getRepository()
                     .getMessagesCount(roomId, messagePointer.getFirstCursorLinkId());
+
         }
 
         List<ResMessages.Link> newMessages = null;

@@ -389,6 +389,10 @@ public class ExpandableTopicAdapter
         }
     }
 
+    public boolean isIdleOfAnim() {
+        return animStatus == AnimStatus.IDLE;
+    }
+
     private enum AnimStatus {
         READY, IN_ANIM, FINISH, IDLE
     }

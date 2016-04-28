@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -47,6 +49,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
@@ -67,6 +70,9 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
     private static final int REQ_TEAM_CREATE = 101;
     private static final int REQ_EMAIL_CHOOSE = 201;
     private static final int REQ_TEAM_JOIN = 301;
+
+    @Extra
+    boolean shouldRefreshAccountInfo = true;
 
     @Bean(AccountHomePresenterImpl.class)
     AccountHomePresenter accountHomePresenter;
@@ -94,6 +100,8 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
         progressWheel = new ProgressWheel(AccountHomeActivity.this);
         setUpActionBar();
 
+        accountHomePresenter.onInitialize(shouldRefreshAccountInfo);
+
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.AccountHome);
     }
 
@@ -105,6 +113,12 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.jadi_account_home);
 
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setShouldReconnectSocketService(false);
     }
 
     @Override
@@ -281,6 +295,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
                 .startForResult(REQ_EMAIL_CHOOSE);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setUserEmailText(String email) {
         tvEmail.setText(email);
@@ -331,6 +346,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
                 .create().show();
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void invalidAccess() {
         finish();

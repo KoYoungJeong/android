@@ -1,8 +1,7 @@
 package com.tosslab.jandi.app.network.models.sticker;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.util.List;
 

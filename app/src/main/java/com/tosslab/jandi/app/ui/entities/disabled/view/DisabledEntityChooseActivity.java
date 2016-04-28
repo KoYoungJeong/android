@@ -3,8 +3,9 @@ package com.tosslab.jandi.app.ui.entities.disabled.view;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.widget.ListView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -18,7 +19,6 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.ViewById;
 
@@ -30,13 +30,16 @@ public class DisabledEntityChooseActivity extends BaseAppCompatActivity implemen
     @Bean(DisabledEntityChoosePresenterImpl.class)
     DisabledEntityChoosePresenter presenter;
     @ViewById(R.id.lv_disabled_choose)
-    ListView lvMembers;
+    RecyclerView lvMembers;
 
     ChatChooseAdapter adapter;
 
     @AfterInject
     void initObject() {
         adapter = new ChatChooseAdapter(DisabledEntityChooseActivity.this);
+        adapter.setOnRecyclerItemClickListener((view, adapter1, position) -> {
+            onMemberItemClick(position);
+        });
         presenter.setView(this);
     }
 
@@ -44,6 +47,7 @@ public class DisabledEntityChooseActivity extends BaseAppCompatActivity implemen
     void initViews() {
         initActionBarTitle();
         presenter.initDisabledMembers();
+        lvMembers.setLayoutManager(new LinearLayoutManager(DisabledEntityChooseActivity.this));
         lvMembers.setAdapter(adapter);
     }
 
@@ -78,7 +82,6 @@ public class DisabledEntityChooseActivity extends BaseAppCompatActivity implemen
         overridePendingTransition(R.anim.ready, R.anim.slide_out_to_bottom);
     }
 
-    @ItemClick(R.id.lv_disabled_choose)
     void onMemberItemClick(int position) {
         ChatChooseItem item = adapter.getItem(position);
         long entityId = item.getEntityId();
