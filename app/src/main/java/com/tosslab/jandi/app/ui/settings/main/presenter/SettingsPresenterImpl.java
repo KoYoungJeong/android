@@ -7,7 +7,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.client.account.devices.DeviceApi;
+import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
@@ -48,8 +48,8 @@ public class SettingsPresenterImpl implements SettingsPresenter {
         try {
 
             Context context = JandiApplication.getContext();
-            new DeviceApi(RetrofitBuilder.newInstance())
-                    .deleteDevice(TokenUtil.getTokenObject().getDeviceId());
+            new LoginApi(RetrofitBuilder.newInstance())
+                    .deleteToken(TokenUtil.getRefreshToken(), TokenUtil.getTokenObject().getDeviceId());
 
             ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
             MixpanelAccountAnalyticsClient

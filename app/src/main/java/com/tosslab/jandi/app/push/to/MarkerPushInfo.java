@@ -1,20 +1,15 @@
 package com.tosslab.jandi.app.push.to;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class MarkerPushInfo extends BasePushInfo {
-    @JsonProperty("account_id")
-    private String accountId;
 
-    public String getAccountId() {
-        return accountId;
+    public MarkerPushInfo() {
+        setPushType("marker_updated");
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
 }

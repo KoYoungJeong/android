@@ -21,6 +21,6 @@ public class JandiConstantsForFlavors {
 
     public static class Push {
         public static final String GCM_SENDER_ID = "252549028791";
-        public static final String BAIDU_API_KEY = "xMfI1LkL64AmDCGsw9kgbenb";
+        public static final String BAIDU_API_KEY = "dkDbCUo6nyYsXGD8cPxjcXVe";
     }
 }

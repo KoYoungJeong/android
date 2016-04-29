@@ -1,20 +1,15 @@
 package com.tosslab.jandi.app.push.to;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.ResMessages;
-
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class PushInfo extends BasePushInfo {
-    @JsonProperty("account_id")
-    private String accountId;
-    @JsonProperty("badge_count")
-    private int badgeCount;
+public class BaseMessagePushInfo extends BasePushInfo {
     @JsonProperty("team_id")
     private long teamId;
     @JsonProperty("team_name")
@@ -29,8 +24,6 @@ public class PushInfo extends BasePushInfo {
     private long messageId;
     @JsonProperty("message_type")
     private String messageType;
-    @JsonProperty("message_content")
-    private MessageContent messageContent;
     @JsonProperty("message_mentions")
     private List<Mention> mentions;
     @JsonProperty("message_feedback_id")
@@ -44,32 +37,8 @@ public class PushInfo extends BasePushInfo {
     @JsonProperty("writer_thumb")
     private String writerThumb;
 
-    public String getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
-
-    public int getBadgeCount() {
-        return badgeCount;
-    }
-
-    public void setBadgeCount(int badgeCount) {
-        this.badgeCount = badgeCount;
-    }
-
-    public void setTeamId(long teamId) {
-        this.teamId = teamId;
-    }
-
-    public void setRoomId(long roomId) {
-        this.roomId = roomId;
-    }
-
-    public void setMessageId(long messageId) {
-        this.messageId = messageId;
+    public BaseMessagePushInfo() {
+        setPushType("message_created");
     }
 
     public long getMessageFeedbackId() {
@@ -78,10 +47,6 @@ public class PushInfo extends BasePushInfo {
 
     public void setMessageFeedbackId(long messageFeedbackId) {
         this.messageFeedbackId = messageFeedbackId;
-    }
-
-    public void setWriterId(long writerId) {
-        this.writerId = writerId;
     }
 
     public String getWriterType() {
@@ -96,6 +61,10 @@ public class PushInfo extends BasePushInfo {
         return teamId;
     }
 
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
+    }
+
     public String getTeamName() {
         return teamName;
     }
@@ -108,6 +77,9 @@ public class PushInfo extends BasePushInfo {
         return roomId;
     }
 
+    public void setRoomId(long roomId) {
+        this.roomId = roomId;
+    }
 
     public String getRoomName() {
         return roomName;
@@ -129,6 +101,9 @@ public class PushInfo extends BasePushInfo {
         return messageId;
     }
 
+    public void setMessageId(long messageId) {
+        this.messageId = messageId;
+    }
 
     public String getMessageType() {
         return messageType;
@@ -136,14 +111,6 @@ public class PushInfo extends BasePushInfo {
 
     public void setMessageType(String messageType) {
         this.messageType = messageType;
-    }
-
-    public MessageContent getMessageContent() {
-        return messageContent;
-    }
-
-    public void setMessageContent(MessageContent messageContent) {
-        this.messageContent = messageContent;
     }
 
     public List<Mention> getMentions() {
@@ -158,6 +125,9 @@ public class PushInfo extends BasePushInfo {
         return writerId;
     }
 
+    public void setWriterId(long writerId) {
+        this.writerId = writerId;
+    }
 
     public String getWriterName() {
         return writerName;
@@ -177,7 +147,7 @@ public class PushInfo extends BasePushInfo {
 
     @Override
     public String toString() {
-        return "PushInfo{" +
+        return "BaseMessagePushInfo{" +
                 "teamId=" + teamId +
                 ", teamName='" + teamName + '\'' +
                 ", roomId=" + roomId +
@@ -185,14 +155,13 @@ public class PushInfo extends BasePushInfo {
                 ", roomType='" + roomType + '\'' +
                 ", messageId=" + messageId +
                 ", messageType='" + messageType + '\'' +
-                ", messageContent='" + messageContent + '\'' +
                 ", mentions=" + mentions +
                 ", messageFeedbackId=" + messageFeedbackId +
                 ", writerId=" + writerId +
                 ", writerName='" + writerName + '\'' +
                 ", writerType='" + writerType + '\'' +
                 ", writerThumb='" + writerThumb + '\'' +
-                '}';
+                "} " + super.toString();
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

@@ -1,26 +1,41 @@
 package com.tosslab.jandi.app.push.to;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
-        defaultImpl = PushInfo.class,
+        defaultImpl = MessagePushInfo.class,
         property = "push_type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = MarkerPushInfo.class, name = "marker_updated"),
-        @JsonSubTypes.Type(value = PushInfo.class, name = "message_created"),
-        @JsonSubTypes.Type(value = PushInfo.class, name = "comment_created"),
-        @JsonSubTypes.Type(value = PushInfo.class, name = "file_shared")})
+        @JsonSubTypes.Type(value = MessagePushInfo.class, name = "message_created"),
+        @JsonSubTypes.Type(value = MessagePushInfo.class, name = "comment_created"),
+        @JsonSubTypes.Type(value = MessagePushInfo.class, name = "file_shared")})
 public class BasePushInfo {
     @JsonProperty("push_type")
     private String pushType;
+    @JsonProperty("badge_count")
+    private int badgeCount;
+    @JsonProperty("account_id")
+    private String accountId;
+
+
+    public int getBadgeCount() {
+        return badgeCount;
+    }
+
+    public void setBadgeCount(int badgeCount) {
+        this.badgeCount = badgeCount;
+    }
+
 
     public String getPushType() {
         return pushType;
@@ -30,4 +45,11 @@ public class BasePushInfo {
         this.pushType = pushType;
     }
 
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
+    }
 }

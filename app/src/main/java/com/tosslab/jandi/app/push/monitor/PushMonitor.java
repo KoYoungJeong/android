@@ -1,19 +1,12 @@
 package com.tosslab.jandi.app.push.monitor;
 
-import android.support.v4.app.NotificationCompat;
-
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Created by Steve SeongUg Jung on 15. 1. 26..
- */
 public class PushMonitor {
 
     private static PushMonitor instance;
 
     private ConcurrentHashMap<Long, PushEntity> pushMap;
-
-    private NotificationCompat.Builder lastNotificationBuilder;
 
     private PushMonitor() {
         this.pushMap = new ConcurrentHashMap<>();
@@ -39,12 +32,4 @@ public class PushMonitor {
         return pushMap.containsKey(entityId);
     }
 
-    public void setLastNotificationBuilder(NotificationCompat.Builder notificationBuilder) {
-
-        this.lastNotificationBuilder = notificationBuilder;
-    }
-
-    public NotificationCompat.Builder getLastNotificationBuilder() {
-        return lastNotificationBuilder;
-    }
 }

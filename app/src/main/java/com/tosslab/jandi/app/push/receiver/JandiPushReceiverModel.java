@@ -14,59 +14,43 @@ import android.support.v4.app.NotificationCompat;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.koushikdutta.ion.Ion;
-import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.main.LeftSideApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
-import com.tosslab.jandi.app.push.monitor.PushMonitor;
-import com.tosslab.jandi.app.push.to.BasePushInfo;
-import com.tosslab.jandi.app.push.to.PushInfo;
+import com.tosslab.jandi.app.push.to.BaseMessagePushInfo;
+import com.tosslab.jandi.app.push.to.CommentPushInfo;
+import com.tosslab.jandi.app.push.to.FilePushInfo;
+import com.tosslab.jandi.app.push.to.MessagePushInfo;
 import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.SystemService;
-
-import java.io.IOException;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import dagger.Lazy;
 
-
-/**
- * Created by Steve SeongUg Jung on 15. 4. 10..
- */
-@EBean
 public class JandiPushReceiverModel {
     public static final String TAG = JandiPushReceiverModel.class.getSimpleName();
     private static final int PENDING_INTENT_REQUEST_CODE = 2012;
-    @SystemService
+
     AudioManager audioManager;
 
-    @Inject
     Lazy<LeftSideApi> leftSideApi;
 
-    @AfterInject
-    void initObject() {
-        DaggerApiClientComponent.create().inject(this);
+    NotificationManager notificationManager;
+
+    public JandiPushReceiverModel(AudioManager audioManager, Lazy<LeftSideApi> leftSideApi, NotificationManager notificationManager) {
+        this.audioManager = audioManager;
+        this.leftSideApi = leftSideApi;
+        this.notificationManager = notificationManager;
     }
 
     public PendingIntent generatePendingIntent(Context context, long chatId, int chatType, long teamId, String roomType) {
@@ -122,33 +106,23 @@ public class JandiPushReceiverModel {
         return isTopicPushOn;
     }
 
-    public boolean isPushForMyAccountId(PushInfo pushInfo) {
-        return TextUtils.equals(pushInfo.getAccountId(), AccountRepository.getRepository().getAccountInfo().getId());
-    }
+    public String getPlainMarkdownContent(Context context, BaseMessagePushInfo messagePushInfo) {
 
-    public BasePushInfo parsingPushTO(String content) {
-        if (TextUtils.isEmpty(content)) {
-            LogUtil.e(TAG, "extras has not data.");
-            return null;
+        String originMessage;
+        if (messagePushInfo instanceof MessagePushInfo) {
+            originMessage = ((MessagePushInfo) messagePushInfo).getMessageContent().getBody();
+        } else if (messagePushInfo instanceof CommentPushInfo) {
+            originMessage = ((CommentPushInfo) messagePushInfo).getMessageContent().getBody();
+        } else if (messagePushInfo instanceof FilePushInfo) {
+            return ((FilePushInfo) messagePushInfo).getMessageContent().title;
+        } else {
+            return "";
         }
-
-        try {
-            return JacksonMapper.getInstance().getObjectMapper().readValue(content, BasePushInfo.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return new BasePushInfo();
-    }
-
-    public void convertPlainMarkdownContent(Context context, PushInfo pushInfo) {
-        PushInfo.MessageContent messageContent = pushInfo.getMessageContent();
-        String content = messageContent.getBody();
-        SpannableStringBuilder contentWrapper = new SpannableStringBuilder(content);
+        SpannableStringBuilder contentWrapper = new SpannableStringBuilder(originMessage);
         SpannableLookUp.text(contentWrapper)
                 .markdown(true)
                 .lookUp(context);
-        messageContent.setBody(contentWrapper.toString());
+        return contentWrapper.toString();
     }
 
     public ResLeftSideMenu getLeftSideMenuFromDB(long teamId) {
@@ -168,18 +142,7 @@ public class JandiPushReceiverModel {
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
     }
 
-    public boolean isMyEntityId(long writerId) {
-        List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
-
-        for (ResAccountInfo.UserTeam userTeam : userTeams) {
-            if (userTeam.getMemberId() == writerId) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean isMentionToMe(List<PushInfo.Mention> mentions, ResLeftSideMenu leftSideMenu) {
+    public boolean isMentionToMe(List<MessagePushInfo.Mention> mentions, ResLeftSideMenu leftSideMenu) {
         boolean isMentionToMe = false;
         if (mentions == null || mentions.isEmpty()) {
             return false;
@@ -188,9 +151,7 @@ public class JandiPushReceiverModel {
         long myTeamMemberId = leftSideMenu.user.id;
         List<ResLeftSideMenu.Entity> joinEntities = leftSideMenu.joinEntities;
 
-        logJoinEntities(joinEntities);
-
-        for (PushInfo.Mention mention : mentions) {
+        for (MessagePushInfo.Mention mention : mentions) {
             long entityId = mention.getId();
             String mentionType = mention.getType();
             if ("room".equals(mentionType)) {
@@ -220,23 +181,6 @@ public class JandiPushReceiverModel {
         }
 
         return false;
-    }
-
-    private void logJoinEntities(List<ResLeftSideMenu.Entity> joinEntities) {
-
-        if (joinEntities == null) {
-            LogUtil.e(TAG, "joinEntities == null");
-        } else {
-            for (ResLeftSideMenu.Entity joinEntity : joinEntities) {
-                LogUtil.d(TAG, "topic joinEntityId = " + joinEntity.id);
-            }
-        }
-    }
-
-    public boolean isPushOn() {
-        return !ParseUpdateUtil.PARSE_ACTIVATION_OFF.equals(
-                ParseInstallation.getCurrentInstallation().getString(ParseUpdateUtil.PARSE_ACTIVATION));
-
     }
 
     private NotificationCompat.Builder getNotification(Context context,
@@ -327,13 +271,13 @@ public class JandiPushReceiverModel {
         return bigTextStyle;
     }
 
-    public void showNotification(Context context, PushInfo pushInfo, boolean isMentionMessage) {
+    public void showNotification(Context context, BaseMessagePushInfo baseMessagePushInfo, boolean isMentionMessage) {
 
-        String writerName = pushInfo.getWriterName();
+        String writerName = baseMessagePushInfo.getWriterName();
 
-        long teamId = pushInfo.getTeamId();
-        long roomId = pushInfo.getRoomId();
-        String writerThumb = pushInfo.getWriterThumb();
+        long teamId = baseMessagePushInfo.getTeamId();
+        long roomId = baseMessagePushInfo.getRoomId();
+        String writerThumb = baseMessagePushInfo.getWriterThumb();
         Bitmap profileImage = null;
         if (!TextUtils.isEmpty(writerThumb)) {
             try {
@@ -352,13 +296,13 @@ public class JandiPushReceiverModel {
                     context.getString(R.string.jandi_mention_push_message, writerName);
         }
 
-        int badgeCount = pushInfo.getBadgeCount();
+        int badgeCount = baseMessagePushInfo.getBadgeCount();
 
-        String roomType = pushInfo.getRoomType();
+        String roomType = baseMessagePushInfo.getRoomType();
         int roomTypeInt = getEntityType(roomType);
-        String roomName = getRoomName(context, pushInfo, roomTypeInt);
+        String roomName = getRoomName(context, baseMessagePushInfo, roomTypeInt);
 
-        String message = pushInfo.getMessageContent().getBody();
+        String message = getPlainMarkdownContent(context, baseMessagePushInfo);
         String outMessage = getOutMessage(roomTypeInt, message);
 
 
@@ -369,9 +313,6 @@ public class JandiPushReceiverModel {
 
         setUpNotificationEffect(notificationBuilder, context, isMentionMessage, roomTypeInt);
 
-        PushMonitor.getInstance().setLastNotificationBuilder(notificationBuilder);
-
-
         // 노티를 터치할 경우엔 자동 삭제되나, 노티를 삭제하지 않고 앱으로 진입했을 때,
         // 해당 채팅 방에 들어갈 때만 이 노티가 삭제되도록...
         JandiPreference.setChatIdFromPush(context, roomId);
@@ -379,12 +320,12 @@ public class JandiPushReceiverModel {
         sendNotification(context, notificationBuilder.build());
     }
 
-    private String getRoomName(Context context, PushInfo pushInfo, int roomTypeInt) {
+    private String getRoomName(Context context, BaseMessagePushInfo baseMessagePushInfo, int roomTypeInt) {
         String roomName;
         if (roomTypeInt == JandiConstants.TYPE_DIRECT_MESSAGE) {
             roomName = context.getString(R.string.jandi_tab_direct_message);
         } else {
-            roomName = pushInfo.getRoomName();
+            roomName = baseMessagePushInfo.getRoomName();
         }
         return roomName;
     }
@@ -410,12 +351,9 @@ public class JandiPushReceiverModel {
     }
 
     void sendNotification(Context context, Notification notification) {
-        NotificationManager nm =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
         if (notification != null) {
-            nm.cancel(JandiConstants.NOTIFICATION_ID);
-            nm.notify(JandiConstants.NOTIFICATION_ID, notification);
+            notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
+            notificationManager.notify(JandiConstants.NOTIFICATION_ID, notification);
         }
     }
 
