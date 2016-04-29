@@ -62,7 +62,7 @@ dependencies {
 
     }
 
-    compile 'com.tosslab.jandi.lib:sprinkler-android:1.1'
+    compile 'com.tosslab.jandi.lib:sprinkler-android:1.2'
     compile 'com.tosslab.jandi.lib:photoview-expand:1.1'
     compile 'com.tosslab.jandi.lib:android-image-zoom-crop:1.1'
 
@@ -160,7 +160,7 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 137
+        versionCode 138
         versionName '2.0.0'
 
         // for Ui Testing

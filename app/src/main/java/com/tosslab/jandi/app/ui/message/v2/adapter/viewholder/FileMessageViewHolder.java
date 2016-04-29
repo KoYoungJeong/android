@@ -1,17 +1,12 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -24,8 +19,6 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
-import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
-import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,7 +36,9 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
 
     private ImageView ivFileImage;
     private TextView tvFileName;
-    private TextView tvFileExtraInfo;
+    private TextView tvFileUploaderName;
+    private TextView tvCommonFileSize;
+    private TextView tvFileInfoDivider;
 
     private FileMessageViewHolder() {
     }
@@ -58,7 +53,9 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
 
         ivFileImage = (ImageView) rootView.findViewById(R.id.iv_message_common_file);
         tvFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
-        tvFileExtraInfo = (TextView) rootView.findViewById(R.id.tv_common_file_type);
+        tvFileUploaderName = (TextView) rootView.findViewById(R.id.tv_uploader_name);
+        tvFileInfoDivider = (TextView) rootView.findViewById(R.id.tv_file_info_divider);
+        tvCommonFileSize = (TextView) rootView.findViewById(R.id.tv_common_file_size);
 
         context = rootView.getContext();
     }
@@ -99,7 +96,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
 
         tvMessageTime.setText(DateTransformator.getTimeStringForSimple(link.time));
 
-        boolean isFileFromMe = true;
+//        boolean isFileFromMe = true;
 
         FormattedEntity entity = entityManager.getEntityById(fromEntityId);
 
@@ -109,28 +106,29 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
             ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
 
             if (fromEntity.id != fileMessage.writerId) {
-                isFileFromMe = false;
-                String shared = JandiApplication.getContext().getString(R.string.jandi_shared);
+//                isFileFromMe = false;
+//                String shared = JandiApplication.getContext().getString(R.string.jandi_shared);
                 String name = EntityManager.getInstance()
                         .getEntityById(fileMessage.writerId).getName();
-                String ofFile = JandiApplication.getContext().getString(R.string.jandi_who_of_file);
-
-                SpannableStringBuilder builder = new SpannableStringBuilder();
-                builder.append(shared).append(" ");
-                int startIdx = builder.length();
-                builder.append(name);
-                int lastIdx = builder.length();
-                builder.append(ofFile);
-
-                int textSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 11f, tvFileExtraInfo
-                        .getResources().getDisplayMetrics());
-
-                builder.setSpan(new NameSpannable(textSize, Color.BLACK),
-                        startIdx,
-                        lastIdx,
-                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                tvFileExtraInfo.setText(builder);
+                tvFileUploaderName.setText(name);
+//                String ofFile = JandiApplication.getContext().getString(R.string.jandi_who_of_file);
+//
+//                SpannableStringBuilder builder = new SpannableStringBuilder();
+//                builder.append(shared).append(" ");
+//                int startIdx = builder.length();
+//                builder.append(name);
+//                int lastIdx = builder.length();
+//                builder.append(ofFile);
+//
+//                int textSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 11f, tvFileExtraInfo
+//                        .getResources().getDisplayMetrics());
+//
+//                builder.setSpan(new NameSpannable(textSize, Color.BLACK),
+//                        startIdx,
+//                        lastIdx,
+//                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//
+//                tvFileExtraInfo.setText(builder);
             }
 
             boolean isSharedFile = false;
@@ -155,9 +153,12 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
             if (TextUtils.equals(link.message.status, "archived")) {
                 tvFileName.setText(R.string.jandi_deleted_file);
                 ivFileImage.setImageResource(R.drawable.file_icon_deleted);
-                tvFileExtraInfo.setVisibility(View.GONE);
+
                 tvFileName.setTextColor(tvFileName.getResources().getColor(R.color
                         .jandi_text_light));
+                tvFileUploaderName.setVisibility(View.GONE);
+                tvFileInfoDivider.setVisibility(View.GONE);
+                tvCommonFileSize.setVisibility(View.GONE);
 
             } else if (!isSharedFile) {
                 tvFileName.setText(fileMessage.content.title);
@@ -172,31 +173,42 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
                 }
 
                 ivFileImage.setClickable(false);
-                tvFileExtraInfo.setText(R.string.jandi_unshared_file);
+                tvFileUploaderName.setText(R.string.jandi_unshared_file);
                 tvFileName.setTextColor(tvFileName.getResources().getColor(R.color
                         .jandi_text_light));
+                tvCommonFileSize.setVisibility(View.VISIBLE);
+                tvFileInfoDivider.setVisibility(View.GONE);
+                tvFileUploaderName.setVisibility(View.GONE);
             } else {
                 tvFileName.setTextColor(tvFileName.getResources().getColor(R.color.dark_gray));
                 tvFileName.setText(fileMessage.content.title);
-                if (isFileFromMe) {
-                    MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
-                    switch (sourceType) {
-                        case S3:
-                            String fileSize = FileUtil.fileSizeCalculation(fileMessage.content.size);
-                            String fileType = String.format("%s, %s", fileSize, fileMessage.content.ext);
-                            tvFileExtraInfo.setText(fileType);
-                            break;
-                        case Google:
-                        case Dropbox:
-                            tvFileExtraInfo.setText(fileMessage.content.ext);
-                            break;
-                    }
-                }
+                String name = EntityManager.getInstance()
+                        .getEntityById(fileMessage.writerId).getName();
+                tvFileUploaderName.setText(name);
+                ResMessages.FileContent fileContent = ((ResMessages.FileMessage) link.message).content;
+                String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
+                tvCommonFileSize.setText(fileSize);
+//                if (isFileFromMe) {
+//                    MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
+//                    switch (sourceType) {
+//                        case S3:
+//                            String fileSize = FileUtil.fileSizeCalculation(fileMessage.content.size);
+//                            String fileType = String.format("%s, %s", fileSize, fileMessage.content.ext);
+//                            tvFileExtraInfo.setText(fileType);
+//                            break;
+//                        case Google:
+//                        case Dropbox:
+//                            tvFileExtraInfo.setText(fileMessage.content.ext);
+//                            break;
+//                    }
+//                }
                 int mimeTypeIconImage =
                         MimeTypeUtil.getMimeTypeIconImage(
                                 fileMessage.content.serverUrl, fileMessage.content.icon);
                 ivFileImage.setImageResource(mimeTypeIconImage);
-                tvFileExtraInfo.setVisibility(View.VISIBLE);
+                tvCommonFileSize.setVisibility(View.VISIBLE);
+                tvFileInfoDivider.setVisibility(View.VISIBLE);
+                tvFileUploaderName.setVisibility(View.VISIBLE);
 
             }
         }
