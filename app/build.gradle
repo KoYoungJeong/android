@@ -62,7 +62,7 @@ dependencies {
 
     }
 
-    compile 'com.tosslab.jandi.lib:sprinkler-android:1.1'
+    compile 'com.tosslab.jandi.lib:sprinkler-android:1.2'
     compile 'com.tosslab.jandi.lib:photoview-expand:1.1'
     compile 'com.tosslab.jandi.lib:android-image-zoom-crop:1.1'
 
@@ -107,7 +107,8 @@ dependencies {
 
     // Cache
     compile 'com.koushikdutta.ion:ion:2.1.+'
-    compile 'com.facebook.fresco:fresco:0.9.0'
+    // Fresco
+    compile 'com.facebook.fresco:fresco:0.8.1'
 
     // Sliqte ORM
     compile 'com.j256.ormlite:ormlite-android:4.+'
@@ -160,8 +161,8 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 138
-        versionName '2.0.0'
+        versionCode 139
+        versionName '2.0.1'
 
         // for Ui Testing
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

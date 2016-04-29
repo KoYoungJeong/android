@@ -191,7 +191,7 @@ public class JandiApplication extends MultiDexApplication {
     }
 
     private DiskCacheConfig getMainDiskConfig() {
-        return DiskCacheConfig.newBuilder(this)
+        return DiskCacheConfig.newBuilder()
                 .setBaseDirectoryPathSupplier(() -> context.getApplicationContext().getCacheDir())
                 .setBaseDirectoryName("image_cache")
                 .setMaxCacheSize(1024 * ByteConstants.MB)
