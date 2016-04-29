@@ -1,121 +1,125 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<com.tosslab.jandi.app.views.SoftInputDetectLinearLayout
+    android:id="@+id/vg_file_detail_soft_input_detector"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_message_item"
-    android:orientation="vertical"
-    tools:context="com.tosslab.jandi.app.FileDetailActivity">
-
-    <com.tosslab.jandi.app.views.KeyboardVisibleChangeDetectView
-        android:id="@+id/v_file_detail_keyboard_visible_change_detector"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/lv_file_detail"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar_file_detail"
-        android:layout_above="@+id/space_file_detail_divider"
-        android:background="@color/white"
-        android:clipToPadding="false"
-        android:paddingBottom="8dp"/>
+    android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/vg_file_detail_preview_sticker"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/space_file_detail_divider"
-        android:background="@color/jandi_black_89"
-        android:visibility="gone">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <com.tosslab.jandi.app.views.FrescoImageView
-            android:id="@+id/iv_file_detail_preview_sticker_image"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="4dp"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/lv_file_detail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/space_file_detail_divider"
+            android:layout_below="@+id/toolbar_file_detail"
+            android:background="@color/white"
+            android:clipToPadding="false"
+            android:paddingBottom="8dp"/>
 
-        <ImageView
-            android:id="@+id/iv_file_detail_preview_sticker_close"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/vg_file_detail_preview_sticker"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:padding="15dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/icon_sticker_close"/>
+            android:layout_above="@+id/space_file_detail_divider"
+            android:background="@color/jandi_black_89"
+            android:visibility="gone">
+
+            <com.tosslab.jandi.app.views.FrescoImageView
+                android:id="@+id/iv_file_detail_preview_sticker_image"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="4dp"/>
+
+            <ImageView
+                android:id="@+id/iv_file_detail_preview_sticker_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:padding="15dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/icon_sticker_close"/>
+
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/space_file_detail_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_above="@+id/vg_file_detail_input_comment"
+            android:layout_alignWithParentIfMissing="true"
+            android:background="@color/deactivate_text_color"/>
+
+        <LinearLayout
+            android:id="@+id/vg_file_detail_input_comment"
+            style="@style/JandiChat.Wrapper"
+            android:layout_alignParentBottom="true">
+
+            <FrameLayout
+                android:layout_gravity="bottom"
+                style="@style/JandiChat.ActionButton.Wrapper">
+
+                <ImageView
+                    android:id="@+id/btn_file_detail_action"
+                    style="@style/JandiChat.ActionButton.Sticker"/>
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/vg_message_input_wrapper"
+                style="@style/JandiChat.InputWrapper"
+                android:orientation="horizontal">
+
+                <com.tosslab.jandi.app.views.BackPressCatchEditText
+                    android:id="@+id/et_message"
+                    style="@style/JandiChat.EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:lineSpacingExtra="2dp"
+                    android:minHeight="36dp"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp"/>
+
+                <ImageView
+                    android:id="@+id/btn_show_mention"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_gravity="bottom"
+                    android:paddingLeft="9dp"
+                    android:paddingRight="9dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/chat_mention"
+                    android:visibility="visible"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/btn_send_message"
+                style="@style/JandiChat.Button"
+                android:gravity="center"
+                android:text="@string/jandi_message_send"
+                android:textSize="@dimen/jandi_text_size_large"/>
+        </LinearLayout>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_file_detail"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_alignParentTop="true"
+            android:visibility="visible"/>
 
     </RelativeLayout>
 
-    <View
-        android:id="@+id/space_file_detail_divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_above="@+id/vg_file_detail_input_comment"
-        android:layout_alignWithParentIfMissing="true"
-        android:background="@color/deactivate_text_color"/>
-
-    <LinearLayout
-        android:id="@+id/vg_file_detail_input_comment"
-        style="@style/JandiChat.Wrapper"
-        android:layout_above="@+id/vg_option_space"
-        android:layout_alignWithParentIfMissing="true">
-
-        <ImageView
-            android:id="@+id/btn_file_detail_action"
-            style="@style/JandiChat.ActionButton"
-            android:src="@drawable/selector_file_detail_action"
-            android:layout_gravity="bottom"/>
-
-        <LinearLayout
-            android:id="@+id/vg_message_input_wrapper"
-            style="@style/JandiChat.InputWrapper"
-            android:orientation="horizontal">
-
-            <com.tosslab.jandi.app.views.BackPressCatchEditText
-                android:id="@+id/et_message"
-                style="@style/JandiChat.EditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:lineSpacingExtra="2dp"
-                android:minHeight="36dp"
-                android:paddingBottom="2dp"
-                android:paddingTop="2dp"/>
-
-            <ImageView
-                android:id="@+id/btn_show_mention"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:layout_gravity="bottom"
-                android:paddingLeft="9dp"
-                android:paddingRight="9dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/chat_mention"
-                android:visibility="visible"/>
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/btn_send_message"
-            style="@style/JandiChat.Button"
-            android:gravity="center"
-            android:text="@string/jandi_message_send"
-            android:textSize="@dimen/jandi_text_size_large"/>
-    </LinearLayout>
-
     <FrameLayout
-        android:id="@+id/vg_option_space"
+        android:id="@+id/vg_file_detail_soft_input_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:visibility="gone"/>
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_file_detail"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentTop="true"
-        android:visibility="visible"/>
-
-</RelativeLayout>
+</com.tosslab.jandi.app.views.SoftInputDetectLinearLayout>
