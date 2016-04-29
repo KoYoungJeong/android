@@ -6,6 +6,7 @@ import com.tosslab.jandi.lib.sprinkler.Logger;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -21,6 +22,7 @@ final class RequestManager {
         RequestConfig config = getRequestConfig();
         retofit = new Retrofit.Builder()
                 .client(OkConnectionClient.getDefaultClient())
+                .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(config.getEndPoint())
                 .build();
     }
