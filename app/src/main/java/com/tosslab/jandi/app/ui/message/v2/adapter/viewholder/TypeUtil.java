@@ -29,7 +29,7 @@ public class TypeUtil {
     public static final int TYPE_OPTION_HAS_COMMENT_VIEW_ALL = 1 << 25;
     public static final int TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE = 1 << 26;
     public static final int TYPE_OPTION_HAS_COMMENT_SEMI_DIVIDER = 1 << 27;
-
+    public static final int TYPE_OPTION_HAS_FLAT_TOP = 1 << 28;
 
     /* 인자 viewType에 flagType의 요소가 포함되어 있는지 검사
      * ex) isElementType(viewType, TYPE_VIEW_EVENT_MESSAGE) -> event 타입의 메세지

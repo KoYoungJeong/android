@@ -63,7 +63,8 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     private Context context;
 
     private boolean hasNestedProfile = false;
-    private boolean hasOnlyBadge;
+    private boolean hasOnlyBadge = false;
+    private boolean hasFlatTop = false;
 
 
     private CommentViewHolder() {
@@ -101,6 +102,24 @@ public class CommentViewHolder extends BaseCommentViewHolder {
             vgProfileNestedCommentUserName.setVisibility(View.GONE);
         }
 
+        if (hasFlatTop) {
+            if (hasBottomMargin) {
+                vgProfileNestedComment.setBackground(
+                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector_flat_top));
+            } else {
+                vgProfileNestedComment.setBackground(
+                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector_flat_all));
+            }
+        } else {
+            if (hasBottomMargin) {
+                vgProfileNestedComment.setBackground(
+                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector));
+
+            } else {
+                vgProfileNestedComment.setBackground(
+                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector_flat_bottom));
+            }
+        }
     }
 
     @Override
@@ -358,6 +377,10 @@ public class CommentViewHolder extends BaseCommentViewHolder {
         this.hasOnlyBadge = hasOnlyBadge;
     }
 
+    protected void setHasFlatTop(boolean hasFlatTop) {
+        this.hasFlatTop = hasFlatTop;
+    }
+
     public static class Builder extends BaseViewHolderBuilder {
 
         public CommentViewHolder build() {
@@ -369,6 +392,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
             viewHolder.setHasNestedProfile(hasNestedProfile);
             viewHolder.setHasViewAllComment(hasViewAllComment);
             viewHolder.setHasOnlyBadge(hasOnlyBadge);
+            viewHolder.setHasFlatTop(hasFlatTop);
             return viewHolder;
         }
     }

@@ -189,7 +189,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="0.5dp"
                 android:background="@color/jandi_comment_divider" />
         </LinearLayout>
 
@@ -387,7 +387,7 @@
             <View
                 android:id="@+id/v_comment_semi_divider"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="0.5dp"
                 android:layout_marginLeft="39dp"
                 android:background="@color/jandi_comment_divider" />
 
@@ -401,7 +401,7 @@
             <View
                 android:id="@+id/v_comment_normal_divider"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="0.5dp"
                 android:background="@color/jandi_comment_divider" />
 
         </LinearLayout>

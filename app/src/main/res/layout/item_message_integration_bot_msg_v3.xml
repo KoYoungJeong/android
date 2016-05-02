@@ -43,7 +43,7 @@
                     android:singleLine="true"
                     android:text="빠빠빠"
                     android:textColor="@color/jandi_messages_name"
-                    android:textSize="@dimen/jandi_messages_user_name"
+                    android:textSize="13dp"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -89,7 +89,7 @@
                     android:paddingTop="4dp"
                     android:text="Text"
                     android:textColor="@color/dark_gray"
-                    android:textSize="@dimen/jandi_messages_content" />
+                    android:textSize="14dp" />
 
                 <LinearLayout
                     android:layout_width="59dp"
@@ -121,7 +121,7 @@
 
                 </LinearLayout>
 
-                <View
+                <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/v_message_sub_menu_connect_color"
                     android:layout_width="4dp"
                     android:layout_height="wrap_content"
@@ -137,7 +137,7 @@
                     android:layout_marginRight="59dp"
                     android:layout_marginTop="6dp"
                     android:layout_toRightOf="@+id/v_message_sub_menu_connect_color"
-                    android:background="@drawable/bg_message_item_selector"
+                    android:background="@drawable/bg_round_right_white_for_message"
                     android:orientation="vertical"
                     android:paddingBottom="5dp"
                     android:paddingLeft="7dp"

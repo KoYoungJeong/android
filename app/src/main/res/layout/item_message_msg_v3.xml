@@ -39,7 +39,7 @@
             <RelativeLayout
                 android:id="@+id/vg_message_profile_user_name"
                 android:layout_width="match_parent"
-                android:layout_height="16dp"
+                android:layout_height="17dp"
                 android:visibility="visible">
 
                 <TextView
@@ -52,7 +52,7 @@
                     android:singleLine="true"
                     android:text="빠빠빠"
                     android:textColor="@color/jandi_messages_name"
-                    android:textSize="@dimen/jandi_messages_user_name"
+                    android:textSize="13dp"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -96,7 +96,7 @@
                     android:paddingTop="4dp"
                     android:text="Text"
                     android:textColor="@color/dark_gray"
-                    android:textSize="@dimen/jandi_messages_content" />
+                    android:textSize="14dp" />
             </RelativeLayout>
 
             <!-- 메세지 끝 -->
@@ -172,7 +172,7 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
+                            android:layout_marginTop="4dp"
                             android:orientation="horizontal">
 
                             <TextView
@@ -257,7 +257,7 @@
                 <View
                     android:id="@+id/v_divider"
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="0.5dp"
                     android:layout_alignLeft="@id/vg_message_photo_wrapper"
                     android:layout_alignRight="@id/vg_message_photo_wrapper"
                     android:layout_below="@id/vg_message_photo_wrapper"
@@ -329,7 +329,6 @@
         android:layout_marginLeft="47dp"
         android:layout_marginRight="59dp"
         android:layout_marginTop="6dp"
-        android:background="@color/white"
         android:visibility="gone">
 
         <include layout="@layout/item_message_layout_linkpreview_v2" />

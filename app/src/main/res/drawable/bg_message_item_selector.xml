@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:drawable="@drawable/bg_round_gray_rect_for_message" android:state_pressed="true" />
+    <item android:drawable="@drawable/bg_round_rect_press_gray_for_message" android:state_pressed="true" />
     <item android:drawable="@drawable/bg_round_white_rect_for_message" />
 
 </selector>

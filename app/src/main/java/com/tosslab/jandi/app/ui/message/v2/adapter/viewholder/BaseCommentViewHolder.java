@@ -24,11 +24,12 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
     protected ImageView ivCommentBubbleTail;
     protected ViewGroup vgReadMore;
 
-    private boolean hasBottomMargin = false;
-    private boolean hasSemiDivider = false;
+    protected boolean hasBottomMargin = false;
+    protected boolean hasSemiDivider = false;
     private boolean hasCommentBubbleTail = false;
     private boolean hasViewAllComment = false;
     private boolean hasFileInfoView = false;
+
 
     @Override
     public void initView(View rootView) {
@@ -57,7 +58,6 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
     private void setOptionView() {
         if (hasFileInfoView) {
             vgFileItem.setVisibility(View.VISIBLE);
-
         } else {
             vgFileItem.setVisibility(View.GONE);
         }
