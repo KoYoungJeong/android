@@ -90,6 +90,11 @@ public class TeamsModel {
                 .collect(() -> teams, List::add);
     }
 
+    public Observable<List<Team>> getSortedTeamListObservable(List<Team> teams) {
+        return Observable.from(teams)
+                .toSortedList((team, team2) -> team.getStatus() == Team.Status.PENDING ? -1 : 1);
+    }
+
     public Observable<List<Team>> getUpdateBadgeCountObservable(final List<Team> teams) {
         return Observable.<List<Team>>create(subscriber -> {
             Observable.from(teams)

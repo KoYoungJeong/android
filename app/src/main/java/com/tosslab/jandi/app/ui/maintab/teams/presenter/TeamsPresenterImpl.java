@@ -58,6 +58,7 @@ public class TeamsPresenterImpl implements TeamsPresenter {
         model.getRefreshAccountInfoObservable()
                 .concatMap(o -> model.getTeamsObservable(teamList))
                 .concatMap(model::getPendingTeamsObservable)
+                .concatMap(model::getSortedTeamListObservable)
                 .concatMap(model::getUpdateBadgeCountObservable)
                 .concatMap(model::getCheckSelectedTeamObservable)
                 .subscribeOn(Schedulers.io())
@@ -78,10 +79,13 @@ public class TeamsPresenterImpl implements TeamsPresenter {
                 });
     }
 
+    // 펜딩상태인 팀이 있거나 안 읽은 메세지가 한 개라도 있는 팀인 경우
     @Override
     public void determineAnotherTeamHasMessage(long selectedTeamId, List<Team> teams) {
         Team team = Observable.from(teams)
-                .filter(team1 -> (team1.getTeamId() != selectedTeamId) && team1.getUnread() > 0)
+                .filter(team1 ->
+                        team1.getStatus() == Team.Status.PENDING ||
+                                (team1.getTeamId() != selectedTeamId) && team1.getUnread() > 0)
                 .toBlocking()
                 .firstOrDefault(Team.createEmptyTeam());
 

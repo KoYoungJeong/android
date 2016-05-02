@@ -143,6 +143,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @ViewById(R.id.vg_main_offline)
     View vgOffline;
 
+    @ViewById(R.id.btn_main_tab_show_another_team)
+    View btnShowAnotherTeam;
     @ViewById(R.id.tv_main_tab_title)
     TextView tvTitle;
 
@@ -434,14 +436,13 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                 new MultiItemRecyclerAdapter.Row<>(null, TeamsAdapter.VIEW_TYPE_TEAM_CREATE));
 
         teamsAdapter.notifyDataSetChanged();
-    }
 
-    @Click(R.id.btn_main_tab_show_another_team)
-    void showAnotherTeams() {
-        int yoff = -tvTitle.getMeasuredHeight() - (int) UiUtils.getPixelFromDp(8) /* 조금 더 올리려고 */;
-        teamsPopupWindow.showAsDropDown(tvTitle, 0, yoff);
+        btnShowAnotherTeam.setOnClickListener(v -> {
+            int yoff = -tvTitle.getMeasuredHeight() - (int) UiUtils.getPixelFromDp(8) /* 조금 더 올리려고 */;
+            teamsPopupWindow.showAsDropDown(tvTitle, 0, yoff);
 
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.OpenTeamList);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.OpenTeamList);
+        });
     }
 
     @Override
@@ -472,7 +473,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         hideAnotherTeamHasMessageMetaphor();
 
         vMetaphorAnotherTeam.setVisibility(View.GONE);
-        tvTitle.setOnClickListener(null);
+        btnShowAnotherTeam.setOnClickListener(null);
         teamsAdapter.clear();
         teamsAdapter.notifyDataSetChanged();
     }
