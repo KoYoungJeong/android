@@ -379,6 +379,14 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
         adapter.clearLoadMoreOffset();
     }
 
+    @Override
+    public void hideEmptyMentionView() {
+        if (isFinishing()) {
+            return;
+        }
+        vEmptyLayout.setVisibility(View.GONE);
+    }
+
     private boolean isFinishing() {
         return getActivity() == null || getActivity().isFinishing();
     }

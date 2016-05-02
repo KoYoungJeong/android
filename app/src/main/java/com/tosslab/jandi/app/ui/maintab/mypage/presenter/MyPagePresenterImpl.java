@@ -82,6 +82,7 @@ public class MyPagePresenterImpl implements MyPagePresenter {
                     if (records == null || records.isEmpty()) {
                         view.showEmptyMentionView();
                     } else {
+                        view.hideEmptyMentionView();
                         view.addMentions(records);
                     }
                 }, throwable -> {
@@ -91,6 +92,7 @@ public class MyPagePresenterImpl implements MyPagePresenter {
                         view.hideRefreshProgress();
                     } else {
                         view.hideProgress();
+                        view.hideEmptyMentionView();
                     }
                 }, view::notifyDataSetChanged);
     }
