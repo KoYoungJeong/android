@@ -193,15 +193,11 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
         if (position == 20 || position == 0 && oldMoreState == MainMessageListAdapter.MoreState.Idle) {
             oldMoreState = MainMessageListAdapter.MoreState.Loading;
-            if (oldMoreState != MainMessageListAdapter.MoreState.Idle) {
-                EventBus.getDefault().post(new RefreshOldMessageEvent());
-            }
+            EventBus.getDefault().post(new RefreshOldMessageEvent());
         } else if (moreFromNew && position == getItemCount() - 1
                 && newMoreState == MainMessageListAdapter.MoreState.Idle) {
             newMoreState = MainMessageListAdapter.MoreState.Loading;
-            if (oldMoreState != MainMessageListAdapter.MoreState.Idle) {
-                EventBus.getDefault().post(new RefreshNewMessageEvent());
-            }
+            EventBus.getDefault().post(new RefreshNewMessageEvent());
         }
 
         bodyViewHolder.setOnItemClickListener(v -> {

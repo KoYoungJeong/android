@@ -204,7 +204,7 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
         } else if (moreFromNew && position == getItemCount() - 1 && newMoreState == MessageListSearchAdapter.MoreState.Idle) {
             newMoreState = MessageListSearchAdapter.MoreState.Loading;
             synchronized (this) {
-                if (oldMoreState != MessageListSearchAdapter.MoreState.Idle) {
+                if (newMoreState != MessageListSearchAdapter.MoreState.Idle) {
                     EventBus.getDefault().post(new RefreshNewMessageEvent());
                 }
             }
