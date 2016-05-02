@@ -71,7 +71,6 @@ public class EventMessageViewHolder implements BodyViewHolder {
             buildCreateEvent((ResMessages.CreateEvent) eventInfo, builder, entityManager);
 
         } else if (eventInfo instanceof ResMessages.InviteEvent) {
-
             buildInviteEvent((ResMessages.InviteEvent) eventInfo, builder, entityManager);
 
         } else {
@@ -330,6 +329,7 @@ public class EventMessageViewHolder implements BodyViewHolder {
             eventViewHolder.setHasBottomMargin(hasBottomMargin);
             return eventViewHolder;
         }
+
     }
 
 }

@@ -16,10 +16,6 @@
 
             freco:backgroundImage="@color/jandi_linkpreview_thumb_background" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_rect_gray" />
     </RelativeLayout>
 
     <LinearLayout

@@ -88,6 +88,10 @@ public class BodyViewFactory {
             builder.setHasSemiDivider(true);
         }
 
+        if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_FLAT_TOP)) {
+            builder.setHasFlatTop(true);
+        }
+
         return builder.build();
 
     }
@@ -146,8 +150,10 @@ public class BodyViewFactory {
             type = TypeUtil.TYPE_VIEW_DUMMY_NORMAL_MESSAGE;
         } else if (isJandiBotMessage(currentLink)) {
             type = TypeUtil.TYPE_VIEW_JANDI_BOT_MESSAGE;
+            return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
         } else if (isIntegrationBotMessage(currentLink)) {
             type = TypeUtil.TYPE_VIEW_INTEGRATION_BOT_MESSAGE;
+            return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
         }
 
         if (isNextMessageSameWriterAndSameTime(currentLink, nextLink)) {
@@ -229,9 +235,11 @@ public class BodyViewFactory {
                     // 3. 이전 링크가 날짜가 다르면 파일 정보 추가
                     type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
                     type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
+                    type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_FLAT_TOP);
                 }
             } else {
                 // 2. previous Link가 Comment 메세지 일때
+                type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_FLAT_TOP);
                 if (isSameWriter(previousLink.message, currentLink.message)) {
                     // 3. 이전 comment 작성자가 같은 사람 일때
                     if (!isSameDay(previousLink, currentLink)) {
@@ -248,9 +256,12 @@ public class BodyViewFactory {
             }
         } else {
             // 1. previous Link가 같은 파일의 커맨트 이거나 파일이 아닐 때
-            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO
+            );
             type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
             type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
+            // view all이 있기 때문에 윗면이 라운드가 아니라 평평해야한다..............
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_FLAT_TOP);
             type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
         }
 
