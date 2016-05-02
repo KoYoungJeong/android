@@ -3,6 +3,8 @@ package com.tosslab.jandi.app.ui.maintab.chat;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ListView;
@@ -31,6 +33,7 @@ import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import org.androidannotations.annotations.AfterInject;
@@ -62,7 +65,7 @@ public class MainChatListFragment extends Fragment
     long selectedEntity;
 
     @ViewById(R.id.lv_main_chat_list)
-    ListView lvChat;
+    RecyclerView lvChat;
 
     @ViewById(R.id.layout_main_chat_list_empty)
     View emptyView;
@@ -81,7 +84,16 @@ public class MainChatListFragment extends Fragment
 
     @AfterViews
     void initViews() {
-        lvChat.setEmptyView(emptyView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        lvChat.setLayoutManager(layoutManager);
+        lvChat.addItemDecoration(new SimpleDividerItemDecoration());
+        mainChatListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
+            onEntityItemClick(position);
+        });
+        mainChatListAdapter.setOnRecyclerItemLongClickListener((view, adapter, position) -> {
+            onEntityLongItemClick(((MainChatListAdapter) adapter).getItem(position));
+            return true;
+        });
         lvChat.setAdapter(mainChatListAdapter);
 
         FAButtonUtil.setFAButtonController(lvChat, btnFAB);
@@ -129,7 +141,7 @@ public class MainChatListFragment extends Fragment
 
     @Override
     public boolean hasChatItems() {
-        return mainChatListAdapter != null && mainChatListAdapter.getCount() > 0;
+        return mainChatListAdapter != null && mainChatListAdapter.getItemCount() > 0;
     }
 
     @Override
@@ -173,7 +185,7 @@ public class MainChatListFragment extends Fragment
     @Override
     public void scrollToPosition(int selectedEntityPosition) {
         if (selectedEntityPosition > 0) {
-            lvChat.setSelection(selectedEntityPosition - 1);
+            lvChat.smoothScrollToPosition(selectedEntityPosition - 1);
         }
     }
 
@@ -192,6 +204,18 @@ public class MainChatListFragment extends Fragment
             mainChatListAdapter.getItem(position).starred(isStarred);
             mainChatListAdapter.notifyDataSetChanged();
         }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showEmptyLayout() {
+        emptyView.setVisibility(View.VISIBLE);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void hideEmptyLayout() {
+        emptyView.setVisibility(View.GONE);
     }
 
     public void onEventMainThread(ShowProfileEvent event) {
@@ -270,14 +294,12 @@ public class MainChatListFragment extends Fragment
     }
 
     //TODO 메세지 진입시 네트워크 체킹 ?
-    @ItemClick(R.id.lv_main_chat_list)
     void onEntityItemClick(int position) {
 
         mainChatListPresenter.onEntityItemClick(getActivity(), position);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.ChooseDM);
     }
 
-    @ItemLongClick(R.id.lv_main_chat_list)
     void onEntityLongItemClick(ChatItem chatItem) {
         EntityMenuDialogFragment_.builder()
                 .entityId(chatItem.getEntityId())
@@ -300,6 +322,6 @@ public class MainChatListFragment extends Fragment
 
     @Override
     public void scrollToTop() {
-        lvChat.setSelectionFromTop(0, 0);
+        lvChat.scrollToPosition(0);
     }
 }
