@@ -1238,31 +1238,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         return false;
     }
 
-//    private void showUploadMenuSelectorIfNotShow(int height) {
-//        if (!uploadMenuViewModel.isShow()) {
-//            Permissions.getChecker()
-//                    .activity(getActivity())
-//                    .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//                    .hasPermission(() -> {
-//                        uploadMenuViewModel.showUploadSelector(height);
-//                        Observable.just(1)
-//                                .delay(100, TimeUnit.MILLISECONDS)
-//                                .subscribe(i -> {
-//                                    if (stickerViewModel.isShow()) {
-////                                            stickerViewModel.dismissStickerSelector(false);
-//                                    }
-//                                });
-//                        currentButtonAction = ButtonAction.UPLOAD;
-//                        sendAnalyticsEvent(AnalyticsValue.Action.Upload);
-//                    })
-//                    .noPermission(() -> {
-//                        String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-//                        requestPermissions(permissions, REQ_STORAGE_PERMISSION);
-//                    })
-//                    .check();
-//        }
-//    }
-
     @Click(R.id.iv_messages_preview_sticker_close)
     void onStickerPreviewClose() {
         this.stickerInfo = NULL_STICKER;
