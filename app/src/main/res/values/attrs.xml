@@ -37,4 +37,8 @@
         <attr name="sbvChcked" format="boolean" />
     </declare-styleable>
 
+    <declare-styleable name="MessageWidthRelativeLayout">
+        <attr name="boundWidth" format="dimension" />
+    </declare-styleable>
+
 </resources>

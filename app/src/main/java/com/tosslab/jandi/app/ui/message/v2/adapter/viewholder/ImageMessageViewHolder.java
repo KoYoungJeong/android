@@ -1,8 +1,9 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
-import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -45,9 +46,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
     private TextView tvName;
     private SimpleDraweeView ivFileImage;
     private TextView tvFileName;
-    private View vDisableCover;
     private View vDisableLineThrough;
-    private Context context;
 
     private int minImageWidth;
     private int minImageHeight;
@@ -64,7 +63,6 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         super.initView(rootView);
         ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
-        vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
 
         vgFileImageWrapper = (RelativeLayout) rootView.findViewById(R.id.vg_message_photo_wrapper);
@@ -72,26 +70,24 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         tvFileName = (TextView) rootView.findViewById(R.id.tv_image_message_file_name);
         tvFileSize = (TextView) rootView.findViewById(R.id.tv_file_size);
 
-        context = rootView.getContext();
-
         initViewSizes();
     }
 
     @Override
-    protected void initObjects() {
-        vgMessageContent.setVisibility(View.GONE);
-        vgStickerMessageContent.setVisibility(View.GONE);
-        vgFileMessageContent.setVisibility(View.GONE);
-        vgImageMessageContent.setVisibility(View.VISIBLE);
+    public int getLayoutId() {
+        return R.layout.item_message_image_v3;
     }
 
     // 계속 계산하지 않도록
     private void initViewSizes() {
-        minImageWidth = getPixelFromDp(MIN_IMAGE_WIDTH);
-        minImageHeight = getPixelFromDp(MIN_IMAGE_HEIGHT);
-        maxImageWidth = getDisplayWidth()
-                - getPixelFromDp(IMAGE_WIDTH_LEFT_MARGIN) - getPixelFromDp(IMAGE_WIDTH_RIGHT_MARGIN);
-        maxImageHeight = getPixelFromDp(MAX_IMAGE_HEIGHT);
+
+        DisplayMetrics displayMetrics = JandiApplication.getContext().getResources().getDisplayMetrics();
+        minImageWidth = getPixelFromDp(MIN_IMAGE_WIDTH, displayMetrics);
+        minImageHeight = getPixelFromDp(MIN_IMAGE_HEIGHT, displayMetrics);
+        maxImageWidth = displayMetrics.widthPixels
+                - getPixelFromDp(IMAGE_WIDTH_LEFT_MARGIN, displayMetrics)
+                - getPixelFromDp(IMAGE_WIDTH_RIGHT_MARGIN, displayMetrics);
+        maxImageHeight = getPixelFromDp(MAX_IMAGE_HEIGHT, displayMetrics);
     }
 
     @Override
@@ -112,13 +108,11 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);
 
         if (fromEntity != null && entity.isEnabled()) {
-            tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
-            vDisableCover.setVisibility(View.GONE);
+            tvName.setTextColor(JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_name));
             vDisableLineThrough.setVisibility(View.GONE);
         } else {
             tvName.setTextColor(
                     tvName.getResources().getColor(R.color.deactivate_text_color));
-            vDisableCover.setVisibility(View.VISIBLE);
             vDisableLineThrough.setVisibility(View.VISIBLE);
         }
 
@@ -203,9 +197,8 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
                     || (!isFromLocalFilePath && TextUtils.isEmpty(remoteFilePth))) {
                 LogUtil.i(TAG, "Thumbnail's are empty.");
 
-                ViewGroup.LayoutParams wrapperLayoutParams = vgFileImageWrapper.getLayoutParams();
-                wrapperLayoutParams.height = maxImageHeight;
-                vgFileImageWrapper.setLayoutParams(wrapperLayoutParams);
+                layoutParams.height = maxImageHeight;
+                ivFileImage.setLayoutParams(layoutParams);
                 vgFileImageWrapper.setBackgroundDrawable(JandiApplication.getContext()
                         .getResources().getDrawable(R.drawable.bg_round_top_green_for_message));
 
@@ -252,9 +245,6 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
             }
 
-            ViewGroup.LayoutParams wrapperLayoutParams = vgFileImageWrapper.getLayoutParams();
-            wrapperLayoutParams.height = height;
-            vgFileImageWrapper.setLayoutParams(wrapperLayoutParams);
             vgFileImageWrapper.setBackgroundDrawable(JandiApplication.getContext()
                     .getResources().getDrawable(R.drawable.bg_round_top_gray_for_message));
 
@@ -274,22 +264,16 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
     @Override
     public void setOnItemClickListener(View.OnClickListener itemClickListener) {
-        super.setOnItemClickListener(itemClickListener);
-        vgImageMessageContent.setOnClickListener(itemClickListener);
+        vgFileImageWrapper.setOnClickListener(itemClickListener);
     }
 
     @Override
     public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
-        super.setOnItemLongClickListener(itemLongClickListener);
-        vgImageMessageContent.setOnLongClickListener(itemLongClickListener);
+        vgFileImageWrapper.setOnLongClickListener(itemLongClickListener);
     }
 
-    private int getPixelFromDp(int dp) {
-        return (int) (dp * context.getResources().getDisplayMetrics().density);
-    }
-
-    private int getDisplayWidth() {
-        return context.getResources().getDisplayMetrics().widthPixels;
+    private int getPixelFromDp(int dp, DisplayMetrics displayMetrics) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, displayMetrics);
     }
 
     private boolean isFileFromGoogleOrDropbox(MimeTypeUtil.SourceType sourceType) {

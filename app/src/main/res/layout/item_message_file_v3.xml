@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.tosslab.jandi.app.views.FrescoImageView
+        android:id="@+id/iv_message_user_profile"
+        android:layout_width="@dimen/jandi_messages_profile_size"
+        android:layout_height="@dimen/jandi_messages_profile_size"
+        android:layout_marginLeft="@dimen/jandi_messages_profile_margin_right"
+        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
+        app:backgroundImage="@color/black"
+        app:roundAsCircle="true" />
+
+    <TextView
+        android:id="@+id/tv_message_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/iv_message_user_profile"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:maxWidth="200dp"
+        android:singleLine="true"
+        android:text="빠빠빠"
+        android:textColor="@color/jandi_messages_name"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/iv_entity_listitem_line_through"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tv_message_user_name"
+        android:layout_alignLeft="@+id/tv_message_user_name"
+        android:layout_alignRight="@+id/tv_message_user_name"
+        android:layout_alignTop="@+id/tv_message_user_name"
+        android:src="@drawable/line_gray" />
+
+
+    <com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout
+        android:id="@+id/vg_message_common_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_message_user_name"
+        android:layout_marginLeft="@dimen/jandi_messages_content_left_margin"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/bg_message_item_selector"
+        android:clickable="true"
+        android:paddingBottom="8dp"
+        android:paddingLeft="11dp"
+        android:paddingRight="11dp"
+        android:paddingTop="8dp"
+        app:boundWidth="59dp">
+
+        <ImageView
+            android:id="@+id/iv_message_common_file"
+            android:layout_width="35dp"
+            android:layout_height="42dp"
+            android:layout_centerVertical="true"
+            android:scaleType="fitCenter" />
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="14dp"
+            android:layout_toRightOf="@+id/iv_message_common_file"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_message_common_file_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:text="jfile name asjhdk lajdlkjhsdlka jfdsafdsafd safdsfsdh flkjahsdf"
+                android:textColor="@color/dark_gray"
+                android:textSize="14dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_uploader_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_message_common_file_name"
+                android:layout_marginTop="4dp"
+                android:text="tee"
+                android:textColor="#333333"
+                android:textSize="11dp" />
+
+            <TextView
+                android:id="@+id/tv_file_info_divider"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/tv_uploader_name"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_toRightOf="@+id/tv_uploader_name"
+                android:text="|"
+                android:textColor="#999999"
+                android:textSize="11dp" />
+
+            <TextView
+                android:id="@+id/tv_common_file_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/tv_uploader_name"
+                android:layout_toRightOf="@+id/tv_file_info_divider"
+                android:text="file size"
+                android:textColor="#999999"
+                android:textSize="11dp" />
+
+        </RelativeLayout>
+
+    </com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/vg_message_common_file"
+        android:layout_marginBottom="1dp"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@+id/vg_message_common_file"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_message_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:text="1"
+            android:textColor="#ff00ace9"
+            android:textSize="9dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_message_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:layout_marginTop="-2dp"
+            android:text="오전 11:30"
+            android:textColor="#ff999999"
+            android:textSize="10dp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/v_margin"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_below="@+id/vg_message_common_file"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/vg_message_last_read"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/vg_message_common_file"
+        android:visibility="gone">
+
+    </RelativeLayout>
+
+</RelativeLayout>

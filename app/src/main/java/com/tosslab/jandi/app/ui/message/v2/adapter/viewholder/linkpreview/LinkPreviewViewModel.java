@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -39,14 +40,6 @@ public class LinkPreviewViewModel {
 
     public void initView(View rootView) {
         vgLinkPreview = (ViewGroup) rootView.findViewById(R.id.vg_linkpreview);
-        vgLinkPreview.setOnClickListener(
-                onLinkPreviewClickListener = new OnLinkPreviewClickListener(context));
-
-        tvTitle = (TextView) rootView.findViewById(R.id.tv_linkpreview_title);
-        tvDomain = (TextView) rootView.findViewById(R.id.tv_linkpreview_domain);
-        tvDescription = (TextView) rootView.findViewById(R.id.tv_linkpreview_description);
-        vgThumb = rootView.findViewById(R.id.vg_linkpreview_thumb);
-        ivThumb = (SimpleDraweeView) rootView.findViewById(R.id.iv_linkpreview_thumb);
     }
 
     public void bindData(ResMessages.Link link) {
@@ -57,6 +50,9 @@ public class LinkPreviewViewModel {
             vgLinkPreview.setVisibility(View.GONE);
             return;
         } else {
+            vgLinkPreview.removeAllViews();
+            LayoutInflater.from(vgLinkPreview.getContext()).inflate(R.layout.item_message_layout_linkpreview_v2, vgLinkPreview, true);
+            initInnerView(vgLinkPreview);
             vgLinkPreview.setVisibility(View.VISIBLE);
         }
 
@@ -90,6 +86,17 @@ public class LinkPreviewViewModel {
 
         String imageUrl = linkPreview.imageUrl;
         ivThumb.setImageURI(Uri.parse(imageUrl));
+    }
+
+    private void initInnerView(ViewGroup vgLinkPreview) {
+        vgLinkPreview.setOnClickListener(
+                onLinkPreviewClickListener = new OnLinkPreviewClickListener(context));
+
+        tvTitle = (TextView) vgLinkPreview.findViewById(R.id.tv_linkpreview_title);
+        tvDomain = (TextView) vgLinkPreview.findViewById(R.id.tv_linkpreview_domain);
+        tvDescription = (TextView) vgLinkPreview.findViewById(R.id.tv_linkpreview_description);
+        vgThumb = vgLinkPreview.findViewById(R.id.vg_linkpreview_thumb);
+        ivThumb = (SimpleDraweeView) vgLinkPreview.findViewById(R.id.iv_linkpreview_thumb);
     }
 
     private boolean useThumbnail(String imagUrl) {

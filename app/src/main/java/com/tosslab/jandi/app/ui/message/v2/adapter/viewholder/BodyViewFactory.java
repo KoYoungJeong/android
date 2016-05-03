@@ -28,7 +28,7 @@ public class BodyViewFactory {
 
     public static BodyViewHolder createViewHolder(int viewType) {
 
-        BaseViewHolderBuilder builder = new EmptyViewHolder.Builder();
+        BaseViewHolderBuilder builder;
 
         // Setting View TYPE
         if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_NORMAL_MESSAGE)) {
@@ -53,6 +53,8 @@ public class BodyViewFactory {
             builder = new JandiBotViewHolder.Builder();
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_INTEGRATION_BOT_MESSAGE)) {
             builder = new IntegrationBotViewHolder.Builder();
+        } else {
+            builder = new EmptyViewHolder.Builder();
         }
 
         // Setting Option

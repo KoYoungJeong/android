@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -62,11 +64,14 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     private ExecutorService threadPool = Executors.newSingleThreadExecutor();
     private MessagePointer messagePointer;
 
+    private Map<ResMessages.Link, Integer> itemTypes;
+
     public MainMessageListAdapter(Context context) {
         this.context = context;
         oldMoreState = MoreState.Idle;
         links = new CopyOnWriteArrayList<>();
         setHasStableIds(true);
+        itemTypes = new WeakHashMap<>();
 
         lock = new ReentrantLock();
     }
@@ -228,7 +233,13 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
             nextLink = getItem(position + 1);
         }
 
-        return BodyViewFactory.getContentType(previousLink, currentLink, nextLink);
+        if (!itemTypes.containsKey(currentLink)) {
+            int contentType = BodyViewFactory.getContentType(previousLink, currentLink, nextLink);
+            itemTypes.put(currentLink, contentType);
+            return contentType;
+        } else {
+            return itemTypes.get(currentLink);
+        }
     }
 
     private long getToCursorLinkId(List<ResMessages.Link> links) {
@@ -346,12 +357,22 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         lock.lock();
 
         try {
-            links.remove(position);
+
+            if (position > 0) {
+                itemTypes.remove(links.get(position - 1));
+            }
+            if (position < getItemCount() - 1) {
+                itemTypes.remove(links.get(position + 1));
+            }
+            ResMessages.Link removed = links.remove(position);
+            itemTypes.remove(removed);
+
         } catch (Exception e) {
             LogUtil.e(Log.getStackTraceString(e));
         } finally {
             lock.unlock();
         }
+
     }
 
     public void clear() {

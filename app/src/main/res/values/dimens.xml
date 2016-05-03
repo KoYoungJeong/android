@@ -37,6 +37,7 @@
     <dimen name="jandi_messages_joined_cdp">12sp</dimen>
     <!--// 이미지 및 간격-->
     <dimen name="jandi_messages_profile_size">32dp</dimen>
+    <dimen name="jandi_messages_content_left_margin">46dp</dimen>
     <dimen name="jandi_messages_padding_left">15dp</dimen>
     <dimen name="jandi_messages_padding_right">16dp</dimen>
     <dimen name="jandi_messages_profile_margin_right">7dp</dimen>
