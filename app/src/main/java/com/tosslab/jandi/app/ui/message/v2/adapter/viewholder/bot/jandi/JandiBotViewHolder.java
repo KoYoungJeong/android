@@ -209,26 +209,6 @@ public class JandiBotViewHolder implements BodyViewHolder {
     }
 
     public static class Builder extends BaseViewHolderBuilder {
-//        private boolean hasBottomMargin = false;
-//        private boolean hasOnlyBadge = false;
-//        private boolean hasProfile = false;
-//
-//        public Builder setHasBottomMargin(boolean hasBottomMargin) {
-//            this.hasBottomMargin = hasBottomMargin;
-//            return this;
-//        }
-//
-//        public Builder setHasOnlyBadge(boolean hasOnlyBadge) {
-//            this.hasOnlyBadge = hasOnlyBadge;
-//            return this;
-//        }
-//
-//        public Builder setHasBotProfile(boolean hasProfile) {
-//            this.hasProfile = hasProfile;
-//            return this;
-//        }
-
-
         public JandiBotViewHolder build() {
             JandiBotViewHolder jandiBotViewHolder = new JandiBotViewHolder();
             jandiBotViewHolder.setHasOnlyBadge(hasOnlyBadge);

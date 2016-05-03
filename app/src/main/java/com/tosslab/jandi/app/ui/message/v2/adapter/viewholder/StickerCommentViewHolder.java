@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -64,6 +63,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
     private boolean hasOnlyBadge;
     private TextView tvFileUploaderName;
     private TextView tvCommonFileSize;
+    private boolean hasFlatTop = false;
 
     private StickerCommentViewHolder() {
     }
@@ -100,6 +100,25 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
         } else {
             ivProfileNestedUserProfileForSticker.setVisibility(View.INVISIBLE);
             tvProfileNestedUserNameForSticker.setVisibility(View.GONE);
+        }
+
+        if (hasFlatTop) {
+            if (hasBottomMargin) {
+                vgProfileNestedCommentSticker.setBackground(
+                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector_flat_top));
+            } else {
+                vgProfileNestedCommentSticker.setBackground(
+                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector_flat_all));
+            }
+        } else {
+            if (hasBottomMargin) {
+                vgProfileNestedCommentSticker.setBackground(
+                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector));
+
+            } else {
+                vgProfileNestedCommentSticker.setBackground(
+                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector_flat_bottom));
+            }
         }
 
     }
@@ -322,6 +341,10 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
         this.hasOnlyBadge = hasOnlyBadge;
     }
 
+    public void setHasFlatTop(boolean hasFlatTop) {
+        this.hasFlatTop = hasFlatTop;
+    }
+
     public static class Builder extends BaseViewHolderBuilder {
 
         public StickerCommentViewHolder build() {
@@ -333,6 +356,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
             viewHolder.setHasNestedProfile(hasNestedProfile);
             viewHolder.setHasViewAllComment(hasViewAllComment);
             viewHolder.setHasOnlyBadge(hasOnlyBadge);
+            viewHolder.setHasFlatTop(hasFlatTop);
             return viewHolder;
         }
     }

@@ -81,6 +81,7 @@ public class TeamDomainInfoModel {
     public void updateTeamInfo(long teamId) throws RetrofitException {
 
         ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+        AccountUtil.removeDuplicatedTeams(resAccountInfo);
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
     }

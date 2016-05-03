@@ -24,8 +24,7 @@
             android:paddingTop="6dp"
             android:text="When"
             android:textColor="@color/white"
-            android:textSize="11dp"
-            android:textStyle="bold" />
+            android:textSize="11dp" />
     </LinearLayout>
 
     <View

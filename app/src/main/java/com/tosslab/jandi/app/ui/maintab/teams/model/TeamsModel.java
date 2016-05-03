@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
@@ -53,6 +54,7 @@ public class TeamsModel {
         return Observable.create(subscriber -> {
             try {
                 ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+                AccountUtil.removeDuplicatedTeams(resAccountInfo);
                 AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
                 subscriber.onNext(new Object());
             } catch (RetrofitException retrofitError) {
@@ -174,6 +176,7 @@ public class TeamsModel {
                 ResAccountInfo resAccountInfo =
                         accountApi.get().getAccountInfo();
 
+                AccountUtil.removeDuplicatedTeams(resAccountInfo);
                 AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
                 AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 

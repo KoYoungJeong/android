@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
@@ -39,7 +40,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
     private TextView tvMessage;
     private View vDisableCover;
     private View vDisableLineThrough;
-    private View vConnectLine;
+    private SimpleDraweeView vConnectLine;
     private TextView tvMessageTime;
     private TextView tvMessageBadge;
     private LinearLayout vgConnectInfo;
@@ -68,7 +69,8 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
         tvMessageBadge = (TextView) rootView.findViewById(R.id.tv_message_badge);
         vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
-        vConnectLine = rootView.findViewById(R.id.v_message_sub_menu_connect_color);
+        vConnectLine = (SimpleDraweeView) rootView.findViewById(R.id.v_message_sub_menu_connect_color);
+
         vgConnectInfo = ((LinearLayout) rootView.findViewById(R.id.vg_message_sub_menu));
         vLastRead = rootView.findViewById(R.id.vg_message_last_read);
 
@@ -90,6 +92,10 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
             ivProfile.setVisibility(View.INVISIBLE);
             vgUserName.setVisibility(View.GONE);
         }
+
+        RoundingParams roundingParams = RoundingParams.fromCornersRadii(10f, 0, 10f, 0);
+        GenericDraweeHierarchy hierarchy = vConnectLine.getHierarchy();
+        hierarchy.setRoundingParams(roundingParams);
 
     }
 
@@ -207,25 +213,6 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
 
     public static class Builder extends BaseViewHolderBuilder {
-//        private boolean hasBottomMargin = false;
-//        private boolean hasOnlyBadge = false;
-//        private boolean hasProfile = false;
-//
-//        public Builder setHasBottomMargin(boolean hasBottomMargin) {
-//            this.hasBottomMargin = hasBottomMargin;
-//            return this;
-//        }
-//
-//        public Builder setHasOnlyBadge(boolean hasOnlyBadge) {
-//            this.hasOnlyBadge = hasOnlyBadge;
-//            return this;
-//        }
-//
-//        public Builder setHasBotProfile(boolean hasProfile) {
-//            this.hasProfile = hasProfile;
-//            return this;
-//        }
-
         public IntegrationBotViewHolder build() {
             IntegrationBotViewHolder integrationBotViewHolder = new IntegrationBotViewHolder();
             integrationBotViewHolder.setHasOnlyBadge(hasOnlyBadge);

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -72,10 +73,13 @@ public class LinkPreviewViewModel {
 
         boolean useThumbnail = useThumbnail(linkPreview.imageUrl);
 
+        RoundingParams roundingParams = RoundingParams.fromCornersRadii(5f, 5f, 0, 0);
+
         GenericDraweeHierarchy hierarchy = ivThumb.getHierarchy();
         Drawable placeHolder = context.getResources().getDrawable(R.drawable.link_preview);
         hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.CENTER_INSIDE);
         hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+        hierarchy.setRoundingParams(roundingParams);
         if (!useThumbnail) {
             ivThumb.setImageURI(null);
             vgThumb.setVisibility(View.GONE);
