@@ -111,7 +111,9 @@ public class ExpandableTopicAdapter
         }
 
         // 마지막에 들어가 있는 더미 아이템을 빼주기 위해서
-        topicItemDatas.remove(topicItemDatas.size() - 1);
+        if (topicItemDatas.size() > 0) {
+            topicItemDatas.remove(topicItemDatas.size() - 1);
+        }
 
         return topicItemDatas;
     }
