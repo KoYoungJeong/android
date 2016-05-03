@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.push.to.PushTO;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 
 import org.androidannotations.annotations.AfterInject;
@@ -86,6 +87,7 @@ public class JandiInterfaceModel {
     public void refreshAccountInfo() throws RetrofitException {
         ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
 
+        AccountUtil.removeDuplicatedTeams(resAccountInfo);
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
         EntityClientManager entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());

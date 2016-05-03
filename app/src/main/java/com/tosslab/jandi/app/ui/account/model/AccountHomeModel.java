@@ -63,6 +63,7 @@ public class AccountHomeModel {
     public void refreshAccountInfo() {
         try {
             ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+            AccountUtil.removeDuplicatedTeams(resAccountInfo);
             AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
         } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();

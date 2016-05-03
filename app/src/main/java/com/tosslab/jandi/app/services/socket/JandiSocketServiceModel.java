@@ -68,6 +68,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicKickedoutEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -165,6 +166,7 @@ public class JandiSocketServiceModel {
     public void refreshAccountInfo() {
         try {
             ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+            AccountUtil.removeDuplicatedTeams(resAccountInfo);
             AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
             Collection<ResAccountInfo.UserTeam> teamList = resAccountInfo.getMemberships();
@@ -506,6 +508,7 @@ public class JandiSocketServiceModel {
                         } else {
                             // 다른 팀의 내 마커가 갱신된 경우
                             ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+                            AccountUtil.removeDuplicatedTeams(resAccountInfo);
                             AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
                             Observable.from(resAccountInfo.getMemberships())
@@ -541,6 +544,7 @@ public class JandiSocketServiceModel {
                 .subscribe(event -> {
                     try {
                         ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+                        AccountUtil.removeDuplicatedTeams(resAccountInfo);
                         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
                         Observable.from(resAccountInfo.getMemberships())

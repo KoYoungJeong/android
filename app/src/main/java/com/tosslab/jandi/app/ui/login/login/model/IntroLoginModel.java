@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -62,6 +63,7 @@ public class IntroLoginModel {
     }
 
     public boolean saveAccountInfo(ResAccountInfo resAccountInfo) {
+        AccountUtil.removeDuplicatedTeams(resAccountInfo);
         return AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
     }
 
