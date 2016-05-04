@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -136,7 +137,9 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
             }
 
             ivFileImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            tvFileName.setGravity(Gravity.NO_GRAVITY);
             if (TextUtils.equals(link.message.status, "archived")) {
+                tvFileName.setGravity(Gravity.CENTER_HORIZONTAL);
                 tvFileName.setText(R.string.jandi_deleted_file);
                 ivFileImage.setImageResource(R.drawable.file_icon_deleted);
 

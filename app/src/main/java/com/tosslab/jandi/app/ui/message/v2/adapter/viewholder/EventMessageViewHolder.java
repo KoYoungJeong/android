@@ -2,29 +2,32 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
 import android.text.style.TextAppearanceSpan;
 import android.view.View;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.views.spannable.ClickableNameSpannable;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
-import com.tosslab.jandi.app.views.spannable.ProfileSpannable;
 
 import java.util.Collection;
 import java.util.Iterator;
 
 public class EventMessageViewHolder implements BodyViewHolder {
 
+    private final int textSize11sp;
     private TextView tvEvent;
     private Context context;
     private View vLastRead;
@@ -32,6 +35,8 @@ public class EventMessageViewHolder implements BodyViewHolder {
     private boolean hasBottomMargin = false;
 
     private EventMessageViewHolder() {
+        textSize11sp = JandiApplication.getContext().getResources().getDimensionPixelSize(R.dimen.jandi_system_message_content);
+
     }
 
     @Override
@@ -100,10 +105,11 @@ public class EventMessageViewHolder implements BodyViewHolder {
         builder.append(" ");
         DateViewSpannable spannable =
                 new DateViewSpannable(context, DateTransformator.getTimeStringForSimple(link.time));
+        spannable.setTextSize(tvEvent.getContext().getResources().getDimensionPixelSize(R.dimen.jandi_system_message_content_time));
         builder.setSpan(spannable, startIndex, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         tvEvent.setText(builder);
-        tvEvent.setMovementMethod(LinkMovementMethod.getInstance());
+        LinkifyUtil.setOnLinkClick(tvEvent);
 
 
     }
@@ -125,7 +131,7 @@ public class EventMessageViewHolder implements BodyViewHolder {
             long creatorId = publicCreateInfo.creatorId;
             FormattedEntity creatorEntity = entityManager.getEntityById(creatorId);
 
-            ProfileSpannable profileSpannable = new ProfileSpannable(creatorId);
+            ClickableNameSpannable profileSpannable = new ClickableNameSpannable(creatorId, textSize11sp, Color.WHITE);
             int beforeLength = builder.length();
             builder.append(creatorEntity.getName());
             int afterLength = builder.length();
@@ -141,7 +147,7 @@ public class EventMessageViewHolder implements BodyViewHolder {
             long creatorId = privateCreateInfo.creatorId;
             FormattedEntity creatorEntity = entityManager.getEntityById(creatorId);
 
-            ProfileSpannable profileSpannable = new ProfileSpannable(creatorId);
+            ClickableNameSpannable profileSpannable = new ClickableNameSpannable(creatorId, textSize11sp, Color.WHITE);
             int beforeLength = builder.length();
             builder.append(creatorEntity.getName());
             int afterLength = builder.length();
@@ -160,7 +166,7 @@ public class EventMessageViewHolder implements BodyViewHolder {
 
         String invitorName = invitorEntity.getName();
 
-        ProfileSpannable profileSpannable = new ProfileSpannable(invitorId);
+        ClickableNameSpannable profileSpannable = new ClickableNameSpannable(invitorId, textSize11sp, Color.WHITE);
         int beforeLength = builder.length();
         builder.append(invitorName);
         int afterLength = builder.length();
@@ -188,8 +194,8 @@ public class EventMessageViewHolder implements BodyViewHolder {
                 }
                 first = false;
 
-                ProfileSpannable profileSpannable1 =
-                        new ProfileSpannable(tempEntity.getId());
+                ClickableNameSpannable profileSpannable1 =
+                        new ClickableNameSpannable(tempEntity.getId(), textSize11sp, Color.WHITE);
                 builder.insert(tempIndex, tempEntity.getName());
 
                 builder.setSpan(profileSpannable1,
@@ -210,7 +216,7 @@ public class EventMessageViewHolder implements BodyViewHolder {
             name = " ";
         }
 
-        ProfileSpannable profileSpannable = new ProfileSpannable(fromEntity);
+        ClickableNameSpannable profileSpannable = new ClickableNameSpannable(fromEntity, textSize11sp, Color.WHITE);
         int beforeLength = builder.length();
         builder.append(name);
         int afterLength = builder.length();
@@ -225,7 +231,7 @@ public class EventMessageViewHolder implements BodyViewHolder {
                 EntityManager.getInstance().getEntityById(fromEntity);
         String name = entity.getName();
 
-        ProfileSpannable profileSpannable = new ProfileSpannable(fromEntity);
+        ClickableNameSpannable profileSpannable = new ClickableNameSpannable(fromEntity, textSize11sp, Color.WHITE);
         int beforeLength = builder.length();
         builder.append(name);
         int afterLength = builder.length();
@@ -246,18 +252,17 @@ public class EventMessageViewHolder implements BodyViewHolder {
         String writer = entity.getName();
 
         String format = context.getResources().getString(R.string.jandi_announcement_created, creator, writer);
-
         builder.append(format);
 
         int creatorStartIndex = format.indexOf(creator);
         int creatorLastIndex = creatorStartIndex + creator.length();
-        ProfileSpannable creatorSpannable = new ProfileSpannable(creatorId);
+        ClickableNameSpannable creatorSpannable = new ClickableNameSpannable(creatorId, textSize11sp, Color.WHITE);
         builder.setSpan(creatorSpannable,
                 creatorStartIndex, creatorLastIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         int writerStartIndex = format.lastIndexOf(writer);
         int writerLastIndex = writerStartIndex + writer.length();
-        ProfileSpannable writerSpannable = new ProfileSpannable(writerId);
+        ClickableNameSpannable writerSpannable = new ClickableNameSpannable(writerId, textSize11sp, Color.WHITE);
         builder.setSpan(writerSpannable,
                 writerStartIndex, writerLastIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
@@ -277,13 +282,13 @@ public class EventMessageViewHolder implements BodyViewHolder {
 
         int creatorStartIndex = format.indexOf(creator);
         int creatorLastIndex = creatorStartIndex + creator.length();
-        ProfileSpannable creatorSpannable = new ProfileSpannable(creatorId);
+        ClickableNameSpannable creatorSpannable = new ClickableNameSpannable(creatorId, textSize11sp, Color.WHITE);
         builder.setSpan(creatorSpannable,
                 creatorStartIndex, creatorLastIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         int writerStartIndex = format.lastIndexOf(writer);
         int writerLastIndex = writerStartIndex + writer.length();
-        ProfileSpannable writerSpannable = new ProfileSpannable(writerId);
+        ClickableNameSpannable writerSpannable = new ClickableNameSpannable(writerId, textSize11sp, Color.WHITE);
         builder.setSpan(writerSpannable,
                 writerStartIndex, writerLastIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
@@ -293,7 +298,7 @@ public class EventMessageViewHolder implements BodyViewHolder {
         FormattedEntity entity = entityManager.getEntityById(from);
         String name = entity.getName();
 
-        ProfileSpannable profileSpannable = new ProfileSpannable(from);
+        ClickableNameSpannable profileSpannable = new ClickableNameSpannable(from, textSize11sp, Color.WHITE);
         int beforeLength = builder.length();
         builder.append(name);
         int afterLength = builder.length();

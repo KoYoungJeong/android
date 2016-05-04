@@ -211,8 +211,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
                 layoutParams.height = maxImageHeight;
                 ivFileImage.setLayoutParams(layoutParams);
-                vgFileImageWrapper.setBackgroundDrawable(JandiApplication.getContext()
-                        .getResources().getDrawable(R.drawable.bg_round_top_green_for_message));
+                vgFileImageWrapper.setBackgroundResource(R.drawable.bg_round_top_green_for_message);
 
                 imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
                 imageRequestBuilder.load(R.drawable.preview_no_img)
