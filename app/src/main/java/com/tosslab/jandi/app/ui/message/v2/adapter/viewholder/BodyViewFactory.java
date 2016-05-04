@@ -142,20 +142,20 @@ public class BodyViewFactory {
     private static int getNormalMessageType(ResMessages.Link previousLink,
                                             ResMessages.Link currentLink,
                                             ResMessages.Link nextLink) {
-        int type = TypeUtil.TYPE_VIEW_NORMAL_MESSAGE;
-
-        if (isPureMessage(previousLink, currentLink)) {
-            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
-        }
+        int type;
 
         if (isDummyMessage(currentLink)) {
             type = TypeUtil.TYPE_VIEW_DUMMY_NORMAL_MESSAGE;
         } else if (isJandiBotMessage(currentLink)) {
             type = TypeUtil.TYPE_VIEW_JANDI_BOT_MESSAGE;
-            return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
         } else if (isIntegrationBotMessage(currentLink)) {
             type = TypeUtil.TYPE_VIEW_INTEGRATION_BOT_MESSAGE;
-            return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
+        } else {
+            type = TypeUtil.TYPE_VIEW_NORMAL_MESSAGE;
+        }
+
+        if (isPureMessage(previousLink, currentLink)) {
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
         }
 
         if (isNextMessageSameWriterAndSameTime(currentLink, nextLink)) {
@@ -176,14 +176,16 @@ public class BodyViewFactory {
     private static int getStickerMessageType(ResMessages.Link previousLink,
                                              ResMessages.Link currentLink,
                                              ResMessages.Link nextLink) {
-        int type = TypeUtil.TYPE_VIEW_STICKER_MESSAGE;
-
-        if (isPureMessage(previousLink, currentLink)) {
-            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
-        }
+        int type;
 
         if (isDummyMessage(currentLink)) {
             type = TypeUtil.TYPE_VIEW_DUMMY_STICKER;
+        } else {
+            type = TypeUtil.TYPE_VIEW_STICKER_MESSAGE;
+        }
+
+        if (isPureMessage(previousLink, currentLink)) {
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
         }
 
         if (isNextMessageSameWriterAndSameTime(currentLink, nextLink)) {

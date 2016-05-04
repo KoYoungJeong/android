@@ -60,6 +60,8 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
 
     @Override
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
+        setMarginVisible();
+        setTimeVisible();
         setProfileInfos(link);
         setFileInfo(link, teamId, roomId);
         setFileBackground(link);

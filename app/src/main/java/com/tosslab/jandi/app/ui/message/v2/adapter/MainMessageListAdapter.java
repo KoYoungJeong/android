@@ -253,6 +253,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     }
 
     private void addAfterLinks(long roomId, List<ResMessages.Link> links) {
+        itemTypes.remove(links.get(links.size() - 1));
         long afterLinkStartId = getAfterLinkStartId(links);
         long afterLinkEndId = Integer.MAX_VALUE;
         int afterMessageCount = MessageRepository.getRepository().getMessagesCount(roomId, afterLinkStartId, afterLinkEndId);

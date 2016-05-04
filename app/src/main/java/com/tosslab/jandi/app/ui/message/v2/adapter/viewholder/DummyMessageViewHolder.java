@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.text.SpannableStringBuilder;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,7 +21,6 @@ import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 public class DummyMessageViewHolder implements BodyViewHolder {
     private SimpleDraweeView ivProfile;
-    private ViewGroup vgName;
     private TextView tvName;
     private TextView tvMessage;
     private SimpleDraweeView ivSticker;
@@ -30,36 +28,44 @@ public class DummyMessageViewHolder implements BodyViewHolder {
 
     private boolean hasBottomMargin = false;
     private boolean hasProfile = false;
+    private View vBottomMargin;
 
     private DummyMessageViewHolder() {
     }
 
+    @Override
     public void initView(View rootView) {
         ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
-        vgName = (ViewGroup) rootView.findViewById(R.id.vg_message_profile_user_name);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_profile_user_name);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_dummy_message_content);
         ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_dummy_message_sticker);
         ivStatus = (ImageView) rootView.findViewById(R.id.iv_dummy_send_status);
-        View vBottomMargin = rootView.findViewById(R.id.v_margin);
+        vBottomMargin = rootView.findViewById(R.id.v_margin);
 
+    }
+
+    private void setProfileVisible() {
+        if (hasProfile) {
+            ivProfile.setVisibility(View.VISIBLE);
+            tvName.setVisibility(View.VISIBLE);
+        } else {
+            ivProfile.setVisibility(View.GONE);
+            tvName.setVisibility(View.GONE);
+        }
+    }
+
+    private void setMarginVisible(View vBottomMargin) {
         if (hasBottomMargin) {
             vBottomMargin.setVisibility(View.VISIBLE);
         } else {
             vBottomMargin.setVisibility(View.GONE);
         }
-
-        if (hasProfile) {
-            ivProfile.setVisibility(View.VISIBLE);
-            vgName.setVisibility(View.VISIBLE);
-        } else {
-            ivProfile.setVisibility(View.INVISIBLE);
-            vgName.setVisibility(View.GONE);
-        }
     }
 
     @Override
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
+        setMarginVisible(vBottomMargin);
+        setProfileVisible();
 
         DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 

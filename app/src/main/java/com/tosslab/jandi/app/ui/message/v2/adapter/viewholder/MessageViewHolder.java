@@ -70,6 +70,8 @@ public class MessageViewHolder extends BaseMessageViewHolder {
 
     @Override
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
+        setMarginVisible();
+        setTimeVisible();
         if (hasProfile) {
             changeVisible(ivProfile, View.VISIBLE);
             changeVisible(tvName, View.VISIBLE);

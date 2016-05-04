@@ -45,6 +45,8 @@ public class StickerMessageViewHolder extends BaseMessageViewHolder {
 
     @Override
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
+        setMarginVisible();
+        setTimeVisible();
         if (hasProfile) {
             ivProfile.setVisibility(View.VISIBLE);
             tvName.setVisibility(View.VISIBLE);

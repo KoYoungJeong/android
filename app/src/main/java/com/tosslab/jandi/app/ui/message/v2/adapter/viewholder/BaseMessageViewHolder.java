@@ -28,12 +28,9 @@ public abstract class BaseMessageViewHolder implements BodyViewHolder {
 
         tvMessageBadge = (TextView) rootView.findViewById(R.id.tv_message_badge);
         tvMessageTime = (TextView) rootView.findViewById(R.id.tv_message_time);
-
-        setMarginVisible();
-        setTimeVisible();
     }
 
-    private void setMarginVisible() {
+    void setMarginVisible() {
         if (vMargin != null) {
             if (hasBottomMargin) {
                 vMargin.setVisibility(View.VISIBLE);
@@ -43,7 +40,7 @@ public abstract class BaseMessageViewHolder implements BodyViewHolder {
         }
     }
 
-    private void setTimeVisible() {
+    void setTimeVisible() {
         if (tvMessageTime != null) {
             if (hasOnlyBadge) {
                 tvMessageTime.setVisibility(View.GONE);

@@ -51,7 +51,6 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
         vMargin = rootView.findViewById(R.id.v_margin);
         ivCommentBubbleTail = (ImageView) rootView.findViewById(R.id.iv_comment_bubble_tail);
 
-        setOptionView();
         initObjects();
     }
 
@@ -98,6 +97,7 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
 
     @Override
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
+        setOptionView();
         if (hasViewAllComment) {
             int count = link.feedback.commentCount;
             String countString

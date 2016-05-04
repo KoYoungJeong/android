@@ -92,6 +92,8 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
     @Override
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
+        setMarginVisible();
+        setTimeVisible();
         setProfileInfos(link);
         bindFileImage(link, teamId, roomId);
         setFileTitleBackground(link);
