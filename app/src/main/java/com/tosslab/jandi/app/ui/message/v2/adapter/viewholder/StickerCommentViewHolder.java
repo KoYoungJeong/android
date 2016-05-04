@@ -98,29 +98,9 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
             ivProfileNestedUserProfileForSticker.setVisibility(View.VISIBLE);
             tvProfileNestedUserNameForSticker.setVisibility(View.VISIBLE);
         } else {
-            ivProfileNestedUserProfileForSticker.setVisibility(View.INVISIBLE);
+            ivProfileNestedUserProfileForSticker.setVisibility(View.GONE);
             tvProfileNestedUserNameForSticker.setVisibility(View.GONE);
         }
-
-        if (hasFlatTop) {
-            if (hasBottomMargin) {
-                vgProfileNestedCommentSticker.setBackground(
-                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector_flat_top));
-            } else {
-                vgProfileNestedCommentSticker.setBackground(
-                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector_flat_all));
-            }
-        } else {
-            if (hasBottomMargin) {
-                vgProfileNestedCommentSticker.setBackground(
-                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector));
-
-            } else {
-                vgProfileNestedCommentSticker.setBackground(
-                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector_flat_bottom));
-            }
-        }
-
     }
 
     @Override
@@ -134,9 +114,62 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
         super.bindData(link, teamId, roomId, entityId);
         if (hasFileInfoView()) {
             settingFileInfo(link, roomId);
+            setFileInfoBackground(link);
         }
         settingCommentUserInfo(link);
         getStickerComment(link, teamId, roomId);
+        setBackground(link);
+    }
+
+    private void setFileInfoBackground(ResMessages.Link link) {
+        boolean isMe = false;
+        if (link.feedback != null) {
+            isMe = EntityManager.getInstance().isMe(link.feedback.writerId);
+        }
+        if (isMe) {
+            vgMessageCommonFile.setBackgroundResource(R.drawable.bg_message_item_selector_mine);
+        } else {
+            vgMessageCommonFile.setBackgroundResource(R.drawable.bg_message_item_selector);
+
+        }
+    }
+
+    private void setBackground(ResMessages.Link link) {
+        boolean isMe = EntityManager.getInstance().isMe(link.message.writerId);
+
+        int resId;
+        if (hasFlatTop) {
+            if (hasBottomMargin) {
+                if (isMe) {
+                    resId = R.drawable.bg_message_item_selector_mine_flat_top;
+                } else {
+                    resId = R.drawable.bg_message_item_selector_flat_top;
+                }
+            } else {
+                if (isMe) {
+                    resId = R.drawable.bg_message_item_selector_mine_flat_all;
+                } else {
+                    resId = R.drawable.bg_message_item_selector_flat_all;
+                }
+            }
+        } else {
+            if (hasBottomMargin) {
+                if (isMe) {
+                    resId = R.drawable.bg_message_item_selector_mine;
+                } else {
+                    resId = R.drawable.bg_message_item_selector;
+
+                }
+            } else {
+                if (isMe) {
+                    resId = R.drawable.bg_message_item_selector_mine_flat_bottom;
+                } else {
+                    resId = R.drawable.bg_message_item_selector_flat_bottom;
+                }
+            }
+        }
+
+        vgProfileNestedCommentSticker.setBackgroundResource(resId);
     }
 
     private void getStickerComment(ResMessages.Link link, long teamId, long roomId) {

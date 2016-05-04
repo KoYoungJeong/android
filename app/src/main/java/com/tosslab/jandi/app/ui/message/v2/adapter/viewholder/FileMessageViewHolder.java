@@ -62,6 +62,16 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
         setProfileInfos(link);
         setFileInfo(link, teamId, roomId);
+        setFileBackground(link);
+    }
+
+    private void setFileBackground(ResMessages.Link link) {
+        long writerId = link.fromEntity;
+        if (EntityManager.getInstance().isMe(writerId)) {
+            vgFileContent.setBackgroundResource(R.drawable.bg_message_item_selector_mine);
+        } else {
+            vgFileContent.setBackgroundResource(R.drawable.bg_message_item_selector);
+        }
     }
 
     @Override

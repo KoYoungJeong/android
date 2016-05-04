@@ -81,6 +81,16 @@ public class MessageViewHolder extends BaseMessageViewHolder {
             changeVisible(vDisableLineThrough, View.GONE);
         }
         setMessage(link, teamId, roomId);
+        setMessageBackground(link);
+    }
+
+    private void setMessageBackground(ResMessages.Link link) {
+        long writerId = link.fromEntity;
+        if (EntityManager.getInstance().isMe(writerId)) {
+            tvMessage.setBackgroundResource(R.drawable.bg_message_item_selector_mine);
+        } else {
+            tvMessage.setBackgroundResource(R.drawable.bg_message_item_selector);
+        }
     }
 
     private void changeVisible(View view, int visible) {

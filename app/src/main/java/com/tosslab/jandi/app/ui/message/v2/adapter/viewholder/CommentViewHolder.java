@@ -54,7 +54,6 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     private TextView tvMessageBadge;
     private TextView tvMessageTime;
     private SimpleDraweeView ivProfileNestedCommentUserProfile;
-    private ViewGroup vgProfileNestedCommentUserName;
     private TextView tvProfileNestedCommentUserName;
     private ImageView ivProfileNestedNameLineThrough;
     private TextView tvProfileNestedCommentContent;
@@ -86,7 +85,6 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
         // 프로필이 있는 커멘트
         ivProfileNestedCommentUserProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_profile_nested_comment_user_profile);
-        vgProfileNestedCommentUserName = (ViewGroup) rootView.findViewById(R.id.vg_profile_nested_comment_user_name);
         tvProfileNestedCommentUserName = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_user_name);
         ivProfileNestedNameLineThrough = (ImageView) rootView.findViewById(R.id.iv_profile_nested_name_line_through);
 
@@ -96,29 +94,12 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
         if (hasNestedProfile) {
             ivProfileNestedCommentUserProfile.setVisibility(View.VISIBLE);
-            vgProfileNestedCommentUserName.setVisibility(View.VISIBLE);
+            tvProfileNestedCommentUserName.setVisibility(View.VISIBLE);
+            ivProfileNestedNameLineThrough.setVisibility(View.VISIBLE);
         } else {
-            ivProfileNestedCommentUserProfile.setVisibility(View.INVISIBLE);
-            vgProfileNestedCommentUserName.setVisibility(View.GONE);
-        }
-
-        if (hasFlatTop) {
-            if (hasBottomMargin) {
-                vgProfileNestedComment.setBackground(
-                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector_flat_top));
-            } else {
-                vgProfileNestedComment.setBackground(
-                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector_flat_all));
-            }
-        } else {
-            if (hasBottomMargin) {
-                vgProfileNestedComment.setBackground(
-                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector));
-
-            } else {
-                vgProfileNestedComment.setBackground(
-                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector_flat_bottom));
-            }
+            ivProfileNestedCommentUserProfile.setVisibility(View.GONE);
+            tvProfileNestedCommentUserName.setVisibility(View.GONE);
+            ivProfileNestedNameLineThrough.setVisibility(View.GONE);
         }
     }
 
@@ -134,11 +115,67 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
         if (hasFileInfoView()) {
             settingFileInfo(link, roomId);
+            setFileInfoBackground(link);
         }
 
         setCommentUserInfo(link);
 
         setCommentMessage(link, teamId, roomId);
+        setBackground(link);
+    }
+
+    private void setFileInfoBackground(ResMessages.Link link) {
+        boolean isMe = false;
+        if (link.feedback != null) {
+            isMe = EntityManager.getInstance().isMe(link.feedback.writerId);
+        }
+        if (isMe) {
+            vgMessageCommonFile.setBackgroundResource(R.drawable.bg_message_item_selector_mine);
+        } else {
+            vgMessageCommonFile.setBackgroundResource(R.drawable.bg_message_item_selector);
+
+        }
+    }
+
+
+    private void setBackground(ResMessages.Link link) {
+
+        boolean isMe = EntityManager.getInstance().isMe(link.message.writerId);
+
+        int resId;
+
+        if (hasFlatTop) {
+            if (hasBottomMargin) {
+                if (isMe) {
+                    resId = R.drawable.bg_message_item_selector_mine_flat_top;
+                } else {
+                    resId = R.drawable.bg_message_item_selector_flat_top;
+                }
+            } else {
+                if (isMe) {
+                    resId = R.drawable.bg_message_item_selector_mine_flat_all;
+                } else {
+                    resId = R.drawable.bg_message_item_selector_flat_all;
+                }
+            }
+        } else {
+            if (hasBottomMargin) {
+                if (isMe) {
+                    resId = R.drawable.bg_message_item_selector_mine;
+                } else {
+                    resId = R.drawable.bg_message_item_selector;
+
+                }
+            } else {
+
+                if (isMe) {
+                    resId = R.drawable.bg_message_item_selector_mine_flat_bottom;
+                } else {
+                    resId = R.drawable.bg_message_item_selector_flat_bottom;
+                }
+            }
+        }
+        vgProfileNestedComment.setBackgroundResource(resId);
     }
 
     private void setCommentMessage(ResMessages.Link link, long teamId, long roomId) {

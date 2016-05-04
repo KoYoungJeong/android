@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.views.viewgroup;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.RelativeLayout;
 
 import com.tosslab.jandi.app.R;
@@ -47,9 +46,7 @@ public class MessageWidthRelativeLayout extends RelativeLayout {
         if (first) {
 
             int measureWidth = MeasureSpec.getSize(widthMeasureSpec);
-            Log.d(TAG, "onMeasure: measureWidth/ " + measureWidth);
             int newMeasureWidth = measureWidth - boundWidth;
-            Log.d(TAG, "onMeasure: newMeasureWidth/ " + newMeasureWidth);
             newWidthMeasureSpec = MeasureSpec.makeMeasureSpec(newMeasureWidth, MeasureSpec.getMode(widthMeasureSpec));
             first = false;
         }

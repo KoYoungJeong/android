@@ -94,6 +94,16 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
         setProfileInfos(link);
         bindFileImage(link, teamId, roomId);
+        setFileTitleBackground(link);
+    }
+
+    private void setFileTitleBackground(ResMessages.Link link) {
+        long writerId = link.fromEntity;
+        if (EntityManager.getInstance().isMe(writerId)) {
+            tvFileName.setBackgroundResource(R.drawable.bg_round_bottom_blue_for_message);
+        } else {
+            tvFileName.setBackgroundResource(R.drawable.bg_round_bottom_white_for_message);
+        }
     }
 
     public void setProfileInfos(ResMessages.Link link) {
