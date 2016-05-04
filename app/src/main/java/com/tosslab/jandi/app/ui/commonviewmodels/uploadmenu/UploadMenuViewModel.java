@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
+
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import de.greenrobot.event.EventBus;

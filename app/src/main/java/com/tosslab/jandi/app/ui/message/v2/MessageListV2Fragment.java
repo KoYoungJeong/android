@@ -458,8 +458,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @AfterInject
     void initObjects() {
-        JandiPreference.setKeyboardHeight(getActivity(), -1);
-
         room = Room.create(entityId, roomId, isFromPush);
         messagePointer = MessagePointer.create(firstCursorLinkId, lastReadLinkId);
     }

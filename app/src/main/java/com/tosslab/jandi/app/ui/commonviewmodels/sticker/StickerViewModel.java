@@ -8,8 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -20,7 +18,6 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.ViewPagerIndicator;
 
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import java.util.ArrayList;
@@ -43,9 +40,6 @@ public class StickerViewModel {
 
     @RootContext
     Context context;
-
-    @Bean
-    KeyboardHeightModel keyboardHeightModel;
 
     // sticker view
     private LinearLayout vgStickerGroups;
