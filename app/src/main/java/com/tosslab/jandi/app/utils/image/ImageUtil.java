@@ -227,6 +227,42 @@ public class ImageUtil {
         return roundingParams;
     }
 
+    public static void setResourceIconOrLoadImageForComment(final SimpleDraweeView draweeView,
+                                                  final View vOutLine,
+                                                  final String fileUrl,
+                                                  final String thumbnailUrl,
+                                                  final String serverUrl,
+                                                  final String fileType) {
+        ImageLoader.Builder builder = ImageLoader.newBuilder()
+                .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+
+        int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, fileType);
+
+        boolean hasImageUrl = !TextUtils.isEmpty(fileUrl) || !TextUtils.isEmpty(thumbnailUrl);
+        if (!TextUtils.equals(fileType, "image") || !hasImageUrl) {
+            builder.load(mimeTypeIconImage).into(draweeView);
+            return;
+        }
+
+        MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
+        if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
+            builder.load(mimeTypeIconImage).into(draweeView);
+        } else {
+            if (TextUtils.isEmpty(thumbnailUrl)) {
+                builder.actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+                builder.load(R.drawable.comment_no_img).into(draweeView);
+                return;
+            }
+
+            builder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+            builder.placeHolder(
+                    R.drawable.comment_img_preview, ScalingUtils.ScaleType.CENTER_INSIDE);
+            builder.error(R.drawable.comment_no_img, ScalingUtils.ScaleType.CENTER_INSIDE);
+
+            builder.load(Uri.parse(thumbnailUrl)).into(draweeView);
+        }
+    }
+
     public static void setResourceIconOrLoadImage(final SimpleDraweeView draweeView,
                                                   final View vOutLine,
                                                   final String fileUrl,

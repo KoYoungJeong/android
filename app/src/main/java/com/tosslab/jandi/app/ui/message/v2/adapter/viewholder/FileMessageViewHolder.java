@@ -164,6 +164,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
                 ivFileImage.setClickable(false);
                 tvFileUploaderName.setText(R.string.jandi_unshared_file);
                 tvFileName.setTextColor(tvFileName.getResources().getColor(R.color.jandi_text_light));
+                tvFileUploaderName.setTextColor(tvFileName.getResources().getColor(R.color.jandi_text_light));
                 tvCommonFileSize.setVisibility(View.GONE);
                 tvFileInfoDivider.setVisibility(View.GONE);
                 tvFileUploaderName.setVisibility(View.VISIBLE);

@@ -32,6 +32,8 @@
         android:layout_alignWithParentIfMissing="true"
         android:layout_below="@+id/vg_messages_member_status_alert"
         android:background="@color/jandi_chat_list_default_background"
+        android:clipToPadding="false"
+        android:paddingTop="20dp"
         android:scrollbars="vertical" />
 
     <LinearLayout

@@ -75,9 +75,13 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tv_message_common_file_name"
                     android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:maxWidth="80dp"
+                    android:singleLine="true"
                     android:text="tee"
-                    android:textColor="#333333"
-                    android:textSize="11dp" />
+                    android:textColor="@color/jandi_text"
+                    android:textSize="11sp" />
 
                 <TextView
                     android:id="@+id/tv_file_info_divider"
@@ -120,7 +124,7 @@
                 android:layout_marginBottom="1dp"
                 android:text="1"
                 android:textColor="#ff00ace9"
-                android:textSize="9dp"
+                android:textSize="9sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -131,7 +135,7 @@
                 android:layout_marginTop="-2dp"
                 android:text="오전 11:30"
                 android:textColor="#ff999999"
-                android:textSize="10dp" />
+                android:textSize="10sp" />
 
         </LinearLayout>
 
@@ -210,6 +214,7 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:orientation="horizontal"
                 android:paddingBottom="8dp"
+                android:paddingRight="@dimen/jandi_comment_name_margin_right"
                 android:paddingTop="6dp">
 
 
@@ -230,11 +235,10 @@
                     android:layout_marginLeft="41dp"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:maxWidth="200dp"
                     android:singleLine="true"
                     android:text="User Name"
                     android:textColor="@color/jandi_messages_name"
-                    android:textSize="11dp"
+                    android:textSize="11sp"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -253,13 +257,12 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tv_profile_nested_comment_user_name"
                     android:layout_marginLeft="41dp"
-                    android:layout_marginRight="14dp"
                     android:layout_marginTop="2dp"
                     android:focusable="false"
                     android:lineSpacingExtra="1dp"
                     android:text="Nested comment"
                     android:textColor="@color/jandi_messages_file_content"
-                    android:textSize="11dp" />
+                    android:textSize="11sp" />
 
             </RelativeLayout>
 
@@ -292,9 +295,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="41dp"
+                    android:layout_marginRight="@dimen/jandi_comment_name_margin_right"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:maxWidth="200dp"
                     android:singleLine="true"
                     android:text="User Name"
                     android:textColor="@color/jandi_messages_name"
@@ -329,7 +332,7 @@
                     android:layout_toRightOf="@+id/iv_profile_nested_comment_sticker"
                     android:text="AM ??:??"
                     android:textColor="@color/jandi_messages_date"
-                    android:textSize="@dimen/jandi_messages_date" />
+                    android:textSize="10sp" />
 
                 <TextView
                     android:id="@+id/tv_profile_nested_comment_sticker_unread"
@@ -340,7 +343,7 @@
                     android:layout_toRightOf="@+id/tv_profile_nested_comment_sticker_create_date"
                     android:text="10"
                     android:textColor="@color/jandi_accent_color"
-                    android:textSize="@dimen/jandi_text_size_smaller"
+                    android:textSize="9sp"
                     android:textStyle="bold" />
 
 

@@ -757,6 +757,15 @@ public class MessageListV2Fragment extends Fragment implements
                     setPreviewVisible(false);
                 }
             }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+
+                } else {
+
+                }
+            }
         });
     }
 
@@ -1820,6 +1829,8 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     public void onEvent(UnshareFileEvent event) {
+        int indexOfUnsharedFile = messageAdapter.indexByMessageId(event.getFileId());
+        messageAdapter.updateCachedType(indexOfUnsharedFile);
         saveCacheAndNotifyDataSetChanged(null);
     }
 

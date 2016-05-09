@@ -5,11 +5,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.StyleSpan;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -64,6 +60,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
     private TextView tvFileUploaderName;
     private TextView tvCommonFileSize;
     private boolean hasFlatTop = false;
+    private View tvFileInfoDivider;
 
     private StickerCommentViewHolder() {
     }
@@ -76,6 +73,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
         ivMessageCommonFile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_common_file);
         tvMessageCommonFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
         tvFileUploaderName = (TextView) rootView.findViewById(R.id.tv_uploader_name);
+        tvFileInfoDivider = rootView.findViewById(R.id.tv_file_info_divider);
         tvCommonFileSize = (TextView) rootView.findViewById(R.id.tv_common_file_size);
         tvMessageBadge = (TextView) rootView.findViewById(R.id.tv_message_badge);
         tvMessageTime = (TextView) rootView.findViewById(R.id.tv_message_time);
@@ -274,9 +272,16 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
             tvMessageCommonFileName.setTypeface(null, Typeface.BOLD);
 
             final Resources resources = tvMessageCommonFileName.getResources();
+            boolean needFileUploader = true;
+            boolean needFileUploaderDivider = true;
+            boolean needFileSize = true;
+
             if (TextUtils.equals(link.feedback.status, "archived")) {
                 tvMessageCommonFileName.setText(R.string.jandi_deleted_file);
                 tvMessageCommonFileName.setTextColor(resources.getColor(R.color.jandi_text_light));
+                needFileUploader = false;
+                needFileUploaderDivider = false;
+                needFileSize = false;
 
                 ImageLoader.newBuilder()
                         .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
@@ -288,27 +293,13 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
                 final ResMessages.FileContent content = feedbackFileMessage.content;
 
                 if (!isSharedFile) {
-                    tvMessageCommonFileName.setTypeface(null, Typeface.NORMAL);
-                    int testSizePx = resources.getDimensionPixelSize(R.dimen.jandi_text_size_11sp);
-                    tvMessageCommonFileName.setTextSize(TypedValue.COMPLEX_UNIT_PX, testSizePx);
-                    SpannableStringBuilder unshareTextBuilder = new SpannableStringBuilder();
-                    String title = content.title;
-                    if (content.title.length() > 15) {
-                        unshareTextBuilder.append(title.substring(0, 14))
-                                .append("...");
-                    } else {
-                        unshareTextBuilder.append(title).append(" ");
-                    }
+                    needFileUploaderDivider = false;
+                    needFileSize = false;
 
-                    unshareTextBuilder.setSpan(
-                            new StyleSpan(Typeface.BOLD),
-                            0, unshareTextBuilder.length(),
-                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                    unshareTextBuilder.append(resources.getString(R.string.jandi_unshared_file));
-                    tvMessageCommonFileName.setText(unshareTextBuilder);
-                    tvMessageCommonFileName.setTextSize(TypedValue.COMPLEX_UNIT_PX, testSizePx);
+                    tvMessageCommonFileName.setText(content.title);
                     tvMessageCommonFileName.setTextColor(resources.getColor(R.color.jandi_text_light));
+                    tvFileUploaderName.setText(R.string.jandi_unshared_file);
+                    tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text_light));
 
                     ivMessageCommonFile.setClickable(false);
 
@@ -323,14 +314,15 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
                             .into(ivMessageCommonFile);
                 } else {
                     tvMessageCommonFileName.setText(content.title);
-                    tvMessageCommonFileName.setTextColor(resources.getColor(R.color.jandi_messages_file_name));
+                    tvMessageCommonFileName.setTextColor(resources.getColor(R.color.dark_gray));
+                    tvFileUploaderName.setTextColor(resources.getColor(R.color.dark_gray));
 
                     String serverUrl = content.serverUrl;
                     String fileType = content.icon;
                     String fileUrl = content.fileUrl;
                     String thumbnailUrl =
                             ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
-                    ImageUtil.setResourceIconOrLoadImage(
+                    ImageUtil.setResourceIconOrLoadImageForComment(
                             ivMessageCommonFile, null,
                             fileUrl, thumbnailUrl,
                             serverUrl, fileType);
@@ -349,6 +341,9 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
                     }
                 }
             }
+            tvFileUploaderName.setVisibility(needFileUploader ? View.VISIBLE : View.GONE);
+            tvCommonFileSize.setVisibility(needFileSize ? View.VISIBLE : View.GONE);
+            tvFileInfoDivider.setVisibility(needFileUploaderDivider ? View.VISIBLE : View.GONE);
         }
     }
 

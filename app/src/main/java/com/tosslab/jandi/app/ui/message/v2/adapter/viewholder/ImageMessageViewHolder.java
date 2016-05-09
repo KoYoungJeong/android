@@ -228,56 +228,17 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             imageRequestBuilder.placeHolder(
                     R.drawable.comment_image_preview_download, ScalingUtils.ScaleType.CENTER_INSIDE);
 
-            float width = maxImageWidth;
-            float height = maxImageHeight;
-
-            if (extraInfo != null && extraInfo.width > 0 && extraInfo.height > 0) {
-
-                float extraInfoWidth = extraInfo.width;
-                float extraInfoHeight = extraInfo.height;
-
-                if (ImageUtil.isVerticalPhoto(extraInfo.orientation)) {
-                    float temp = extraInfoWidth;
-                    extraInfoWidth = extraInfoHeight;
-                    extraInfoHeight = temp;
-                }
-
-                float ratio = extraInfoWidth / extraInfoHeight;
-
-                boolean needCrop = false;
-                if (ratio > 1) {
-                    // 가로 > 세로
-                    if (ratio > MAX_WIDTH_RATIO) {
-                        needCrop = true;
-                        height = minImageHeight;
-                        width = maxImageWidth;
-                    } else {
-                        height = maxImageHeight;
-                        width = height * ratio;
-                    }
-                } else if (ratio < 1) {
-                    // 세로 > 가로
-                    if (ratio < MIN_WIDTH_RATIO) {
-                        needCrop = true;
-                        width = minImageWidth;
-                        height = maxImageHeight;
-                    } else {
-                        width = maxImageWidth;
-                        height = width * ratio;
-                    }
-                }
-
-                if (needCrop) {
-                    imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-                } else {
-                    imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
-                }
+            ImageLoadInfo imageInfo = getImageInfo(extraInfo);
+            if (imageInfo.needCrop) {
+                imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+            } else {
+                imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
             }
 
             vgFileImageWrapper.setCardBackgroundColor(vgFileImageWrapper.getResources().getColor(R.color.jandi_messages_image_view_bg));
 
-            layoutParams.width = (int) width;
-            layoutParams.height = (int) height;
+            layoutParams.width = imageInfo.width;
+            layoutParams.height = imageInfo.height;
             ivFileImage.setLayoutParams(layoutParams);
             ivFileImage.setBackgroundColor(Color.TRANSPARENT);
 
@@ -295,6 +256,52 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
                     .load(uri)
                     .into(ivFileImage);
         }
+    }
+
+    private ImageLoadInfo getImageInfo(ResMessages.ThumbnailUrls extraInfo) {
+        float width = maxImageWidth;
+        float height = maxImageHeight;
+
+        if (extraInfo != null && extraInfo.width > 0 && extraInfo.height > 0) {
+
+            float extraInfoWidth = extraInfo.width;
+            float extraInfoHeight = extraInfo.height;
+
+            if (ImageUtil.isVerticalPhoto(extraInfo.orientation)) {
+                float temp = extraInfoWidth;
+                extraInfoWidth = extraInfoHeight;
+                extraInfoHeight = temp;
+            }
+
+            float ratio = extraInfoWidth / extraInfoHeight;
+
+            boolean needCrop = false;
+            if (ratio > 1) {
+                // 가로 > 세로
+                if (ratio > MAX_WIDTH_RATIO) {
+                    needCrop = true;
+                    height = minImageHeight;
+                    width = maxImageWidth;
+                } else {
+                    height = maxImageHeight;
+                    width = height * ratio;
+                }
+            } else if (ratio < 1) {
+                // 세로 > 가로
+                if (ratio < MIN_WIDTH_RATIO) {
+                    needCrop = true;
+                    width = minImageWidth;
+                    height = maxImageHeight;
+                } else {
+                    width = maxImageWidth;
+                    height = width * ratio;
+                }
+            }
+
+            return new ImageLoadInfo(needCrop, width, height);
+
+        }
+        return new ImageLoadInfo(false, width, height);
     }
 
     @Override
@@ -329,4 +336,17 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         }
     }
 
+
+    private static class ImageLoadInfo {
+        private boolean needCrop;
+        private int width;
+        private int height;
+
+        public ImageLoadInfo(boolean needCrop, float width, float height) {
+            this.needCrop = needCrop;
+            this.width = Math.round(width);
+            this.height = Math.round(height);
+        }
+
+    }
 }

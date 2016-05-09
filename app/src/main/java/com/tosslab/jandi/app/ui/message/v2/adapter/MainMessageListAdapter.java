@@ -376,6 +376,10 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     }
 
+    public void updateCachedType(int position) {
+        itemTypes.remove(links.get(position));
+    }
+
     public void clear() {
         lock.lock();
         try {

@@ -21,7 +21,7 @@
         android:layout_toRightOf="@+id/iv_message_user_profile"
         android:ellipsize="end"
         android:maxLines="1"
-        android:maxWidth="200dp"
+        android:layout_marginRight="@dimen/jandi_messages_name_margin_right"
         android:singleLine="true"
         android:text="빠빠빠"
         android:textColor="@color/jandi_messages_name"
