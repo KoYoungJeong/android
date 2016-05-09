@@ -22,6 +22,7 @@
 
 
     <View
+        android:layout_below="@+id/txt_message_date_devider"
         android:layout_width="match_parent"
         android:layout_height="25dp" />
 
