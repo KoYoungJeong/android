@@ -1,12 +1,13 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.graphics.Color;
 import android.net.Uri;
+import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.drawable.ScalingUtils;
@@ -24,6 +25,7 @@ import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.listener.BaseOnResourceReadyCallback;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
@@ -42,6 +44,9 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
     public static final int IMAGE_WIDTH_RIGHT_MARGIN = 59;
     public static final int MAX_IMAGE_HEIGHT = 150;
 
+    private final float MIN_WIDTH_RATIO;
+    private final float MAX_WIDTH_RATIO;
+
     private SimpleDraweeView ivProfile;
     private TextView tvName;
     private SimpleDraweeView ivFileImage;
@@ -52,10 +57,19 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
     private int minImageHeight;
     private int maxImageWidth;
     private int maxImageHeight;
-    private RelativeLayout vgFileImageWrapper;
+    private CardView vgFileImageWrapper;
     private TextView tvFileSize;
 
     private ImageMessageViewHolder() {
+        DisplayMetrics displayMetrics = JandiApplication.getContext().getResources().getDisplayMetrics();
+        minImageWidth = getPixelFromDp(MIN_IMAGE_WIDTH, displayMetrics);
+        minImageHeight = getPixelFromDp(MIN_IMAGE_HEIGHT, displayMetrics);
+        maxImageWidth = displayMetrics.widthPixels
+                - getPixelFromDp(IMAGE_WIDTH_LEFT_MARGIN, displayMetrics)
+                - getPixelFromDp(IMAGE_WIDTH_RIGHT_MARGIN, displayMetrics);
+        maxImageHeight = getPixelFromDp(MAX_IMAGE_HEIGHT, displayMetrics);
+        MAX_WIDTH_RATIO = (float) maxImageWidth / (float) maxImageHeight;
+        MIN_WIDTH_RATIO = (float) minImageWidth / (float) maxImageHeight;
     }
 
     @Override
@@ -65,7 +79,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
 
-        vgFileImageWrapper = (RelativeLayout) rootView.findViewById(R.id.vg_message_photo_wrapper);
+        vgFileImageWrapper = (CardView) rootView.findViewById(R.id.vg_message_photo_wrapper);
         ivFileImage = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_photo);
         tvFileName = (TextView) rootView.findViewById(R.id.tv_image_message_file_name);
         tvFileSize = (TextView) rootView.findViewById(R.id.tv_file_size);
@@ -80,14 +94,6 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
     // 계속 계산하지 않도록
     private void initViewSizes() {
-
-        DisplayMetrics displayMetrics = JandiApplication.getContext().getResources().getDisplayMetrics();
-        minImageWidth = getPixelFromDp(MIN_IMAGE_WIDTH, displayMetrics);
-        minImageHeight = getPixelFromDp(MIN_IMAGE_HEIGHT, displayMetrics);
-        maxImageWidth = displayMetrics.widthPixels
-                - getPixelFromDp(IMAGE_WIDTH_LEFT_MARGIN, displayMetrics)
-                - getPixelFromDp(IMAGE_WIDTH_RIGHT_MARGIN, displayMetrics);
-        maxImageHeight = getPixelFromDp(MAX_IMAGE_HEIGHT, displayMetrics);
     }
 
     @Override
@@ -211,7 +217,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
                 layoutParams.height = maxImageHeight;
                 ivFileImage.setLayoutParams(layoutParams);
-                vgFileImageWrapper.setBackgroundResource(R.drawable.bg_round_top_green_for_message);
+                vgFileImageWrapper.setCardBackgroundColor(vgFileImageWrapper.getResources().getColor(R.color.jandi_messages_big_size_image_view_bg));
 
                 imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
                 imageRequestBuilder.load(R.drawable.preview_no_img)
@@ -222,52 +228,70 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             imageRequestBuilder.placeHolder(
                     R.drawable.comment_image_preview_download, ScalingUtils.ScaleType.CENTER_INSIDE);
 
-            int width = maxImageWidth;
-            int height = maxImageHeight;
+            float width = maxImageWidth;
+            float height = maxImageHeight;
 
             if (extraInfo != null && extraInfo.width > 0 && extraInfo.height > 0) {
 
-                int extraInfoWidth = extraInfo.width;
-                int extraInfoHeight = extraInfo.height;
+                float extraInfoWidth = extraInfo.width;
+                float extraInfoHeight = extraInfo.height;
 
                 if (ImageUtil.isVerticalPhoto(extraInfo.orientation)) {
-                    int temp = extraInfoWidth;
+                    float temp = extraInfoWidth;
                     extraInfoWidth = extraInfoHeight;
                     extraInfoHeight = temp;
                 }
 
-                if (extraInfo.height < minImageHeight) {
-                    height = minImageHeight;
-                } else if (extraInfo.height > maxImageHeight) {
-                    height = maxImageHeight;
-                } else {
-                    height = extraInfoHeight;
+                float ratio = extraInfoWidth / extraInfoHeight;
+
+                boolean needCrop = false;
+                if (ratio > 1) {
+                    // 가로 > 세로
+                    if (ratio > MAX_WIDTH_RATIO) {
+                        needCrop = true;
+                        height = minImageHeight;
+                        width = maxImageWidth;
+                    } else {
+                        height = maxImageHeight;
+                        width = height * ratio;
+                    }
+                } else if (ratio < 1) {
+                    // 세로 > 가로
+                    if (ratio < MIN_WIDTH_RATIO) {
+                        needCrop = true;
+                        width = minImageWidth;
+                        height = maxImageHeight;
+                    } else {
+                        width = maxImageWidth;
+                        height = width * ratio;
+                    }
                 }
 
-                int convertedWidthByRatio = (int) ((float) extraInfoWidth * ((float) height / (float) extraInfoHeight));
-
-                if (convertedWidthByRatio < minImageWidth) {
-                    width = minImageWidth;
-                } else if (convertedWidthByRatio > maxImageWidth) {
-                    width = maxImageWidth;
+                if (needCrop) {
+                    imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
                 } else {
-                    width = convertedWidthByRatio;
+                    imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
                 }
-
             }
 
-            vgFileImageWrapper.setBackgroundDrawable(JandiApplication.getContext()
-                    .getResources().getDrawable(R.drawable.bg_round_top_gray_for_message));
+            vgFileImageWrapper.setCardBackgroundColor(vgFileImageWrapper.getResources().getColor(R.color.jandi_messages_image_view_bg));
 
-            layoutParams.width = width;
-            layoutParams.height = height;
+            layoutParams.width = (int) width;
+            layoutParams.height = (int) height;
             ivFileImage.setLayoutParams(layoutParams);
+            ivFileImage.setBackgroundColor(Color.TRANSPARENT);
 
             Uri uri = isFromLocalFilePath
                     ? UriFactory.getFileUri(localFilePath) : Uri.parse(remoteFilePth);
 
             imageRequestBuilder
-                    .actualScaleType(ScalingUtils.ScaleType.FIT_XY)
+                    .callback(new BaseOnResourceReadyCallback() {
+                        @Override
+                        public void onFail(Throwable cause) {
+                            ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.file_icon_img));
+                            vgFileImageWrapper.setCardBackgroundColor(vgFileImageWrapper.getResources().getColor(R.color.jandi_messages_big_size_image_view_bg));
+                        }
+                    })
                     .load(uri)
                     .into(ivFileImage);
         }

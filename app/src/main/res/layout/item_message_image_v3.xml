@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -11,8 +11,8 @@
         android:layout_height="@dimen/jandi_messages_profile_size"
         android:layout_marginLeft="@dimen/jandi_messages_profile_margin_right"
         android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
-        fresco:backgroundImage="@color/black"
-        fresco:roundAsCircle="true" />
+        app:backgroundImage="@color/black"
+        app:roundAsCircle="true" />
 
     <TextView
         android:id="@+id/tv_message_user_name"
@@ -40,31 +40,62 @@
         android:src="@drawable/line_gray" />
 
 
-    <com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout
+    <android.support.v7.widget.CardView
         android:id="@+id/vg_message_photo_wrapper"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_message_user_name"
         android:layout_marginLeft="@dimen/jandi_messages_content_left_margin"
         android:layout_marginTop="5dp"
-        android:background="@drawable/bg_round_top_gray_for_message"
-        fresco:boundWidth="59dp">
+        app:cardBackgroundColor="@color/jandi_messages_image_view_bg"
+        app:cardCornerRadius="2dp"
+        app:cardElevation="0dp"
+        app:cardUseCompatPadding="false">
 
-        <com.tosslab.jandi.app.views.FrescoImageView
-            android:id="@+id/iv_message_photo"
+        <com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            fresco:placeholderImage="@drawable/image_preview_download"
-            fresco:placeholderImageScaleType="centerCrop" />
+            android:layout_height="wrap_content"
+            app:boundWidth="59dp">
+
+            <com.tosslab.jandi.app.views.FrescoImageView
+                android:id="@+id/iv_message_photo"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                app:placeholderImage="@drawable/image_preview_download"
+                app:placeholderImageScaleType="centerInside" />
+
+            <View
+                android:id="@+id/v_divider"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_below="@+id/iv_message_photo"
+                android:background="#ffe1e1e1" />
+
+            <TextView
+                android:id="@+id/tv_image_message_file_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/v_divider"
+                android:background="@drawable/bg_round_bottom_white_for_message"
+                android:ellipsize="middle"
+                android:paddingBottom="9dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="8dp"
+                android:singleLine="true"
+                android:text="가로 긴 이미지.png"
+                android:textColor="@color/dark_gray"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout>
 
         <TextView
             android:id="@+id/tv_file_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
+            android:layout_gravity="right|top"
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/bg_round_50_black_for_message"
@@ -74,33 +105,8 @@
             android:paddingTop="2dp"
             android:text="1MB"
             android:textColor="@color/white"
-            android:textSize="10sp"
-            android:textStyle="bold" />
-
-        <View
-            android:id="@+id/v_divider"
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_below="@+id/iv_message_photo"
-            android:background="#ffe1e1e1" />
-
-        <TextView
-            android:id="@+id/tv_image_message_file_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/v_divider"
-            android:background="@drawable/bg_round_bottom_white_for_message"
-            android:ellipsize="middle"
-            android:paddingBottom="9dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="8dp"
-            android:singleLine="true"
-            android:text="가로 긴 이미지.png"
-            android:textColor="@color/dark_gray"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-    </com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout>
+            android:textSize="10sp" />
+    </android.support.v7.widget.CardView>
 
 
     <!-- badge와 시간 -->
