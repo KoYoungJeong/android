@@ -1,5 +1,9 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -205,10 +209,14 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
 
         if (entity.getUser() != null && entity.isEnabled()) {
             tvName.setTextColor(JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_name));
+            ivProfile.setForeground(new ColorDrawable(Color.TRANSPARENT));
             vDisableLineThrough.setVisibility(View.GONE);
         } else {
             tvName.setTextColor(
                     tvName.getResources().getColor(R.color.deactivate_text_color));
+            ShapeDrawable foreground = new ShapeDrawable(new OvalShape());
+            foreground.getPaint().setColor(0x66FFFFFF);
+            ivProfile.setForeground(foreground);
             vDisableLineThrough.setVisibility(View.VISIBLE);
         }
 

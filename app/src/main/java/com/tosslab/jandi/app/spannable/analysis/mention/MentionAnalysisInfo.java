@@ -32,7 +32,7 @@ public class MentionAnalysisInfo {
         textSize = builder.textSize;
         textColor = builder.textColor != 0 ? builder.textColor : Color.parseColor("#FF00A6E9");
         backgroundColor = builder.backgroundColor != 0
-                ? builder.backgroundColor : Color.WHITE;
+                ? builder.backgroundColor : Color.TRANSPARENT;
         forMeTextColor = builder.forMeTextColor != 0
                 ? builder.forMeTextColor : Color.parseColor("#FF00A6E9");
         forMeBackgroundColor = builder.forMeBackgroundColor != 0

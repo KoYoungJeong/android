@@ -1,6 +1,10 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -75,7 +79,6 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         if (hasProfile) {
             changeVisible(ivProfile, View.VISIBLE);
             changeVisible(tvName, View.VISIBLE);
-            changeVisible(vDisableLineThrough, View.VISIBLE);
             setProfileInfos(link);
         } else {
             changeVisible(ivProfile, View.GONE);
@@ -128,7 +131,7 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         } else {
             messageStringBuilder.append("");
         }
-        tvMessage.setText(messageStringBuilder);
+        tvMessage.setText(messageStringBuilder, TextView.BufferType.SPANNABLE);
 
         int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
                 link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
@@ -176,10 +179,14 @@ public class MessageViewHolder extends BaseMessageViewHolder {
 
         if (fromEntity != null && entity.isEnabled()) {
             tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
+            ivProfile.setForeground(new ColorDrawable(Color.TRANSPARENT));
             changeVisible(vDisableLineThrough, View.GONE);
         } else {
             tvName.setTextColor(
                     tvName.getResources().getColor(R.color.deactivate_text_color));
+            ShapeDrawable foreground = new ShapeDrawable(new OvalShape());
+            foreground.getPaint().setColor(0x66FFFFFF);
+            ivProfile.setForeground(foreground);
             changeVisible(vDisableLineThrough, View.VISIBLE);
         }
 

@@ -3,6 +3,10 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -188,7 +192,8 @@ public class CommentViewHolder extends BaseCommentViewHolder {
             long myId = EntityManager.getInstance().getMe().getId();
             MentionAnalysisInfo mentionAnalysisInfo =
                     MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
-                            .textSizeFromResource(R.dimen.jandi_mention_message_view_comment_item_font_size)
+                            .textSize(tvProfileNestedCommentContent.getTextSize())
+                            .clickable(true)
                             .build();
 
             SpannableLookUp.text(builder)
@@ -230,7 +235,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
-            tvProfileNestedCommentContent.setText(builder);
+            tvProfileNestedCommentContent.setText(builder, TextView.BufferType.SPANNABLE);
         }
     }
 
@@ -251,10 +256,14 @@ public class CommentViewHolder extends BaseCommentViewHolder {
         if (user != null && entityById.isEnabled()) {
             tvProfileNestedCommentUserName.setTextColor(
                     JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_name));
+            ivProfileNestedNameLineThrough.setForeground(new ColorDrawable(Color.TRANSPARENT));
             ivProfileNestedNameLineThrough.setVisibility(View.GONE);
         } else {
             tvProfileNestedCommentUserName.setTextColor(
                     JandiApplication.getContext().getResources().getColor(R.color.deactivate_text_color));
+            ShapeDrawable foreground = new ShapeDrawable(new OvalShape());
+            foreground.getPaint().setColor(0x66FFFFFF);
+            ivProfileNestedNameLineThrough.setForeground(foreground);
             ivProfileNestedNameLineThrough.setVisibility(View.VISIBLE);
         }
 

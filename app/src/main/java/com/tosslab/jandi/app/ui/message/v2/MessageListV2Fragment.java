@@ -129,6 +129,7 @@ import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
 import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
+import com.tosslab.jandi.app.ui.message.v2.viewmodel.DateAnimator;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
@@ -241,6 +242,7 @@ public class MessageListV2Fragment extends Fragment implements
     AnnouncementViewModel announcementViewModel;
 
     MentionControlViewModel mentionControlViewModel;
+    DateAnimator dateAnimator;
 
     @SystemService
     ClipboardManager clipboardManager;
@@ -750,12 +752,13 @@ public class MessageListV2Fragment extends Fragment implements
             }
             return false;
         });
+        dateAnimator = new DateAnimator(tvMessageDate);
         RecyclerScrollStateListener recyclerScrollStateListener = new RecyclerScrollStateListener();
         recyclerScrollStateListener.setListener(scrolling -> {
             if (scrolling) {
-                tvMessageDate.setVisibility(View.VISIBLE);
+                dateAnimator.show();
             } else {
-                tvMessageDate.setVisibility(View.GONE);
+                dateAnimator.hide();
             }
         });
         // 스크롤 했을 때 동작

@@ -3,7 +3,11 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
@@ -209,10 +213,14 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
         if (user != null && entityById.isEnabled()) {
             tvProfileNestedUserNameForSticker.setTextColor(
                     JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_name));
+            ivProfileNestedLineThroughForSticker.setForeground(new ColorDrawable(Color.TRANSPARENT));
             ivProfileNestedLineThroughForSticker.setVisibility(View.GONE);
         } else {
             tvProfileNestedUserNameForSticker.setTextColor(
                     JandiApplication.getContext().getResources().getColor(R.color.deactivate_text_color));
+            ShapeDrawable foreground = new ShapeDrawable(new OvalShape());
+            foreground.getPaint().setColor(0x66FFFFFF);
+            ivProfileNestedLineThroughForSticker.setForeground(foreground);
             ivProfileNestedLineThroughForSticker.setVisibility(View.VISIBLE);
         }
 
