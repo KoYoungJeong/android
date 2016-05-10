@@ -258,7 +258,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
                     .callback(new BaseOnResourceReadyCallback() {
                         @Override
                         public void onFail(Throwable cause) {
-                            ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.file_icon_img));
+                            ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.comment_no_img));
                             vgFileImageWrapper.setCardBackgroundColor(vgFileImageWrapper.getResources().getColor(R.color.jandi_messages_big_size_image_view_bg));
                         }
                     })

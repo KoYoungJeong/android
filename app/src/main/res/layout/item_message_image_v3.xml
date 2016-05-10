@@ -59,6 +59,8 @@
         app:cardBackgroundColor="@color/jandi_messages_image_view_bg"
         app:cardCornerRadius="2dp"
         app:cardElevation="0dp"
+        app:cardMaxElevation="0dp"
+        app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="false">
 
         <com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout

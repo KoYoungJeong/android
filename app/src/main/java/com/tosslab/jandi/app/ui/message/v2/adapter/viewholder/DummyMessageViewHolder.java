@@ -101,7 +101,7 @@ public class DummyMessageViewHolder implements BodyViewHolder {
                     .mention(mentionAnalysisInfo, false)
                     .lookUp(JandiApplication.getContext());
 
-            tvMessage.setText(builder);
+            tvMessage.setText(builder, TextView.BufferType.SPANNABLE);
         } else if (link.message instanceof ResMessages.StickerMessage) {
             ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) link.message;
             ivSticker.setVisibility(View.VISIBLE);

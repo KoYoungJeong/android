@@ -64,9 +64,9 @@
         android:paddingTop="8dp"
         app:boundWidth="59dp">
 
-        <ImageView
+        <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/iv_message_common_file"
-            android:layout_width="35dp"
+            android:layout_width="42dp"
             android:layout_height="42dp"
             android:layout_centerVertical="true"
             android:scaleType="fitCenter" />

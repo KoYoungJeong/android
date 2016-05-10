@@ -69,6 +69,13 @@ public class IntegrationBotUtil {
 
         int titleVisible = View.GONE;
         int descriptionVisible = View.GONE;
+
+        DisplayMetrics displayMetrics = vgConnectInfo.getResources().getDisplayMetrics();
+        final int defaultMargin = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                4f,
+                displayMetrics);
+
         for (int idx = 0; idx < viewChildGroupCount; ++idx) {
             viewChildIdx = idx * 2;
 
@@ -114,11 +121,7 @@ public class IntegrationBotUtil {
                     if (idx == 0) {
                         layoutParams.topMargin = 0;
                     } else {
-                        DisplayMetrics displayMetrics = tvDescription.getResources().getDisplayMetrics();
-                        layoutParams.topMargin = (int) TypedValue.applyDimension(
-                                TypedValue.COMPLEX_UNIT_DIP,
-                                20f,
-                                displayMetrics);
+                        layoutParams.topMargin = defaultMargin;
                     }
 
                     tvDescription.setLayoutParams(layoutParams);

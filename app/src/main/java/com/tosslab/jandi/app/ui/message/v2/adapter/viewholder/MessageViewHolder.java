@@ -133,6 +133,7 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         } else {
             messageStringBuilder.append("");
         }
+
         tvMessage.setText(messageStringBuilder, TextView.BufferType.SPANNABLE);
 
         int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,

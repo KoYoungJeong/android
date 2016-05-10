@@ -356,15 +356,21 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
                     ivMessageCommonFile.setClickable(false);
 
-                    int resId = R.drawable.file_icon_unshared;
-                    if (isPublicTopic) {
-                        resId = MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
+                    boolean image = fileContent.icon.startsWith("image");
+                    if (!image && !isPublicTopic) {
+                        ivMessageCommonFile.setImageResource(R.drawable.file_icon_unshared);
+                    } else {
+                        String serverUrl = content.serverUrl;
+                        String fileType = content.icon;
+                        String fileUrl = content.fileUrl;
+                        String thumbnailUrl =
+                                ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
+                        ImageUtil.setResourceIconOrLoadImageForComment(
+                                ivMessageCommonFile, null,
+                                fileUrl, thumbnailUrl,
+                                serverUrl, fileType);
                     }
 
-                    ImageLoader.newBuilder()
-                            .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                            .load(resId)
-                            .into(ivMessageCommonFile);
                 } else {
                     tvMessageCommonFileName.setText(content.title);
                     tvMessageCommonFileName.setTextColor(resources.getColor(R.color.dark_gray));

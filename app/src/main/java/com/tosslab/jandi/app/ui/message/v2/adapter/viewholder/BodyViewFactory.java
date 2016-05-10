@@ -256,6 +256,13 @@ public class BodyViewFactory {
                 } else {
                     // 3. 이전 comment 작성자가 다른 사람 일때 프로필이 들어가야 함
                     type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
+
+                    if (!isSameDay(previousLink, currentLink)) {
+                        // 4. 날짜가 다르다면 파일 정보를 추가해야 됨
+                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
+                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
+                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
+                    }
                 }
             }
         } else {
@@ -373,10 +380,13 @@ public class BodyViewFactory {
             }
         }
 
+        boolean isMe = EntityManager.getInstance().isMe(fileMessage.writerId);
+
         String fileType = fileMessage.content.icon;
 
         return !TextUtils.isEmpty(fileType)
                 && fileType.startsWith("image")
+                && isMe
                 && SourceTypeUtil.getSourceType(fileMessage.content.serverUrl) == MimeTypeUtil.SourceType.S3
                 && isSharedFile
                 && !TextUtils.equals(currentLink.message.status, "archived");

@@ -59,13 +59,13 @@
         android:background="@drawable/bg_message_item_selector"
         android:clickable="true"
         android:focusable="false"
-        android:lineSpacingExtra="1dp"
+        android:lineSpacingExtra="2dp"
         android:minHeight="24dp"
         android:paddingBottom="5dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingTop="4dp"
-        android:text="Text"
+        android:text="Text kjs\ndhfakjhsdf jahsfkjha\nkl sjdhflkjh"
         android:textColor="@color/dark_gray"
         android:textSize="14sp" />
 
