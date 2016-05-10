@@ -117,7 +117,7 @@ public class IntegrationBotUtil {
                         DisplayMetrics displayMetrics = tvDescription.getResources().getDisplayMetrics();
                         layoutParams.topMargin = (int) TypedValue.applyDimension(
                                 TypedValue.COMPLEX_UNIT_DIP,
-                                11f,
+                                20f,
                                 displayMetrics);
                     }
 

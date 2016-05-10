@@ -777,6 +777,7 @@ public class MessageListV2Fragment extends Fragment implements
                 Date date = ((MainMessageListAdapter) recyclerView.getAdapter()).getItemDate(firstVisibleItemPosition);
                 if (date != null) {
                     Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(date);
                     calendar.set(Calendar.HOUR_OF_DAY, 0);
                     calendar.set(Calendar.MINUTE, 0);
                     calendar.set(Calendar.SECOND, 0);

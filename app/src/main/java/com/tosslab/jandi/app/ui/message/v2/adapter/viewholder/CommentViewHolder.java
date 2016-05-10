@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -66,6 +67,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     private boolean hasOnlyBadge = false;
     private boolean hasFlatTop = false;
     private View tvFileInfoDivider;
+    private View vProfileCover;
 
 
     private CommentViewHolder() {
@@ -88,6 +90,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
         // 프로필이 있는 커멘트
         ivProfileNestedCommentUserProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_profile_nested_comment_user_profile);
+        vProfileCover = rootView.findViewById(R.id.v_profile_nested_comment_user_profile_cover);
         tvProfileNestedCommentUserName = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_user_name);
         ivProfileNestedNameLineThrough = (ImageView) rootView.findViewById(R.id.iv_profile_nested_name_line_through);
 
@@ -214,7 +217,8 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
                 DateViewSpannable spannable =
                         new DateViewSpannable(tvProfileNestedCommentContent.getContext(),
-                                DateTransformator.getTimeStringForSimple(commentMessage.createTime));
+                                DateTransformator.getTimeStringForSimple(commentMessage.createTime),
+                                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10f, context.getResources().getDisplayMetrics()));
                 spannable.setTextColor(
                         JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_date));
                 builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -226,7 +230,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
             if (unreadCount > 0) {
                 NameSpannable unreadCountSpannable =
                         new NameSpannable(
-                                context.getResources().getDimensionPixelSize(R.dimen.jandi_comment_text_size)
+                                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 9f, context.getResources().getDisplayMetrics())
                                 , context.getResources().getColor(R.color.jandi_accent_color));
                 int beforeLength = builder.length();
                 builder.append(" ");
@@ -256,14 +260,14 @@ public class CommentViewHolder extends BaseCommentViewHolder {
         if (user != null && entityById.isEnabled()) {
             tvProfileNestedCommentUserName.setTextColor(
                     JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_name));
-            ivProfileNestedNameLineThrough.setForeground(new ColorDrawable(Color.TRANSPARENT));
+            vProfileCover.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             ivProfileNestedNameLineThrough.setVisibility(View.GONE);
         } else {
             tvProfileNestedCommentUserName.setTextColor(
                     JandiApplication.getContext().getResources().getColor(R.color.deactivate_text_color));
             ShapeDrawable foreground = new ShapeDrawable(new OvalShape());
             foreground.getPaint().setColor(0x66FFFFFF);
-            ivProfileNestedNameLineThrough.setForeground(foreground);
+            vProfileCover.setBackgroundDrawable(foreground);
             ivProfileNestedNameLineThrough.setVisibility(View.VISIBLE);
         }
 

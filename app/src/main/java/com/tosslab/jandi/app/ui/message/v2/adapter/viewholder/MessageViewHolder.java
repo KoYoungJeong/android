@@ -44,6 +44,7 @@ public class MessageViewHolder extends BaseMessageViewHolder {
 
     private TextView tvMessage;
     private LinkPreviewViewModel linkPreviewViewModel;
+    private View vProfileCover;
 
     private MessageViewHolder() {}
 
@@ -53,6 +54,7 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         context = rootView.getContext();
 
         ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
+        vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
 
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
@@ -179,14 +181,14 @@ public class MessageViewHolder extends BaseMessageViewHolder {
 
         if (fromEntity != null && entity.isEnabled()) {
             tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
-            ivProfile.setForeground(new ColorDrawable(Color.TRANSPARENT));
+            vProfileCover.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             changeVisible(vDisableLineThrough, View.GONE);
         } else {
             tvName.setTextColor(
                     tvName.getResources().getColor(R.color.deactivate_text_color));
             ShapeDrawable foreground = new ShapeDrawable(new OvalShape());
             foreground.getPaint().setColor(0x66FFFFFF);
-            ivProfile.setForeground(foreground);
+            vProfileCover.setBackgroundDrawable(foreground);
             changeVisible(vDisableLineThrough, View.VISIBLE);
         }
 

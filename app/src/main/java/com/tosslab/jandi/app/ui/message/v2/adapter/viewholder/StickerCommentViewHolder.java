@@ -65,6 +65,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
     private TextView tvCommonFileSize;
     private boolean hasFlatTop = false;
     private View tvFileInfoDivider;
+    private View vProfileCover;
 
     private StickerCommentViewHolder() {
     }
@@ -87,6 +88,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
 
         // 커멘트 스티커 프로필
         ivProfileNestedUserProfileForSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_profile_nested_user_profile_for_sticker);
+        vProfileCover = rootView.findViewById(R.id.v_profile_nested_user_profile_for_sticker_cover);
         tvProfileNestedUserNameForSticker = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_user_name_for_sticker);
         ivProfileNestedLineThroughForSticker = (ImageView) rootView.findViewById(R.id.iv_profile_nested_name_line_through_for_sticker);
 
@@ -213,14 +215,14 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
         if (user != null && entityById.isEnabled()) {
             tvProfileNestedUserNameForSticker.setTextColor(
                     JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_name));
-            ivProfileNestedLineThroughForSticker.setForeground(new ColorDrawable(Color.TRANSPARENT));
+            vProfileCover.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             ivProfileNestedLineThroughForSticker.setVisibility(View.GONE);
         } else {
             tvProfileNestedUserNameForSticker.setTextColor(
                     JandiApplication.getContext().getResources().getColor(R.color.deactivate_text_color));
             ShapeDrawable foreground = new ShapeDrawable(new OvalShape());
             foreground.getPaint().setColor(0x66FFFFFF);
-            ivProfileNestedLineThroughForSticker.setForeground(foreground);
+            vProfileCover.setBackgroundDrawable(foreground);
             ivProfileNestedLineThroughForSticker.setVisibility(View.VISIBLE);
         }
 

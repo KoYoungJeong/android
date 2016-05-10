@@ -33,6 +33,7 @@ public class StickerMessageViewHolder extends BaseMessageViewHolder {
     private TextView tvName;
     private View vDisableLineThrough;
     private SimpleDraweeView ivSticker;
+    private View vProfileCover;
 
     private StickerMessageViewHolder() {
     }
@@ -42,6 +43,7 @@ public class StickerMessageViewHolder extends BaseMessageViewHolder {
         super.initView(rootView);
         context = rootView.getContext();
         ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
+        vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_sticker);
@@ -121,14 +123,14 @@ public class StickerMessageViewHolder extends BaseMessageViewHolder {
 
         if (entity.getUser() != null && entity.isEnabled()) {
             tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
-            ivProfile.setForeground(new ColorDrawable(Color.TRANSPARENT));
+            vProfileCover.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             vDisableLineThrough.setVisibility(View.GONE);
         } else {
             tvName.setTextColor(
                     tvName.getResources().getColor(R.color.deactivate_text_color));
             ShapeDrawable foreground = new ShapeDrawable(new OvalShape());
             foreground.getPaint().setColor(0x66FFFFFF);
-            ivProfile.setForeground(foreground);
+            vProfileCover.setBackgroundDrawable(foreground);
             vDisableLineThrough.setVisibility(View.VISIBLE);
         }
         tvName.setText(entity.getName());

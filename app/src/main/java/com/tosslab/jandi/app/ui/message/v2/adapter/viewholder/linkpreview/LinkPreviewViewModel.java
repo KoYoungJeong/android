@@ -113,7 +113,7 @@ public class LinkPreviewViewModel {
                     .callback(new BaseOnResourceReadyCallback() {
                         @Override
                         public void onFail(Throwable cause) {
-                            ivThumb.setBackgroundResource(R.drawable.bg_round_top_green_for_message);
+                            vgThumb.setBackgroundResource(R.drawable.bg_round_top_green_for_message);
                             ImageLoader.newBuilder()
                                     .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
                                     .load(UriFactory.getResourceUri(R.drawable.preview_no_img))

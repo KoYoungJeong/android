@@ -213,9 +213,9 @@
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:orientation="horizontal"
-                android:paddingBottom="8dp"
+                android:paddingBottom="4dp"
                 android:paddingRight="@dimen/jandi_comment_name_margin_right"
-                android:paddingTop="6dp">
+                android:paddingTop="4dp">
 
 
                 <com.tosslab.jandi.app.views.FrescoImageView
@@ -228,10 +228,21 @@
                     appp:backgroundImage="@color/black"
                     appp:roundAsCircle="true" />
 
+                <View
+                    android:id="@+id/v_profile_nested_comment_user_profile_cover"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/iv_profile_nested_comment_user_profile"
+                    android:layout_alignLeft="@+id/iv_profile_nested_comment_user_profile"
+                    android:layout_alignRight="@+id/iv_profile_nested_comment_user_profile"
+                    android:layout_alignTop="@+id/iv_profile_nested_comment_user_profile" />
+
+
                 <TextView
                     android:id="@+id/tv_profile_nested_comment_user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
                     android:layout_marginLeft="41dp"
                     android:ellipsize="end"
                     android:maxLines="1"
@@ -257,7 +268,6 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tv_profile_nested_comment_user_name"
                     android:layout_marginLeft="41dp"
-                    android:layout_marginTop="2dp"
                     android:focusable="false"
                     android:lineSpacingExtra="1dp"
                     android:text="Nested comment"
@@ -277,7 +287,7 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:orientation="horizontal"
                 android:paddingBottom="8dp"
-                android:paddingTop="6dp">
+                android:paddingTop="8dp">
 
 
                 <com.tosslab.jandi.app.views.FrescoImageView
@@ -289,6 +299,16 @@
                     android:layout_marginTop="2dp"
                     appp:backgroundImage="@color/black"
                     appp:roundAsCircle="true" />
+
+                <View
+                    android:id="@+id/v_profile_nested_user_profile_for_sticker_cover"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/iv_profile_nested_user_profile_for_sticker"
+                    android:layout_alignLeft="@+id/iv_profile_nested_user_profile_for_sticker"
+                    android:layout_alignRight="@+id/iv_profile_nested_user_profile_for_sticker"
+                    android:layout_alignTop="@+id/iv_profile_nested_user_profile_for_sticker" />
+
 
                 <TextView
                     android:id="@+id/tv_profile_nested_comment_user_name_for_sticker"
