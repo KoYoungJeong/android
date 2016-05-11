@@ -6,7 +6,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -31,7 +30,7 @@ public class SearchedFileItemView extends RelativeLayout {
     @ViewById(R.id.tv_searched_file_date)
     TextView tvDate;
     @ViewById(R.id.iv_searched_file_type)
-    SimpleDraweeView ivFileType;
+    ImageView ivFileType;
     @ViewById(R.id.v_searched_file_round)
     View vFileRound;
     @ViewById(R.id.v_searched_file_name_line_through)

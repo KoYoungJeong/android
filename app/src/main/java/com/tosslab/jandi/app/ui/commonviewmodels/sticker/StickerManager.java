@@ -1,15 +1,10 @@
 package com.tosslab.jandi.app.ui.commonviewmodels.sticker;
 
-import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.view.animation.AlphaAnimation;
+import android.widget.ImageView;
 
-import com.facebook.drawee.controller.BaseControllerListener;
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.image.ImageInfo;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -23,7 +18,7 @@ import rx.Observable;
 
 public class StickerManager {
 
-    public static final String ASSET_SCHEMA = "asset:///";
+    public static final String ASSET_SCHEMA = "file:///android_asset/";
     public static final String STICKER_ASSET_PATH = "stickers/default";
     private static final LoadOptions DEFAULT_OPTIONS = new LoadOptions();
     private static StickerManager stickerManager;
@@ -45,12 +40,12 @@ public class StickerManager {
         return stickerManager;
     }
 
-    public void loadStickerDefaultOption(SimpleDraweeView view, long groupId, String stickerId) {
+    public void loadStickerDefaultOption(ImageView view, long groupId, String stickerId) {
 
         loadSticker(view, groupId, stickerId, DEFAULT_OPTIONS);
     }
 
-    public void loadStickerNoOption(SimpleDraweeView view, long groupId, String stickerId) {
+    public void loadStickerNoOption(ImageView view, long groupId, String stickerId) {
 
         LoadOptions loadOptions = new LoadOptions();
         loadOptions.isClickImage = false;
@@ -59,7 +54,7 @@ public class StickerManager {
         loadSticker(view, groupId, stickerId, loadOptions);
     }
 
-    public void loadSticker(SimpleDraweeView view,
+    public void loadSticker(ImageView view,
                             long groupId, String stickerId, LoadOptions options) {
 
         String stickerAssetPath;
@@ -76,22 +71,13 @@ public class StickerManager {
         }
     }
 
-    private void loadSticker(Uri uri, final SimpleDraweeView view, final LoadOptions options) {
-        ImageLoader.newBuilder()
-                .actualScaleType(options.scaleType)
-                .controllerListener(new BaseControllerListener<ImageInfo>() {
-                    @Override
-                    public void onFinalImageSet(String id,
-                                                ImageInfo imageInfo, Animatable animatable) {
-                        if (options.isFadeAnimation) {
-                            AlphaAnimation animation = new AlphaAnimation(0f, 1f);
-                            animation.setDuration(300);
-                            view.startAnimation(animation);
-                        }
-                    }
-                })
-                .load(uri)
-                .into(view);
+    private void loadSticker(Uri uri, final ImageView view, final LoadOptions options) {
+        ImageLoader loader = ImageLoader.newInstance()
+                .actualImageScaleType(options.scaleType);
+        if (options.isFadeAnimation) {
+            loader.animate(android.R.anim.fade_in);
+        }
+        loader.uri(uri).into(view);
     }
 
     private boolean isLocalSticker(long groupId) {
@@ -138,7 +124,7 @@ public class StickerManager {
     public static class LoadOptions {
         public boolean isFadeAnimation = true;
         public boolean isClickImage;
-        public ScalingUtils.ScaleType scaleType = ScalingUtils.ScaleType.FIT_CENTER;
+        public ImageView.ScaleType scaleType = ImageView.ScaleType.FIT_CENTER;
     }
 
 }

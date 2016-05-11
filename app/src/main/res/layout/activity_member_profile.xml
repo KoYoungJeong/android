@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:background="@android:color/black">
 
-        <com.tosslab.jandi.app.views.FrescoImageView
+        <ImageView
             android:id="@+id/iv_member_profile_img_large"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
@@ -174,7 +174,7 @@
 
             </LinearLayout>
 
-            <com.tosslab.jandi.app.views.FrescoImageView
+            <ImageView
                 android:id="@+id/iv_member_profile_img_small"
                 android:layout_width="80dp"
                 android:layout_height="80dp"

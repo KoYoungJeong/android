@@ -8,10 +8,10 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 
 /**
@@ -25,7 +25,7 @@ public class IconWithTextView extends RelativeLayout {
             android.R.attr.textSize,
             android.R.attr.textColor
     };
-    private SimpleDraweeView ivIcon;
+    private ImageView ivIcon;
     private TextView tvTitle;
     private TextView tvBadge;
 
@@ -37,7 +37,7 @@ public class IconWithTextView extends RelativeLayout {
         super(context, attrs);
         LayoutInflater.from(context).inflate(R.layout.view_icon_with_text, this);
 
-        ivIcon = (SimpleDraweeView) findViewById(R.id.img_icon_with_text);
+        ivIcon = (ImageView) findViewById(R.id.img_icon_with_text);
         tvTitle = (TextView) findViewById(R.id.tv_icon_with_text);
         tvBadge = (TextView) findViewById(R.id.tv_icon_with_text_badge);
 
@@ -45,7 +45,7 @@ public class IconWithTextView extends RelativeLayout {
         setBadgeCount(0);
     }
 
-    public SimpleDraweeView getImageView() {
+    public ImageView getImageView() {
         return ivIcon;
     }
 

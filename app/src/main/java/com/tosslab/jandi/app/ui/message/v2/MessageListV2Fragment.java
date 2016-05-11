@@ -41,9 +41,6 @@ import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.RoundingParams;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -148,6 +145,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.transform.TransformConfig;
 import com.tosslab.jandi.app.views.BackPressCatchEditText;
@@ -251,7 +249,7 @@ public class MessageListV2Fragment extends Fragment implements
     @ViewById(R.id.vg_messages_preview_last_item)
     View vgPreview;
     @ViewById(R.id.iv_message_preview_user_profile)
-    SimpleDraweeView ivPreviewProfile;
+    ImageView ivPreviewProfile;
     @ViewById(R.id.tv_message_preview_user_name)
     TextView tvPreviewUserName;
     @ViewById(R.id.tv_message_preview_content)
@@ -272,7 +270,7 @@ public class MessageListV2Fragment extends Fragment implements
     @ViewById(R.id.vg_messages_preview_sticker)
     ViewGroup vgStickerPreview;
     @ViewById(R.id.iv_messages_preview_sticker_image)
-    SimpleDraweeView ivSticker;
+    ImageView ivSticker;
     @ViewById(R.id.vg_message_offline)
     View vgOffline;
     @ViewById(R.id.progress_message)
@@ -635,7 +633,7 @@ public class MessageListV2Fragment extends Fragment implements
 
     public void loadSticker(StickerInfo stickerInfo) {
         StickerManager.LoadOptions loadOption = new StickerManager.LoadOptions();
-        loadOption.scaleType = ScalingUtils.ScaleType.CENTER_CROP;
+        loadOption.scaleType = ImageView.ScaleType.CENTER_CROP;
         StickerManager.getInstance()
                 .loadSticker(ivSticker,
                         stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(),
@@ -991,15 +989,14 @@ public class MessageListV2Fragment extends Fragment implements
         if (!EntityManager.getInstance().isBot(entity.getId())) {
             ImageUtil.loadProfileImage(ivPreviewProfile, uri, R.drawable.profile_img);
         } else {
-            RoundingParams circleRoundingParams = ImageUtil.getCircleRoundingParams(
-                    TransformConfig.DEFAULT_CIRCLE_LINE_COLOR, TransformConfig.DEFAULT_CIRCLE_LINE_WIDTH);
-
-            ImageLoader.newBuilder()
-                    .placeHolder(R.drawable.profile_img, ScalingUtils.ScaleType.FIT_CENTER)
-                    .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
-                    .backgroundColor(Color.WHITE)
-                    .roundingParams(circleRoundingParams)
-                    .load(uri)
+            ImageLoader.newInstance()
+                    .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
+                    .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                    .transformation(new JandiProfileTransform(ivPreviewProfile.getContext(),
+                            TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
+                            TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
+                            Color.WHITE))
+                    .uri(uri)
                     .into(ivPreviewProfile);
 
         }

@@ -6,12 +6,10 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.generic.RoundingParams;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
@@ -23,7 +21,8 @@ import java.util.Iterator;
 public class IntegrationBotUtil {
     private static final String TAG = "IntegrationBotUtil";
 
-    public static void setIntegrationSubUI(ResMessages.TextContent content, SimpleDraweeView vConnectLine, LinearLayout vgConnectInfo) {
+    public static void setIntegrationSubUI(ResMessages.TextContent content,
+                                           ImageView vConnectLine, LinearLayout vgConnectInfo) {
         if (content.connectInfo != null && !content.connectInfo.isEmpty()) {
 
             if (vConnectLine.getVisibility() != View.VISIBLE) {
@@ -41,7 +40,7 @@ public class IntegrationBotUtil {
         }
     }
 
-    private static void updateSubInfoSideLine(String connectColor, SimpleDraweeView vConnectLine) {
+    private static void updateSubInfoSideLine(String connectColor, ImageView vConnectLine) {
         try {
             int color = Color.parseColor(connectColor);
             vConnectLine.setBackgroundColor(color);

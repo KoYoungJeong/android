@@ -8,15 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.album.imagealbum.model.ImageAlbumModel;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.SelectPictures;
-import com.tosslab.jandi.app.utils.ApplicationUtil;
-import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
@@ -56,7 +53,7 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
         if (viewType == IMAGE_VIEW_TYPE) {
             View view = LayoutInflater.from(context).inflate(R.layout.item_image_picture, parent, false);
             PictureViewHolder viewHolder = new PictureViewHolder(view);
-            viewHolder.ivPicture = (SimpleDraweeView) view.findViewById(R.id.iv_item_image_picture_thumb);
+            viewHolder.ivPicture = (ImageView) view.findViewById(R.id.iv_item_image_picture_thumb);
             viewHolder.ivSelector = (ImageView) view.findViewById(R.id.iv_item_image_picture_selector);
             viewHolder.ivSelected = (ImageView) view.findViewById(R.id.iv_item_image_picture_selected);
             return viewHolder;
@@ -89,11 +86,12 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
             viewHolder.ivSelector.setVisibility(View.GONE);
         }
 
-        final SimpleDraweeView ivPicture = viewHolder.ivPicture;
+        final Uri uri = UriUtil.getContentUri(item.get_id());
 
-        final Uri uri = UriFactory.getContentUri(item.get_id());
-
-        setImage(ivPicture, uri);
+        ImageLoader.newInstance()
+                .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                .uri(uri)
+                .into(viewHolder.ivPicture);
 
         holder.itemView.setOnClickListener(v -> {
             if (onRecyclerItemImageClickListener != null) {
@@ -122,16 +120,6 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
             enqueueLoadingImageId = imageId;
             onLoadMoreCallback.onLoadMore(imageId);
         }
-    }
-
-    private void setImage(SimpleDraweeView ivPicture, Uri uri) {
-        int size = ApplicationUtil.getDisplaySize(false) / column;
-        ImageLoader.newBuilder()
-                .aspectRatio(1.0f)
-                .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
-                .resize(size, size)
-                .load(uri)
-                .into(ivPicture);
     }
 
     public ImagePicture getItem(int position) {
@@ -178,7 +166,7 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
     }
 
     private static class PictureViewHolder extends RecyclerView.ViewHolder {
-        SimpleDraweeView ivPicture;
+        ImageView ivPicture;
         ImageView ivSelector;
         ImageView ivSelected;
 

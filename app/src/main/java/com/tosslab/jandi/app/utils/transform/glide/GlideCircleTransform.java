@@ -16,8 +16,8 @@ class GlideCircleTransform {
 //    @Override
 //    protected Bitmap transform(BitmapPool pool, Bitmap source, int outWidth, int outHeight) {
 //        return ImageUtil.getCircularBitmap(source,
-//                TransformConfig.DEFAULT_CIRCLE_LINE_WIDTH,
-//                TransformConfig.DEFAULT_CIRCLE_LINE_COLOR,
+//                TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
+//                TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
 //                TransformConfig.DEFAULT_CIRCLE_BG_COLOR);
 //    }
 //

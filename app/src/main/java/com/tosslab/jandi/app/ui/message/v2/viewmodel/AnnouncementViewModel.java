@@ -2,17 +2,16 @@ package com.tosslab.jandi.app.ui.message.v2.viewmodel;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.RoundingParams;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
@@ -23,11 +22,11 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
-import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
 import com.tosslab.jandi.app.utils.transform.TransformConfig;
 
 import org.androidannotations.annotations.AfterViews;
@@ -52,7 +51,7 @@ public class AnnouncementViewModel {
     @ViewById(R.id.vg_announcement_action)
     ViewGroup vgAnnouncementAction;
     @ViewById(R.id.iv_announcement_user)
-    SimpleDraweeView ivAnnouncementUser;
+    ImageView ivAnnouncementUser;
     @ViewById(R.id.tv_announcement_info)
     TextView tvAnnouncementInfo;
     @ViewById(R.id.sv_announcement_message)
@@ -119,19 +118,17 @@ public class AnnouncementViewModel {
 
         if (entityManager.isBot(writerId)) {
             if (entityManager.isJandiBot(writerId)) {
-                ImageLoader.newBuilder()
-                        .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
-                        .load(UriFactory.getResourceUri(R.drawable.bot_80x100))
-                        .into(ivAnnouncementUser);
+                ivAnnouncementUser.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                ivAnnouncementUser.setImageResource(R.drawable.bot_80x100);
             } else {
-                RoundingParams circleRoundingParams = ImageUtil.getCircleRoundingParams(
-                        TransformConfig.DEFAULT_CIRCLE_LINE_COLOR, TransformConfig.DEFAULT_CIRCLE_LINE_WIDTH);
-
-                ImageLoader.newBuilder()
-                        .placeHolder(R.drawable.profile_img, ScalingUtils.ScaleType.FIT_CENTER)
-                        .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
-                        .roundingParams(circleRoundingParams)
-                        .load(Uri.parse(fromEntity.getUserLargeProfileUrl()))
+                ImageLoader.newInstance()
+                        .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
+                        .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                        .transformation(new JandiProfileTransform(ivAnnouncementUser.getContext(),
+                                TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
+                                TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
+                                Color.TRANSPARENT))
+                        .uri(Uri.parse(fromEntity.getUserLargeProfileUrl()))
                         .into(ivAnnouncementUser);
             }
         } else {

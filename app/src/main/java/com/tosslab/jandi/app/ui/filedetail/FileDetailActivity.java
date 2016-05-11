@@ -31,7 +31,6 @@ import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -164,7 +163,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @ViewById(R.id.vg_file_detail_preview_sticker)
     ViewGroup vgStickerPreview;
     @ViewById(R.id.iv_file_detail_preview_sticker_image)
-    SimpleDraweeView ivStickerPreview;
+    ImageView ivStickerPreview;
     @ViewById(R.id.vg_option_space)
     ViewGroup vgOptionSpace;
     @ViewById(R.id.v_file_detail_keyboard_visible_change_detector)

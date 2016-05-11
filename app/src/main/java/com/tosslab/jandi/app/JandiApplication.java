@@ -8,15 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 
+import com.bumptech.glide.Glide;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
-import com.facebook.cache.disk.DiskCacheConfig;
-import com.facebook.common.logging.FLog;
-import com.facebook.common.util.ByteConstants;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import com.facebook.imagepipeline.listener.RequestListener;
-import com.facebook.imagepipeline.listener.RequestLoggingListener;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
@@ -35,8 +29,6 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.image.BitmapMemoryCacheSupplier;
-import com.tosslab.jandi.app.utils.image.fresco.integreation.okhttp3.OkHttpImagePipelineConfigFactory;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
@@ -120,7 +112,12 @@ public class JandiApplication extends MultiDexApplication {
 
         initRetrofitBuilder();
 
-        initFresco();
+        initGlide();
+    }
+
+    private void initGlide() {
+//        Glide.with(this)
+//                .setDefaultOptions();
     }
 
     void initParse() {
@@ -151,26 +148,6 @@ public class JandiApplication extends MultiDexApplication {
         RetrofitBuilder.newInstance();
     }
 
-    private void initFresco() {
-        Set<RequestListener> listeners = new HashSet<>();
-        if (BuildConfig.DEBUG) {
-            listeners.add(new RequestLoggingListener());
-        }
-
-        // Fresco
-        ImagePipelineConfig config =
-                OkHttpImagePipelineConfigFactory.newBuilder(this, getOkHttpClient())
-                        .setBitmapMemoryCacheParamsSupplier(new BitmapMemoryCacheSupplier(this))
-                        .setMainDiskCacheConfig(getMainDiskConfig())
-                        .setRequestListeners(listeners)
-                        .build();
-
-        Fresco.initialize(context, config);
-        if (BuildConfig.DEBUG) {
-            FLog.setMinimumLoggingLevel(Logger.LogLevel.VERBOSE);
-        }
-    }
-
     private void addLogConfigIfDebug() {
         if (!BuildConfig.DEBUG) return;
 
@@ -188,16 +165,6 @@ public class JandiApplication extends MultiDexApplication {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private DiskCacheConfig getMainDiskConfig() {
-        return DiskCacheConfig.newBuilder()
-                .setBaseDirectoryPathSupplier(() -> context.getApplicationContext().getCacheDir())
-                .setBaseDirectoryName("image_cache")
-                .setMaxCacheSize(1024 * ByteConstants.MB)
-                .setMaxCacheSizeOnLowDiskSpace(10 * ByteConstants.MB)
-                .setMaxCacheSizeOnVeryLowDiskSpace(2 * ByteConstants.MB)
-                .build();
     }
 
     /**

@@ -11,9 +11,9 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -62,7 +62,7 @@ public class FileUploadDialogFragment extends DialogFragment {
             editTextInputName.setText(fileName);
         }
 
-        SimpleDraweeView imageView = (SimpleDraweeView) mainView.findViewById(R.id.img_upload_image);
+        ImageView imageView = (ImageView) mainView.findViewById(R.id.img_upload_image);
         if (fileName.endsWith("jpg") || fileName.endsWith("jpeg") || fileName.endsWith("png")) {
             imageView.setImageURI(Uri.fromFile(uploadFile));
         } else {

@@ -23,7 +23,7 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <com.tosslab.jandi.app.views.FrescoImageView
+        <ImageView
             android:id="@+id/iv_kick_user_topic_profile"
             android:layout_width="@dimen/jandi_entity_item_icon"
             android:layout_height="@dimen/jandi_entity_item_icon"

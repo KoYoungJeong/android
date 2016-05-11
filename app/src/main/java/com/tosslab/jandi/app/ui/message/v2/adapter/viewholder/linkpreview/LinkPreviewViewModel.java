@@ -2,20 +2,19 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.generic.RoundingParams;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 18..
@@ -27,7 +26,7 @@ public class LinkPreviewViewModel {
     private TextView tvDomain;
     private TextView tvDescription;
     private View vgThumb;
-    private SimpleDraweeView ivThumb;
+    private ImageView ivThumb;
     private OnLinkPreviewClickListener onLinkPreviewClickListener;
 
     private Context context;
@@ -46,7 +45,7 @@ public class LinkPreviewViewModel {
         tvDomain = (TextView) rootView.findViewById(R.id.tv_linkpreview_domain);
         tvDescription = (TextView) rootView.findViewById(R.id.tv_linkpreview_description);
         vgThumb = rootView.findViewById(R.id.vg_linkpreview_thumb);
-        ivThumb = (SimpleDraweeView) rootView.findViewById(R.id.iv_linkpreview_thumb);
+        ivThumb = (ImageView) rootView.findViewById(R.id.iv_linkpreview_thumb);
     }
 
     public void bindData(ResMessages.Link link) {
@@ -73,13 +72,6 @@ public class LinkPreviewViewModel {
 
         boolean useThumbnail = useThumbnail(linkPreview.imageUrl);
 
-        RoundingParams roundingParams = RoundingParams.fromCornersRadii(5f, 5f, 0, 0);
-
-        GenericDraweeHierarchy hierarchy = ivThumb.getHierarchy();
-        Drawable placeHolder = context.getResources().getDrawable(R.drawable.link_preview);
-        hierarchy.setPlaceholderImage(placeHolder, ScalingUtils.ScaleType.CENTER_INSIDE);
-        hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-        hierarchy.setRoundingParams(roundingParams);
         if (!useThumbnail) {
             ivThumb.setImageURI(null);
             vgThumb.setVisibility(View.GONE);
@@ -88,8 +80,13 @@ public class LinkPreviewViewModel {
 
         vgThumb.setVisibility(View.VISIBLE);
 
-        String imageUrl = linkPreview.imageUrl;
-        ivThumb.setImageURI(Uri.parse(imageUrl));
+        ImageLoader.newInstance()
+                .placeHolder(R.drawable.link_preview, ImageView.ScaleType.CENTER_INSIDE)
+                .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                .transformation(new RoundedCornersTransformation(ivThumb.getContext(),
+                        5, 0, RoundedCornersTransformation.CornerType.TOP))
+                .uri(Uri.parse(linkPreview.imageUrl))
+                .into(ivThumb);
     }
 
     private boolean useThumbnail(String imagUrl) {

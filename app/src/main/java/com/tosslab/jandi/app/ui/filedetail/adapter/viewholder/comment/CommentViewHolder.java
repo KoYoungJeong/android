@@ -4,9 +4,9 @@ import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -23,7 +23,7 @@ import com.tosslab.jandi.app.utils.LinkifyUtil;
  */
 public class CommentViewHolder extends BaseViewHolder<ResMessages.CommentMessage> {
     private TextView tvUserName;
-    private SimpleDraweeView ivUserProfile;
+    private ImageView ivUserProfile;
     private View vUserNameDisableIndicator;
     private View vUserProfileDisableIndicator;
     private TextView tvCreatedDate;
@@ -33,7 +33,7 @@ public class CommentViewHolder extends BaseViewHolder<ResMessages.CommentMessage
         super(itemView);
 
         tvUserName = (TextView) itemView.findViewById(R.id.tv_file_detail_comment_user_name);
-        ivUserProfile = (SimpleDraweeView) itemView.findViewById(R.id.iv_file_detail_comment_user_profile);
+        ivUserProfile = (ImageView) itemView.findViewById(R.id.iv_file_detail_comment_user_profile);
         tvCreatedDate = (TextView) itemView.findViewById(R.id.tv_file_detail_comment_create_date);
 
         vUserNameDisableIndicator =

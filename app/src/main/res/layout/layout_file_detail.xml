@@ -12,7 +12,7 @@
         android:paddingLeft="11dp"
         android:paddingTop="10dp">
 
-        <com.tosslab.jandi.app.views.FrescoImageView
+        <ImageView
             android:id="@+id/iv_file_detail_user_profile"
             android:layout_width="35dp"
             android:layout_height="35dp"

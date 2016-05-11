@@ -4,8 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
@@ -53,11 +53,11 @@ public class ProfileSelectorAdapter<VH extends RecyclerView.ViewHolder, T> exten
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
-        SimpleDraweeView ivImageBox;
+        ImageView ivImageBox;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
-            ivImageBox = (SimpleDraweeView) itemView.findViewById(R.id.iv_image_box);
+            ivImageBox = (ImageView) itemView.findViewById(R.id.iv_image_box);
         }
     }
 

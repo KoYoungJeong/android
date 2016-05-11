@@ -13,16 +13,14 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
-import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,7 +140,7 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     static class MemberChoiceViewHolder extends RecyclerView.ViewHolder {
-        private SimpleDraweeView ivIcon;
+        private ImageView ivIcon;
         private ImageView ivFavorite;
         private TextView tvName;
         private View vDisableLineThrough;
@@ -153,7 +151,7 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
         public MemberChoiceViewHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.tv_entity_listitem_name);
-            ivIcon = (SimpleDraweeView) itemView.findViewById(R.id.iv_entity_listitem_icon);
+            ivIcon = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_icon);
             ivFavorite = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_fav);
             vDisableLineThrough = itemView.findViewById(R.id.iv_entity_listitem_line_through);
             vDisableCover = itemView.findViewById(R.id.v_entity_listitem_warning);
@@ -193,7 +191,7 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     static class MemberViewHolder extends RecyclerView.ViewHolder {
-        private SimpleDraweeView ivIcon;
+        private ImageView ivIcon;
         private ImageView ivFavorite;
         private TextView tvName;
         private TextView tvAdditional;
@@ -206,7 +204,7 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.tv_entity_listitem_name);
             tvAdditional = (TextView) itemView.findViewById(R.id.tv_entity_listitem_user_count);
-            ivIcon = (SimpleDraweeView) itemView.findViewById(R.id.iv_entity_listitem_icon);
+            ivIcon = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_icon);
             ivFavorite = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_fav);
             vDisableLineThrough = itemView.findViewById(R.id.iv_entity_listitem_line_through);
             vDisableCover = itemView.findViewById(R.id.v_entity_listitem_warning);
@@ -232,7 +230,6 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
             tvAdditional.setVisibility(!TextUtils.isEmpty(item.getStatusMessage()) ? View.VISIBLE : View.GONE);
             tvAdditional.setText(item.getStatusMessage());
 
-//            ivFavorite.setVisibility(item.isStarred() ? View.VISIBLE : View.GONE);
             ivFavorite.setVisibility(View.GONE);
 
             vDisableLineThrough.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
@@ -254,7 +251,7 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
                     ImageUtil.loadProfileImage(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
                 } else {
                     ImageUtil.loadProfileImage(ivIcon,
-                            UriFactory.getResourceUri(R.drawable.profile_img_dummyaccount_43),
+                            UriUtil.getResourceUri(R.drawable.profile_img_dummyaccount_43),
                             R.drawable.profile_img_dummyaccount_43);
                 }
             } else {
@@ -264,7 +261,7 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
                         TypedValue.applyDimension(
                                 TypedValue.COMPLEX_UNIT_DIP, 54f, displayMetrics));
                 ivIcon.setLayoutParams(layoutParams);
-                ImageLoader.newBuilder().load(R.drawable.bot_43x54).into(ivIcon);
+                ivIcon.setImageResource(R.drawable.bot_43x54);
             }
 
             itemView.setOnClickListener(v ->

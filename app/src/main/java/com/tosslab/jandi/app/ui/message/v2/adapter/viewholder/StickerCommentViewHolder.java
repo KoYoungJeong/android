@@ -15,8 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
@@ -45,16 +43,16 @@ import de.greenrobot.event.EventBus;
 public class StickerCommentViewHolder extends BaseCommentViewHolder {
 
     private ViewGroup vgMessageCommonFile;
-    private SimpleDraweeView ivMessageCommonFile;
+    private ImageView ivMessageCommonFile;
     private TextView tvCommonFileOwner;
     private TextView tvMessageBadge;
     private TextView tvMessageTime;
 
-    private SimpleDraweeView ivProfileNestedUserProfileForSticker;
+    private ImageView ivProfileNestedUserProfileForSticker;
     private TextView tvProfileNestedUserNameForSticker;
     private ImageView ivProfileNestedLineThroughForSticker;
 
-    private SimpleDraweeView ivProfileNestedCommentSticker;
+    private ImageView ivProfileNestedCommentSticker;
     private TextView tvProfileNestedCommentStickerCreateDate;
     private TextView tvProfileNestedCommentStickerUnread;
     private TextView tvMessageCommonFileName;
@@ -73,7 +71,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
         super.initView(rootView);
         // 파일 정보
         vgMessageCommonFile = (ViewGroup) rootView.findViewById(R.id.vg_message_common_file);
-        ivMessageCommonFile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_common_file);
+        ivMessageCommonFile = (ImageView) rootView.findViewById(R.id.iv_message_common_file);
         tvMessageCommonFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
         tvFileUploaderName = (TextView) rootView.findViewById(R.id.tv_uploader_name);
         tvCommonFileSize = (TextView) rootView.findViewById(R.id.tv_common_file_size);
@@ -84,12 +82,12 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
         tvMessageTime.setVisibility(View.GONE);
 
         // 커멘트 스티커 프로필
-        ivProfileNestedUserProfileForSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_profile_nested_user_profile_for_sticker);
+        ivProfileNestedUserProfileForSticker = (ImageView) rootView.findViewById(R.id.iv_profile_nested_user_profile_for_sticker);
         tvProfileNestedUserNameForSticker = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_user_name_for_sticker);
         ivProfileNestedLineThroughForSticker = (ImageView) rootView.findViewById(R.id.iv_profile_nested_name_line_through_for_sticker);
 
         // 스티커
-        ivProfileNestedCommentSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_profile_nested_comment_sticker);
+        ivProfileNestedCommentSticker = (ImageView) rootView.findViewById(R.id.iv_profile_nested_comment_sticker);
         tvProfileNestedCommentStickerCreateDate = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_sticker_create_date);
         tvProfileNestedCommentStickerUnread = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_sticker_unread);
         context = rootView.getContext();
@@ -245,10 +243,8 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
                 tvMessageCommonFileName.setText(R.string.jandi_deleted_file);
                 tvMessageCommonFileName.setTextColor(resources.getColor(R.color.jandi_text_light));
 
-                ImageLoader.newBuilder()
-                        .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                        .load(R.drawable.file_icon_deleted)
-                        .into(ivMessageCommonFile);
+                ivMessageCommonFile.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                ivMessageCommonFile.setImageResource(R.drawable.file_icon_deleted);
 
                 ivMessageCommonFile.setOnClickListener(null);
             } else {
@@ -284,10 +280,8 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
                         resId = MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
                     }
 
-                    ImageLoader.newBuilder()
-                            .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                            .load(resId)
-                            .into(ivMessageCommonFile);
+                    ivMessageCommonFile.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    ivMessageCommonFile.setImageResource(resId);
                 } else {
                     tvMessageCommonFileName.setText(content.title);
                     tvMessageCommonFileName.setTextColor(resources.getColor(R.color.jandi_messages_file_name));

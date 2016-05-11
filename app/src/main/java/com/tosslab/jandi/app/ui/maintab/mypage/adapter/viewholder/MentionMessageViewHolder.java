@@ -6,11 +6,9 @@ import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.RoundingParams;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
@@ -19,9 +17,9 @@ import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UiUtils;
-import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
 import com.tosslab.jandi.app.utils.transform.TransformConfig;
 
 import butterknife.Bind;
@@ -33,7 +31,7 @@ import butterknife.ButterKnife;
 public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
 
     @Bind(R.id.iv_mention_message_profile)
-    SimpleDraweeView ivProfile;
+    ImageView ivProfile;
     @Bind(R.id.tv_mention_message_name)
     TextView tvWriter;
     @Bind(R.id.tv_mention_message_date)
@@ -113,22 +111,19 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
             if (!isBot) {
                 ImageUtil.loadProfileImage(ivProfile, uri, R.drawable.profile_img);
             } else {
-                RoundingParams circleRoundingParams = ImageUtil.getCircleRoundingParams(
-                        TransformConfig.DEFAULT_CIRCLE_LINE_COLOR, TransformConfig.DEFAULT_CIRCLE_LINE_WIDTH);
-
-                ImageLoader.newBuilder()
-                        .placeHolder(R.drawable.profile_img, ScalingUtils.ScaleType.FIT_CENTER)
-                        .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
-                        .roundingParams(circleRoundingParams)
-                        .load(uri)
+                ImageLoader.newInstance()
+                        .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
+                        .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                        .transformation(new JandiProfileTransform(ivProfile.getContext(),
+                                TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
+                                TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
+                                Color.TRANSPARENT))
+                        .uri(uri)
                         .into(ivProfile);
             }
         } else {
-            ImageLoader.newBuilder()
-                    .placeHolder(R.drawable.bot_80x100, ScalingUtils.ScaleType.CENTER_INSIDE)
-                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
-                    .load(UriFactory.getResourceUri(R.drawable.bot_80x100))
-                    .into(ivProfile);
+            ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            ivProfile.setImageResource(R.drawable.bot_80x100);
         }
 
         tvWriter.setText(mentionMessage.getWriterName());

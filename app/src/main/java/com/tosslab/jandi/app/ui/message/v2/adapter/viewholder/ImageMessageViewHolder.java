@@ -1,15 +1,16 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
@@ -19,7 +20,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -41,9 +42,9 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
     public static final int IMAGE_WIDTH_RIGHT_MARGIN = 59;
     public static final int MAX_IMAGE_HEIGHT = 150;
 
-    private SimpleDraweeView ivProfile;
+    private ImageView ivProfile;
     private TextView tvName;
-    private SimpleDraweeView ivFileImage;
+    private ImageView ivFileImage;
     private TextView tvFileName;
     private View vDisableCover;
     private View vDisableLineThrough;
@@ -62,13 +63,13 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
     @Override
     public void initView(View rootView) {
         super.initView(rootView);
-        ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
+        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
 
         vgFileImageWrapper = (RelativeLayout) rootView.findViewById(R.id.vg_message_photo_wrapper);
-        ivFileImage = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_photo);
+        ivFileImage = (ImageView) rootView.findViewById(R.id.iv_message_photo);
         tvFileName = (TextView) rootView.findViewById(R.id.tv_image_message_file_name);
         tvFileSize = (TextView) rootView.findViewById(R.id.tv_file_size);
 
@@ -155,17 +156,15 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
         if (TextUtils.equals(fileMessage.status, "archived")) {
             tvFileName.setText(R.string.jandi_deleted_file);
-            ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.file_icon_deleted));
+            ivFileImage.setImageResource(R.drawable.file_icon_deleted);
             return;
         }
 
         tvFileName.setText(fileContent.title);
 
         if (!ImageUtil.hasImageUrl(fileContent)) {
-            ImageLoader.newBuilder()
-                    .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
-                    .load(R.drawable.file_icon_img)
-                    .into(ivFileImage);
+            ivFileImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            ivFileImage.setImageResource(R.drawable.file_icon_img);
             return;
         }
 
@@ -174,12 +173,8 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             String serverUrl = fileContent.serverUrl;
             String icon = fileContent.icon;
             int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, icon);
-            ImageLoader.newBuilder()
-                    .placeHolder(mimeTypeIconImage, ScalingUtils.ScaleType.CENTER_INSIDE)
-                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
-                    .load(UriFactory.getResourceUri(mimeTypeIconImage))
-                    .into(ivFileImage);
-
+            ivFileImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            ivFileImage.setImageResource(mimeTypeIconImage);
         } else {
             String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
             tvFileSize.setText(fileSize);
@@ -192,9 +187,6 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
                     ImageUtil.getThumbnailUrl(extraInfo, ImageUtil.Thumbnails.LARGE);
 
             final ViewGroup.LayoutParams layoutParams = ivFileImage.getLayoutParams();
-
-            ImageLoader.Builder imageRequestBuilder = ImageLoader.newBuilder();
-            imageRequestBuilder.error(R.drawable.preview_no_img, ScalingUtils.ScaleType.CENTER_INSIDE);
 
             // 유효한 확장자가 아닌 경우, Local File Path 도 없고 Thumbnail Path 도 없는 경우
             boolean shouldSupportImageExtensions =
@@ -209,14 +201,15 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
                 vgFileImageWrapper.setBackgroundDrawable(JandiApplication.getContext()
                         .getResources().getDrawable(R.drawable.bg_round_top_green_for_message));
 
-                imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
-                imageRequestBuilder.load(R.drawable.preview_no_img)
-                        .into(ivFileImage);
+                ivFileImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                ivFileImage.setImageResource(R.drawable.preview_no_img);
                 return;
             }
 
-            imageRequestBuilder.placeHolder(
-                    R.drawable.comment_image_preview_download, ScalingUtils.ScaleType.CENTER_INSIDE);
+            ImageLoader loader = ImageLoader.newInstance();
+            loader.error(R.drawable.preview_no_img, ImageView.ScaleType.CENTER_INSIDE);
+            loader.placeHolder(
+                    R.drawable.comment_image_preview_download, ImageView.ScaleType.CENTER_INSIDE);
 
             int width = maxImageWidth;
             int height = maxImageHeight;
@@ -240,7 +233,8 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
                     height = extraInfoHeight;
                 }
 
-                int convertedWidthByRatio = (int) ((float) extraInfoWidth * ((float) height / (float) extraInfoHeight));
+                int convertedWidthByRatio =
+                        (int) ((float) extraInfoWidth * ((float) height / (float) extraInfoHeight));
 
                 if (convertedWidthByRatio < minImageWidth) {
                     width = minImageWidth;
@@ -258,16 +252,31 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             vgFileImageWrapper.setBackgroundDrawable(JandiApplication.getContext()
                     .getResources().getDrawable(R.drawable.bg_round_top_gray_for_message));
 
+            int getwidth = ivFileImage.getWidth();
+            int getheight = ivFileImage.getHeight();
+            int paramWidth = ivFileImage.getLayoutParams().width;
+            int paramHeight = ivFileImage.getLayoutParams().height;
+
+            Log.d("tony", String.format("width = %d, height = %d, paramWidth = %d, paramHeight = %d", getwidth, getheight, paramWidth, paramHeight));
+
             layoutParams.width = width;
             layoutParams.height = height;
             ivFileImage.setLayoutParams(layoutParams);
 
-            Uri uri = isFromLocalFilePath
-                    ? UriFactory.getFileUri(localFilePath) : Uri.parse(remoteFilePth);
+            getwidth = ivFileImage.getWidth();
+            getheight = ivFileImage.getHeight();
+            paramWidth = ivFileImage.getLayoutParams().width;
+            paramHeight = ivFileImage.getLayoutParams().height;
 
-            imageRequestBuilder
-                    .actualScaleType(ScalingUtils.ScaleType.FIT_XY)
-                    .load(uri)
+            Log.e("tony", String.format("width = %d, height = %d, paramWidth = %d, paramHeight = %d", getwidth, getheight, paramWidth, paramHeight));
+
+            Uri uri = isFromLocalFilePath
+                    ? UriUtil.getFileUri(localFilePath) : Uri.parse(remoteFilePth);
+
+            ivFileImage.setBackgroundColor(Color.BLACK);
+
+            loader.actualImageScaleType(ImageView.ScaleType.FIT_XY)
+                    .uri(uri)
                     .into(ivFileImage);
         }
     }

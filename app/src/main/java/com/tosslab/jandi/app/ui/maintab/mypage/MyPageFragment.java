@@ -16,10 +16,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.MentionToMeEvent;
@@ -72,7 +72,7 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
     @Bind(R.id.vg_mypage_my_profile_wrapper)
     ViewGroup vgMyProfileWrapper;
     @Bind(R.id.iv_mypage_my_profile)
-    SimpleDraweeView ivProfile;
+    ImageView ivProfile;
     @Bind(R.id.tv_mypage_my_profile_name)
     TextView tvName;
     @Bind(R.id.tv_mypage_my_profile_email)

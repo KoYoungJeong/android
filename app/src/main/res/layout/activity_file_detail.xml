@@ -29,7 +29,7 @@
         android:background="@color/jandi_black_89"
         android:visibility="gone">
 
-        <com.tosslab.jandi.app.views.FrescoImageView
+        <ImageView
             android:id="@+id/iv_file_detail_preview_sticker_image"
             android:layout_width="140dp"
             android:layout_height="140dp"

@@ -11,15 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.FileUploadProgressEvent;
 import com.tosslab.jandi.app.events.files.FileUploadStartEvent;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
-import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.listeners.WebLoadingBar;
@@ -155,7 +153,7 @@ public class FileUploadStateViewModel {
 
             FileUploadViewHolder holder = new FileUploadViewHolder(view);
             holder.ivPhoto =
-                    (SimpleDraweeView) view.findViewById(R.id.iv_item_message_file_upload_state_photo);
+                    (ImageView) view.findViewById(R.id.iv_item_message_file_upload_state_photo);
             holder.ivPhoto.setBackgroundColor(context.getResources()
                     .getColor(R.color.jandi_file_upload_list_view_background));
             holder.ivState = (ImageView) view.findViewById(R.id.iv_item_message_file_upload_state_state);
@@ -167,28 +165,23 @@ public class FileUploadStateViewModel {
         public void onBindViewHolder(FileUploadViewHolder holder, int position) {
             FileUploadDTO item = uploadInfos.get(position);
             FileExtensionsUtil.Extensions fileExtType = FileExtensionsUtil.getExtensions(item.getFilePath());
-            SimpleDraweeView ivPhoto = holder.ivPhoto;
+            ImageView ivPhoto = holder.ivPhoto;
 
             if (fileExtType == FileExtensionsUtil.Extensions.IMAGE) {
                 ivPhoto.setPadding(0, 0, 0, 0);
-                ViewGroup.LayoutParams layoutParams = ivPhoto.getLayoutParams();
-                int width = layoutParams.width;
-                int height = layoutParams.height;
-                Uri uri = UriFactory.getFileUri(item.getFilePath());
 
-                ImageLoader.newBuilder()
-                        .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
-                        .resize(width, height)
-                        .load(uri)
+                Uri uri = UriUtil.getFileUri(item.getFilePath());
+
+                ImageLoader.newInstance()
+                        .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                        .uri(uri)
                         .into(ivPhoto);
             } else {
                 int resId = FileExtensionsUtil.getTypeResourceId(fileExtType);
                 int paddingPx = (int) (4 * context.getResources().getDisplayMetrics().density);
                 ivPhoto.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
-                ImageLoader.newBuilder()
-                        .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
-                        .load(resId)
-                        .into(ivPhoto);
+                ivPhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                ivPhoto.setImageResource(resId);
             }
 
             switch (item.getUploadState()) {
@@ -228,7 +221,7 @@ public class FileUploadStateViewModel {
     }
 
     private static class FileUploadViewHolder extends RecyclerView.ViewHolder {
-        SimpleDraweeView ivPhoto;
+        ImageView ivPhoto;
         ImageView ivState;
 
         public FileUploadViewHolder(View itemView) {

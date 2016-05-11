@@ -4,9 +4,9 @@ import android.content.Context;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -30,7 +30,7 @@ public class MessageViewHolder extends BaseMessageViewHolder {
 
     protected Context context;
 
-    private SimpleDraweeView ivProfile;
+    private ImageView ivProfile;
 
     private TextView tvName;
     private View vDisableCover;
@@ -49,7 +49,7 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         super.initView(rootView);
         context = rootView.getContext();
 
-        ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
+        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
 
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);

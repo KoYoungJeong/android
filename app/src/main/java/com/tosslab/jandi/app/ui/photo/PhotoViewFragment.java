@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.photo;
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -12,21 +11,19 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.facebook.common.references.CloseableReference;
-import com.facebook.imagepipeline.animated.base.AnimatableDrawable;
-import com.facebook.imagepipeline.common.ResizeOptions;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar;
-import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.image.ImageDownloadTracker;
-import com.tosslab.jandi.app.utils.image.listener.BaseOnResourceReadyCallback;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.listener.BaseOnResourceReadyCallback;
-import com.tosslab.jandi.app.utils.image.listener.ClosableAttachStateChangeListener;
+import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+import com.tosslab.jandi.app.utils.image.loader.ThrowIOExceptionStreamLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
@@ -121,28 +118,40 @@ public class PhotoViewFragment extends Fragment {
         }
 
         if (!TextUtils.isEmpty(thumbUrl)) {
+
             loadImage(Uri.parse(thumbUrl));
+
         } else {
             final Uri originalUri = Uri.parse(originalUrl);
 
-            boolean hasDownloadHistory = ImageUtil.hasCache(originalUri) ||
-                    (ImageDownloadTracker.getInstance()
-                            .getStatus(originalUri) != ImageDownloadTracker.Status.PENDING);
-
-            if (hasDownloadHistory) {
-                loadImage(originalUri);
-            } else {
-                // PhotoView 그려진 이미지(Drawable)이 없으면 ViewTapListener 가 동작하지 않는다.
-                photoView.setImageDrawable(new ColorDrawable(Color.TRANSPARENT));
-                vgProgress.setVisibility(View.GONE);
-                btnTapToViewOriginal.setVisibility(View.VISIBLE);
-                btnTapToViewOriginal.setOnClickListener(v -> {
-                    btnTapToViewOriginal.setVisibility(View.GONE);
-                    vgProgress.setVisibility(View.VISIBLE);
-                    loadImage(originalUri);
-                });
-            }
+            Glide.with(photoView.getContext())
+                    // cache 되어 있는지 확인하기 위해 네트워킹 작업이 실행되면 exception 발생시킨다.
+                    .using(new ThrowIOExceptionStreamLoader<Uri>())
+                    .load(originalUri)
+                    .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, Uri model,
+                                                   Target<GlideDrawable> target,
+                                                   boolean isFirstResource) {
+                            // cache 가 되어 있지 않음
+                            showTapToView(originalUri);
+                            return true;
+                        }
+                    })
+                    .into(photoView);
         }
+    }
+
+    private void showTapToView(Uri originalUri) {
+        // PhotoView 그려진 이미지(Drawable)이 없으면 ViewTapListener 가 동작하지 않는다.
+        photoView.setImageDrawable(new ColorDrawable(Color.TRANSPARENT));
+        vgProgress.setVisibility(View.GONE);
+        btnTapToViewOriginal.setVisibility(View.VISIBLE);
+        btnTapToViewOriginal.setOnClickListener(v -> {
+            btnTapToViewOriginal.setVisibility(View.GONE);
+            vgProgress.setVisibility(View.VISIBLE);
+            loadImage(originalUri);
+        });
     }
 
     private void setupProgress() {
@@ -178,48 +187,34 @@ public class PhotoViewFragment extends Fragment {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void loadImage(Uri uri) {
-        int width = fromCarousel
-                ? ApplicationUtil.getDisplaySize(false) : ImageUtil.STANDARD_IMAGE_SIZE;
-        int height = fromCarousel
-                ? ApplicationUtil.getDisplaySize(true) : ImageUtil.STANDARD_IMAGE_SIZE;
-
-        ResizeOptions resizeOptions = new ResizeOptions(width, height);
-
         ImageDownloadTracker.getInstance().put(uri, ImageDownloadTracker.Status.IN_PROGRESS);
-        ImageLoader.loadWithCallback(uri, resizeOptions, new BaseOnResourceReadyCallback() {
-            @Override
-            public void onReady(Drawable drawable, CloseableReference reference) {
-                hideProgress();
 
-                setImageResource(drawable, reference);
+        ImageLoader.newInstance()
+                .uri(uri)
+                .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, Uri model, Target<GlideDrawable> target,
+                                               boolean isFirstResource) {
+                        LogUtil.e(TAG, Log.getStackTraceString(e));
+                        hideProgress();
 
-                ImageDownloadTracker.getInstance().put(uri, ImageDownloadTracker.Status.COMPLETED);
-            }
+                        showError();
+                        return true;
+                    }
 
-            @Override
-            public void onFail(Throwable cause) {
-                LogUtil.e(TAG, Log.getStackTraceString(cause));
-                hideProgress();
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource,
+                                                   Uri model, Target<GlideDrawable> target,
+                                                   boolean isFromMemoryCache,
+                                                   boolean isFirstResource) {
+                        ImageDownloadTracker.getInstance()
+                                .put(uri, ImageDownloadTracker.Status.COMPLETED);
 
-                showError();
-            }
-
-            @Override
-            public void onProgressUpdate(float progress) {
-                updateProgress(progress);
-            }
-        });
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    void setImageResource(Drawable drawable, CloseableReference reference) {
-        photoView.setImageDrawable(drawable);
-
-        if (drawable instanceof AnimatableDrawable) {
-            ((AnimatableDrawable) drawable).start();
-        }
-
-        photoView.addOnAttachStateChangeListener(new ClosableAttachStateChangeListener(reference));
+                        hideProgress();
+                        return false;
+                    }
+                })
+                .into(photoView);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

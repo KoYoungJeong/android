@@ -1,18 +1,16 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.generic.RoundingParams;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -27,20 +25,20 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHo
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
 import com.tosslab.jandi.app.utils.transform.TransformConfig;
 
 public class IntegrationBotViewHolder implements BodyViewHolder {
 
     private static final String TAG = "IntegrationBotViewHolder";
     private View contentView;
-    private SimpleDraweeView ivProfile;
+    private ImageView ivProfile;
     private TextView tvName;
     private TextView tvMessage;
     private View vDisableCover;
     private View vDisableLineThrough;
-    private SimpleDraweeView vConnectLine;
+    private ImageView vConnectLine;
     private TextView tvMessageTime;
     private TextView tvMessageBadge;
     private LinearLayout vgConnectInfo;
@@ -57,11 +55,10 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
     private IntegrationBotViewHolder() {
     }
 
-
     @Override
     public void initView(View rootView) {
         contentView = rootView.findViewById(R.id.vg_dummy_message_item);
-        ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
+        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
         vgUserName = (ViewGroup) rootView.findViewById(R.id.vg_message_profile_user_name);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
@@ -69,7 +66,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
         tvMessageBadge = (TextView) rootView.findViewById(R.id.tv_message_badge);
         vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
-        vConnectLine = (SimpleDraweeView) rootView.findViewById(R.id.v_message_sub_menu_connect_color);
+        vConnectLine = (ImageView) rootView.findViewById(R.id.v_message_sub_menu_connect_color);
 
         vgConnectInfo = ((LinearLayout) rootView.findViewById(R.id.vg_message_sub_menu));
         vLastRead = rootView.findViewById(R.id.vg_message_last_read);
@@ -93,9 +90,15 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
             vgUserName.setVisibility(View.GONE);
         }
 
-        RoundingParams roundingParams = RoundingParams.fromCornersRadii(10f, 0, 10f, 0);
-        GenericDraweeHierarchy hierarchy = vConnectLine.getHierarchy();
-        hierarchy.setRoundingParams(roundingParams);
+        // TODO 가장자리 둥글게
+//        ImageLoader.newInstance()
+//                .placeHolder(R.drawable.link_preview, ImageView.ScaleType.CENTER_INSIDE)
+//                .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+//                .transformation(new RoundedCornersTransformation(ivThumb.getContext(),
+//                        10, 0, RoundedCornersTransformation.CornerType.LEFT));
+//        RoundingParams roundingParams = RoundingParams.fromCornersRadii(10f, 0, 10f, 0);
+//        GenericDraweeHierarchy hierarchy = vConnectLine.getHierarchy();
+//        hierarchy.setRoundingParams(roundingParams);
 
     }
 
@@ -112,14 +115,14 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
         BotEntity botEntity = (BotEntity) entity;
         ResLeftSideMenu.Bot bot = botEntity.getBot();
 
-        RoundingParams circleRoundingParams = ImageUtil.getCircleRoundingParams(
-                TransformConfig.DEFAULT_CIRCLE_LINE_COLOR, TransformConfig.DEFAULT_CIRCLE_LINE_WIDTH);
-
-        ImageLoader.newBuilder()
-                .placeHolder(R.drawable.profile_img, ScalingUtils.ScaleType.FIT_CENTER)
-                .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
-                .roundingParams(circleRoundingParams)
-                .load(Uri.parse(botEntity.getUserLargeProfileUrl()))
+        ImageLoader.newInstance()
+                .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
+                .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                .transformation(new JandiProfileTransform(ivProfile.getContext(),
+                        TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
+                        TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
+                        Color.TRANSPARENT))
+                .uri(Uri.parse(botEntity.getUserLargeProfileUrl()))
                 .into(ivProfile);
 
         tvName.setText(botEntity.getName());

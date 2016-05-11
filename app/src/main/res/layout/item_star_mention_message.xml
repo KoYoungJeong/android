@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_vertical_margin"
     android:paddingRight="@dimen/activity_vertical_margin">
 
-    <com.tosslab.jandi.app.views.FrescoImageView
+    <ImageView
         android:id="@+id/iv_star_mention_profile"
         android:layout_width="44dp"
         android:layout_marginTop="@dimen/activity_vertical_margin"
