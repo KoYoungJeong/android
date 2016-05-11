@@ -87,6 +87,7 @@ public class IntroActivityModel {
     public void refreshAccountInfo() throws RetrofitException {
 
         ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+        AccountUtil.removeDuplicatedTeams(resAccountInfo);
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
         Collection<ResAccountInfo.UserTeam> teamList = resAccountInfo.getMemberships();

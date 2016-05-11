@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.network.models.ResAccountActivate;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.signup.verify.exception.VerifyNetworkException;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -75,6 +76,7 @@ public class SignUpVerifyModel {
 
         TokenUtil.saveTokenInfoByPassword(accountActivate);
 
+        AccountUtil.removeDuplicatedTeams(accountInfo);
         AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
 
         JandiPreference.setFirstLogin(JandiApplication.getContext());

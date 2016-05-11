@@ -5,6 +5,8 @@ import android.content.Context;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
+import rx.Observable;
+
 /**
  * Created by tonyjs on 15. 7. 29..
  */
@@ -28,6 +30,20 @@ public class AccountUtil {
                 AccountRepository.getRepository().getSelectedTeamInfo();
 
         return selectedTeamInfo != null ? selectedTeamInfo.getMemberId() : -1;
+    }
+
+    public static void removeDuplicatedTeams(ResAccountInfo resAccountInfo) {
+        if (resAccountInfo == null
+                || resAccountInfo.getMemberships() == null
+                || resAccountInfo.getMemberships().isEmpty()) {
+            return;
+        }
+
+        Observable.from(resAccountInfo.getMemberships())
+                .distinct(ResAccountInfo.UserTeam::getTeamId)
+                .toList()
+                .subscribe(resAccountInfo::setMemberships);
+
     }
 
 }

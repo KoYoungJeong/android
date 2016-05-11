@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -130,6 +131,7 @@ public class BaseInitUtil {
             long teamId = Observable.from(accountInfo.getMemberships())
                     .takeFirst(userTeam -> TextUtils.equals(userTeam.getName(), "android-test-code"))
                     .toBlocking().first().getTeamId();
+            AccountUtil.removeDuplicatedTeams(accountInfo);
             AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
             AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
