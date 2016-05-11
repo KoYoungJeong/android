@@ -147,6 +147,9 @@ public class MessageViewHolder extends BaseMessageViewHolder {
 
         if (unreadCount > 0) {
             tvMessageBadge.setText(String.valueOf(unreadCount));
+            tvMessageBadge.setVisibility(View.VISIBLE);
+        } else {
+            tvMessageBadge.setVisibility(View.GONE);
         }
 
 

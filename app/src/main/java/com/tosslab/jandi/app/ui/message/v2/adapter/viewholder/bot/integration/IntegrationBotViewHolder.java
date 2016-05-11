@@ -175,12 +175,18 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
         if (tvMessage != null && itemClickListener != null) {
             tvMessage.setOnClickListener(itemClickListener);
         }
+        if (vgConnectInfo != null) {
+            vgConnectInfo.setOnClickListener(itemClickListener);
+        }
     }
 
     @Override
     public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
         if (tvMessage != null && itemLongClickListener != null) {
             tvMessage.setOnLongClickListener(itemLongClickListener);
+        }
+        if (vgConnectInfo != null) {
+            vgConnectInfo.setOnLongClickListener(itemLongClickListener);
         }
     }
 

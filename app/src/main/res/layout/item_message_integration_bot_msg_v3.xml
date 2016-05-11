@@ -97,12 +97,12 @@
         android:layout_alignLeft="@+id/tv_message_content"
         android:layout_below="@+id/tv_message_content"
         android:layout_marginRight="59dp"
-        android:layout_marginTop="6dp"
         android:orientation="vertical">
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="2dp"
             app:cardElevation="0dp"
@@ -143,8 +143,7 @@
             android:id="@+id/vg_linkpreview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="59dp"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="4dp">
 
             <include layout="@layout/item_message_layout_linkpreview_v2" />
         </RelativeLayout>

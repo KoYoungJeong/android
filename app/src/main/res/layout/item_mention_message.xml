@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -21,7 +20,16 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_centerVertical="true"
-            android:layout_marginTop="@dimen/activity_vertical_margin"/>
+            android:layout_marginTop="@dimen/activity_vertical_margin" />
+
+        <View
+            android:id="@+id/v_mention_message_profile_cover"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/iv_mention_message_profile"
+            android:layout_alignLeft="@+id/iv_mention_message_profile"
+            android:layout_alignRight="@+id/iv_mention_message_profile"
+            android:layout_alignTop="@+id/iv_mention_message_profile" />
 
         <RelativeLayout
             android:id="@+id/vg_mention_message_content_wrapper"
@@ -35,14 +43,25 @@
 
             <TextView
                 android:id="@+id/tv_mention_message_name"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textColor="@color/jandi_star_mention_item_name_content_text"
                 android:textSize="16sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
+
+            <View
+                android:id="@+id/v_mention_message_name_cover"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tv_mention_message_name"
+                android:layout_alignLeft="@+id/tv_mention_message_name"
+                android:layout_alignRight="@+id/tv_mention_message_name"
+                android:layout_alignTop="@+id/tv_mention_message_name"
+                android:background="@drawable/line_gray" />
+
 
             <TextView
                 android:id="@+id/tv_mention_message_content"
@@ -56,7 +75,7 @@
                 android:minHeight="20dp"
                 android:text="mention"
                 android:textColor="@color/jandi_star_mention_item_name_content_text"
-                android:textSize="13sp"/>
+                android:textSize="13sp" />
 
             <TextView
                 android:id="@+id/tv_mention_message_topic_name"
@@ -69,7 +88,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="@color/jandi_star_mention_item_topic_name_text"
-                android:textSize="13sp"/>
+                android:textSize="13sp" />
 
             <TextView
                 android:id="@+id/tv_mention_message_date"
@@ -80,7 +99,7 @@
                 android:layout_marginLeft="18dp"
                 android:layout_marginRight="3dp"
                 android:textColor="@color/jandi_star_mention_item_date_text"
-                android:textSize="13sp"/>
+                android:textSize="13sp" />
 
         </RelativeLayout>
 
@@ -89,5 +108,5 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/jandi_starred_list_line"/>
+        android:background="@color/jandi_starred_list_line" />
 </LinearLayout>
