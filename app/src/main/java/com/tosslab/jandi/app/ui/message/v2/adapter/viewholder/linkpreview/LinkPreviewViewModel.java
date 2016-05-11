@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -31,6 +33,8 @@ public class LinkPreviewViewModel {
 
     private Context context;
     private ViewGroup vgLinkPreview;
+    private View vgSnippet;
+    private View vDividier;
 
     public LinkPreviewViewModel(Context context) {
         this.context = context;
@@ -38,14 +42,6 @@ public class LinkPreviewViewModel {
 
     public void initView(View rootView) {
         vgLinkPreview = (ViewGroup) rootView.findViewById(R.id.vg_linkpreview);
-        vgLinkPreview.setOnClickListener(
-                onLinkPreviewClickListener = new OnLinkPreviewClickListener(context));
-
-        tvTitle = (TextView) rootView.findViewById(R.id.tv_linkpreview_title);
-        tvDomain = (TextView) rootView.findViewById(R.id.tv_linkpreview_domain);
-        tvDescription = (TextView) rootView.findViewById(R.id.tv_linkpreview_description);
-        vgThumb = rootView.findViewById(R.id.vg_linkpreview_thumb);
-        ivThumb = (ImageView) rootView.findViewById(R.id.iv_linkpreview_thumb);
     }
 
     public void bindData(ResMessages.Link link) {
@@ -56,17 +52,35 @@ public class LinkPreviewViewModel {
             vgLinkPreview.setVisibility(View.GONE);
             return;
         } else {
+            vgLinkPreview.removeAllViews();
+            LayoutInflater.from(vgLinkPreview.getContext()).inflate(R.layout.item_message_layout_linkpreview_v2, vgLinkPreview, true);
+            initInnerView(vgLinkPreview);
             vgLinkPreview.setVisibility(View.VISIBLE);
         }
 
         ResMessages.LinkPreview linkPreview = message.linkPreview;
 
-        tvTitle.setText(linkPreview.title);
-        tvDomain.setText(linkPreview.domain);
+        if (!TextUtils.isEmpty(linkPreview.title)) {
+
+            tvTitle.setVisibility(View.VISIBLE);
+            tvTitle.setText(linkPreview.title);
+        } else {
+            tvTitle.setVisibility(View.GONE);
+        }
+        if (!TextUtils.isEmpty(linkPreview.domain)) {
+            tvDomain.setVisibility(View.VISIBLE);
+            tvDomain.setText(linkPreview.domain);
+        } else {
+            tvDomain.setVisibility(View.GONE);
+        }
 
         String description = linkPreview.description;
-        tvDescription.setText(TextUtils.isEmpty(description) ? "" : description);
-        tvDescription.setVisibility(TextUtils.isEmpty(description) ? View.GONE : View.VISIBLE);
+        if (!TextUtils.isEmpty(description)) {
+            tvDescription.setText(description);
+            tvDescription.setVisibility(View.VISIBLE);
+        } else {
+            tvDescription.setVisibility(View.GONE);
+        }
 
         onLinkPreviewClickListener.setLinkUrl(linkPreview.linkUrl);
 
@@ -75,11 +89,39 @@ public class LinkPreviewViewModel {
         if (!useThumbnail) {
             ivThumb.setImageURI(null);
             vgThumb.setVisibility(View.GONE);
-            return;
+            vDividier.setVisibility(View.GONE);
+            vgSnippet.setBackgroundResource(R.drawable.bg_round_white_rect_for_message);
+        } else {
+            vgSnippet.setBackgroundResource(R.drawable.bg_round_bottom_white_for_message);
+
+            vDividier.setVisibility(View.VISIBLE);
+            vgThumb.setVisibility(View.VISIBLE);
+
+            float imageRound = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, JandiApplication.getContext().getResources().getDisplayMetrics());
+            ImageLoader.newInstance()
+                    .backgroundColor(ivThumb.getResources().getColor(R.color.jandi_messages_image_background))
+                    .placeHolder(R.drawable.comment_image_preview_download, ImageView.ScaleType.CENTER_INSIDE)
+                    .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                    .error(R.drawable.comment_no_img, ImageView.ScaleType.CENTER_INSIDE)
+                    .transformation(new RoundedCornersTransformation(ivThumb.getContext(),
+                            5, 0, RoundedCornersTransformation.CornerType.TOP))
+                    .uri(Uri.parse(linkPreview.imageUrl))
+                    .into(ivThumb);
         }
 
-        vgThumb.setVisibility(View.VISIBLE);
+    }
 
+    private void initInnerView(ViewGroup vgLinkPreview) {
+        vgLinkPreview.setOnClickListener(
+                onLinkPreviewClickListener = new OnLinkPreviewClickListener(context));
+
+        tvTitle = (TextView) vgLinkPreview.findViewById(R.id.tv_linkpreview_title);
+        tvDomain = (TextView) vgLinkPreview.findViewById(R.id.tv_linkpreview_domain);
+        tvDescription = (TextView) vgLinkPreview.findViewById(R.id.tv_linkpreview_description);
+        vgThumb = vgLinkPreview.findViewById(R.id.vg_linkpreview_thumb);
+        ivThumb = (SimpleDraweeView) vgLinkPreview.findViewById(R.id.iv_linkpreview_thumb);
+        vgSnippet = vgLinkPreview.findViewById(R.id.vg_snippet_summary);
+        vDividier = vgLinkPreview.findViewById(R.id.v_snippet_divider);
         ImageLoader.newInstance()
                 .placeHolder(R.drawable.link_preview, ImageView.ScaleType.CENTER_INSIDE)
                 .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)

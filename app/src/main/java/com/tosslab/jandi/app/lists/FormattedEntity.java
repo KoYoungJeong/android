@@ -119,7 +119,7 @@ public class FormattedEntity {
     public String getName() {
         // Dummy entity일 경우 이름이 없다.
         if (isDummy()) {
-            return null;
+            return "";
         }
 
         return getEntity().name;

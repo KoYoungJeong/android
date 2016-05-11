@@ -28,7 +28,7 @@ public class BodyViewFactory {
 
     public static BodyViewHolder createViewHolder(int viewType) {
 
-        BaseViewHolderBuilder builder = new EmptyViewHolder.Builder();
+        BaseViewHolderBuilder builder;
 
         // Setting View TYPE
         if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_NORMAL_MESSAGE)) {
@@ -53,6 +53,8 @@ public class BodyViewFactory {
             builder = new JandiBotViewHolder.Builder();
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_INTEGRATION_BOT_MESSAGE)) {
             builder = new IntegrationBotViewHolder.Builder();
+        } else {
+            builder = new EmptyViewHolder.Builder();
         }
 
         // Setting Option
@@ -140,20 +142,20 @@ public class BodyViewFactory {
     private static int getNormalMessageType(ResMessages.Link previousLink,
                                             ResMessages.Link currentLink,
                                             ResMessages.Link nextLink) {
-        int type = TypeUtil.TYPE_VIEW_NORMAL_MESSAGE;
-
-        if (isPureMessage(previousLink, currentLink)) {
-            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
-        }
+        int type;
 
         if (isDummyMessage(currentLink)) {
             type = TypeUtil.TYPE_VIEW_DUMMY_NORMAL_MESSAGE;
         } else if (isJandiBotMessage(currentLink)) {
             type = TypeUtil.TYPE_VIEW_JANDI_BOT_MESSAGE;
-            return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
         } else if (isIntegrationBotMessage(currentLink)) {
             type = TypeUtil.TYPE_VIEW_INTEGRATION_BOT_MESSAGE;
-            return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
+        } else {
+            type = TypeUtil.TYPE_VIEW_NORMAL_MESSAGE;
+        }
+
+        if (isPureMessage(previousLink, currentLink)) {
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
         }
 
         if (isNextMessageSameWriterAndSameTime(currentLink, nextLink)) {
@@ -174,14 +176,16 @@ public class BodyViewFactory {
     private static int getStickerMessageType(ResMessages.Link previousLink,
                                              ResMessages.Link currentLink,
                                              ResMessages.Link nextLink) {
-        int type = TypeUtil.TYPE_VIEW_STICKER_MESSAGE;
-
-        if (isPureMessage(previousLink, currentLink)) {
-            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
-        }
+        int type;
 
         if (isDummyMessage(currentLink)) {
             type = TypeUtil.TYPE_VIEW_DUMMY_STICKER;
+        } else {
+            type = TypeUtil.TYPE_VIEW_STICKER_MESSAGE;
+        }
+
+        if (isPureMessage(previousLink, currentLink)) {
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
         }
 
         if (isNextMessageSameWriterAndSameTime(currentLink, nextLink)) {
@@ -252,6 +256,13 @@ public class BodyViewFactory {
                 } else {
                     // 3. 이전 comment 작성자가 다른 사람 일때 프로필이 들어가야 함
                     type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
+
+                    if (!isSameDay(previousLink, currentLink)) {
+                        // 4. 날짜가 다르다면 파일 정보를 추가해야 됨
+                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
+                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
+                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
+                    }
                 }
             }
         } else {
@@ -369,10 +380,13 @@ public class BodyViewFactory {
             }
         }
 
+        boolean shared = fileMessage.writerId != currentLink.fromEntity;
+
         String fileType = fileMessage.content.icon;
 
         return !TextUtils.isEmpty(fileType)
                 && fileType.startsWith("image")
+                && !shared
                 && SourceTypeUtil.getSourceType(fileMessage.content.serverUrl) == MimeTypeUtil.SourceType.S3
                 && isSharedFile
                 && !TextUtils.equals(currentLink.message.status, "archived");

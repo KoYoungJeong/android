@@ -33,10 +33,14 @@
     <dimen name="jandi_messages_date_divider">12sp</dimen>
     <dimen name="jandi_messages_date">12sp</dimen>
     <dimen name="jandi_messages_content">14sp</dimen>
-    <dimen name="jandi_system_message_content">11dp</dimen>
+    <dimen name="jandi_system_message_content">11sp</dimen>
+    <dimen name="jandi_system_message_content_time">10sp</dimen>
     <dimen name="jandi_messages_joined_cdp">12sp</dimen>
     <!--// 이미지 및 간격-->
+    <dimen name="jandi_messages_name_margin_right">10dp</dimen>
+    <dimen name="jandi_comment_name_margin_right">8dp</dimen>
     <dimen name="jandi_messages_profile_size">32dp</dimen>
+    <dimen name="jandi_messages_content_left_margin">46dp</dimen>
     <dimen name="jandi_messages_padding_left">15dp</dimen>
     <dimen name="jandi_messages_padding_right">16dp</dimen>
     <dimen name="jandi_messages_profile_margin_right">7dp</dimen>
@@ -142,7 +146,7 @@
     <dimen name="jandi_mention_edit_text_item_font_size">18sp</dimen>
     <dimen name="jandi_mention_message_item_font_size">15sp</dimen>
     <dimen name="jandi_mention_comment_item_font_size">12sp</dimen>
-    <dimen name="jandi_mention_message_view_comment_item_font_size">11dp</dimen>
+    <dimen name="jandi_mention_message_view_comment_item_font_size">11sp</dimen>
     <dimen name="jandi_mention_star_list_item_font_size">13sp</dimen>
 
     <!-- star list -->

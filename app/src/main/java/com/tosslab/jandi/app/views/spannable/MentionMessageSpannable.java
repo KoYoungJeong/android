@@ -20,11 +20,9 @@ public class MentionMessageSpannable extends ReplacementSpan {
     private final float textSize;
     private final int textColor;
     private final int backgroundColor;
-
-    private String drawText;
-
-    private int maxWidth = -1;
     private final int defaultMargin;
+    private String drawText;
+    private int maxWidth = -1;
 
     public MentionMessageSpannable(String entityName, float textSize,
                                    int textColor, int backgroundColor) {
@@ -44,7 +42,6 @@ public class MentionMessageSpannable extends ReplacementSpan {
 
     @Override
     public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
-        paint.setTextSize(textSize);
         return getTextWidth(paint).width();
     }
 
@@ -75,8 +72,6 @@ public class MentionMessageSpannable extends ReplacementSpan {
         // http://flavienlaurent.com/blog/2014/01/31/spans/ 참조할것
 
         canvas.save();
-
-        paint.setTextSize(textSize);
 
         Rect textRect = getTextWidth(paint);
 

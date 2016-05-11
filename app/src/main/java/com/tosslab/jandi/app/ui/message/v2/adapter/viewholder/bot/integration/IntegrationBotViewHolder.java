@@ -32,13 +32,11 @@ import com.tosslab.jandi.app.utils.transform.TransformConfig;
 public class IntegrationBotViewHolder implements BodyViewHolder {
 
     private static final String TAG = "IntegrationBotViewHolder";
-    private View contentView;
     private ImageView ivProfile;
     private TextView tvName;
     private TextView tvMessage;
-    private View vDisableCover;
     private View vDisableLineThrough;
-    private ImageView vConnectLine;
+    private View vConnectLine;
     private TextView tvMessageTime;
     private TextView tvMessageBadge;
     private LinearLayout vgConnectInfo;
@@ -50,23 +48,19 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
     private LinkPreviewViewModel linkPreviewViewModel;
     private boolean hasBotProfile;
-    private ViewGroup vgUserName;
 
     private IntegrationBotViewHolder() {
     }
 
     @Override
     public void initView(View rootView) {
-        contentView = rootView.findViewById(R.id.vg_dummy_message_item);
-        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
-        vgUserName = (ViewGroup) rootView.findViewById(R.id.vg_message_profile_user_name);
+        ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
         tvMessageTime = (TextView) rootView.findViewById(R.id.tv_message_time);
         tvMessageBadge = (TextView) rootView.findViewById(R.id.tv_message_badge);
-        vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
-        vConnectLine = (ImageView) rootView.findViewById(R.id.v_message_sub_menu_connect_color);
+        vConnectLine = rootView.findViewById(R.id.v_message_sub_menu_connect_color);
 
         vgConnectInfo = ((LinearLayout) rootView.findViewById(R.id.vg_message_sub_menu));
         vLastRead = rootView.findViewById(R.id.vg_message_last_read);
@@ -84,22 +78,11 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
         if (hasBotProfile) {
             ivProfile.setVisibility(View.VISIBLE);
-            vgUserName.setVisibility(View.VISIBLE);
+            tvName.setVisibility(View.VISIBLE);
         } else {
-            ivProfile.setVisibility(View.INVISIBLE);
-            vgUserName.setVisibility(View.GONE);
+            ivProfile.setVisibility(View.GONE);
+            tvName.setVisibility(View.GONE);
         }
-
-        // TODO 가장자리 둥글게
-//        ImageLoader.newInstance()
-//                .placeHolder(R.drawable.link_preview, ImageView.ScaleType.CENTER_INSIDE)
-//                .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
-//                .transformation(new RoundedCornersTransformation(ivThumb.getContext(),
-//                        10, 0, RoundedCornersTransformation.CornerType.LEFT));
-//        RoundingParams roundingParams = RoundingParams.fromCornersRadii(10f, 0, 10f, 0);
-//        GenericDraweeHierarchy hierarchy = vConnectLine.getHierarchy();
-//        hierarchy.setRoundingParams(roundingParams);
-
     }
 
     @Override
@@ -129,12 +112,10 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
         if (bot != null && TextUtils.equals(bot.status, "enabled")) {
             tvName.setTextColor(tvName.getResources().getColor(R.color.jandi_messages_name));
-            vDisableCover.setVisibility(View.GONE);
             vDisableLineThrough.setVisibility(View.GONE);
         } else {
             tvName.setTextColor(
                     tvName.getResources().getColor(R.color.deactivate_text_color));
-            vDisableCover.setVisibility(View.VISIBLE);
             vDisableLineThrough.setVisibility(View.VISIBLE);
         }
 
@@ -190,15 +171,15 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
     @Override
     public void setOnItemClickListener(View.OnClickListener itemClickListener) {
-        if (contentView != null && itemClickListener != null) {
-            contentView.setOnClickListener(itemClickListener);
+        if (tvMessage != null && itemClickListener != null) {
+            tvMessage.setOnClickListener(itemClickListener);
         }
     }
 
     @Override
     public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
-        if (contentView != null && itemLongClickListener != null) {
-            contentView.setOnLongClickListener(itemLongClickListener);
+        if (tvMessage != null && itemLongClickListener != null) {
+            tvMessage.setOnLongClickListener(itemLongClickListener);
         }
     }
 

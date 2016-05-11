@@ -785,7 +785,7 @@ public class MessageListV2Presenter {
         }
     }
 
-    @Background
+    @Background(serial = "send_message")
     public void sendStickerMessage(StickerInfo stickerInfo) {
         long entityId = room.getEntityId();
         long roomId = room.getRoomId();
@@ -806,7 +806,7 @@ public class MessageListV2Presenter {
         }
     }
 
-    @Background
+    @Background(serial = "send_message")
     public void sendTextMessage(String message, List<MentionObject> mentions,
                                 ReqSendMessageV3 reqSendMessage) {
         long entityId = room.getEntityId();

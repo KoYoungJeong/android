@@ -3,12 +3,14 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Typeface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.StyleSpan;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +53,6 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     private TextView tvMessageBadge;
     private TextView tvMessageTime;
     private ImageView ivProfileNestedCommentUserProfile;
-    private ViewGroup vgProfileNestedCommentUserName;
     private TextView tvProfileNestedCommentUserName;
     private ImageView ivProfileNestedNameLineThrough;
     private TextView tvProfileNestedCommentContent;
@@ -62,6 +63,9 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     private boolean hasNestedProfile = false;
     private boolean hasOnlyBadge = false;
     private boolean hasFlatTop = false;
+    private View tvFileInfoDivider;
+    private View vProfileCover;
+    private View vFileIconBorder;
 
 
     private CommentViewHolder() {
@@ -74,7 +78,9 @@ public class CommentViewHolder extends BaseCommentViewHolder {
         vgMessageCommonFile = (ViewGroup) rootView.findViewById(R.id.vg_message_common_file);
         ivMessageCommonFile = (ImageView) rootView.findViewById(R.id.iv_message_common_file);
         tvMessageCommonFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
+        vFileIconBorder = rootView.findViewById(R.id.v_message_common_file_border);
         tvFileUploaderName = (TextView) rootView.findViewById(R.id.tv_uploader_name);
+        tvFileInfoDivider = rootView.findViewById(R.id.tv_file_info_divider);
         tvCommonFileSize = (TextView) rootView.findViewById(R.id.tv_common_file_size);
         tvMessageBadge = (TextView) rootView.findViewById(R.id.tv_message_badge);
         tvMessageTime = (TextView) rootView.findViewById(R.id.tv_message_time);
@@ -83,7 +89,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
         // 프로필이 있는 커멘트
         ivProfileNestedCommentUserProfile = (ImageView) rootView.findViewById(R.id.iv_profile_nested_comment_user_profile);
-        vgProfileNestedCommentUserName = (ViewGroup) rootView.findViewById(R.id.vg_profile_nested_comment_user_name);
+        vProfileCover = rootView.findViewById(R.id.v_profile_nested_comment_user_profile_cover);
         tvProfileNestedCommentUserName = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_user_name);
         ivProfileNestedNameLineThrough = (ImageView) rootView.findViewById(R.id.iv_profile_nested_name_line_through);
 
@@ -93,29 +99,12 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
         if (hasNestedProfile) {
             ivProfileNestedCommentUserProfile.setVisibility(View.VISIBLE);
-            vgProfileNestedCommentUserName.setVisibility(View.VISIBLE);
+            tvProfileNestedCommentUserName.setVisibility(View.VISIBLE);
+            ivProfileNestedNameLineThrough.setVisibility(View.VISIBLE);
         } else {
-            ivProfileNestedCommentUserProfile.setVisibility(View.INVISIBLE);
-            vgProfileNestedCommentUserName.setVisibility(View.GONE);
-        }
-
-        if (hasFlatTop) {
-            if (hasBottomMargin) {
-                vgProfileNestedComment.setBackground(
-                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector_flat_top));
-            } else {
-                vgProfileNestedComment.setBackground(
-                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector_flat_all));
-            }
-        } else {
-            if (hasBottomMargin) {
-                vgProfileNestedComment.setBackground(
-                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector));
-
-            } else {
-                vgProfileNestedComment.setBackground(
-                        JandiApplication.getContext().getResources().getDrawable(R.drawable.bg_message_item_selector_flat_bottom));
-            }
+            ivProfileNestedCommentUserProfile.setVisibility(View.GONE);
+            tvProfileNestedCommentUserName.setVisibility(View.GONE);
+            ivProfileNestedNameLineThrough.setVisibility(View.GONE);
         }
     }
 
@@ -131,11 +120,67 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
         if (hasFileInfoView()) {
             settingFileInfo(link, roomId);
+            setFileInfoBackground(link);
         }
 
         setCommentUserInfo(link);
 
         setCommentMessage(link, teamId, roomId);
+        setBackground(link);
+    }
+
+    private void setFileInfoBackground(ResMessages.Link link) {
+        boolean isMe = false;
+        if (link.feedback != null) {
+            isMe = EntityManager.getInstance().isMe(link.feedback.writerId);
+        }
+        if (isMe) {
+            vgMessageCommonFile.setBackgroundResource(R.drawable.bg_message_item_selector_mine);
+        } else {
+            vgMessageCommonFile.setBackgroundResource(R.drawable.bg_message_item_selector);
+
+        }
+    }
+
+
+    private void setBackground(ResMessages.Link link) {
+
+        boolean isMe = EntityManager.getInstance().isMe(link.message.writerId);
+
+        int resId;
+
+        if (hasFlatTop) {
+            if (hasBottomMargin) {
+                if (isMe) {
+                    resId = R.drawable.bg_message_item_selector_mine_flat_top;
+                } else {
+                    resId = R.drawable.bg_message_item_selector_flat_top;
+                }
+            } else {
+                if (isMe) {
+                    resId = R.drawable.bg_message_item_selector_mine_flat_all;
+                } else {
+                    resId = R.drawable.bg_message_item_selector_flat_all;
+                }
+            }
+        } else {
+            if (hasBottomMargin) {
+                if (isMe) {
+                    resId = R.drawable.bg_message_item_selector_mine;
+                } else {
+                    resId = R.drawable.bg_message_item_selector;
+
+                }
+            } else {
+
+                if (isMe) {
+                    resId = R.drawable.bg_message_item_selector_mine_flat_bottom;
+                } else {
+                    resId = R.drawable.bg_message_item_selector_flat_bottom;
+                }
+            }
+        }
+        vgProfileNestedComment.setBackgroundResource(resId);
     }
 
     private void setCommentMessage(ResMessages.Link link, long teamId, long roomId) {
@@ -149,7 +194,8 @@ public class CommentViewHolder extends BaseCommentViewHolder {
             long myId = EntityManager.getInstance().getMe().getId();
             MentionAnalysisInfo mentionAnalysisInfo =
                     MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
-                            .textSizeFromResource(R.dimen.jandi_mention_message_view_comment_item_font_size)
+                            .textSize(tvProfileNestedCommentContent.getTextSize())
+                            .clickable(true)
                             .build();
 
             SpannableLookUp.text(builder)
@@ -170,7 +216,8 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
                 DateViewSpannable spannable =
                         new DateViewSpannable(tvProfileNestedCommentContent.getContext(),
-                                DateTransformator.getTimeStringForSimple(commentMessage.createTime));
+                                DateTransformator.getTimeStringForSimple(commentMessage.createTime),
+                                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10f, context.getResources().getDisplayMetrics()));
                 spannable.setTextColor(
                         JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_date));
                 builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -182,7 +229,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
             if (unreadCount > 0) {
                 NameSpannable unreadCountSpannable =
                         new NameSpannable(
-                                context.getResources().getDimensionPixelSize(R.dimen.jandi_comment_text_size)
+                                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 9f, context.getResources().getDisplayMetrics())
                                 , context.getResources().getColor(R.color.jandi_accent_color));
                 int beforeLength = builder.length();
                 builder.append(" ");
@@ -191,7 +238,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
-            tvProfileNestedCommentContent.setText(builder);
+            tvProfileNestedCommentContent.setText(builder, TextView.BufferType.SPANNABLE);
         }
     }
 
@@ -212,10 +259,14 @@ public class CommentViewHolder extends BaseCommentViewHolder {
         if (user != null && entityById.isEnabled()) {
             tvProfileNestedCommentUserName.setTextColor(
                     JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_name));
+            vProfileCover.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             ivProfileNestedNameLineThrough.setVisibility(View.GONE);
         } else {
             tvProfileNestedCommentUserName.setTextColor(
                     JandiApplication.getContext().getResources().getColor(R.color.deactivate_text_color));
+            ShapeDrawable foreground = new ShapeDrawable(new OvalShape());
+            foreground.getPaint().setColor(0x66FFFFFF);
+            vProfileCover.setBackgroundDrawable(foreground);
             ivProfileNestedNameLineThrough.setVisibility(View.VISIBLE);
         }
 
@@ -274,59 +325,64 @@ public class CommentViewHolder extends BaseCommentViewHolder {
             }
 
             final Resources resources = tvMessageCommonFileName.getResources();
+            boolean needFileUploader = true;
+            boolean needFileUploaderDivider = true;
+            boolean needFileSize = true;
             if (TextUtils.equals(link.feedback.status, "archived")) {
                 tvMessageCommonFileName.setText(R.string.jandi_deleted_file);
                 tvMessageCommonFileName.setTextColor(resources.getColor(R.color.jandi_text_light));
+                needFileUploader = false;
+                needFileUploaderDivider = false;
+                needFileSize = false;
 
                 ivMessageCommonFile.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 ivMessageCommonFile.setImageResource(R.drawable.file_icon_deleted);
+
+                vFileIconBorder.setVisibility(View.GONE);
                 ivMessageCommonFile.setOnClickListener(null);
             } else {
                 final ResMessages.FileContent content = feedbackFileMessage.content;
 
+
                 if (!isSharedFile) {
-                    tvMessageCommonFileName.setTypeface(null, Typeface.NORMAL);
-                    int testSizePx = resources.getDimensionPixelSize(R.dimen.jandi_text_size_11sp);
-                    tvMessageCommonFileName.setTextSize(TypedValue.COMPLEX_UNIT_PX, testSizePx);
-                    SpannableStringBuilder unshareTextBuilder = new SpannableStringBuilder();
-                    String title = content.title;
-                    if (content.title.length() > 15) {
-                        unshareTextBuilder.append(title.substring(0, 14))
-                                .append("...");
-                    } else {
-                        unshareTextBuilder.append(title).append(" ");
-                    }
+                    needFileUploaderDivider = false;
+                    needFileSize = false;
 
-                    unshareTextBuilder.setSpan(
-                            new StyleSpan(Typeface.BOLD),
-                            0, unshareTextBuilder.length(),
-                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                    unshareTextBuilder.append(resources.getString(R.string.jandi_unshared_file));
-                    tvMessageCommonFileName.setText(unshareTextBuilder);
-                    tvMessageCommonFileName.setTextSize(TypedValue.COMPLEX_UNIT_PX, testSizePx);
+                    tvMessageCommonFileName.setText(content.title);
+                    tvFileUploaderName.setText(R.string.jandi_unshared_file);
                     tvMessageCommonFileName.setTextColor(resources.getColor(R.color.jandi_text_light));
+                    tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text_light));
 
                     ivMessageCommonFile.setClickable(false);
 
-                    int resId = R.drawable.file_icon_unshared;
-                    if (isPublicTopic) {
-                        resId = MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon);
+                    boolean image = fileContent.icon.startsWith("image");
+                    if (!image && !isPublicTopic) {
+                        ivMessageCommonFile.setImageResource(R.drawable.file_icon_unshared);
+                        vFileIconBorder.setVisibility(View.GONE);
+                    } else {
+                        String serverUrl = content.serverUrl;
+                        String fileType = content.icon;
+                        String fileUrl = content.fileUrl;
+                        String thumbnailUrl =
+                                ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
+                        ImageUtil.setResourceIconOrLoadImageForComment(
+                                ivMessageCommonFile, vFileIconBorder,
+                                fileUrl, thumbnailUrl,
+                                serverUrl, fileType);
                     }
 
-                    ivMessageCommonFile.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    ivMessageCommonFile.setImageResource(resId);
                 } else {
                     tvMessageCommonFileName.setText(content.title);
                     tvMessageCommonFileName.setTextColor(resources.getColor(R.color.dark_gray));
+                    tvFileUploaderName.setTextColor(resources.getColor(R.color.dark_gray));
 
                     String serverUrl = content.serverUrl;
                     String fileType = content.icon;
                     String fileUrl = content.fileUrl;
                     String thumbnailUrl =
                             ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
-                    ImageUtil.setResourceIconOrLoadImage(
-                            ivMessageCommonFile, null,
+                    ImageUtil.setResourceIconOrLoadImageForComment(
+                            ivMessageCommonFile, vFileIconBorder,
                             fileUrl, thumbnailUrl,
                             serverUrl, fileType);
 
@@ -344,6 +400,10 @@ public class CommentViewHolder extends BaseCommentViewHolder {
                     }
                 }
             }
+
+            tvFileUploaderName.setVisibility(needFileUploader ? View.VISIBLE : View.GONE);
+            tvCommonFileSize.setVisibility(needFileSize ? View.VISIBLE : View.GONE);
+            tvFileInfoDivider.setVisibility(needFileUploaderDivider ? View.VISIBLE : View.GONE);
         }
     }
 

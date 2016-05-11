@@ -28,11 +28,13 @@
     <color name="jandi_accent_color_1f">#1F00A3E1</color>
     <color name="jandi_accent_color_7f">#7F00A3E1</color>
 
+    <color name="jandi_black_1a">#1A000000</color>
     <color name="jandi_black_25">#25000000</color>
     <color name="jandi_black_89">#89000000</color>
     <color name="jandi_black_bf">#BF000000</color>
     <color name="jandi_black_b2">#B2000000</color>
     <color name="jandi_black_de">#de000000</color>
+    <color name="jandi_black_e6">#e6000000</color>
 
 
     <color name="jandi_badge_point_color">#FFFF5B49</color>
@@ -125,6 +127,7 @@
     <color name="jandi_messages_image_view_bg">#FFF0F0F0</color>
     <color name="jandi_messages_big_size_image_view_bg">#FFC5E1D6</color>
     <color name="jandi_messages_50_black_file_size">#80000000</color>
+    <color name="jandi_messages_blue_background">#FFF0F9FC</color>
 
     <!-- Main panel -->
     <color name="jandi_messages_bottom_bg">#FFFFFF</color>

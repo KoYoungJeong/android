@@ -126,6 +126,7 @@ import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
 import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
+import com.tosslab.jandi.app.ui.message.v2.viewmodel.DateAnimator;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
@@ -133,8 +134,10 @@ import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.RecyclerScrollStateListener;
 import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -171,6 +174,7 @@ import org.androidannotations.annotations.ViewById;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -236,6 +240,7 @@ public class MessageListV2Fragment extends Fragment implements
     AnnouncementViewModel announcementViewModel;
 
     MentionControlViewModel mentionControlViewModel;
+    DateAnimator dateAnimator;
 
     @SystemService
     ClipboardManager clipboardManager;
@@ -258,6 +263,9 @@ public class MessageListV2Fragment extends Fragment implements
     View vgMessageInput;
     @ViewById(R.id.vg_messages_go_to_latest)
     View vgMoveToLatest;
+
+    @ViewById(R.id.tv_messages_date_devider)
+    TextView tvMessageDate;
 
     @ViewById(R.id.layout_messages_empty)
     LinearLayout vgEmptyLayout;
@@ -742,7 +750,15 @@ public class MessageListV2Fragment extends Fragment implements
             }
             return false;
         });
-
+        dateAnimator = new DateAnimator(tvMessageDate);
+        RecyclerScrollStateListener recyclerScrollStateListener = new RecyclerScrollStateListener();
+        recyclerScrollStateListener.setListener(scrolling -> {
+            if (scrolling) {
+                dateAnimator.show();
+            } else {
+                dateAnimator.hide();
+            }
+        });
         // 스크롤 했을 때 동작
         lvMessages.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -754,6 +770,24 @@ public class MessageListV2Fragment extends Fragment implements
                 if (isShowingLastItem) {
                     setPreviewVisible(false);
                 }
+
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+                Date date = ((MainMessageListAdapter) recyclerView.getAdapter()).getItemDate(firstVisibleItemPosition);
+                if (date != null) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(date);
+                    calendar.set(Calendar.HOUR_OF_DAY, 0);
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.SECOND, 0);
+                    calendar.set(Calendar.MILLISECOND, 0);
+
+                    tvMessageDate.setText(DateTransformator.getTimeStringForDivider(calendar.getTimeInMillis()));
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                recyclerScrollStateListener.onScrollState(newState);
             }
         });
     }
@@ -1817,6 +1851,8 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     public void onEvent(UnshareFileEvent event) {
+        int indexOfUnsharedFile = messageAdapter.indexByMessageId(event.getFileId());
+        messageAdapter.updateCachedType(indexOfUnsharedFile);
         saveCacheAndNotifyDataSetChanged(null);
     }
 
@@ -1932,6 +1968,8 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     public void onEvent(DeleteFileEvent event) {
+        int indexOfUnsharedFile = messageAdapter.indexByMessageId(event.getId());
+        messageAdapter.updateCachedType(indexOfUnsharedFile);
         changeLinkStatusToArchive(event.getId());
     }
 

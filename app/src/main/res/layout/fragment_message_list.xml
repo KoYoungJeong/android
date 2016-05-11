@@ -31,7 +31,26 @@
         android:layout_alignWithParentIfMissing="true"
         android:layout_below="@+id/vg_messages_member_status_alert"
         android:background="@color/jandi_chat_list_default_background"
+        android:clipToPadding="false"
+        android:paddingTop="20dp"
         android:scrollbars="vertical" />
+
+    <TextView
+        android:id="@+id/tv_messages_date_devider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/lv_messages"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_round_for_message_header"
+        android:paddingBottom="6dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="6dp"
+        android:text="When"
+        android:visibility="gone"
+        android:textColor="@color/white"
+        android:textSize="11sp" />
 
     <LinearLayout
         android:id="@+id/layout_messages_empty"

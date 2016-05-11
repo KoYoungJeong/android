@@ -1,12 +1,13 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.util;
 
 import android.graphics.Color;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RoundRectShape;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -21,8 +22,7 @@ import java.util.Iterator;
 public class IntegrationBotUtil {
     private static final String TAG = "IntegrationBotUtil";
 
-    public static void setIntegrationSubUI(ResMessages.TextContent content,
-                                           ImageView vConnectLine, LinearLayout vgConnectInfo) {
+    public static void setIntegrationSubUI(ResMessages.TextContent content, View vConnectLine, LinearLayout vgConnectInfo) {
         if (content.connectInfo != null && !content.connectInfo.isEmpty()) {
 
             if (vConnectLine.getVisibility() != View.VISIBLE) {
@@ -40,10 +40,14 @@ public class IntegrationBotUtil {
         }
     }
 
-    private static void updateSubInfoSideLine(String connectColor, ImageView vConnectLine) {
+    private static void updateSubInfoSideLine(String connectColor, View vConnectLine) {
         try {
+            float v = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, JandiApplication.getContext().getResources().getDisplayMetrics());
             int color = Color.parseColor(connectColor);
-            vConnectLine.setBackgroundColor(color);
+            RoundRectShape shape = new RoundRectShape(new float[]{v, v, 0, 0, 0, 0, v, v}, null, null);
+            ShapeDrawable shapeDrawable = new ShapeDrawable(shape);
+            shapeDrawable.getPaint().setColor(color);
+            vConnectLine.setBackgroundDrawable(shapeDrawable);
         } catch (Exception e) {
             LogUtil.d(TAG, "updateSubInfoSideLine" + e.getMessage());
             vConnectLine.setBackgroundColor(Color.TRANSPARENT);
@@ -64,6 +68,13 @@ public class IntegrationBotUtil {
 
         int titleVisible = View.GONE;
         int descriptionVisible = View.GONE;
+
+        DisplayMetrics displayMetrics = vgConnectInfo.getResources().getDisplayMetrics();
+        final int defaultMargin = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                4f,
+                displayMetrics);
+
         for (int idx = 0; idx < viewChildGroupCount; ++idx) {
             viewChildIdx = idx * 2;
 
@@ -109,11 +120,7 @@ public class IntegrationBotUtil {
                     if (idx == 0) {
                         layoutParams.topMargin = 0;
                     } else {
-                        DisplayMetrics displayMetrics = tvDescription.getResources().getDisplayMetrics();
-                        layoutParams.topMargin = (int) TypedValue.applyDimension(
-                                TypedValue.COMPLEX_UNIT_DIP,
-                                11f,
-                                displayMetrics);
+                        layoutParams.topMargin = defaultMargin;
                     }
 
                     tvDescription.setLayoutParams(layoutParams);
