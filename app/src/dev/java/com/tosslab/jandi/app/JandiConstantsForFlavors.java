@@ -13,22 +13,21 @@ public class JandiConstantsForFlavors {
     // These constants are just for DEBUG mode
     private static final String SERVICE_PROTOCOL = "http";
     private static final String SERVICE_DOMAIN_SUB = "i2";
-    private static final String SERVICE_DOMAIN_BASE = "jandi.xyz";
+    private static final String SERVICE_DOMAIN_BASE = "jandi.io";
     private static final String SERVICE_PORT = "80";
     private static final String SERVICE_DOMAIN = SERVICE_DOMAIN_SUB + "." + SERVICE_DOMAIN_BASE;
-    private static final String SERVICE_FILE_DOMAIN = "files" + "." + SERVICE_DOMAIN_BASE;
-    private static final String SERVICE_BASE_DOMAIN = "www" + "." + SERVICE_DOMAIN_BASE;
-    private static final String SERVICE_FILE_UPLOAD_DOMAIN = "upload" + "." + SERVICE_DOMAIN_BASE;
     public static final String SERVICE_ROOT_URL =
             SERVICE_PROTOCOL + "://" + SERVICE_DOMAIN + ":" + SERVICE_PORT + "/";
     public static final String SERVICE_INNER_API_URL = SERVICE_ROOT_URL + "inner-api/";
+    private static final String SERVICE_FILE_DOMAIN = "files" + "." + SERVICE_DOMAIN_BASE;
     public static final String SERVICE_FILE_URL =
             SERVICE_PROTOCOL + "://" + SERVICE_FILE_DOMAIN + ":" + SERVICE_PORT + "/";
-    public static final String SERVICE_FILE_UPLOAD_URL =
-            SERVICE_PROTOCOL + "://" + SERVICE_FILE_UPLOAD_DOMAIN + ":" + SERVICE_PORT + "/";
+    private static final String SERVICE_BASE_DOMAIN = "www" + "." + SERVICE_DOMAIN_BASE;
     public static final String SERVICE_BASE_URL =
             SERVICE_PROTOCOL + "://" + SERVICE_BASE_DOMAIN + ":" + SERVICE_PORT + "/";
-
+    private static final String SERVICE_FILE_UPLOAD_DOMAIN = "upload" + "." + SERVICE_DOMAIN_BASE;
+    public static final String SERVICE_FILE_UPLOAD_URL =
+            SERVICE_PROTOCOL + "://" + SERVICE_FILE_UPLOAD_DOMAIN + ":" + SERVICE_PORT + "/";
     private static final String SOCKET_DOMAIN = "ws" + "." + SERVICE_DOMAIN_BASE;
     public static final String SOCKET_ROOT_URL =
             SERVICE_PROTOCOL + "://" + SOCKET_DOMAIN + ":" + SERVICE_PORT + "/";
