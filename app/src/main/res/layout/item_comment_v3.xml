@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:appp="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -23,8 +23,8 @@
             android:layout_height="@dimen/jandi_messages_profile_size"
             android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
             android:clickable="false"
-            appp:backgroundImage="@drawable/comment_profile"
-            appp:roundAsCircle="true" />
+            app:backgroundImage="@drawable/comment_profile"
+            app:roundAsCircle="true" />
 
         <com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout
             android:id="@+id/vg_message_common_file"
@@ -39,7 +39,7 @@
             android:paddingLeft="11dp"
             android:paddingRight="11dp"
             android:paddingTop="8dp"
-            appp:boundWidth="59dp">
+            app:boundWidth="59dp">
 
             <com.tosslab.jandi.app.views.FrescoImageView
                 android:id="@+id/iv_message_common_file"
@@ -47,6 +47,17 @@
                 android:layout_height="42dp"
                 android:layout_centerVertical="true"
                 android:scaleType="fitCenter" />
+
+            <View
+                android:id="@+id/v_message_common_file_border"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_black_a_10"
+                android:layout_alignBottom="@+id/iv_message_common_file"
+                android:layout_alignLeft="@+id/iv_message_common_file"
+                android:layout_alignRight="@+id/iv_message_common_file"
+                android:layout_alignTop="@+id/iv_message_common_file" />
+
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -162,7 +173,7 @@
             android:layout_width="match_parent"
             android:layout_height="33dp"
             android:layout_below="@+id/iv_comment_bubble_tail"
-            android:background="@drawable/bg_message_item_selector"
+            android:background="@drawable/bg_message_item_selector_flat_bottom"
             android:clickable="true"
             android:orientation="vertical">
 
@@ -224,9 +235,9 @@
                     android:layout_height="25dp"
                     android:layout_marginLeft="9dp"
                     android:layout_marginRight="7dp"
-                    android:layout_marginTop="2dp"
-                    appp:backgroundImage="@color/black"
-                    appp:roundAsCircle="true" />
+                    android:layout_marginTop="4dp"
+                    app:backgroundImage="@color/black"
+                    app:roundAsCircle="true" />
 
                 <View
                     android:id="@+id/v_profile_nested_comment_user_profile_cover"
@@ -269,7 +280,7 @@
                     android:layout_below="@+id/tv_profile_nested_comment_user_name"
                     android:layout_marginLeft="41dp"
                     android:focusable="false"
-                    android:lineSpacingExtra="1dp"
+                    android:lineSpacingExtra="2dp"
                     android:text="Nested comment"
                     android:textColor="@color/jandi_messages_file_content"
                     android:textSize="11sp" />
@@ -297,8 +308,8 @@
                     android:layout_marginLeft="9dp"
                     android:layout_marginRight="7dp"
                     android:layout_marginTop="2dp"
-                    appp:backgroundImage="@color/black"
-                    appp:roundAsCircle="true" />
+                    app:backgroundImage="@color/black"
+                    app:roundAsCircle="true" />
 
                 <View
                     android:id="@+id/v_profile_nested_user_profile_for_sticker_cover"

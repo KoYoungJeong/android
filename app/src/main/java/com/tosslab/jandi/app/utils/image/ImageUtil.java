@@ -233,6 +233,11 @@ public class ImageUtil {
                                                   final String thumbnailUrl,
                                                   final String serverUrl,
                                                   final String fileType) {
+
+        if (vOutLine != null) {
+            vOutLine.setVisibility(View.GONE);
+        }
+
         ImageLoader.Builder builder = ImageLoader.newBuilder()
                 .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
 
@@ -240,13 +245,15 @@ public class ImageUtil {
 
         boolean hasImageUrl = !TextUtils.isEmpty(fileUrl) || !TextUtils.isEmpty(thumbnailUrl);
         if (!TextUtils.equals(fileType, "image") || !hasImageUrl) {
-            builder.load(mimeTypeIconImage).into(draweeView);
+            builder.backgroundColor(Color.TRANSPARENT)
+                    .load(mimeTypeIconImage).into(draweeView);
             return;
         }
 
         MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
         if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
-            builder.load(mimeTypeIconImage).into(draweeView);
+            builder.backgroundColor(Color.TRANSPARENT)
+                    .load(mimeTypeIconImage).into(draweeView);
         } else {
             if (TextUtils.isEmpty(thumbnailUrl)) {
                 builder.actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
@@ -254,11 +261,23 @@ public class ImageUtil {
                 return;
             }
 
+            if (vOutLine != null) {
+                vOutLine.setVisibility(View.VISIBLE);
+            }
+
             builder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+            builder.backgroundColor(draweeView.getResources().getColor(R.color.jandi_messages_image_view_bg));
             builder.placeHolder(
                     R.drawable.comment_img_preview, ScalingUtils.ScaleType.CENTER_INSIDE);
             builder.error(R.drawable.comment_no_img, ScalingUtils.ScaleType.CENTER_INSIDE);
-
+            builder.controllerListener(new BaseControllerListener<ImageInfo>() {
+                @Override
+                public void onFailure(String id, Throwable throwable) {
+                    if (vOutLine != null) {
+                        vOutLine.setVisibility(View.GONE);
+                    }
+                }
+            });
             builder.load(Uri.parse(thumbnailUrl)).into(draweeView);
         }
     }

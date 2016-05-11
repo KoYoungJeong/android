@@ -13,7 +13,8 @@
             android:id="@+id/iv_linkpreview_thumb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            freco:backgroundImage="@color/jandi_linkpreview_thumb_background" />
+            freco:backgroundImage="@color/jandi_linkpreview_thumb_background"
+            freco:placeholderImage="@drawable/link_preview" />
 
     </RelativeLayout>
 
@@ -35,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:lineSpacingExtra="1dp"
+            android:lineSpacingExtra="2dp"
             android:maxLines="2"
             android:text="Rock Formation Image, Galapagos Islands - National bla blaa bla bla bla blab albalblablblbla"
             android:textColor="@android:color/black"
@@ -69,7 +70,7 @@
     <View
         android:id="@+id/v_snippet_divider"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="0.5dp"
         android:layout_alignTop="@+id/vg_snippet_summary"
         android:background="@color/jandi_messages_input_hint" />
 

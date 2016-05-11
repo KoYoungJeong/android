@@ -84,8 +84,6 @@ public class DummyMessageViewHolder implements BodyViewHolder {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
             builder.append(textMessage.content.body);
             ivSticker.setVisibility(View.GONE);
-            ivStatus.setVisibility(View.VISIBLE);
-            ivStatus.setVisibility(View.GONE);
             tvMessage.setVisibility(View.VISIBLE);
 
             setTextSendingStatus(dummyMessageLink);
@@ -105,8 +103,6 @@ public class DummyMessageViewHolder implements BodyViewHolder {
         } else if (link.message instanceof ResMessages.StickerMessage) {
             ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) link.message;
             ivSticker.setVisibility(View.VISIBLE);
-            ivStatus.setVisibility(View.GONE);
-            ivStatus.setVisibility(View.VISIBLE);
             tvMessage.setVisibility(View.GONE);
 
             ResMessages.StickerContent content = stickerMessage.content;

@@ -66,6 +66,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
     private boolean hasFlatTop = false;
     private View tvFileInfoDivider;
     private View vProfileCover;
+    private View vFileIconBorder;
 
     private StickerCommentViewHolder() {
     }
@@ -77,6 +78,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
         vgMessageCommonFile = (ViewGroup) rootView.findViewById(R.id.vg_message_common_file);
         ivMessageCommonFile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_common_file);
         tvMessageCommonFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
+        vFileIconBorder =  rootView.findViewById(R.id.v_message_common_file_border);
         tvFileUploaderName = (TextView) rootView.findViewById(R.id.tv_uploader_name);
         tvFileInfoDivider = rootView.findViewById(R.id.tv_file_info_divider);
         tvCommonFileSize = (TextView) rootView.findViewById(R.id.tv_common_file_size);
@@ -297,7 +299,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
                         .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
                         .load(R.drawable.file_icon_deleted)
                         .into(ivMessageCommonFile);
-
+                vFileIconBorder.setVisibility(View.GONE);
                 ivMessageCommonFile.setOnClickListener(null);
             } else {
                 final ResMessages.FileContent content = feedbackFileMessage.content;
@@ -316,6 +318,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
                     boolean image = fileContent.icon.startsWith("image");
                     if (!image && !isPublicTopic) {
                         ivMessageCommonFile.setImageResource(R.drawable.file_icon_unshared);
+                        vFileIconBorder.setVisibility(View.GONE);
                     } else {
                         String serverUrl = content.serverUrl;
                         String fileType = content.icon;
@@ -323,7 +326,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
                         String thumbnailUrl =
                                 ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
                         ImageUtil.setResourceIconOrLoadImageForComment(
-                                ivMessageCommonFile, null,
+                                ivMessageCommonFile, vFileIconBorder,
                                 fileUrl, thumbnailUrl,
                                 serverUrl, fileType);
                     }
@@ -338,7 +341,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
                     String thumbnailUrl =
                             ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
                     ImageUtil.setResourceIconOrLoadImageForComment(
-                            ivMessageCommonFile, null,
+                            ivMessageCommonFile, vFileIconBorder,
                             fileUrl, thumbnailUrl,
                             serverUrl, fileType);
 

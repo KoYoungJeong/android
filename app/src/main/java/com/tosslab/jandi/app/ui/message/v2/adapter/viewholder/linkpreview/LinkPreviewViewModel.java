@@ -108,15 +108,19 @@ public class LinkPreviewViewModel {
 
             ImageLoader.newBuilder()
                     .roundingParams(roundingParams)
-                    .placeHolder(R.drawable.link_preview, ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .backgroundColor(ivThumb.getResources().getColor(R.color.jandi_messages_image_background))
+                    .placeHolder(R.drawable.comment_image_preview_download, ScalingUtils.ScaleType.CENTER_INSIDE)
                     .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
+                    .error(R.drawable.comment_no_img, ScalingUtils.ScaleType.CENTER_INSIDE)
                     .callback(new BaseOnResourceReadyCallback() {
                         @Override
                         public void onFail(Throwable cause) {
-                            vgThumb.setBackgroundResource(R.drawable.bg_round_top_green_for_message);
+                            Uri resourceUri = UriFactory.getResourceUri(R.drawable.comment_no_img);
                             ImageLoader.newBuilder()
                                     .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
-                                    .load(UriFactory.getResourceUri(R.drawable.preview_no_img))
+                                    .backgroundColor(ivThumb.getResources().getColor(R.color.jandi_messages_big_size_image_view_bg))
+                                    .placeHolder(R.drawable.comment_no_img, ScalingUtils.ScaleType.CENTER_INSIDE)
+                                    .load(resourceUri)
                                     .into(ivThumb);
                         }
                     })

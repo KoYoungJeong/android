@@ -380,13 +380,13 @@ public class BodyViewFactory {
             }
         }
 
-        boolean isMe = EntityManager.getInstance().isMe(fileMessage.writerId);
+        boolean shared = fileMessage.writerId != currentLink.fromEntity;
 
         String fileType = fileMessage.content.icon;
 
         return !TextUtils.isEmpty(fileType)
                 && fileType.startsWith("image")
-                && isMe
+                && !shared
                 && SourceTypeUtil.getSourceType(fileMessage.content.serverUrl) == MimeTypeUtil.SourceType.S3
                 && isSharedFile
                 && !TextUtils.equals(currentLink.message.status, "archived");

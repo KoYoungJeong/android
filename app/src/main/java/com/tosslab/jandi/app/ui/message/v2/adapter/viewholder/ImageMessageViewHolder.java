@@ -5,7 +5,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
-import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -60,7 +59,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
     private int minImageHeight;
     private int maxImageWidth;
     private int maxImageHeight;
-    private CardView vgFileImageWrapper;
+    private View vgFileImageWrapper;
     private TextView tvFileSize;
     private View vProfileCover;
 
@@ -72,7 +71,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
                 - getPixelFromDp(IMAGE_WIDTH_LEFT_MARGIN, displayMetrics)
                 - getPixelFromDp(IMAGE_WIDTH_RIGHT_MARGIN, displayMetrics);
         maxImageHeight = getPixelFromDp(MAX_IMAGE_HEIGHT, displayMetrics);
-        MAX_WIDTH_RATIO = (float) maxImageWidth / (float) maxImageHeight;
+        MAX_WIDTH_RATIO = (float) maxImageWidth / (float) minImageHeight;
         MIN_WIDTH_RATIO = (float) minImageWidth / (float) maxImageHeight;
     }
 
@@ -84,7 +83,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
 
-        vgFileImageWrapper = (CardView) rootView.findViewById(R.id.vg_message_photo_wrapper);
+        vgFileImageWrapper = rootView.findViewById(R.id.vg_message_photo_wrapper);
         ivFileImage = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_photo);
         tvFileName = (TextView) rootView.findViewById(R.id.tv_image_message_file_name);
         tvFileSize = (TextView) rootView.findViewById(R.id.tv_file_size);
@@ -226,7 +225,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
                 layoutParams.height = maxImageHeight;
                 ivFileImage.setLayoutParams(layoutParams);
-                vgFileImageWrapper.setCardBackgroundColor(vgFileImageWrapper.getResources().getColor(R.color.jandi_messages_big_size_image_view_bg));
+                vgFileImageWrapper.setBackgroundColor(vgFileImageWrapper.getResources().getColor(R.color.jandi_messages_big_size_image_view_bg));
 
                 imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
                 imageRequestBuilder.load(R.drawable.preview_no_img)
@@ -244,7 +243,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
                 imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
             }
 
-            vgFileImageWrapper.setCardBackgroundColor(vgFileImageWrapper.getResources().getColor(R.color.jandi_messages_image_view_bg));
+            vgFileImageWrapper.setBackgroundColor(vgFileImageWrapper.getResources().getColor(R.color.jandi_messages_image_view_bg));
 
             layoutParams.width = imageInfo.width;
             layoutParams.height = imageInfo.height;
@@ -259,7 +258,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
                         @Override
                         public void onFail(Throwable cause) {
                             ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.comment_no_img));
-                            vgFileImageWrapper.setCardBackgroundColor(vgFileImageWrapper.getResources().getColor(R.color.jandi_messages_big_size_image_view_bg));
+                            vgFileImageWrapper.setBackgroundColor(vgFileImageWrapper.getResources().getColor(R.color.jandi_messages_big_size_image_view_bg));
                         }
                     })
                     .load(uri)
@@ -292,8 +291,8 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
                     height = minImageHeight;
                     width = maxImageWidth;
                 } else {
-                    height = maxImageHeight;
-                    width = height * ratio;
+                    width = maxImageWidth;
+                    height = width / ratio;
                 }
             } else if (ratio < 1) {
                 // 세로 > 가로

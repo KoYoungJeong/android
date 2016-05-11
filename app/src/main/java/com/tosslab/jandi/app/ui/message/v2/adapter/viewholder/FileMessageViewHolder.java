@@ -43,6 +43,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
     private TextView tvFileInfoDivider;
     private View vgFileContent;
     private View vProfileCover;
+    private View vFileIconBorder;
 
     private FileMessageViewHolder() {
     }
@@ -56,6 +57,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
 
         ivFileImage = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_common_file);
+        vFileIconBorder = rootView.findViewById(R.id.v_message_common_file_border);
         tvFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
         tvFileUploaderName = (TextView) rootView.findViewById(R.id.tv_uploader_name);
         tvFileInfoDivider = (TextView) rootView.findViewById(R.id.tv_file_info_divider);
@@ -156,13 +158,16 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
                 tvFileInfoDivider.setVisibility(View.GONE);
                 tvCommonFileSize.setVisibility(View.GONE);
                 loadIcon = false;
-
+                vFileIconBorder.setVisibility(View.GONE);
             } else if (!isSharedFile) {
                 tvFileName.setText(fileMessage.content.title);
                 boolean image = fileMessage.content.icon.startsWith("image");
                 if (!image && !isPublicTopic) {
                     ivFileImage.setImageResource(R.drawable.file_icon_unshared);
                     loadIcon = false;
+                    vFileIconBorder.setVisibility(View.GONE);
+                } else {
+                    vFileIconBorder.setVisibility(View.VISIBLE);
                 }
 
                 ivFileImage.setClickable(false);
@@ -181,6 +186,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
                 ResMessages.FileContent fileContent = ((ResMessages.FileMessage) link.message).content;
                 String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
                 tvCommonFileSize.setText(fileSize);
+                vFileIconBorder.setVisibility(View.VISIBLE);
 
                 int mimeTypeIconImage =
                         MimeTypeUtil.getMimeTypeIconImage(
@@ -200,7 +206,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
                 String thumbnailUrl =
                         ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
                 ImageUtil.setResourceIconOrLoadImageForComment(
-                        ivFileImage, null,
+                        ivFileImage, vFileIconBorder,
                         fileUrl, thumbnailUrl,
                         serverUrl, fileType);
             }

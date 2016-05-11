@@ -1971,6 +1971,8 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     public void onEvent(DeleteFileEvent event) {
+        int indexOfUnsharedFile = messageAdapter.indexByMessageId(event.getId());
+        messageAdapter.updateCachedType(indexOfUnsharedFile);
         changeLinkStatusToArchive(event.getId());
     }
 
