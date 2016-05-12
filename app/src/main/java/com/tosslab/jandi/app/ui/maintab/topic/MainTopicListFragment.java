@@ -273,6 +273,11 @@ public class MainTopicListFragment extends Fragment
         }
     }
 
+    @Click(R.id.vg_main_topic_order)
+    void onOrderTitleUnClick() {
+        // do nothing
+    }
+
     @Click(R.id.vg_main_topic_order_title)
     void onOrderTitleClick() {
         boolean currentFolder = isCurrentFolder();

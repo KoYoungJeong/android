@@ -50,7 +50,7 @@ public class EditTextDialogFragment extends DialogFragment {
     public static final int ACTION_MODIFY_PROFILE_MEMBER_NAME = 10;
     private final static int MAX_LENGTH_OF_TOPIC_NAME = 60;
     private final static int MAX_LENGTH_OF_PHONE = 20;
-    private static final int MAX_LENGTH_OF_ACCOUNT_NAME = 20;
+    private static final int MAX_LENGTH_OF_ACCOUNT_NAME = 30;
     private final static int MAX_LENGTH_OF_STATUS = 60;
     private final static int MAX_LENGTH_OF_DIVISION = 60;
     private final static int MAX_LENGTH_OF_POSITION = 60;
@@ -312,7 +312,7 @@ public class EditTextDialogFragment extends DialogFragment {
             case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
             case ACTION_MODIFY_PROFILE_MEMBER_NAME:
                 confirm.setEnabled(inputLength > 0
-                        && inputLength < MAX_LENGTH_OF_ACCOUNT_NAME
+                        && inputLength <= MAX_LENGTH_OF_ACCOUNT_NAME
                         && !editable.equals(currentMessage));
                 break;
             case ACTION_FORGOT_PASSWORD:
