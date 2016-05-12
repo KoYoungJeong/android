@@ -141,9 +141,14 @@
         android:layout_height="25dp"
         android:visibility="gone" />
 
-    <include
+
+    <RelativeLayout
         android:id="@+id/vg_message_last_read"
-        layout="@layout/item_message_last_read_v2"
-        android:visibility="gone" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/v_margin"
+        android:visibility="gone">
+
+    </RelativeLayout>
 
 </LinearLayout>

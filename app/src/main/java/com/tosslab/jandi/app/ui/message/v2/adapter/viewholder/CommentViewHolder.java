@@ -191,58 +191,62 @@ public class CommentViewHolder extends BaseCommentViewHolder {
         if (link.message instanceof ResMessages.CommentMessage) {
             ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) link.message;
 
-            SpannableStringBuilder builder = new SpannableStringBuilder();
-            builder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
-            builder.append(" ");
+            if (commentMessage.content.contentBuilder == null) {
 
-            long myId = EntityManager.getInstance().getMe().getId();
-            MentionAnalysisInfo mentionAnalysisInfo =
-                    MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
-                            .textSize(tvProfileNestedCommentContent.getTextSize())
-                            .clickable(true)
-                            .build();
-
-            SpannableLookUp.text(builder)
-                    .hyperLink(false)
-                    .markdown(false)
-                    .webLink(false)
-                    .emailLink(false)
-                    .telLink(false)
-                    .mention(mentionAnalysisInfo, false)
-                    .lookUp(tvProfileNestedCommentContent.getContext());
-
-            LinkifyUtil.addLinks(context, builder);
-
-            if (!hasOnlyBadge) {
-                int startIndex = builder.length();
-                builder.append(DateTransformator.getTimeStringForSimple(commentMessage.createTime));
-                int endIndex = builder.length();
-
-                DateViewSpannable spannable =
-                        new DateViewSpannable(tvProfileNestedCommentContent.getContext(),
-                                DateTransformator.getTimeStringForSimple(commentMessage.createTime),
-                                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10f, context.getResources().getDisplayMetrics()));
-                spannable.setTextColor(
-                        JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_date));
-                builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-
-            int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                    link.id, link.fromEntity, myId);
-
-            if (unreadCount > 0) {
-                NameSpannable unreadCountSpannable =
-                        new NameSpannable(
-                                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 9f, context.getResources().getDisplayMetrics())
-                                , context.getResources().getColor(R.color.jandi_accent_color));
-                int beforeLength = builder.length();
+                SpannableStringBuilder builder = new SpannableStringBuilder();
+                builder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
                 builder.append(" ");
-                builder.append(String.valueOf(unreadCount))
-                        .setSpan(unreadCountSpannable, beforeLength, builder.length(),
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                long myId = EntityManager.getInstance().getMe().getId();
+                MentionAnalysisInfo mentionAnalysisInfo =
+                        MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
+                                .textSize(tvProfileNestedCommentContent.getTextSize())
+                                .clickable(true)
+                                .build();
+
+                SpannableLookUp.text(builder)
+                        .hyperLink(false)
+                        .markdown(false)
+                        .webLink(false)
+                        .emailLink(false)
+                        .telLink(false)
+                        .mention(mentionAnalysisInfo, false)
+                        .lookUp(tvProfileNestedCommentContent.getContext());
+
+                LinkifyUtil.addLinks(context, builder);
+
+                if (!hasOnlyBadge) {
+                    int startIndex = builder.length();
+                    builder.append(DateTransformator.getTimeStringForSimple(commentMessage.createTime));
+                    int endIndex = builder.length();
+
+                    DateViewSpannable spannable =
+                            new DateViewSpannable(tvProfileNestedCommentContent.getContext(),
+                                    DateTransformator.getTimeStringForSimple(commentMessage.createTime),
+                                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10f, context.getResources().getDisplayMetrics()));
+                    spannable.setTextColor(
+                            JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_date));
+                    builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+
+                int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
+                        link.id, link.fromEntity, myId);
+
+                if (unreadCount > 0) {
+                    NameSpannable unreadCountSpannable =
+                            new NameSpannable(
+                                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 9f, context.getResources().getDisplayMetrics())
+                                    , context.getResources().getColor(R.color.jandi_accent_color));
+                    int beforeLength = builder.length();
+                    builder.append(" ");
+                    builder.append(String.valueOf(unreadCount))
+                            .setSpan(unreadCountSpannable, beforeLength, builder.length(),
+                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+                commentMessage.content.contentBuilder = builder;
             }
 
-            tvProfileNestedCommentContent.setText(builder, TextView.BufferType.SPANNABLE);
+            tvProfileNestedCommentContent.setText(commentMessage.content.contentBuilder, TextView.BufferType.SPANNABLE);
         }
     }
 

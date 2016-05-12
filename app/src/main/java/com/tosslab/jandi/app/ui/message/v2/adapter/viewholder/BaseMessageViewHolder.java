@@ -18,13 +18,13 @@ public abstract class BaseMessageViewHolder implements BodyViewHolder {
     protected boolean hasBottomMargin = false;
     protected boolean hasOnlyBadge = false;
     private View vMargin;
-    private View vgMessageLastRead;
+    private ViewGroup vgMessageLastRead;
 
     @Override
     public void initView(View rootView) {
 
         vMargin = rootView.findViewById(R.id.v_margin);
-        vgMessageLastRead = rootView.findViewById(R.id.vg_message_last_read);
+        vgMessageLastRead = (ViewGroup) rootView.findViewById(R.id.vg_message_last_read);
 
         tvMessageBadge = (TextView) rootView.findViewById(R.id.tv_message_badge);
         tvMessageTime = (TextView) rootView.findViewById(R.id.tv_message_time);
@@ -66,7 +66,6 @@ public abstract class BaseMessageViewHolder implements BodyViewHolder {
     public void setLastReadViewVisible(long currentLinkId, long lastReadLinkId) {
         if (vgMessageLastRead != null) {
             if (currentLinkId == lastReadLinkId) {
-                ViewGroup vgMessageLastRead = (ViewGroup) this.vgMessageLastRead;
                 vgMessageLastRead.removeAllViews();
                 LayoutInflater.from(vgMessageLastRead.getContext()).inflate(R.layout.item_message_last_read_v2, vgMessageLastRead);
                 vgMessageLastRead.setVisibility(View.VISIBLE);

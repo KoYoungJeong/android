@@ -99,31 +99,35 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         EntityManager entityManager = EntityManager.getInstance();
         ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
-        SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
-        if (!TextUtils.isEmpty(textMessage.content.body)) {
-            messageStringBuilder.append(textMessage.content.body);
-            long myId = entityManager.getMe().getId();
-            MentionAnalysisInfo mentionInfo = MentionAnalysisInfo.newBuilder(myId, textMessage.mentions)
-                    .textSize(tvMessage.getTextSize())
-                    .clickable(true)
-                    .build();
+        if (textMessage.content.contentBuilder == null) {
 
-            SpannableLookUp.text(messageStringBuilder)
-                    .hyperLink(false)
-                    .markdown(false)
-                    .webLink(false)
-                    .telLink(false)
-                    .emailLink(false)
-                    .mention(mentionInfo, false)
-                    .lookUp(tvMessage.getContext());
+            SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
+            if (!TextUtils.isEmpty(textMessage.content.body)) {
+                messageStringBuilder.append(textMessage.content.body);
+                long myId = entityManager.getMe().getId();
+                MentionAnalysisInfo mentionInfo = MentionAnalysisInfo.newBuilder(myId, textMessage.mentions)
+                        .textSize(tvMessage.getTextSize())
+                        .clickable(true)
+                        .build();
 
-            LinkifyUtil.setOnLinkClick(tvMessage);
+                SpannableLookUp.text(messageStringBuilder)
+                        .hyperLink(false)
+                        .markdown(false)
+                        .webLink(false)
+                        .telLink(false)
+                        .emailLink(false)
+                        .mention(mentionInfo, false)
+                        .lookUp(tvMessage.getContext());
 
-        } else {
-            messageStringBuilder.append("");
+                LinkifyUtil.setOnLinkClick(tvMessage);
+
+            } else {
+                messageStringBuilder.append("");
+            }
+            textMessage.content.contentBuilder = messageStringBuilder;
         }
 
-        tvMessage.setText(messageStringBuilder, TextView.BufferType.SPANNABLE);
+        tvMessage.setText(textMessage.content.contentBuilder, TextView.BufferType.SPANNABLE);
 
         linkPreviewViewModel.bindData(link);
     }

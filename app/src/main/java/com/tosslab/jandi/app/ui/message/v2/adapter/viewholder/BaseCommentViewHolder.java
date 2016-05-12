@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -81,12 +82,10 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
             vCommentSemiDivider.setVisibility(View.GONE);
             vCommentNormalDivider.setVisibility(View.GONE);
             vMargin.setVisibility(View.VISIBLE);
-            return;
         } else {
             vCommentSemiDivider.setVisibility(View.GONE);
             vCommentNormalDivider.setVisibility(View.VISIBLE);
             vMargin.setVisibility(View.GONE);
-            return;
         }
     }
 
@@ -104,10 +103,14 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
 
     @Override
     public void setLastReadViewVisible(long currentLinkId, long lastReadLinkId) {
-        if (currentLinkId == lastReadLinkId) {
-            vgMessageLastRead.setVisibility(View.VISIBLE);
-        } else {
-            vgMessageLastRead.setVisibility(View.GONE);
+        if (vgMessageLastRead != null) {
+            if (currentLinkId == lastReadLinkId) {
+                vgMessageLastRead.removeAllViews();
+                LayoutInflater.from(vgMessageLastRead.getContext()).inflate(R.layout.item_message_last_read_v2, vgMessageLastRead);
+                vgMessageLastRead.setVisibility(View.VISIBLE);
+            } else {
+                vgMessageLastRead.setVisibility(View.GONE);
+            }
         }
     }
 
