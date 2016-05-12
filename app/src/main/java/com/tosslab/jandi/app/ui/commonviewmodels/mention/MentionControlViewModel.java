@@ -24,8 +24,6 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel_;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
-import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel;
-import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel_;
 import com.tosslab.jandi.app.views.spannable.MentionMessageSpannable;
 
 import java.util.ArrayList;
@@ -43,7 +41,6 @@ public class MentionControlViewModel {
     public static final String MENTION_TYPE_MESSAGE = "mention_type_message";
     public static final String MENTION_TYPE_FILE_COMMENT = "mention_type_file_comment";
     protected String currentSearchKeywordString;
-    private KeyboardHeightModel keyboardHeightModel;
     private SearchMemberModel searchMemberModel;
 
     //message or file view type
@@ -106,7 +103,6 @@ public class MentionControlViewModel {
 
         addTextWatcher(editText);
 
-        keyboardHeightModel = KeyboardHeightModel_.getInstance_(activity);
         searchMemberModel = SearchMemberModel_.getInstance_(activity);
 
         refreshSelectableMembers(teamId, roomIds);
@@ -117,14 +113,6 @@ public class MentionControlViewModel {
         etMessage.setAdapter(mentionMemberListAdapter);
         etMessage.setDropDownBackgroundResource(R.drawable.mention_popup);
         etMessage.setThreshold(1);
-
-        if (keyboardHeightModel.getOnKeyboardShowListener() == null) {
-            keyboardHeightModel.setOnKeyboardShowListener(isShow -> {
-                if (!isShow) {
-                    showListView(false);
-                }
-            });
-        }
 
     }
 
@@ -565,9 +553,6 @@ public class MentionControlViewModel {
 
     public void reset() {
         etMessage.removeTextChangedListener(textWatcher);
-        if (keyboardHeightModel != null) {
-            keyboardHeightModel.setOnKeyboardShowListener(null);
-        }
         removeClipboardListener();
         showListView(false);
     }

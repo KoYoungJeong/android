@@ -388,16 +388,15 @@ public class JandiPreference {
                 .apply();
     }
 
+    public static int getLastSelectedTab() {
+        return getSharedPreferences()
+                .getInt(PREF_LAST_SELECTED_TAB, 0);
+    }
 
     public static void setLastSelectedTab(int position) {
         getSharedPreferences()
                 .edit()
                 .putInt(PREF_LAST_SELECTED_TAB, position)
                 .apply();
-    }
-
-    public static int getLastSelectedTab() {
-        return getSharedPreferences()
-                .getInt(PREF_LAST_SELECTED_TAB, 0);
     }
 }

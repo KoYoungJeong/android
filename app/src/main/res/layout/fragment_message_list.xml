@@ -1,349 +1,358 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.tosslab.jandi.app.views.SoftInputDetectLinearLayout
+    android:id="@+id/vg_messages_soft_input_detector"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical">
 
-    <com.tosslab.jandi.app.views.KeyboardVisibleChangeDetectView
-        android:id="@+id/v_messages_keyboard_visible_change_detector"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/layout_search_bar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/layout_search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"/>
 
-    <FrameLayout
-        android:id="@+id/vg_easteregg_snow"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/v_messages_divider"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@+id/vg_messages_member_status_alert" />
+        <FrameLayout
+            android:id="@+id/vg_easteregg_snow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/v_messages_divider"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_below="@+id/vg_messages_member_status_alert"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/lv_messages"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/v_messages_divider"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@+id/vg_messages_member_status_alert"
-        android:background="@color/jandi_chat_list_default_background"
-        android:clipToPadding="false"
-        android:paddingTop="20dp"
-        android:scrollbars="vertical" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/lv_messages"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/v_messages_divider"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_below="@+id/vg_messages_member_status_alert"
+            android:background="@color/jandi_chat_list_default_background"
+            android:clipToPadding="false"
+            android:paddingTop="20dp"
+            android:scrollbars="vertical" //>
 
-    <TextView
-        android:id="@+id/tv_messages_date_devider"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/lv_messages"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/bg_round_for_message_header"
-        android:paddingBottom="6dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="6dp"
-        android:text="When"
-        android:visibility="gone"
-        android:textColor="@color/white"
-        android:textSize="11sp" />
-
-    <LinearLayout
-        android:id="@+id/layout_messages_empty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/vg_messages_input"
-        android:layout_below="@+id/layout_search_bar"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/lv_messages"
-        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tv_messages_date_devider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/lv_messages"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_round_for_message_header"
+            android:paddingBottom="6dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="6dp"
+            android:text="When"
+            android:visibility="gone"
+            android:textColor="@color/white"
+            android:textSize="11sp" />
 
         <LinearLayout
-            android:id="@+id/vg_message_upload_file"
+            android:id="@+id/layout_messages_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/vg_messages_input"
+            android:layout_below="@+id/layout_search_bar"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"/>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/lv_messages"
-            android:orientation="vertical"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/vg_message_upload_file"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/lv_messages"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_message_upload_file"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@color/jandi_primary_color"
+                    android:clipToPadding="false"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="12.5dp"
+                    android:paddingRight="12.5dp"
+                    android:paddingTop="10dp"/>
+
+                <com.tosslab.jandi.app.views.listeners.WebLoadingBar
+                    android:id="@+id/loading_message_upload_file"
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"/>
+            </LinearLayout>
+
+            <include
+                android:id="@+id/vg_announcement"
+                layout="@layout/layout_announcement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/vg_messages_member_status_alert"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_search_bar"
+            android:background="@color/jandi_disabled_user_background"
+            android:paddingBottom="14dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="14dp"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/iv_messages_member_status_alert"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_disabled_members_bar"/>
+
+            <TextView
+                android:id="@+id/tv_messages_member_status_alert"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/jandi_disabled_user"
+                android:textColor="@color/jandi_text_white"
+                android:textSize="14sp"/>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/vg_messages_preview_sticker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/vg_messages_preview_last_item"
+            android:layout_alignWithParentIfMissing="true"
+            android:background="@color/jandi_black_89"
             android:visibility="gone">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_message_upload_file"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:background="@color/jandi_primary_color"
-                android:clipToPadding="false"
-                android:paddingBottom="10dp"
-                android:paddingLeft="12.5dp"
-                android:paddingRight="12.5dp"
-                android:paddingTop="10dp" />
+            <com.tosslab.jandi.app.views.FrescoImageView
+                android:id="@+id/iv_messages_preview_sticker_image"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="4dp"/>
 
-            <com.tosslab.jandi.app.views.listeners.WebLoadingBar
-                android:id="@+id/loading_message_upload_file"
+            <ImageView
+                android:id="@+id/iv_messages_preview_sticker_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:padding="15dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/icon_sticker_close"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/vg_messages_preview_last_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/v_messages_divider"
+            android:background="#E5696969"
+            android:paddingLeft="@dimen/jandi_messages_padding_left"
+            android:paddingRight="@dimen/jandi_messages_padding_right"
+            android:paddingTop="5dp"
+            android:visibility="gone">
+
+            <com.tosslab.jandi.app.views.FrescoImageView
+                android:id="@+id/iv_message_preview_user_profile"
+                android:layout_width="@dimen/jandi_messages_profile_size"
+                android:layout_height="@dimen/jandi_messages_profile_size"
+                android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
+                fresco:placeholderImage="@drawable/profile_img"/>
+
+            <!-- 기본 표시 레이어 -->
+            <TextView
+                android:id="@+id/tv_message_preview_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/jandi_messages_date_margin_left"
+                android:layout_marginTop="2dp"
+                android:layout_toRightOf="@+id/iv_message_preview_user_profile"
+                android:ellipsize="end"
+                android:maxWidth="200dp"
+                android:singleLine="true"
+                android:text="User name"
+                android:textColor="@color/white"
+                android:textSize="@dimen/jandi_messages_user_name"
+                android:textStyle="bold"/>
+            <!-- 실제 메시지 내용 -->
+            <TextView
+                android:id="@+id/tv_message_preview_content"
                 android:layout_width="match_parent"
-                android:layout_height="4dp" />
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_message_preview_user_name"
+                android:layout_marginBottom="2dp"
+                android:layout_toRightOf="@+id/iv_message_preview_user_profile"
+                android:singleLine="true"
+                android:text="Text"
+                android:textColor="@color/white"
+                android:textSize="@dimen/jandi_messages_content"/>
+        </RelativeLayout>
+
+        <!-- Message Input Layout -->
+        <View
+            android:id="@+id/v_messages_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_above="@+id/vg_messages_input"
+            android:layout_alignWithParentIfMissing="true"
+            android:background="@color/deactivate_text_color"/>
+
+        <LinearLayout
+            android:id="@+id/vg_messages_input"
+            style="@style/JandiChat.Wrapper"
+            android:layout_alignParentBottom="true">
+
+            <FrameLayout
+                android:layout_gravity="bottom"
+                style="@style/JandiChat.ActionButton.Wrapper">
+
+                <ImageView
+                    android:id="@+id/btn_message_action_button_1"
+                    style="@style/JandiChat.ActionButton.Upload"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_gravity="bottom"
+                style="@style/JandiChat.ActionButton.Wrapper">
+                <ImageView
+                    android:id="@+id/btn_message_action_button_2"
+                    style="@style/JandiChat.ActionButton.Sticker"/>
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/vg_message_input_wrapper"
+                style="@style/JandiChat.InputWrapper"
+                android:orientation="horizontal">
+
+                <com.tosslab.jandi.app.views.BackPressCatchEditText
+                    android:id="@+id/et_message"
+                    style="@style/JandiChat.EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:lineSpacingExtra="2dp"
+                    android:minHeight="36dp"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp"/>
+
+                <ImageView
+                    android:id="@+id/btn_show_mention"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_gravity="bottom"
+                    android:paddingLeft="9dp"
+                    android:paddingRight="9dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/chat_mention"
+                    android:visibility="gone"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/btn_send_message"
+                style="@style/JandiChat.Button"
+                android:gravity="center"
+                android:text="@string/jandi_message_send"
+                android:textSize="@dimen/jandi_text_size_large"/>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/vg_messages_go_to_latest"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_alignBottom="@+id/vg_messages_input"
+            android:layout_alignTop="@+id/vg_messages_input"
+            android:layout_alignWithParentIfMissing="false"
+            android:background="#FF696969"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="@string/jandi_go_to_latest"
+                android:textColor="@color/white"
+                android:textSize="14sp"/>
+
+            <ImageView
+                android:id="@+id/iv_go_to_latest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/account_icon_arrow"/>
+
+            <ProgressBar
+                android:id="@+id/progress_go_to_latest"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_search_bar">
+
+            <LinearLayout
+                android:id="@+id/vg_message_offline"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/jandi_network_disconnect_height"
+                android:background="@color/jandi_black_bf"
+                android:gravity="center_vertical"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:visibility="gone">
+
+                <include layout="@layout/layout_network_offline"/>
+
+            </LinearLayout>
         </LinearLayout>
 
         <include
-            android:id="@+id/vg_announcement"
-            layout="@layout/layout_announcement"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/vg_messages_member_status_alert"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/layout_search_bar"
-        android:background="@color/jandi_disabled_user_background"
-        android:paddingBottom="14dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="14dp"
-        android:visibility="visible">
-
-        <ImageView
-            android:id="@+id/iv_messages_member_status_alert"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/icon_disabled_members_bar" />
-
-        <TextView
-            android:id="@+id/tv_messages_member_status_alert"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="@string/jandi_disabled_user"
-            android:textColor="@color/jandi_text_white"
-            android:textSize="14sp" />
-
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/vg_messages_preview_sticker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/vg_messages_preview_last_item"
-        android:layout_alignWithParentIfMissing="true"
-        android:background="@color/jandi_black_89"
-        android:visibility="gone">
-
-        <com.tosslab.jandi.app.views.FrescoImageView
-            android:id="@+id/iv_messages_preview_sticker_image"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="4dp" />
-
-        <ImageView
-            android:id="@+id/iv_messages_preview_sticker_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:padding="15dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/icon_sticker_close" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/vg_messages_preview_last_item"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/v_messages_divider"
-        android:background="#E5696969"
-        android:paddingLeft="@dimen/jandi_messages_padding_left"
-        android:paddingRight="@dimen/jandi_messages_padding_right"
-        android:paddingTop="5dp"
-        android:visibility="gone">
-
-        <com.tosslab.jandi.app.views.FrescoImageView
-            android:id="@+id/iv_message_preview_user_profile"
-            android:layout_width="@dimen/jandi_messages_profile_size"
-            android:layout_height="@dimen/jandi_messages_profile_size"
-            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
-            fresco:placeholderImage="@drawable/profile_img" />
-
-        <!-- 기본 표시 레이어 -->
-        <TextView
-            android:id="@+id/tv_message_preview_user_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/jandi_messages_date_margin_left"
-            android:layout_marginTop="2dp"
-            android:layout_toRightOf="@+id/iv_message_preview_user_profile"
-            android:ellipsize="end"
-            android:maxWidth="200dp"
-            android:singleLine="true"
-            android:text="User name"
-            android:textColor="@color/white"
-            android:textSize="@dimen/jandi_messages_user_name"
-            android:textStyle="bold" />
-        <!-- 실제 메시지 내용 -->
-        <TextView
-            android:id="@+id/tv_message_preview_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_message_preview_user_name"
-            android:layout_marginBottom="2dp"
-            android:layout_toRightOf="@+id/iv_message_preview_user_profile"
-            android:singleLine="true"
-            android:text="Text"
-            android:textColor="@color/white"
-            android:textSize="@dimen/jandi_messages_content" />
-    </RelativeLayout>
-
-    <!-- Message Input Layout -->
-    <View
-        android:id="@+id/v_messages_divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_above="@+id/vg_messages_input"
-        android:layout_alignWithParentIfMissing="true"
-        android:background="@color/deactivate_text_color" />
-
-    <LinearLayout
-        android:id="@+id/vg_messages_input"
-        style="@style/JandiChat.Wrapper"
-        android:layout_above="@+id/vg_option_space"
-        android:layout_alignWithParentIfMissing="true">
-
-        <ImageView
-            android:id="@+id/btn_message_action_button_1"
-            style="@style/JandiChat.ActionButton.Upload"
-            android:layout_gravity="bottom" />
-
-        <ImageView
-            android:id="@+id/btn_message_action_button_2"
-            style="@style/JandiChat.ActionButton.Sticker"
-            android:layout_gravity="bottom" />
-
-        <LinearLayout
-            android:id="@+id/vg_message_input_wrapper"
-            style="@style/JandiChat.InputWrapper"
-            android:orientation="horizontal">
-
-            <com.tosslab.jandi.app.views.BackPressCatchEditText
-                android:id="@+id/et_message"
-                style="@style/JandiChat.EditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:lineSpacingExtra="2dp"
-                android:minHeight="36dp"
-                android:paddingBottom="2dp"
-                android:paddingTop="2dp" />
-
-            <ImageView
-                android:id="@+id/btn_show_mention"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:layout_gravity="bottom"
-                android:paddingLeft="9dp"
-                android:paddingRight="9dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/chat_mention"
-                android:visibility="gone" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/btn_send_message"
-            style="@style/JandiChat.Button"
-            android:gravity="center"
-            android:text="@string/jandi_message_send"
-            android:textSize="@dimen/jandi_text_size_large" />
-
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/vg_messages_go_to_latest"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignBottom="@+id/vg_messages_input"
-        android:layout_alignTop="@+id/vg_messages_input"
-        android:layout_alignWithParentIfMissing="false"
-        android:background="#FF696969"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="@string/jandi_go_to_latest"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
-
-        <ImageView
-            android:id="@+id/iv_go_to_latest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/account_icon_arrow" />
+            android:id="@+id/layout_messages_loading"
+            layout="@layout/progress_wheel"/>
 
         <ProgressBar
-            android:id="@+id/progress_go_to_latest"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:visibility="gone" />
+            android:id="@+id/progress_message"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignTop="@+id/lv_messages"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:indeterminate="true"
+            android:indeterminateDrawable="@drawable/progress_refresh_animation"
+            android:visibility="gone"/>
 
     </RelativeLayout>
 
     <FrameLayout
-        android:id="@+id/vg_option_space"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone" />
-
-    <LinearLayout
+        android:id="@+id/vg_messages_soft_input_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/layout_search_bar">
+        android:visibility="gone"/>
 
-        <LinearLayout
-            android:id="@+id/vg_message_offline"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/jandi_network_disconnect_height"
-            android:background="@color/jandi_black_bf"
-            android:gravity="center_vertical"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:visibility="gone">
-
-            <include layout="@layout/layout_network_offline" />
-
-        </LinearLayout>
-    </LinearLayout>
-
-    <include
-        android:id="@+id/layout_messages_loading"
-        layout="@layout/progress_wheel" />
-
-    <ProgressBar
-        android:id="@+id/progress_message"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_alignTop="@+id/lv_messages"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:indeterminate="true"
-        android:indeterminateDrawable="@drawable/progress_refresh_animation"
-        android:visibility="gone" />
-
-</RelativeLayout>
+</com.tosslab.jandi.app.views.SoftInputDetectLinearLayout>

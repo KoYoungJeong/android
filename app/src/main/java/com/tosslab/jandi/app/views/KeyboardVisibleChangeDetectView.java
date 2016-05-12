@@ -1,55 +1,7 @@
 package com.tosslab.jandi.app.views;
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.View;
-
 /**
- * Created by tonyjs on 16. 2. 17..
+ * Created by tonyjs on 16. 4. 28..
  */
-public class KeyboardVisibleChangeDetectView extends View {
-
-    private boolean isShowing;
-
-    public interface OnKeyboardVisibleChangeListener {
-        void onKeyboardVisibleChange(boolean isShow, int height);
-    }
-
-    public KeyboardVisibleChangeDetectView(Context context) {
-        super(context);
-    }
-
-    public KeyboardVisibleChangeDetectView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public KeyboardVisibleChangeDetectView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    private OnKeyboardVisibleChangeListener onKeyboardVisibleChangeListener;
-
-    public void setOnKeyboardVisibleChangeListener(
-            OnKeyboardVisibleChangeListener onKeyboardVisibleChangeListener) {
-        this.onKeyboardVisibleChangeListener = onKeyboardVisibleChangeListener;
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        if (onKeyboardVisibleChangeListener == null) {
-            return;
-        }
-
-        if (oldw != w) {
-            isShowing = false;
-            return;
-        }
-
-        isShowing = h - oldh <= 0;
-        onKeyboardVisibleChangeListener.onKeyboardVisibleChange(isShowing, Math.abs(h - oldh));
-    }
-
-    public boolean isShowing() {
-        return isShowing;
-    }
+public class KeyboardVisibleChangeDetectView {
 }
