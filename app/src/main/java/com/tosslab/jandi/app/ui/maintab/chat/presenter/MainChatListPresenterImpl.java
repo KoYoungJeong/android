@@ -86,7 +86,12 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
             List<ResChat> savedChatList = mainChatListModel.getSavedChatList();
             List<ChatItem> chatItems = mainChatListModel.convertChatItems(context, teamId,
                     savedChatList);
-            view.setChatItems(chatItems);
+            if (chatItems == null || chatItems.isEmpty()) {
+                view.showEmptyLayout();
+            } else {
+                view.hideEmptyLayout();
+                view.setChatItems(chatItems);
+            }
         }
 
         if (!NetworkCheckUtil.isConnected()) {
@@ -98,7 +103,12 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
             mainChatListModel.saveChatList(teamId, chatList);
             List<ChatItem> chatItems = mainChatListModel.convertChatItems(context, teamId,
                     chatList);
-            view.setChatItems(chatItems);
+            if (chatItems == null || chatItems.isEmpty()) {
+                view.showEmptyLayout();
+            } else {
+                view.hideEmptyLayout();
+                view.setChatItems(chatItems);
+            }
 
             view.setSelectedItem(selectedEntity);
             view.startSelectedItemAnimation();
