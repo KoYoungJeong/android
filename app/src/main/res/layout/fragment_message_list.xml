@@ -36,7 +36,7 @@
             android:background="@color/jandi_chat_list_default_background"
             android:clipToPadding="false"
             android:paddingTop="20dp"
-            android:scrollbars="vertical" //>
+            android:scrollbars="vertical" />
 
         <TextView
             android:id="@+id/tv_messages_date_devider"

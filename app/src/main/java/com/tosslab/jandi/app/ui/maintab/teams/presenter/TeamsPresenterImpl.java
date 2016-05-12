@@ -59,7 +59,6 @@ public class TeamsPresenterImpl implements TeamsPresenter {
                 .concatMap(o -> model.getTeamsObservable(teamList))
                 .concatMap(model::getPendingTeamsObservable)
                 .concatMap(model::getSortedTeamListObservable)
-                .concatMap(model::getUpdateBadgeCountObservable)
                 .concatMap(model::getCheckSelectedTeamObservable)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
