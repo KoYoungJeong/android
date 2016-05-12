@@ -90,15 +90,18 @@ public class LinkedEllipsizeTextView extends TextView {
         int lineEnd = layout.getLineEnd(2);
         float lineMax = layout.getLineMax(2);
 
-        SpannableStringBuilder determineBrokenText = new SpannableStringBuilder(text.subSequence(lineStart, lineEnd));
+        SpannableStringBuilder determineBrokenText =
+                new SpannableStringBuilder(text.subSequence(lineStart, lineEnd));
         determineBrokenText.append(moreSpannable);
 
         int length = determineBrokenText.length();
-        int breakPoint = layout.getPaint().breakText(determineBrokenText.toString(), true, lineMax, null);
+        int breakPoint =
+                layout.getPaint().breakText(determineBrokenText.toString(), true, lineMax, null);
         LogUtil.i(TAG, "length - " + length + " breakPoint - " + breakPoint);
         // ... 더보기 라는 글자를 추가하면 넘친다.
         if (breakPoint < length) {
-            text = text.subSequence(0, lineEnd - moreSpannable.length() -1 - 1/* 여백을 위해 한렝스 더 줄인다 */);
+            text = text.subSequence(0,
+                    lineEnd - moreSpannable.length() -1 - 1/* 여백을 위해 한렝스 더 줄인다 */);
             SpannableStringBuilder sb = new SpannableStringBuilder(text);
             sb.append(moreSpannable);
             setText(sb);

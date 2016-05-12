@@ -5,10 +5,10 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.net.Uri;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +19,8 @@ import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
+import com.tosslab.jandi.app.views.listeners.OnRecyclerItemLongClickListener;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
@@ -29,56 +31,45 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
  */
-public class MainChatListAdapter extends BaseAdapter {
+public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
 
     private List<ChatItem> entities;
     private long selectedEntity = -1;
     private AnimStatus animStatus = AnimStatus.READY;
+    private OnRecyclerItemClickListener onRecyclerItemClickListener;
+    private OnRecyclerItemLongClickListener onRecyclerItemLongClickListener;
 
     public MainChatListAdapter(Context context) {
         this.context = context;
         entities = new ArrayList<>();
     }
 
-    @Override
-    public int getCount() {
-        return entities.size();
-    }
-
-    @Override
     public ChatItem getItem(int position) {
         return entities.get(position);
     }
 
-    @Override
-    public long getItemId(int position) {
-        return position;
+    public void setOnRecyclerItemClickListener(
+            OnRecyclerItemClickListener onRecyclerItemClickListener) {
+        this.onRecyclerItemClickListener = onRecyclerItemClickListener;
+    }
+
+    public void setOnRecyclerItemLongClickListener(
+            OnRecyclerItemLongClickListener onRecyclerItemLongClickListener) {
+        this.onRecyclerItemLongClickListener = onRecyclerItemLongClickListener;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_chat_list, parent, false);
+        return new ChatViewHolder(itemView);
+    }
 
-        ViewHolder viewHolder;
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_chat_list, parent, false);
-            viewHolder = new ViewHolder();
-            viewHolder.selector = convertView.findViewById(R.id.v_entity_listitem_selector);
-            viewHolder.tvName = (TextView) convertView.findViewById(R.id.tv_entity_listitem_name);
-            viewHolder.ivIcon = (ImageView) convertView.findViewById(R.id.iv_entity_listitem_icon);
-            viewHolder.ivFavorite = (ImageView) convertView.findViewById(R.id.iv_entity_listitem_fav);
-            viewHolder.tvAdditional = (TextView) convertView.findViewById(R.id.tv_entity_listitem_user_count);
-            viewHolder.tvBadgeCount = (TextView) convertView.findViewById(R.id.tv_entity_listitem_badge);
-            viewHolder.vDisableLineThrough = convertView.findViewById(R.id.iv_entity_listitem_line_through);
-            viewHolder.vDisableWarning = convertView.findViewById(R.id.iv_entity_listitem_warning);
-            viewHolder.vDisableCover = convertView.findViewById(R.id.v_entity_listitem_warning);
-
-            convertView.setTag(viewHolder);
-
-        } else {
-            viewHolder = (ViewHolder) convertView.getTag();
-        }
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        ChatViewHolder viewHolder = (ChatViewHolder) holder;
 
         ChatItem item = getItem(position);
 
@@ -170,7 +161,29 @@ public class MainChatListAdapter extends BaseAdapter {
                     .into(ivIcon);
         }
 
-        return convertView;
+        if (onRecyclerItemClickListener != null) {
+            viewHolder.itemView.setOnClickListener(v ->
+                    onRecyclerItemClickListener.onItemClick(
+                            viewHolder.itemView, MainChatListAdapter.this, position));
+        }
+
+        if (onRecyclerItemLongClickListener != null) {
+            viewHolder.itemView.setOnLongClickListener(v -> {
+                onRecyclerItemLongClickListener.onItemClick(viewHolder.itemView, this, position);
+                return true;
+            });
+        }
+
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemCount() {
+        return entities.size();
     }
 
     private View.OnClickListener getProfileClickListener(long entityId) {
@@ -200,7 +213,7 @@ public class MainChatListAdapter extends BaseAdapter {
     }
 
     public int findPosition(long entityId) {
-        int count = getCount();
+        int count = getItemCount();
         for (int idx = 0; idx < count; idx++) {
             if (getItem(idx).getEntityId() == entityId) {
                 return idx;
@@ -214,8 +227,7 @@ public class MainChatListAdapter extends BaseAdapter {
         IDLE, READY, IN_ANIM, FINISH
     }
 
-    static class ViewHolder {
-        public Context context;
+    static class ChatViewHolder extends RecyclerView.ViewHolder {
         public ImageView ivIcon;
         public ImageView ivFavorite;
         public TextView tvName;
@@ -225,6 +237,21 @@ public class MainChatListAdapter extends BaseAdapter {
         public View vDisableWarning;
         public View vDisableCover;
         public View selector;
+
+        public ChatViewHolder(View itemView) {
+            super(itemView);
+            selector = itemView.findViewById(R.id.v_entity_listitem_selector);
+            tvName = (TextView) itemView.findViewById(R.id.tv_entity_listitem_name);
+            ivIcon = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_icon);
+            ivFavorite = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_fav);
+            tvAdditional = (TextView) itemView.findViewById(R.id.tv_entity_listitem_user_count);
+            tvBadgeCount = (TextView) itemView.findViewById(R.id.tv_entity_listitem_badge);
+            vDisableLineThrough = itemView.findViewById(R.id.iv_entity_listitem_line_through);
+            vDisableWarning = itemView.findViewById(R.id.iv_entity_listitem_warning);
+            vDisableCover = itemView.findViewById(R.id.v_entity_listitem_warning);
+        }
+
+
     }
 
 }

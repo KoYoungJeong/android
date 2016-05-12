@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.maintab.teams.model;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Pair;
 
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.main.LeftSideApi;
@@ -90,21 +89,6 @@ public class TeamsModelTest {
         List<Team> teams = testSubscriber.getOnNextEvents().get(0);
 
         assertTrue(teams.size() <= 0);
-    }
-
-    @Test
-    public void testGetUpdateBadgeCountObservable() throws Exception {
-        Observable<List<Team>> updateBadgeCountObservable =
-                model.getTeamsObservable(new ArrayList<>())
-                        .concatMap(model::getUpdateBadgeCountObservable);
-
-        TestSubscriber<List<Team>> testSubscriber = new TestSubscriber<>();
-        updateBadgeCountObservable.subscribe(testSubscriber);
-
-        testSubscriber.assertNoErrors();
-        testSubscriber.assertCompleted();
-
-        assertTrue(BadgeCountRepository.getRepository().getTotalBadgeCount() > 0);
     }
 
     @Test

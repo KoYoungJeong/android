@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.DisplayMetrics;
 
+import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 
@@ -62,5 +63,12 @@ public class ApplicationUtil {
     public static int getDisplaySize(boolean isHeight) {
         DisplayMetrics metrics = JandiApplication.getContext().getResources().getDisplayMetrics();
         return isHeight ? metrics.heightPixels : metrics.widthPixels;
+    }
+
+    public static String getAppVersionName() {
+        return BuildConfig.VERSION_NAME;
+    }
+    public static int getAppVersionCode() {
+        return BuildConfig.VERSION_CODE;
     }
 }

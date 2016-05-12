@@ -5,6 +5,7 @@ package com.tosslab.jandi.app;
  */
 public class JandiConstantsForFlavors {
     // These constants are for REAL sevice
+    public static final String BAIDU_API_KEY = "xMfI1LkL64AmDCGsw9kgbenb";
     public static final String SERVICE_ROOT_URL = "https://i2.jandi.com/";
     public static final String SERVICE_FILE_URL = "https://files.jandi.com/";
     public static final String SERVICE_FILE_UPLOAD_URL = "https://upload.jandi.com/";
@@ -17,4 +18,9 @@ public class JandiConstantsForFlavors {
     public static final String NEWRELIC_TOKEN_ID = "AAa432b3c57008e42b2a3fa8bc9a7542fa13aace93";
     public static final String PARSE_APPLICATION_ID = "8vjqkTLaLNaebx5uAHJhcFsJ4gPuFdgymnlYbQMs";
     public static final String PARSE_CLIENT_KEY = "RxyMePFGh2shwjMJ0lBIjHvWix4JRh1VEk64AyKi";
+
+    public static class Push {
+        public static final String GCM_SENDER_ID = "252549028791";
+        public static final String BAIDU_API_KEY = "dkDbCUo6nyYsXGD8cPxjcXVe";
+    }
 }

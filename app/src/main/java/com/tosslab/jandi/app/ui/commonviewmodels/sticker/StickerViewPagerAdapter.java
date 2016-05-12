@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.commonviewmodels.sticker;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -36,12 +35,7 @@ class StickerViewPagerAdapter extends PagerAdapter {
         this.stickers = stickers;
 
         this.onStickerClick = onStickerClick;
-        int orientation = context.getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            stickerMax = STICKER_MAX_VIEW_PORTAIT;
-        } else {
-            stickerMax = STICKER_MAX_VIEW_LANDSCAPE;
-        }
+        stickerMax = STICKER_MAX_VIEW_PORTAIT;
 
     }
 

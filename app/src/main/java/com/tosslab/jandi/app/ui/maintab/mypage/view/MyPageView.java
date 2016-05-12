@@ -39,4 +39,5 @@ public interface MyPageView {
 
     void clearLoadMoreOffset();
 
+    void hideEmptyMentionView();
 }

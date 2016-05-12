@@ -26,7 +26,7 @@ public class LockExecutorTemplate {
         }
     }
 
-    public OrmDatabaseHelper getHelper() {
+    protected OrmDatabaseHelper getHelper() {
         return helper;
     }
 

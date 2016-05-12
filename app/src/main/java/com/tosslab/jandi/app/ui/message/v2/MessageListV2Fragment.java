@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -105,7 +104,6 @@ import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
-import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.uploadmenu.UploadMenuViewModel;
@@ -128,6 +126,7 @@ import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.DateAnimator;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
+import com.tosslab.jandi.app.ui.message.v2.viewmodel.SoftInputAreaController;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
@@ -152,6 +151,7 @@ import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.transform.TransformConfig;
 import com.tosslab.jandi.app.views.BackPressCatchEditText;
+import com.tosslab.jandi.app.views.SoftInputDetectLinearLayout;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.spannable.JandiURLSpan;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -188,8 +188,7 @@ import rx.android.schedulers.AndroidSchedulers;
  */
 @OptionsMenu(R.menu.message_list_menu_basic)
 @EFragment(R.layout.fragment_message_list)
-public class MessageListV2Fragment extends Fragment implements
-        MessageListV2Presenter.View,
+public class MessageListV2Fragment extends Fragment implements MessageListV2Presenter.View,
         MessageListV2Activity.OnBackPressedListener,
         MessageListV2Activity.OnKeyPressListener {
 
@@ -199,9 +198,8 @@ public class MessageListV2Fragment extends Fragment implements
 
     public static final int REQ_STORAGE_PERMISSION = 101;
     public static final int REQ_WINDOW_PERMISSION = 102;
-
+    public static final String REQUEST_FILE_UPLOAD_EVENT_TYPE = "request_file_upload_event_type";
     private static final StickerInfo NULL_STICKER = new StickerInfo();
-
     @FragmentArg
     int entityType;
     @FragmentArg
@@ -226,8 +224,6 @@ public class MessageListV2Fragment extends Fragment implements
     InvitationDialogExecutor invitationDialogExecutor;
 
     @Bean
-    KeyboardHeightModel keyboardHeightModel;
-    @Bean
     StickerViewModel stickerViewModel;
     @Bean
     UploadMenuViewModel uploadMenuViewModel;
@@ -244,6 +240,12 @@ public class MessageListV2Fragment extends Fragment implements
 
     @SystemService
     ClipboardManager clipboardManager;
+
+    @ViewById(R.id.vg_messages_soft_input_detector)
+    SoftInputDetectLinearLayout vgSoftInputDetector;
+
+    @ViewById(R.id.vg_messages_soft_input_area)
+    ViewGroup vgSoftInputArea;
 
     @ViewById(R.id.lv_messages)
     RecyclerView lvMessages;
@@ -283,16 +285,15 @@ public class MessageListV2Fragment extends Fragment implements
     View vgOffline;
     @ViewById(R.id.progress_message)
     View oldProgressBar;
-    @ViewById(R.id.btn_message_action_button_1)
-    ImageView btnActionButton1;
-    @ViewById(R.id.btn_message_action_button_2)
-    ImageView btnActionButton2;
     @ViewById(R.id.btn_show_mention)
     ImageView btnShowMention;
-    @ViewById(R.id.vg_option_space)
-    ViewGroup vgOptionSpace;
     @ViewById(R.id.vg_easteregg_snow)
     FrameLayout vgEasterEggSnow;
+
+    @ViewById(R.id.btn_message_action_button_1)
+    ImageView btnAction1;
+    @ViewById(R.id.btn_message_action_button_2)
+    ImageView btnAction2;
 
     @ViewById(R.id.vg_messages_member_status_alert)
     View vgMemberStatusAlert;
@@ -314,10 +315,10 @@ public class MessageListV2Fragment extends Fragment implements
     private boolean isForeground = true;
     private LinearLayoutManager layoutManager;
 
-    private ButtonAction currentButtonAction = ButtonAction.KEYBOARD;
-
     private Room room;
     private MessagePointer messagePointer;
+    private SoftInputAreaController softInputAreaController;
+    private int requestFileUploadEventType = -1;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -325,6 +326,7 @@ public class MessageListV2Fragment extends Fragment implements
         EventBus.getDefault().register(this);
         if (savedInstanceState != null) {
             photoFileByCamera = (File) savedInstanceState.getSerializable(EXTRA_NEW_PHOTO_FILE);
+            requestFileUploadEventType = savedInstanceState.getInt(REQUEST_FILE_UPLOAD_EVENT_TYPE);
         }
     }
 
@@ -375,14 +377,12 @@ public class MessageListV2Fragment extends Fragment implements
                 .subscribe(integer -> {
                     saveCacheAndNotifyDataSetChanged(null);
 
+                    if (softInputAreaController != null) {
+                        softInputAreaController.onConfigurationChanged();
+                    }
+
                     if (mentionControlViewModel != null) {
                         mentionControlViewModel.onConfigurationChanged();
-                    }
-                    if (stickerViewModel != null) {
-                        stickerViewModel.onConfigurationChanged();
-                    }
-                    if (uploadMenuViewModel != null) {
-                        uploadMenuViewModel.onConfigurationChanged();
                     }
                 });
     }
@@ -393,14 +393,7 @@ public class MessageListV2Fragment extends Fragment implements
                 .activity(getActivity())
                 .addRequestCode(REQ_STORAGE_PERMISSION)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        () -> Observable.just(1)
-                                .delay(300, TimeUnit.MILLISECONDS)
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(integer -> {
-                                    int keyboardHeight =
-                                            JandiPreference.getKeyboardHeight(JandiApplication.getContext());
-                                    showUploadMenuSelectorIfNotShow(keyboardHeight);
-                                }, Throwable::printStackTrace))
+                        () -> handleFileUpload())
                 .neverAskAgain(() -> {
                     PermissionRetryDialog.showExternalPermissionDialog(getActivity());
                 })
@@ -448,9 +441,6 @@ public class MessageListV2Fragment extends Fragment implements
             mentionControlViewModel.removeClipboardListener();
         }
 
-        dismissStickerSelectorIfShow();
-        dismissUploadSelectorIfShow();
-
         super.onPause();
     }
 
@@ -460,6 +450,8 @@ public class MessageListV2Fragment extends Fragment implements
         if (fileUploadController.getUploadedFile() != null) {
             outState.putSerializable(EXTRA_NEW_PHOTO_FILE, fileUploadController.getUploadedFile());
         }
+
+        outState.putInt(REQUEST_FILE_UPLOAD_EVENT_TYPE, requestFileUploadEventType);
     }
 
 
@@ -472,8 +464,6 @@ public class MessageListV2Fragment extends Fragment implements
 
     @AfterInject
     void initObjects() {
-        JandiPreference.setKeyboardHeight(getActivity(), -1);
-
         room = Room.create(entityId, roomId, isFromPush);
         messagePointer = MessagePointer.create(firstCursorLinkId, lastReadLinkId);
     }
@@ -499,19 +489,27 @@ public class MessageListV2Fragment extends Fragment implements
 
         initFileUploadStateViewModel();
 
-        initUploadViewModel();
-
-        initActionListeners();
-
         initMessageListView();
 
         initUserStatus();
 
         initAnnouncement();
 
+        initSoftInputAreaController();
+
+        initActionListeners();
+
         initMessages(true /* withProgress */);
 
         showCoachMarkIfNeed();
+    }
+
+    private void initSoftInputAreaController() {
+        softInputAreaController = new SoftInputAreaController(
+                stickerViewModel, uploadMenuViewModel,
+                vgSoftInputDetector, vgSoftInputArea, btnAction1, btnAction2,
+                etMessage);
+        softInputAreaController.init();
     }
 
     private void initEmptyLayout() {
@@ -584,24 +582,6 @@ public class MessageListV2Fragment extends Fragment implements
             return false;
         });
 
-        etMessage.setOnClickListener(v -> {
-            dismissStickerSelectorIfShow();
-            dismissUploadSelectorIfShow();
-        });
-
-        etMessage.setOnBackPressListener(() -> {
-            if (keyboardHeightModel.isOpened()) {
-                //키보드가 열려져 있고 그 위에 스티커가 있는 상태에서 둘다 제거 할때 속도를 맞추기 위해 딜레이를 줌
-                Observable.just(1)
-                        .delay(200, TimeUnit.MILLISECONDS)
-                        .subscribe(i -> {
-                            dismissStickerSelectorIfShow();
-                            dismissUploadSelectorIfShow();
-                        });
-            }
-            return false;
-        });
-
         TextCutter.with(etMessage)
                 .listener((s) -> {
                     SuperToast.cancelAllSuperToasts();
@@ -611,7 +591,6 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private void initStickerViewModel() {
-        stickerViewModel.setOptionSpace(vgOptionSpace);
         stickerViewModel.setOnStickerClick((groupId, stickerId) -> {
             StickerInfo oldSticker = stickerInfo;
             stickerInfo = new StickerInfo();
@@ -626,8 +605,6 @@ public class MessageListV2Fragment extends Fragment implements
 
         stickerViewModel.setType(isInDirectMessage()
                 ? StickerViewModel.TYPE_MESSAGE : StickerViewModel.TYPE_TOPIC);
-
-        stickerViewModel.setStickerButton(btnActionButton2);
     }
 
     private void showStickerPreview(StickerInfo oldSticker, StickerInfo stickerInfo) {
@@ -658,35 +635,15 @@ public class MessageListV2Fragment extends Fragment implements
         fileUploadStateViewModel.setEntityId(entityId);
     }
 
-    private void initUploadViewModel() {
-        uploadMenuViewModel.setOptionSpace(vgOptionSpace);
-    }
-
     private void initActionListeners() {
-        keyboardHeightModel.addOnKeyboardShowListener((isShowing) -> {
-            boolean visibility = keyboardHeightModel.isOpened()
-                    || stickerViewModel.isShow() || uploadMenuViewModel.isShow();
-            announcementViewModel.setAnnouncementViewVisibility(!visibility);
-        });
-
-        stickerViewModel.setOnStickerLayoutShowListener(isShow -> {
-            boolean visibility = keyboardHeightModel.isOpened()
-                    || stickerViewModel.isShow() || uploadMenuViewModel.isShow();
-            announcementViewModel.setAnnouncementViewVisibility(!visibility);
-        });
-
-        uploadMenuViewModel.setOnUploadLayoutShowListener(isShow -> {
-            boolean visibility = keyboardHeightModel.isOpened()
-                    || stickerViewModel.isShow() || uploadMenuViewModel.isShow();
-            announcementViewModel.setAnnouncementViewVisibility(!visibility);
+        softInputAreaController.setOnSoftInputAreaShowingListener((isShowing, softInputAreaHeight) -> {
+            announcementViewModel.setAnnouncementViewVisibility(!isShowing);
         });
 
         uploadMenuViewModel.setOnClickUploadEventListener(() -> {
-            if (keyboardHeightModel.isOpened()) {
-                keyboardHeightModel.hideKeyboard();
+            if (softInputAreaController.isSoftInputAreaShowing()) {
+                softInputAreaController.hideSoftInputArea(true, true);
             }
-            currentButtonAction = ButtonAction.KEYBOARD;
-            setActionButtons();
         });
     }
 
@@ -744,9 +701,7 @@ public class MessageListV2Fragment extends Fragment implements
 
         lvMessages.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                keyboardHeightModel.hideKeyboard();
-                dismissStickerSelectorIfShow();
-                dismissUploadSelectorIfShow();
+                hideAllSoftInputArea();
             }
             return false;
         });
@@ -792,6 +747,20 @@ public class MessageListV2Fragment extends Fragment implements
         });
     }
 
+    private void hideAllSoftInputArea() {
+        if (softInputAreaController == null) {
+            return;
+        }
+
+        if (softInputAreaController.isSoftInputAreaShowing()) {
+            softInputAreaController.hideSoftInputArea(true, true);
+        } else {
+            if (softInputAreaController.isSoftInputShowing()) {
+                softInputAreaController.hideSoftInput();
+            }
+        }
+    }
+
     private void setPreviewVisible(boolean show) {
         if (vgPreview != null) {
             vgPreview.setVisibility(show ? View.VISIBLE : View.GONE);
@@ -824,7 +793,9 @@ public class MessageListV2Fragment extends Fragment implements
                     roomIds,
                     MentionControlViewModel.MENTION_TYPE_MESSAGE);
             mentionControlViewModel.setOnMentionShowingListener(
-                    isShowing -> btnShowMention.setVisibility(!isShowing ? View.VISIBLE : View.GONE));
+                    isShowing -> {
+                        btnShowMention.setVisibility(!isShowing ? View.VISIBLE : View.GONE);
+                    });
 
             mentionControlViewModel.setUpMention(readyMessage);
         } else {
@@ -1103,9 +1074,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private void onMessageItemClick(int position) {
-        keyboardHeightModel.hideKeyboard();
-        dismissStickerSelectorIfShow();
-        dismissUploadSelectorIfShow();
+        hideAllSoftInputArea();
 
         ResMessages.Link link = messageAdapter.getItem(position);
         if (link == null) {
@@ -1172,22 +1141,6 @@ public class MessageListV2Fragment extends Fragment implements
                 .localId(localId)
                 .build()
                 .show(getActivity().getFragmentManager(), "dialog");
-    }
-
-    private void dismissStickerSelectorIfShow() {
-        if (stickerViewModel.isShow()) {
-            stickerViewModel.dismissStickerSelector(true);
-            currentButtonAction = ButtonAction.KEYBOARD;
-            setActionButtons();
-        }
-    }
-
-    private void dismissUploadSelectorIfShow() {
-        if (uploadMenuViewModel.isShow()) {
-            uploadMenuViewModel.dismissUploadSelector(true);
-            currentButtonAction = ButtonAction.KEYBOARD;
-            setActionButtons();
-        }
     }
 
     private void showPreviewForUploadPhoto(int requestCode, Intent intent) {
@@ -1290,6 +1243,7 @@ public class MessageListV2Fragment extends Fragment implements
     @Click(R.id.btn_show_mention)
     void onMentionClick() {
         etMessage.requestFocus();
+
         BaseInputConnection inputConnection = new BaseInputConnection(etMessage, true);
         if (needSpace(etMessage.getSelectionStart(), etMessage.getText().toString())) {
             inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SPACE));
@@ -1297,17 +1251,10 @@ public class MessageListV2Fragment extends Fragment implements
 
         inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_AT));
 
-        if (currentButtonAction != ButtonAction.KEYBOARD) {
-            if (currentButtonAction == ButtonAction.STICKER || currentButtonAction == ButtonAction.UPLOAD) {
-                if (keyboardHeightModel.isOpened()) {
-                    dismissStickerSelectorIfShow();
-                    dismissUploadSelectorIfShow();
-                } else {
-                    keyboardHeightModel.showKeyboard();
-                }
-                currentButtonAction = ButtonAction.KEYBOARD;
-                setActionButtons();
-            }
+        if (softInputAreaController.isSoftInputAreaShowing()) {
+            softInputAreaController.hideSoftInputAreaAndShowSoftInput();
+        } else {
+            softInputAreaController.showSoftInput();
         }
     }
 
@@ -1318,134 +1265,6 @@ public class MessageListV2Fragment extends Fragment implements
             return !TextUtils.isEmpty(charSequence.toString().trim());
         }
         return false;
-    }
-
-    @Click(R.id.btn_message_action_button_1)
-    public void handleActionButton1() {
-        int keyboardHeight = JandiPreference.getKeyboardHeight(getActivity().getApplicationContext());
-        switch (currentButtonAction) {
-            case KEYBOARD:
-                showUploadMenuSelectorIfNotShow(keyboardHeight);
-                break;
-            case STICKER:
-                showUploadMenuSelectorIfNotShow(keyboardHeight);
-                break;
-            case UPLOAD:
-                if (keyboardHeightModel.isOpened()) {
-                    dismissUploadSelectorIfShow();
-                } else {
-                    dismissUploadSelectorIfShow();
-                    keyboardHeightModel.showKeyboard();
-                }
-                break;
-        }
-    }
-
-    @Click(R.id.btn_message_action_button_2)
-    public void handleActionButton2() {
-        int keyboardHeight = JandiPreference.getKeyboardHeight(getActivity().getApplicationContext());
-        switch (currentButtonAction) {
-            case KEYBOARD:
-                showStickerSelectorIfNotShow(keyboardHeight);
-                break;
-            case UPLOAD:
-                showStickerSelectorIfNotShow(keyboardHeight);
-                break;
-            case STICKER:
-                sendAnalyticsEvent(AnalyticsValue.Action.Sticker);
-                if (keyboardHeightModel.isOpened()) {
-                    dismissStickerSelectorIfShow();
-                } else {
-                    dismissStickerSelectorIfShow();
-                    keyboardHeightModel.showKeyboard();
-                }
-                break;
-        }
-    }
-
-    private void showStickerSelectorIfNotShow(int height) {
-        if (!stickerViewModel.isShow()) {
-            if (isCanDrawWindowOverlay()) {
-                stickerViewModel.showStickerSelector(height);
-                Observable.just(1)
-                        .delay(100, TimeUnit.MILLISECONDS)
-                        .subscribe(i -> {
-                            if (uploadMenuViewModel.isShow()) {
-                                uploadMenuViewModel.dismissUploadSelector(false);
-                            }
-                        });
-                currentButtonAction = ButtonAction.STICKER;
-                setActionButtons();
-            } else {
-                // Android M (23) 부터 적용되는 시나리오
-                requestWindowPermission();
-            }
-        }
-    }
-
-    private void showUploadMenuSelectorIfNotShow(int height) {
-        if (!uploadMenuViewModel.isShow()) {
-            if (isCanDrawWindowOverlay()) {
-                Permissions.getChecker()
-                        .activity(getActivity())
-                        .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        .hasPermission(() -> {
-                            uploadMenuViewModel.showUploadSelector(height);
-                            Observable.just(1)
-                                    .delay(100, TimeUnit.MILLISECONDS)
-                                    .subscribe(i -> {
-                                        if (stickerViewModel.isShow()) {
-                                            stickerViewModel.dismissStickerSelector(false);
-                                        }
-                                    });
-                            currentButtonAction = ButtonAction.UPLOAD;
-                            setActionButtons();
-                            sendAnalyticsEvent(AnalyticsValue.Action.Upload);
-                        })
-                        .noPermission(() -> {
-                            String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                            requestPermissions(permissions, REQ_STORAGE_PERMISSION);
-                        })
-                        .check();
-            } else {
-                requestWindowPermission();
-            }
-        }
-    }
-
-    private boolean isCanDrawWindowOverlay() {
-        boolean canDraw;
-        if (SdkUtils.isMarshmallow()) {
-            canDraw = Settings.canDrawOverlays(getActivity());
-        } else {
-            canDraw = true;
-        }
-        return canDraw;
-    }
-
-    private void requestWindowPermission() {
-        String packageName = JandiApplication.getContext().getPackageName();
-        Intent intent = new Intent(
-                Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + packageName));
-        startActivityForResult(intent, REQ_WINDOW_PERMISSION);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void setActionButtons() {
-        switch (currentButtonAction) {
-            case STICKER:
-                btnActionButton1.setImageResource(R.drawable.chat_icon_upload);
-                btnActionButton2.setImageResource(R.drawable.chat_icon_keypad);
-                break;
-            case UPLOAD:
-                btnActionButton1.setImageResource(R.drawable.chat_icon_keypad);
-                btnActionButton2.setImageResource(R.drawable.chat_icon_emoticon);
-                break;
-            case KEYBOARD:
-                btnActionButton1.setImageResource(R.drawable.chat_icon_upload);
-                btnActionButton2.setImageResource(R.drawable.chat_icon_emoticon);
-                break;
-        }
     }
 
     @Click(R.id.iv_messages_preview_sticker_close)
@@ -2056,10 +1875,29 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
 
-        fileUploadController.selectFileSelector(event.type, this, entityId);
+        requestFileUploadEventType = event.type;
+
+        Permissions.getChecker()
+                .activity(getActivity())
+                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .hasPermission(this::handleFileUpload)
+                .noPermission(() -> {
+                    String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                    requestPermissions(permissions, REQ_STORAGE_PERMISSION);
+                })
+                .check();
+
+    }
+
+    private void handleFileUpload() {
+        if (requestFileUploadEventType == -1) {
+            return;
+        }
+
+        fileUploadController.selectFileSelector(requestFileUploadEventType, this, entityId);
 
         AnalyticsValue.Action action;
-        switch (event.type) {
+        switch (requestFileUploadEventType) {
             default:
             case FileUploadController.TYPE_UPLOAD_GALLERY:
                 action = AnalyticsValue.Action.Upload_Photo;
@@ -2073,6 +1911,8 @@ public class MessageListV2Fragment extends Fragment implements
         }
 
         sendAnalyticsEvent(action);
+
+        requestFileUploadEventType = -1;
     }
 
     public void onEvent(NetworkConnectEvent event) {
@@ -2355,15 +2195,11 @@ public class MessageListV2Fragment extends Fragment implements
 
     @Override
     public boolean onBackPressed() {
-        if (stickerViewModel.isShow()) {
-            dismissStickerSelectorIfShow();
+        if (softInputAreaController != null && softInputAreaController.isSoftInputAreaShowing()) {
+            softInputAreaController.hideSoftInputArea(true, true);
             return true;
         }
 
-        if (uploadMenuViewModel.isShow()) {
-            dismissUploadSelectorIfShow();
-            return true;
-        }
         return false;
     }
 
