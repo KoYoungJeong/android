@@ -326,7 +326,7 @@ public class MessageListModel {
     }
 
     public List<ResMessages.Link> getDummyMessages(long roomId) {
-        List<SendMessage> sendMessage = SendMessageRepository.getRepository().getSendMessage(roomId);
+        List<SendMessage> sendMessage = SendMessageRepository.getRepository().getSendMessageOfRoom(roomId);
         long id = EntityManager.getInstance().getMe().getId();
         List<ResMessages.Link> links = new ArrayList<>();
         for (SendMessage link : sendMessage) {
@@ -426,7 +426,7 @@ public class MessageListModel {
         MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, myId, lastLinkId);
     }
 
-    public int sendStickerMessage(long teamId, long entityId, StickerInfo stickerInfo, long localId) {
+    public long sendStickerMessage(long teamId, long entityId, StickerInfo stickerInfo, long localId) {
 
         String type = null;
 
@@ -441,7 +441,7 @@ public class MessageListModel {
             trackMessagePostSuccess();
             EventBus.getDefault().post(new SendCompleteEvent(localId, resCommon.id));
 
-            return 1;
+            return resCommon.id;
         } catch (RetrofitException e) {
             e.printStackTrace();
 
@@ -458,11 +458,11 @@ public class MessageListModel {
 
     private void trackMessagePostSuccess() {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                        .event(Event.MessagePost)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, true)
-                        .build());
+                .event(Event.MessagePost)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .build());
         AnalyticsUtil.flushSprinkler();
 
     }
@@ -542,8 +542,13 @@ public class MessageListModel {
                 .subscribe(link -> {
                     link.roomId = messages.entityId;
                 });
-
         MessageRepository.getRepository().upsertMessages(messages.records);
+        if (messages.records != null && !messages.records.isEmpty()) {
+            long firstId = messages.records.get(0).id;
+            long lastId = messages.records.get(messages.records.size() - 1).id;
+            messages.records = MessageRepository.getRepository()
+                    .getMessages(messages.entityId, firstId, lastId + 1);
+        }
 
     }
 
@@ -615,9 +620,8 @@ public class MessageListModel {
         Observable.from(messages)
                 .doOnNext(link -> link.roomId = roomId)
                 .doOnNext(link -> {
-                    // event 가 아니고 삭제된 파일/코멘트/메세지만 처리
-                    if (!TextUtils.equals(link.status, "event")
-                            && TextUtils.equals(link.status, "archived")) {
+                    // 삭제된 파일/코멘트/메세지만 처리
+                    if (TextUtils.equals(link.status, "archived")) {
                         if (!(link.message instanceof ResMessages.FileMessage)) {
                             MessageRepository.getRepository().deleteMessage(link.messageId);
                         } else {
@@ -628,8 +632,7 @@ public class MessageListModel {
                 })
                 .filter(link -> {
                     // 이벤트와 삭제된 메세지는 처리 됐으므로..
-                    return TextUtils.equals(link.status, "event")
-                            || !TextUtils.equals(link.status, "archived");
+                    return !TextUtils.equals(link.status, "archived");
                 })
                 .collect((Func0<List<ResMessages.Link>>) ArrayList::new, List::add)
                 .subscribe(links -> {
@@ -643,7 +646,9 @@ public class MessageListModel {
                     SendMessageRepository.getRepository().deleteCompletedMessages(messageIds);
 
                     MessageRepository.getRepository().upsertMessages(links);
+
                 });
+
     }
 
     public AnalyticsValue.Screen getScreen(long entityId) {
@@ -711,5 +716,11 @@ public class MessageListModel {
 
     public void deleteAllDummyMessageAtDatabase(long roomId) {
         SendMessageRepository.getRepository().deleteAllSendingMessage(roomId);
+    }
+
+    public ResMessages.Link getDummyMessage(long localId) {
+        SendMessage sendMessage = SendMessageRepository.getRepository().getSendMessageOfLocal(localId);
+        long id = EntityManager.getInstance().getMe().getId();
+        return getDummyMessageLink(id, sendMessage);
     }
 }
