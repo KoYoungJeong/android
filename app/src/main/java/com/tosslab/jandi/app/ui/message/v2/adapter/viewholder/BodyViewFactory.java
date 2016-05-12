@@ -240,6 +240,7 @@ public class BodyViewFactory {
                     type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
                     type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
                     type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_FLAT_TOP);
+                    type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
                 }
             } else {
                 // 2. previous Link가 Comment 메세지 일때
@@ -262,6 +263,7 @@ public class BodyViewFactory {
                         type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
                         type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
                         type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
+                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
                     }
                 }
             }

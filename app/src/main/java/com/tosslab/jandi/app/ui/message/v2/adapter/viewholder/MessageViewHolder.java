@@ -1,10 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.OvalShape;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -15,24 +11,16 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 
-import de.greenrobot.event.EventBus;
-
-/**
- * Created by Steve SeongUg Jung on 15. 1. 21..
- */
 public class MessageViewHolder extends BaseMessageViewHolder {
 
     protected Context context;
@@ -53,11 +41,13 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         super.initView(rootView);
         context = rootView.getContext();
 
-        ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
-        vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
+        if (hasProfile) {
+            ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
+            vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
 
-        tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
-        vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+            tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
+            vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+        }
 
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
         initTextMessageMathWidth();
@@ -81,13 +71,12 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         if (hasProfile) {
             changeVisible(ivProfile, View.VISIBLE);
             changeVisible(tvName, View.VISIBLE);
-            setProfileInfos(link);
-        } else {
-            changeVisible(ivProfile, View.GONE);
-            changeVisible(tvName, View.GONE);
-            changeVisible(vDisableLineThrough, View.GONE);
+            ProfileUtil.setProfile(link.fromEntity, ivProfile, vProfileCover, tvName, vDisableLineThrough);
         }
-        setMessage(link, teamId, roomId);
+        setMessage(link);
+        setMessageTime(link);
+        setBadge(teamId, roomId, link);
+
         setMessageBackground(link);
     }
 
@@ -106,7 +95,7 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         }
     }
 
-    private void setMessage(ResMessages.Link link, long teamId, long roomId) {
+    private void setMessage(ResMessages.Link link) {
         EntityManager entityManager = EntityManager.getInstance();
         ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
@@ -136,14 +125,21 @@ public class MessageViewHolder extends BaseMessageViewHolder {
 
         tvMessage.setText(messageStringBuilder, TextView.BufferType.SPANNABLE);
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
+        linkPreviewViewModel.bindData(link);
+    }
 
+    private void setMessageTime(ResMessages.Link link) {
         if (!hasOnlyBadge) {
             tvMessageTime.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
         } else {
             tvMessageTime.setVisibility(View.GONE);
         }
+    }
+
+    private void setBadge(long teamId, long roomId, ResMessages.Link link) {
+        int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
+                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
+
 
         if (unreadCount > 0) {
             tvMessageBadge.setText(String.valueOf(unreadCount));
@@ -151,14 +147,15 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         } else {
             tvMessageBadge.setVisibility(View.GONE);
         }
-
-
-        linkPreviewViewModel.bindData(link);
     }
 
     @Override
     public int getLayoutId() {
-        return R.layout.item_message_msg_v3;
+        if (hasProfile) {
+            return R.layout.item_message_msg_v3;
+        } else {
+            return R.layout.item_message_msg_collapse_v3;
+        }
     }
 
     @Override
@@ -170,35 +167,6 @@ public class MessageViewHolder extends BaseMessageViewHolder {
     @Override
     public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
         tvMessage.setOnLongClickListener(itemLongClickListener);
-    }
-
-    public void setProfileInfos(ResMessages.Link link) {
-        long fromEntityId = link.fromEntity;
-
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity entity = entityManager.getEntityById(fromEntityId);
-        ResLeftSideMenu.User fromEntity = entity.getUser();
-
-        String profileUrl = entity.getUserLargeProfileUrl();
-
-        ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);
-
-        if (fromEntity != null && entity.isEnabled()) {
-            tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
-            vProfileCover.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            changeVisible(vDisableLineThrough, View.GONE);
-        } else {
-            tvName.setTextColor(
-                    tvName.getResources().getColor(R.color.deactivate_text_color));
-            ShapeDrawable foreground = new ShapeDrawable(new OvalShape());
-            foreground.getPaint().setColor(0x66FFFFFF);
-            vProfileCover.setBackgroundDrawable(foreground);
-            changeVisible(vDisableLineThrough, View.VISIBLE);
-        }
-
-        tvName.setText(fromEntity.name);
-        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));
-        tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
     }
 
     public static class Builder extends BaseViewHolderBuilder {
