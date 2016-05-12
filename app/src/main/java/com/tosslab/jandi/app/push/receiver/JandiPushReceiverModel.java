@@ -9,71 +9,51 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.koushikdutta.ion.Ion;
-import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.main.LeftSideApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
-import com.tosslab.jandi.app.push.monitor.PushMonitor;
-import com.tosslab.jandi.app.push.to.PushTO;
+import com.tosslab.jandi.app.push.to.BaseMessagePushInfo;
+import com.tosslab.jandi.app.push.to.CommentPushInfo;
+import com.tosslab.jandi.app.push.to.FilePushInfo;
+import com.tosslab.jandi.app.push.to.MessagePushInfo;
+import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.ui.settings.Settings;
-import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.SystemService;
-
-import java.io.IOException;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import dagger.Lazy;
 
-
-/**
- * Created by Steve SeongUg Jung on 15. 4. 10..
- */
-@EBean
 public class JandiPushReceiverModel {
     public static final String TAG = JandiPushReceiverModel.class.getSimpleName();
-    private static final String JSON_KEY_DATA = "com.parse.Data";
-    private static final String JSON_KEY_CHANNEL = "com.parse.Channel";
-    private static final int PENDING_INTENT_REQUEST_CODE = 20140626;
-    @SystemService
+    private static final int PENDING_INTENT_REQUEST_CODE = 2012;
+
     AudioManager audioManager;
 
-    @Inject
     Lazy<LeftSideApi> leftSideApi;
 
-    @AfterInject
-    void initObject() {
-        DaggerApiClientComponent.create().inject(this);
+    NotificationManager notificationManager;
+
+    public JandiPushReceiverModel(AudioManager audioManager, Lazy<LeftSideApi> leftSideApi, NotificationManager notificationManager) {
+        this.audioManager = audioManager;
+        this.leftSideApi = leftSideApi;
+        this.notificationManager = notificationManager;
     }
 
-    public PendingIntent generatePendingIntent(Context context, int chatId, int chatType, int teamId, String roomType) {
+    public PendingIntent generatePendingIntent(Context context, long chatId, int chatType, long teamId, String roomType) {
 
         PushInterfaceActivity_.IntentBuilder_ intentBuilder = PushInterfaceActivity_.intent(context);
         intentBuilder.flags(Intent.FLAG_ACTIVITY_NEW_TASK
@@ -100,22 +80,18 @@ public class JandiPushReceiverModel {
     }
 
     public int getEntityType(String roomType) {
-        if (TextUtils.equals(roomType, PushTO.RoomType.CHANNEL.getName())) {
+        if (TextUtils.equals(roomType, PushRoomType.CHANNEL.getName())) {
             return JandiConstants.TYPE_PUBLIC_TOPIC;
-        } else if (TextUtils.equals(roomType, PushTO.RoomType.PRIVATE_GROUP.getName())) {
+        } else if (TextUtils.equals(roomType, PushRoomType.PRIVATE_GROUP.getName())) {
             return JandiConstants.TYPE_PRIVATE_TOPIC;
-        } else if (TextUtils.equals(roomType, PushTO.RoomType.CHAT.getName())) {
+        } else if (TextUtils.equals(roomType, PushRoomType.CHAT.getName())) {
             return JandiConstants.TYPE_DIRECT_MESSAGE;
         } else {
             return -1;
         }
     }
 
-    public int getBadgeCount(int teamId) {
-        return BadgeCountRepository.getRepository().findBadgeCountByTeamId(teamId);
-    }
-
-    public boolean isTopicPushOn(ResLeftSideMenu leftSideMenu, int roomId) {
+    public boolean isTopicPushOn(ResLeftSideMenu leftSideMenu, long roomId) {
         boolean isTopicPushOn = true;
 
         ResLeftSideMenu.User user = leftSideMenu.user;
@@ -130,60 +106,30 @@ public class JandiPushReceiverModel {
         return isTopicPushOn;
     }
 
-    public void updateBadgeCount(Context context, int teamId, int badgeCount) {
-        BadgeCountRepository repository = BadgeCountRepository.getRepository();
-        repository.upsertBadgeCount(teamId, badgeCount);
-        BadgeUtils.setBadge(context, repository.getTotalBadgeCount());
-    }
+    public String getPlainMarkdownContent(Context context, BaseMessagePushInfo messagePushInfo) {
 
-    public boolean isPushForMyAccountId(Bundle extras, String accountId) {
-        if (extras != null && extras.containsKey(JSON_KEY_CHANNEL)) {
-            String value = extras.getString(JSON_KEY_CHANNEL);
-            if (!TextUtils.isEmpty(value)) {
-                LogUtil.d(TAG, value);
-                return value.contains(accountId);
-            } else {
-                LogUtil.e(TAG, "Channel data is empty.");
-            }
+        String originMessage;
+        if (messagePushInfo instanceof MessagePushInfo) {
+            originMessage = ((MessagePushInfo) messagePushInfo).getMessageContent().getBody();
+        } else if (messagePushInfo instanceof CommentPushInfo) {
+            originMessage = ((CommentPushInfo) messagePushInfo).getMessageContent().getBody();
+        } else if (messagePushInfo instanceof FilePushInfo) {
+            return ((FilePushInfo) messagePushInfo).getMessageContent().title;
+        } else {
+            return "";
         }
-        return false;
-    }
-
-    public PushTO parsingPushTO(Bundle extras) {
-        if (extras == null || !extras.containsKey(JSON_KEY_DATA)) {
-            LogUtil.e(TAG, "extras has not data.");
-            return null;
-        }
-
-        LogUtil.i(TAG, "extras data >");
-        LogUtil.d(TAG, extras.toString());
-        LogUtil.i(TAG, "< extras data");
-
-        try {
-            String jsonData = extras.getString(JSON_KEY_DATA);
-            LogUtil.e(TAG, jsonData);
-            ObjectMapper mapper = JacksonMapper.getInstance().getObjectMapper();
-            return mapper.readValue(jsonData, PushTO.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public void convertPlainMarkdownContent(Context context, PushTO pushTO) {
-        String content = pushTO.getInfo().getMessageContent();
-        SpannableStringBuilder contentWrapper = new SpannableStringBuilder(content);
+        SpannableStringBuilder contentWrapper = new SpannableStringBuilder(originMessage);
         SpannableLookUp.text(contentWrapper)
                 .markdown(true)
                 .lookUp(context);
-        pushTO.getInfo().setMessageContent(contentWrapper.toString());
+        return contentWrapper.toString();
     }
 
-    public ResLeftSideMenu getLeftSideMenuFromDB(int teamId) {
+    public ResLeftSideMenu getLeftSideMenuFromDB(long teamId) {
         return LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
     }
 
-    public ResLeftSideMenu getLeftSideMenuFromServer(int teamId) {
+    public ResLeftSideMenu getLeftSideMenuFromServer(long teamId) {
         ResLeftSideMenu leftSideMenu = null;
         try {
             leftSideMenu = leftSideApi.get().getInfosForSideMenu(teamId);
@@ -196,18 +142,7 @@ public class JandiPushReceiverModel {
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
     }
 
-    public boolean isMyEntityId(int writerId) {
-        List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
-
-        for (ResAccountInfo.UserTeam userTeam : userTeams) {
-            if (userTeam.getMemberId() == writerId) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean isMentionToMe(List<PushTO.Mention> mentions, ResLeftSideMenu leftSideMenu) {
+    public boolean isMentionToMe(List<MessagePushInfo.Mention> mentions, ResLeftSideMenu leftSideMenu) {
         boolean isMentionToMe = false;
         if (mentions == null || mentions.isEmpty()) {
             return false;
@@ -216,10 +151,8 @@ public class JandiPushReceiverModel {
         long myTeamMemberId = leftSideMenu.user.id;
         List<ResLeftSideMenu.Entity> joinEntities = leftSideMenu.joinEntities;
 
-        logJoinEntities(joinEntities);
-
-        for (PushTO.Mention mention : mentions) {
-            int entityId = mention.getId();
+        for (MessagePushInfo.Mention mention : mentions) {
+            long entityId = mention.getId();
             String mentionType = mention.getType();
             if ("room".equals(mentionType)) {
                 if (amIJoined(joinEntities, entityId)) {
@@ -237,7 +170,7 @@ public class JandiPushReceiverModel {
         return isMentionToMe;
     }
 
-    private boolean amIJoined(List<ResLeftSideMenu.Entity> joinEntities, int mentionedEntityId) {
+    private boolean amIJoined(List<ResLeftSideMenu.Entity> joinEntities, long mentionedEntityId) {
         if (joinEntities != null && !joinEntities.isEmpty()) {
             for (ResLeftSideMenu.Entity joinEntity : joinEntities) {
                 if (joinEntity.id == mentionedEntityId) {
@@ -248,23 +181,6 @@ public class JandiPushReceiverModel {
         }
 
         return false;
-    }
-
-    private void logJoinEntities(List<ResLeftSideMenu.Entity> joinEntities) {
-
-        if (joinEntities == null) {
-            LogUtil.e(TAG, "joinEntities == null");
-        } else {
-            for (ResLeftSideMenu.Entity joinEntity : joinEntities) {
-                LogUtil.d(TAG, "topic joinEntityId = " + joinEntity.id);
-            }
-        }
-    }
-
-    public boolean isPushOn() {
-        return !ParseUpdateUtil.PARSE_ACTIVATION_OFF.equals(
-                ParseInstallation.getCurrentInstallation().getString(ParseUpdateUtil.PARSE_ACTIVATION));
-
     }
 
     private NotificationCompat.Builder getNotification(Context context,
@@ -355,28 +271,13 @@ public class JandiPushReceiverModel {
         return bigTextStyle;
     }
 
-    public void showNotification(Context context, PushTO.PushInfo pushInfo, boolean isMentionMessage) {
-        String createdAt = pushInfo.getCreatedAt();
-        if (isPreviousMessage(createdAt)) {
+    public void showNotification(Context context, BaseMessagePushInfo baseMessagePushInfo, boolean isMentionMessage) {
 
-            NotificationCompat.Builder lastNotificationBuilder = PushMonitor.getInstance().getLastNotificationBuilder();
-            if (lastNotificationBuilder != null) {
-                int badgeCount = BadgeCountRepository.getRepository().getTotalBadgeCount();
-                lastNotificationBuilder.setDefaults(0);
-                lastNotificationBuilder.setNumber(badgeCount);
-                sendNotification(context, lastNotificationBuilder.build());
-            }
+        String writerName = baseMessagePushInfo.getWriterName();
 
-            return;
-        }
-
-        PushMonitor.getInstance().setLastNotifiedCreatedAt(createdAt);
-
-        String writerName = pushInfo.getWriterName();
-
-        int teamId = pushInfo.getTeamId();
-        int roomId = pushInfo.getRoomId();
-        String writerThumb = pushInfo.getWriterThumb();
+        long teamId = baseMessagePushInfo.getTeamId();
+        long roomId = baseMessagePushInfo.getRoomId();
+        String writerThumb = baseMessagePushInfo.getWriterThumb();
         Bitmap profileImage = null;
         if (!TextUtils.isEmpty(writerThumb)) {
             try {
@@ -385,22 +286,23 @@ public class JandiPushReceiverModel {
                         .asBitmap()
                         .get();
             } catch (Exception e) {
+                LogUtil.e("Failed Notification Image", e);
             }
         }
 
         String notificationTitle = writerName;
         if (isMentionMessage) {
             notificationTitle =
-                    context.getResources().getString(R.string.jandi_mention_push_message, writerName);
+                    context.getString(R.string.jandi_mention_push_message, writerName);
         }
 
-        int badgeCount = BadgeCountRepository.getRepository().getTotalBadgeCount();
+        int badgeCount = baseMessagePushInfo.getBadgeCount();
 
-        String roomType = pushInfo.getRoomType();
+        String roomType = baseMessagePushInfo.getRoomType();
         int roomTypeInt = getEntityType(roomType);
-        String roomName = getRoomName(context, pushInfo, roomTypeInt);
+        String roomName = getRoomName(context, baseMessagePushInfo, roomTypeInt);
 
-        String message = pushInfo.getMessageContent();
+        String message = getPlainMarkdownContent(context, baseMessagePushInfo);
         String outMessage = getOutMessage(roomTypeInt, message);
 
 
@@ -411,9 +313,6 @@ public class JandiPushReceiverModel {
 
         setUpNotificationEffect(notificationBuilder, context, isMentionMessage, roomTypeInt);
 
-        PushMonitor.getInstance().setLastNotificationBuilder(notificationBuilder);
-
-
         // 노티를 터치할 경우엔 자동 삭제되나, 노티를 삭제하지 않고 앱으로 진입했을 때,
         // 해당 채팅 방에 들어갈 때만 이 노티가 삭제되도록...
         JandiPreference.setChatIdFromPush(context, roomId);
@@ -421,12 +320,12 @@ public class JandiPushReceiverModel {
         sendNotification(context, notificationBuilder.build());
     }
 
-    private String getRoomName(Context context, PushTO.PushInfo pushInfo, int roomTypeInt) {
+    private String getRoomName(Context context, BaseMessagePushInfo baseMessagePushInfo, int roomTypeInt) {
         String roomName;
         if (roomTypeInt == JandiConstants.TYPE_DIRECT_MESSAGE) {
             roomName = context.getString(R.string.jandi_tab_direct_message);
         } else {
-            roomName = pushInfo.getRoomName();
+            roomName = baseMessagePushInfo.getRoomName();
         }
         return roomName;
     }
@@ -451,33 +350,10 @@ public class JandiPushReceiverModel {
         return outMessage;
     }
 
-    private boolean isPreviousMessage(String createdAt) {
-        if (TextUtils.isEmpty(createdAt)) {
-            LogUtil.e(TAG, "createdAt is empty string.");
-            return false;
-        }
-        LogUtil.d(TAG, createdAt);
-        long createdAtTime = DateTransformator.getTimeFromISO(createdAt);
-
-        String lastNotifiedCreatedAt = PushMonitor.getInstance().getLastNotifiedCreatedAt();
-        if (!TextUtils.isEmpty(lastNotifiedCreatedAt)) {
-            LogUtil.i(TAG, lastNotifiedCreatedAt);
-            long preCreatedAtTime = DateTransformator.getTimeFromISO(lastNotifiedCreatedAt);
-            if (createdAtTime < preCreatedAtTime) {
-                LogUtil.i(TAG, "createdAtTime < preCreatedAtTime");
-                return true;
-            }
-        }
-        return false;
-    }
-
     void sendNotification(Context context, Notification notification) {
-        NotificationManager nm =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
         if (notification != null) {
-            nm.cancel(JandiConstants.NOTIFICATION_ID);
-            nm.notify(JandiConstants.NOTIFICATION_ID, notification);
+            notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
+            notificationManager.notify(JandiConstants.NOTIFICATION_ID, notification);
         }
     }
 

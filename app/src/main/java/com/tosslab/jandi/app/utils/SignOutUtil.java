@@ -12,6 +12,7 @@ public class SignOutUtil {
         OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
                 .clearAllData();
         TokenUtil.clearTokenInfo();
+
     }
 
     public static void initSignData() {

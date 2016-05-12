@@ -36,6 +36,10 @@ public class ResAccessToken {
     @JsonProperty("expires_in")
     private String expireTime;
 
+    @DatabaseField
+    @JsonProperty("device_id")
+    private String deviceId;
+
     public String getAccessToken() {
         return accessToken;
     }
@@ -84,5 +88,14 @@ public class ResAccessToken {
 
     public void set_id(long _id) {
         this._id = _id;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public ResAccessToken setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+        return this;
     }
 }

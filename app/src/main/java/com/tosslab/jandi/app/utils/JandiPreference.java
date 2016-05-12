@@ -11,7 +11,7 @@ import com.tosslab.jandi.app.JandiApplication;
  * Created by justinygchoi on 2014. 7. 8..
  */
 public class JandiPreference {
-    public static final int NOT_SET_YET = -1;
+    public static final long NOT_SET_YET = -1;
     public static final String PREF_SETTING_ORIENTATION = "setting_orientation";
     public static final String PREF_VALUE_PUSH_PREVIEW_ALL_MESSAGE = "0";
     public static final String PREF_VALUE_PUSH_PREVIEW_PUBLIC_ONLY = "1";
@@ -121,34 +121,18 @@ public class JandiPreference {
         return true;
     }
 
-    public static int getChatIdFromPush(Context context) {
+    public static long getChatIdFromPush(Context context) {
         SharedPreferences pref = getSharedPreferences();
-        return pref.getInt(PREF_CHAT_ID_FROM_PUSH, NOT_SET_YET);
+        return pref.getLong(PREF_CHAT_ID_FROM_PUSH, NOT_SET_YET);
     }
 
-    public static void setChatIdFromPush(Context context, int chatId) {
+    public static void setChatIdFromPush(Context context, long chatId) {
         SharedPreferences pref = getSharedPreferences();
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt(PREF_CHAT_ID_FROM_PUSH, chatId);
+        editor.putLong(PREF_CHAT_ID_FROM_PUSH, chatId);
         editor.commit();
     }
 
-    public static int getActivatedChatId(Context context) {
-        SharedPreferences pref = getSharedPreferences();
-        return pref.getInt(PREF_CHAT_ID, NOT_SET_YET);
-    }
-
-    public static void setActivatedChatId(Context context, int chatId) {
-        SharedPreferences pref = getSharedPreferences();
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putInt(PREF_CHAT_ID, chatId);
-        editor.commit();
-    }
-
-    public static int getMyEntityId(Context context) {
-        SharedPreferences pref = getSharedPreferences();
-        return pref.getInt(PREF_MY_ENTITY_ID, NOT_SET_YET);
-    }
 
     public static void setMyEntityId(Context context, long myEntityId) {
         SharedPreferences pref = getSharedPreferences();

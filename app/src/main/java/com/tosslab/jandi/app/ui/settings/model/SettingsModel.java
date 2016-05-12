@@ -1,12 +1,10 @@
 package com.tosslab.jandi.app.ui.settings.model;
 
-import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 
 public class SettingsModel {
@@ -58,13 +56,7 @@ public class SettingsModel {
     }
 
     public static String getVersionName() {
-        Context context = JandiApplication.getContext();
-        String packageName = context.getPackageName();
-        try {
-            return context.getPackageManager().getPackageInfo(packageName, 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            return "";
-        }
+        return ApplicationUtil.getAppVersionName();
     }
 
     public static String getSupportUrl() {

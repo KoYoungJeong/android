@@ -3,11 +3,8 @@ package com.tosslab.jandi.app.ui.maintab;
 import android.animation.ValueAnimator;
 import android.content.ActivityNotFoundException;
 import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -44,7 +41,6 @@ import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
@@ -55,7 +51,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.PushInterfaceActivity;
-import com.tosslab.jandi.app.push.to.PushTO;
+import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
@@ -77,7 +73,6 @@ import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
-import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -88,7 +83,6 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.MaxHeightRecyclerView;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
@@ -184,7 +178,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @AfterViews
     void initView() {
         showDialogIfNotLastestVersion();
-        ParseUpdateUtil.addChannelOnServer();
 
         entityManager = EntityManager.getInstance();
         new MixpanelAnalytics().trackSigningIn(entityManager);
@@ -496,8 +489,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         JandiSocketService.stopService(this);
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
-        ParseUpdateUtil.addChannelOnServer();
-
         MainTabActivity_.intent(this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
@@ -648,10 +639,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         try {
             ResLeftSideMenu resLeftSideMenu = entityClientManager.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
-            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
-            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-            badgeCountRepository.upsertBadgeCount(resLeftSideMenu.team.id, totalUnreadCount);
-            BadgeUtils.setBadge(getApplicationContext(), badgeCountRepository.getTotalBadgeCount());
             entityManager.refreshEntity();
             getEntitiesSucceed(resLeftSideMenu);
             if (setProfile && !resLeftSideMenu.user.profileUpdated) {
@@ -725,7 +712,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     public void onEvent(MessagePushEvent event) {
-        if (!TextUtils.equals(event.getEntityType(), PushTO.RoomType.CHAT.getName())) {
+        if (!TextUtils.equals(event.getEntityType(), PushRoomType.CHAT.getName())) {
             getEntities(false);
         }
     }
@@ -870,16 +857,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     public int getCurrentAppVersionCode() {
-        try {
-            Context context = JandiApplication.getContext();
-            PackageManager packageManager = context.getPackageManager();
-            String packageName = context.getPackageName();
-            PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
-            return packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            return 0;
-        }
+        return ApplicationUtil.getAppVersionCode();
     }
 
     public void setFABMenuVisibility(boolean visibility) {

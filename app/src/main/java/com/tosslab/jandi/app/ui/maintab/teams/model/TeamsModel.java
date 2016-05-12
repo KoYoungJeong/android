@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
@@ -22,7 +21,6 @@ import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.util.List;
@@ -92,19 +90,6 @@ public class TeamsModel {
                 .collect(() -> teams, List::add);
     }
 
-    public Observable<List<Team>> getUpdateBadgeCountObservable(final List<Team> teams) {
-        return Observable.<List<Team>>create(subscriber -> {
-            Observable.from(teams)
-                    .filter(team -> team.getStatus() == Team.Status.JOINED)
-                    .subscribe(team -> {
-                        BadgeCountRepository.getRepository()
-                                .upsertBadgeCount(team.getTeamId(), team.getUnread());
-                    });
-            subscriber.onNext(teams);
-            subscriber.onCompleted();
-        });
-    }
-
     public Observable<Pair<Long, List<Team>>> getCheckSelectedTeamObservable(final List<Team> teams) {
         return Observable.<Pair<Long, List<Team>>>create(subscriber -> {
             ResAccountInfo.UserTeam selectedTeamInfo =
@@ -141,11 +126,6 @@ public class TeamsModel {
                 leftSideApi.get().getInfosForSideMenu(teamId);
 
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
-        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(leftSideMenu);
-        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-        badgeCountRepository.upsertBadgeCount(leftSideMenu.team.id, totalUnreadCount);
-        BadgeUtils.setBadge(
-                JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
         EntityManager entityManager = EntityManager.getInstance();
         entityManager.refreshEntity();
     }

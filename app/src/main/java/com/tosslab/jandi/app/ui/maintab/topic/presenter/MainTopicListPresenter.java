@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResFolder;
@@ -22,7 +21,6 @@ import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.model.TopicFolderSettingModel;
-import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -136,7 +134,6 @@ public class MainTopicListPresenter {
         AnalyticsValue.Action action = item.isPublic() ? AnalyticsValue.Action.ChoosePublicTopic : AnalyticsValue.Action.ChoosePrivateTopic;
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, action);
 
-        updateBadgeCount(item.getUnreadCount());
         item.setUnreadCount(0);
         mainTopicModel.resetBadge(item.getEntityId());
 
@@ -166,7 +163,6 @@ public class MainTopicListPresenter {
         mainTopicModel.resetBadge(item.getEntityId());
 
         long teamId = EntityManager.getInstance().getTeamId();
-        updateBadgeCount(itemsUnreadCount);
 
         int unreadCount = getUnreadCount(Observable.from(topicAdapter.getAllTopicItemData()));
         EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
@@ -176,17 +172,6 @@ public class MainTopicListPresenter {
                 item.getMarkerLinkId());
         view.setSelectedItem(item.getEntityId());
         view.notifyDatasetChangedForFolder();
-    }
-
-    private void updateBadgeCount(int itemsUnreadCount) {
-        long teamId = EntityManager.getInstance().getTeamId();
-        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-        int badgeCount = badgeCountRepository.findBadgeCountByTeamId(teamId) - itemsUnreadCount;
-        if (badgeCount <= 0) {
-            badgeCount = 0;
-        }
-        badgeCountRepository.upsertBadgeCount(EntityManager.getInstance().getTeamId(), badgeCount);
-        BadgeUtils.setBadge(JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
     }
 
     public void onUpdatedTopicLongClick(Topic item) {

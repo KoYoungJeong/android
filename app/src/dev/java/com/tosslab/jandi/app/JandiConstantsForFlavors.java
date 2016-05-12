@@ -33,4 +33,10 @@ public class JandiConstantsForFlavors {
     public static final String SOCKET_ROOT_URL =
             SERVICE_PROTOCOL + "://" + SOCKET_DOMAIN + ":" + SERVICE_PORT + "/";
 
+
+    public static class Push {
+
+        public static final String GCM_SENDER_ID = "648623146882";
+        public static final String BAIDU_API_KEY = "xMfI1LkL64AmDCGsw9kgbenb";
+    }
 }

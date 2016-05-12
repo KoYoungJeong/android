@@ -217,6 +217,7 @@ android {
         }
 
         main.res.srcDirs += 'src/main/res-crawrer'
+        main.java.srcDirs += 'src/main/java-push'
     }
 
     packagingOptions.excludes = [
@@ -265,18 +266,20 @@ android {
     }
 
     dexOptions {
-        javaMaxHeapSize "2048M"
+        javaMaxHeapSize "3g"
         incremental true
         maxProcessCount Math.max(1, ((int) (Runtime.getRuntime().availableProcessors() / 2)))
-    }
-
-    testOptions {
-
     }
 
     configurations.all {
         resolutionStrategy {
             force "com.android.support:support-annotations:${rootProject.ext.supportLibVersion}"
+        }
+    }
+
+    testOptions.unitTests.all {
+        testLogging {
+            events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
         }
     }
 }

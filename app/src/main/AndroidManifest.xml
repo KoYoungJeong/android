@@ -13,7 +13,7 @@
         android:theme="@style/JandiTheme"
         tools:replace="android:icon, android:allowBackup">
 
-        // 삼성폰 멀티윈도우
+        <!--삼성폰 멀티윈도우-->
         <meta-data
             android:name="com.samsung.android.sdk.multiwindow.enable"
             android:value="true"/>
@@ -260,34 +260,109 @@
             android:screenOrientation="fullUser"
             android:theme="@style/Jandi.NoTitle"/>
 
-        <service android:name="com.parse.PushService"/>
-
-        <receiver
-            android:name="com.parse.ParsePushBroadcastReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.parse.push.intent.RECEIVE"/>
-                <action android:name="com.parse.push.intent.OPEN"/>
-                <action android:name="com.parse.push.intent.DELETE"/>
-            </intent-filter>
-        </receiver>
-
         <receiver android:name=".push.receiver.JandiBroadcastReceiver">
             <intent-filter>
-                <action android:name="com.tosslab.jandi.app.Push"/>
+                <action android:name="com.tosslab.jandi.app.push"/>
+            </intent-filter>
+        </receiver>
+
+        <!--Parse-->
+        <receiver android:name="com.parse.ParsePushBroadcastReceiver"/>
+
+        <receiver android:name="com.parse.GcmBroadcastReceiver"/>
+        <!--EOF Parse-->
+
+        <!-- GCM -->
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
+
+                <category android:name="${applicationId}" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name=".push.gcm.receiver.MyGcmListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".push.gcm.register.MyInstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".push.gcm.register.RegistrationIntentService"
+            android:exported="false"/>
+        <!-- EOF GCM -->
+
+        <!--Baidu Push-->
+        <receiver android:name=".push.baidu.receiver.CustomPushReceiver">
+            <intent-filter android:priority="1000">
+                <action android:name="com.baidu.android.pushservice.action.notification.SHOW"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".push.baidu.register.MyPushMessageReceiver">
+            <intent-filter>
+                <!-- 接收push消息 -->
+                <action android:name="com.baidu.android.pushservice.action.MESSAGE"/>
+                <!-- 接收bind,unbind,fetch,delete等反馈消息 -->
+                <action android:name="com.baidu.android.pushservice.action.RECEIVE"/>
+                <action android:name="com.baidu.android.pushservice.action.notification.CLICK"/>
             </intent-filter>
         </receiver>
 
         <receiver
-            android:name="com.parse.GcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
+            android:name="com.baidu.android.pushservice.PushServiceReceiver"
+            android:process=":bdservice_v1">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
-
-                <category android:name="${applicationId}"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <action android:name="com.baidu.android.pushservice.action.notification.SHOW"/>
+                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
+                <action android:name="android.intent.action.USER_PRESENT"/>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name="com.baidu.android.pushservice.RegistrationReceiver"
+            android:process=":bdservice_v1">
+            <intent-filter>
+                <action android:name="com.baidu.android.pushservice.action.METHOD"/>
+                <action android:name="com.baidu.android.pushservice.action.BIND_SYNC"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
+                <data android:scheme="package"/>
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.baidu.android.pushservice.PushService"
+            android:exported="true"
+            android:process=":bdservice_v1">
+            <intent-filter>
+                <action android:name="com.baidu.android.pushservice.action.PUSH_SERVICE"/>
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.baidu.android.pushservice.CommandService"
+            android:exported="true"/>
+
+        <!--EOF Baidu Push-->
+
 
         <activity
             android:name=".ui.interfaces.JandiInterfaceActivity_"
@@ -535,7 +610,7 @@
 
     </application>
 
-    // for samsung or sony device to show badge
+    <!--for samsung or sony device to show badge-->
     <uses-permission android:name="com.sec.android.provider.badge.permission.READ"/>
     <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE"/>
     <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE"/>
@@ -550,6 +625,16 @@
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
     <uses-permission android:name="android.permission.GET_TASKS"/>
+
+    <!--baidu-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER"/>
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
 
     <permission
         android:name="${applicationId}.permission.C2D_MESSAGE"

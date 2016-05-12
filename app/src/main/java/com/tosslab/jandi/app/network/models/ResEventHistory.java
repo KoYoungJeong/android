@@ -7,9 +7,8 @@ import com.tosslab.jandi.app.network.jackson.deserialize.message.SocketHistoryDe
 
 import java.util.List;
 
-/**
- * Created by tee on 15. 11. 17..
- */
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResEventHistory {
 
     public int size;
