@@ -90,6 +90,11 @@ public class TeamsModel {
                 .collect(() -> teams, List::add);
     }
 
+    public Observable<List<Team>> getSortedTeamListObservable(List<Team> teams) {
+        return Observable.from(teams)
+                .toSortedList((team, team2) -> team.getStatus() == Team.Status.PENDING ? -1 : 1);
+    }
+
     public Observable<Pair<Long, List<Team>>> getCheckSelectedTeamObservable(final List<Team> teams) {
         return Observable.<Pair<Long, List<Team>>>create(subscriber -> {
             ResAccountInfo.UserTeam selectedTeamInfo =

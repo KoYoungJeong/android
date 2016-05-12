@@ -260,7 +260,7 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
 
     @Override
     public void setMe(FormattedEntity me) {
-        if (isFinishing()) {
+        if (isFinishing() || me == null) {
             return;
         }
 
