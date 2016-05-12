@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.utils.image;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
@@ -24,7 +25,7 @@ import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
-import com.tosslab.jandi.app.utils.transform.TransformConfig;
+import com.tosslab.jandi.app.utils.image.transform.TransformConfig;
 
 import java.io.File;
 
@@ -234,6 +235,65 @@ public class ImageUtil {
             loader.placeHolder(
                     R.drawable.comment_image_preview_download, ImageView.ScaleType.FIT_XY);
             loader.error(R.drawable.file_icon_img, ImageView.ScaleType.FIT_CENTER);
+            loader.listener(new SimpleRequestListener<Uri, GlideDrawable>() {
+                @Override
+                public boolean onException(Exception e, Uri model,
+                                           Target<GlideDrawable> target,
+                                           boolean isFirstResource) {
+                    if (vOutLine != null) {
+                        vOutLine.setVisibility(View.GONE);
+                    }
+                    return false;
+                }
+            });
+
+            loader.uri(Uri.parse(thumbnailUrl)).into(imageView);
+        }
+    }
+
+    public static void setResourceIconOrLoadImageForComment(final ImageView imageView,
+                                                            final View vOutLine,
+                                                            final String fileUrl,
+                                                            final String thumbnailUrl,
+                                                            final String serverUrl,
+                                                            final String fileType) {
+
+        if (vOutLine != null) {
+            vOutLine.setVisibility(View.GONE);
+        }
+
+        int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, fileType);
+
+        boolean hasImageUrl = !TextUtils.isEmpty(fileUrl) || !TextUtils.isEmpty(thumbnailUrl);
+        if (!TextUtils.equals(fileType, "image") || !hasImageUrl) {
+            imageView.setBackgroundColor(Color.TRANSPARENT);
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            imageView.setImageResource(mimeTypeIconImage);
+            return;
+        }
+
+        MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
+        if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
+            imageView.setBackgroundColor(Color.TRANSPARENT);
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            imageView.setImageResource(mimeTypeIconImage);
+        } else {
+            if (TextUtils.isEmpty(thumbnailUrl)) {
+                imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                imageView.setImageResource(R.drawable.comment_no_img);
+                return;
+            }
+
+            if (vOutLine != null) {
+                vOutLine.setVisibility(View.VISIBLE);
+            }
+
+            ImageLoader loader = ImageLoader.newInstance();
+            loader.actualImageScaleType(ImageView.ScaleType.CENTER_CROP);
+            loader.backgroundColor(imageView.getResources().getColor(R.color.jandi_messages_image_view_bg));
+            loader.placeHolder(
+                    R.drawable.comment_img_preview, ImageView.ScaleType.CENTER_INSIDE);
+            loader.error(R.drawable.comment_no_img, ImageView.ScaleType.CENTER_INSIDE);
             loader.listener(new SimpleRequestListener<Uri, GlideDrawable>() {
                 @Override
                 public boolean onException(Exception e, Uri model,

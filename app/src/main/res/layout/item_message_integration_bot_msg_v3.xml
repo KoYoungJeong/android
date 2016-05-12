@@ -2,10 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal">
 
     <!-- 사용자 프로필 사진 -->
-    <ImageVew
+    <ImageView
         android:id="@+id/iv_message_user_profile"
         android:layout_width="@dimen/jandi_messages_profile_size"
         android:layout_height="@dimen/jandi_messages_profile_size"
@@ -22,7 +23,6 @@
         android:maxLines="1"
         android:maxWidth="200dp"
         android:singleLine="true"
-        android:text="빠빠빠"
         android:textColor="@color/jandi_messages_name"
         android:textSize="13dp"
         android:textStyle="bold" />

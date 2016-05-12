@@ -23,7 +23,7 @@ import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
-import com.tosslab.jandi.app.utils.transform.TransformConfig;
+import com.tosslab.jandi.app.utils.image.transform.TransformConfig;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

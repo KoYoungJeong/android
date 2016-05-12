@@ -3,12 +3,13 @@ package com.tosslab.jandi.app.utils.image.loader;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.DrawableRequestBuilder;
+import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.Transformation;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.ViewPropertyAnimation;
@@ -21,6 +22,7 @@ public class ImageLoader {
 
     public static final String TAG = ImageLoader.class.getSimpleName();
 
+    private int backgroundColor = Integer.MAX_VALUE;
     private int placeHolder;
     private Drawable placeHolderDrawable;
     private ImageView.ScaleType placeHolderScaleType;
@@ -30,6 +32,7 @@ public class ImageLoader {
     private ViewPropertyAnimation.Animator animator;
     private int anim = -1;
     private Transformation<Bitmap> transformation;
+    private boolean blockNetworking = false;
     private RequestListener<Uri, GlideDrawable> listener;
     private Uri uri;
 
@@ -38,6 +41,11 @@ public class ImageLoader {
 
     public static ImageLoader newInstance() {
         return new ImageLoader();
+    }
+
+    public ImageLoader backgroundColor(int color) {
+        this.backgroundColor = color;
+        return this;
     }
 
     public ImageLoader placeHolder(int placeHolder) {
@@ -90,6 +98,11 @@ public class ImageLoader {
         return this;
     }
 
+    public ImageLoader blockNetworking(boolean blockNetworking) {
+        this.blockNetworking = blockNetworking;
+        return this;
+    }
+
     public ImageLoader listener(RequestListener<Uri, GlideDrawable> listener) {
         this.listener = listener;
         return this;
@@ -102,10 +115,13 @@ public class ImageLoader {
 
     @SuppressWarnings("unchecked")
     public void into(ImageView imageView) {
-        DrawableRequestBuilder<Uri> request =
-                Glide.with(imageView.getContext())
-                        .load(uri)
-                        .fitCenter();
+        if (backgroundColor != Integer.MAX_VALUE) {
+            imageView.setBackgroundColor(backgroundColor);
+        }
+
+        DrawableRequestBuilder<Uri> request = getRequest(imageView).fitCenter();
+
+        request.diskCacheStrategy(DiskCacheStrategy.ALL);
 
         if (placeHolderDrawable != null) {
             request.placeholder(placeHolderDrawable);
@@ -123,6 +139,14 @@ public class ImageLoader {
             request.animate(anim);
         } else if (animator != null) {
             request.animate(animator);
+        } else {
+            // crossFade 가 동작하면 fitCenter 가 정상동작하지 않는다.(TransitionDrawable issue)
+            request.animate(view -> {
+                view.setAlpha(0.0f);
+                view.animate()
+                        .alpha(1.0f)
+                        .setDuration(300);
+            });
         }
 
         request.listener(listener)
@@ -131,6 +155,16 @@ public class ImageLoader {
                         .actualImageScaleType(actualImageScaleType)
                         .errorScaleType(errorScaleType)
                         .build(imageView));
-//
     }
+
+    private DrawableTypeRequest<Uri> getRequest(ImageView imageView) {
+        if (blockNetworking) {
+            return Glide.with(imageView.getContext())
+                    .using(new ThrowIOExceptionStreamLoader<Uri>())
+                    .load(uri);
+        } else {
+            return Glide.with(imageView.getContext()).load(uri);
+        }
+    }
+
 }

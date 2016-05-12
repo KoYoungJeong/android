@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.ShapeDrawable;
@@ -8,13 +9,13 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.target.Target;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
@@ -28,6 +29,7 @@ import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
@@ -202,7 +204,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             boolean isFromLocalFilePath = !TextUtils.isEmpty(localFilePath);
 
             final ResMessages.ThumbnailUrls extraInfo = fileContent.extraInfo;
-            String remoteFilePth =
+            String remoteFilePath =
                     ImageUtil.getThumbnailUrl(extraInfo, ImageUtil.Thumbnails.LARGE);
 
             final ViewGroup.LayoutParams layoutParams = ivFileImage.getLayoutParams();
@@ -210,13 +212,16 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             // 유효한 확장자가 아닌 경우, Local File Path 도 없고 Thumbnail Path 도 없는 경우
             boolean shouldSupportImageExtensions =
                     FileExtensionsUtil.shouldSupportImageExtensions(fileContent.ext);
+            Resources resources = vgFileImageWrapper.getResources();
+            final int bigSizeImageBackgroundColor = resources
+                    .getColor(R.color.jandi_messages_big_size_image_view_bg);
             if (!shouldSupportImageExtensions
-                    || (!isFromLocalFilePath && TextUtils.isEmpty(remoteFilePth))) {
+                    || (!isFromLocalFilePath && TextUtils.isEmpty(remoteFilePath))) {
                 LogUtil.i(TAG, "Thumbnail's are empty.");
 
                 layoutParams.height = maxImageHeight;
                 ivFileImage.setLayoutParams(layoutParams);
-                vgFileImageWrapper.setBackgroundColor(vgFileImageWrapper.getResources().getColor(R.color.jandi_messages_big_size_image_view_bg));
+                vgFileImageWrapper.setBackgroundColor(bigSizeImageBackgroundColor);
 
                 ivFileImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 ivFileImage.setImageResource(R.drawable.preview_no_img);
@@ -229,32 +234,33 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
                     R.drawable.comment_image_preview_download, ImageView.ScaleType.CENTER_INSIDE);
 
             ImageLoadInfo imageInfo = getImageInfo(extraInfo);
+            layoutParams.width = imageInfo.width;
+            layoutParams.height = imageInfo.height;
+            ivFileImage.setLayoutParams(layoutParams);
+
             if (imageInfo.needCrop) {
                 loader.actualImageScaleType(ImageView.ScaleType.CENTER_CROP);
             } else {
                 loader.actualImageScaleType(ImageView.ScaleType.FIT_CENTER);
             }
 
-            vgFileImageWrapper.setBackgroundColor(vgFileImageWrapper.getResources().getColor(R.color.jandi_messages_image_view_bg));
-
-            layoutParams.width = imageInfo.width;
-            layoutParams.height = imageInfo.height;
-            ivFileImage.setLayoutParams(layoutParams);
-            ivFileImage.setBackgroundColor(Color.TRANSPARENT);
+            int backgroundColor = resources.getColor(R.color.jandi_messages_image_view_bg);
+            vgFileImageWrapper.setBackgroundColor(backgroundColor);
 
             Uri uri = isFromLocalFilePath
-                    ? UriFactory.getFileUri(localFilePath) : Uri.parse(remoteFilePth);
+                    ? UriUtil.getFileUri(localFilePath) : Uri.parse(remoteFilePath);
 
-            loader
-                    .listener(new BaseOnResourceReadyCallback() {
-                        @Override
-                        public void onFail(Throwable cause) {
-                            ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.comment_no_img));
-                            vgFileImageWrapper.setBackgroundColor(vgFileImageWrapper.getResources().getColor(R.color.jandi_messages_big_size_image_view_bg));
-                        }
-                    })
-                    .load(uri)
-                    .into(ivFileImage);
+            loader.listener(new SimpleRequestListener<Uri, GlideDrawable>() {
+                @Override
+                public boolean onException(Exception e,
+                                           Uri model, Target<GlideDrawable> target,
+                                           boolean isFirstResource) {
+                    vgFileImageWrapper.setBackgroundColor(bigSizeImageBackgroundColor);
+                    return false;
+                }
+            });
+
+            loader.uri(uri).into(ivFileImage);
         }
     }
 

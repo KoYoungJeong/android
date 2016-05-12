@@ -11,9 +11,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
@@ -97,14 +99,14 @@ public class LinkPreviewViewModel {
             vDividier.setVisibility(View.VISIBLE);
             vgThumb.setVisibility(View.VISIBLE);
 
-            float imageRound = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, JandiApplication.getContext().getResources().getDisplayMetrics());
+            float imageRound = UiUtils.getPixelFromDp(2f);
             ImageLoader.newInstance()
                     .backgroundColor(ivThumb.getResources().getColor(R.color.jandi_messages_image_background))
                     .placeHolder(R.drawable.comment_image_preview_download, ImageView.ScaleType.CENTER_INSIDE)
                     .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
                     .error(R.drawable.comment_no_img, ImageView.ScaleType.CENTER_INSIDE)
                     .transformation(new RoundedCornersTransformation(ivThumb.getContext(),
-                            5, 0, RoundedCornersTransformation.CornerType.TOP))
+                            (int) imageRound, 0, RoundedCornersTransformation.CornerType.TOP))
                     .uri(Uri.parse(linkPreview.imageUrl))
                     .into(ivThumb);
         }
@@ -119,16 +121,9 @@ public class LinkPreviewViewModel {
         tvDomain = (TextView) vgLinkPreview.findViewById(R.id.tv_linkpreview_domain);
         tvDescription = (TextView) vgLinkPreview.findViewById(R.id.tv_linkpreview_description);
         vgThumb = vgLinkPreview.findViewById(R.id.vg_linkpreview_thumb);
-        ivThumb = (SimpleDraweeView) vgLinkPreview.findViewById(R.id.iv_linkpreview_thumb);
+        ivThumb = (ImageView) vgLinkPreview.findViewById(R.id.iv_linkpreview_thumb);
         vgSnippet = vgLinkPreview.findViewById(R.id.vg_snippet_summary);
         vDividier = vgLinkPreview.findViewById(R.id.v_snippet_divider);
-        ImageLoader.newInstance()
-                .placeHolder(R.drawable.link_preview, ImageView.ScaleType.CENTER_INSIDE)
-                .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
-                .transformation(new RoundedCornersTransformation(ivThumb.getContext(),
-                        5, 0, RoundedCornersTransformation.CornerType.TOP))
-                .uri(Uri.parse(linkPreview.imageUrl))
-                .into(ivThumb);
     }
 
     private boolean useThumbnail(String imagUrl) {

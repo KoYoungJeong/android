@@ -12,7 +12,6 @@ import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapResource;
-import com.tosslab.jandi.app.utils.transform.TransformConfig;
 
 /**
  * Created by tonyjs on 16. 5. 9..
@@ -22,8 +21,8 @@ public class JandiProfileTransform implements Transformation<Bitmap> {
     private BitmapPool bitmapPool;
 
     private float borderWidth;
-    private int borderColor = -1;
-    private int backgroundColor = -1;
+    private int borderColor = Integer.MAX_VALUE;
+    private int backgroundColor = Integer.MAX_VALUE;
 
     public JandiProfileTransform(Context context) {
         this(context,
@@ -65,12 +64,13 @@ public class JandiProfileTransform implements Transformation<Bitmap> {
 
         Canvas canvas = new Canvas(bitmap);
 
-        if (backgroundColor != -1) {
+        if (backgroundColor != Integer.MAX_VALUE) {
             // Background
             Paint bgPaint = new Paint();
             bgPaint.setFlags(Paint.DITHER_FLAG | Paint.ANTI_ALIAS_FLAG);
             bgPaint.setColor(backgroundColor);
             bgPaint.setStyle(Paint.Style.FILL);
+
             canvas.drawCircle(r, r, r - 1, bgPaint);
         }
 
@@ -88,12 +88,14 @@ public class JandiProfileTransform implements Transformation<Bitmap> {
 
         canvas.drawCircle(r, r, r, paint);
 
-        if (borderColor != -1) {
+        if (borderColor != Integer.MAX_VALUE) {
             Paint borderPaint = new Paint();
             borderPaint.setFlags(Paint.DITHER_FLAG | Paint.ANTI_ALIAS_FLAG);
             borderPaint.setColor(borderColor);
             borderPaint.setStrokeWidth(borderWidth);
             borderPaint.setStyle(Paint.Style.STROKE);
+
+            canvas.drawCircle(r, r, r, borderPaint);
         }
 
         return BitmapResource.obtain(bitmap, bitmapPool);

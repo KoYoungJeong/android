@@ -18,10 +18,6 @@ public class DynamicImageViewTarget extends GlideDrawableImageViewTarget {
     private ImageView.ScaleType actualImageScaleType = ImageView.ScaleType.FIT_CENTER;
     private ImageView.ScaleType errorScaleType = ImageView.ScaleType.FIT_CENTER;
 
-    public static Builder newBuilder() {
-        return new Builder();
-    }
-
     private DynamicImageViewTarget(ImageView view,
                                    ImageView.ScaleType placeHolderScaleType,
                                    ImageView.ScaleType actualImageScaleType,
@@ -30,6 +26,10 @@ public class DynamicImageViewTarget extends GlideDrawableImageViewTarget {
         this.placeHolderScaleType = placeHolderScaleType;
         this.actualImageScaleType = actualImageScaleType;
         this.errorScaleType = errorScaleType;
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     @Override
@@ -93,7 +93,6 @@ public class DynamicImageViewTarget extends GlideDrawableImageViewTarget {
             return new DynamicImageViewTarget(imageView,
                     placeHolderScaleType, actualImageScaleType, errorScaleType);
         }
-
     }
 
 }

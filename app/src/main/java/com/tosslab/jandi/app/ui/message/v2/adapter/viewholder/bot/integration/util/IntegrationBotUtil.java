@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Collection;
@@ -42,7 +43,7 @@ public class IntegrationBotUtil {
 
     private static void updateSubInfoSideLine(String connectColor, View vConnectLine) {
         try {
-            float v = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, JandiApplication.getContext().getResources().getDisplayMetrics());
+            float v = UiUtils.getPixelFromDp(2f);
             int color = Color.parseColor(connectColor);
             RoundRectShape shape = new RoundRectShape(new float[]{v, v, 0, 0, 0, 0, v, v}, null, null);
             ShapeDrawable shapeDrawable = new ShapeDrawable(shape);

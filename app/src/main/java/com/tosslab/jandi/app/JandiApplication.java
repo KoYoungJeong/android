@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 
-import com.bumptech.glide.Glide;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -111,12 +110,6 @@ public class JandiApplication extends MultiDexApplication {
 
         initRetrofitBuilder();
 
-        initGlide();
-    }
-
-    private void initGlide() {
-//        Glide.with(this)
-//                .setDefaultOptions();
     }
 
     void initParse() {

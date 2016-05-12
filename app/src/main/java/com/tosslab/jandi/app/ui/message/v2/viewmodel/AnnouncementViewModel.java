@@ -27,7 +27,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
-import com.tosslab.jandi.app.utils.transform.TransformConfig;
+import com.tosslab.jandi.app.utils.image.transform.TransformConfig;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;

@@ -55,7 +55,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
 
-        ivFileImage = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_common_file);
+        ivFileImage = (ImageView) rootView.findViewById(R.id.iv_message_common_file);
         vFileIconBorder = rootView.findViewById(R.id.v_message_common_file_border);
         tvFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
         tvFileUploaderName = (TextView) rootView.findViewById(R.id.tv_uploader_name);
@@ -64,14 +64,6 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
 
         vgFileContent = rootView.findViewById(R.id.vg_message_common_file);
 
-    }
-
-    @Override
-    protected void initObjects() {
-        vgMessageContent.setVisibility(View.GONE);
-        vgStickerMessageContent.setVisibility(View.GONE);
-        vgFileMessageContent.setVisibility(View.VISIBLE);
-        vgImageMessageContent.setVisibility(View.GONE);
     }
 
     @Override

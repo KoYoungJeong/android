@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.utils.transform;
+package com.tosslab.jandi.app.utils.image.transform;
 
 import android.graphics.Color;
 

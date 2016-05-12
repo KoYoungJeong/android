@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,7 +26,7 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
-import com.tosslab.jandi.app.utils.transform.TransformConfig;
+import com.tosslab.jandi.app.utils.image.transform.TransformConfig;
 
 public class IntegrationBotViewHolder implements BodyViewHolder {
 
@@ -54,7 +53,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
     @Override
     public void initView(View rootView) {
-        ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
+        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
         tvMessageTime = (TextView) rootView.findViewById(R.id.tv_message_time);
@@ -104,7 +103,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
                 .transformation(new JandiProfileTransform(ivProfile.getContext(),
                         TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
                         TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
-                        Color.TRANSPARENT))
+                        Color.WHITE))
                 .uri(Uri.parse(botEntity.getUserLargeProfileUrl()))
                 .into(ivProfile);
 

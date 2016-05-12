@@ -11,20 +11,17 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
-import com.tosslab.jandi.app.utils.image.ImageDownloadTracker;
 import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
-import com.tosslab.jandi.app.utils.image.loader.ThrowIOExceptionStreamLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.views.controller.AutoProgressUpdateController;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -40,46 +37,39 @@ import uk.co.senab.photoview.PhotoView;
 @EFragment(R.layout.fragment_photo_view)
 public class PhotoViewFragment extends Fragment {
     public static final String TAG = PhotoViewFragment.class.getSimpleName();
-
     @FragmentArg
     boolean fromCarousel = false;
-
     @FragmentArg
     String thumbUrl;
-
     @FragmentArg
     String originalUrl;
-
     @FragmentArg
     String imageType;
-
     @FragmentArg
     String extensions;
-
     @ViewById(R.id.pv_photoview)
     PhotoView photoView;
-
     @ViewById(R.id.progress_photoview)
     CircleProgressBar progressBar;
-
     @ViewById(R.id.tv_photoview_percentage)
     TextView tvPercentage;
-
     @ViewById(R.id.vg_photoview_progress)
     LinearLayout vgProgress;
-
     @ViewById(R.id.vg_photoview_tap_to_view)
     View btnTapToViewOriginal;
-
     private CarouselViewerActivity.OnCarouselImageClickListener carouselImageClickListener;
-
     private OnSwipeExitListener onSwipeExitListener;
+    private ShouldOpenImmediatelyUrlProvider shouldOpenImmediatelyUrlProvider;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (activity instanceof OnSwipeExitListener) {
             onSwipeExitListener = (OnSwipeExitListener) activity;
+        }
+
+        if (activity instanceof ShouldOpenImmediatelyUrlProvider) {
+            shouldOpenImmediatelyUrlProvider = ((ShouldOpenImmediatelyUrlProvider) activity);
         }
     }
 
@@ -117,31 +107,60 @@ public class PhotoViewFragment extends Fragment {
             return;
         }
 
+        autoProgressUpdateController = new AutoProgressUpdateController();
+        autoProgressUpdateController.setPercentageTextView(tvPercentage);
+        autoProgressUpdateController.setProgressBar(progressBar);
+        autoProgressUpdateController.start();
+
         if (!TextUtils.isEmpty(thumbUrl)) {
 
             loadImage(Uri.parse(thumbUrl));
 
         } else {
+
+            String shouldOpenImmediatelyUrl =
+                    shouldOpenImmediatelyUrlProvider != null
+                            ? shouldOpenImmediatelyUrlProvider.getShouldOpenImmediatelyUrl()
+                            : "";
+
+            final boolean shouldOpenImmediately = originalUrl.equals(shouldOpenImmediatelyUrl);
+
             final Uri originalUri = Uri.parse(originalUrl);
 
-            Glide.with(photoView.getContext())
+            ImageLoader.newInstance()
                     // cache 되어 있는지 확인하기 위해 네트워킹 작업이 실행되면 exception 발생시킨다.
-                    .using(new ThrowIOExceptionStreamLoader<Uri>())
-                    .load(originalUri)
+                    .blockNetworking(!shouldOpenImmediately)
                     .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
+
+                        @Override
+                        public boolean onResourceReady(GlideDrawable glideDrawable,
+                                                       Uri model, Target<GlideDrawable> target,
+                                                       boolean isFromMemoryCache,
+                                                       boolean isFirstResource) {
+                            hideProgress();
+                            return false;
+                        }
+
                         @Override
                         public boolean onException(Exception e, Uri model,
                                                    Target<GlideDrawable> target,
                                                    boolean isFirstResource) {
-                            // cache 가 되어 있지 않음
-                            showTapToView(originalUri);
-                            return true;
+                            hideProgress();
+
+                            if (!shouldOpenImmediately) {
+                                // cache 가 되어 있지 않음
+                                showTapToView(originalUri);
+                                return true;
+                            }
+                            return false;
                         }
                     })
+                    .uri(originalUri)
                     .into(photoView);
         }
     }
 
+    private AutoProgressUpdateController autoProgressUpdateController;
     private void showTapToView(Uri originalUri) {
         // PhotoView 그려진 이미지(Drawable)이 없으면 ViewTapListener 가 동작하지 않는다.
         photoView.setImageDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -149,7 +168,15 @@ public class PhotoViewFragment extends Fragment {
         btnTapToViewOriginal.setVisibility(View.VISIBLE);
         btnTapToViewOriginal.setOnClickListener(v -> {
             btnTapToViewOriginal.setVisibility(View.GONE);
+
             vgProgress.setVisibility(View.VISIBLE);
+
+            autoProgressUpdateController = new AutoProgressUpdateController();
+            autoProgressUpdateController.setPercentageTextView(tvPercentage);
+            autoProgressUpdateController.setProgressBar(progressBar);
+
+            autoProgressUpdateController.start();
+
             loadImage(originalUri);
         });
     }
@@ -183,12 +210,15 @@ public class PhotoViewFragment extends Fragment {
             tvPercentage.setText(100 + "%");
         }
         vgProgress.setVisibility(View.GONE);
+
+        if (autoProgressUpdateController != null) {
+            autoProgressUpdateController.cancel();
+            autoProgressUpdateController = null;
+        }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void loadImage(Uri uri) {
-        ImageDownloadTracker.getInstance().put(uri, ImageDownloadTracker.Status.IN_PROGRESS);
-
         ImageLoader.newInstance()
                 .uri(uri)
                 .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
@@ -207,9 +237,6 @@ public class PhotoViewFragment extends Fragment {
                                                    Uri model, Target<GlideDrawable> target,
                                                    boolean isFromMemoryCache,
                                                    boolean isFirstResource) {
-                        ImageDownloadTracker.getInstance()
-                                .put(uri, ImageDownloadTracker.Status.COMPLETED);
-
                         hideProgress();
                         return false;
                     }
@@ -222,8 +249,21 @@ public class PhotoViewFragment extends Fragment {
         photoView.setImageResource(R.drawable.file_noimage);
     }
 
+    @Override
+    public void onDestroyView() {
+        if (autoProgressUpdateController != null) {
+            autoProgressUpdateController.cancel();
+        }
+        super.onDestroyView();
+    }
+
     public void setOnCarouselImageClickListener(
+
             CarouselViewerActivity.OnCarouselImageClickListener carouselImageClickListener) {
         this.carouselImageClickListener = carouselImageClickListener;
+    }
+
+    public interface ShouldOpenImmediatelyUrlProvider {
+        String getShouldOpenImmediatelyUrl();
     }
 }

@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <com.tosslab.jandi.app.views.viewgroup.AdvancedViewPager
         android:id="@+id/vp_carousel"
         android:layout_width="match_parent"
@@ -34,7 +33,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/jandi_carousel_bottom_line_spacing"
-                android:text="asdasd"
                 android:layout_marginLeft="@dimen/jandi_carousel_bottom_left"
                 android:textColor="@color/jandi_text_white"
                 android:textSize="@dimen/jandi_carousel_file_writer_txt" />
@@ -44,7 +42,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/jandi_carousel_bottom_line_spacing_date"
-                android:text="asads"
                 android:layout_marginLeft="@dimen/jandi_carousel_bottom_left"
                 android:textColor="@color/jandi_carousel_file_size_ext_create_time"
                 android:textSize="@dimen/jandi_carousel_file_create_time_txt" />

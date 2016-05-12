@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.settings.main.presenter;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
@@ -18,6 +19,7 @@ import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
@@ -74,6 +76,7 @@ public class SettingsPresenterImpl implements SettingsPresenter {
 
 
         } catch (Exception e) {
+            LogUtil.e(Log.getStackTraceString(e));
         } finally {
             view.dismissProgressDialog();
         }
