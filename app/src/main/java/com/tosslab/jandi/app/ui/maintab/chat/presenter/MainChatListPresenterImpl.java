@@ -7,11 +7,9 @@ import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.ui.maintab.chat.model.MainChatListModel;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
-import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -88,7 +86,12 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
             List<ResChat> savedChatList = mainChatListModel.getSavedChatList();
             List<ChatItem> chatItems = mainChatListModel.convertChatItems(context, teamId,
                     savedChatList);
-            view.setChatItems(chatItems);
+            if (chatItems == null || chatItems.isEmpty()) {
+                view.showEmptyLayout();
+            } else {
+                view.hideEmptyLayout();
+                view.setChatItems(chatItems);
+            }
         }
 
         if (!NetworkCheckUtil.isConnected()) {
@@ -100,7 +103,12 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
             mainChatListModel.saveChatList(teamId, chatList);
             List<ChatItem> chatItems = mainChatListModel.convertChatItems(context, teamId,
                     chatList);
-            view.setChatItems(chatItems);
+            if (chatItems == null || chatItems.isEmpty()) {
+                view.showEmptyLayout();
+            } else {
+                view.hideEmptyLayout();
+                view.setChatItems(chatItems);
+            }
 
             view.setSelectedItem(selectedEntity);
             view.startSelectedItemAnimation();
@@ -153,21 +161,11 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
     public void onEntityItemClick(Context context, int position) {
         ChatItem chatItem = view.getChatItem(position);
 
-        int unread = chatItem.getUnread();
         chatItem.unread(0);
         view.refreshListView();
 
         view.setSelectedItem(chatItem.getRoomId());
         EventBus.getDefault().post(new MainSelectTopicEvent(chatItem.getEntityId()));
-
-        long teamId = mainChatListModel.getTeamId();
-        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-        int badgeCount = badgeCountRepository.findBadgeCountByTeamId(teamId) - unread;
-        if (badgeCount <= 0) {
-            badgeCount = 0;
-        }
-        badgeCountRepository.upsertBadgeCount(teamId, badgeCount);
-        BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
 
         int unreadCount = mainChatListModel.getUnreadCount(view.getChatItems());
         EventBus.getDefault().post(new ChatBadgeEvent(unreadCount > 0, unreadCount));

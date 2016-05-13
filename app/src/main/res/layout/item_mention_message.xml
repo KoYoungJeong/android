@@ -73,7 +73,6 @@
                 android:lineSpacingExtra="2dip"
                 android:maxLines="10"
                 android:minHeight="20dp"
-                android:text="mention"
                 android:textColor="@color/jandi_star_mention_item_name_content_text"
                 android:textSize="13sp" />
 

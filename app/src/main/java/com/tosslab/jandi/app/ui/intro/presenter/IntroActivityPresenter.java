@@ -61,7 +61,7 @@ public class IntroActivityPresenter {
         try {
             ResConfig config = model.getConfigInfo();
 
-            int installedAppVersion = model.getInstalledAppVersion(context);
+            int installedAppVersion = model.getInstalledAppVersion();
 
             if (config.maintenance != null && config.maintenance.status) {
                 view.showMaintenanceDialog();
@@ -168,7 +168,7 @@ public class IntroActivityPresenter {
         model.sleep(initTime, MAX_DELAY_MS);
 
         if (model.hasSelectedTeam() && !startForInvite) {
-            ParseUpdateUtil.addChannelOnServer();
+            ParseUpdateUtil.registPush();
 
             if (!model.hasLeftSideMenu() && NetworkCheckUtil.isConnected()) {
                 // LeftSideMenu 가 없는 경우 대비

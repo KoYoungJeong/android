@@ -5,14 +5,16 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/lv_main_chat_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:clipToPadding="false"/>
 
     <include
         android:id="@+id/layout_main_chat_list_empty"
-        layout="@layout/view_chat_list_empty" />
+        layout="@layout/view_chat_list_empty"
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/btn_main_chat_fab"
@@ -21,6 +23,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="20dp"
-        android:background="@drawable/btn_chat_fab" />
+        android:background="@drawable/btn_chat_fab"/>
 
 </RelativeLayout>

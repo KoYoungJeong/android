@@ -377,7 +377,7 @@ public class MessageListModel {
 
     public void removeNotificationSameEntityId(long entityId) {
 
-        int chatIdFromPush = JandiPreference.getChatIdFromPush(activity);
+        long chatIdFromPush = JandiPreference.getChatIdFromPush(activity);
         if (chatIdFromPush == entityId) {
             NotificationManager notificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(JandiConstants.NOTIFICATION_ID);

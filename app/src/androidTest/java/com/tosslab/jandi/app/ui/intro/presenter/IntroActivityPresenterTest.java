@@ -80,7 +80,7 @@ public class IntroActivityPresenterTest {
             IntroActivityModel mockModel2 = mock(IntroActivityModel.class);
             when(mockModel2.isNetworkConnected()).thenReturn(true);
 
-            when(mockModel2.getInstalledAppVersion(context)).thenReturn(2);
+            when(mockModel2.getInstalledAppVersion()).thenReturn(2);
             when(mockModel2.getConfigInfo()).thenReturn(mockResConfig2);
 
             presenter2.model = mockModel2;

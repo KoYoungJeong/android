@@ -1,8 +1,11 @@
 package com.tosslab.jandi.app.network.models;
 
-/**
- * Created by tee on 15. 8. 25..
- */
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResCreateFolder {
 
     private long folderId;

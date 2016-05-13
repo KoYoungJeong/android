@@ -260,7 +260,7 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
 
     @Override
     public void setMe(FormattedEntity me) {
-        if (isFinishing()) {
+        if (isFinishing() || me == null) {
             return;
         }
 
@@ -388,6 +388,14 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
     @Override
     public void clearLoadMoreOffset() {
         adapter.clearLoadMoreOffset();
+    }
+
+    @Override
+    public void hideEmptyMentionView() {
+        if (isFinishing()) {
+            return;
+        }
+        vEmptyLayout.setVisibility(View.GONE);
     }
 
     private boolean isFinishing() {

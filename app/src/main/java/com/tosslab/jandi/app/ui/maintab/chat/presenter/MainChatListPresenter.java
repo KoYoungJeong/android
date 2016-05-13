@@ -43,5 +43,9 @@ public interface MainChatListPresenter {
         void startSelectedItemAnimation();
 
         void setStarred(long entityId, boolean isStarred);
+
+        void showEmptyLayout();
+
+        void hideEmptyLayout();
     }
 }

@@ -4,7 +4,6 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
@@ -248,13 +247,11 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             List<Team> teamList = accountHomeModel.getTeamInfos();
 
             Observable.from(teamList)
-                    .filter(team -> team.getStatus() == Team.Status.JOINED)
-                    .subscribe(team -> {
-                        BadgeCountRepository.getRepository()
-                                .upsertBadgeCount(team.getTeamId(), team.getUnread());
+                    .map(Team::getUnread)
+                    .reduce((prev, current) -> prev + current)
+                    .subscribe(total -> {
+                        BadgeUtils.setBadge(JandiApplication.getContext(), total);
                     });
-
-            BadgeUtils.setBadge(JandiApplication.getContext(), BadgeCountRepository.getRepository().getTotalBadgeCount());
 
             ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo();
             view.setTeamInfo(teamList, selectedTeamInfo);

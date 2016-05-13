@@ -5,7 +5,6 @@ import android.preference.PreferenceManager;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.chat.ChatApi;
@@ -17,7 +16,6 @@ import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
-import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -74,10 +72,6 @@ public class EntityMenuDialogModel {
     public void refreshEntities() throws RetrofitException {
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-        badgeCountRepository.upsertBadgeCount(EntityManager.getInstance().getTeamId(), totalUnreadCount);
-        BadgeUtils.setBadge(JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
         EntityManager.getInstance().refreshEntity();
     }
 

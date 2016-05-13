@@ -14,13 +14,8 @@ import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-/**
- * Created by tonyjs on 15. 11. 4..
- */
 public class SignOutService extends IntentService {
-    public static final String ACTION_SIGN_OUT = "action_sign_out";
     public static final String TAG = SignOutService.class.getSimpleName();
 
     public SignOutService() {
@@ -40,8 +35,6 @@ public class SignOutService extends IntentService {
             return;
         }
 
-        LogUtil.i(TAG, "Log out");
-
         SignOutUtil.removeSignData();
 
         final Context context = getApplicationContext();
@@ -52,8 +45,6 @@ public class SignOutService extends IntentService {
                 .start();
 
         new Handler(Looper.getMainLooper())
-                .post(() -> {
-                    ColoredToast.show(context.getString(R.string.err_expired_session));
-                });
+                .post(() -> ColoredToast.show(context.getString(R.string.err_expired_session)));
     }
 }

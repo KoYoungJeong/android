@@ -38,7 +38,6 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.image.BitmapMemoryCacheSupplier;
 import com.tosslab.jandi.app.utils.image.fresco.integreation.okhttp3.OkHttpImagePipelineConfigFactory;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 
 import org.androidannotations.api.BackgroundExecutor;
@@ -124,11 +123,6 @@ public class JandiApplication extends MultiDexApplication {
     }
 
     void initParse() {
-        boolean oldParseFileCacheDeleted = JandiPreference.isOldParseFileCacheDeleted(this);
-        if (!oldParseFileCacheDeleted) {
-            ParseUpdateUtil.removeFileAndCacheIfNeed(this);
-            JandiPreference.setOldParseFileCacheDeleted(this, true);
-        }
 
         // For Parse Push Notification
         if (BuildConfig.DEBUG) {
@@ -139,12 +133,6 @@ public class JandiApplication extends MultiDexApplication {
                 JandiConstantsForFlavors.PARSE_APPLICATION_ID,
                 JandiConstantsForFlavors.PARSE_CLIENT_KEY);
 
-
-        boolean oldParseChannelDeleted = JandiPreference.isOldParseChannelDeleted(this);
-        if (!oldParseChannelDeleted) {
-            ParseUpdateUtil.refreshChannelOnServer();
-            JandiPreference.setOldParseChannelDeleted(this, true);
-        }
     }
 
     private void initRetrofitBuilder() {
