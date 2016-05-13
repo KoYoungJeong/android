@@ -6,6 +6,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
@@ -45,6 +46,8 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
+import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -54,6 +57,7 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -722,5 +726,76 @@ public class MessageListModel {
         SendMessage sendMessage = SendMessageRepository.getRepository().getSendMessageOfLocal(localId);
         long id = EntityManager.getInstance().getMe().getId();
         return getDummyMessageLink(id, sendMessage);
+    }
+
+    public void presetTextContent(List<ResMessages.Link> records) {
+        Observable.from(records)
+                .filter(link -> link.message instanceof ResMessages.TextMessage
+                        || link.message instanceof ResMessages.CommentMessage)
+                .subscribe(link -> {
+                    if (link.message instanceof ResMessages.TextMessage) {
+                        presetTextMessage(link);
+                    } else {
+                        presetCommentMessage(link);
+                    }
+                }, throwable -> {});
+    }
+
+    private void presetCommentMessage(ResMessages.Link link) {
+        ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) link.message;
+        long myId = EntityManager.getInstance().getMe().getId();
+        if (commentMessage.content.contentBuilder == null) {
+
+            SpannableStringBuilder messageBuilder = new SpannableStringBuilder();
+            messageBuilder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
+            messageBuilder.append(" ");
+
+            MentionAnalysisInfo mentionAnalysisInfo =
+                    MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
+                            .textSize(UiUtils.getPixelFromSp(11f))
+                            .clickable(true)
+                            .build();
+
+            SpannableLookUp.text(messageBuilder)
+                    .hyperLink(false)
+                    .markdown(false)
+                    .webLink(false)
+                    .emailLink(false)
+                    .telLink(false)
+                    .mention(mentionAnalysisInfo, false)
+                    .lookUp(JandiApplication.getContext());
+
+            commentMessage.content.contentBuilder = messageBuilder;
+        }
+    }
+
+    private void presetTextMessage(ResMessages.Link link) {
+        ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
+        if (textMessage.content.contentBuilder == null) {
+
+            SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
+            if (!TextUtils.isEmpty(textMessage.content.body)) {
+                messageStringBuilder.append(textMessage.content.body);
+                long myId = EntityManager.getInstance().getMe().getId();
+                MentionAnalysisInfo mentionInfo = MentionAnalysisInfo.newBuilder(myId, textMessage.mentions)
+                        .textSize(UiUtils.getPixelFromSp(14f))
+                        .clickable(true)
+                        .build();
+
+                SpannableLookUp.text(messageStringBuilder)
+                        .hyperLink(false)
+                        .markdown(false)
+                        .webLink(false)
+                        .telLink(false)
+                        .emailLink(false)
+                        .mention(mentionInfo, false)
+                        .lookUp(JandiApplication.getContext());
+
+            } else {
+                messageStringBuilder.append("");
+            }
+            textMessage.content.contentBuilder = messageStringBuilder;
+        }
+
     }
 }

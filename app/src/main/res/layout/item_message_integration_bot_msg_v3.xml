@@ -99,45 +99,36 @@
         android:layout_marginRight="59dp"
         android:orientation="vertical">
 
-        <android.support.v7.widget.CardView
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="2dp"
-            app:cardElevation="0dp"
-            app:cardMaxElevation="0dp"
-            app:cardPreventCornerOverlap="false"
-            app:cardUseCompatPadding="false">
+            android:background="@drawable/bg_message_item_selector"
+            android:orientation="horizontal">
 
-            <RelativeLayout
+            <ImageView
+                android:id="@+id/v_message_sub_menu_connect_color"
+                android:layout_width="4dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/vg_message_sub_menu"
+                android:layout_alignTop="@+id/vg_message_sub_menu" />
+
+            <LinearLayout
+                android:id="@+id/vg_message_sub_menu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_toRightOf="@+id/v_message_sub_menu_connect_color"
+                android:orientation="vertical"
+                android:paddingBottom="4dp"
+                android:paddingLeft="7dp"
+                android:paddingRight="8dp"
+                android:paddingTop="4dp">
 
-                <ImageView
-                    android:id="@+id/v_message_sub_menu_connect_color"
-                    android:layout_width="4dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/vg_message_sub_menu"
-                    android:layout_alignTop="@+id/vg_message_sub_menu" />
+                <include layout="@layout/layout_integration_bot_sub_menu" />
 
-                <LinearLayout
-                    android:id="@+id/vg_message_sub_menu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/v_message_sub_menu_connect_color"
-                    android:orientation="vertical"
-                    android:paddingBottom="4dp"
-                    android:paddingLeft="7dp"
-                    android:paddingRight="8dp"
-                    android:paddingTop="4dp">
+            </LinearLayout>
+        </RelativeLayout>
 
-                    <include layout="@layout/layout_integration_bot_sub_menu" />
-
-                </LinearLayout>
-            </RelativeLayout>
-        </android.support.v7.widget.CardView>
 
         <RelativeLayout
             android:id="@+id/vg_linkpreview"

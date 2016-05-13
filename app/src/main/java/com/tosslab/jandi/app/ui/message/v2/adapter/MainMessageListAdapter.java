@@ -158,12 +158,11 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
         int minPosition = Math.min(position, getItemCount());
 
-        List<ResMessages.Link> copyList = new ArrayList<>(links);
         if (minPosition != 0) {
-            for (int idx = copyList.size() - 1; idx >= 0; idx--) {
-                ResMessages.Link link = copyList.get(idx);
+            for (int idx = links.size() - 1; idx >= 0; idx--) {
+                ResMessages.Link link = links.get(idx);
                 if (TextUtils.equals(link.status, "archived")) {
-                    copyList.remove(idx);
+                    links.remove(idx);
                     int searchedPosition = indexByMessageId(link.messageId);
                     if (searchedPosition < 0) {
                         continue;
@@ -174,27 +173,38 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
                         originLink.message = link.message;
                         originLink.status = "archived";
                         itemTypes.remove(originLink);
+                        getItemViewType(searchedPosition);
                     } else {
-                        MainMessageListAdapter.this.remove(searchedPosition);
+                        remove(searchedPosition);
                         minPosition--;
                     }
                 }
             }
+        }
 
-            if (minPosition > 0 && minPosition <= getItemCount()) {
-                itemTypes.remove(getItem(minPosition - 1));
+        int dummyMessageCount = getDummyMessageCount();
+        int beforePosition;
+        if (minPosition > dummyMessageCount) {
+            this.links.addAll(minPosition - dummyMessageCount, links);
+            beforePosition = minPosition - dummyMessageCount - 1;
+            for (int idx = 0; idx < links.size(); idx++) {
+                getItemViewType(minPosition - dummyMessageCount + idx);
             }
         } else {
-
-            if (minPosition < getItemCount()) {
-                itemTypes.remove(getItem(minPosition));
+            this.links.addAll(minPosition, links);
+            beforePosition = minPosition - 1;
+            for (int idx = 0; idx < links.size(); idx++) {
+                getItemViewType(minPosition + idx);
             }
         }
-        int dummyMessageCount = getDummyMessageCount();
-        if (minPosition > dummyMessageCount) {
-            this.links.addAll(minPosition - dummyMessageCount, copyList);
-        } else {
-            this.links.addAll(minPosition, copyList);
+        if (beforePosition >= 0) {
+            itemTypes.remove(getItem(beforePosition));
+            getItemViewType(beforePosition);
+        }
+
+        if (beforePosition + links.size() + 1 < getItemCount()) {
+            itemTypes.remove(getItem(beforePosition + links.size() + 1));
+            getItemViewType(beforePosition + links.size() + 1);
         }
     }
 
@@ -203,14 +213,17 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
         try {
 
-            if (position > 0) {
-                itemTypes.remove(links.get(position - 1));
-            }
-            if (position < getItemCount() - 1) {
-                itemTypes.remove(links.get(position + 1));
-            }
             ResMessages.Link removed = links.remove(position);
             itemTypes.remove(removed);
+
+            if (position > 0) {
+                itemTypes.remove(links.get(position - 1));
+                getItemViewType(position - 1);
+            }
+            if (position < getItemCount() - 1) {
+                itemTypes.remove(links.get(position));
+                getItemViewType(position);
+            }
 
         } catch (Exception e) {
             LogUtil.e(Log.getStackTraceString(e));
@@ -221,6 +234,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     @Override
     public void updateCachedType(int position) {
         itemTypes.remove(links.get(position));
+        getItemViewType(position);
     }
 
     @Override

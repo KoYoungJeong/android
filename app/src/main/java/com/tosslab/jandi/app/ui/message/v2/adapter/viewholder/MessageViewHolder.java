@@ -96,11 +96,10 @@ public class MessageViewHolder extends BaseMessageViewHolder {
     }
 
     private void setMessage(ResMessages.Link link) {
-        EntityManager entityManager = EntityManager.getInstance();
         ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
         if (textMessage.content.contentBuilder == null) {
-
+            EntityManager entityManager = EntityManager.getInstance();
             SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
             if (!TextUtils.isEmpty(textMessage.content.body)) {
                 messageStringBuilder.append(textMessage.content.body);
@@ -119,13 +118,14 @@ public class MessageViewHolder extends BaseMessageViewHolder {
                         .mention(mentionInfo, false)
                         .lookUp(tvMessage.getContext());
 
-                LinkifyUtil.setOnLinkClick(tvMessage);
 
             } else {
                 messageStringBuilder.append("");
             }
             textMessage.content.contentBuilder = messageStringBuilder;
         }
+
+        LinkifyUtil.setOnLinkClick(tvMessage);
 
         tvMessage.setText(textMessage.content.contentBuilder, TextView.BufferType.SPANNABLE);
 

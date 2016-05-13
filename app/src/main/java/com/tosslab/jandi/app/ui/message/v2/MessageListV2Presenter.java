@@ -392,6 +392,7 @@ public class MessageListV2Presenter {
                     view.updateRecyclerViewInfo();
                 }
 
+                messageListModel.presetTextContent(resOldMessage.records);
                 adapterModel.addAll(0, resOldMessage.records);
                 view.refreshMessages();
                 if (!isFirstMessage) {
@@ -649,6 +650,7 @@ public class MessageListV2Presenter {
         }
 
         adapterModel.addAll(adapterModel.getCount(), archivedList);
+        messageListModel.presetTextContent(newMessages);
         adapterModel.addAll(adapterModel.getCount(), newMessages);
         view.refreshMessages();
 
@@ -1146,8 +1148,7 @@ public class MessageListV2Presenter {
             ResMessages.Link item = adapterModel.getItem(position);
             item.message.status = archivedStatus;
             item.message.createTime = new Date();
-            int indexOfUnsharedFile = adapterModel.indexByMessageId(position);
-            adapterModel.updateCachedType(indexOfUnsharedFile);
+            adapterModel.updateCachedType(position);
 
         }
 
@@ -1157,8 +1158,7 @@ public class MessageListV2Presenter {
             ResMessages.Link item = adapterModel.getItem(commentIndex);
             item.feedback.status = archivedStatus;
             item.feedback.createTime = new Date();
-            int indexOfUnsharedFile = adapterModel.indexByMessageId(commentIndex);
-            adapterModel.updateCachedType(indexOfUnsharedFile);
+            adapterModel.updateCachedType(commentIndex);
 
         }
 
