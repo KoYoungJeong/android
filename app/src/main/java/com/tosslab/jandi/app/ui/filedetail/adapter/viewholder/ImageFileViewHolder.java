@@ -126,6 +126,7 @@ public class ImageFileViewHolder extends FileViewHolder {
         Uri originalUri = Uri.parse(originalUrl);
 
         ImageLoader.newInstance()
+                // cache 되어 있는지 확인하기 위해 네트워킹 작업이 실행되면 exception 발생시킨다.
                 .blockNetworking(true)
                 .placeHolder(R.drawable.comment_image_preview_download, ImageView.ScaleType.FIT_XY)
                 .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)

@@ -160,6 +160,7 @@ public class ImageLoader {
     private DrawableTypeRequest<Uri> getRequest(ImageView imageView) {
         if (blockNetworking) {
             return Glide.with(imageView.getContext())
+                    // cache 되어 있는지 확인하기 위해 네트워킹 작업이 실행되면 exception 발생시킨다.
                     .using(new ThrowIOExceptionStreamLoader<Uri>())
                     .load(uri);
         } else {
