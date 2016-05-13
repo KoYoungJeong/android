@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.TypeUtil;
 import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
+import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
@@ -43,16 +44,15 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     MoreState newMoreState;
     MainMessageListAdapter.OnItemClickListener onItemClickListener;
     MainMessageListAdapter.OnItemLongClickListener onItemLongClickListener;
-    long teamId;
-    long roomId = -1;
-    long entityId;
     List<ResMessages.Link> links;
+    private Room room;
     private MessagePointer messagePointer;
 
     private Map<ResMessages.Link, Integer> itemTypes;
 
-    public MainMessageListAdapter(Context context) {
+    public MainMessageListAdapter(Context context, Room room) {
         this.context = context;
+        this.room = room;
         oldMoreState = MoreState.Idle;
         links = new ArrayList<>();
         setHasStableIds(true);
@@ -73,7 +73,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     public void onBindViewHolder(RecyclerBodyViewHolder viewHolder, int position) {
         ResMessages.Link item = getItem(position);
         BodyViewHolder bodyViewHolder = viewHolder.getViewHolder();
-        bodyViewHolder.bindData(item, teamId, roomId, entityId);
+        bodyViewHolder.bindData(item, room.getTeamId(), room.getRoomId(), room.getEntityId());
 
         if (item.id == lastMarker) {
             if (markerAnimState == MainMessageListAdapter.AnimState.Idle) {
@@ -218,6 +218,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     }
 
+    @Override
     public void updateCachedType(int position) {
         itemTypes.remove(links.get(position));
     }
@@ -230,10 +231,12 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         return links.get(position);
     }
 
+    @Override
     public void setOldLoadingComplete() {
         oldMoreState = MoreState.Idle;
     }
 
+    @Override
     public void setOldNoMoreLoading() {
         oldMoreState = MoreState.Nope;
     }
@@ -331,14 +334,17 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         this.lastMarker = lastMarker;
     }
 
+    @Override
     public void setMoreFromNew(boolean moreFromNew) {
         this.moreFromNew = moreFromNew;
     }
 
+    @Override
     public void setNewLoadingComplete() {
         newMoreState = MoreState.Idle;
     }
 
+    @Override
     public void setNewNoMoreLoading() {
         newMoreState = MoreState.Nope;
     }
@@ -349,10 +355,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
         this.onItemLongClickListener = onItemLongClickListener;
-    }
-
-    public void setTeamId(long teamId) {
-        this.teamId = teamId;
     }
 
     @Override
@@ -405,21 +407,9 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         links.add(dummyMessage);
     }
 
-    public long getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(long roomId) {
-        this.roomId = roomId;
-    }
-
-    public void setEntityId(long entityId) {
-        this.entityId = entityId;
-    }
-
+    @Override
     public void modifyStarredStateByPosition(int position, boolean isStarred) {
         getItem(position).message.isStarred = isStarred;
-        notifyItemChanged(position);
     }
 
     @Override
@@ -434,6 +424,11 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     public void setMessagePointer(MessagePointer messagPointer) {
         this.messagePointer = messagPointer;
+    }
+
+    @Override
+    public void refresh() {
+        notifyDataSetChanged();
     }
 
     enum MoreState {

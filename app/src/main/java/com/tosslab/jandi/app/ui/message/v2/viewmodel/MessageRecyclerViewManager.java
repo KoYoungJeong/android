@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapterModel;
 
-public class LinkRecyclerViewManager {
+public class MessageRecyclerViewManager {
     private final LinearLayoutManager layoutManager;
     private MessageListAdapterModel adapterModel;
     private long firstLinkId = -1;
@@ -14,7 +14,7 @@ public class LinkRecyclerViewManager {
     private int cachedLastItemPosition;
     private int cachedItemCount;
 
-    public LinkRecyclerViewManager(RecyclerView recyclerView, MessageListAdapterModel adapterModel) {
+    public MessageRecyclerViewManager(RecyclerView recyclerView, MessageListAdapterModel adapterModel) {
         this.adapterModel = adapterModel;
         this.layoutManager = ((LinearLayoutManager) recyclerView.getLayoutManager());
     }
@@ -44,8 +44,32 @@ public class LinkRecyclerViewManager {
         }
     }
 
+    public void scrollToLast() {
+        if (adapterModel.getCount() > 0) {
+            layoutManager.scrollToPosition(adapterModel.getCount() - 1);
+        }
+    }
+
+    public void scrollToLinkId(long linkId) {
+        int position = adapterModel.indexOfLinkId(linkId);
+        if (position >= 0) {
+            layoutManager.scrollToPosition(position);
+        }
+    }
+
     public boolean isScrollInMiddleAsLastStatus() {
         return cachedLastItemPosition >= 0 && cachedLastItemPosition < cachedItemCount - 1;
 
+    }
+
+    public void scrollToLinkId(long lastReadLinkId, int top) {
+        int position = adapterModel.indexOfLinkId(lastReadLinkId);
+
+        if (position > 0) {
+            position = Math.min(adapterModel.getCount() - 1, position + 1);
+            layoutManager.scrollToPositionWithOffset(position, top);
+        } else if (position < 0) {
+            layoutManager.scrollToPosition(adapterModel.getCount() - 1);
+        }
     }
 }

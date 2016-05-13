@@ -11,6 +11,10 @@ public interface MessageListAdapterModel {
 
     ResMessages.Link getItem(int position);
 
+    void setOldLoadingComplete();
+
+    void setOldNoMoreLoading();
+
     int indexByMessageId(long messageId);
 
     int indexOfDummyMessageId(long messageId);
@@ -23,6 +27,10 @@ public interface MessageListAdapterModel {
 
     int getDummyMessagePositionByLocalId(long localId);
 
+    void setMoreFromNew(boolean moreFromNew);
+
+    void setNewLoadingComplete();
+
     int getCount();
 
     int getDummyMessageCount();
@@ -30,4 +38,10 @@ public interface MessageListAdapterModel {
     void removeAllDummy();
 
     void add(ResMessages.Link dummyMessage);
+
+    void setNewNoMoreLoading();
+
+    void updateCachedType(int indexOfUnsharedFile);
+
+    void modifyStarredStateByPosition(int index, boolean starred);
 }
