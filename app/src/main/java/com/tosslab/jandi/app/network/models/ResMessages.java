@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.network.models;
 
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -340,6 +341,9 @@ public class ResMessages {
 
         @DatabaseField
         public String body;
+
+        @JsonIgnore
+        public SpannableStringBuilder contentBuilder;
 
         @DatabaseField
         public String connectType;

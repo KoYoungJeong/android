@@ -2,9 +2,6 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -18,12 +15,10 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.target.Target;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
@@ -34,8 +29,6 @@ import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
-
-import de.greenrobot.event.EventBus;
 
 public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
@@ -80,10 +73,12 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
     @Override
     public void initView(View rootView) {
         super.initView(rootView);
-        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
-        vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
-        tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
-        vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+        if (hasProfile) {
+            ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
+            vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
+            tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
+            vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+        }
 
         vgFileImageWrapper = rootView.findViewById(R.id.vg_message_photo_wrapper);
         ivFileImage = (ImageView) rootView.findViewById(R.id.iv_message_photo);
@@ -95,7 +90,11 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
     @Override
     public int getLayoutId() {
-        return R.layout.item_message_image_v3;
+        if (hasProfile) {
+            return R.layout.item_message_image_v3;
+        } else {
+            return R.layout.item_message_image_collapse_v3;
+        }
     }
 
     // 계속 계산하지 않도록
@@ -106,7 +105,9 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
         setMarginVisible();
         setTimeVisible();
-        setProfileInfos(link);
+        if (hasProfile) {
+            ProfileUtil.setProfile(link.fromEntity, ivProfile, vProfileCover, tvName, vDisableLineThrough);
+        }
         bindFileImage(link, teamId, roomId);
         setFileTitleBackground(link);
     }
@@ -118,35 +119,6 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         } else {
             tvFileName.setBackgroundResource(R.drawable.bg_round_bottom_white_for_message);
         }
-    }
-
-    public void setProfileInfos(ResMessages.Link link) {
-        long fromEntityId = link.fromEntity;
-
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity entity = entityManager.getEntityById(fromEntityId);
-        ResLeftSideMenu.User fromEntity = entity.getUser();
-
-        String profileUrl = entity.getUserLargeProfileUrl();
-
-        ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);
-
-        if (fromEntity != null && entity.isEnabled()) {
-            tvName.setTextColor(JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_name));
-            vProfileCover.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            vDisableLineThrough.setVisibility(View.GONE);
-        } else {
-            tvName.setTextColor(
-                    tvName.getResources().getColor(R.color.deactivate_text_color));
-            ShapeDrawable foreground = new ShapeDrawable(new OvalShape());
-            foreground.getPaint().setColor(0x66FFFFFF);
-            vProfileCover.setBackgroundDrawable(foreground);
-            vDisableLineThrough.setVisibility(View.VISIBLE);
-        }
-
-        tvName.setText(fromEntity.name);
-        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));
-        tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
     }
 
     private void bindFileImage(ResMessages.Link link, long teamId, long roomId) {

@@ -1,7 +1,9 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,14 +16,14 @@ import com.tosslab.jandi.app.network.models.ResMessages;
  */
 public abstract class BaseCommentViewHolder implements BodyViewHolder {
 
-    protected ViewGroup vgFileItem;
-    protected ViewGroup vgProfileNestedComment;
-    protected ViewGroup vgProfileNestedCommentSticker;
+    protected ViewStub stubFileInfo;
+    protected ViewGroup vgFileInfo;
     protected View vCommentSemiDivider;
     protected View vCommentNormalDivider;
     protected View vMargin;
     protected ViewGroup vgMessageLastRead;
     protected ImageView ivCommentBubbleTail;
+    protected ViewStub stubReadMore;
     protected ViewGroup vgReadMore;
 
     protected boolean hasBottomMargin = false;
@@ -29,22 +31,15 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
     private boolean hasCommentBubbleTail = false;
     private boolean hasViewAllComment = false;
     private boolean hasFileInfoView = false;
+    private TextView tvReadMore;
 
 
     @Override
     public void initView(View rootView) {
-        vgFileItem =
-                (ViewGroup) rootView.findViewById(R.id.vg_file_item);
-        vgReadMore = (ViewGroup) rootView.findViewById(R.id.vg_read_more);
+        stubFileInfo = (ViewStub) rootView.findViewById(R.id.vg_file_item);
+        stubReadMore = (ViewStub) rootView.findViewById(R.id.vg_read_more);
 
-        vgProfileNestedComment =
-                (ViewGroup) rootView.findViewById(R.id.vg_profile_nested_comment);
-
-        vgProfileNestedCommentSticker =
-                (ViewGroup) rootView.findViewById(R.id.vg_profile_nested_comment_sticker);
-
-        vgMessageLastRead =
-                (ViewGroup) rootView.findViewById(R.id.vg_message_last_read);
+        vgMessageLastRead = (ViewGroup) rootView.findViewById(R.id.vg_message_last_read);
 
         vCommentSemiDivider = rootView.findViewById(R.id.v_comment_semi_divider);
         vCommentNormalDivider = rootView.findViewById(R.id.v_comment_normal_divider);
@@ -52,26 +47,29 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
         ivCommentBubbleTail = (ImageView) rootView.findViewById(R.id.iv_comment_bubble_tail);
 
         initObjects();
+        setOptionView();
     }
 
     private void setOptionView() {
-        if (hasFileInfoView) {
-            vgFileItem.setVisibility(View.VISIBLE);
-        } else {
-            vgFileItem.setVisibility(View.GONE);
-        }
-
-        if (hasCommentBubbleTail) {
-            ivCommentBubbleTail.setVisibility(View.VISIBLE);
-        } else {
-            ivCommentBubbleTail.setVisibility(View.GONE);
+        if (hasFileInfoView && stubFileInfo != null) {
+            vgFileInfo = (ViewGroup) stubFileInfo.inflate();
         }
 
         if (hasViewAllComment) {
-            vgReadMore.setVisibility(View.VISIBLE);
-        } else {
-            vgReadMore.setVisibility(View.GONE);
+            if (stubReadMore != null) {
+                vgReadMore = (ViewGroup) stubReadMore.inflate();
+            }
+            tvReadMore = (TextView) vgReadMore.findViewById(R.id.tv_comment_read_more);
         }
+
+        if (ivCommentBubbleTail != null) {
+            if (hasCommentBubbleTail) {
+                ivCommentBubbleTail.setVisibility(View.VISIBLE);
+            } else {
+                ivCommentBubbleTail.setVisibility(View.GONE);
+            }
+        }
+
 
         if (hasSemiDivider) {
             vCommentSemiDivider.setVisibility(View.VISIBLE);
@@ -84,12 +82,10 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
             vCommentSemiDivider.setVisibility(View.GONE);
             vCommentNormalDivider.setVisibility(View.GONE);
             vMargin.setVisibility(View.VISIBLE);
-            return;
         } else {
             vCommentSemiDivider.setVisibility(View.GONE);
             vCommentNormalDivider.setVisibility(View.VISIBLE);
             vMargin.setVisibility(View.GONE);
-            return;
         }
     }
 
@@ -97,28 +93,25 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
 
     @Override
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
-        setOptionView();
         if (hasViewAllComment) {
             int count = link.feedback.commentCount;
             String countString
                     = JandiApplication.getContext().getResources().getString(R.string.jandi_view_comment_read_more, count);
-            TextView tvReadMore = (TextView) vgReadMore.findViewById(R.id.tv_comment_read_more);
             tvReadMore.setText(countString);
         }
     }
 
     @Override
     public void setLastReadViewVisible(long currentLinkId, long lastReadLinkId) {
-        if (currentLinkId == lastReadLinkId) {
-            vgMessageLastRead.setVisibility(View.VISIBLE);
-        } else {
-            vgMessageLastRead.setVisibility(View.GONE);
+        if (vgMessageLastRead != null) {
+            if (currentLinkId == lastReadLinkId) {
+                vgMessageLastRead.removeAllViews();
+                LayoutInflater.from(vgMessageLastRead.getContext()).inflate(R.layout.item_message_last_read_v2, vgMessageLastRead);
+                vgMessageLastRead.setVisibility(View.VISIBLE);
+            } else {
+                vgMessageLastRead.setVisibility(View.GONE);
+            }
         }
-    }
-
-    @Override
-    public int getLayoutId() {
-        return R.layout.item_comment_v3;
     }
 
     @Override

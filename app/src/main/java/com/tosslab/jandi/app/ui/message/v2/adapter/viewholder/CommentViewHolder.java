@@ -3,10 +3,6 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -19,17 +15,16 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
@@ -40,8 +35,6 @@ import com.tosslab.jandi.app.views.spannable.NameSpannable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import de.greenrobot.event.EventBus;
-
 /**
  * Created by tee on 16. 4. 7..
  */
@@ -50,8 +43,6 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     private ImageView ivMessageCommonFile;
     private TextView tvFileUploaderName;
     private TextView tvCommonFileSize;
-    private TextView tvMessageBadge;
-    private TextView tvMessageTime;
     private ImageView ivProfileNestedCommentUserProfile;
     private TextView tvProfileNestedCommentUserName;
     private ImageView ivProfileNestedNameLineThrough;
@@ -66,32 +57,46 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     private View tvFileInfoDivider;
     private View vProfileCover;
     private View vFileIconBorder;
+    private ViewGroup vgProfileNestedComment;
 
 
     private CommentViewHolder() {
     }
 
     @Override
+    public int getLayoutId() {
+        if (hasNestedProfile) {
+            return R.layout.item_comment_msg_v3;
+        } else {
+            return R.layout.item_comment_msg_collapse_v3;
+        }
+    }
+
+    @Override
     public void initView(View rootView) {
         super.initView(rootView);
-        // 파일 정보
-        vgMessageCommonFile = (ViewGroup) rootView.findViewById(R.id.vg_message_common_file);
-        ivMessageCommonFile = (ImageView) rootView.findViewById(R.id.iv_message_common_file);
-        tvMessageCommonFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
-        vFileIconBorder = rootView.findViewById(R.id.v_message_common_file_border);
-        tvFileUploaderName = (TextView) rootView.findViewById(R.id.tv_uploader_name);
-        tvFileInfoDivider = rootView.findViewById(R.id.tv_file_info_divider);
-        tvCommonFileSize = (TextView) rootView.findViewById(R.id.tv_common_file_size);
-        tvMessageBadge = (TextView) rootView.findViewById(R.id.tv_message_badge);
-        tvMessageTime = (TextView) rootView.findViewById(R.id.tv_message_time);
-        tvMessageBadge.setVisibility(View.GONE);
-        tvMessageTime.setVisibility(View.GONE);
+
+        vgProfileNestedComment =
+                (ViewGroup) rootView.findViewById(R.id.vg_profile_nested_comment);
+
+        if (hasFileInfoView()) {
+            // 파일 정보
+            vgMessageCommonFile = (ViewGroup) rootView.findViewById(R.id.vg_message_common_file);
+            ivMessageCommonFile = (ImageView) rootView.findViewById(R.id.iv_message_common_file);
+            tvMessageCommonFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
+            vFileIconBorder = rootView.findViewById(R.id.v_message_common_file_border);
+            tvFileUploaderName = (TextView) rootView.findViewById(R.id.tv_uploader_name);
+            tvFileInfoDivider = rootView.findViewById(R.id.tv_file_info_divider);
+            tvCommonFileSize = (TextView) rootView.findViewById(R.id.tv_common_file_size);
+        }
 
         // 프로필이 있는 커멘트
-        ivProfileNestedCommentUserProfile = (ImageView) rootView.findViewById(R.id.iv_profile_nested_comment_user_profile);
-        vProfileCover = rootView.findViewById(R.id.v_profile_nested_comment_user_profile_cover);
-        tvProfileNestedCommentUserName = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_user_name);
-        ivProfileNestedNameLineThrough = (ImageView) rootView.findViewById(R.id.iv_profile_nested_name_line_through);
+        if (hasNestedProfile) {
+            ivProfileNestedCommentUserProfile = (ImageView) rootView.findViewById(R.id.iv_profile_nested_comment_user_profile);
+            vProfileCover = rootView.findViewById(R.id.v_profile_nested_comment_user_profile_cover);
+            tvProfileNestedCommentUserName = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_user_name);
+            ivProfileNestedNameLineThrough = (ImageView) rootView.findViewById(R.id.iv_profile_nested_name_line_through);
+        }
 
         tvProfileNestedCommentContent = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_content);
 
@@ -101,17 +106,11 @@ public class CommentViewHolder extends BaseCommentViewHolder {
             ivProfileNestedCommentUserProfile.setVisibility(View.VISIBLE);
             tvProfileNestedCommentUserName.setVisibility(View.VISIBLE);
             ivProfileNestedNameLineThrough.setVisibility(View.VISIBLE);
-        } else {
-            ivProfileNestedCommentUserProfile.setVisibility(View.GONE);
-            tvProfileNestedCommentUserName.setVisibility(View.GONE);
-            ivProfileNestedNameLineThrough.setVisibility(View.GONE);
         }
     }
 
     @Override
     protected void initObjects() {
-        vgProfileNestedComment.setVisibility(View.VISIBLE);
-        vgProfileNestedCommentSticker.setVisibility(View.GONE);
     }
 
     @Override
@@ -123,7 +122,9 @@ public class CommentViewHolder extends BaseCommentViewHolder {
             setFileInfoBackground(link);
         }
 
-        setCommentUserInfo(link);
+        if (hasNestedProfile) {
+            ProfileUtil.setProfile(link.fromEntity, ivProfileNestedCommentUserProfile, vProfileCover, tvProfileNestedCommentUserName, ivProfileNestedNameLineThrough);
+        }
 
         setCommentMessage(link, teamId, roomId);
         setBackground(link);
@@ -187,40 +188,44 @@ public class CommentViewHolder extends BaseCommentViewHolder {
         if (link.message instanceof ResMessages.CommentMessage) {
             ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) link.message;
 
-            SpannableStringBuilder builder = new SpannableStringBuilder();
-            builder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
-            builder.append(" ");
-
             long myId = EntityManager.getInstance().getMe().getId();
-            MentionAnalysisInfo mentionAnalysisInfo =
-                    MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
-                            .textSize(tvProfileNestedCommentContent.getTextSize())
-                            .clickable(true)
-                            .build();
+            if (commentMessage.content.contentBuilder == null) {
 
-            SpannableLookUp.text(builder)
-                    .hyperLink(false)
-                    .markdown(false)
-                    .webLink(false)
-                    .emailLink(false)
-                    .telLink(false)
-                    .mention(mentionAnalysisInfo, false)
-                    .lookUp(tvProfileNestedCommentContent.getContext());
+                SpannableStringBuilder messageBuilder = new SpannableStringBuilder();
+                messageBuilder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
+                messageBuilder.append(" ");
 
-            LinkifyUtil.addLinks(context, builder);
+                MentionAnalysisInfo mentionAnalysisInfo =
+                        MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
+                                .textSize(tvProfileNestedCommentContent.getTextSize())
+                                .clickable(true)
+                                .build();
 
+                SpannableLookUp.text(messageBuilder)
+                        .hyperLink(false)
+                        .markdown(false)
+                        .webLink(false)
+                        .emailLink(false)
+                        .telLink(false)
+                        .mention(mentionAnalysisInfo, false)
+                        .lookUp(tvProfileNestedCommentContent.getContext());
+
+                commentMessage.content.contentBuilder = messageBuilder;
+            }
+
+            SpannableStringBuilder builderWithBadge = new SpannableStringBuilder(commentMessage.content.contentBuilder);
             if (!hasOnlyBadge) {
-                int startIndex = builder.length();
-                builder.append(DateTransformator.getTimeStringForSimple(commentMessage.createTime));
-                int endIndex = builder.length();
+                int startIndex = builderWithBadge.length();
+                builderWithBadge.append(DateTransformator.getTimeStringForSimple(commentMessage.createTime));
+                int endIndex = builderWithBadge.length();
 
                 DateViewSpannable spannable =
                         new DateViewSpannable(tvProfileNestedCommentContent.getContext(),
                                 DateTransformator.getTimeStringForSimple(commentMessage.createTime),
-                                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10f, context.getResources().getDisplayMetrics()));
+                                (int) UiUtils.getPixelFromSp(10f));
                 spannable.setTextColor(
                         JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_date));
-                builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                builderWithBadge.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
             int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
@@ -231,52 +236,15 @@ public class CommentViewHolder extends BaseCommentViewHolder {
                         new NameSpannable(
                                 (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 9f, context.getResources().getDisplayMetrics())
                                 , context.getResources().getColor(R.color.jandi_accent_color));
-                int beforeLength = builder.length();
-                builder.append(" ");
-                builder.append(String.valueOf(unreadCount))
-                        .setSpan(unreadCountSpannable, beforeLength, builder.length(),
+                int beforeLength = builderWithBadge.length();
+                builderWithBadge.append(" ");
+                builderWithBadge.append(String.valueOf(unreadCount))
+                        .setSpan(unreadCountSpannable, beforeLength, builderWithBadge.length(),
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
-            tvProfileNestedCommentContent.setText(builder, TextView.BufferType.SPANNABLE);
+            tvProfileNestedCommentContent.setText(builderWithBadge, TextView.BufferType.SPANNABLE);
         }
-    }
-
-    private void setCommentUserInfo(ResMessages.Link link) {
-        long fromEntityId = link.fromEntity;
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity entity = entityManager.getEntityById(fromEntityId);
-        ResLeftSideMenu.User fromEntity = entity.getUser();
-
-        String profileUrl = entity.getUserLargeProfileUrl();
-
-        ImageUtil.loadProfileImage(
-                ivProfileNestedCommentUserProfile, profileUrl, R.drawable.profile_img);
-
-        FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
-        ResLeftSideMenu.User user = entityById != EntityManager.UNKNOWN_USER_ENTITY ? entityById.getUser() : null;
-
-        if (user != null && entityById.isEnabled()) {
-            tvProfileNestedCommentUserName.setTextColor(
-                    JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_name));
-            vProfileCover.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            ivProfileNestedNameLineThrough.setVisibility(View.GONE);
-        } else {
-            tvProfileNestedCommentUserName.setTextColor(
-                    JandiApplication.getContext().getResources().getColor(R.color.deactivate_text_color));
-            ShapeDrawable foreground = new ShapeDrawable(new OvalShape());
-            foreground.getPaint().setColor(0x66FFFFFF);
-            vProfileCover.setBackgroundDrawable(foreground);
-            ivProfileNestedNameLineThrough.setVisibility(View.VISIBLE);
-        }
-
-        tvProfileNestedCommentUserName.setText(fromEntity.name);
-
-        ivProfileNestedCommentUserProfile.setOnClickListener(
-                v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));
-
-        tvProfileNestedCommentUserName.setOnClickListener(
-                v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
     }
 
     private void settingFileInfo(ResMessages.Link link, long roomId) {
@@ -287,18 +255,14 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
         FormattedEntity feedbackEntityById =
                 entityManager.getEntityById(link.feedback.writerId);
-        ResLeftSideMenu.User feedbackUser =
-                feedbackEntityById != EntityManager.UNKNOWN_USER_ENTITY ? feedbackEntityById.getUser() : null;
 
-        tvFileUploaderName.setText(feedbackUser.name);
+        tvFileUploaderName.setText(feedbackEntityById.getName());
 
         ResMessages.FileContent fileContent = link.feedback.content;
 
         String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
 
         tvCommonFileSize.setText(fileSize);
-
-        tvMessageTime.setText(DateTransformator.getTimeStringForSimple(link.time));
 
         if (link.feedback instanceof ResMessages.FileMessage) {
 
@@ -414,8 +378,12 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     @Override
     public void setOnItemClickListener(View.OnClickListener itemClickListener) {
         super.setOnItemClickListener(itemClickListener);
-        vgMessageCommonFile.setOnClickListener(itemClickListener);
-        vgReadMore.setOnClickListener(itemClickListener);
+        if (vgMessageCommonFile != null) {
+            vgMessageCommonFile.setOnClickListener(itemClickListener);
+        }
+        if (vgReadMore != null) {
+            vgReadMore.setOnClickListener(itemClickListener);
+        }
         vgProfileNestedComment.setOnClickListener(itemClickListener);
     }
 

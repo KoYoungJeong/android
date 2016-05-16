@@ -2,15 +2,13 @@ package com.tosslab.jandi.app.ui.message.v2.viewmodel;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 public class DateAnimator {
-    private static final String TAG = "DateAnimator";
-    private static final long DURATION = 1500;
+    private static final long DURATION = 500;
     private final ValueAnimator valueAnimator;
     private View target;
 
@@ -27,7 +25,6 @@ public class DateAnimator {
     }
 
     public void show() {
-        Log.d(TAG, "show() called with: " + "");
 
         long currentPlayTime = valueAnimator.getCurrentPlayTime();
         valueAnimator.removeAllListeners();
@@ -39,7 +36,6 @@ public class DateAnimator {
     }
 
     public void hide() {
-        Log.d(TAG, "hide() called with: ");
         long currentPlayTime = valueAnimator.getCurrentPlayTime();
         valueAnimator.removeAllListeners();
         valueAnimator.cancel();

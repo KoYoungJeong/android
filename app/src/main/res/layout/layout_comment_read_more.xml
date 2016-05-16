@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="33dp"
+    android:background="@drawable/bg_message_item_selector_flat_bottom"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/jandi_messages_profile_margin_right">
+
+    <ImageView
+        android:id="@+id/iv_comment_read_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="7dp"
+        android:src="@drawable/comment_more" />
+
+    <TextView
+        android:id="@+id/tv_comment_read_more"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/iv_comment_read_more"
+        android:gravity="center_vertical"
+        android:paddingRight="8dp"
+        android:text="3개 댓글 모두 읽기"
+        android:textColor="#ff333333"
+        android:textSize="11sp"
+        android:textStyle="bold" />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/jandi_comment_divider" />
+</RelativeLayout>
+
