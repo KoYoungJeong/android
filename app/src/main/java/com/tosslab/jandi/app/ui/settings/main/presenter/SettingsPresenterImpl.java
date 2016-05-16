@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.settings.main.presenter;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
@@ -18,10 +20,13 @@ import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
+
+import java.util.UUID;
 
 @EBean
 public class SettingsPresenterImpl implements SettingsPresenter {
@@ -48,8 +53,14 @@ public class SettingsPresenterImpl implements SettingsPresenter {
         try {
 
             Context context = JandiApplication.getContext();
+            String deviceId = TokenUtil.getTokenObject().getDeviceId();
+            // deviceId 가 없는 경우에 대한 방어코드, deviceId 가 비어 있는 경우 400 error 가 떨어짐.
+            // UUID RFC4122 규격 맞춘 아무 값이나 필요
+            if (TextUtils.isEmpty(deviceId)) {
+                deviceId = UUID.randomUUID().toString();
+            }
             new LoginApi(RetrofitBuilder.newInstance())
-                    .deleteToken(TokenUtil.getRefreshToken(), TokenUtil.getTokenObject().getDeviceId());
+                    .deleteToken(TokenUtil.getRefreshToken(), deviceId);
 
             ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
             MixpanelAccountAnalyticsClient
@@ -74,6 +85,7 @@ public class SettingsPresenterImpl implements SettingsPresenter {
 
 
         } catch (Exception e) {
+            LogUtil.e(Log.getStackTraceString(e));
         } finally {
             view.dismissProgressDialog();
         }
