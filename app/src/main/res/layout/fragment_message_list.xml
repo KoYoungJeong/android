@@ -39,21 +39,21 @@
             android:scrollbars="vertical" />
 
         <TextView
-            android:id="@+id/tv_messages_date_devider"
+            android:id="@+id/tv_messages_date_divider"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/lv_messages"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="6dp"
             android:background="@drawable/bg_round_for_message_header"
             android:paddingBottom="6dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:paddingTop="6dp"
             android:text="When"
-            android:visibility="gone"
             android:textColor="@color/white"
-            android:textSize="11sp" />
+            android:textSize="11sp"
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/layout_messages_empty"
@@ -108,7 +108,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/layout_search_bar"
-            android:background="@color/jandi_disabled_user_background"
+            android:background="@color/jandi_black_b2"
+            android:gravity="center"
+            android:orientation="horizontal"
             android:paddingBottom="14dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
@@ -221,8 +223,8 @@
             android:layout_alignParentBottom="true">
 
             <FrameLayout
-                android:layout_gravity="bottom"
-                style="@style/JandiChat.ActionButton.Wrapper">
+                style="@style/JandiChat.ActionButton.Wrapper"
+                android:layout_gravity="bottom">
 
                 <ImageView
                     android:id="@+id/btn_message_action_button_1"
@@ -230,8 +232,8 @@
             </FrameLayout>
 
             <FrameLayout
-                android:layout_gravity="bottom"
-                style="@style/JandiChat.ActionButton.Wrapper">
+                style="@style/JandiChat.ActionButton.Wrapper"
+                android:layout_gravity="bottom">
                 <ImageView
                     android:id="@+id/btn_message_action_button_2"
                     style="@style/JandiChat.ActionButton.Sticker"/>

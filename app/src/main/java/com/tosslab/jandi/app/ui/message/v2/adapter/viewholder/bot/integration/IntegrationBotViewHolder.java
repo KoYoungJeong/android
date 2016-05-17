@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,9 +26,14 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHo
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.transform.TransformConfig;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 
 public class IntegrationBotViewHolder implements BodyViewHolder {
 
@@ -39,6 +45,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
     private View vConnectLine;
     private TextView tvMessageTime;
     private TextView tvMessageBadge;
+    private View vgConnectInfoWrapper;
     private LinearLayout vgConnectInfo;
     private View vLastRead;
     private View vBottomMargin;
@@ -63,6 +70,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         vConnectLine = rootView.findViewById(R.id.v_message_sub_menu_connect_color);
 
+        vgConnectInfoWrapper = rootView.findViewById(R.id.vg_message_connect_info_wrapper);
         vgConnectInfo = ((LinearLayout) rootView.findViewById(R.id.vg_message_sub_menu));
         vLastRead = rootView.findViewById(R.id.vg_message_last_read);
 
@@ -77,13 +85,18 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
             vBottomMargin.setVisibility(View.GONE);
         }
 
+        ViewGroup.MarginLayoutParams layoutParams =
+                (ViewGroup.MarginLayoutParams) tvMessage.getLayoutParams();
         if (hasBotProfile) {
             ivProfile.setVisibility(View.VISIBLE);
             tvName.setVisibility(View.VISIBLE);
+            layoutParams.topMargin = (int) UiUtils.getPixelFromDp(5f);
         } else {
             ivProfile.setVisibility(View.GONE);
             tvName.setVisibility(View.GONE);
+            layoutParams.topMargin = (int) UiUtils.getPixelFromDp(6f);
         }
+        tvMessage.setLayoutParams(layoutParams);
     }
 
     @Override
@@ -150,7 +163,14 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
         tvMessage.setText(messageStringBuilder);
 
-        IntegrationBotUtil.setIntegrationSubUI(textMessage.content, vConnectLine, vgConnectInfo);
+        Collection<ResMessages.ConnectInfo> connectInfo = textMessage.content.connectInfo;
+        if (isEmptyConnectInfos(connectInfo)) {
+            textMessage.content.connectInfo = Collections.emptyList();
+            vgConnectInfoWrapper.setVisibility(View.GONE);
+        } else {
+            vgConnectInfoWrapper.setVisibility(View.VISIBLE);
+            IntegrationBotUtil.setIntegrationSubUI(textMessage.content, vConnectLine, vgConnectInfo);
+        }
 
         linkPreviewViewModel.bindData(link);
 
@@ -202,6 +222,23 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
         this.hasBotProfile = hasBotProfile;
     }
 
+    private boolean isEmptyConnectInfos(Collection<ResMessages.ConnectInfo> connectInfos) {
+        if (connectInfos == null || connectInfos.isEmpty()) {
+            return true;
+        }
+
+        boolean isEmpty = true;
+        Iterator<ResMessages.ConnectInfo> iterator = connectInfos.iterator();
+        while (iterator.hasNext()) {
+            ResMessages.ConnectInfo connectInfo = iterator.next();
+            if(!TextUtils.isEmpty(connectInfo.title) || !TextUtils.isEmpty(connectInfo.description)) {
+                isEmpty = false;
+                break;
+            }
+        }
+
+        return isEmpty;
+    }
 
     public static class Builder extends BaseViewHolderBuilder {
         public IntegrationBotViewHolder build() {

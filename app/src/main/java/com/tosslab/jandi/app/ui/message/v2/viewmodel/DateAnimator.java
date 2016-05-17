@@ -8,7 +8,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 public class DateAnimator {
-    private static final long DURATION = 500;
+    private static final long DURATION = 1000;
     private final ValueAnimator valueAnimator;
     private View target;
 
@@ -30,7 +30,8 @@ public class DateAnimator {
         valueAnimator.removeAllListeners();
         valueAnimator.cancel();
         valueAnimator.setFloatValues(target.getAlpha(), 1f);
-        valueAnimator.setDuration(currentPlayTime <= 0 ? DURATION : currentPlayTime);
+//        valueAnimator.setDuration(currentPlayTime <= 0 ? DURATION : currentPlayTime);
+        valueAnimator.setDuration(DURATION);
         valueAnimator.start();
         target.setVisibility(View.VISIBLE);
     }
@@ -40,7 +41,8 @@ public class DateAnimator {
         valueAnimator.removeAllListeners();
         valueAnimator.cancel();
         valueAnimator.setFloatValues(target.getAlpha(), 0f);
-        valueAnimator.setDuration(currentPlayTime <= 0 ? DURATION : currentPlayTime);
+//        valueAnimator.setDuration(currentPlayTime <= 0 ? DURATION : currentPlayTime);
+        valueAnimator.setDuration(DURATION);
         valueAnimator.addListener(new SimpleEndAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {

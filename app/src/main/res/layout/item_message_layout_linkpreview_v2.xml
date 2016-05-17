@@ -4,32 +4,33 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:id="@+id/vg_linkpreview_thumb"
-        android:layout_width="wrap_content"
-        android:layout_height="120dp">
+    <com.tosslab.jandi.app.views.FrescoImageView
+        android:id="@+id/iv_linkpreview_thumb"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        freco:backgroundImage="@color/jandi_linkpreview_thumb_background"
+        freco:placeholderImage="@drawable/link_preview"/>
 
-        <com.tosslab.jandi.app.views.FrescoImageView
-            android:id="@+id/iv_linkpreview_thumb"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            freco:backgroundImage="@color/jandi_linkpreview_thumb_background"
-            freco:placeholderImage="@drawable/link_preview" />
-
-    </RelativeLayout>
+    <View
+        android:id="@+id/iv_message_photo_cover"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/iv_linkpreview_thumb"
+        android:layout_alignTop="@+id/iv_linkpreview_thumb"
+        android:background="@drawable/bg_image" />
 
     <LinearLayout
         android:id="@+id/vg_snippet_summary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/vg_linkpreview_thumb"
-        android:layout_below="@+id/vg_linkpreview_thumb"
+        android:layout_alignLeft="@id/iv_linkpreview_thumb"
+        android:layout_below="@+id/iv_linkpreview_thumb"
         android:background="@drawable/bg_round_bottom_white_for_message"
         android:orientation="vertical"
         android:paddingBottom="8dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="6dp">
+        android:paddingLeft="9dp"
+        android:paddingRight="9dp"
+        android:paddingTop="7dp">
 
         <TextView
             android:id="@+id/tv_linkpreview_title"
@@ -41,7 +42,7 @@
             android:text="Rock Formation Image, Galapagos Islands - National bla blaa bla bla bla blab albalblablblbla"
             android:textColor="@android:color/black"
             android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tv_linkpreview_domain"
@@ -52,7 +53,7 @@
             android:singleLine="true"
             android:text="National Geographic"
             android:textColor="@color/jandi_text_light"
-            android:textSize="11sp" />
+            android:textSize="11sp"/>
 
         <TextView
             android:id="@+id/tv_linkpreview_description"
@@ -63,7 +64,7 @@
             android:singleLine="true"
             android:text="Sunlight paints a rock formation in the world"
             android:textColor="@android:color/black"
-            android:textSize="11sp" />
+            android:textSize="11sp"/>
 
     </LinearLayout>
 
@@ -72,6 +73,6 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_alignTop="@+id/vg_snippet_summary"
-        android:background="@color/jandi_messages_input_hint" />
+        android:background="@color/jandi_comment_divider"/>
 
 </RelativeLayout>

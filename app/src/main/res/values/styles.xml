@@ -223,6 +223,13 @@
 
     <style name="JandiChat"></style>
 
+    <style name="JandiChat.Bubble">
+        <item name="android:paddingTop">7dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingLeft">9dp</item>
+        <item name="android:paddingRight">9dp</item>
+    </style>
+
     <style name="JandiChat.Wrapper">
         <item name="android:layout_width">match_parent</item>
         <item name="android:paddingRight">5dp</item>

@@ -116,28 +116,45 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
     @Override
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
         super.bindData(link, teamId, roomId, entityId);
-        if (hasFileInfoView()) {
+
+        boolean hasFileInfoView = hasFileInfoView();
+        if (hasFileInfoView) {
             settingFileInfo(link, roomId);
             setFileInfoBackground(link);
         }
+
         if (hasNestedProfile) {
-            ProfileUtil.setProfile(link.fromEntity, ivProfileNestedUserProfileForSticker, vProfileCover, tvProfileNestedUserNameForSticker, ivProfileNestedLineThroughForSticker);
+            ProfileUtil.setProfile(link.fromEntity, ivProfileNestedUserProfileForSticker, vProfileCover,
+                    tvProfileNestedUserNameForSticker, ivProfileNestedLineThroughForSticker);
         }
+
         getStickerComment(link, teamId, roomId);
         setBackground(link);
+
+        if (hasCommentBubbleTail()) {
+            // 파일 정보가 없고 내가 쓴 코멘트 인 경우만 comment_bubble_tail_mine resource 사
+            vCommentBubbleTail.setBackgroundResource(hasFileInfoView
+                    ? R.drawable.bg_comment_bubble_tail :
+                    isFromMe(link) ? R.drawable.comment_bubble_tail_mine : R.drawable.bg_comment_bubble_tail);
+        }
     }
 
     private void setFileInfoBackground(ResMessages.Link link) {
-        boolean isMe = false;
-        if (link.feedback != null) {
-            isMe = EntityManager.getInstance().isMe(link.feedback.writerId);
-        }
+        boolean isMe = isFromMe(link);
         if (isMe) {
             vgMessageCommonFile.setBackgroundResource(R.drawable.bg_message_item_selector_mine);
         } else {
             vgMessageCommonFile.setBackgroundResource(R.drawable.bg_message_item_selector);
 
         }
+    }
+
+    private boolean isFromMe(ResMessages.Link link) {
+        boolean isMe = false;
+        if (link.feedback != null) {
+            isMe = EntityManager.getInstance().isMe(link.feedback.writerId);
+        }
+        return isMe;
     }
 
     private void setBackground(ResMessages.Link link) {

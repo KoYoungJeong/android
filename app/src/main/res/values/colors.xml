@@ -178,7 +178,7 @@
     <!-- CUSTOMISING PagerSlidingTabStrip -->
     <color name="background_tab_pressed">#6633B5E5</color>
     <color name="activate_text_color">#FF666666</color>
-    <color name="deactivate_text_color">#FFCCCCCC</color>
+    <color name="deactivate_text_color">#FF666666</color>
     <color name="transparent">#00000000</color>
 
 
@@ -244,7 +244,7 @@
 
     <color name="jandi_message_indicator">#FF303030</color>
 
-    <color name="jandi_comment_divider">#FFE1E1E1</color>
+    <color name="jandi_comment_divider">#FFE9E9E9</color>
 
     <color name="jandi_create_topic">#FF00ABE8</color>
 
