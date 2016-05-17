@@ -17,7 +17,7 @@
         <ImageView
             android:id="@+id/iv_message_photo"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="@dimen/jandi_messages_image_height"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:scaleType="centerInside"/>

@@ -8,7 +8,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 public class DateAnimator {
-    private static final long DURATION = 500;
+    private static final long DURATION = 1000;
     private final ValueAnimator valueAnimator;
     private View target;
 

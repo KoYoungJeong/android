@@ -115,9 +115,9 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
     private void setFileTitleBackground(ResMessages.Link link) {
         long writerId = link.fromEntity;
         if (EntityManager.getInstance().isMe(writerId)) {
-            tvFileName.setBackgroundResource(R.drawable.bg_round_bottom_blue_for_message);
+            tvFileName.setBackgroundResource(R.drawable.bg_round_bottom_for_item_name_mine);
         } else {
-            tvFileName.setBackgroundResource(R.drawable.bg_round_bottom_white_for_message);
+            tvFileName.setBackgroundResource(R.drawable.bg_round_bottom_for_item_name);
         }
     }
 
@@ -149,6 +149,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
         if (TextUtils.equals(fileMessage.status, "archived")) {
             tvFileName.setText(R.string.jandi_deleted_file);
+            setImageViewSizeToDefault();
             ivFileImage.setImageResource(R.drawable.file_icon_deleted);
             return;
         }
@@ -156,6 +157,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         tvFileName.setText(fileContent.title);
 
         if (!ImageUtil.hasImageUrl(fileContent)) {
+            setImageViewSizeToDefault();
             ivFileImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
             ivFileImage.setImageResource(R.drawable.file_icon_img);
             return;
@@ -163,6 +165,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
         // Google, Dropbox 파일이 인 경우
         if (isFileFromGoogleOrDropbox(sourceType)) {
+            setImageViewSizeToDefault();
             String serverUrl = fileContent.serverUrl;
             String icon = fileContent.icon;
             int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, icon);
@@ -290,6 +293,15 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
     @Override
     public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
         vgFileImageWrapper.setOnLongClickListener(itemLongClickListener);
+    }
+
+    private void setImageViewSizeToDefault() {
+        int height = ivFileImage.getResources()
+                .getDimensionPixelSize(R.dimen.jandi_messages_image_height);
+        ViewGroup.LayoutParams layoutParams = ivFileImage.getLayoutParams();
+        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        layoutParams.height = height;
+        ivFileImage.setLayoutParams(layoutParams);
     }
 
     private int getPixelFromDp(int dp, DisplayMetrics displayMetrics) {

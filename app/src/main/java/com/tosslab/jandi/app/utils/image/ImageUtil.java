@@ -201,13 +201,17 @@ public class ImageUtil {
                                                   final String serverUrl,
                                                   final String fileType) {
         if (vOutLine != null) {
-            vOutLine.setVisibility(View.GONE);
+            vOutLine.setVisibility(View.VISIBLE);
         }
 
         int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, fileType);
 
         boolean hasImageUrl = !TextUtils.isEmpty(fileUrl) || !TextUtils.isEmpty(thumbnailUrl);
         if (!TextUtils.equals(fileType, "image") || !hasImageUrl) {
+            if (vOutLine != null) {
+                vOutLine.setVisibility(View.GONE);
+            }
+
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             imageView.setImageResource(mimeTypeIconImage);
             return;
@@ -215,38 +219,24 @@ public class ImageUtil {
 
         MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
         if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
+            if (vOutLine != null) {
+                vOutLine.setVisibility(View.GONE);
+            }
+
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             imageView.setImageResource(mimeTypeIconImage);
         } else {
             if (TextUtils.isEmpty(thumbnailUrl)) {
-                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                imageView.setImageResource(R.drawable.file_icon_img);
+                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                imageView.setImageResource(R.drawable.comment_no_img);
                 return;
             }
 
             ImageLoader loader = ImageLoader.newInstance()
-                    .actualImageScaleType(ImageView.ScaleType.FIT_CENTER);
-
-            if (vOutLine != null) {
-                vOutLine.setVisibility(View.VISIBLE);
-            }
-
-            loader.actualImageScaleType(ImageView.ScaleType.CENTER_CROP);
+                    .actualImageScaleType(ImageView.ScaleType.CENTER_CROP);
             loader.placeHolder(
-                    R.drawable.comment_image_preview_download, ImageView.ScaleType.FIT_XY);
-            loader.error(R.drawable.file_icon_img, ImageView.ScaleType.FIT_CENTER);
-            loader.listener(new SimpleRequestListener<Uri, GlideDrawable>() {
-                @Override
-                public boolean onException(Exception e, Uri model,
-                                           Target<GlideDrawable> target,
-                                           boolean isFirstResource) {
-                    if (vOutLine != null) {
-                        vOutLine.setVisibility(View.GONE);
-                    }
-                    return false;
-                }
-            });
-
+                    R.drawable.comment_img_preview, ImageView.ScaleType.FIT_XY);
+            loader.error(R.drawable.comment_no_img, ImageView.ScaleType.FIT_XY);
             loader.uri(Uri.parse(thumbnailUrl)).into(imageView);
         }
     }

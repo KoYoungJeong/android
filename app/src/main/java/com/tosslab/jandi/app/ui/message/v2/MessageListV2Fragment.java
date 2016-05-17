@@ -266,7 +266,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @ViewById(R.id.vg_messages_go_to_latest)
     View vgMoveToLatest;
 
-    @ViewById(R.id.tv_messages_date_devider)
+    @ViewById(R.id.tv_messages_date_divider)
     TextView tvMessageDate;
 
     @ViewById(R.id.layout_messages_empty)
@@ -1098,7 +1098,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     }
 
-    @Click(R.id.tv_messages_date_devider)
+    @Click(R.id.tv_messages_date_divider)
     void dateClick() {
         int firstVisibleItemPosition = ((LinearLayoutManager) lvMessages.getLayoutManager()).findFirstVisibleItemPosition();
         MainMessageListAdapter messageAdapter = (MainMessageListAdapter) lvMessages.getAdapter();

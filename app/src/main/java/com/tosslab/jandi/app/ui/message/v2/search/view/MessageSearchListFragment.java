@@ -63,19 +63,23 @@ import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.message.v2.adapter.MainMessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListSearchAdapter;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPresenterImpl;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
+import com.tosslab.jandi.app.ui.message.v2.viewmodel.DateAnimator;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.RecyclerScrollStateListener;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -96,6 +100,7 @@ import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -179,7 +184,9 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     @Bean(MessageSearchListPresenterImpl.class)
     MessageSearchListPresenter messageSearchListPresenter;
-
+    DateAnimator dateAnimator;
+    @ViewById(R.id.tv_messages_date_divider)
+    TextView tvMessageDate;
     private boolean isForeground;
     private boolean isRoomInit;
     private MessageListSearchAdapter messageAdapter;
@@ -362,6 +369,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         StickyHeadersItemDecoration stickyHeadersItemDecoration = new StickyHeadersBuilder()
                 .setAdapter(messageAdapter)
                 .setRecyclerView(lvMessages)
+                .setSticky(false)
                 .setStickyHeadersAdapter(messageListHeaderAdapter, false)
                 .build();
 
@@ -404,6 +412,17 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
             return true;
         });
 
+        dateAnimator = new DateAnimator(tvMessageDate);
+        RecyclerScrollStateListener recyclerScrollStateListener = new RecyclerScrollStateListener();
+        recyclerScrollStateListener.setListener(scrolling -> {
+            if (scrolling) {
+                dateAnimator.show();
+            } else {
+                dateAnimator.hide();
+            }
+        });
+
+        // 스크롤 했을 때 동작
         lvMessages.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -413,6 +432,24 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
                         onGotoLatestClick();
                     }
                 }
+
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+                Date date = ((MessageListSearchAdapter) recyclerView.getAdapter()).getItemDate(firstVisibleItemPosition);
+                if (date != null) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(date);
+                    calendar.set(Calendar.HOUR_OF_DAY, 0);
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.SECOND, 0);
+                    calendar.set(Calendar.MILLISECOND, 0);
+
+                    tvMessageDate.setText(DateTransformator.getTimeStringForDivider(calendar.getTimeInMillis()));
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                recyclerScrollStateListener.onScrollState(newState);
             }
         });
     }

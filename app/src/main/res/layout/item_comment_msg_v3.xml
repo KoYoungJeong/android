@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="2dp"
-            android:src="@drawable/comment_bubble_tail" />
+            android:src="@drawable/bg_comment_bubble_tail" />
 
         <ViewStub
             android:id="@+id/vg_read_more"
