@@ -139,10 +139,8 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.RecyclerScrollStateListener;
-import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
@@ -270,7 +268,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @ViewById(R.id.vg_messages_go_to_latest)
     View vgMoveToLatest;
 
-    @ViewById(R.id.tv_messages_date_devider)
+    @ViewById(R.id.tv_messages_date_divider)
     TextView tvMessageDate;
 
     @ViewById(R.id.layout_messages_empty)
@@ -1103,7 +1101,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     }
 
-    @Click(R.id.tv_messages_date_devider)
+    @Click(R.id.tv_messages_date_divider)
     void dateClick() {
         int firstVisibleItemPosition = ((LinearLayoutManager) lvMessages.getLayoutManager()).findFirstVisibleItemPosition();
         MainMessageListAdapter messageAdapter = (MainMessageListAdapter) lvMessages.getAdapter();

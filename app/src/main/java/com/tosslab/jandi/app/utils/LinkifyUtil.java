@@ -191,7 +191,13 @@ public class LinkifyUtil {
                             return false;
                         }
                         isInLongClickProcess = true;
-                        findParentAndPerformLongClickIfNeed(textView.getParent());
+                        if (clickableSpannable != null && textView.isLongClickable()) {
+                            textView.setPressed(true);
+                            textView.performLongClick();
+                            textView.setPressed(false);
+                        } else {
+                            findParentAndPerformLongClickIfNeed(textView.getParent());
+                        }
                         return false;
                     }
                 }
