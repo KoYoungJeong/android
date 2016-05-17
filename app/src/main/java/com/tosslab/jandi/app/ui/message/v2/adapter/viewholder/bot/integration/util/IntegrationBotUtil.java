@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,7 +24,7 @@ import java.util.Iterator;
 public class IntegrationBotUtil {
     private static final String TAG = "IntegrationBotUtil";
 
-    public static void setIntegrationSubUI(ResMessages.TextContent content, View vConnectLine, LinearLayout vgConnectInfo) {
+    public static void setIntegrationSubUI(ResMessages.TextContent content, View vConnectLine, ViewGroup vgConnectInfo) {
         if (content.connectInfo != null && !content.connectInfo.isEmpty()) {
 
             if (vConnectLine.getVisibility() != View.VISIBLE) {
@@ -55,7 +56,7 @@ public class IntegrationBotUtil {
         }
     }
 
-    private static void updateSubInfo(Collection<ResMessages.ConnectInfo> connectInfo, LinearLayout vgConnectInfo) {
+    private static void updateSubInfo(Collection<ResMessages.ConnectInfo> connectInfo, ViewGroup vgConnectInfo) {
         int viewChildGroupCount = vgConnectInfo.getChildCount() / 2;
 
         TextView tvTitle;

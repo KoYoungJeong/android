@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inflatedId="@+id/vg_file_item"
-        android:layout="@layout/layout_comment_file_info" />
+        android:layout="@layout/layout_comment_file_info"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -20,13 +20,13 @@
         android:layout_marginRight="59dp"
         android:orientation="vertical">
 
-        <ImageView
+        <View
             android:id="@+id/iv_comment_bubble_tail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="11dp"
+            android:layout_height="6dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="2dp"
-            android:src="@drawable/comment_bubble_tail" />
+            android:background="@drawable/bg_comment_bubble_tail"/>
 
         <ViewStub
             android:id="@+id/vg_read_more"
@@ -34,131 +34,123 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/iv_comment_bubble_tail"
             android:inflatedId="@+id/vg_read_more"
-            android:layout="@layout/layout_comment_read_more" />
+            android:layout="@layout/layout_comment_read_more"/>
 
         <!-- comment -->
 
         <RelativeLayout
-            android:id="@+id/vg_comment_content_wrapper"
+            android:id="@+id/vg_profile_nested_comment_sticker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/vg_read_more"
-            android:orientation="vertical">
+            android:background="@drawable/bg_message_item_selector"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:orientation="horizontal"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
 
-            <RelativeLayout
-                android:id="@+id/vg_profile_nested_comment_sticker"
-                android:layout_width="match_parent"
+            <com.tosslab.jandi.app.views.FrescoImageView
+                android:id="@+id/iv_profile_nested_user_profile_for_sticker"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="9dp"
+                android:layout_marginRight="7dp"
+                android:layout_marginTop="2dp"
+                app:backgroundImage="@color/black"
+                app:roundAsCircle="true"/>
+
+            <View
+                android:id="@+id/v_profile_nested_user_profile_for_sticker_cover"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_message_item_selector"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:orientation="horizontal"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp">
+                android:layout_alignBottom="@+id/iv_profile_nested_user_profile_for_sticker"
+                android:layout_alignLeft="@+id/iv_profile_nested_user_profile_for_sticker"
+                android:layout_alignRight="@+id/iv_profile_nested_user_profile_for_sticker"
+                android:layout_alignTop="@+id/iv_profile_nested_user_profile_for_sticker"/>
 
 
-                <com.tosslab.jandi.app.views.FrescoImageView
-                    android:id="@+id/iv_profile_nested_user_profile_for_sticker"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginLeft="9dp"
-                    android:layout_marginRight="7dp"
-                    android:layout_marginTop="2dp"
-                    app:backgroundImage="@color/black"
-                    app:roundAsCircle="true" />
+            <TextView
+                android:id="@+id/tv_profile_nested_comment_user_name_for_sticker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="41dp"
+                android:layout_marginRight="@dimen/jandi_comment_name_margin_right"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="User Name"
+                android:textColor="@color/jandi_messages_name"
+                android:textSize="11dp"
+                android:textStyle="bold"/>
 
-                <View
-                    android:id="@+id/v_profile_nested_user_profile_for_sticker_cover"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/iv_profile_nested_user_profile_for_sticker"
-                    android:layout_alignLeft="@+id/iv_profile_nested_user_profile_for_sticker"
-                    android:layout_alignRight="@+id/iv_profile_nested_user_profile_for_sticker"
-                    android:layout_alignTop="@+id/iv_profile_nested_user_profile_for_sticker" />
+            <ImageView
+                android:id="@+id/iv_profile_nested_name_line_through_for_sticker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tv_profile_nested_comment_user_name_for_sticker"
+                android:layout_alignLeft="@+id/tv_profile_nested_comment_user_name_for_sticker"
+                android:layout_alignRight="@+id/tv_profile_nested_comment_user_name_for_sticker"
+                android:layout_alignTop="@+id/tv_profile_nested_comment_user_name_for_sticker"
+                android:src="@drawable/line_gray"/>
 
+            <com.tosslab.jandi.app.views.FrescoImageView
+                android:id="@+id/iv_profile_nested_comment_sticker"
+                android:layout_width="107dp"
+                android:layout_height="107dp"
+                android:layout_below="@+id/tv_profile_nested_comment_user_name_for_sticker"
+                android:layout_marginLeft="41dp"
+                android:layout_marginTop="4dp"
+                android:focusable="false"/>
 
-                <TextView
-                    android:id="@+id/tv_profile_nested_comment_user_name_for_sticker"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="41dp"
-                    android:layout_marginRight="@dimen/jandi_comment_name_margin_right"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:text="User Name"
-                    android:textColor="@color/jandi_messages_name"
-                    android:textSize="11dp"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tv_profile_nested_comment_sticker_create_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/iv_profile_nested_comment_sticker"
+                android:layout_marginLeft="6dp"
+                android:layout_toRightOf="@+id/iv_profile_nested_comment_sticker"
+                android:text="AM ??:??"
+                android:textColor="@color/jandi_messages_date"
+                android:textSize="10sp"/>
 
-                <ImageView
-                    android:id="@+id/iv_profile_nested_name_line_through_for_sticker"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/tv_profile_nested_comment_user_name_for_sticker"
-                    android:layout_alignLeft="@+id/tv_profile_nested_comment_user_name_for_sticker"
-                    android:layout_alignRight="@+id/tv_profile_nested_comment_user_name_for_sticker"
-                    android:layout_alignTop="@+id/tv_profile_nested_comment_user_name_for_sticker"
-                    android:src="@drawable/line_gray" />
-
-                <com.tosslab.jandi.app.views.FrescoImageView
-                    android:id="@+id/iv_profile_nested_comment_sticker"
-                    android:layout_width="107dp"
-                    android:layout_height="107dp"
-                    android:layout_below="@+id/tv_profile_nested_comment_user_name_for_sticker"
-                    android:layout_marginLeft="41dp"
-                    android:layout_marginTop="4dp"
-                    android:focusable="false" />
-
-                <TextView
-                    android:id="@+id/tv_profile_nested_comment_sticker_create_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/iv_profile_nested_comment_sticker"
-                    android:layout_marginLeft="6dp"
-                    android:layout_toRightOf="@+id/iv_profile_nested_comment_sticker"
-                    android:text="AM ??:??"
-                    android:textColor="@color/jandi_messages_date"
-                    android:textSize="10sp" />
-
-                <TextView
-                    android:id="@+id/tv_profile_nested_comment_sticker_unread"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/tv_profile_nested_comment_sticker_create_date"
-                    android:layout_marginLeft="4dp"
-                    android:layout_toRightOf="@+id/tv_profile_nested_comment_sticker_create_date"
-                    android:text="10"
-                    android:textColor="@color/jandi_accent_color"
-                    android:textSize="9sp"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tv_profile_nested_comment_sticker_unread"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tv_profile_nested_comment_sticker_create_date"
+                android:layout_marginLeft="4dp"
+                android:layout_toRightOf="@+id/tv_profile_nested_comment_sticker_create_date"
+                android:text="10"
+                android:textColor="@color/jandi_accent_color"
+                android:textSize="9sp"
+                android:textStyle="bold"/>
 
 
-            </RelativeLayout>
         </RelativeLayout>
 
         <View
             android:id="@+id/v_comment_semi_divider"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:layout_alignBottom="@+id/vg_comment_content_wrapper"
+            android:layout_alignBottom="@+id/vg_profile_nested_comment_sticker"
             android:layout_marginLeft="39dp"
-            android:background="@color/jandi_comment_divider" />
+            android:background="@color/jandi_comment_divider"/>
 
         <View
             android:id="@+id/v_comment_normal_divider"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:layout_alignBottom="@+id/vg_comment_content_wrapper"
-            android:background="@color/jandi_comment_divider" />
+            android:layout_alignBottom="@+id/vg_profile_nested_comment_sticker"
+            android:background="@color/jandi_comment_divider"/>
     </RelativeLayout>
 
     <View
         android:id="@+id/v_margin"
         android:layout_width="match_parent"
         android:layout_height="25dp"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
 
     <RelativeLayout

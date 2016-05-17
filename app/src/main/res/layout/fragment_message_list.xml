@@ -39,12 +39,12 @@
             android:scrollbars="vertical" />
 
         <TextView
-            android:id="@+id/tv_messages_date_devider"
+            android:id="@+id/tv_messages_date_divider"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/lv_messages"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="6dp"
             android:background="@drawable/bg_round_for_message_header"
             android:paddingBottom="6dp"
             android:paddingLeft="10dp"

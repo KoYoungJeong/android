@@ -235,7 +235,7 @@ public class ImageUtil {
                                                   final String fileType) {
 
         if (vOutLine != null) {
-            vOutLine.setVisibility(View.GONE);
+            vOutLine.setVisibility(View.VISIBLE);
         }
 
         ImageLoader.Builder builder = ImageLoader.newBuilder()
@@ -245,6 +245,11 @@ public class ImageUtil {
 
         boolean hasImageUrl = !TextUtils.isEmpty(fileUrl) || !TextUtils.isEmpty(thumbnailUrl);
         if (!TextUtils.equals(fileType, "image") || !hasImageUrl) {
+            LogUtil.e("tony", "1111111111111");
+            if (vOutLine != null) {
+                vOutLine.setVisibility(View.GONE);
+            }
+
             builder.backgroundColor(Color.TRANSPARENT)
                     .load(mimeTypeIconImage).into(draweeView);
             return;
@@ -252,32 +257,27 @@ public class ImageUtil {
 
         MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
         if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
+            LogUtil.e("tony", "222222222222");
+            if (vOutLine != null) {
+                vOutLine.setVisibility(View.GONE);
+            }
+
             builder.backgroundColor(Color.TRANSPARENT)
                     .load(mimeTypeIconImage).into(draweeView);
         } else {
             if (TextUtils.isEmpty(thumbnailUrl)) {
-                builder.actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
+                LogUtil.e("tony", "333333333333333");
+                builder.actualScaleType(ScalingUtils.ScaleType.FIT_XY);
                 builder.load(R.drawable.comment_no_img).into(draweeView);
                 return;
             }
 
-            if (vOutLine != null) {
-                vOutLine.setVisibility(View.VISIBLE);
-            }
-
+            LogUtil.e("tony", "44444444444444444");
             builder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
             builder.backgroundColor(draweeView.getResources().getColor(R.color.jandi_messages_image_view_bg));
             builder.placeHolder(
-                    R.drawable.comment_img_preview, ScalingUtils.ScaleType.CENTER_INSIDE);
-            builder.error(R.drawable.comment_no_img, ScalingUtils.ScaleType.CENTER_INSIDE);
-            builder.controllerListener(new BaseControllerListener<ImageInfo>() {
-                @Override
-                public void onFailure(String id, Throwable throwable) {
-                    if (vOutLine != null) {
-                        vOutLine.setVisibility(View.GONE);
-                    }
-                }
-            });
+                    R.drawable.comment_img_preview, ScalingUtils.ScaleType.FIT_XY);
+            builder.error(R.drawable.comment_no_img, ScalingUtils.ScaleType.FIT_XY);
             builder.load(Uri.parse(thumbnailUrl)).into(draweeView);
         }
     }
