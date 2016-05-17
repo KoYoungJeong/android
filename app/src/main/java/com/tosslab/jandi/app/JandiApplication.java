@@ -43,7 +43,6 @@ import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import org.androidannotations.api.BackgroundExecutor;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
