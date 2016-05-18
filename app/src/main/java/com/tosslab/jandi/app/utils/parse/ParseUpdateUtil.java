@@ -19,6 +19,8 @@ public class ParseUpdateUtil {
     public static final String PARSE_ACTIVATION_ON = "on";
     public static final String PARSE_ACTIVATION_OFF = "off";
 
+    public static boolean isParseOff = false;
+
     public static void registPush() {
         Intent service = new Intent(JandiApplication.getContext(), RegistrationIntentService.class);
         JandiApplication.getContext().startService(service);
@@ -27,6 +29,7 @@ public class ParseUpdateUtil {
                 PushConstants.LOGIN_TYPE_API_KEY,
                 JandiConstantsForFlavors.Push.BAIDU_API_KEY);
         deleteChannelOnServer();
+        isParseOff = true;
     }
 
     public static void deleteChannelOnServer() {

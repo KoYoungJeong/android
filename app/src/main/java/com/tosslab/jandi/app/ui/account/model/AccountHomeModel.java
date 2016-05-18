@@ -110,9 +110,7 @@ public class AccountHomeModel {
         }
 
         for (ResPendingTeamInfo pedingTeamInfo : pedingTeamInfos) {
-
             teams.add(Team.createTeam(pedingTeamInfo));
-
         }
 
         return teams;
@@ -130,7 +128,6 @@ public class AccountHomeModel {
         }
 
         return teams;
-
     }
 
     public ResAccountInfo updateAccountName(String newName) throws RetrofitException {
@@ -182,17 +179,15 @@ public class AccountHomeModel {
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.TeamId, teamId)
                 .build());
-
     }
 
     public void trackLaunchTeamFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                        .event(Event.LaunchTeam)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, false)
-                        .property(PropertyKey.ErrorCode, errorCode)
-                        .build());
-
+                .event(Event.LaunchTeam)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
     }
 
     public void trackChangeAccountNameSuccess(Context context, String accountId) {
@@ -201,21 +196,19 @@ public class AccountHomeModel {
                 .trackSetAccount();
 
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                        .event(Event.ChangeAccountName)
-                        .accountId(accountId)
-                        .property(PropertyKey.ResponseSuccess, true)
-                        .build());
+                .event(Event.ChangeAccountName)
+                .accountId(accountId)
+                .property(PropertyKey.ResponseSuccess, true)
+                .build());
     }
 
     public void trackChangeAccountNameFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                        .event(Event.ChangeAccountName)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, false)
-                        .property(PropertyKey.ErrorCode, errorCode)
-                        .build());
-
-
+                .event(Event.ChangeAccountName)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
     }
 
 }
