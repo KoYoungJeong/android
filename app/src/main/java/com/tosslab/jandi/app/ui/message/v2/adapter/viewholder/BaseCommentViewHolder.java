@@ -22,7 +22,7 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
     protected View vCommentNormalDivider;
     protected View vMargin;
     protected ViewGroup vgMessageLastRead;
-    protected ImageView ivCommentBubbleTail;
+    protected View vCommentBubbleTail;
     protected ViewStub stubReadMore;
     protected ViewGroup vgReadMore;
 
@@ -44,7 +44,7 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
         vCommentSemiDivider = rootView.findViewById(R.id.v_comment_semi_divider);
         vCommentNormalDivider = rootView.findViewById(R.id.v_comment_normal_divider);
         vMargin = rootView.findViewById(R.id.v_margin);
-        ivCommentBubbleTail = (ImageView) rootView.findViewById(R.id.iv_comment_bubble_tail);
+        vCommentBubbleTail = rootView.findViewById(R.id.iv_comment_bubble_tail);
 
         initObjects();
         setOptionView();
@@ -62,11 +62,11 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
             tvReadMore = (TextView) vgReadMore.findViewById(R.id.tv_comment_read_more);
         }
 
-        if (ivCommentBubbleTail != null) {
+        if (vCommentBubbleTail != null) {
             if (hasCommentBubbleTail) {
-                ivCommentBubbleTail.setVisibility(View.VISIBLE);
+                vCommentBubbleTail.setVisibility(View.VISIBLE);
             } else {
-                ivCommentBubbleTail.setVisibility(View.GONE);
+                vCommentBubbleTail.setVisibility(View.GONE);
             }
         }
 

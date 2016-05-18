@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -23,10 +24,12 @@ import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
@@ -133,7 +136,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
         if (hasCommentBubbleTail()) {
             // 파일 정보가 없고 내가 쓴 코멘트 인 경우만 comment_bubble_tail_mine resource 사
-            ivCommentBubbleTail.setBackgroundResource(hasFileInfoView
+            vCommentBubbleTail.setBackgroundResource(hasFileInfoView
                     ? R.drawable.bg_comment_bubble_tail :
                     isFromMe(link) ? R.drawable.comment_bubble_tail_mine : R.drawable.bg_comment_bubble_tail);
         }
@@ -270,6 +273,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
         FormattedEntity feedbackEntityById =
                 entityManager.getEntityById(link.feedback.writerId);
 
+        tvFileUploaderName.setTypeface(Typeface.DEFAULT_BOLD);
         tvFileUploaderName.setText(feedbackEntityById.getName());
 
         ResMessages.FileContent fileContent = link.feedback.content;
@@ -321,6 +325,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
             } else {
                 final ResMessages.FileContent content = feedbackFileMessage.content;
 
+                LogUtil.d("tony", content.name);
 
                 if (!isSharedFile) {
                     needFileUploaderDivider = false;
@@ -329,6 +334,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
                     tvMessageCommonFileName.setText(content.title);
                     tvFileUploaderName.setText(R.string.jandi_unshared_file);
                     tvMessageCommonFileName.setTextColor(resources.getColor(R.color.jandi_text_light));
+                    tvFileUploaderName.setTypeface(Typeface.DEFAULT);
                     tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text_light));
 
                     ivMessageCommonFile.setClickable(false);
@@ -390,21 +396,40 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     }
 
     @Override
-    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+    public void setOnItemClickListener(final View.OnClickListener itemClickListener) {
         super.setOnItemClickListener(itemClickListener);
+
+        View.OnClickListener onClickListenerWrapper = v -> {
+            // TODO N개의 댓글 혹은 댓글이 press 됐을 때 화살표 색상바꿔줘야함...
+            if (hasCommentBubbleTail()) {
+            }
+
+            itemClickListener.onClick(v);
+        };
+
         if (vgMessageCommonFile != null) {
-            vgMessageCommonFile.setOnClickListener(itemClickListener);
+            vgMessageCommonFile.setOnClickListener(onClickListenerWrapper);
         }
+
         if (vgReadMore != null) {
-            vgReadMore.setOnClickListener(itemClickListener);
+            vgReadMore.setOnClickListener(onClickListenerWrapper);
         }
-        vgProfileNestedComment.setOnClickListener(itemClickListener);
+
+        vgProfileNestedComment.setOnClickListener(onClickListenerWrapper);
     }
 
     @Override
     public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
         super.setOnItemLongClickListener(itemLongClickListener);
-        vgProfileNestedComment.setOnLongClickListener(itemLongClickListener);
+
+        View.OnLongClickListener onLongClickListenerWrapper = v -> {
+            // TODO N개의 댓글 혹은 댓글이 press 됐을 때 화살표 색상바꿔줘야함...
+            if (hasCommentBubbleTail()) {
+            }
+            return itemLongClickListener.onLongClick(v);
+        };
+
+        vgProfileNestedComment.setOnLongClickListener(onLongClickListenerWrapper);
     }
 
     public void setHasOnlyBadge(boolean hasOnlyBadge) {

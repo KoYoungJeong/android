@@ -30,7 +30,8 @@ public class DateAnimator {
         valueAnimator.removeAllListeners();
         valueAnimator.cancel();
         valueAnimator.setFloatValues(target.getAlpha(), 1f);
-        valueAnimator.setDuration(currentPlayTime <= 0 ? DURATION : currentPlayTime);
+//        valueAnimator.setDuration(currentPlayTime <= 0 ? DURATION : currentPlayTime);
+        valueAnimator.setDuration(DURATION);
         valueAnimator.start();
         target.setVisibility(View.VISIBLE);
     }
@@ -40,7 +41,8 @@ public class DateAnimator {
         valueAnimator.removeAllListeners();
         valueAnimator.cancel();
         valueAnimator.setFloatValues(target.getAlpha(), 0f);
-        valueAnimator.setDuration(currentPlayTime <= 0 ? DURATION : currentPlayTime);
+//        valueAnimator.setDuration(currentPlayTime <= 0 ? DURATION : currentPlayTime);
+        valueAnimator.setDuration(DURATION);
         valueAnimator.addListener(new SimpleEndAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {

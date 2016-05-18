@@ -13,15 +13,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.target.Target;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
-
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 18..
@@ -102,13 +99,10 @@ public class LinkPreviewViewModel {
     void showImage(ResMessages.LinkPreview linkPreview, final Resources resources) {
         vDividier.setVisibility(View.VISIBLE);
 
-        float imageRound = UiUtils.getPixelFromDp(2f);
         ImageLoader.newInstance()
                 .backgroundColor(resources.getColor(R.color.jandi_messages_image_background))
                 .placeHolder(R.drawable.comment_image_preview_download, ImageView.ScaleType.CENTER_INSIDE)
                 .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
-//                    .transformation(new RoundedCornersTransformation(ivThumb.getContext(),
-//                            (int) imageRound, 0, RoundedCornersTransformation.CornerType.TOP))
                 .uri(Uri.parse(linkPreview.imageUrl))
                 .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
                     @Override

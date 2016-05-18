@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.utils.image.transform.TransformConfig;
@@ -208,6 +209,7 @@ public class ImageUtil {
 
         boolean hasImageUrl = !TextUtils.isEmpty(fileUrl) || !TextUtils.isEmpty(thumbnailUrl);
         if (!TextUtils.equals(fileType, "image") || !hasImageUrl) {
+            LogUtil.e("tony", "1111111111111");
             if (vOutLine != null) {
                 vOutLine.setVisibility(View.GONE);
             }
@@ -219,6 +221,7 @@ public class ImageUtil {
 
         MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
         if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
+            LogUtil.e("tony", "222222222222");
             if (vOutLine != null) {
                 vOutLine.setVisibility(View.GONE);
             }
@@ -227,11 +230,13 @@ public class ImageUtil {
             imageView.setImageResource(mimeTypeIconImage);
         } else {
             if (TextUtils.isEmpty(thumbnailUrl)) {
+                LogUtil.e("tony", "333333333333333");
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                 imageView.setImageResource(R.drawable.comment_no_img);
                 return;
             }
 
+            LogUtil.e("tony", "44444444444444444");
             ImageLoader loader = ImageLoader.newInstance()
                     .actualImageScaleType(ImageView.ScaleType.CENTER_CROP);
             loader.placeHolder(

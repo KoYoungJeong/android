@@ -32,6 +32,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+
 public class IntegrationBotViewHolder implements BodyViewHolder {
 
     private static final String TAG = "IntegrationBotViewHolder";

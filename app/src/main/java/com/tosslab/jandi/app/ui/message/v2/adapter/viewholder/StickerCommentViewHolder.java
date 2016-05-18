@@ -132,7 +132,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
 
         if (hasCommentBubbleTail()) {
             // 파일 정보가 없고 내가 쓴 코멘트 인 경우만 comment_bubble_tail_mine resource 사
-            ivCommentBubbleTail.setBackgroundResource(hasFileInfoView
+            vCommentBubbleTail.setBackgroundResource(hasFileInfoView
                     ? R.drawable.bg_comment_bubble_tail :
                     isFromMe(link) ? R.drawable.comment_bubble_tail_mine : R.drawable.bg_comment_bubble_tail);
         }

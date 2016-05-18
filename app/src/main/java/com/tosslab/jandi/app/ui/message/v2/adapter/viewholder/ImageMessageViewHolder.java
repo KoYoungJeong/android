@@ -279,6 +279,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
                 }
             }
 
+            height = height > maxImageHeight ? maxImageHeight : height;
             return new ImageLoadInfo(needCrop, width, height);
 
         }

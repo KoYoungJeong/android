@@ -6,17 +6,15 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    android:orientation="vertical"
-    android:paddingLeft="@dimen/jandi_messages_profile_margin_right">
+    android:orientation="vertical">
 
     <ImageView
         android:id="@+id/iv_comment_read_more"
-        android:layout_width="wrap_content"
+        android:layout_width="41dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="10dp"
         android:layout_marginTop="7dp"
-        android:src="@drawable/comment_more" />
+        android:scaleType="centerInside"
+        android:src="@drawable/comment_more"/>
 
     <TextView
         android:id="@+id/tv_comment_read_more"
@@ -29,13 +27,12 @@
         android:text="3개 댓글 모두 읽기"
         android:textColor="#ff333333"
         android:textSize="11sp"
-        android:textStyle="bold" />
-
+        android:textStyle="bold"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/jandi_comment_divider" />
+        android:background="@color/jandi_comment_divider"/>
 </RelativeLayout>
 
