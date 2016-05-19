@@ -8,6 +8,7 @@ import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.push.gcm.register.RegistrationIntentService;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 9..
@@ -19,6 +20,8 @@ public class ParseUpdateUtil {
     public static final String PARSE_ACTIVATION_ON = "on";
     public static final String PARSE_ACTIVATION_OFF = "off";
 
+    public static boolean isParseOff = false;
+
     public static void registPush() {
         Intent service = new Intent(JandiApplication.getContext(), RegistrationIntentService.class);
         JandiApplication.getContext().startService(service);
@@ -26,7 +29,6 @@ public class ParseUpdateUtil {
         PushManager.startWork(JandiApplication.getContext(),
                 PushConstants.LOGIN_TYPE_API_KEY,
                 JandiConstantsForFlavors.Push.BAIDU_API_KEY);
-        deleteChannelOnServer();
     }
 
     public static void deleteChannelOnServer() {
