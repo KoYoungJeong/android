@@ -35,6 +35,7 @@ public class StickerManager {
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_MOZZI);
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_DAY);
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_DAY_ZH_TW);
+        localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_DINGO);
     }
 
     public static StickerManager getInstance() {
@@ -139,7 +140,10 @@ public class StickerManager {
             group = "day";
         } else if (groupId == StickerRepository.DEFAULT_GROUP_ID_DAY_ZH_TW) {
             group = "day/zh_tw";
-        } else {
+        } else if (groupId == StickerRepository.DEFAULT_GROUP_ID_DINGO){
+            group = "dingo";
+        }
+        else {
             group = "mozzi";
         }
         return group;

@@ -40,7 +40,6 @@ class StickerViewPagerAdapter extends PagerAdapter {
 
         this.onStickerClick = onStickerClick;
         stickerMax = STICKER_MAX_VIEW_PORTAIT;
-
     }
 
     @Override
@@ -48,7 +47,6 @@ class StickerViewPagerAdapter extends PagerAdapter {
         if (stickers == null) {
             return 0;
         }
-
         return ((stickers.size() - 1) / stickerMax) + 1;
     }
 
@@ -147,7 +145,6 @@ class StickerViewPagerAdapter extends PagerAdapter {
             options.isFadeAnimation = false;
             StickerManager.getInstance()
                     .loadSticker(child, resSticker.groupId, resSticker.stickerId, options);
-
         }
 
         return linearLayout;
