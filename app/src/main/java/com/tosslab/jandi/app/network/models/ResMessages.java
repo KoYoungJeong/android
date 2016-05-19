@@ -375,6 +375,17 @@ public class ResMessages {
         public String title;
         @DatabaseField
         public String description;
+
+        @Override
+        public String toString() {
+            return "ConnectInfo{" +
+                    "_id=" + _id +
+                    ", textContentOf=" + textContentOf +
+                    ", event='" + event + '\'' +
+                    ", title='" + title + '\'' +
+                    ", description='" + description + '\'' +
+                    '}';
+        }
     }
 
     @DatabaseTable(tableName = "message_sticker")

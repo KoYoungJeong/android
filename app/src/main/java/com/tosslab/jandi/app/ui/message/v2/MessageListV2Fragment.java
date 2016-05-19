@@ -20,7 +20,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -35,7 +34,6 @@ import android.view.inputmethod.BaseInputConnection;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
@@ -139,10 +137,8 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.RecyclerScrollStateListener;
-import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
@@ -270,7 +266,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @ViewById(R.id.vg_messages_go_to_latest)
     View vgMoveToLatest;
 
-    @ViewById(R.id.tv_messages_date_devider)
+    @ViewById(R.id.tv_messages_date_divider)
     TextView tvMessageDate;
 
     @ViewById(R.id.layout_messages_empty)
@@ -816,11 +812,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @Override
     public void showDisabledUserLayer() {
         vgMessageInput.setVisibility(View.GONE);
-        int dp_2 = ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, getResources().getDisplayMetrics()));
-        ((RelativeLayout.LayoutParams) vgMemberStatusAlert.getLayoutParams())
-                .setMargins(dp_2, dp_2, dp_2, dp_2);
         vgMemberStatusAlert.setVisibility(View.VISIBLE);
-        vgMemberStatusAlert.setBackgroundColor(getResources().getColor(R.color.jandi_disabled_user_background));
+        vgMemberStatusAlert.setBackgroundColor(getResources().getColor(R.color.jandi_black_b2));
         ivMemberStatusAlert.setImageResource(R.drawable.icon_disabled_members_bar);
         tvMemberStatusAlert.setText(R.string.jandi_disabled_user);
         setPreviewVisible(false);
@@ -830,7 +823,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showInactivedUserLayer() {
-        ((RelativeLayout.LayoutParams) vgMemberStatusAlert.getLayoutParams()).setMargins(0, 0, 0, 0);
         vgMemberStatusAlert.setVisibility(View.VISIBLE);
         vgMemberStatusAlert.setBackgroundColor(getResources().getColor(R.color.jandi_black_de));
         ivMemberStatusAlert.setImageResource(R.drawable.bar_icon_info);
@@ -1103,7 +1095,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     }
 
-    @Click(R.id.tv_messages_date_devider)
+    @Click(R.id.tv_messages_date_divider)
     void dateClick() {
         int firstVisibleItemPosition = ((LinearLayoutManager) lvMessages.getLayoutManager()).findFirstVisibleItemPosition();
         MainMessageListAdapter messageAdapter = (MainMessageListAdapter) lvMessages.getAdapter();

@@ -17,6 +17,7 @@ public abstract class BaseMessageViewHolder implements BodyViewHolder {
     protected boolean hasProfile = true;
     protected boolean hasBottomMargin = false;
     protected boolean hasOnlyBadge = false;
+    protected boolean hasTopMargin = false;
     private View vMargin;
     private ViewGroup vgMessageLastRead;
 
@@ -62,12 +63,17 @@ public abstract class BaseMessageViewHolder implements BodyViewHolder {
         this.hasOnlyBadge = hasOnlyBadge;
     }
 
+    public void setHasTopMargin(boolean hasTopMargin) {
+        this.hasTopMargin = hasTopMargin;
+    }
+
     @Override
     public void setLastReadViewVisible(long currentLinkId, long lastReadLinkId) {
         if (vgMessageLastRead != null) {
             if (currentLinkId == lastReadLinkId) {
                 vgMessageLastRead.removeAllViews();
-                LayoutInflater.from(vgMessageLastRead.getContext()).inflate(R.layout.item_message_last_read_v2, vgMessageLastRead);
+                LayoutInflater.from(vgMessageLastRead.getContext())
+                        .inflate(R.layout.item_message_last_read_v2, vgMessageLastRead);
                 vgMessageLastRead.setVisibility(View.VISIBLE);
             } else {
                 vgMessageLastRead.setVisibility(View.GONE);

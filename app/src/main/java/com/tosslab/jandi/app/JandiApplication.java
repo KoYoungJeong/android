@@ -139,23 +139,13 @@ public class JandiApplication extends MultiDexApplication {
     }
 
     private void initFresco() {
-        Set<RequestListener> listeners = new HashSet<>();
-        if (BuildConfig.DEBUG) {
-            listeners.add(new RequestLoggingListener());
-        }
-
-        // Fresco
         ImagePipelineConfig config =
                 OkHttpImagePipelineConfigFactory.newBuilder(this, getOkHttpClient())
                         .setBitmapMemoryCacheParamsSupplier(new BitmapMemoryCacheSupplier(this))
                         .setMainDiskCacheConfig(getMainDiskConfig())
-                        .setRequestListeners(listeners)
                         .build();
 
         Fresco.initialize(context, config);
-        if (BuildConfig.DEBUG) {
-            FLog.setMinimumLoggingLevel(Logger.LogLevel.VERBOSE);
-        }
     }
 
     private void addLogConfigIfDebug() {

@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -113,9 +114,9 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
     private void setFileTitleBackground(ResMessages.Link link) {
         long writerId = link.fromEntity;
         if (EntityManager.getInstance().isMe(writerId)) {
-            tvFileName.setBackgroundResource(R.drawable.bg_round_bottom_blue_for_message);
+            tvFileName.setBackgroundResource(R.drawable.bg_round_bottom_for_item_name_mine);
         } else {
-            tvFileName.setBackgroundResource(R.drawable.bg_round_bottom_white_for_message);
+            tvFileName.setBackgroundResource(R.drawable.bg_round_bottom_for_item_name);
         }
     }
 
@@ -147,6 +148,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
         if (TextUtils.equals(fileMessage.status, "archived")) {
             tvFileName.setText(R.string.jandi_deleted_file);
+            setImageViewSizeToDefault();
             ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.file_icon_deleted));
             return;
         }
@@ -154,6 +156,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         tvFileName.setText(fileContent.title);
 
         if (!ImageUtil.hasImageUrl(fileContent)) {
+            setImageViewSizeToDefault();
             ImageLoader.newBuilder()
                     .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
                     .load(R.drawable.file_icon_img)
@@ -163,6 +166,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
         // Google, Dropbox 파일이 인 경우
         if (isFileFromGoogleOrDropbox(sourceType)) {
+            setImageViewSizeToDefault();
             String serverUrl = fileContent.serverUrl;
             String icon = fileContent.icon;
             int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, icon);
@@ -186,18 +190,21 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             final ViewGroup.LayoutParams layoutParams = ivFileImage.getLayoutParams();
 
             ImageLoader.Builder imageRequestBuilder = ImageLoader.newBuilder();
-            imageRequestBuilder.error(R.drawable.preview_no_img, ScalingUtils.ScaleType.CENTER_INSIDE);
+            imageRequestBuilder.error(
+                    R.drawable.preview_no_img, ScalingUtils.ScaleType.CENTER_INSIDE);
 
             // 유효한 확장자가 아닌 경우, Local File Path 도 없고 Thumbnail Path 도 없는 경우
             boolean shouldSupportImageExtensions =
                     FileExtensionsUtil.shouldSupportImageExtensions(fileContent.ext);
+            final Resources resources = vgFileImageWrapper.getResources();
             if (!shouldSupportImageExtensions
                     || (!isFromLocalFilePath && TextUtils.isEmpty(remoteFilePth))) {
                 LogUtil.i(TAG, "Thumbnail's are empty.");
 
                 layoutParams.height = maxImageHeight;
                 ivFileImage.setLayoutParams(layoutParams);
-                vgFileImageWrapper.setBackgroundColor(vgFileImageWrapper.getResources().getColor(R.color.jandi_messages_big_size_image_view_bg));
+                vgFileImageWrapper.setBackgroundColor(
+                        resources.getColor(R.color.jandi_messages_big_size_image_view_bg));
 
                 imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
                 imageRequestBuilder.load(R.drawable.preview_no_img)
@@ -215,7 +222,8 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
                 imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
             }
 
-            vgFileImageWrapper.setBackgroundColor(vgFileImageWrapper.getResources().getColor(R.color.jandi_messages_image_view_bg));
+            vgFileImageWrapper.setBackgroundColor(
+                    resources.getColor(R.color.jandi_messages_image_view_bg));
 
             layoutParams.width = imageInfo.width;
             layoutParams.height = imageInfo.height;
@@ -230,7 +238,8 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
                         @Override
                         public void onFail(Throwable cause) {
                             ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.comment_no_img));
-                            vgFileImageWrapper.setBackgroundColor(vgFileImageWrapper.getResources().getColor(R.color.jandi_messages_big_size_image_view_bg));
+                            vgFileImageWrapper.setBackgroundColor(
+                                    resources.getColor(R.color.jandi_messages_big_size_image_view_bg));
                         }
                     })
                     .load(uri)
@@ -278,6 +287,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
                 }
             }
 
+            height = height > maxImageHeight ? maxImageHeight : height;
             return new ImageLoadInfo(needCrop, width, height);
 
         }
@@ -292,6 +302,15 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
     @Override
     public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
         vgFileImageWrapper.setOnLongClickListener(itemLongClickListener);
+    }
+
+    private void setImageViewSizeToDefault() {
+        int height = ivFileImage.getResources()
+                .getDimensionPixelSize(R.dimen.jandi_messages_image_height);
+        ViewGroup.LayoutParams layoutParams = ivFileImage.getLayoutParams();
+        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        layoutParams.height = height;
+        ivFileImage.setLayoutParams(layoutParams);
     }
 
     private int getPixelFromDp(int dp, DisplayMetrics displayMetrics) {

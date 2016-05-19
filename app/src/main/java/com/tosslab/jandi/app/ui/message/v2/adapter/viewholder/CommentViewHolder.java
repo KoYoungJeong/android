@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -99,17 +100,15 @@ public class CommentViewHolder extends BaseCommentViewHolder {
             vProfileCover = rootView.findViewById(R.id.v_profile_nested_comment_user_profile_cover);
             tvProfileNestedCommentUserName = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_user_name);
             ivProfileNestedNameLineThrough = (ImageView) rootView.findViewById(R.id.iv_profile_nested_name_line_through);
+
+            ivProfileNestedCommentUserProfile.setVisibility(View.VISIBLE);
+            tvProfileNestedCommentUserName.setVisibility(View.VISIBLE);
+            ivProfileNestedNameLineThrough.setVisibility(View.VISIBLE);
         }
 
         tvProfileNestedCommentContent = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_content);
 
         context = rootView.getContext();
-
-        if (hasNestedProfile) {
-            ivProfileNestedCommentUserProfile.setVisibility(View.VISIBLE);
-            tvProfileNestedCommentUserName.setVisibility(View.VISIBLE);
-            ivProfileNestedNameLineThrough.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override
@@ -120,24 +119,31 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
         super.bindData(link, teamId, roomId, entityId);
 
-        if (hasFileInfoView()) {
+        boolean hasFileInfoView = hasFileInfoView();
+        if (hasFileInfoView) {
             settingFileInfo(link, roomId);
             setFileInfoBackground(link);
         }
 
         if (hasNestedProfile) {
-            ProfileUtil.setProfile(link.fromEntity, ivProfileNestedCommentUserProfile, vProfileCover, tvProfileNestedCommentUserName, ivProfileNestedNameLineThrough);
+            ProfileUtil.setProfile(link.fromEntity, ivProfileNestedCommentUserProfile, vProfileCover,
+                    tvProfileNestedCommentUserName, ivProfileNestedNameLineThrough);
         }
 
         setCommentMessage(link, teamId, roomId);
         setBackground(link);
+
+        if (hasCommentBubbleTail()) {
+            // 파일 정보가 없고 내가 쓴 코멘트 인 경우만 comment_bubble_tail_mine resource 사
+            vCommentBubbleTail.setBackgroundResource(hasFileInfoView
+                    ? R.drawable.bg_comment_bubble_tail :
+                    isFromMe(link) ? R.drawable.comment_bubble_tail_mine : R.drawable.bg_comment_bubble_tail);
+        }
+
     }
 
     private void setFileInfoBackground(ResMessages.Link link) {
-        boolean isMe = false;
-        if (link.feedback != null) {
-            isMe = EntityManager.getInstance().isMe(link.feedback.writerId);
-        }
+        boolean isMe = isFromMe(link);
         if (isMe) {
             vgMessageCommonFile.setBackgroundResource(R.drawable.bg_message_item_selector_mine);
         } else {
@@ -146,6 +152,13 @@ public class CommentViewHolder extends BaseCommentViewHolder {
         }
     }
 
+    private boolean isFromMe(ResMessages.Link link) {
+        boolean isMe = false;
+        if (link.feedback != null) {
+            isMe = EntityManager.getInstance().isMe(link.feedback.writerId);
+        }
+        return isMe;
+    }
 
     private void setBackground(ResMessages.Link link) {
 
@@ -251,6 +264,8 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     }
 
     private void settingFileInfo(ResMessages.Link link, long roomId) {
+        final Resources resources = tvMessageCommonFileName.getResources();
+
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity room = entityManager.getEntityById(roomId);
 
@@ -259,7 +274,9 @@ public class CommentViewHolder extends BaseCommentViewHolder {
         FormattedEntity feedbackEntityById =
                 entityManager.getEntityById(link.feedback.writerId);
 
+        tvFileUploaderName.setTypeface(Typeface.DEFAULT_BOLD);
         tvFileUploaderName.setText(feedbackEntityById.getName());
+        tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text));
 
         ResMessages.FileContent fileContent = link.feedback.content;
 
@@ -291,7 +308,6 @@ public class CommentViewHolder extends BaseCommentViewHolder {
                 }
             }
 
-            final Resources resources = tvMessageCommonFileName.getResources();
             boolean needFileUploader = true;
             boolean needFileUploaderDivider = true;
             boolean needFileSize = true;
@@ -312,7 +328,6 @@ public class CommentViewHolder extends BaseCommentViewHolder {
             } else {
                 final ResMessages.FileContent content = feedbackFileMessage.content;
 
-
                 if (!isSharedFile) {
                     needFileUploaderDivider = false;
                     needFileSize = false;
@@ -320,6 +335,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
                     tvMessageCommonFileName.setText(content.title);
                     tvFileUploaderName.setText(R.string.jandi_unshared_file);
                     tvMessageCommonFileName.setTextColor(resources.getColor(R.color.jandi_text_light));
+                    tvFileUploaderName.setTypeface(Typeface.DEFAULT);
                     tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text_light));
 
                     ivMessageCommonFile.setClickable(false);
@@ -343,7 +359,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
                 } else {
                     tvMessageCommonFileName.setText(content.title);
                     tvMessageCommonFileName.setTextColor(resources.getColor(R.color.dark_gray));
-                    tvFileUploaderName.setTextColor(resources.getColor(R.color.dark_gray));
+                    tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text));
 
                     String serverUrl = content.serverUrl;
                     String fileType = content.icon;
@@ -381,21 +397,40 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     }
 
     @Override
-    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+    public void setOnItemClickListener(final View.OnClickListener itemClickListener) {
         super.setOnItemClickListener(itemClickListener);
+
+        View.OnClickListener onClickListenerWrapper = v -> {
+            // TODO N개의 댓글 혹은 댓글이 press 됐을 때 화살표 색상바꿔줘야함...
+            if (hasCommentBubbleTail()) {
+            }
+
+            itemClickListener.onClick(v);
+        };
+
         if (vgMessageCommonFile != null) {
-            vgMessageCommonFile.setOnClickListener(itemClickListener);
+            vgMessageCommonFile.setOnClickListener(onClickListenerWrapper);
         }
+
         if (vgReadMore != null) {
-            vgReadMore.setOnClickListener(itemClickListener);
+            vgReadMore.setOnClickListener(onClickListenerWrapper);
         }
-        vgProfileNestedComment.setOnClickListener(itemClickListener);
+
+        vgProfileNestedComment.setOnClickListener(onClickListenerWrapper);
     }
 
     @Override
     public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
         super.setOnItemLongClickListener(itemLongClickListener);
-        vgProfileNestedComment.setOnLongClickListener(itemLongClickListener);
+
+        View.OnLongClickListener onLongClickListenerWrapper = v -> {
+            // TODO N개의 댓글 혹은 댓글이 press 됐을 때 화살표 색상바꿔줘야함...
+            if (hasCommentBubbleTail()) {
+            }
+            return itemLongClickListener.onLongClick(v);
+        };
+
+        vgProfileNestedComment.setOnLongClickListener(onLongClickListenerWrapper);
     }
 
     public void setHasOnlyBadge(boolean hasOnlyBadge) {
