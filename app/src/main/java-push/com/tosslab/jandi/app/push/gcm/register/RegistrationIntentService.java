@@ -29,7 +29,7 @@ import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.push.PushTokenRegister;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
+import com.tosslab.jandi.app.utils.parse.PushUtil;
 
 import java.io.IOException;
 
@@ -51,13 +51,14 @@ public class RegistrationIntentService extends IntentService {
                 String token =
                         instanceID.getToken(JandiConstantsForFlavors.Push.GCM_SENDER_ID,
                                 GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                LogUtil.e("tony", "token = " + token);
                 subscribeTopics(token);
                 // TODO: Implement this method to send any registration to your app's servers.
                 PushTokenRepository.getInstance().upsertPushToken(new PushToken("gcm", token));
                 PushTokenRegister.getInstance().updateToken();
 
                 if (!JandiPreference.isParsePushRemoved()) {
-                    ParseUpdateUtil.deleteChannelOnServer();
+                    PushUtil.unsubscribeParsePush();
                     JandiPreference.setParsePushRemoved(true);
                 }
             }

@@ -38,7 +38,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
+import com.tosslab.jandi.app.utils.parse.PushUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -262,8 +262,8 @@ public class PreviousJandiPushReceiverModel {
     }
 
     public boolean isPushOn() {
-        return !ParseUpdateUtil.PARSE_ACTIVATION_OFF.equals(
-                ParseInstallation.getCurrentInstallation().getString(ParseUpdateUtil.PARSE_ACTIVATION));
+        return !PushUtil.PARSE_ACTIVATION_OFF.equals(
+                ParseInstallation.getCurrentInstallation().getString(PushUtil.PARSE_ACTIVATION));
 
     }
 

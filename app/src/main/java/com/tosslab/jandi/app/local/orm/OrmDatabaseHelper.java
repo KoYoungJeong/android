@@ -132,6 +132,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             createTable(connectionSource, UploadedFileInfo.class);
 
+            createTable(connectionSource, BadgeCount.class);
+
             createTable(connectionSource, ResAccessToken.class);
 
             createTable(connectionSource, DownloadInfo.class);
@@ -229,9 +231,6 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, PushHistory.class);
                         Dao<ResAccessToken, ?> dao = DaoManager.createDao(connectionSource, ResAccessToken.class);
                         dao.executeRawNoArgs("ALTER TABLE `token` ADD COLUMN deviceId VARCHAR;");
-                        dao.executeRawNoArgs("DROP TABLE `badge_count`;");
-
-
                     }));
 
 

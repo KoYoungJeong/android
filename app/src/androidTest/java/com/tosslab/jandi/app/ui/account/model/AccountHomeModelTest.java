@@ -65,7 +65,7 @@ public class AccountHomeModelTest {
     public void testGetTeamInfos() throws Exception {
 
         // Given
-        List<ResPendingTeamInfo> pendingTeamInfo = new InvitationApi(RetrofitBuilder.newInstance()).getPedingTeamInfo();
+        List<ResPendingTeamInfo> pendingTeamInfo = new InvitationApi(RetrofitBuilder.getInstance()).getPedingTeamInfo();
         int pendingCount = 0;
         for (ResPendingTeamInfo resPendingTeamInfo : pendingTeamInfo) {
             if (TextUtils.equals(resPendingTeamInfo.getStatus(), "pending")) {
@@ -95,13 +95,13 @@ public class AccountHomeModelTest {
         accountHomeModel.updateAccountName(changedName);
 
         // Then
-        ResAccountInfo newAccountInfo = new AccountApi(RetrofitBuilder.newInstance()).getAccountInfo();
+        ResAccountInfo newAccountInfo = new AccountApi(RetrofitBuilder.getInstance()).getAccountInfo();
         String newName = newAccountInfo.getName();
 
         assertThat(originName, is(not(equalTo(newName))));
         assertThat(changedName, is(equalTo(newName)));
 
-        new AccountProfileApi(RetrofitBuilder.newInstance()).changeName(new ReqProfileName("Steve"));
+        new AccountProfileApi(RetrofitBuilder.getInstance()).changeName(new ReqProfileName("Steve"));
 
     }
 
@@ -159,7 +159,7 @@ public class AccountHomeModelTest {
         List<ResAccountInfo.UserTeam> accountTeams = AccountRepository.getRepository().getAccountTeams();
         long teamId = accountTeams.get(accountTeams.size() - 1).getTeamId();
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
-        ResLeftSideMenu leftSideMenu = new LeftSideApi(RetrofitBuilder.newInstance()).getInfosForSideMenu(teamId);
+        ResLeftSideMenu leftSideMenu = new LeftSideApi(RetrofitBuilder.getInstance()).getInfosForSideMenu(teamId);
 
         // When
         EntityManager entityManager = accountHomeModel.updateEntityInfo(JandiApplication.getContext(), leftSideMenu);

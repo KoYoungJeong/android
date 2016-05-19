@@ -45,9 +45,9 @@ public class TeamsModelTest {
     @Before
     public void setup() throws Exception {
 
-        model = new TeamsModel(() -> new AccountApi(RetrofitBuilder.newInstance()),
-                () -> new LeftSideApi(RetrofitBuilder.newInstance()),
-                () -> new InvitationApi(RetrofitBuilder.newInstance()));
+        model = new TeamsModel(() -> new AccountApi(RetrofitBuilder.getInstance()),
+                () -> new LeftSideApi(RetrofitBuilder.getInstance()),
+                () -> new InvitationApi(RetrofitBuilder.getInstance()));
     }
 
     @Test

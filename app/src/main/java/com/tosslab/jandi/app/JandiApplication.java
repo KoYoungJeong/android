@@ -11,12 +11,9 @@ import android.text.TextUtils;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.facebook.cache.disk.DiskCacheConfig;
-import com.facebook.common.logging.FLog;
 import com.facebook.common.util.ByteConstants;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import com.facebook.imagepipeline.listener.RequestListener;
-import com.facebook.imagepipeline.listener.RequestLoggingListener;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
@@ -46,9 +43,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.logging.LogManager;
 
@@ -135,7 +130,7 @@ public class JandiApplication extends MultiDexApplication {
     }
 
     private void initRetrofitBuilder() {
-        RetrofitBuilder.newInstance();
+        RetrofitBuilder.getInstance();
     }
 
     private void initFresco() {
@@ -270,7 +265,7 @@ public class JandiApplication extends MultiDexApplication {
         SimpleApiRequester.request(() -> {
             ReqUpdatePlatformStatus req = new ReqUpdatePlatformStatus(active);
             try {
-                new PlatformApi(RetrofitBuilder.newInstance()).updatePlatformStatus(req);
+                new PlatformApi(RetrofitBuilder.getInstance()).updatePlatformStatus(req);
             } catch (RetrofitException e) {
             }
         }, () -> LogUtil.i("PlatformApi", "Success(updatePlatformStatus)"));

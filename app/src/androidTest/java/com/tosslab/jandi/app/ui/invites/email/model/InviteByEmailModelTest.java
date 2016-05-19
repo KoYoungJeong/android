@@ -27,7 +27,7 @@ public class InviteByEmailModelTest {
     public void setUp() throws Exception {
         BaseInitUtil.initData();
 
-        model = new InviteByEmailModel(() -> new TeamApi(RetrofitBuilder.newInstance()));
+        model = new InviteByEmailModel(() -> new TeamApi(RetrofitBuilder.getInstance()));
     }
 
     @Test

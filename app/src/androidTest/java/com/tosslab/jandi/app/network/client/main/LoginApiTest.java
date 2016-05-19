@@ -24,7 +24,7 @@ public class LoginApiTest {
 
     @Test
     public void testGetAccessToken() throws Exception {
-        LoginApi loginApi = new LoginApi(RetrofitBuilder.newInstance());
+        LoginApi loginApi = new LoginApi(RetrofitBuilder.getInstance());
         {
             ResAccessToken accessToken = loginApi
                     .getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST1_EMAIL, BaseInitUtil.TEST_PASSWORD));

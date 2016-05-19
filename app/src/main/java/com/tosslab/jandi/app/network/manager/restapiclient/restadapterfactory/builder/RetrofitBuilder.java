@@ -18,7 +18,7 @@ public class RetrofitBuilder {
 
     private RetrofitBuilder() {}
 
-    synchronized public static RetrofitBuilder newInstance() {
+    synchronized public static RetrofitBuilder getInstance() {
         if (retrofitBuilder == null) {
             retrofitBuilder = new RetrofitBuilder();
         }

@@ -82,7 +82,7 @@ public class IntroLoginModel {
     }
 
     public ResCommon requestPasswordReset(String email) throws RetrofitException {
-        return new AccountPasswordApi(RetrofitBuilder.newInstance()).resetPassword(new ReqAccountEmail(email, LanguageUtil.getLanguage()));
+        return new AccountPasswordApi(RetrofitBuilder.getInstance()).resetPassword(new ReqAccountEmail(email, LanguageUtil.getLanguage()));
     }
 
     public void trackSignInSuccess() {
