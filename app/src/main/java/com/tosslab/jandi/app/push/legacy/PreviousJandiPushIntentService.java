@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.push.receiver;
+package com.tosslab.jandi.app.push.legacy;
 
 import android.app.IntentService;
 import android.content.Context;
@@ -8,7 +8,6 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
-import com.tosslab.jandi.app.push.queue.PreviousPushHandler;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -19,7 +18,7 @@ import de.greenrobot.event.EventBus;
  * Created by tonyjs on 15. 7. 14..
  */
 public class PreviousJandiPushIntentService extends IntentService {
-    public static final String TAG = "JANDI.JandiPushIntentService";
+    public static final String TAG = "ParsePushIntentService";
     private PreviousJandiPushReceiverModel jandiPushReceiverModel;
     private PreviousPushHandler pushHandler;
 

@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.push.receiver;
+package com.tosslab.jandi.app.push.legacy;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,7 +8,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
-public class PreviousBroadcastReceiver extends BroadcastReceiver {
+public class PreviousBroadCastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (TextUtils.isEmpty(TokenUtil.getRefreshToken()) || ParseUpdateUtil.isParseOff) {

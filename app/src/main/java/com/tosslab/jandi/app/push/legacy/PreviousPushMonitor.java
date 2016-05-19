@@ -1,6 +1,8 @@
-package com.tosslab.jandi.app.push.monitor;
+package com.tosslab.jandi.app.push.legacy;
 
 import android.support.v4.app.NotificationCompat;
+
+import com.tosslab.jandi.app.push.monitor.PushEntity;
 
 import java.util.concurrent.ConcurrentHashMap;
 

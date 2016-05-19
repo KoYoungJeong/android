@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.push.receiver;
+package com.tosslab.jandi.app.push.legacy;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -31,7 +31,6 @@ import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
-import com.tosslab.jandi.app.push.monitor.PreviousPushMonitor;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.ui.settings.Settings;

@@ -386,12 +386,12 @@ public class JandiPreference {
                 .apply();
     }
 
-    public static boolean getRemovedParsePush() {
+    public static boolean isParsePushRemoved() {
         return getSharedPreferences()
                 .getBoolean(PREF_REMOVED_PARSE_PUSH, false);
     }
 
-    public static void setRemovedParsePush(boolean removed) {
+    public static void setParsePushRemoved(boolean removed) {
         getSharedPreferences()
                 .edit()
                 .putBoolean(PREF_REMOVED_PARSE_PUSH, removed)

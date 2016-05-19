@@ -27,7 +27,7 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 
 public class JandiPushIntentService extends IntentService {
-    public static final String TAG = "JANDI.JandiPushIntentService";
+    public static final String TAG = "JandiPushIntentService";
     private static final String EXTRA_CONTENT = "content";
 
     public JandiPushIntentService() {

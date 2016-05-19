@@ -111,12 +111,6 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
-            android:name=".ui.maintab.file.FileListActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_tab_file"
-            android:screenOrientation="portrait" />
-
-        <activity
             android:name=".ui.filedetail.FileDetailActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_file_detail"
@@ -268,7 +262,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".push.receiver.PreviousBroadcastReceiver">
+        <receiver android:name=".push.legacy.PreviousBroadCastReceiver">
             <intent-filter>
                 <action android:name="com.tosslab.jandi.app.Push" />
             </intent-filter>
@@ -606,7 +600,7 @@
         <service android:name=".push.receiver.JandiPushIntentService" />
 
         <!-- Previous Push Intent Service -->
-        <service android:name=".push.receiver.PreviousJandiPushIntentService" />
+        <service android:name=".push.legacy.PreviousJandiPushIntentService" />
 
         <!-- Log Out Service -->
         <service android:name=".services.SignOutService" />

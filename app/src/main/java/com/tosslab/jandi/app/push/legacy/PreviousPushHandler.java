@@ -1,11 +1,10 @@
-package com.tosslab.jandi.app.push.queue;
+package com.tosslab.jandi.app.push.legacy;
 
 import android.content.Context;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.push.receiver.PreviousJandiPushReceiverModel_;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.utils.DateTransformator;
 

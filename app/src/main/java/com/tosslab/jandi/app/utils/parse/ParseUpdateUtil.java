@@ -29,10 +29,6 @@ public class ParseUpdateUtil {
         PushManager.startWork(JandiApplication.getContext(),
                 PushConstants.LOGIN_TYPE_API_KEY,
                 JandiConstantsForFlavors.Push.BAIDU_API_KEY);
-        deleteChannelOnServer();
-        if (!JandiPreference.getRemovedParsePush()) {
-            JandiPreference.setRemovedParsePush(true);
-        }
     }
 
     public static void deleteChannelOnServer() {
