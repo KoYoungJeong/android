@@ -9,8 +9,7 @@ import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.push.gcm.register.RegistrationIntentService;
-import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.push.gcm.register.GcmRegistrationIntentService;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
@@ -25,7 +24,7 @@ public class PushUtil {
     public static final String PARSE_ACTIVATION_OFF = "off";
 
     public static void registPush() {
-        Intent service = new Intent(JandiApplication.getContext(), RegistrationIntentService.class);
+        Intent service = new Intent(JandiApplication.getContext(), GcmRegistrationIntentService.class);
         JandiApplication.getContext().startService(service);
 
         PushManager.startWork(JandiApplication.getContext(),

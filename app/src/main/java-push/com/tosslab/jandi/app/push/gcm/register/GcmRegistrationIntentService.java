@@ -33,12 +33,12 @@ import com.tosslab.jandi.app.utils.parse.PushUtil;
 
 import java.io.IOException;
 
-public class RegistrationIntentService extends IntentService {
+public class GcmRegistrationIntentService extends IntentService {
 
-    private static final String TAG = "RegIntentService";
+    private static final String TAG = GcmRegistrationIntentService.class.getSimpleName();
     private static final String[] TOPICS = {"global"};
 
-    public RegistrationIntentService() {
+    public GcmRegistrationIntentService() {
         super(TAG);
     }
 
@@ -51,7 +51,7 @@ public class RegistrationIntentService extends IntentService {
                 String token =
                         instanceID.getToken(JandiConstantsForFlavors.Push.GCM_SENDER_ID,
                                 GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-                LogUtil.e("tony", "token = " + token);
+                LogUtil.e(TAG, "token = " + token);
                 subscribeTopics(token);
                 // TODO: Implement this method to send any registration to your app's servers.
                 PushTokenRepository.getInstance().upsertPushToken(new PushToken("gcm", token));
