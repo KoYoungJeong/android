@@ -15,26 +15,24 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="@string/jandi_unread_messages_below"
-        android:textColor="#80000000"
+        android:textColor="#66000000"
         android:textSize="12dp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="6dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginRight="6dp"
         android:layout_toLeftOf="@id/tv_message_last_read"
-        android:background="#80000000" />
+        android:background="#33000000" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="6dp"
+        android:layout_marginLeft="6dp"
         android:layout_toRightOf="@id/tv_message_last_read"
-        android:background="#80000000" />
+        android:background="#33000000" />
 
 
 </RelativeLayout>

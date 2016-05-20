@@ -27,7 +27,7 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 
 public class JandiPushIntentService extends IntentService {
-    public static final String TAG = "JANDI.JandiPushIntentService";
+    public static final String TAG = "JandiPushIntentService";
     private static final String EXTRA_CONTENT = "content";
 
     public JandiPushIntentService() {
@@ -37,13 +37,13 @@ public class JandiPushIntentService extends IntentService {
     public static void startService(Context context, String customContent) {
         Intent intent = new Intent(context, JandiPushIntentService.class);
         intent.putExtra(EXTRA_CONTENT, customContent);
-
         context.startService(intent);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         String accountId = AccountUtil.getAccountId(getApplicationContext());
+
         if (TextUtils.isEmpty(accountId)) {
             LogUtil.e(TAG, "Account Id is empty.");
             return;
@@ -52,6 +52,7 @@ public class JandiPushIntentService extends IntentService {
         String content = intent.getStringExtra(EXTRA_CONTENT);
 
         BasePushInfo basePushInfo = parsingPushTO(content);
+
         if (basePushInfo == null) {
             LogUtil.e(TAG, "messagePushInfo == null");
             return;

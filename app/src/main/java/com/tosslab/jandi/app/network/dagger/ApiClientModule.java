@@ -40,7 +40,7 @@ public class ApiClientModule {
 
     @Provides
     RetrofitBuilder provideRetrofitAdapterBuilder() {
-        return RetrofitBuilder.newInstance();
+        return RetrofitBuilder.getInstance();
     }
 
     @Provides

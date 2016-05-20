@@ -34,7 +34,7 @@ public class InviteByEmailPresenterImplTest {
     public void setUp() throws Exception {
         view = mock(InviteByEmailView.class);
         invitedEmailDataModel = mock(InvitedEmailDataModel.class);
-        inviteByEmailModel = new InviteByEmailModel(() -> new TeamApi(RetrofitBuilder.newInstance()));
+        inviteByEmailModel = new InviteByEmailModel(() -> new TeamApi(RetrofitBuilder.getInstance()));
         inviteByEmailPresenter =
                 new InviteByEmailPresenterImpl(inviteByEmailModel, view, invitedEmailDataModel);
 

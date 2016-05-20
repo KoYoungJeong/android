@@ -143,7 +143,7 @@ public class OpenActionTest {
 
         boolean[] finished = getFinished();
 
-        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.newInstance()).getAccessToken(
+        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.getInstance()).getAccessToken(
                 ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST1_EMAIL, BaseInitUtil.TEST_PASSWORD));
 
 

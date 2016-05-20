@@ -10,6 +10,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.local.orm.domain.BadgeCount;
 import com.tosslab.jandi.app.local.orm.domain.DownloadInfo;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
@@ -131,6 +132,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             createTable(connectionSource, UploadedFileInfo.class);
 
+            createTable(connectionSource, BadgeCount.class);
+
             createTable(connectionSource, ResAccessToken.class);
 
             createTable(connectionSource, DownloadInfo.class);
@@ -152,6 +155,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, ResFolderItem.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_BADGE, () -> {
+                        // for Parse
+                        createTable(connectionSource, BadgeCount.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_FOLDER_MODIFY, () -> {
                         dropTable(connectionSource, ResFolderItem.class);
@@ -226,9 +231,6 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, PushHistory.class);
                         Dao<ResAccessToken, ?> dao = DaoManager.createDao(connectionSource, ResAccessToken.class);
                         dao.executeRawNoArgs("ALTER TABLE `token` ADD COLUMN deviceId VARCHAR;");
-                        dao.executeRawNoArgs("DROP TABLE `badge_count`;");
-
-
                     }));
 
 
@@ -303,6 +305,9 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(getConnectionSource(), ResFolder.class);
         clearTable(getConnectionSource(), ResFolderItem.class);
         clearTable(getConnectionSource(), FolderExpand.class);
+
+        // for parse
+        clearTable(getConnectionSource(), BadgeCount.class);
 
         clearTable(getConnectionSource(), ResAccessToken.class);
         clearTable(getConnectionSource(), PushToken.class);

@@ -40,7 +40,7 @@ public class DeviceApiTest {
 
     @Before
     public void setUp() throws Exception {
-        deviceApi = new DeviceApi(RetrofitBuilder.newInstance());
+        deviceApi = new DeviceApi(RetrofitBuilder.getInstance());
         accessToken = TokenUtil.getTokenObject();
 
     }
@@ -66,7 +66,7 @@ public class DeviceApiTest {
 
     @Test
     public void testDeleteDevice() throws Exception {
-        accessToken = new LoginApi(RetrofitBuilder.newInstance()).getAccessToken(
+        accessToken = new LoginApi(RetrofitBuilder.getInstance()).getAccessToken(
                 ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_EMAIL, BaseInitUtil.TEST_PASSWORD));
         TokenUtil.saveTokenInfoByPassword(accessToken);
         ResDeviceSubscribe resDeviceSubscribe = deviceApi.deleteDevice(accessToken.getDeviceId());

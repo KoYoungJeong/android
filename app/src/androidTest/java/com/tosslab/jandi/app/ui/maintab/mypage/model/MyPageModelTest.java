@@ -41,7 +41,7 @@ public class MyPageModelTest {
     @Before
     public void setup() throws Exception {
 
-        model = new MyPageModel(() -> new MessageApi(RetrofitBuilder.newInstance()));
+        model = new MyPageModel(() -> new MessageApi(RetrofitBuilder.getInstance()));
     }
 
     @Test

@@ -2,18 +2,16 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.RoundingParams;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
@@ -30,13 +28,11 @@ public class LinkPreviewViewModel {
     private TextView tvTitle;
     private TextView tvDomain;
     private TextView tvDescription;
-    private View vgThumb;
     private SimpleDraweeView ivThumb;
     private OnLinkPreviewClickListener onLinkPreviewClickListener;
 
     private Context context;
     private ViewGroup vgLinkPreview;
-    private View vgSnippet;
     private View vDividier;
 
     public LinkPreviewViewModel(Context context) {
@@ -56,7 +52,8 @@ public class LinkPreviewViewModel {
             return;
         } else {
             vgLinkPreview.removeAllViews();
-            LayoutInflater.from(vgLinkPreview.getContext()).inflate(R.layout.item_message_layout_linkpreview_v2, vgLinkPreview, true);
+            LayoutInflater.from(vgLinkPreview.getContext())
+                    .inflate(R.layout.item_message_layout_linkpreview_v2, vgLinkPreview, true);
             initInnerView(vgLinkPreview);
             vgLinkPreview.setVisibility(View.VISIBLE);
         }
@@ -89,38 +86,33 @@ public class LinkPreviewViewModel {
 
         boolean useThumbnail = useThumbnail(linkPreview.imageUrl);
 
+        final Resources resources = ivThumb.getResources();
+
         if (!useThumbnail) {
-            ivThumb.setImageURI(null);
-            vgThumb.setVisibility(View.GONE);
-            vDividier.setVisibility(View.GONE);
-            vgSnippet.setBackgroundResource(R.drawable.bg_round_white_rect_for_message);
+            int color = resources.getColor(R.color.jandi_messages_big_size_image_view_bg);
+            ImageLoader.newBuilder()
+                    .backgroundColor(color)
+                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
+                    .load(R.drawable.preview_no_img)
+                    .into(ivThumb);
         } else {
-            vgSnippet.setBackgroundResource(R.drawable.bg_round_bottom_white_for_message);
 
             vDividier.setVisibility(View.VISIBLE);
-            vgThumb.setVisibility(View.VISIBLE);
 
             String imageUrl = linkPreview.imageUrl;
 
-
-            float imageRound = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, JandiApplication.getContext().getResources().getDisplayMetrics());
-            RoundingParams roundingParams = RoundingParams.fromCornersRadii(imageRound, imageRound, 0, 0);
-
             ImageLoader.newBuilder()
-                    .roundingParams(roundingParams)
-                    .backgroundColor(ivThumb.getResources().getColor(R.color.jandi_messages_image_background))
+                    .backgroundColor(resources.getColor(R.color.jandi_messages_image_background))
                     .placeHolder(R.drawable.comment_image_preview_download, ScalingUtils.ScaleType.CENTER_INSIDE)
                     .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
-                    .error(R.drawable.comment_no_img, ScalingUtils.ScaleType.CENTER_INSIDE)
                     .callback(new BaseOnResourceReadyCallback() {
                         @Override
                         public void onFail(Throwable cause) {
-                            Uri resourceUri = UriFactory.getResourceUri(R.drawable.comment_no_img);
+                            int color = resources.getColor(R.color.jandi_messages_big_size_image_view_bg);
                             ImageLoader.newBuilder()
+                                    .backgroundColor(color)
                                     .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
-                                    .backgroundColor(ivThumb.getResources().getColor(R.color.jandi_messages_big_size_image_view_bg))
-                                    .placeHolder(R.drawable.comment_no_img, ScalingUtils.ScaleType.CENTER_INSIDE)
-                                    .load(resourceUri)
+                                    .load(R.drawable.preview_no_img)
                                     .into(ivThumb);
                         }
                     })
@@ -138,9 +130,7 @@ public class LinkPreviewViewModel {
         tvTitle = (TextView) vgLinkPreview.findViewById(R.id.tv_linkpreview_title);
         tvDomain = (TextView) vgLinkPreview.findViewById(R.id.tv_linkpreview_domain);
         tvDescription = (TextView) vgLinkPreview.findViewById(R.id.tv_linkpreview_description);
-        vgThumb = vgLinkPreview.findViewById(R.id.vg_linkpreview_thumb);
         ivThumb = (SimpleDraweeView) vgLinkPreview.findViewById(R.id.iv_linkpreview_thumb);
-        vgSnippet = vgLinkPreview.findViewById(R.id.vg_snippet_summary);
         vDividier = vgLinkPreview.findViewById(R.id.v_snippet_divider);
     }
 

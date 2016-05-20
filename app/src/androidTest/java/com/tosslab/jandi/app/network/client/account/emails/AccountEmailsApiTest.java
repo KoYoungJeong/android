@@ -26,14 +26,14 @@ public class AccountEmailsApiTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.newInstance()).getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_EMAIL, BaseInitUtil.TEST_PASSWORD));
+        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.getInstance()).getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_EMAIL, BaseInitUtil.TEST_PASSWORD));
         TokenUtil.saveTokenInfoByPassword(accessToken);
 
     }
 
     @Before
     public void setUp() throws Exception {
-        accountEmailsApi = new AccountEmailsApi(RetrofitBuilder.newInstance());
+        accountEmailsApi = new AccountEmailsApi(RetrofitBuilder.getInstance());
     }
 
     @Test
