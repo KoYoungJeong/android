@@ -4,7 +4,7 @@
     <item android:state_selected="true">
         <layer-list>
             <item>
-                <color android:color="@color/deactivate_text_color" />
+                <color android:color="@color/jandi_line_gray" />
             </item>
             <item android:right="1dp">
                 <color android:color="@color/jandi_sticker_view_selector" />
@@ -14,7 +14,7 @@
     <item>
         <layer-list>
             <item>
-                <color android:color="@color/deactivate_text_color" />
+                <color android:color="@color/jandi_line_gray" />
             </item>
             <item android:right="1dp">
                 <color android:color="@color/jandi_sticker_view_background" />

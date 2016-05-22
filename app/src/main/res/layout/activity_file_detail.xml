@@ -54,7 +54,7 @@
             android:layout_height="1dp"
             android:layout_above="@+id/vg_file_detail_input_comment"
             android:layout_alignWithParentIfMissing="true"
-            android:background="@color/deactivate_text_color"/>
+            android:background="@color/jandi_line_gray"/>
 
         <LinearLayout
             android:id="@+id/vg_file_detail_input_comment"
