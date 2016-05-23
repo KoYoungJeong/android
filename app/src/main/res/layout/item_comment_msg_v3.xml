@@ -51,7 +51,7 @@
             android:paddingRight="@dimen/jandi_comment_name_margin_right"
             android:paddingTop="7dp">
 
-            <iv_profile_nested_comment_user_profile
+            <ImageView
                 android:id="@+id/iv_profile_nested_comment_user_profile"
                 android:layout_width="25dp"
                 android:layout_height="25dp"

@@ -590,15 +590,8 @@ public class MessageListV2Presenter {
         }
 
         boolean cacheMode = messageContainer.isCacheMode();
-        messageListModel.sortByTime(newMessages);
         boolean firstLoadNewMessage = currentMessageState.isFirstLoadNewMessage();
-        if (firstLoadNewMessage) {
-            int messagesCount = MessageRepository.getRepository()
-                    .getMessagesCount(roomId, messagePointer.getLastReadLinkId());
-            if (messagesCount <= 1) {
-                messagePointer.setLastReadLinkId(-1);
-            }
-        }
+        messageListModel.sortByTime(newMessages);
 
         view.updateRecyclerViewInfo();
 
@@ -610,6 +603,14 @@ public class MessageListV2Presenter {
 
         if (cacheMode) {
             messageListModel.upsertMessages(roomId, newMessages);
+
+            if (firstLoadNewMessage) {
+                int messagesCount = MessageRepository.getRepository()
+                        .getMessagesCount(roomId, messagePointer.getLastReadLinkId());
+                if (messagesCount <= 1) {
+                    messagePointer.setLastReadLinkId(-1);
+                }
+            }
 
             int size = newMessages.size();
             long minLinkId = -1;
@@ -637,6 +638,8 @@ public class MessageListV2Presenter {
 
         }
 
+        messageListModel.presetTextContent(newMessages);
+
         for (ResMessages.Link link : newMessages) {
             if (link.message instanceof ResMessages.StickerMessage
                     || link.message instanceof ResMessages.TextMessage) {
@@ -650,7 +653,6 @@ public class MessageListV2Presenter {
         }
 
         adapterModel.addAll(adapterModel.getCount(), archivedList);
-        messageListModel.presetTextContent(newMessages);
         adapterModel.addAll(adapterModel.getCount(), newMessages);
         view.refreshMessages();
 

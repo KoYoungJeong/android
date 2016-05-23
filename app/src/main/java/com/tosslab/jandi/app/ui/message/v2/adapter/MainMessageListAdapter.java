@@ -414,11 +414,14 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     @Override
     public void add(ResMessages.Link dummyMessage) {
-        int itemCount = getItemCount();
-        if (itemCount > 0) {
-            itemTypes.remove(links.get(itemCount - 1));
-        }
         links.add(dummyMessage);
+        int itemCount = getItemCount();
+        if (itemCount > 1) {
+            itemTypes.remove(links.get(itemCount - 2));
+            getItemViewType(itemCount - 2);
+        }
+        getItemViewType(itemCount - 1);
+
     }
 
     @Override
