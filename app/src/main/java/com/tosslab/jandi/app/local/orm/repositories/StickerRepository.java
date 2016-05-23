@@ -24,7 +24,9 @@ public class StickerRepository extends LockExecutorTemplate {
     public static final long DEFAULT_GROUP_ID_MOZZI = 100;
     public static final long DEFAULT_GROUP_ID_DAY = 101;
     public static final long DEFAULT_GROUP_ID_DAY_ZH_TW = 102;
+    public static final long DEFAULT_GROUP_ID_DINGO = 103;
     public static final long DEFAULT_MOZZI_COUNT = 26;
+
     private static StickerRepository repository;
 
     protected StickerRepository() {
@@ -69,6 +71,9 @@ public class StickerRepository extends LockExecutorTemplate {
 
                 String[] dayZhTwList = assetManager.list("stickers/default/day/zh_tw");
                 addStickerConetentIfNeed(dao, dayZhTwList, DEFAULT_GROUP_ID_DAY_ZH_TW);
+
+                String[] dingoList = assetManager.list("stickers/default/dingo");
+                addStickerConetentIfNeed(dao, dingoList, DEFAULT_GROUP_ID_DINGO);
 
             } catch (SQLException e) {
                 e.printStackTrace();

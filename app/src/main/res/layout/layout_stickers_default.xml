@@ -39,8 +39,8 @@
                 android:id="@+id/iv_sticker_default_items_no_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:scaleType="centerInside"
                 android:layout_marginBottom="15dp"
+                android:scaleType="centerInside"
                 android:src="@drawable/icon_sticker_no_items" />
 
             <TextView
@@ -81,6 +81,11 @@
                 android:id="@+id/btn_sticker_group_default_recent"
                 style="@style/JandiSticker.Group"
                 android:src="@drawable/btn_sticker_group_recent" />
+
+            <ImageView
+                android:id="@+id/btn_sticker_group_default_dingo"
+                style="@style/JandiSticker.Group"
+                android:src="@drawable/btn_sticker_group_dingo" />
 
             <ImageView
                 android:id="@+id/btn_sticker_group_default_day"
