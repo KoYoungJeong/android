@@ -8,9 +8,9 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.ShowMoreSharedEntitiesEvent;
@@ -45,7 +45,7 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
 
     private Context context;
     private TextView tvUserName;
-    private SimpleDraweeView ivUserProfile;
+    private ImageView ivUserProfile;
     private View vUserNameDisableIndicator;
     private View vUserProfileDisableIndicator;
     private TextView tvCreatedDate;
@@ -62,7 +62,7 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
         context = itemView.getContext();
 
         tvUserName = (TextView) itemView.findViewById(R.id.tv_file_detail_user_name);
-        ivUserProfile = (SimpleDraweeView) itemView.findViewById(R.id.iv_file_detail_user_profile);
+        ivUserProfile = (ImageView) itemView.findViewById(R.id.iv_file_detail_user_profile);
         tvCreatedDate = (TextView) itemView.findViewById(R.id.tv_file_detail_create_date);
 
         vUserNameDisableIndicator =

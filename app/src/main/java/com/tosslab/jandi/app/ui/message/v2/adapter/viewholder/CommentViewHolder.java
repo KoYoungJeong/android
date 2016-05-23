@@ -14,8 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -26,11 +24,12 @@ import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
@@ -44,10 +43,10 @@ import java.util.Collection;
  */
 public class CommentViewHolder extends BaseCommentViewHolder {
 
-    private SimpleDraweeView ivMessageCommonFile;
+    private ImageView ivMessageCommonFile;
     private TextView tvFileUploaderName;
     private TextView tvCommonFileSize;
-    private SimpleDraweeView ivProfileNestedCommentUserProfile;
+    private ImageView ivProfileNestedCommentUserProfile;
     private TextView tvProfileNestedCommentUserName;
     private ImageView ivProfileNestedNameLineThrough;
     private TextView tvProfileNestedCommentContent;
@@ -86,7 +85,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
         if (hasFileInfoView()) {
             // 파일 정보
             vgMessageCommonFile = (ViewGroup) rootView.findViewById(R.id.vg_message_common_file);
-            ivMessageCommonFile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_common_file);
+            ivMessageCommonFile = (ImageView) rootView.findViewById(R.id.iv_message_common_file);
             tvMessageCommonFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
             vFileIconBorder = rootView.findViewById(R.id.v_message_common_file_border);
             tvFileUploaderName = (TextView) rootView.findViewById(R.id.tv_uploader_name);
@@ -96,7 +95,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
         // 프로필이 있는 커멘트
         if (hasNestedProfile) {
-            ivProfileNestedCommentUserProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_profile_nested_comment_user_profile);
+            ivProfileNestedCommentUserProfile = (ImageView) rootView.findViewById(R.id.iv_profile_nested_comment_user_profile);
             vProfileCover = rootView.findViewById(R.id.v_profile_nested_comment_user_profile_cover);
             tvProfileNestedCommentUserName = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_user_name);
             ivProfileNestedNameLineThrough = (ImageView) rootView.findViewById(R.id.iv_profile_nested_name_line_through);
@@ -318,10 +317,8 @@ public class CommentViewHolder extends BaseCommentViewHolder {
                 needFileUploaderDivider = false;
                 needFileSize = false;
 
-                ImageLoader.newBuilder()
-                        .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                        .load(R.drawable.file_icon_deleted)
-                        .into(ivMessageCommonFile);
+                ivMessageCommonFile.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                ivMessageCommonFile.setImageResource(R.drawable.file_icon_deleted);
 
                 vFileIconBorder.setVisibility(View.GONE);
                 ivMessageCommonFile.setOnClickListener(null);

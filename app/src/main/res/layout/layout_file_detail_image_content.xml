@@ -5,7 +5,7 @@
     android:background="#f0f0f0"
     android:orientation="vertical">
 
-    <com.tosslab.jandi.app.views.FrescoImageView
+    <ImageView
         android:id="@+id/iv_file_detail_thumb"
         android:layout_width="match_parent"
         android:layout_height="306dp"/>

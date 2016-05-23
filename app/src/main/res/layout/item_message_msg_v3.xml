@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.tosslab.jandi.app.views.FrescoImageView
+    <ImageView
         android:id="@+id/iv_message_user_profile"
         android:layout_width="@dimen/jandi_messages_profile_size"
         android:layout_height="@dimen/jandi_messages_profile_size"
         android:layout_marginLeft="@dimen/jandi_messages_profile_margin_right"
-        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
-        app:backgroundImage="@color/black"
-        app:roundAsCircle="true" />
+        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"/>
 
     <View
         android:id="@+id/v_message_user_profile_cover"

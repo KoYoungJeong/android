@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.message.v2.viewmodel;
+package com.tosslab.jandi.app.views.controller;
 
 import android.content.Context;
 import android.view.View;

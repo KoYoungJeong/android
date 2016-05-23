@@ -4,9 +4,9 @@ import android.net.Uri;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.defaultimage.adapter.CharacterSelectorAdapter;
@@ -51,7 +51,7 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     RecyclerView lvProfileItemSelector;
 
     @ViewById(R.id.iv_main_image)
-    SimpleDraweeView lvMainImage;
+    ImageView lvMainImage;
 
     @Bean
     ProfileImageSelectorPresenter profileImageSelectorPresenter;

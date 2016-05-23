@@ -8,9 +8,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
@@ -34,8 +34,8 @@ public class KickDialogFragment extends DialogFragment {
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_kick_user_topic, null);
 
-        SimpleDraweeView ivProfile =
-                (SimpleDraweeView) view.findViewById(R.id.iv_kick_user_topic_profile);
+        ImageView ivProfile =
+                (ImageView) view.findViewById(R.id.iv_kick_user_topic_profile);
         TextView tvName = (TextView) view.findViewById(R.id.tv_kick_user_topic_name);
 
         ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);

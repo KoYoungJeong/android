@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal">
 
     <!-- 사용자 프로필 사진 -->
-    <com.tosslab.jandi.app.views.FrescoImageView
+    <ImageView
         android:id="@+id/iv_message_user_profile"
         android:layout_width="@dimen/jandi_messages_profile_size"
         android:layout_height="@dimen/jandi_messages_profile_size"
         android:layout_marginLeft="7dp"
         android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
-        android:visibility="invisible"
-        app:backgroundImage="@color/black"
-        app:roundAsCircle="true" />
+        android:visibility="invisible"/>
 
     <TextView
         android:id="@+id/tv_message_user_name"
@@ -25,7 +23,6 @@
         android:maxLines="1"
         android:maxWidth="200dp"
         android:singleLine="true"
-        android:text="빠빠빠"
         android:textColor="@color/jandi_messages_name"
         android:textSize="13dp"
         android:textStyle="bold" />

@@ -6,10 +6,10 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.ImageView;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -27,7 +27,7 @@ public class MessageViewHolder extends BaseMessageViewHolder {
 
     protected Context context;
 
-    private SimpleDraweeView ivProfile;
+    private ImageView ivProfile;
 
     private TextView tvName;
     private View vDisableLineThrough;
@@ -48,7 +48,7 @@ public class MessageViewHolder extends BaseMessageViewHolder {
 
         int topMargin = (int) UiUtils.getPixelFromDp(5f);
         if (hasProfile) {
-            ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
+            ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
             vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
 
             tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);

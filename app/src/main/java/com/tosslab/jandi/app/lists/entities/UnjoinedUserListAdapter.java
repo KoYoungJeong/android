@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -57,7 +57,7 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_check_user, null);
             holder = new ViewHolder();
             holder.textView = (TextView) convertView.findViewById(R.id.txt_check_user_name);
-            holder.imageView = (SimpleDraweeView) convertView.findViewById(R.id.img_check_user_icon);
+            holder.imageView = (ImageView) convertView.findViewById(R.id.img_check_user_icon);
             holder.checkBox = (CheckBox) convertView.findViewById(R.id.cb_check_user);
             holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -103,7 +103,7 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
 
     static class ViewHolder {
         TextView textView;
-        SimpleDraweeView imageView;
+        ImageView imageView;
         CheckBox checkBox;
     }
 }

@@ -15,8 +15,6 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -79,7 +77,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     String text;
 
     @ViewById(R.id.iv_share_image)
-    SimpleDraweeView ivShareImage;
+    ImageView ivShareImage;
 
     @ViewById(R.id.tv_share_image_title)
     TextView tvTitle;
@@ -175,13 +173,9 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
             vgFileIcon.setVisibility(View.GONE);
             ivShareImage.setVisibility(View.VISIBLE);
 
-            int width = ImageUtil.STANDARD_IMAGE_SIZE;
-            int height = ImageUtil.STANDARD_IMAGE_SIZE;
-
-            ImageLoader.newBuilder()
-                    .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                    .resize(width, height)
-                    .load(Uri.fromFile(file))
+            ImageLoader.newInstance()
+                    .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
+                    .uri(Uri.fromFile(file))
                     .into(ivShareImage);
         } else {
             vgFileIcon.setVisibility(View.VISIBLE);

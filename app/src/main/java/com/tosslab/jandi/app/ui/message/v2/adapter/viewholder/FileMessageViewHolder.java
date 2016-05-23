@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -27,11 +27,11 @@ import java.util.Collection;
 
 public class FileMessageViewHolder extends BaseMessageViewHolder {
 
-    private SimpleDraweeView ivProfile;
+    private ImageView ivProfile;
     private TextView tvName;
     private View vDisableLineThrough;
 
-    private SimpleDraweeView ivFileImage;
+    private ImageView ivFileImage;
     private TextView tvFileName;
     private TextView tvFileUploaderName;
     private TextView tvCommonFileSize;
@@ -47,13 +47,13 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
     public void initView(View rootView) {
         super.initView(rootView);
         if (hasProfile) {
-            ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
+            ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
             vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
             tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
             vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         }
 
-        ivFileImage = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_common_file);
+        ivFileImage = (ImageView) rootView.findViewById(R.id.iv_message_common_file);
         vFileIconBorder = rootView.findViewById(R.id.v_message_common_file_border);
         tvFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
         tvFileUploaderName = (TextView) rootView.findViewById(R.id.tv_uploader_name);

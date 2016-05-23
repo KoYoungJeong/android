@@ -3,9 +3,9 @@ package com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.comment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -20,17 +20,17 @@ import com.tosslab.jandi.app.utils.DateTransformator;
  */
 public class StickerViewHolder extends BaseViewHolder<ResMessages.CommentStickerMessage> {
     private TextView tvUserName;
-    private SimpleDraweeView ivUserProfile;
+    private ImageView ivUserProfile;
     private View vUserNameDisableIndicator;
     private View vUserProfileDisableIndicator;
     private TextView tvCreatedDate;
-    private SimpleDraweeView ivSticker;
+    private ImageView ivSticker;
 
     public StickerViewHolder(View itemView) {
         super(itemView);
 
         tvUserName = (TextView) itemView.findViewById(R.id.tv_file_detail_comment_sticker_user_name);
-        ivUserProfile = (SimpleDraweeView) itemView.findViewById(R.id.iv_file_detail_comment_sticker_user_profile);
+        ivUserProfile = (ImageView) itemView.findViewById(R.id.iv_file_detail_comment_sticker_user_profile);
         tvCreatedDate = (TextView) itemView.findViewById(R.id.tv_file_detail_comment_sticker_create_date);
 
         vUserNameDisableIndicator =
@@ -38,7 +38,7 @@ public class StickerViewHolder extends BaseViewHolder<ResMessages.CommentSticker
         vUserProfileDisableIndicator =
                 itemView.findViewById(R.id.v_file_detail_comment_sticker_user_profile_disable_indicator);
 
-        ivSticker = (SimpleDraweeView) itemView.findViewById(R.id.iv_file_detail_comment_sticker_content);
+        ivSticker = (ImageView) itemView.findViewById(R.id.iv_file_detail_comment_sticker_content);
     }
 
     public static StickerViewHolder newInstance(ViewGroup parent) {

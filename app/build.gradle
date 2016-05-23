@@ -107,8 +107,9 @@ dependencies {
 
     // Cache
     compile 'com.koushikdutta.ion:ion:2.1.+'
-    // Fresco
-    compile 'com.facebook.fresco:fresco:0.8.1'
+    // Image
+    compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
+    compile 'jp.wasabeef:glide-transformations:2.0.1'
 
     // Sliqte ORM
     compile 'com.j256.ormlite:ormlite-android:4.+'

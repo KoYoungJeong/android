@@ -6,15 +6,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.album.fragment.ImageAlbumFragment;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImageAlbum;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.SelectPictures;
-import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
@@ -40,7 +39,7 @@ public class DefaultAlbumAdapter extends RecyclerView.Adapter {
         AlbumViewHolder albumViewHolder = new AlbumViewHolder(view);
         albumViewHolder.tvTitle = (TextView) view.findViewById(R.id.tv_item_default_album_title);
         albumViewHolder.tvSelectCount = (TextView) view.findViewById(R.id.tv_item_default_album_count);
-        albumViewHolder.ivSample = (SimpleDraweeView) view.findViewById(R.id.iv_item_default_album_sample);
+        albumViewHolder.ivSample = (ImageView) view.findViewById(R.id.iv_item_default_album_sample);
 
         return albumViewHolder;
     }
@@ -76,16 +75,12 @@ public class DefaultAlbumAdapter extends RecyclerView.Adapter {
             viewHolder.tvTitle.setText(String.format("%s (%s)", buckerName, bucketCount));
         }
 
-        Uri uri = UriFactory.getContentUri(item.get_id());
+        Uri uri = UriUtil.getContentUri(item.get_id());
 
-        SimpleDraweeView ivSample = viewHolder.ivSample;
-
-        ViewGroup.LayoutParams layoutParams = ivSample.getLayoutParams();
-        ImageLoader.newBuilder()
-                .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
-                .resize(layoutParams.width, layoutParams.height)
-                .load(uri)
-                .into(ivSample);
+        ImageLoader.newInstance()
+                .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                .uri(uri)
+                .into(viewHolder.ivSample);
 
         viewHolder.itemView.setOnClickListener(v -> {
             if (onRecyclerItemClickListener != null) {
@@ -114,7 +109,7 @@ public class DefaultAlbumAdapter extends RecyclerView.Adapter {
 
         TextView tvTitle;
         TextView tvSelectCount;
-        SimpleDraweeView ivSample;
+        ImageView ivSample;
 
         public AlbumViewHolder(View itemView) {
             super(itemView);

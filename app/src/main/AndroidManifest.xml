@@ -12,6 +12,10 @@
         android:theme="@style/JandiTheme"
         tools:replace="android:icon, android:allowBackup">
 
+        <meta-data
+            android:name="com.tosslab.jandi.app.utils.image.JandiGlideModule"
+            android:value="GlideModule" />
+
         <!--삼성폰 멀티윈도우-->
         <meta-data
             android:name="com.samsung.android.sdk.multiwindow.enable"

@@ -4,17 +4,16 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.utils.UiUtils;
-import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -29,7 +28,7 @@ public class MemberViewHolder extends BaseViewHolder<FormattedEntity> {
     @Bind(R.id.tv_team_member_status)
     TextView tvStatus;
     @Bind(R.id.iv_team_member_profile)
-    SimpleDraweeView ivProfile;
+    ImageView ivProfile;
 
     private MemberViewHolder(View itemView) {
         super(itemView);
@@ -59,7 +58,8 @@ public class MemberViewHolder extends BaseViewHolder<FormattedEntity> {
         if (user instanceof BotEntity) {
             ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(54f);
             ivProfile.setLayoutParams(ivProfileLayoutParams);
-            ImageLoader.newBuilder().load(R.drawable.bot_43x54).into(ivProfile);
+
+            ivProfile.setImageResource(R.drawable.bot_43x54);
         } else {
             ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(43f);
             ivProfile.setLayoutParams(ivProfileLayoutParams);
@@ -68,7 +68,7 @@ public class MemberViewHolder extends BaseViewHolder<FormattedEntity> {
                         ivProfile, user.getUserLargeProfileUrl(), R.drawable.profile_img);
             } else {
                 ImageUtil.loadProfileImage(ivProfile,
-                        UriFactory.getResourceUri(R.drawable.profile_img_dummyaccount_43),
+                        UriUtil.getResourceUri(R.drawable.profile_img_dummyaccount_43),
                         R.drawable.profile_img_dummyaccount_43);
             }
         }

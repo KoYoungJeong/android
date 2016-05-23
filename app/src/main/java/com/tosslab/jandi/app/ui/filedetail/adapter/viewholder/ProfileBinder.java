@@ -3,9 +3,9 @@ package com.tosslab.jandi.app.ui.filedetail.adapter.viewholder;
 import android.content.res.Resources;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -22,11 +22,11 @@ import de.greenrobot.event.EventBus;
 public class ProfileBinder {
     private TextView tvUserName;
     private View vUserNameDisableIndicator;
-    private SimpleDraweeView ivUserProfile;
+    private ImageView ivUserProfile;
     private View vUserProfileDisableIndicator;
 
     private ProfileBinder(TextView tvUserName, View vUserNameDisableIndicator,
-                          SimpleDraweeView ivUserProfile, View vUserProfileDisableIndicator) {
+                          ImageView ivUserProfile, View vUserProfileDisableIndicator) {
         this.tvUserName = tvUserName;
         this.vUserNameDisableIndicator = vUserNameDisableIndicator;
         this.ivUserProfile = ivUserProfile;
@@ -35,7 +35,7 @@ public class ProfileBinder {
 
     public static ProfileBinder newInstance(
             TextView tvUserName, View vUserNameDisableIndicator,
-            SimpleDraweeView ivUserProfile, View vUserProfileDisableIndicator) {
+            ImageView ivUserProfile, View vUserProfileDisableIndicator) {
         return new ProfileBinder(tvUserName,
                 vUserNameDisableIndicator, ivUserProfile, vUserProfileDisableIndicator);
     }

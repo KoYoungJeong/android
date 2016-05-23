@@ -9,13 +9,13 @@
     android:paddingLeft="@dimen/jandi_messages_profile_margin_right">
 
     <!-- 사용자 프로필 사진 -->
-    <com.tosslab.jandi.app.views.FrescoImageView
+    <ImageView
         android:id="@+id/iv_message_user_profile"
         android:layout_width="@dimen/jandi_messages_profile_size"
         android:layout_height="@dimen/jandi_messages_profile_size"
         android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
-        android:clickable="false"
-        app:backgroundImage="@drawable/comment_profile"/>
+        android:src="@drawable/comment_profile"
+        android:clickable="false"/>
 
     <com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout
         android:id="@+id/vg_message_common_file"
@@ -32,7 +32,7 @@
         android:paddingTop="8dp"
         app:boundWidth="59dp">
 
-        <com.tosslab.jandi.app.views.FrescoImageView
+        <ImageView
             android:id="@+id/iv_message_common_file"
             android:layout_width="42dp"
             android:layout_height="42dp"

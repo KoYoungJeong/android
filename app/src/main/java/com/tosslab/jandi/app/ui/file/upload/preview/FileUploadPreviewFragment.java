@@ -7,13 +7,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
-import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import org.androidannotations.annotations.AfterViews;
@@ -31,7 +28,7 @@ public class FileUploadPreviewFragment extends Fragment {
     String realFilePath;
 
     @ViewById(R.id.iv_file_upload_preview)
-    SimpleDraweeView ivFileImage;
+    ImageView ivFileImage;
 
     @ViewById(R.id.vg_file_extensions)
     ViewGroup vgFileExtensions;
@@ -47,19 +44,18 @@ public class FileUploadPreviewFragment extends Fragment {
         FileExtensionsUtil.Extensions extensions = FileExtensionsUtil.getExtensions(realFilePath);
 
         if (extensions == FileExtensionsUtil.Extensions.IMAGE) {
-            Uri uri = UriFactory.getFileUri(realFilePath);
+            Uri uri = UriUtil.getFileUri(realFilePath);
 
-            int width = ImageUtil.STANDARD_IMAGE_SIZE;
-            int height = ImageUtil.STANDARD_IMAGE_SIZE;
-
-            ImageLoader.newBuilder()
-                    .resize(width, height)
-                    .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                    .load(uri)
+            ImageLoader.newInstance()
+                    .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
+                    .placeHolder(R.drawable.file_icon_img_198, ImageView.ScaleType.CENTER)
+                    .uri(uri)
                     .into(ivFileImage);
         } else {
             ivFileImage.setVisibility(View.GONE);
             vgFileExtensions.setVisibility(View.VISIBLE);
+
+            ivFileExtensions.setScaleType(ImageView.ScaleType.FIT_CENTER);
             ivFileExtensions.setImageResource(getFileTypeResource(extensions));
             tvFileExtensions.setText(extensions.name().toUpperCase());
         }

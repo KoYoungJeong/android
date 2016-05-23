@@ -3,7 +3,7 @@
     android:layout_width="45dp"
     android:layout_height="40dp">
 
-    <com.tosslab.jandi.app.views.FrescoImageView
+    <ImageView
         android:id="@+id/iv_item_message_file_upload_state_photo"
         android:layout_width="40dp"
         android:layout_height="40dp"

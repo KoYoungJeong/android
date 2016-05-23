@@ -20,7 +20,7 @@
         android:paddingTop="8dp"
         app:boundWidth="59dp">
 
-        <com.facebook.drawee.view.SimpleDraweeView
+        <ImageView
             android:id="@+id/iv_message_common_file"
             android:layout_width="42dp"
             android:layout_height="42dp"

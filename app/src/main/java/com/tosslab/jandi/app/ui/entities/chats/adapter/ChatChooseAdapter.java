@@ -10,15 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.domain.DisableDummyItem;
 import com.tosslab.jandi.app.ui.entities.chats.domain.EmptyChatChooseItem;
 import com.tosslab.jandi.app.ui.members.adapter.searchable.viewholder.EmptySearchedMemberViewHolder;
-import com.tosslab.jandi.app.utils.UriFactory;
+import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
@@ -146,7 +144,7 @@ public class ChatChooseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     static class ChatChooseViewHolder extends RecyclerView.ViewHolder {
         public Context context;
         @Bind(R.id.iv_entity_listitem_icon)
-        public SimpleDraweeView ivIcon;
+        public ImageView ivIcon;
         @Bind(R.id.iv_entity_listitem_fav)
         public ImageView ivFavorite;
         @Bind(R.id.tv_entity_listitem_name)
@@ -203,7 +201,7 @@ public class ChatChooseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 vDisableCover.setVisibility(View.VISIBLE);
             }
 
-            SimpleDraweeView imageViewIcon = ivIcon;
+            ImageView imageViewIcon = ivIcon;
             imageViewIcon.setOnClickListener(v ->
                     EventBus.getDefault().post(
                             new ShowProfileEvent(item.getEntityId(),
@@ -225,14 +223,14 @@ public class ChatChooseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     ImageUtil.loadProfileImage(imageViewIcon, item.getPhotoUrl(), R.drawable.profile_img);
                 } else {
                     ImageUtil.loadProfileImage(imageViewIcon,
-                            UriFactory.getResourceUri(R.drawable.profile_img_dummyaccount_43),
+                            UriUtil.getResourceUri(R.drawable.profile_img_dummyaccount_43),
                             R.drawable.profile_img_dummyaccount_43);
                 }
             } else {
-                ImageLoader.newBuilder()
-                        .placeHolder(R.drawable.bot_43x54, ScalingUtils.ScaleType.CENTER_INSIDE)
-                        .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
-                        .load(UriFactory.getResourceUri(R.drawable.bot_43x54))
+                ImageLoader.newInstance()
+                        .placeHolder(R.drawable.bot_43x54, ImageView.ScaleType.CENTER_INSIDE)
+                        .actualImageScaleType(ImageView.ScaleType.CENTER_INSIDE)
+                        .uri(UriUtil.getResourceUri(R.drawable.bot_43x54))
                         .into(imageViewIcon);
             }
         }

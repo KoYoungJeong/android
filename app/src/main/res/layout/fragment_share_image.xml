@@ -18,7 +18,7 @@
             android:layout_alignParentTop="true"
             android:orientation="vertical">
 
-            <com.tosslab.jandi.app.views.FrescoImageView
+            <ImageView
                 android:id="@+id/iv_share_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -31,7 +31,7 @@
                 android:orientation="vertical"
                 android:visibility="visible">
 
-                <com.tosslab.jandi.app.views.FrescoImageView
+                <ImageView
                     android:id="@+id/iv_share_file_icon"
                     android:layout_width="66dp"
                     android:layout_height="79dp"

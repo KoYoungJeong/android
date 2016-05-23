@@ -28,7 +28,6 @@ import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -140,7 +139,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     View vgPreview;
 
     @ViewById(R.id.iv_message_preview_user_profile)
-    SimpleDraweeView ivPreviewProfile;
+    ImageView ivPreviewProfile;
 
     @ViewById(R.id.tv_message_preview_user_name)
     TextView tvPreviewUserName;
