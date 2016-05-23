@@ -227,6 +227,57 @@ public class ImageUtil {
         return roundingParams;
     }
 
+    public static void setResourceIconOrLoadImageForComment(final SimpleDraweeView draweeView,
+                                                  final View vOutLine,
+                                                  final String fileUrl,
+                                                  final String thumbnailUrl,
+                                                  final String serverUrl,
+                                                  final String fileType) {
+
+        if (vOutLine != null) {
+            vOutLine.setVisibility(View.VISIBLE);
+        }
+
+        ImageLoader.Builder builder = ImageLoader.newBuilder()
+                .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+
+        int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, fileType);
+
+        boolean hasImageUrl = !TextUtils.isEmpty(fileUrl) || !TextUtils.isEmpty(thumbnailUrl);
+        if (!TextUtils.equals(fileType, "image") || !hasImageUrl) {
+            if (vOutLine != null) {
+                vOutLine.setVisibility(View.GONE);
+            }
+
+            builder.backgroundColor(Color.TRANSPARENT)
+                    .load(mimeTypeIconImage).into(draweeView);
+            return;
+        }
+
+        MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
+        if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
+            if (vOutLine != null) {
+                vOutLine.setVisibility(View.GONE);
+            }
+
+            builder.backgroundColor(Color.TRANSPARENT)
+                    .load(mimeTypeIconImage).into(draweeView);
+        } else {
+            if (TextUtils.isEmpty(thumbnailUrl)) {
+                builder.actualScaleType(ScalingUtils.ScaleType.FIT_XY);
+                builder.load(R.drawable.comment_no_img).into(draweeView);
+                return;
+            }
+
+            builder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+            builder.backgroundColor(draweeView.getResources().getColor(R.color.jandi_messages_image_view_bg));
+            builder.placeHolder(
+                    R.drawable.comment_img_preview, ScalingUtils.ScaleType.FIT_XY);
+            builder.error(R.drawable.comment_no_img, ScalingUtils.ScaleType.FIT_XY);
+            builder.load(Uri.parse(thumbnailUrl)).into(draweeView);
+        }
+    }
+
     public static void setResourceIconOrLoadImage(final SimpleDraweeView draweeView,
                                                   final View vOutLine,
                                                   final String fileUrl,

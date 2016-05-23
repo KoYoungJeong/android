@@ -69,11 +69,21 @@ public class StickerManager {
             stickerAssetPath = JandiConstantsForFlavors.SERVICE_FILE_URL +
                     "files-sticker/" + groupId + "/" + stickerId + "?size=420";
         }
+        boolean load = true;
+        if (view.getTag(view.getId()) != null) {
+            Object tag = view.getTag();
+            if (tag instanceof String && !TextUtils.equals(tag.toString(), stickerAssetPath)) {
+                // 이미 같은 이미지를 요청하고 있다고 판단함
+                load = false;
+            }
+        }
 
-        if (!TextUtils.isEmpty(stickerAssetPath)) {
+        if (!TextUtils.isEmpty(stickerAssetPath) && load) {
             Uri uri = Uri.parse(stickerAssetPath);
             loadSticker(uri, view, options);
+            view.setTag(view.getId(), stickerAssetPath);
         }
+
     }
 
     private void loadSticker(Uri uri, final SimpleDraweeView view, final LoadOptions options) {

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.tosslab.jandi.app.views.FrescoImageView
+        android:id="@+id/iv_message_user_profile"
+        android:layout_width="@dimen/jandi_messages_profile_size"
+        android:layout_height="@dimen/jandi_messages_profile_size"
+        android:layout_marginLeft="@dimen/jandi_messages_profile_margin_right"
+        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
+        fresco:backgroundImage="@color/black"
+        fresco:roundAsCircle="true" />
+
+    <View
+        android:id="@+id/v_message_user_profile_cover"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/iv_message_user_profile"
+        android:layout_alignLeft="@+id/iv_message_user_profile"
+        android:layout_alignRight="@+id/iv_message_user_profile"
+        android:layout_alignTop="@+id/iv_message_user_profile" />
+
+
+    <TextView
+        android:id="@+id/tv_message_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/jandi_messages_name_margin_right"
+        android:layout_toRightOf="@+id/iv_message_user_profile"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="빠빠빠"
+        android:textColor="@color/jandi_messages_name"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/iv_entity_listitem_line_through"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tv_message_user_name"
+        android:layout_alignLeft="@+id/tv_message_user_name"
+        android:layout_alignRight="@+id/tv_message_user_name"
+        android:layout_alignTop="@+id/tv_message_user_name"
+        android:src="@drawable/line_gray" />
+
+    <com.tosslab.jandi.app.views.FrescoImageView
+        android:id="@+id/iv_message_sticker"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_below="@+id/tv_message_user_name"
+        android:layout_marginLeft="@dimen/jandi_messages_content_left_margin"
+        android:layout_marginTop="5dp"
+        android:focusable="false" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/iv_message_sticker"
+        android:layout_marginBottom="1dp"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@+id/iv_message_sticker"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_message_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:text="1"
+            android:textColor="#ff00ace9"
+            android:textSize="9sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_message_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="오전 11:30"
+            android:textColor="#ff999999"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+
+    <View
+        android:id="@+id/v_margin"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_below="@+id/iv_message_sticker"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/vg_message_last_read"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_message_sticker"
+        android:visibility="gone">
+
+    </RelativeLayout>
+
+</RelativeLayout>

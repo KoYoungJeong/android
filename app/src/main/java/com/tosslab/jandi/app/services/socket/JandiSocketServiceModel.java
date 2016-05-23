@@ -27,7 +27,6 @@ import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
@@ -69,6 +68,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicKickedoutEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -164,17 +164,18 @@ public class JandiSocketServiceModel {
     public void refreshAccountInfo() {
         try {
             ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+            AccountUtil.removeDuplicatedTeams(resAccountInfo);
             AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
             Collection<ResAccountInfo.UserTeam> teamList = resAccountInfo.getMemberships();
 
             Observable.from(teamList)
-                    .subscribe(team -> {
-                        BadgeCountRepository.getRepository()
-                                .upsertBadgeCount(team.getTeamId(), team.getUnread());
+                    .map(ResAccountInfo.UserTeam::getUnread)
+                    .reduce((prev, current) -> prev + current)
+                    .subscribe(totalUnreadCount -> {
+                        BadgeUtils.setBadge(JandiApplication.getContext(), totalUnreadCount);
                     });
 
-            BadgeUtils.setBadge(JandiApplication.getContext(), BadgeCountRepository.getRepository().getTotalBadgeCount());
 
             postEvent(new TeamInfoChangeEvent());
         } catch (RetrofitException e) {
@@ -494,10 +495,6 @@ public class JandiSocketServiceModel {
                             EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
                             ResLeftSideMenu entitiesInfo = entityClientManager.getTotalEntitiesInfo();
                             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(entitiesInfo);
-                            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
-                            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-                            badgeCountRepository.upsertBadgeCount(entitiesInfo.team.id, totalUnreadCount);
-                            BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
 
                             EntityManager.getInstance().refreshEntity();
 
@@ -505,14 +502,15 @@ public class JandiSocketServiceModel {
                         } else {
                             // 다른 팀의 내 마커가 갱신된 경우
                             ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+                            AccountUtil.removeDuplicatedTeams(resAccountInfo);
                             AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
                             Observable.from(resAccountInfo.getMemberships())
-                                    .subscribe(team -> {
-                                        BadgeCountRepository.getRepository()
-                                                .upsertBadgeCount(team.getTeamId(), team.getUnread());
+                                    .map(ResAccountInfo.UserTeam::getUnread)
+                                    .reduce((prev, current) -> prev + current)
+                                    .subscribe(totalUnreadCount -> {
+                                        BadgeUtils.setBadge(context, totalUnreadCount);
                                     });
-                            BadgeUtils.setBadge(context, BadgeCountRepository.getRepository().getTotalBadgeCount());
 
                             postEvent(new MessageOfOtherTeamEvent());
                         }
@@ -540,14 +538,15 @@ public class JandiSocketServiceModel {
                 .subscribe(event -> {
                     try {
                         ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+                        AccountUtil.removeDuplicatedTeams(resAccountInfo);
                         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
                         Observable.from(resAccountInfo.getMemberships())
-                                .subscribe(team -> {
-                                    BadgeCountRepository.getRepository()
-                                            .upsertBadgeCount(team.getTeamId(), team.getUnread());
+                                .map(ResAccountInfo.UserTeam::getUnread)
+                                .reduce((prev, current) -> prev + current)
+                                .subscribe(totalUnreadCount -> {
+                                    BadgeUtils.setBadge(context, totalUnreadCount);
                                 });
-                        BadgeUtils.setBadge(context, BadgeCountRepository.getRepository().getTotalBadgeCount());
 
                         postEvent(new MessageOfOtherTeamEvent());
                     } catch (RetrofitException e) {

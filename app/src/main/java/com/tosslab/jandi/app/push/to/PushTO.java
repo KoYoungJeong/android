@@ -11,22 +11,6 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class PushTO {
-    public enum RoomType {
-        CHANNEL("channel"),
-        PRIVATE_GROUP("privateGroup"),
-        CHAT("chat");
-
-        String name;
-
-        RoomType(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
-
     private String action;
     private PushInfo info;
 
@@ -52,6 +36,22 @@ public class PushTO {
                 "action='" + action + '\'' +
                 ", info=" + info +
                 '}';
+    }
+
+    public enum RoomType {
+        CHANNEL("channel"),
+        PRIVATE_GROUP("privateGroup"),
+        CHAT("chat");
+
+        String name;
+
+        RoomType(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

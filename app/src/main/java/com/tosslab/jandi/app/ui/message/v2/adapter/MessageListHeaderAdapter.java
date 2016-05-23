@@ -6,7 +6,6 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersAdapter;
@@ -45,9 +44,6 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageLis
         } else {
             viewHolder.dateTextView.setText(DateTransformator.getTimeStringForDivider(headerId));
         }
-
-        viewHolder.vgHeaderWrapper.setBackgroundColor(
-                context.getResources().getColor(R.color.transparent));
     }
 
     @Override
@@ -71,12 +67,10 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageLis
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
         public TextView dateTextView;
-        public LinearLayout vgHeaderWrapper;
 
         public HeaderViewHolder(View itemView) {
             super(itemView);
             dateTextView = (TextView) itemView.findViewById(R.id.txt_message_date_devider);
-            vgHeaderWrapper = (LinearLayout) itemView.findViewById(R.id.vg_message_header_wrapper);
         }
     }
 

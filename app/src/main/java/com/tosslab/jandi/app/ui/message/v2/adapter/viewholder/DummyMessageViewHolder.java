@@ -18,11 +18,11 @@ import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 public class DummyMessageViewHolder implements BodyViewHolder {
     private SimpleDraweeView ivProfile;
-    private ViewGroup vgName;
     private TextView tvName;
     private TextView tvMessage;
     private SimpleDraweeView ivSticker;
@@ -30,36 +30,53 @@ public class DummyMessageViewHolder implements BodyViewHolder {
 
     private boolean hasBottomMargin = false;
     private boolean hasProfile = false;
+    private View vBottomMargin;
 
     private DummyMessageViewHolder() {
     }
 
+    @Override
     public void initView(View rootView) {
         ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
-        vgName = (ViewGroup) rootView.findViewById(R.id.vg_message_profile_user_name);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_profile_user_name);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_dummy_message_content);
         ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_dummy_message_sticker);
         ivStatus = (ImageView) rootView.findViewById(R.id.iv_dummy_send_status);
-        View vBottomMargin = rootView.findViewById(R.id.v_margin);
+        vBottomMargin = rootView.findViewById(R.id.v_margin);
 
+        int topMargin = (int) UiUtils.getPixelFromDp(5f);
+        if(!hasProfile) {
+            topMargin = (int) UiUtils.getPixelFromDp(6f);
+        }
+
+        ViewGroup.MarginLayoutParams layoutParams =
+                (ViewGroup.MarginLayoutParams) tvMessage.getLayoutParams();
+        layoutParams.topMargin = topMargin;
+        tvMessage.setLayoutParams(layoutParams);
+    }
+
+    private void setProfileVisible() {
+        if (hasProfile) {
+            ivProfile.setVisibility(View.VISIBLE);
+            tvName.setVisibility(View.VISIBLE);
+        } else {
+            ivProfile.setVisibility(View.GONE);
+            tvName.setVisibility(View.GONE);
+        }
+    }
+
+    private void setMarginVisible(View vBottomMargin) {
         if (hasBottomMargin) {
             vBottomMargin.setVisibility(View.VISIBLE);
         } else {
             vBottomMargin.setVisibility(View.GONE);
         }
-
-        if (hasProfile) {
-            ivProfile.setVisibility(View.VISIBLE);
-            vgName.setVisibility(View.VISIBLE);
-        } else {
-            ivProfile.setVisibility(View.INVISIBLE);
-            vgName.setVisibility(View.GONE);
-        }
     }
 
     @Override
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
+        setMarginVisible(vBottomMargin);
+        setProfileVisible();
 
         DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
@@ -78,8 +95,6 @@ public class DummyMessageViewHolder implements BodyViewHolder {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
             builder.append(textMessage.content.body);
             ivSticker.setVisibility(View.GONE);
-            ivStatus.setVisibility(View.VISIBLE);
-            ivStatus.setVisibility(View.GONE);
             tvMessage.setVisibility(View.VISIBLE);
 
             setTextSendingStatus(dummyMessageLink);
@@ -95,12 +110,10 @@ public class DummyMessageViewHolder implements BodyViewHolder {
                     .mention(mentionAnalysisInfo, false)
                     .lookUp(JandiApplication.getContext());
 
-            tvMessage.setText(builder);
+            tvMessage.setText(builder, TextView.BufferType.SPANNABLE);
         } else if (link.message instanceof ResMessages.StickerMessage) {
             ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) link.message;
             ivSticker.setVisibility(View.VISIBLE);
-            ivStatus.setVisibility(View.GONE);
-            ivStatus.setVisibility(View.VISIBLE);
             tvMessage.setVisibility(View.GONE);
 
             ResMessages.StickerContent content = stickerMessage.content;

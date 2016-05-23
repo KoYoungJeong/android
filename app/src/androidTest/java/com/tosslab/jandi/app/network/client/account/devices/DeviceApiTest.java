@@ -1,25 +1,29 @@
 package com.tosslab.jandi.app.network.client.account.devices;
 
 import android.support.test.runner.AndroidJUnit4;
-import android.text.TextUtils;
 
+import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
-import com.tosslab.jandi.app.network.models.ReqDeviceToken;
-import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
-import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
-import com.tosslab.jandi.app.network.models.ReqSubscibeToken;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.PushToken;
+import com.tosslab.jandi.app.network.models.ReqAccessToken;
+import com.tosslab.jandi.app.network.models.ReqPushToken;
+import com.tosslab.jandi.app.network.models.ReqSubscribeToken;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
+import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResDeviceSubscribe;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import rx.Observable;
-import rx.observers.TestSubscriber;
+import java.util.Arrays;
+
 import setup.BaseInitUtil;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @RunWith(AndroidJUnit4.class)
 public class DeviceApiTest {
@@ -27,70 +31,47 @@ public class DeviceApiTest {
     private static final String SAMPLE_TOKEN = "sdkjfhlakjdfhlkajsdhflkajshdf";
 
     private DeviceApi deviceApi;
+    private ResAccessToken accessToken;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
     }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        BaseInitUtil.releaseDatabase();
-    }
-
     @Before
     public void setUp() throws Exception {
-        deviceApi = new DeviceApi(RetrofitBuilder.newInstance());
+        deviceApi = new DeviceApi(RetrofitBuilder.getInstance());
+        accessToken = TokenUtil.getTokenObject();
 
     }
 
     @Test
-    public void testRegisterNotificationToken() throws Exception {
-        ResAccountInfo accountInfo = deviceApi.registerNotificationToken(new ReqNotificationRegister("android", SAMPLE_TOKEN));
-
-        TestSubscriber<ResAccountInfo.UserDevice> subscriber = TestSubscriber.create();
-        Observable.from(accountInfo.getDevices())
-                .filter(userDevice -> TextUtils.equals(userDevice.getToken(), SAMPLE_TOKEN))
-                .subscribe(subscriber);
-
-        subscriber.assertValueCount(1);
-        subscriber.assertNoErrors();
-        subscriber.assertCompleted();
+    public void testUpdatePushToken() throws Exception {
+        ResCommon resCommon = deviceApi.updatePushToken(accessToken.getDeviceId(), new ReqPushToken(Arrays.asList(new PushToken("gcm", "asdad"))));
+        assertThat(resCommon).isNotNull();
     }
 
     @Test
-    public void testDeleteNotificationToken() throws Exception {
-        deviceApi.registerNotificationToken(new ReqNotificationRegister("android", SAMPLE_TOKEN));
-        ResAccountInfo accountInfo = deviceApi.deleteNotificationToken(new ReqDeviceToken(SAMPLE_TOKEN));
+    public void testUpdateSubscribe() throws Exception {
+        ResDeviceSubscribe resDeviceSubscribe = deviceApi.updateSubscribe(accessToken.getDeviceId(), new ReqSubscribeToken(false));
+        assertThat(resDeviceSubscribe).isNotNull();
+        assertThat(resDeviceSubscribe.getId()).isEqualTo(accessToken.getDeviceId());
+        assertThat(resDeviceSubscribe.isSubscribe()).isFalse();
 
-        TestSubscriber<ResAccountInfo.UserDevice> subscriber = TestSubscriber.create();
-        Observable.from(accountInfo.getDevices())
-                .filter(userDevice -> TextUtils.equals(userDevice.getToken(), SAMPLE_TOKEN))
-                .subscribe(subscriber);
-
-        subscriber.assertNoValues();
-        subscriber.assertNoErrors();
-        subscriber.assertCompleted();
+        resDeviceSubscribe = deviceApi.updateSubscribe(accessToken.getDeviceId(), new ReqSubscribeToken(true));
+        assertThat(resDeviceSubscribe).isNotNull();
+        assertThat(resDeviceSubscribe.getId()).isEqualTo(accessToken.getDeviceId());
+        assertThat(resDeviceSubscribe.isSubscribe()).isTrue();
     }
 
     @Test
-    public void testSubscribeStateNotification() throws Exception {
-        deviceApi.registerNotificationToken(new ReqNotificationRegister("android", SAMPLE_TOKEN));
-        ResAccountInfo accountInfo = deviceApi.subscribeStateNotification(new ReqSubscibeToken(SAMPLE_TOKEN, false));
-        TestSubscriber<ResAccountInfo.UserDevice> subscriber = TestSubscriber.create();
-        Observable.from(accountInfo.getDevices())
-                .filter(userDevice -> TextUtils.equals(userDevice.getToken(), SAMPLE_TOKEN))
-                .filter(userDevice -> !userDevice.isSubscribe())
-                .subscribe(subscriber);
-
-        subscriber.assertValueCount(1);
-        subscriber.assertNoErrors();
-        subscriber.assertCompleted();
-    }
-
-    @Ignore
-    @Test
-    public void testGetNotificationBadge() throws Exception {
-        deviceApi.getNotificationBadge(new ReqNotificationTarget(""));
+    public void testDeleteDevice() throws Exception {
+        accessToken = new LoginApi(RetrofitBuilder.getInstance()).getAccessToken(
+                ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_EMAIL, BaseInitUtil.TEST_PASSWORD));
+        TokenUtil.saveTokenInfoByPassword(accessToken);
+        ResDeviceSubscribe resDeviceSubscribe = deviceApi.deleteDevice(accessToken.getDeviceId());
+        assertThat(resDeviceSubscribe).isNotNull();
+        assertThat(resDeviceSubscribe.getId()).isEqualTo(accessToken.getDeviceId());
+        assertThat(resDeviceSubscribe.isSubscribe()).isFalse();
     }
 }

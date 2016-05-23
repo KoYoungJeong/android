@@ -14,12 +14,15 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.In
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi.JandiBotViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 
 /*
  소스 추적은 getContentType 부터 따라가면 쉽게 파악할 수 있음.
@@ -28,7 +31,7 @@ public class BodyViewFactory {
 
     public static BodyViewHolder createViewHolder(int viewType) {
 
-        BaseViewHolderBuilder builder = new EmptyViewHolder.Builder();
+        BaseViewHolderBuilder builder;
 
         // Setting View TYPE
         if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_NORMAL_MESSAGE)) {
@@ -53,6 +56,8 @@ public class BodyViewFactory {
             builder = new JandiBotViewHolder.Builder();
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_INTEGRATION_BOT_MESSAGE)) {
             builder = new IntegrationBotViewHolder.Builder();
+        } else {
+            builder = new EmptyViewHolder.Builder();
         }
 
         // Setting Option
@@ -86,6 +91,14 @@ public class BodyViewFactory {
 
         if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_SEMI_DIVIDER)) {
             builder.setHasSemiDivider(true);
+        }
+
+        if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_FLAT_TOP)) {
+            builder.setHasFlatTop(true);
+        }
+
+        if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_TOP_MARGIN)) {
+            builder.setHasTopMargin(true);
         }
 
         return builder.build();
@@ -136,11 +149,7 @@ public class BodyViewFactory {
     private static int getNormalMessageType(ResMessages.Link previousLink,
                                             ResMessages.Link currentLink,
                                             ResMessages.Link nextLink) {
-        int type = TypeUtil.TYPE_VIEW_NORMAL_MESSAGE;
-
-        if (isPureMessage(previousLink, currentLink)) {
-            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
-        }
+        int type;
 
         if (isDummyMessage(currentLink)) {
             type = TypeUtil.TYPE_VIEW_DUMMY_NORMAL_MESSAGE;
@@ -148,9 +157,23 @@ public class BodyViewFactory {
             type = TypeUtil.TYPE_VIEW_JANDI_BOT_MESSAGE;
         } else if (isIntegrationBotMessage(currentLink)) {
             type = TypeUtil.TYPE_VIEW_INTEGRATION_BOT_MESSAGE;
+        } else {
+            type = TypeUtil.TYPE_VIEW_NORMAL_MESSAGE;
         }
 
-        if (isNextMessageSameWriterAndSameTime(currentLink, nextLink)) {
+        if (isPureMessage(previousLink, currentLink)) {
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
+
+            // "분"이 차이나는 경우 - Top margin
+            boolean since1min = isSameMinute(previousLink, currentLink);
+            if (!since1min
+                    && isSameWriter(previousLink.message, currentLink.message)
+                    && isTextMessage(previousLink) && isTextMessage(currentLink)) {
+                type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_TOP_MARGIN);
+            }
+        }
+
+        if (isNextLinkSameWriterAndSameTime(currentLink, nextLink)) {
             // Next Link와 같은 작성자인데 시간이 같다면 시간 생략
             return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_ONLY_BADGE);
         } else if (isNextLinkSameWriterAndCloseTime(currentLink, nextLink)) {
@@ -168,17 +191,19 @@ public class BodyViewFactory {
     private static int getStickerMessageType(ResMessages.Link previousLink,
                                              ResMessages.Link currentLink,
                                              ResMessages.Link nextLink) {
-        int type = TypeUtil.TYPE_VIEW_STICKER_MESSAGE;
+        int type;
+
+        if (isDummyMessage(currentLink)) {
+            type = TypeUtil.TYPE_VIEW_DUMMY_STICKER;
+        } else {
+            type = TypeUtil.TYPE_VIEW_STICKER_MESSAGE;
+        }
 
         if (isPureMessage(previousLink, currentLink)) {
             type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
         }
 
-        if (isDummyMessage(currentLink)) {
-            type = TypeUtil.TYPE_VIEW_DUMMY_STICKER;
-        }
-
-        if (isNextMessageSameWriterAndSameTime(currentLink, nextLink)) {
+        if (isNextLinkSameWriterAndSameTime(currentLink, nextLink)) {
             // Next Link와 같은 작성자인데 시간이 같다면 시간 생략
             return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_ONLY_BADGE);
         } else if (isNextLinkSameWriterAndCloseTime(currentLink, nextLink)) {
@@ -189,8 +214,8 @@ public class BodyViewFactory {
         return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
     }
 
-    private static boolean isNextMessageSameWriterAndSameTime(ResMessages.Link currentLink,
-                                                              ResMessages.Link nextLink) {
+    private static boolean isNextLinkSameWriterAndSameTime(ResMessages.Link currentLink,
+                                                           ResMessages.Link nextLink) {
         return hasNextMessage(nextLink) &&
                 DateComparatorUtil.isSameTime(
                         currentLink.message.createTime, nextLink.message.createTime) &&
@@ -205,6 +230,18 @@ public class BodyViewFactory {
                         nextLink.message.createTime, currentLink.message.createTime) &&
                 isSameWriter(currentLink.message, nextLink.message) &&
                 (isTextMessage(nextLink) || isStickerMessage(nextLink));
+    }
+
+    private static boolean isSameMinute(ResMessages.Link currentLink,
+                                        ResMessages.Link nextLink) {
+
+        SimpleDateFormat format = new SimpleDateFormat("mm");
+        Date next = nextLink.message.createTime == null
+                ? new Date() : nextLink.message.createTime;
+        Date current = currentLink.message.createTime == null
+                ? new Date() : currentLink.message.createTime;
+
+        return format.format(next).equals(format.format(current));
     }
 
 
@@ -229,9 +266,12 @@ public class BodyViewFactory {
                     // 3. 이전 링크가 날짜가 다르면 파일 정보 추가
                     type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
                     type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
+                    type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_FLAT_TOP);
+                    type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
                 }
             } else {
                 // 2. previous Link가 Comment 메세지 일때
+                type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_FLAT_TOP);
                 if (isSameWriter(previousLink.message, currentLink.message)) {
                     // 3. 이전 comment 작성자가 같은 사람 일때
                     if (!isSameDay(previousLink, currentLink)) {
@@ -244,13 +284,24 @@ public class BodyViewFactory {
                 } else {
                     // 3. 이전 comment 작성자가 다른 사람 일때 프로필이 들어가야 함
                     type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
+
+                    if (!isSameDay(previousLink, currentLink)) {
+                        // 4. 날짜가 다르다면 파일 정보를 추가해야 됨
+                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
+                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
+                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
+                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
+                    }
                 }
             }
         } else {
             // 1. previous Link가 같은 파일의 커맨트 이거나 파일이 아닐 때
-            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO
+            );
             type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
             type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
+            // view all이 있기 때문에 윗면이 라운드가 아니라 평평해야한다..............
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_FLAT_TOP);
             type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
         }
 
@@ -358,10 +409,13 @@ public class BodyViewFactory {
             }
         }
 
+        boolean shared = fileMessage.writerId != currentLink.fromEntity;
+
         String fileType = fileMessage.content.icon;
 
         return !TextUtils.isEmpty(fileType)
                 && fileType.startsWith("image")
+                && !shared
                 && SourceTypeUtil.getSourceType(fileMessage.content.serverUrl) == MimeTypeUtil.SourceType.S3
                 && isSharedFile
                 && !TextUtils.equals(currentLink.message.status, "archived");

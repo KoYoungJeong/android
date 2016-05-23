@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -21,7 +20,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -36,7 +34,6 @@ import android.view.inputmethod.BaseInputConnection;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
@@ -108,7 +105,6 @@ import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
-import com.tosslab.jandi.app.ui.commonviewmodels.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.uploadmenu.UploadMenuViewModel;
@@ -124,21 +120,25 @@ import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MainMessageListAdapter;
+import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapterView;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
 import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
+import com.tosslab.jandi.app.ui.message.v2.viewmodel.DateAnimator;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
+import com.tosslab.jandi.app.ui.message.v2.viewmodel.MessageRecyclerViewManager;
+import com.tosslab.jandi.app.ui.message.v2.viewmodel.SoftInputAreaController;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.SdkUtils;
+import com.tosslab.jandi.app.utils.RecyclerScrollStateListener;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
@@ -151,6 +151,7 @@ import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.transform.TransformConfig;
 import com.tosslab.jandi.app.views.BackPressCatchEditText;
+import com.tosslab.jandi.app.views.SoftInputDetectLinearLayout;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.spannable.JandiURLSpan;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -173,6 +174,7 @@ import org.androidannotations.annotations.ViewById;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -186,8 +188,7 @@ import rx.android.schedulers.AndroidSchedulers;
  */
 @OptionsMenu(R.menu.message_list_menu_basic)
 @EFragment(R.layout.fragment_message_list)
-public class MessageListV2Fragment extends Fragment implements
-        MessageListV2Presenter.View,
+public class MessageListV2Fragment extends Fragment implements MessageListV2Presenter.View,
         MessageListV2Activity.OnBackPressedListener,
         MessageListV2Activity.OnKeyPressListener {
 
@@ -197,9 +198,8 @@ public class MessageListV2Fragment extends Fragment implements
 
     public static final int REQ_STORAGE_PERMISSION = 101;
     public static final int REQ_WINDOW_PERMISSION = 102;
-
+    public static final String REQUEST_FILE_UPLOAD_EVENT_TYPE = "request_file_upload_event_type";
     private static final StickerInfo NULL_STICKER = new StickerInfo();
-
     @FragmentArg
     int entityType;
     @FragmentArg
@@ -224,8 +224,6 @@ public class MessageListV2Fragment extends Fragment implements
     InvitationDialogExecutor invitationDialogExecutor;
 
     @Bean
-    KeyboardHeightModel keyboardHeightModel;
-    @Bean
     StickerViewModel stickerViewModel;
     @Bean
     UploadMenuViewModel uploadMenuViewModel;
@@ -238,9 +236,16 @@ public class MessageListV2Fragment extends Fragment implements
     AnnouncementViewModel announcementViewModel;
 
     MentionControlViewModel mentionControlViewModel;
+    DateAnimator dateAnimator;
 
     @SystemService
     ClipboardManager clipboardManager;
+
+    @ViewById(R.id.vg_messages_soft_input_detector)
+    SoftInputDetectLinearLayout vgSoftInputDetector;
+
+    @ViewById(R.id.vg_messages_soft_input_area)
+    ViewGroup vgSoftInputArea;
 
     @ViewById(R.id.lv_messages)
     RecyclerView lvMessages;
@@ -261,6 +266,9 @@ public class MessageListV2Fragment extends Fragment implements
     @ViewById(R.id.vg_messages_go_to_latest)
     View vgMoveToLatest;
 
+    @ViewById(R.id.tv_messages_date_divider)
+    TextView tvMessageDate;
+
     @ViewById(R.id.layout_messages_empty)
     LinearLayout vgEmptyLayout;
     @ViewById(R.id.layout_messages_loading)
@@ -277,16 +285,15 @@ public class MessageListV2Fragment extends Fragment implements
     View vgOffline;
     @ViewById(R.id.progress_message)
     View oldProgressBar;
-    @ViewById(R.id.btn_message_action_button_1)
-    ImageView btnActionButton1;
-    @ViewById(R.id.btn_message_action_button_2)
-    ImageView btnActionButton2;
     @ViewById(R.id.btn_show_mention)
     ImageView btnShowMention;
-    @ViewById(R.id.vg_option_space)
-    ViewGroup vgOptionSpace;
     @ViewById(R.id.vg_easteregg_snow)
     FrameLayout vgEasterEggSnow;
+
+    @ViewById(R.id.btn_message_action_button_1)
+    ImageView btnAction1;
+    @ViewById(R.id.btn_message_action_button_2)
+    ImageView btnAction2;
 
     @ViewById(R.id.vg_messages_member_status_alert)
     View vgMemberStatusAlert;
@@ -299,8 +306,6 @@ public class MessageListV2Fragment extends Fragment implements
 
     private ProgressWheel progressWheel;
 
-    private MainMessageListAdapter messageAdapter;
-
     private StickerInfo stickerInfo = NULL_STICKER;
 
     private File photoFileByCamera;
@@ -308,10 +313,12 @@ public class MessageListV2Fragment extends Fragment implements
     private boolean isForeground = true;
     private LinearLayoutManager layoutManager;
 
-    private ButtonAction currentButtonAction = ButtonAction.KEYBOARD;
-
     private Room room;
     private MessagePointer messagePointer;
+    private SoftInputAreaController softInputAreaController;
+    private int requestFileUploadEventType = -1;
+    private MessageRecyclerViewManager messageRecyclerViewManager;
+    private MessageListAdapterView adapterView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -319,6 +326,7 @@ public class MessageListV2Fragment extends Fragment implements
         EventBus.getDefault().register(this);
         if (savedInstanceState != null) {
             photoFileByCamera = (File) savedInstanceState.getSerializable(EXTRA_NEW_PHOTO_FILE);
+            requestFileUploadEventType = savedInstanceState.getInt(REQUEST_FILE_UPLOAD_EVENT_TYPE);
         }
     }
 
@@ -333,9 +341,7 @@ public class MessageListV2Fragment extends Fragment implements
         fileUploadStateViewModel.initDownloadState();
 
         messageListPresenter.restoreStatus();
-        if (messageAdapter.getItemCount() > 0) {
-            messageAdapter.notifyItemRangeChanged(0, messageAdapter.getItemCount());
-        }
+        refreshMessages();
         messageListPresenter.addNewMessageQueue(true);
     }
 
@@ -367,16 +373,15 @@ public class MessageListV2Fragment extends Fragment implements
                 .delay(100, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(integer -> {
-                    saveCacheAndNotifyDataSetChanged(null);
+
+                    refreshMessages();
+
+                    if (softInputAreaController != null) {
+                        softInputAreaController.onConfigurationChanged();
+                    }
 
                     if (mentionControlViewModel != null) {
                         mentionControlViewModel.onConfigurationChanged();
-                    }
-                    if (stickerViewModel != null) {
-                        stickerViewModel.onConfigurationChanged();
-                    }
-                    if (uploadMenuViewModel != null) {
-                        uploadMenuViewModel.onConfigurationChanged();
                     }
                 });
     }
@@ -387,14 +392,7 @@ public class MessageListV2Fragment extends Fragment implements
                 .activity(getActivity())
                 .addRequestCode(REQ_STORAGE_PERMISSION)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        () -> Observable.just(1)
-                                .delay(300, TimeUnit.MILLISECONDS)
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(integer -> {
-                                    int keyboardHeight =
-                                            JandiPreference.getKeyboardHeight(JandiApplication.getContext());
-                                    showUploadMenuSelectorIfNotShow(keyboardHeight);
-                                }, Throwable::printStackTrace))
+                        () -> handleFileUpload())
                 .neverAskAgain(() -> {
                     PermissionRetryDialog.showExternalPermissionDialog(getActivity());
                 })
@@ -442,9 +440,6 @@ public class MessageListV2Fragment extends Fragment implements
             mentionControlViewModel.removeClipboardListener();
         }
 
-        dismissStickerSelectorIfShow();
-        dismissUploadSelectorIfShow();
-
         super.onPause();
     }
 
@@ -454,6 +449,8 @@ public class MessageListV2Fragment extends Fragment implements
         if (fileUploadController.getUploadedFile() != null) {
             outState.putSerializable(EXTRA_NEW_PHOTO_FILE, fileUploadController.getUploadedFile());
         }
+
+        outState.putInt(REQUEST_FILE_UPLOAD_EVENT_TYPE, requestFileUploadEventType);
     }
 
 
@@ -466,10 +463,8 @@ public class MessageListV2Fragment extends Fragment implements
 
     @AfterInject
     void initObjects() {
-        JandiPreference.setKeyboardHeight(getActivity(), -1);
-
         room = Room.create(entityId, roomId, isFromPush);
-        messagePointer = MessagePointer.create(firstCursorLinkId, lastReadLinkId);
+        messagePointer = MessagePointer.create(lastReadLinkId);
     }
 
     @AfterViews
@@ -493,19 +488,27 @@ public class MessageListV2Fragment extends Fragment implements
 
         initFileUploadStateViewModel();
 
-        initUploadViewModel();
-
-        initActionListeners();
-
         initMessageListView();
 
         initUserStatus();
 
         initAnnouncement();
 
+        initSoftInputAreaController();
+
+        initActionListeners();
+
         initMessages(true /* withProgress */);
 
         showCoachMarkIfNeed();
+    }
+
+    private void initSoftInputAreaController() {
+        softInputAreaController = new SoftInputAreaController(
+                stickerViewModel, uploadMenuViewModel,
+                vgSoftInputDetector, vgSoftInputArea, btnAction1, btnAction2,
+                etMessage);
+        softInputAreaController.init();
     }
 
     private void initEmptyLayout() {
@@ -578,24 +581,6 @@ public class MessageListV2Fragment extends Fragment implements
             return false;
         });
 
-        etMessage.setOnClickListener(v -> {
-            dismissStickerSelectorIfShow();
-            dismissUploadSelectorIfShow();
-        });
-
-        etMessage.setOnBackPressListener(() -> {
-            if (keyboardHeightModel.isOpened()) {
-                //키보드가 열려져 있고 그 위에 스티커가 있는 상태에서 둘다 제거 할때 속도를 맞추기 위해 딜레이를 줌
-                Observable.just(1)
-                        .delay(200, TimeUnit.MILLISECONDS)
-                        .subscribe(i -> {
-                            dismissStickerSelectorIfShow();
-                            dismissUploadSelectorIfShow();
-                        });
-            }
-            return false;
-        });
-
         TextCutter.with(etMessage)
                 .listener((s) -> {
                     SuperToast.cancelAllSuperToasts();
@@ -605,7 +590,6 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private void initStickerViewModel() {
-        stickerViewModel.setOptionSpace(vgOptionSpace);
         stickerViewModel.setOnStickerClick((groupId, stickerId) -> {
             StickerInfo oldSticker = stickerInfo;
             stickerInfo = new StickerInfo();
@@ -620,8 +604,6 @@ public class MessageListV2Fragment extends Fragment implements
 
         stickerViewModel.setType(isInDirectMessage()
                 ? StickerViewModel.TYPE_MESSAGE : StickerViewModel.TYPE_TOPIC);
-
-        stickerViewModel.setStickerButton(btnActionButton2);
     }
 
     private void showStickerPreview(StickerInfo oldSticker, StickerInfo stickerInfo) {
@@ -652,35 +634,15 @@ public class MessageListV2Fragment extends Fragment implements
         fileUploadStateViewModel.setEntityId(entityId);
     }
 
-    private void initUploadViewModel() {
-        uploadMenuViewModel.setOptionSpace(vgOptionSpace);
-    }
-
     private void initActionListeners() {
-        keyboardHeightModel.addOnKeyboardShowListener((isShowing) -> {
-            boolean visibility = keyboardHeightModel.isOpened()
-                    || stickerViewModel.isShow() || uploadMenuViewModel.isShow();
-            announcementViewModel.setAnnouncementViewVisibility(!visibility);
-        });
-
-        stickerViewModel.setOnStickerLayoutShowListener(isShow -> {
-            boolean visibility = keyboardHeightModel.isOpened()
-                    || stickerViewModel.isShow() || uploadMenuViewModel.isShow();
-            announcementViewModel.setAnnouncementViewVisibility(!visibility);
-        });
-
-        uploadMenuViewModel.setOnUploadLayoutShowListener(isShow -> {
-            boolean visibility = keyboardHeightModel.isOpened()
-                    || stickerViewModel.isShow() || uploadMenuViewModel.isShow();
-            announcementViewModel.setAnnouncementViewVisibility(!visibility);
+        softInputAreaController.setOnSoftInputAreaShowingListener((isShowing, softInputAreaHeight) -> {
+            announcementViewModel.setAnnouncementViewVisibility(!isShowing);
         });
 
         uploadMenuViewModel.setOnClickUploadEventListener(() -> {
-            if (keyboardHeightModel.isOpened()) {
-                keyboardHeightModel.hideKeyboard();
+            if (softInputAreaController.isSoftInputAreaShowing()) {
+                softInputAreaController.hideSoftInputArea(true, true);
             }
-            currentButtonAction = ButtonAction.KEYBOARD;
-            setActionButtons();
         });
     }
 
@@ -704,7 +666,8 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     private void initMessageListView() {
-        messageAdapter = new MainMessageListAdapter(getActivity().getBaseContext());
+        MainMessageListAdapter messageAdapter = new MainMessageListAdapter(getActivity().getBaseContext(), room);
+        adapterView = messageAdapter;
         messageAdapter.setMessagePointer(messagePointer);
         MessageListHeaderAdapter messageListHeaderAdapter =
                 new MessageListHeaderAdapter(getContext(), messageAdapter);
@@ -727,24 +690,30 @@ public class MessageListV2Fragment extends Fragment implements
 
         // 아이템 클릭 했을 때의 액션
         messageAdapter.setOnItemClickListener((adapter, position) -> {
-            onMessageItemClick(position);
+            onMessageItemClick(messageAdapter.getItem(position));
         });
 
         // 아이템 롱클릭했을때 액션
         messageAdapter.setOnItemLongClickListener((adapter, position) -> {
-            onMessageLongClick(position);
+            onMessageLongClick(messageAdapter.getItem(position));
             return true;
         });
 
         lvMessages.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                keyboardHeightModel.hideKeyboard();
-                dismissStickerSelectorIfShow();
-                dismissUploadSelectorIfShow();
+                hideAllSoftInputArea();
             }
             return false;
         });
-
+        dateAnimator = new DateAnimator(tvMessageDate);
+        RecyclerScrollStateListener recyclerScrollStateListener = new RecyclerScrollStateListener();
+        recyclerScrollStateListener.setListener(scrolling -> {
+            if (scrolling) {
+                dateAnimator.show();
+            } else {
+                dateAnimator.hide();
+            }
+        });
         // 스크롤 했을 때 동작
         lvMessages.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -756,8 +725,43 @@ public class MessageListV2Fragment extends Fragment implements
                 if (isShowingLastItem) {
                     setPreviewVisible(false);
                 }
+
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+                Date date = ((MainMessageListAdapter) recyclerView.getAdapter()).getItemDate(firstVisibleItemPosition);
+                if (date != null) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(date);
+                    calendar.set(Calendar.HOUR_OF_DAY, 0);
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.SECOND, 0);
+                    calendar.set(Calendar.MILLISECOND, 0);
+
+                    tvMessageDate.setText(DateTransformator.getTimeStringForDivider(calendar.getTimeInMillis()));
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                recyclerScrollStateListener.onScrollState(newState);
             }
         });
+
+        messageListPresenter.setAdapterModel(messageAdapter);
+        messageRecyclerViewManager = new MessageRecyclerViewManager(lvMessages, messageAdapter);
+    }
+
+    private void hideAllSoftInputArea() {
+        if (softInputAreaController == null) {
+            return;
+        }
+
+        if (softInputAreaController.isSoftInputAreaShowing()) {
+            softInputAreaController.hideSoftInputArea(true, true);
+        } else {
+            if (softInputAreaController.isSoftInputShowing()) {
+                softInputAreaController.hideSoftInput();
+            }
+        }
     }
 
     private void setPreviewVisible(boolean show) {
@@ -792,7 +796,9 @@ public class MessageListV2Fragment extends Fragment implements
                     roomIds,
                     MentionControlViewModel.MENTION_TYPE_MESSAGE);
             mentionControlViewModel.setOnMentionShowingListener(
-                    isShowing -> btnShowMention.setVisibility(!isShowing ? View.VISIBLE : View.GONE));
+                    isShowing -> {
+                        btnShowMention.setVisibility(!isShowing ? View.VISIBLE : View.GONE);
+                    });
 
             mentionControlViewModel.setUpMention(readyMessage);
         } else {
@@ -806,11 +812,8 @@ public class MessageListV2Fragment extends Fragment implements
     @Override
     public void showDisabledUserLayer() {
         vgMessageInput.setVisibility(View.GONE);
-        int dp_2 = ((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, getResources().getDisplayMetrics()));
-        ((RelativeLayout.LayoutParams) vgMemberStatusAlert.getLayoutParams())
-                .setMargins(dp_2, dp_2, dp_2, dp_2);
         vgMemberStatusAlert.setVisibility(View.VISIBLE);
-        vgMemberStatusAlert.setBackgroundColor(getResources().getColor(R.color.jandi_disabled_user_background));
+        vgMemberStatusAlert.setBackgroundColor(getResources().getColor(R.color.jandi_black_b2));
         ivMemberStatusAlert.setImageResource(R.drawable.icon_disabled_members_bar);
         tvMemberStatusAlert.setText(R.string.jandi_disabled_user);
         setPreviewVisible(false);
@@ -820,7 +823,6 @@ public class MessageListV2Fragment extends Fragment implements
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showInactivedUserLayer() {
-        ((RelativeLayout.LayoutParams) vgMemberStatusAlert.getLayoutParams()).setMargins(0, 0, 0, 0);
         vgMemberStatusAlert.setVisibility(View.VISIBLE);
         vgMemberStatusAlert.setBackgroundColor(getResources().getColor(R.color.jandi_black_de));
         ivMemberStatusAlert.setImageResource(R.drawable.bar_icon_info);
@@ -888,96 +890,42 @@ public class MessageListV2Fragment extends Fragment implements
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void setMoreNewFromAdapter(boolean isMoreNew) {
-        messageAdapter.setMoreFromNew(isMoreNew);
-    }
+    public void setUpOldMessage(boolean isFirstLoad) {
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void setNewLoadingComplete() {
-        messageAdapter.setNewLoadingComplete();
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void setMarkerInfo(long roomId) {
-        messageAdapter.setTeamId(teamId);
-        messageAdapter.setRoomId(roomId);
-        saveCacheAndNotifyDataSetChanged(null);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void setUpOldMessage(boolean isFirstLoad, boolean isFirstMessage) {
         if (isFirstLoad) {
-            // 첫 로드라면...
-            clearMessages();
-
-            saveCacheAndNotifyDataSetChanged(() -> {
-                layoutManager.scrollToPosition(messageAdapter.getItemCount() - 1);
-                if (!isFirstMessage) {
-                    messageAdapter.setOldLoadingComplete();
-                } else {
-                    messageAdapter.setOldNoMoreLoading();
-                }
-            });
-
+            messageRecyclerViewManager.scrollToLast();
         } else {
-            saveCacheAndNotifyDataSetChangedForAdding(() -> {
-                if (!isFirstMessage) {
-                    messageAdapter.setOldLoadingComplete();
-                } else {
-                    messageAdapter.setOldNoMoreLoading();
-                }
-
-            });
-
+            messageRecyclerViewManager.scrollToCachedFirst();
         }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setUpNewMessage(List<ResMessages.Link> records, long myId,
-                                boolean isFirstLoad,
-                                boolean moveToLinkId) {
+                                boolean isFirstLoad) {
         final int location = records.size() - 1;
         if (location < 0) {
             return;
         }
 
-        int visibleLastItemPosition = layoutManager.findLastVisibleItemPosition();
-        int lastItemPosition = messageAdapter.getItemCount();
-
-        messageAdapter.addAll(lastItemPosition, records);
-
-        saveCacheAndNotifyDataSetChanged(() -> {
-            ResMessages.Link lastUpdatedMessage = records.get(location);
-            if (!isFirstLoad
-                    && visibleLastItemPosition >= 0
-                    && visibleLastItemPosition < lastItemPosition - 1
-                    && lastUpdatedMessage.fromEntity != myId) {
-                showPreviewIfNotLastItem();
+        ResMessages.Link lastUpdatedMessage = records.get(location);
+        if (!isFirstLoad
+                && messageRecyclerViewManager.isScrollInMiddleAsLastStatus()
+                && lastUpdatedMessage.fromEntity != myId) {
+            showPreviewIfNotLastItem(lastUpdatedMessage);
+        } else {
+            if (isFirstLoad) {
+                moveLastReadLink();
             } else {
-                long messageId = lastUpdatedMessage.messageId;
-
-                if (isFirstLoad) {
-                    moveLastReadLink();
-                } else {
-                    moveToMessage(messageId, 0);
-                }
+                messageRecyclerViewManager.scrollToLinkId(lastUpdatedMessage.id);
             }
-        });
+        }
     }
 
     @UiThread
-    public void showPreviewIfNotLastItem() {
-        boolean isLastItemShowing =
-                layoutManager.findFirstVisibleItemPosition() == messageAdapter.getItemCount() - 1;
-        if (isLastItemShowing) {
-            return;
-        }
+    public void showPreviewIfNotLastItem(ResMessages.Link lastUpdatedMessage) {
 
-        ResMessages.Link item = messageAdapter.getItem(messageAdapter.getItemCount() - 1);
+        ResMessages.Link item = lastUpdatedMessage;
 
         if (TextUtils.equals(item.status, "event")) {
             return;
@@ -1034,52 +982,8 @@ public class MessageListV2Fragment extends Fragment implements
         vgPreview.setVisibility(View.VISIBLE);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void moveToMessageById(long linkId, int firstVisibleItemTop) {
-        int itemPosition = messageAdapter.indexOfLinkId(linkId);
-        layoutManager.scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
-    }
-
-    private long getFirstVisibleItemLinkId() {
-        if (messageAdapter.getItemCount() > 0) {
-            int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItemPosition >= 0) {
-                return messageAdapter.getItem(firstVisibleItemPosition).messageId;
-            } else {
-                return -1;
-            }
-        } else {
-            return -1;
-        }
-    }
-
-    private int getFirstVisibleItemTop() {
-        View childAt = layoutManager.getChildAt(0);
-        if (childAt != null) {
-            return childAt.getTop();
-        } else {
-            return 0;
-        }
-    }
-
-    private void moveToMessage(long messageId, int firstVisibleItemTop) {
-        int itemPosition = messageAdapter.getLastIndexByMessageId(messageId);
-        layoutManager.scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
-    }
-
-    private void moveToMessage(int itemPosition, int firstVisibleItemTop) {
-        layoutManager.scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
-    }
-
-    private void onMessageItemClick(int position) {
-        keyboardHeightModel.hideKeyboard();
-        dismissStickerSelectorIfShow();
-        dismissUploadSelectorIfShow();
-
-        ResMessages.Link link = messageAdapter.getItem(position);
-        if (link == null) {
-            return;
-        }
+    private void onMessageItemClick(ResMessages.Link link) {
+        hideAllSoftInputArea();
 
         if (link instanceof DummyMessageLink) {
             showDummyMessageDialog(((DummyMessageLink) link));
@@ -1118,8 +1022,7 @@ public class MessageListV2Fragment extends Fragment implements
         }
     }
 
-    private void onMessageLongClick(int position) {
-        ResMessages.Link link = messageAdapter.getItem(position);
+    private void onMessageLongClick(ResMessages.Link link) {
         if (link == null) {
             return;
         }
@@ -1141,22 +1044,6 @@ public class MessageListV2Fragment extends Fragment implements
                 .localId(localId)
                 .build()
                 .show(getActivity().getFragmentManager(), "dialog");
-    }
-
-    private void dismissStickerSelectorIfShow() {
-        if (stickerViewModel.isShow()) {
-            stickerViewModel.dismissStickerSelector(true);
-            currentButtonAction = ButtonAction.KEYBOARD;
-            setActionButtons();
-        }
-    }
-
-    private void dismissUploadSelectorIfShow() {
-        if (uploadMenuViewModel.isShow()) {
-            uploadMenuViewModel.dismissUploadSelector(true);
-            currentButtonAction = ButtonAction.KEYBOARD;
-            setActionButtons();
-        }
     }
 
     private void showPreviewForUploadPhoto(int requestCode, Intent intent) {
@@ -1206,6 +1093,30 @@ public class MessageListV2Fragment extends Fragment implements
         boolean isEmptyText = TextUtils.isEmpty(text.toString().trim()) && stickerInfo == NULL_STICKER;
         setSendButtonEnabled(!isEmptyText);
 
+    }
+
+    @Click(R.id.tv_messages_date_divider)
+    void dateClick() {
+        int firstVisibleItemPosition = ((LinearLayoutManager) lvMessages.getLayoutManager()).findFirstVisibleItemPosition();
+        MainMessageListAdapter messageAdapter = (MainMessageListAdapter) lvMessages.getAdapter();
+
+        Date time = messageAdapter.getItem(firstVisibleItemPosition).time;
+        Calendar clickedCalenar = Calendar.getInstance();
+        clickedCalenar.setTime(time);
+        int clickedDay = clickedCalenar.get(Calendar.DAY_OF_YEAR);
+        int tempPosition = firstVisibleItemPosition;
+        Calendar tempCalendar;
+        for (int visibleItemPosition = firstVisibleItemPosition; visibleItemPosition > 0; visibleItemPosition--) {
+            ResMessages.Link item = messageAdapter.getItem(visibleItemPosition);
+            tempCalendar = Calendar.getInstance();
+            tempCalendar.setTime(item.time);
+            if (tempCalendar.get(Calendar.DAY_OF_YEAR) == clickedDay) {
+                tempPosition = visibleItemPosition;
+            } else {
+                break;
+            }
+        }
+        lvMessages.scrollToPosition(tempPosition);
     }
 
     @Click(R.id.btn_send_message)
@@ -1259,6 +1170,7 @@ public class MessageListV2Fragment extends Fragment implements
     @Click(R.id.btn_show_mention)
     void onMentionClick() {
         etMessage.requestFocus();
+
         BaseInputConnection inputConnection = new BaseInputConnection(etMessage, true);
         if (needSpace(etMessage.getSelectionStart(), etMessage.getText().toString())) {
             inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SPACE));
@@ -1266,17 +1178,10 @@ public class MessageListV2Fragment extends Fragment implements
 
         inputConnection.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_AT));
 
-        if (currentButtonAction != ButtonAction.KEYBOARD) {
-            if (currentButtonAction == ButtonAction.STICKER || currentButtonAction == ButtonAction.UPLOAD) {
-                if (keyboardHeightModel.isOpened()) {
-                    dismissStickerSelectorIfShow();
-                    dismissUploadSelectorIfShow();
-                } else {
-                    keyboardHeightModel.showKeyboard();
-                }
-                currentButtonAction = ButtonAction.KEYBOARD;
-                setActionButtons();
-            }
+        if (softInputAreaController.isSoftInputAreaShowing()) {
+            softInputAreaController.hideSoftInputAreaAndShowSoftInput();
+        } else {
+            softInputAreaController.showSoftInput();
         }
     }
 
@@ -1287,134 +1192,6 @@ public class MessageListV2Fragment extends Fragment implements
             return !TextUtils.isEmpty(charSequence.toString().trim());
         }
         return false;
-    }
-
-    @Click(R.id.btn_message_action_button_1)
-    public void handleActionButton1() {
-        int keyboardHeight = JandiPreference.getKeyboardHeight(getActivity().getApplicationContext());
-        switch (currentButtonAction) {
-            case KEYBOARD:
-                showUploadMenuSelectorIfNotShow(keyboardHeight);
-                break;
-            case STICKER:
-                showUploadMenuSelectorIfNotShow(keyboardHeight);
-                break;
-            case UPLOAD:
-                if (keyboardHeightModel.isOpened()) {
-                    dismissUploadSelectorIfShow();
-                } else {
-                    dismissUploadSelectorIfShow();
-                    keyboardHeightModel.showKeyboard();
-                }
-                break;
-        }
-    }
-
-    @Click(R.id.btn_message_action_button_2)
-    public void handleActionButton2() {
-        int keyboardHeight = JandiPreference.getKeyboardHeight(getActivity().getApplicationContext());
-        switch (currentButtonAction) {
-            case KEYBOARD:
-                showStickerSelectorIfNotShow(keyboardHeight);
-                break;
-            case UPLOAD:
-                showStickerSelectorIfNotShow(keyboardHeight);
-                break;
-            case STICKER:
-                sendAnalyticsEvent(AnalyticsValue.Action.Sticker);
-                if (keyboardHeightModel.isOpened()) {
-                    dismissStickerSelectorIfShow();
-                } else {
-                    dismissStickerSelectorIfShow();
-                    keyboardHeightModel.showKeyboard();
-                }
-                break;
-        }
-    }
-
-    private void showStickerSelectorIfNotShow(int height) {
-        if (!stickerViewModel.isShow()) {
-            if (isCanDrawWindowOverlay()) {
-                stickerViewModel.showStickerSelector(height);
-                Observable.just(1)
-                        .delay(100, TimeUnit.MILLISECONDS)
-                        .subscribe(i -> {
-                            if (uploadMenuViewModel.isShow()) {
-                                uploadMenuViewModel.dismissUploadSelector(false);
-                            }
-                        });
-                currentButtonAction = ButtonAction.STICKER;
-                setActionButtons();
-            } else {
-                // Android M (23) 부터 적용되는 시나리오
-                requestWindowPermission();
-            }
-        }
-    }
-
-    private void showUploadMenuSelectorIfNotShow(int height) {
-        if (!uploadMenuViewModel.isShow()) {
-            if (isCanDrawWindowOverlay()) {
-                Permissions.getChecker()
-                        .activity(getActivity())
-                        .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        .hasPermission(() -> {
-                            uploadMenuViewModel.showUploadSelector(height);
-                            Observable.just(1)
-                                    .delay(100, TimeUnit.MILLISECONDS)
-                                    .subscribe(i -> {
-                                        if (stickerViewModel.isShow()) {
-                                            stickerViewModel.dismissStickerSelector(false);
-                                        }
-                                    });
-                            currentButtonAction = ButtonAction.UPLOAD;
-                            setActionButtons();
-                            sendAnalyticsEvent(AnalyticsValue.Action.Upload);
-                        })
-                        .noPermission(() -> {
-                            String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                            requestPermissions(permissions, REQ_STORAGE_PERMISSION);
-                        })
-                        .check();
-            } else {
-                requestWindowPermission();
-            }
-        }
-    }
-
-    private boolean isCanDrawWindowOverlay() {
-        boolean canDraw;
-        if (SdkUtils.isMarshmallow()) {
-            canDraw = Settings.canDrawOverlays(getActivity());
-        } else {
-            canDraw = true;
-        }
-        return canDraw;
-    }
-
-    private void requestWindowPermission() {
-        String packageName = JandiApplication.getContext().getPackageName();
-        Intent intent = new Intent(
-                Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + packageName));
-        startActivityForResult(intent, REQ_WINDOW_PERMISSION);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void setActionButtons() {
-        switch (currentButtonAction) {
-            case STICKER:
-                btnActionButton1.setImageResource(R.drawable.chat_icon_upload);
-                btnActionButton2.setImageResource(R.drawable.chat_icon_keypad);
-                break;
-            case UPLOAD:
-                btnActionButton1.setImageResource(R.drawable.chat_icon_keypad);
-                btnActionButton2.setImageResource(R.drawable.chat_icon_emoticon);
-                break;
-            case KEYBOARD:
-                btnActionButton1.setImageResource(R.drawable.chat_icon_upload);
-                btnActionButton2.setImageResource(R.drawable.chat_icon_emoticon);
-                break;
-        }
     }
 
     @Click(R.id.iv_messages_preview_sticker_close)
@@ -1442,7 +1219,7 @@ public class MessageListV2Fragment extends Fragment implements
     @Click(R.id.vg_messages_preview_last_item)
     void onPreviewClick() {
         setPreviewVisible(false);
-        moveLastPage();
+        messageRecyclerViewManager.scrollToLast();
     }
 
     public void setSendButtonEnabled(boolean enabled) {
@@ -1481,19 +1258,6 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void saveCacheAndNotifyDataSetChanged(
-            MainMessageListAdapter.NotifyDataSetChangedCallback callback) {
-        messageAdapter.saveCacheAndNotifyDataSetChanged(callback);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void saveCacheAndNotifyDataSetChangedForAdding(
-            MainMessageListAdapter.NotifyDataSetChangedCallback callback) {
-        messageAdapter.saveCacheAndNotifyDataSetChangedForAdding(callback);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Click(R.id.vg_message_offline)
     @Override
     public void dismissOfflineLayer() {
@@ -1508,14 +1272,8 @@ public class MessageListV2Fragment extends Fragment implements
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void clearMessages() {
-        messageAdapter.clear();
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
     public void moveLastPage() {
-        layoutManager.scrollToPosition(messageAdapter.getItemCount() - 1);
+        messageRecyclerViewManager.scrollToLast();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -1543,12 +1301,6 @@ public class MessageListV2Fragment extends Fragment implements
             }
         });
         oldProgressBar.startAnimation(outAnim);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void setNewNoMoreLoading() {
-        messageAdapter.setNewNoMoreLoading();
     }
 
     public void onEvent(SocketMessageEvent event) {
@@ -1617,16 +1369,11 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     public void onEvent(EntitiesUpdatedEvent event) {
-        if (messageAdapter == null || !isForeground) {
+        if (!isForeground) {
             return;
         }
 
-        notifyDataSetChanged();
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    void notifyDataSetChanged() {
-        messageAdapter.notifyDataSetChanged();
+        refreshMessages();
     }
 
     public void onEvent(LinkPreviewUpdateEvent event) {
@@ -1644,7 +1391,8 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
 
-        saveCacheAndNotifyDataSetChanged(null);
+
+        refreshMessages();
     }
 
     public void onEvent(SocketRoomMarkerEvent event) {
@@ -1727,11 +1475,11 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     public void onEvent(ProfileChangeEvent event) {
-        saveCacheAndNotifyDataSetChanged(null);
+        refreshMessages();
     }
 
     public void onEvent(RefreshConnectBotEvent event) {
-        saveCacheAndNotifyDataSetChanged(null);
+        refreshMessages();
     }
 
     public void onEvent(ConfirmModifyTopicEvent event) {
@@ -1820,7 +1568,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     public void onEvent(UnshareFileEvent event) {
-        saveCacheAndNotifyDataSetChanged(null);
+        messageListPresenter.updateCachedTypeOfMessageId(event.getFileId());
     }
 
     public void onEvent(DummyRetryEvent event) {
@@ -1828,49 +1576,14 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
 
-        long localId = event.getLocalId();
-        DummyMessageLink dummyMessage = getDummyMessageLink(localId);
-        dummyMessage.setStatus(SendMessage.Status.SENDING.name());
-
-        saveCacheAndNotifyDataSetChanged(() -> {
-            if (dummyMessage.message instanceof ResMessages.TextMessage) {
-
-                ResMessages.TextMessage dummyMessageContent = (ResMessages.TextMessage) dummyMessage.message;
-                List<MentionObject> mentionObjects = new ArrayList<>();
-
-                if (dummyMessageContent.mentions != null) {
-                    Observable.from(dummyMessageContent.mentions)
-                            .subscribe(mentionObjects::add);
-                }
-
-                messageListPresenter.addSendingMessageQueue(
-                        localId, dummyMessageContent.content.body, null, mentionObjects);
-            } else if (dummyMessage.message instanceof ResMessages.StickerMessage) {
-                ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) dummyMessage.message;
-
-                StickerInfo stickerInfo1 = new StickerInfo();
-                stickerInfo1.setStickerGroupId(stickerMessage.content.groupId);
-                stickerInfo1.setStickerId(stickerMessage.content.stickerId);
-
-                messageListPresenter.addSendingMessageQueue(localId, "", stickerInfo1, new ArrayList<>());
-            }
-        });
-
-
-    }
-
-    private DummyMessageLink getDummyMessageLink(long localId) {
-        int position = messageAdapter.getDummyMessagePositionByLocalId(localId);
-
-        return ((DummyMessageLink) messageAdapter.getItem(position));
+        messageListPresenter.retryToSendDummyMessage(event.getLocalId());
     }
 
     public void onEvent(DummyDeleteEvent event) {
         if (!isForeground) {
             return;
         }
-        DummyMessageLink dummyMessage = getDummyMessageLink(event.getLocalId());
-        messageListPresenter.onDeleteDummyMessageAction(dummyMessage.getLocalId());
+        messageListPresenter.onDeleteDummyMessageAction(event.getLocalId());
     }
 
     public void onEvent(RequestDeleteMessageEvent event) {
@@ -1914,7 +1627,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     public void onEvent(FileUploadFinishEvent event) {
-        saveCacheAndNotifyDataSetChanged(null);
+        refreshMessages();
     }
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {
@@ -1935,30 +1648,7 @@ public class MessageListV2Fragment extends Fragment implements
     }
 
     public void onEvent(DeleteFileEvent event) {
-        changeLinkStatusToArchive(event.getId());
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    void changeLinkStatusToArchive(long messageId) {
-        int position = messageAdapter.indexByMessageId(messageId);
-        String archivedStatus = "archived";
-        if (position > 0) {
-            ResMessages.Link item = messageAdapter.getItem(position);
-            item.message.status = archivedStatus;
-            item.message.createTime = new Date();
-        }
-
-        List<Integer> commentIndexes = messageAdapter.indexByFeedbackId(messageId);
-
-        for (Integer commentIndex : commentIndexes) {
-            ResMessages.Link item = messageAdapter.getItem(commentIndex);
-            item.feedback.status = archivedStatus;
-            item.feedback.createTime = new Date();
-        }
-
-        if (position >= 0 || commentIndexes.size() > 0) {
-            messageAdapter.notifyItemRangeChanged(0, messageAdapter.getItemCount());
-        }
+        messageListPresenter.changeLinkStatusToArchive(event.getId());
     }
 
     public void onEvent(FileCommentRefreshEvent event) {
@@ -1980,9 +1670,7 @@ public class MessageListV2Fragment extends Fragment implements
         int messageId = event.getMessageId();
         boolean starred = event.isStarred();
 
-        int index = messageAdapter.indexByMessageId(messageId);
-
-        messageAdapter.modifyStarredStateByPosition(index, starred);
+        messageListPresenter.updateStarredOfMessage(messageId, starred);
     }
 
     public void onEvent(SocketServiceStopEvent event) {
@@ -2013,7 +1701,7 @@ public class MessageListV2Fragment extends Fragment implements
         if (!isForeground) {
             return;
         }
-        saveCacheAndNotifyDataSetChanged(null);
+        refreshMessages();
     }
 
     public void onEvent(RequestFileUploadEvent event) {
@@ -2021,10 +1709,29 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
 
-        fileUploadController.selectFileSelector(event.type, this, entityId);
+        requestFileUploadEventType = event.type;
+
+        Permissions.getChecker()
+                .activity(getActivity())
+                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .hasPermission(this::handleFileUpload)
+                .noPermission(() -> {
+                    String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                    requestPermissions(permissions, REQ_STORAGE_PERMISSION);
+                })
+                .check();
+
+    }
+
+    private void handleFileUpload() {
+        if (requestFileUploadEventType == -1) {
+            return;
+        }
+
+        fileUploadController.selectFileSelector(requestFileUploadEventType, this, entityId);
 
         AnalyticsValue.Action action;
-        switch (event.type) {
+        switch (requestFileUploadEventType) {
             default:
             case FileUploadController.TYPE_UPLOAD_GALLERY:
                 action = AnalyticsValue.Action.Upload_Photo;
@@ -2038,18 +1745,13 @@ public class MessageListV2Fragment extends Fragment implements
         }
 
         sendAnalyticsEvent(action);
+
+        requestFileUploadEventType = -1;
     }
 
     public void onEvent(NetworkConnectEvent event) {
         if (event.isConnected()) {
-            if (messageAdapter.getItemCount() <= 0) {
-                // roomId 설정 후...
-                initMessages(true);
-            } else {
-                if (room.getRoomId() > 0) {
-                    messageListPresenter.addNewMessageQueue(true);
-                }
-            }
+            messageListPresenter.onNetworkConnect();
 
             dismissOfflineLayer();
         } else {
@@ -2076,18 +1778,6 @@ public class MessageListV2Fragment extends Fragment implements
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void setUpLastReadLinkIdIfPosition() {
-        // 마커가 마지막아이템을 가르키고 있을때만 position = -1 처리
-        long lastReadLinkId = messagePointer.getLastReadLinkId();
-        int markerPosition = messageAdapter.indexOfLinkId(lastReadLinkId);
-        if (markerPosition ==
-                messageAdapter.getItemCount() - messageAdapter.getDummyMessageCount() - 1) {
-            messagePointer.setLastReadLinkId(-1);
-        }
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
     public void finish() {
         getActivity().finish();
     }
@@ -2100,35 +1790,11 @@ public class MessageListV2Fragment extends Fragment implements
         if (lastReadLinkId <= 0) {
             return;
         }
-
-        int position = messageAdapter.indexOfLinkId(lastReadLinkId);
-
-        if (position > 0) {
-            int measuredHeight = lvMessages.getMeasuredHeight() / 2;
-            if (measuredHeight <= 0) {
-                measuredHeight = (int) UiUtils.getPixelFromDp(100f);
-            }
-            position = Math.min(messageAdapter.getItemCount() - 1, position + 1);
-            layoutManager.scrollToPositionWithOffset(position, measuredHeight);
-        } else if (position < 0) {
-            layoutManager.scrollToPosition(messageAdapter.getItemCount() - 1);
+        int measuredHeight = lvMessages.getMeasuredHeight() / 2;
+        if (measuredHeight <= 0) {
+            measuredHeight = (int) UiUtils.getPixelFromDp(100f);
         }
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void updateLinkPreviewMessage(ResMessages.TextMessage message) {
-        long messageId = message.id;
-        int index = messageAdapter.indexByMessageId(messageId);
-        if (index < 0) {
-            return;
-        }
-
-        ResMessages.Link link = messageAdapter.getItem(index);
-        if (!(link.message instanceof ResMessages.TextMessage)) {
-            return;
-        }
-        link.message = message;
+        messageRecyclerViewManager.scrollToLinkId(lastReadLinkId, measuredHeight);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -2251,13 +1917,6 @@ public class MessageListV2Fragment extends Fragment implements
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void deleteLinkByMessageId(long messageId) {
-        int position = messageAdapter.indexByMessageId(messageId);
-        messageAdapter.remove(position);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
     public void showLeavedMemberDialog(String name) {
         String msg = JandiApplication.getContext()
                 .getResources().getString(R.string.jandi_no_long_team_member, name);
@@ -2284,14 +1943,27 @@ public class MessageListV2Fragment extends Fragment implements
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void modifyStarredInfo(long messageId, boolean isStarred) {
-        int position = messageAdapter.indexByMessageId(messageId);
-        messageAdapter.modifyStarredStateByPosition(position, isStarred);
+
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissUserStatusLayout() {
         vgMemberStatusAlert.setVisibility(View.GONE);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void refreshMessages() {
+        if (adapterView != null) {
+            adapterView.refresh();
+        }
+    }
+
+    @Override
+    public void updateRecyclerViewInfo() {
+        messageRecyclerViewManager.updateFirstVisibleItem();
+        messageRecyclerViewManager.updateLastVisibleItem();
     }
 
     private void showCoachMarkIfNeed() {
@@ -2320,15 +1992,11 @@ public class MessageListV2Fragment extends Fragment implements
 
     @Override
     public boolean onBackPressed() {
-        if (stickerViewModel.isShow()) {
-            dismissStickerSelectorIfShow();
+        if (softInputAreaController != null && softInputAreaController.isSoftInputAreaShowing()) {
+            softInputAreaController.hideSoftInputArea(true, true);
             return true;
         }
 
-        if (uploadMenuViewModel.isShow()) {
-            dismissUploadSelectorIfShow();
-            return true;
-        }
         return false;
     }
 

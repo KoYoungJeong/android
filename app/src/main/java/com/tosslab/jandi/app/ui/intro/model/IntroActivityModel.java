@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.ui.intro.model;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
@@ -12,7 +10,6 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.DatabaseConsts;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
@@ -24,6 +21,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -68,16 +66,8 @@ public class IntroActivityModel {
         return NetworkCheckUtil.isConnected();
     }
 
-    public int getInstalledAppVersion(Context context) {
-        try {
-            PackageManager packageManager = context.getPackageManager();
-            String packageName = context.getPackageName();
-            PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
-            return packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            return 0;
-        }
+    public int getInstalledAppVersion() {
+        return ApplicationUtil.getAppVersionCode();
     }
 
     public boolean isNeedLogin() {
@@ -87,17 +77,18 @@ public class IntroActivityModel {
     public void refreshAccountInfo() throws RetrofitException {
 
         ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+        AccountUtil.removeDuplicatedTeams(resAccountInfo);
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
         Collection<ResAccountInfo.UserTeam> teamList = resAccountInfo.getMemberships();
 
         Observable.from(teamList)
-                .subscribe(team -> {
-                    BadgeCountRepository.getRepository()
-                            .upsertBadgeCount(team.getTeamId(), team.getUnread());
+                .map(ResAccountInfo.UserTeam::getUnread)
+                .reduce((prev, current) -> prev + current)
+                .subscribe(total -> {
+                    BadgeUtils.setBadge(JandiApplication.getContext(), total);
                 });
 
-        BadgeUtils.setBadge(JandiApplication.getContext(), BadgeCountRepository.getRepository().getTotalBadgeCount());
     }
 
     public void sleep(long initTime, long maxDelayMs) {
@@ -134,10 +125,6 @@ public class IntroActivityModel {
             ResLeftSideMenu totalEntitiesInfo =
                     leftSideApi.get().getInfosForSideMenu(selectedTeamId);
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-            badgeCountRepository.upsertBadgeCount(totalEntitiesInfo.team.id, totalUnreadCount);
-            BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
             EntityManager.getInstance().refreshEntity();
             return true;
         } catch (RetrofitException e) {
@@ -193,12 +180,12 @@ public class IntroActivityModel {
 
     public void trackSignInFailAndFlush(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                        .event(Event.SignIn)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, false)
-                        .property(PropertyKey.ErrorCode, errorCode)
-                        .build());
+                .event(Event.SignIn)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
         AnalyticsUtil.flushSprinkler();
     }
 

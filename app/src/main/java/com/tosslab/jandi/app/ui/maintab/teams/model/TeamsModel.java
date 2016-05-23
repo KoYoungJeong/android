@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
@@ -21,7 +20,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
-import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.util.List;
@@ -53,6 +52,7 @@ public class TeamsModel {
         return Observable.create(subscriber -> {
             try {
                 ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+                AccountUtil.removeDuplicatedTeams(resAccountInfo);
                 AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
                 subscriber.onNext(new Object());
             } catch (RetrofitException retrofitError) {
@@ -90,17 +90,9 @@ public class TeamsModel {
                 .collect(() -> teams, List::add);
     }
 
-    public Observable<List<Team>> getUpdateBadgeCountObservable(final List<Team> teams) {
-        return Observable.<List<Team>>create(subscriber -> {
-            Observable.from(teams)
-                    .filter(team -> team.getStatus() == Team.Status.JOINED)
-                    .subscribe(team -> {
-                        BadgeCountRepository.getRepository()
-                                .upsertBadgeCount(team.getTeamId(), team.getUnread());
-                    });
-            subscriber.onNext(teams);
-            subscriber.onCompleted();
-        });
+    public Observable<List<Team>> getSortedTeamListObservable(List<Team> teams) {
+        return Observable.from(teams)
+                .toSortedList((team, team2) -> team.getStatus() == Team.Status.PENDING ? -1 : 1);
     }
 
     public Observable<Pair<Long, List<Team>>> getCheckSelectedTeamObservable(final List<Team> teams) {
@@ -139,11 +131,6 @@ public class TeamsModel {
                 leftSideApi.get().getInfosForSideMenu(teamId);
 
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
-        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(leftSideMenu);
-        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-        badgeCountRepository.upsertBadgeCount(leftSideMenu.team.id, totalUnreadCount);
-        BadgeUtils.setBadge(
-                JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
         EntityManager entityManager = EntityManager.getInstance();
         entityManager.refreshEntity();
     }
@@ -174,6 +161,7 @@ public class TeamsModel {
                 ResAccountInfo resAccountInfo =
                         accountApi.get().getAccountInfo();
 
+                AccountUtil.removeDuplicatedTeams(resAccountInfo);
                 AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
                 AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 

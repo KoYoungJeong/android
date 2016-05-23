@@ -15,6 +15,8 @@ public abstract class BaseViewHolderBuilder {
     protected boolean hasNestedProfile = false;
     protected boolean hasViewAllComment = false;
     protected boolean hasSemiDivider = false;
+    protected boolean hasFlatTop = false;
+    protected boolean hasTopMargin = false;
 
     public BaseViewHolderBuilder setHasOnlyBadge(boolean hasOnlyBadge) {
         this.hasOnlyBadge = hasOnlyBadge;
@@ -56,6 +58,17 @@ public abstract class BaseViewHolderBuilder {
         return this;
     }
 
+    public BaseViewHolderBuilder setHasFlatTop(boolean hasFlatTop) {
+        this.hasFlatTop = hasFlatTop;
+        return this;
+    }
+
+    public BaseViewHolderBuilder setHasTopMargin(boolean hasTopMargin) {
+        this.hasTopMargin = hasTopMargin;
+        return this;
+    }
+
     public abstract BodyViewHolder build();
+
 
 }

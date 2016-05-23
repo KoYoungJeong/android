@@ -31,7 +31,7 @@ public class EventsApiTest {
 
     @Before
     public void setUp() throws Exception {
-        eventsApi = new EventsApi(RetrofitBuilder.newInstance());
+        eventsApi = new EventsApi(RetrofitBuilder.getInstance());
         myId = EntityManager.getInstance().getMe().getId();
     }
 

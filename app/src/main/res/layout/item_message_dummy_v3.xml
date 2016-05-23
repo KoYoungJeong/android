@@ -1,133 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <com.tosslab.jandi.app.views.FrescoImageView
+        android:id="@+id/iv_message_user_profile"
+        android:layout_width="@dimen/jandi_messages_profile_size"
+        android:layout_height="@dimen/jandi_messages_profile_size"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
+        fresco:backgroundImage="@color/black"
+        fresco:roundAsCircle="true"/>
+
+    <TextView
+        android:id="@+id/tv_message_profile_user_name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_toRightOf="@+id/iv_message_user_profile"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:maxWidth="200dp"
+        android:singleLine="true"
+        android:text="빠빠빠"
+        android:textColor="@color/jandi_messages_name"
+        android:textSize="@dimen/jandi_messages_user_name"
+        android:textStyle="bold"/>
 
-        <!-- Profile 사진 -->
-        <LinearLayout
-            android:id="@+id/vg_message_profile_image"
+    <RelativeLayout
+        android:id="@+id/vg_dummy_message_content_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_message_profile_user_name"
+        android:layout_marginLeft="@dimen/jandi_messages_content_left_margin"
+        android:layout_marginRight="59dp">
+
+        <TextView
+            android:id="@+id/tv_dummy_message_content"
+            android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible">
+            android:background="@drawable/bg_message_item_selector_mine"
+            android:focusable="false"
+            android:gravity="center_vertical"
+            android:lineSpacingExtra="2dp"
+            android:minHeight="24dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="9dp"
+            android:paddingRight="9dp"
+            android:paddingTop="7dp"
+            android:text="Text"
+            android:textColor="@color/dark_gray"
+            android:textSize="@dimen/jandi_messages_content"/>
 
-            <com.tosslab.jandi.app.views.FrescoImageView
-                android:id="@+id/iv_message_user_profile"
-                android:layout_width="@dimen/jandi_messages_profile_size"
-                android:layout_height="@dimen/jandi_messages_profile_size"
-                android:layout_marginLeft="7dp"
-                android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
-                fresco:backgroundImage="@color/black"
-                fresco:roundAsCircle="true" />
+        <com.tosslab.jandi.app.views.FrescoImageView
+            android:id="@+id/iv_dummy_message_sticker"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_below="@+id/tv_dummy_message_content"
+            android:focusable="false"/>
+    </RelativeLayout>
 
-        </LinearLayout>
-        <!-- Profile 사진 끝 -->
+    <ImageView
+        android:id="@+id/iv_dummy_send_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/vg_dummy_message_content_wrapper"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="-55dp"
+        android:layout_toRightOf="@+id/vg_dummy_message_content_wrapper"
+        android:src="@drawable/icon_message_sending"/>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <!-- status 끝 -->
 
-            <!-- Profile 이름 -->
-            <RelativeLayout
-                android:id="@+id/vg_message_profile_user_name"
-                android:layout_width="match_parent"
-                android:layout_height="16dp"
-                android:visibility="visible">
-
-                <TextView
-                    android:id="@+id/tv_message_profile_user_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:maxWidth="200dp"
-                    android:singleLine="true"
-                    android:text="빠빠빠"
-                    android:textColor="@color/jandi_messages_name"
-                    android:textSize="@dimen/jandi_messages_user_name"
-                    android:textStyle="bold" />
-
-            </RelativeLayout>
-            <!-- Profile 이름 끝 -->
-
-            <!-- 메세지 -->
-            <RelativeLayout
-                android:id="@+id/vg_dummy_message_content"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="visible">
-
-                <TextView
-                    android:id="@+id/tv_dummy_message_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="59dp"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/bg_round_white_rect_for_message"
-                    android:focusable="false"
-                    android:lineSpacingExtra="3dp"
-                    android:minHeight="24dp"
-                    android:paddingBottom="4dp"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:paddingTop="4dp"
-                    android:text="Text"
-                    android:textColor="@color/dark_gray"
-                    android:textSize="@dimen/jandi_messages_content" />
-            </RelativeLayout>
-            <!-- 메세지 끝 -->
-
-            <!-- 스티커 메세지 -->
-            <RelativeLayout
-                android:id="@+id/vg_dummy_sticker_message_content"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="visible">
-
-                <com.tosslab.jandi.app.views.FrescoImageView
-                    android:id="@+id/iv_dummy_message_sticker"
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
-                    android:layout_marginRight="59dp"
-                    android:layout_marginTop="5dp"
-                    android:focusable="false" />
-
-            </RelativeLayout>
-            <!-- 스티커 메세지 끝 -->
-        </LinearLayout>
-
-        <!-- status -->
-        <LinearLayout
-            android:id="@+id/vg_dummy_send_status"
-            android:layout_width="59dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginLeft="-55dp"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/iv_dummy_send_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="5dp"
-                android:src="@drawable/icon_message_sending" />
-        </LinearLayout>
-        <!-- status 끝 -->
-
-    </LinearLayout>
 
     <View
         android:id="@+id/v_margin"
         android:layout_width="match_parent"
-        android:layout_height="25dp" />
+        android:layout_height="25dp"
+        android:layout_below="@+id/vg_dummy_message_content_wrapper"/>
 
-</LinearLayout>
+</RelativeLayout>
 

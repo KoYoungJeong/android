@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.parse.PushUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
@@ -64,10 +65,15 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
         super.onCreate(savedInstanceState);
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.PushNotification);
         setNeedUnLockPassCode(false);
+
     }
 
     @AfterInject
     void initObject() {
+        if (jandiInterfaceModel.hasNotRegisteredAtNewPushService()) {
+            PushUtil.registPush();
+        }
+
         if (!jandiInterfaceModel.hasBackStackActivity()) {
             checkNewVersion();
         } else {
@@ -80,7 +86,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
         try {
             ResConfig config = jandiInterfaceModel.getConfigInfo();
 
-            int installedAppVersion = jandiInterfaceModel.getInstalledAppVersion(getApplicationContext());
+            int installedAppVersion = jandiInterfaceModel.getInstalledAppVersion();
 
             LogUtil.i(TAG, "installedAppVersion - " + installedAppVersion
                     + " config.versions.android - " + config.versions.android);

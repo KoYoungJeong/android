@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
@@ -23,7 +22,6 @@ import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -63,6 +61,7 @@ public class AccountHomeModel {
     public void refreshAccountInfo() {
         try {
             ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+            AccountUtil.removeDuplicatedTeams(resAccountInfo);
             AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
         } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();
@@ -111,9 +110,7 @@ public class AccountHomeModel {
         }
 
         for (ResPendingTeamInfo pedingTeamInfo : pedingTeamInfos) {
-
             teams.add(Team.createTeam(pedingTeamInfo));
-
         }
 
         return teams;
@@ -131,7 +128,6 @@ public class AccountHomeModel {
         }
 
         return teams;
-
     }
 
     public ResAccountInfo updateAccountName(String newName) throws RetrofitException {
@@ -148,11 +144,6 @@ public class AccountHomeModel {
 
     public EntityManager updateEntityInfo(Context context, ResLeftSideMenu entityInfo) {
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(entityInfo);
-        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entityInfo);
-        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-        badgeCountRepository.upsertBadgeCount(entityInfo.team.id, totalUnreadCount);
-        BadgeUtils.setBadge(context, badgeCountRepository.getTotalBadgeCount());
-
         EntityManager entityManager = EntityManager.getInstance();
         entityManager.refreshEntity();
         return entityManager;
@@ -188,17 +179,15 @@ public class AccountHomeModel {
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.TeamId, teamId)
                 .build());
-
     }
 
     public void trackLaunchTeamFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                        .event(Event.LaunchTeam)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, false)
-                        .property(PropertyKey.ErrorCode, errorCode)
-                        .build());
-
+                .event(Event.LaunchTeam)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
     }
 
     public void trackChangeAccountNameSuccess(Context context, String accountId) {
@@ -207,21 +196,19 @@ public class AccountHomeModel {
                 .trackSetAccount();
 
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                        .event(Event.ChangeAccountName)
-                        .accountId(accountId)
-                        .property(PropertyKey.ResponseSuccess, true)
-                        .build());
+                .event(Event.ChangeAccountName)
+                .accountId(accountId)
+                .property(PropertyKey.ResponseSuccess, true)
+                .build());
     }
 
     public void trackChangeAccountNameFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                        .event(Event.ChangeAccountName)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, false)
-                        .property(PropertyKey.ErrorCode, errorCode)
-                        .build());
-
-
+                .event(Event.ChangeAccountName)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
     }
 
 }

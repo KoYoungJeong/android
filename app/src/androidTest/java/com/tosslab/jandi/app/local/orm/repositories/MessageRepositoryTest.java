@@ -159,7 +159,7 @@ public class MessageRepositoryTest {
         SendMessageRepository.getRepository().insertSendMessage(sendMessage);
 
 
-        List<SendMessage> sendMessages = SendMessageRepository.getRepository().getSendMessage(roomId);
+        List<SendMessage> sendMessages = SendMessageRepository.getRepository().getSendMessageOfRoom(roomId);
         sendMessage = sendMessages.get(0);
 
         assertThat(sendMessages.size(), is(equalTo(roomId)));
@@ -170,13 +170,13 @@ public class MessageRepositoryTest {
         SendMessageRepository.getRepository().updateSendMessageStatus(sendMessage.getId(),
                 SendMessage.Status.COMPLETE);
 
-        sendMessages = SendMessageRepository.getRepository().getSendMessage(roomId);
+        sendMessages = SendMessageRepository.getRepository().getSendMessageOfRoom(roomId);
         sendMessage = sendMessages.get(0);
 
         assertThat(sendMessage.getStatus(), is(equalTo(SendMessage.Status.COMPLETE.name())));
 
         SendMessageRepository.getRepository().deleteSendMessage(sendMessage.getId());
-        sendMessages = SendMessageRepository.getRepository().getSendMessage(roomId);
+        sendMessages = SendMessageRepository.getRepository().getSendMessageOfRoom(roomId);
 
         assertThat(sendMessages.size(), is(equalTo(0)));
     }

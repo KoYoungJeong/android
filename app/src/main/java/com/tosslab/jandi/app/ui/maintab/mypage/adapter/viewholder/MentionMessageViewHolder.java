@@ -1,6 +1,9 @@
 package com.tosslab.jandi.app.ui.maintab.mypage.adapter.viewholder;
 
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
@@ -34,8 +37,12 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
 
     @Bind(R.id.iv_mention_message_profile)
     SimpleDraweeView ivProfile;
+    @Bind(R.id.v_mention_message_profile_cover)
+    View vProfileCover;
     @Bind(R.id.tv_mention_message_name)
     TextView tvWriter;
+    @Bind(R.id.v_mention_message_name_cover)
+    View vWriterCover;
     @Bind(R.id.tv_mention_message_date)
     TextView tvDate;
     @Bind(R.id.tv_mention_message_content)
@@ -93,6 +100,8 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
     }
 
     private void bindWriter(MentionMessage mentionMessage) {
+        tvWriter.setText(mentionMessage.getWriterName());
+
         boolean isBot = EntityManager.getInstance().isBot(mentionMessage.getWriterId());
         boolean isJandiBot = EntityManager.getInstance().isJandiBot(mentionMessage.getWriterId());
         ViewGroup.MarginLayoutParams layoutParams =
@@ -108,29 +117,48 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
 
         ivProfile.setLayoutParams(layoutParams);
 
-        if (!isJandiBot) {
-            Uri uri = Uri.parse(mentionMessage.getWriterProfileUrl());
-            if (!isBot) {
-                ImageUtil.loadProfileImage(ivProfile, uri, R.drawable.profile_img);
-            } else {
-                RoundingParams circleRoundingParams = ImageUtil.getCircleRoundingParams(
-                        TransformConfig.DEFAULT_CIRCLE_LINE_COLOR, TransformConfig.DEFAULT_CIRCLE_LINE_WIDTH);
+        Uri uri = Uri.parse(mentionMessage.getWriterProfileUrl());
+        Resources resources = tvWriter.getResources();
+        if (!isJandiBot && !isBot) {
+            ImageUtil.loadProfileImage(ivProfile, uri, R.drawable.profile_img);
 
-                ImageLoader.newBuilder()
-                        .placeHolder(R.drawable.profile_img, ScalingUtils.ScaleType.FIT_CENTER)
-                        .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
-                        .roundingParams(circleRoundingParams)
-                        .load(uri)
-                        .into(ivProfile);
+            if (EntityManager.getInstance().getEntityById(mentionMessage.getWriterId()).isEnabled()) {
+                vProfileCover.setBackgroundColor(Color.TRANSPARENT);
+
+                tvWriter.setTextColor(resources.getColor(R.color.jandi_star_mention_item_name_content_text));
+                vWriterCover.setVisibility(View.GONE);
+            } else {
+                ShapeDrawable foreground = new ShapeDrawable(new OvalShape());
+                foreground.getPaint().setColor(0x66FFFFFF);
+                vProfileCover.setBackgroundDrawable(foreground);
+
+                tvWriter.setTextColor(resources.getColor(R.color.deactivate_text_color));
+                vWriterCover.setVisibility(View.VISIBLE);
             }
-        } else {
+            return;
+        }
+
+        vProfileCover.setVisibility(View.GONE);
+        vWriterCover.setVisibility(View.GONE);
+
+        if (isJandiBot) {
+
             ImageLoader.newBuilder()
                     .placeHolder(R.drawable.bot_80x100, ScalingUtils.ScaleType.CENTER_INSIDE)
                     .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
                     .load(UriFactory.getResourceUri(R.drawable.bot_80x100))
                     .into(ivProfile);
-        }
 
-        tvWriter.setText(mentionMessage.getWriterName());
+        } else {
+            RoundingParams circleRoundingParams = ImageUtil.getCircleRoundingParams(
+                    TransformConfig.DEFAULT_CIRCLE_LINE_COLOR, TransformConfig.DEFAULT_CIRCLE_LINE_WIDTH);
+
+            ImageLoader.newBuilder()
+                    .placeHolder(R.drawable.profile_img, ScalingUtils.ScaleType.FIT_CENTER)
+                    .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
+                    .roundingParams(circleRoundingParams)
+                    .load(uri)
+                    .into(ivProfile);
+        }
     }
 }

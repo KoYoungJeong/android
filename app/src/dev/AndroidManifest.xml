@@ -8,6 +8,10 @@
 
     <application>
         <activity android:name="com.tosslab.jandi.app.ui.base.BaseAppCompatActivity" />
+
+        <meta-data
+            android:name="api_key"
+            android:value="xMfI1LkL64AmDCGsw9kgbenb" />
     </application>
 
 

@@ -10,17 +10,14 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
 import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
-import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -196,10 +193,6 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
             EntityClientManager entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
             ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-            badgeCountRepository.upsertBadgeCount(EntityManager.getInstance().getTeamId(), totalUnreadCount);
-            BadgeUtils.setBadge(JandiApplication.getContext(), totalUnreadCount);
             EntityManager.getInstance().refreshEntity();
             return true;
         } catch (Exception e) {

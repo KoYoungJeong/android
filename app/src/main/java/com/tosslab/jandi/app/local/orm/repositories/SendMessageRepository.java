@@ -60,7 +60,7 @@ public class SendMessageRepository extends LockExecutorTemplate {
         });
     }
 
-    public List<SendMessage> getSendMessage(long roomId) {
+    public List<SendMessage> getSendMessageOfRoom(long roomId) {
         return execute(() -> {
             try {
                 Dao<SendMessage, ?> dao = getHelper().getDao(SendMessage.class);
@@ -72,6 +72,22 @@ public class SendMessageRepository extends LockExecutorTemplate {
                 e.printStackTrace();
             }
             return new ArrayList<SendMessage>(0);
+
+        });
+    }
+
+    public SendMessage getSendMessageOfLocal(long localId) {
+        return execute(() -> {
+            try {
+                Dao<SendMessage, ?> dao = getHelper().getDao(SendMessage.class);
+                return dao.queryBuilder()
+                        .where()
+                        .eq("id", localId)
+                        .queryForFirst();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return null;
 
         });
     }
@@ -143,7 +159,7 @@ public class SendMessageRepository extends LockExecutorTemplate {
         });
     }
 
-    public SendMessage getSendMessage(int roomId, int index) {
+    public SendMessage getSendMessageOfRoom(int roomId, int index) {
         return execute(() -> {
             try {
                 Dao<SendMessage, ?> dao = getHelper().getDao(SendMessage.class);

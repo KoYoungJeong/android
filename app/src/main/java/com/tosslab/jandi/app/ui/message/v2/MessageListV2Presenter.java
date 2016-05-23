@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
+import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
@@ -20,6 +21,7 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
+import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
@@ -28,7 +30,7 @@ import com.tosslab.jandi.app.ui.message.to.queue.NewMessageContainer;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageContainer;
 import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageContainer;
 import com.tosslab.jandi.app.ui.message.to.queue.UpdateLinkPreviewMessageContainer;
-import com.tosslab.jandi.app.ui.message.v2.adapter.MainMessageListAdapter;
+import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapterModel;
 import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
 import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
@@ -43,12 +45,14 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
+import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -69,6 +73,7 @@ public class MessageListV2Presenter {
     private Room room;
     private MessagePointer messagePointer;
     private boolean isInitialized;
+    private MessageListAdapterModel adapterModel;
 
     public void setView(View view) {
         this.view = view;
@@ -114,7 +119,8 @@ public class MessageListV2Presenter {
                             break;
                     }
                 }, throwable -> {
-                    LogUtil.e("Message Publish Fail!! \n" + throwable);
+                    LogUtil.e("Message Publish Fail!!");
+                    throwable.printStackTrace();
                 }, () -> {
 
                 });
@@ -269,11 +275,9 @@ public class MessageListV2Presenter {
 
             currentMessageState.setLoadHistory(false);
 
-            view.setMoreNewFromAdapter(true);
-            view.setNewLoadingComplete();
+            adapterModel.setMoreFromNew(true);
+            adapterModel.setNewLoadingComplete();
         }
-
-        view.setMarkerInfo(roomId);
 
         long myId = EntityManager.getInstance().getMe().getId();
 
@@ -384,19 +388,19 @@ public class MessageListV2Presenter {
                 view.dismissProgressView();
                 view.dismissOldLoadProgress();
 
-                Observable.from(resOldMessage.records)
-                        .first()
-                        .subscribe(link -> {
-                            long firstCursorLinkId = messagePointer.getFirstCursorLinkId();
-                            if (firstCursorLinkId < 0) {
-                                firstCursorLinkId = Math.max(firstCursorLinkId, link.id);
-                            } else {
-                                firstCursorLinkId = Math.min(firstCursorLinkId, link.id);
-                            }
-                            messagePointer.setFirstCursorLinkId(firstCursorLinkId);
-                            view.setUpOldMessage(isFirst, isFirstMessage);
-                        }, t -> {
-                        });
+                if (!isFirst) {
+                    view.updateRecyclerViewInfo();
+                }
+
+                messageListModel.presetTextContent(resOldMessage.records);
+                adapterModel.addAll(0, resOldMessage.records);
+                view.refreshMessages();
+                if (!isFirstMessage) {
+                    adapterModel.setOldLoadingComplete();
+                } else {
+                    adapterModel.setOldNoMoreLoading();
+                }
+                view.setUpOldMessage(isFirst);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -414,7 +418,13 @@ public class MessageListV2Presenter {
 
         long teamId = room.getTeamId();
         long roomId = room.getRoomId();
-        long linkId = messagePointer.getFirstCursorLinkId();
+        ResMessages.Link item = adapterModel.getItem(0);
+        long linkId;
+        if (item != null) {
+            linkId = item.id;
+        } else {
+            linkId = -1;
+        }
         boolean isFirstLoad = messageContainer.getData().isFirstLoadOldMessage();
         boolean isCacheMode = messageContainer.isCacheMode();
 
@@ -471,6 +481,7 @@ public class MessageListV2Presenter {
                     messagePointer.setLastReadLinkId(-1);
                 }
                 updateMarker(teamId, resOldMessage.entityId, resOldMessage.lastLinkId);
+                adapterModel.removeAllDummy();
                 messageListModel.deleteCompletedSendingMessage(resOldMessage.entityId);
             }
             // 첫 대화인 경우 해당 채팅방의 보내는 중인 메세지 캐시 데이터 삭제함
@@ -489,9 +500,6 @@ public class MessageListV2Presenter {
                 offset);
 
         if (oldMessages != null && !oldMessages.isEmpty()) {
-            long firstLinkId = oldMessages.get(oldMessages.size() - 1).id;
-            messagePointer.setFirstCursorLinkId(firstLinkId);
-
             resOldMessage = new ResMessages();
             // 현재 챗의 첫 메세지가 아니라고 하기 위함
             resOldMessage.firstLinkId = -1;
@@ -511,9 +519,14 @@ public class MessageListV2Presenter {
 
         long teamId = room.getTeamId();
         long roomId = room.getRoomId();
-        long firstCursorLinkId = messagePointer.getFirstCursorLinkId();
-        int currentItemCount = MessageRepository.getRepository()
-                .getMessagesCount(roomId, firstCursorLinkId);
+        ResMessages.Link item = adapterModel.getItem(0);
+        long firstCursorLinkId;
+        if (item != null) {
+            firstCursorLinkId = item.id;
+        } else {
+            firstCursorLinkId = -1;
+        }
+        int currentItemCount = adapterModel.getCount();
 
         if (lastUpdateLinkId < 0) {
             messageListModel.deleteAllDummyMessageAtDatabase(room.getRoomId());
@@ -524,9 +537,8 @@ public class MessageListV2Presenter {
             lastUpdateLinkId = MessageRepository.getRepository()
                     .getLastMessage(room.getRoomId()).id;
 
-            firstCursorLinkId = messagePointer.getFirstCursorLinkId();
             currentItemCount = MessageRepository.getRepository()
-                    .getMessagesCount(roomId, messagePointer.getFirstCursorLinkId());
+                    .getMessagesCount(roomId, firstCursorLinkId);
 
         }
 
@@ -566,21 +578,19 @@ public class MessageListV2Presenter {
 
             if (currentMessageState.isFirstLoadNewMessage()) {
                 currentMessageState.setIsFirstLoadNewMessage(false);
-                view.setUpLastReadLinkIdIfPosition();
-                view.saveCacheAndNotifyDataSetChanged(view::moveLastReadLink);
-            } else {
-                view.saveCacheAndNotifyDataSetChanged(null);
+                long lastReadLinkId = messagePointer.getLastReadLinkId();
+                int markerPosition = adapterModel.indexOfLinkId(lastReadLinkId);
+                if (markerPosition ==
+                        adapterModel.getCount() - adapterModel.getDummyMessageCount() - 1) {
+                    messagePointer.setLastReadLinkId(-1);
+                }
             }
+
             return;
         }
 
         boolean cacheMode = messageContainer.isCacheMode();
-        if (cacheMode) {
-            messageListModel.upsertMessages(roomId, newMessages);
-        }
-
         messageListModel.sortByTime(newMessages);
-
         boolean firstLoadNewMessage = currentMessageState.isFirstLoadNewMessage();
         if (firstLoadNewMessage) {
             int messagesCount = MessageRepository.getRepository()
@@ -590,19 +600,73 @@ public class MessageListV2Presenter {
             }
         }
 
-        view.setUpNewMessage(
-                newMessages, messageListModel.getMyId(), firstLoadNewMessage, moveToLink);
+        view.updateRecyclerViewInfo();
+
+        List<ResMessages.Link> archivedList = Observable.from(newMessages)
+                .filter(link -> TextUtils.equals(link.status, "archived"))
+                .collect((Func0<ArrayList<ResMessages.Link>>) ArrayList::new, ArrayList::add)
+                .toBlocking()
+                .firstOrDefault(new ArrayList<>());
+
+        if (cacheMode) {
+            messageListModel.upsertMessages(roomId, newMessages);
+
+            int size = newMessages.size();
+            long minLinkId = -1;
+            long maxLinkId = -1;
+            for (int idx = 0; idx < size; idx++) {
+                ResMessages.Link link = newMessages.get(idx);
+                if (!TextUtils.equals(link.status, "archived")) {
+                    minLinkId = link.id;
+                    break;
+                }
+            }
+
+            if (minLinkId > 0) {
+                for (int idx = size - 1; idx >= 0; idx--) {
+                    ResMessages.Link link = newMessages.get(idx);
+                    if (!TextUtils.equals(link.status, "archived")) {
+                        maxLinkId = link.id;
+                        break;
+                    }
+                }
+                newMessages = MessageRepository.getRepository().getMessages(roomId, minLinkId, maxLinkId + 1);
+            } else {
+                newMessages = new ArrayList<>();
+            }
+
+        }
+
+        for (ResMessages.Link link : newMessages) {
+            if (link.message instanceof ResMessages.StickerMessage
+                    || link.message instanceof ResMessages.TextMessage) {
+                if (EntityManager.getInstance().isMe(link.fromEntity)) {
+                    int idxOfMessageId = adapterModel.indexOfDummyMessageId(link.messageId);
+                    if (idxOfMessageId >= 0) {
+                        adapterModel.remove(idxOfMessageId);
+                    }
+                }
+            }
+        }
+
+        adapterModel.addAll(adapterModel.getCount(), archivedList);
+        messageListModel.presetTextContent(newMessages);
+        adapterModel.addAll(adapterModel.getCount(), newMessages);
+        view.refreshMessages();
+
+        view.setUpNewMessage(newMessages, messageListModel.getMyId(), firstLoadNewMessage);
 
         currentMessageState.setIsFirstLoadNewMessage(false);
 
-        currentItemCount = MessageRepository.getRepository()
-                .getMessagesCount(roomId, messagePointer.getFirstCursorLinkId());
+        currentItemCount = adapterModel.getCount();
 
         boolean hasMessages = hasMessages(firstCursorLinkId, currentItemCount);
         view.showEmptyView(!hasMessages);
 
-        long lastLinkId = newMessages.get(newMessages.size() - 1).id;
-        messageListModel.upsertMyMarker(roomId, lastLinkId);
+        if (newMessages.size() > 0) {
+            long lastLinkId = newMessages.get(newMessages.size() - 1).id;
+            messageListModel.upsertMyMarker(roomId, lastLinkId);
+        }
         try {
             messageListModel.updateLastLinkId(lastUpdateLinkId);
         } catch (RetrofitException e) {
@@ -620,13 +684,10 @@ public class MessageListV2Presenter {
 
     private int getEventMessageCount(long firstCursorLinkId) {
 
-
-        List<ResMessages.Link> messages = MessageRepository.getRepository()
-                .getMessages(room.getRoomId(), firstCursorLinkId, Integer.MAX_VALUE);
-
         int[] arrayForCounting = new int[1];
 
-        Observable.from(messages)
+        Observable.range(0, adapterModel.getCount() - 1)
+                .map(idx -> adapterModel.getItem(idx))
                 .filter(link -> TextUtils.equals(link.status, "event"))
                 .subscribe(link1 -> {
                     arrayForCounting[0]++;
@@ -644,7 +705,7 @@ public class MessageListV2Presenter {
             public void call(Subscriber<? super ResMessages> subscriber) {
 
                 // 300 개씩 요청함
-                view.setMoreNewFromAdapter(false);
+                adapterModel.setMoreFromNew(false);
 
                 ResMessages afterMarkerMessage = null;
                 try {
@@ -672,16 +733,16 @@ public class MessageListV2Presenter {
                             currentMessageState.setLoadHistory(false);
                         }
 
-                        view.setNewNoMoreLoading();
+                        adapterModel.setNewNoMoreLoading();
                     } else {
-                        view.setMoreNewFromAdapter(true);
-                        view.setNewLoadingComplete();
+                        adapterModel.setMoreFromNew(true);
+                        adapterModel.setNewLoadingComplete();
                     }
 
                 } catch (RetrofitException retrofitError) {
                     retrofitError.printStackTrace();
-                    view.setMoreNewFromAdapter(true);
-                    view.setNewLoadingComplete();
+                    adapterModel.setMoreFromNew(true);
+                    adapterModel.setNewLoadingComplete();
                 }
 
                 subscriber.onNext(afterMarkerMessage);
@@ -714,8 +775,17 @@ public class MessageListV2Presenter {
         ResMessages.TextMessage textMessage =
                 MessageRepository.getRepository().getTextMessage(messageId);
 
-        view.updateLinkPreviewMessage(textMessage);
-        view.saveCacheAndNotifyDataSetChanged(null);
+        int index = adapterModel.indexByMessageId(messageId);
+        if (index < 0) {
+            return;
+        }
+
+        ResMessages.Link link = adapterModel.getItem(index);
+        if (!(link.message instanceof ResMessages.TextMessage)) {
+            return;
+        }
+        link.message = textMessage;
+        view.refreshMessages();
     }
 
     public void onInitializeEmptyLayout(long entityId) {
@@ -785,28 +855,28 @@ public class MessageListV2Presenter {
         }
     }
 
-    @Background
+    @Background(serial = "send_message")
     public void sendStickerMessage(StickerInfo stickerInfo) {
         long entityId = room.getEntityId();
         long roomId = room.getRoomId();
         long localId = messageListModel.insertSendingMessageIfCan(entityId, roomId, stickerInfo);
         if (localId > 0) {
             view.showEmptyView(false);
-            view.saveCacheAndNotifyDataSetChanged(() -> {
-                view.moveLastPage();
+            ResMessages.Link dummyMessage = messageListModel.getDummyMessage(localId);
+            adapterModel.add(dummyMessage);
+            view.refreshMessages();
+            view.moveLastPage();
 
-                StickerInfo reqStickerInfo = new StickerInfo(stickerInfo);
-                ArrayList<MentionObject> mentions = new ArrayList<>();
-                SendingMessage sendingMessage = new SendingMessage(localId, "", reqStickerInfo, mentions);
+            StickerInfo reqStickerInfo = new StickerInfo(stickerInfo);
+            SendingMessage sendingMessage = new SendingMessage(localId, "", reqStickerInfo, new ArrayList<>());
 
-                SendingMessageContainer messageQueue = new SendingMessageContainer(sendingMessage);
+            SendingMessageContainer messageQueue = new SendingMessageContainer(sendingMessage);
 
-                addQueue(messageQueue);
-            });
+            addQueue(messageQueue);
         }
     }
 
-    @Background
+    @Background(serial = "send_message")
     public void sendTextMessage(String message, List<MentionObject> mentions,
                                 ReqSendMessageV3 reqSendMessage) {
         long entityId = room.getEntityId();
@@ -816,36 +886,42 @@ public class MessageListV2Presenter {
         if (localId > 0) {
             // insert to ui
             view.showEmptyView(false);
-            view.saveCacheAndNotifyDataSetChanged(() -> {
-                view.moveLastPage();
+            ResMessages.Link dummyMessage = messageListModel.getDummyMessage(localId);
+            adapterModel.add(dummyMessage);
+            view.refreshMessages();
+            view.moveLastPage();
 
-                SendingMessage sendingMessage = new SendingMessage(localId, reqSendMessage);
-
-                SendingMessageContainer messageQueue = new SendingMessageContainer(sendingMessage);
-
-                addQueue(messageQueue);
-            });
+            SendingMessage sendingMessage = new SendingMessage(localId, reqSendMessage);
+            SendingMessageContainer messageQueue = new SendingMessageContainer(sendingMessage);
+            addQueue(messageQueue);
         }
     }
 
     private void sendMessage(SendingMessageContainer messageContainer) {
         SendingMessage data = messageContainer.getData();
-        long linkId;
+        long messageId;
         if (data.getStickerInfo() != null) {
-            linkId = messageListModel.sendStickerMessage(room.getTeamId(), room.getEntityId(),
+            messageId = messageListModel.sendStickerMessage(room.getTeamId(), room.getEntityId(),
                     data.getStickerInfo(), data.getLocalId());
         } else {
             List<MentionObject> mentions = data.getMentions();
-            linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage(), mentions);
+            messageId = messageListModel.sendMessage(data.getLocalId(), data.getMessage(), mentions);
         }
-        if (linkId > 0) {
+
+        int position = adapterModel.getDummyMessagePositionByLocalId(data.getLocalId());
+        if (position >= 0) {
+            adapterModel.getItem(position).messageId = messageId;
+        }
+
+
+        if (messageId > 0) {
             if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
                 // 소켓이 안 붙어 있으면 임의로 갱신 요청
                 EventBus.getDefault().post(new RefreshNewMessageEvent());
             }
         }
 
-        view.saveCacheAndNotifyDataSetChanged(null);
+        view.refreshMessages();
     }
 
     public void restoreStatus() {
@@ -902,7 +978,7 @@ public class MessageListV2Presenter {
     @Background
     public void onDeleteDummyMessageAction(long localId) {
         messageListModel.deleteDummyMessageAtDatabase(localId);
-        view.saveCacheAndNotifyDataSetChanged(null);
+        view.refreshMessages();
     }
 
     @Background
@@ -919,9 +995,12 @@ public class MessageListV2Presenter {
 
             view.dismissProgressWheel();
 
-            view.deleteLinkByMessageId(messageId);
+            int position = adapterModel.indexByMessageId(messageId);
+            if (position >= 0) {
+                adapterModel.remove(position);
+            }
 
-            view.saveCacheAndNotifyDataSetChanged(null);
+            view.refreshMessages();
 
             messageListModel.trackMessageDeleteSuccess(messageId);
 
@@ -977,7 +1056,11 @@ public class MessageListV2Presenter {
             messageListModel.registStarredMessage(room.getTeamId(), messageId);
 
             view.showMessageStarSuccessToast();
-            view.modifyStarredInfo(messageId, true);
+            int position = adapterModel.indexByMessageId(messageId);
+            if (position >= 0) {
+                adapterModel.modifyStarredStateByPosition(position, true);
+            }
+            view.refreshMessages();
             EventBus.getDefault().post(new StarredInfoChangeEvent());
         } catch (Exception e) {
             e.printStackTrace();
@@ -990,7 +1073,11 @@ public class MessageListV2Presenter {
             messageListModel.unregistStarredMessage(room.getTeamId(), messageId);
 
             view.showMessageUnStarSuccessToast();
-            view.modifyStarredInfo(messageId, false);
+            int position = adapterModel.indexByMessageId(messageId);
+            if (position >= 0) {
+                adapterModel.modifyStarredStateByPosition(position, false);
+            }
+            view.refreshMessages();
             EventBus.getDefault().post(new StarredInfoChangeEvent());
         } catch (RetrofitException e) {
             e.printStackTrace();
@@ -1003,13 +1090,100 @@ public class MessageListV2Presenter {
         //TODO Presenter 에 객체들이 initialize 되기 전에 Event 가 호출 되면서 NullPointerException 이 나는 경우가 있음.
         // Presenter 전체적으로 개선해야 할 필요 있음.
         if (view != null) {
-            view.saveCacheAndNotifyDataSetChanged(null);
+            view.refreshMessages();
         }
     }
 
     @Background
     public void deleteReadyMessage() {
         messageListModel.deleteReadyMessage(room.getRoomId());
+    }
+
+    public void setAdapterModel(MessageListAdapterModel adapterModel) {
+        this.adapterModel = adapterModel;
+    }
+
+    public void updateCachedTypeOfMessageId(int fileId) {
+        int indexOfUnsharedFile = adapterModel.indexByMessageId(fileId);
+        adapterModel.updateCachedType(indexOfUnsharedFile);
+        view.refreshMessages();
+    }
+
+    public void retryToSendDummyMessage(long localId) {
+
+        int dummyPosition = adapterModel.getDummyMessagePositionByLocalId(localId);
+        DummyMessageLink dummyMessage = ((DummyMessageLink) adapterModel.getItem(dummyPosition));
+        dummyMessage.setStatus(SendMessage.Status.SENDING.name());
+
+        view.refreshMessages();
+
+        if (dummyMessage.message instanceof ResMessages.TextMessage) {
+
+            ResMessages.TextMessage dummyMessageContent = (ResMessages.TextMessage) dummyMessage.message;
+            List<MentionObject> mentionObjects = new ArrayList<>();
+
+            if (dummyMessageContent.mentions != null) {
+                Observable.from(dummyMessageContent.mentions)
+                        .subscribe(mentionObjects::add);
+            }
+
+            addSendingMessageQueue(
+                    localId, dummyMessageContent.content.body, null, mentionObjects);
+        } else if (dummyMessage.message instanceof ResMessages.StickerMessage) {
+            ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) dummyMessage.message;
+
+            StickerInfo stickerInfo1 = new StickerInfo();
+            stickerInfo1.setStickerGroupId(stickerMessage.content.groupId);
+            stickerInfo1.setStickerId(stickerMessage.content.stickerId);
+
+            addSendingMessageQueue(localId, "", stickerInfo1, new ArrayList<>());
+        }
+
+    }
+
+    public void changeLinkStatusToArchive(long fileMessageId) {
+        int position = adapterModel.indexByMessageId(fileMessageId);
+        String archivedStatus = "archived";
+        if (position > 0) {
+            ResMessages.Link item = adapterModel.getItem(position);
+            item.message.status = archivedStatus;
+            item.message.createTime = new Date();
+            adapterModel.updateCachedType(position);
+
+        }
+
+        List<Integer> commentIndexes = adapterModel.indexByFeedbackId(fileMessageId);
+
+        for (int commentIndex : commentIndexes) {
+            ResMessages.Link item = adapterModel.getItem(commentIndex);
+            item.feedback.status = archivedStatus;
+            item.feedback.createTime = new Date();
+            adapterModel.updateCachedType(commentIndex);
+
+        }
+
+        if (position >= 0 || commentIndexes.size() > 0) {
+            view.refreshMessages();
+        }
+
+    }
+
+    public void updateStarredOfMessage(int messageId, boolean starred) {
+        int index = adapterModel.indexByMessageId(messageId);
+        adapterModel.modifyStarredStateByPosition(index, starred);
+        view.refreshMessages();
+    }
+
+    public void onNetworkConnect() {
+        if (adapterModel.getCount() <= 0) {
+            // roomId 설정 후...
+            onInitMessages(true);
+        } else {
+            if (room.getRoomId() > 0) {
+                addNewMessageQueue(true);
+            }
+        }
+
     }
 
     public interface View {
@@ -1031,42 +1205,26 @@ public class MessageListV2Presenter {
 
         void showInvalidEntityToast();
 
-        void setMoreNewFromAdapter(boolean isMoreNew);
-
-        void setNewLoadingComplete();
-
-        void setMarkerInfo(long roomId);
-
-        void setUpOldMessage(boolean isFirstLoad, boolean isFirstMessage);
+        void setUpOldMessage(boolean isFirstLoad);
 
         void setUpNewMessage(List<ResMessages.Link> records,
-                             long myId, boolean isFirstLoad, boolean moveToLinkId);
+                             long myId, boolean isFirstLoad);
 
         void showOldLoadProgress();
 
         void showEmptyView(boolean show);
 
-        void saveCacheAndNotifyDataSetChanged(MainMessageListAdapter.NotifyDataSetChangedCallback callback);
-
         void dismissOfflineLayer();
 
         void showOfflineLayer();
-
-        void clearMessages();
 
         void moveLastPage();
 
         void dismissOldLoadProgress();
 
-        void setNewNoMoreLoading();
-
-        void setUpLastReadLinkIdIfPosition();
-
         void finish();
 
         void moveLastReadLink();
-
-        void updateLinkPreviewMessage(ResMessages.TextMessage message);
 
         void insertTeamMemberEmptyLayout();
 
@@ -1095,8 +1253,6 @@ public class MessageListV2Presenter {
 
         void showCommentMessageMenuDialog(ResMessages.CommentMessage message);
 
-        void deleteLinkByMessageId(long messageId);
-
         void showLeavedMemberDialog(String name);
 
         void showMessageStarSuccessToast();
@@ -1106,6 +1262,10 @@ public class MessageListV2Presenter {
         void modifyStarredInfo(long messageId, boolean isStarred);
 
         void dismissUserStatusLayout();
+
+        void refreshMessages();
+
+        void updateRecyclerViewInfo();
     }
 
 }

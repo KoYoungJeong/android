@@ -30,7 +30,7 @@ public class ChatApiTest {
 
     @Before
     public void setUp() throws Exception {
-        chatApi = new ChatApi(RetrofitBuilder.newInstance());
+        chatApi = new ChatApi(RetrofitBuilder.getInstance());
     }
 
     @Test

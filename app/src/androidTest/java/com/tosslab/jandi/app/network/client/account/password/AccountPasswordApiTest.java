@@ -18,7 +18,7 @@ public class AccountPasswordApiTest {
 
     @Test
     public void testResetPassword() throws Exception {
-        ResCommon resCommon = new AccountPasswordApi(RetrofitBuilder.newInstance()).resetPassword(new ReqAccountEmail(BaseInitUtil.TEST_EMAIL));
+        ResCommon resCommon = new AccountPasswordApi(RetrofitBuilder.getInstance()).resetPassword(new ReqAccountEmail(BaseInitUtil.TEST_EMAIL));
         assertThat(resCommon).isNotNull();
     }
 }

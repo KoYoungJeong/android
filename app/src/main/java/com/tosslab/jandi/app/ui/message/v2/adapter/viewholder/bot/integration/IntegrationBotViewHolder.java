@@ -26,22 +26,26 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHo
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.transform.TransformConfig;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+
 public class IntegrationBotViewHolder implements BodyViewHolder {
 
     private static final String TAG = "IntegrationBotViewHolder";
-    private View contentView;
     private SimpleDraweeView ivProfile;
     private TextView tvName;
     private TextView tvMessage;
-    private View vDisableCover;
     private View vDisableLineThrough;
     private View vConnectLine;
     private TextView tvMessageTime;
     private TextView tvMessageBadge;
+    private View vgConnectInfoWrapper;
     private LinearLayout vgConnectInfo;
     private View vLastRead;
     private View vBottomMargin;
@@ -51,7 +55,6 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
     private LinkPreviewViewModel linkPreviewViewModel;
     private boolean hasBotProfile;
-    private ViewGroup vgUserName;
 
     private IntegrationBotViewHolder() {
     }
@@ -59,16 +62,15 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
     @Override
     public void initView(View rootView) {
-        contentView = rootView.findViewById(R.id.vg_dummy_message_item);
         ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
-        vgUserName = (ViewGroup) rootView.findViewById(R.id.vg_message_profile_user_name);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
         tvMessageTime = (TextView) rootView.findViewById(R.id.tv_message_time);
         tvMessageBadge = (TextView) rootView.findViewById(R.id.tv_message_badge);
-        vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
         vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         vConnectLine = rootView.findViewById(R.id.v_message_sub_menu_connect_color);
+
+        vgConnectInfoWrapper = rootView.findViewById(R.id.vg_message_connect_info_wrapper);
         vgConnectInfo = ((LinearLayout) rootView.findViewById(R.id.vg_message_sub_menu));
         vLastRead = rootView.findViewById(R.id.vg_message_last_read);
 
@@ -83,14 +85,18 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
             vBottomMargin.setVisibility(View.GONE);
         }
 
+        ViewGroup.MarginLayoutParams layoutParams =
+                (ViewGroup.MarginLayoutParams) tvMessage.getLayoutParams();
         if (hasBotProfile) {
             ivProfile.setVisibility(View.VISIBLE);
-            vgUserName.setVisibility(View.VISIBLE);
+            tvName.setVisibility(View.VISIBLE);
+            layoutParams.topMargin = (int) UiUtils.getPixelFromDp(5f);
         } else {
-            ivProfile.setVisibility(View.INVISIBLE);
-            vgUserName.setVisibility(View.GONE);
+            ivProfile.setVisibility(View.GONE);
+            tvName.setVisibility(View.GONE);
+            layoutParams.topMargin = (int) UiUtils.getPixelFromDp(6f);
         }
-
+        tvMessage.setLayoutParams(layoutParams);
     }
 
     @Override
@@ -120,12 +126,10 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
         if (bot != null && TextUtils.equals(bot.status, "enabled")) {
             tvName.setTextColor(tvName.getResources().getColor(R.color.jandi_messages_name));
-            vDisableCover.setVisibility(View.GONE);
             vDisableLineThrough.setVisibility(View.GONE);
         } else {
             tvName.setTextColor(
                     tvName.getResources().getColor(R.color.deactivate_text_color));
-            vDisableCover.setVisibility(View.VISIBLE);
             vDisableLineThrough.setVisibility(View.VISIBLE);
         }
 
@@ -159,7 +163,14 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
         tvMessage.setText(messageStringBuilder);
 
-        IntegrationBotUtil.setIntegrationSubUI(textMessage.content, vConnectLine, vgConnectInfo);
+        Collection<ResMessages.ConnectInfo> connectInfo = textMessage.content.connectInfo;
+        if (isEmptyConnectInfos(connectInfo)) {
+            textMessage.content.connectInfo = Collections.emptyList();
+            vgConnectInfoWrapper.setVisibility(View.GONE);
+        } else {
+            vgConnectInfoWrapper.setVisibility(View.VISIBLE);
+            IntegrationBotUtil.setIntegrationSubUI(textMessage.content, vConnectLine, vgConnectInfo);
+        }
 
         linkPreviewViewModel.bindData(link);
 
@@ -181,15 +192,21 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
     @Override
     public void setOnItemClickListener(View.OnClickListener itemClickListener) {
-        if (contentView != null && itemClickListener != null) {
-            contentView.setOnClickListener(itemClickListener);
+        if (tvMessage != null && itemClickListener != null) {
+            tvMessage.setOnClickListener(itemClickListener);
+        }
+        if (vgConnectInfo != null) {
+            vgConnectInfo.setOnClickListener(itemClickListener);
         }
     }
 
     @Override
     public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
-        if (contentView != null && itemLongClickListener != null) {
-            contentView.setOnLongClickListener(itemLongClickListener);
+        if (tvMessage != null && itemLongClickListener != null) {
+            tvMessage.setOnLongClickListener(itemLongClickListener);
+        }
+        if (vgConnectInfo != null) {
+            vgConnectInfo.setOnLongClickListener(itemLongClickListener);
         }
     }
 
@@ -205,27 +222,25 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
         this.hasBotProfile = hasBotProfile;
     }
 
+    private boolean isEmptyConnectInfos(Collection<ResMessages.ConnectInfo> connectInfos) {
+        if (connectInfos == null || connectInfos.isEmpty()) {
+            return true;
+        }
+
+        boolean isEmpty = true;
+        Iterator<ResMessages.ConnectInfo> iterator = connectInfos.iterator();
+        while (iterator.hasNext()) {
+            ResMessages.ConnectInfo connectInfo = iterator.next();
+            if(!TextUtils.isEmpty(connectInfo.title) || !TextUtils.isEmpty(connectInfo.description)) {
+                isEmpty = false;
+                break;
+            }
+        }
+
+        return isEmpty;
+    }
 
     public static class Builder extends BaseViewHolderBuilder {
-//        private boolean hasBottomMargin = false;
-//        private boolean hasOnlyBadge = false;
-//        private boolean hasProfile = false;
-//
-//        public Builder setHasBottomMargin(boolean hasBottomMargin) {
-//            this.hasBottomMargin = hasBottomMargin;
-//            return this;
-//        }
-//
-//        public Builder setHasOnlyBadge(boolean hasOnlyBadge) {
-//            this.hasOnlyBadge = hasOnlyBadge;
-//            return this;
-//        }
-//
-//        public Builder setHasBotProfile(boolean hasProfile) {
-//            this.hasProfile = hasProfile;
-//            return this;
-//        }
-
         public IntegrationBotViewHolder build() {
             IntegrationBotViewHolder integrationBotViewHolder = new IntegrationBotViewHolder();
             integrationBotViewHolder.setHasOnlyBadge(hasOnlyBadge);

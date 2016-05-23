@@ -12,19 +12,19 @@
         android:background="#4c000000"
         android:gravity="center"
         android:paddingBottom="6dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
         android:paddingTop="6dp">
 
         <TextView
             android:id="@+id/tv_message_event_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:lineSpacingExtra="5dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
             android:text="test"
             android:textColor="@color/white"
-            android:textSize="11dp"
-            android:textStyle="bold" />
+            android:textSize="11sp" />
 
     </LinearLayout>
 

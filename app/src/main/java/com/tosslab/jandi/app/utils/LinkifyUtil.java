@@ -164,8 +164,14 @@ public class LinkifyUtil {
                     int line = layout.getLineForVertical(y);
                     int off = layout.getOffsetForHorizontal(line, x);
 
+                    // Text 영역을 벗어난 곳을 터치
+                    if (off >= buffer.length()) {
+                        return false;
+                    }
+
                     ClickableSpannable[] clickableSpan =
                             buffer.getSpans(off, off, ClickableSpannable.class);
+
                     if (clickableSpan != null && clickableSpan.length > 0) {
                         for (int spanIdx = clickableSpan.length - 1; spanIdx >= 0; spanIdx--) {
                             clickableSpannable = clickableSpan[spanIdx];
@@ -185,7 +191,13 @@ public class LinkifyUtil {
                             return false;
                         }
                         isInLongClickProcess = true;
-                        findParentAndPerformLongClickIfNeed(textView.getParent());
+                        if (clickableSpannable != null && textView.isLongClickable()) {
+                            textView.setPressed(true);
+                            textView.performLongClick();
+                            textView.setPressed(false);
+                        } else {
+                            findParentAndPerformLongClickIfNeed(textView.getParent());
+                        }
                         return false;
                     }
                 }

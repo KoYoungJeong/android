@@ -60,7 +60,7 @@ public class EmailChooseModel {
 
     public ResAccountInfo requestNewEmail(String email) throws RetrofitException {
         ReqAccountEmail reqAccountEmail = new ReqAccountEmail(email, LanguageUtil.getLanguage());
-        return new AccountEmailsApi(RetrofitBuilder.newInstance()).requestAddEmail(reqAccountEmail);
+        return new AccountEmailsApi(RetrofitBuilder.getInstance()).requestAddEmail(reqAccountEmail);
     }
 
     public boolean isConfirmedEmail(String email) {
@@ -91,16 +91,16 @@ public class EmailChooseModel {
 
     public ResAccountInfo requestDeleteEmail(String email) throws RetrofitException {
         ReqAccountEmail reqAccountEmail = new ReqAccountEmail(email, LanguageUtil.getLanguage());
-        return new AccountEmailsApi(RetrofitBuilder.newInstance()).deleteEmail(reqAccountEmail);
+        return new AccountEmailsApi(RetrofitBuilder.getInstance()).deleteEmail(reqAccountEmail);
     }
 
     public ResAccountInfo getAccountEmailsFromServer() throws RetrofitException {
-        return new AccountApi(RetrofitBuilder.newInstance()).getAccountInfo();
+        return new AccountApi(RetrofitBuilder.getInstance()).getAccountInfo();
 
     }
 
     public ResAccountInfo updatePrimaryEmail(String selectedEmail) throws RetrofitException {
-        return new AccountApi(RetrofitBuilder.newInstance()).updatePrimaryEmail(new ReqUpdatePrimaryEmailInfo(selectedEmail));
+        return new AccountApi(RetrofitBuilder.getInstance()).updatePrimaryEmail(new ReqUpdatePrimaryEmailInfo(selectedEmail));
     }
 
     public void trackChangeAccountEmailSuccess(String accountId) {

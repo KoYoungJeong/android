@@ -13,6 +13,11 @@ public class UiUtils {
         return resources.getDisplayMetrics().density * dp;
     }
 
+    public static float getPixelFromSp(float sp) {
+        Resources resources = JandiApplication.getContext().getResources();
+        return resources.getDisplayMetrics().scaledDensity * sp;
+    }
+
     public interface KeyboardHandler {
         void hideKeyboard();
     }

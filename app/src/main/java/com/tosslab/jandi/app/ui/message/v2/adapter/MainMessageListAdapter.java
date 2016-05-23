@@ -14,39 +14,28 @@ import android.view.ViewGroup;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.domain.SendMessage;
-import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
-import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.TypeUtil;
 import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
+import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 import de.greenrobot.event.EventBus;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 
 public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHolder>
-        implements MessageListHeaderAdapter.MessageItemDate {
+        implements MessageListHeaderAdapter.MessageItemDate, MessageListAdapterView, MessageListAdapterModel {
 
-    private final Lock lock;
     Context context;
     long lastMarker = -1;
     AnimState markerAnimState = AnimState.Idle;
@@ -55,97 +44,20 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     MoreState newMoreState;
     MainMessageListAdapter.OnItemClickListener onItemClickListener;
     MainMessageListAdapter.OnItemLongClickListener onItemLongClickListener;
-    long teamId;
-    long roomId = -1;
-    long entityId;
     List<ResMessages.Link> links;
-    private ExecutorService threadPool = Executors.newSingleThreadExecutor();
+    private Room room;
     private MessagePointer messagePointer;
 
-    public MainMessageListAdapter(Context context) {
+    private Map<ResMessages.Link, Integer> itemTypes;
+
+    public MainMessageListAdapter(Context context, Room room) {
         this.context = context;
+        this.room = room;
         oldMoreState = MoreState.Idle;
-        links = new CopyOnWriteArrayList<>();
+        links = new ArrayList<>();
         setHasStableIds(true);
+        itemTypes = new WeakHashMap<>();
 
-        lock = new ReentrantLock();
-    }
-
-    public void saveCacheAndNotifyDataSetChanged(NotifyDataSetChangedCallback callback) {
-        Runnable saveCacheRunnable = () -> {
-            if (roomId == -1 || messagePointer.getFirstCursorLinkId() == -1) {
-                clearAndNotifyDataSetChanged(callback);
-                return;
-            }
-
-            lock.lock();
-
-            try {
-                addBeforeLinks(roomId, messagePointer.getFirstCursorLinkId(), links);
-                removeDummyLink(links);
-                addAfterLinks(roomId, links);
-                addDummyLink(roomId, links);
-            } finally {
-                lock.unlock();
-            }
-
-            Observable.just(0)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(i -> {
-                        MainMessageListAdapter.this.notifyDataSetChanged();
-                        if (callback != null) {
-                            callback.callBack();
-                        }
-                    });
-        };
-
-        threadPool.execute(saveCacheRunnable);
-    }
-
-    public void saveCacheAndNotifyDataSetChangedForAdding(NotifyDataSetChangedCallback callback) {
-        Runnable saveCacheRunnable = () -> {
-            if (roomId == -1 || messagePointer.getFirstCursorLinkId() == -1) {
-                clearAndNotifyDataSetChanged(callback);
-                return;
-            }
-
-            lock.lock();
-
-            try {
-                int startLinkSize = links.size();
-                addBeforeLinks(roomId, messagePointer.getFirstCursorLinkId(), links);
-                removeDummyLink(links);
-                addAfterLinks(roomId, links);
-                addDummyLink(roomId, links);
-                int endLinkSize = links.size();
-
-                Observable.just(0)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(i -> {
-                            MainMessageListAdapter.this.notifyItemRangeInserted(0, endLinkSize - startLinkSize);
-                            if (callback != null) {
-                                callback.callBack();
-                            }
-                        });
-            } finally {
-                lock.unlock();
-            }
-        };
-
-        threadPool.execute(saveCacheRunnable);
-    }
-
-    private void clearAndNotifyDataSetChanged(NotifyDataSetChangedCallback callback) {
-        clear();
-
-        Observable.just(0)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(i -> {
-                    MainMessageListAdapter.this.notifyDataSetChanged();
-                    if (callback != null) {
-                        callback.callBack();
-                    }
-                });
     }
 
     @Override
@@ -161,7 +73,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     public void onBindViewHolder(RecyclerBodyViewHolder viewHolder, int position) {
         ResMessages.Link item = getItem(position);
         BodyViewHolder bodyViewHolder = viewHolder.getViewHolder();
-        bodyViewHolder.bindData(item, teamId, roomId, entityId);
+        bodyViewHolder.bindData(item, room.getTeamId(), room.getRoomId(), room.getEntityId());
 
         if (item.id == lastMarker) {
             if (markerAnimState == MainMessageListAdapter.AnimState.Idle) {
@@ -191,17 +103,13 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
             bodyViewHolder.setLastReadViewVisible(0, -1);
         }
 
-        if (position == 20 || position == 0 && oldMoreState == MainMessageListAdapter.MoreState.Idle) {
+        if (position <= 2 && oldMoreState == MoreState.Idle) {
             oldMoreState = MainMessageListAdapter.MoreState.Loading;
-            if (oldMoreState != MainMessageListAdapter.MoreState.Idle) {
-                EventBus.getDefault().post(new RefreshOldMessageEvent());
-            }
+            EventBus.getDefault().post(new RefreshOldMessageEvent());
         } else if (moreFromNew && position == getItemCount() - 1
                 && newMoreState == MainMessageListAdapter.MoreState.Idle) {
             newMoreState = MainMessageListAdapter.MoreState.Loading;
-            if (oldMoreState != MainMessageListAdapter.MoreState.Idle) {
-                EventBus.getDefault().post(new RefreshNewMessageEvent());
-            }
+            EventBus.getDefault().post(new RefreshNewMessageEvent());
         }
 
         bodyViewHolder.setOnItemClickListener(v -> {
@@ -232,159 +140,122 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
             nextLink = getItem(position + 1);
         }
 
-        return BodyViewFactory.getContentType(previousLink, currentLink, nextLink);
-    }
-
-    private long getToCursorLinkId(List<ResMessages.Link> links) {
-        long toCursorLinkId;
-        if (!links.isEmpty()) {
-            toCursorLinkId = getItem(0).id;
+        if (!itemTypes.containsKey(currentLink)) {
+            int contentType = BodyViewFactory.getContentType(previousLink, currentLink, nextLink);
+            itemTypes.put(currentLink, contentType);
+            return contentType;
         } else {
-            toCursorLinkId = Integer.MAX_VALUE;
-        }
-        return toCursorLinkId;
-    }
-
-    private void addAfterLinks(long roomId, List<ResMessages.Link> links) {
-        long afterLinkStartId = getAfterLinkStartId(links);
-        long afterLinkEndId = Integer.MAX_VALUE;
-        int afterMessageCount = MessageRepository.getRepository().getMessagesCount(roomId, afterLinkStartId, afterLinkEndId);
-        if (afterMessageCount > 0) {
-            List<ResMessages.Link> afterLinks = MessageRepository.getRepository().getMessages(roomId, afterLinkStartId, afterLinkEndId);
-            links.addAll(afterLinks);
+            return itemTypes.get(currentLink);
         }
     }
 
-    private long getAfterLinkStartId(List<ResMessages.Link> links) {
-        long afterLinkStartId;
-        if (!links.isEmpty()) {
-            afterLinkStartId = getItem(getItemCount() - 1).id + 1;
-        } else {
-            afterLinkStartId = -1;
-        }
-        return afterLinkStartId;
-    }
-
-    private void addDummyLink(long roomId, List<ResMessages.Link> links) {
-        Observable.from(SendMessageRepository.getRepository().getSendMessage(roomId))
-                .map(sendMessage -> getDummyMessageLink(EntityManager.getInstance().getMe().getId(), sendMessage))
-                .collect(() -> links, List::add)
-                .onErrorResumeNext(throwable -> {
-                    return Observable.empty();
-                })
-                .subscribe();
-    }
-
-    private void removeDummyLink(List<ResMessages.Link> links) {
-        for (int idx = getItemCount() - 1; idx >= 0; idx--) {
-            if (getItem(idx) instanceof DummyMessageLink) {
-                links.remove(idx);
-            } else {
-                break;
-            }
-        }
-    }
-
-    private void addBeforeLinks(long roomId, long firstCursorLinkId, List<ResMessages.Link> links) {
-        long toCursorLinkId = getToCursorLinkId(links);
-        MessageRepository messageRepository = MessageRepository.getRepository();
-        int beforeMessageCount = messageRepository.getMessagesCount(roomId, firstCursorLinkId, toCursorLinkId);
-
-        if (firstCursorLinkId < toCursorLinkId && beforeMessageCount > 0) {
-            List<ResMessages.Link> messages = messageRepository.getMessages(roomId, firstCursorLinkId, toCursorLinkId);
-            links.addAll(0, messages);
-        }
-    }
-
-    private DummyMessageLink getDummyMessageLink(long id, SendMessage link) {
-        List<MentionObject> mentionObjects = new ArrayList<>();
-
-        Collection<MentionObject> savedMention = link.getMentionObjects();
-        if (savedMention != null) {
-            for (MentionObject mentionObject : savedMention) {
-                mentionObjects.add(mentionObject);
-            }
-        }
-
-        DummyMessageLink dummyMessageLink;
-        if (link.getStickerGroupId() > 0 && !TextUtils.isEmpty(link.getStickerId())) {
-
-            dummyMessageLink = new DummyMessageLink(link.getId(), link.getStatus(),
-                    link.getStickerGroupId(), link.getStickerId());
-            dummyMessageLink.message.writerId = id;
-            dummyMessageLink.message.createTime = new Date();
-        } else {
-            dummyMessageLink = new DummyMessageLink(link.getId(), link.getMessage(),
-                    link.getStatus(), mentionObjects);
-            dummyMessageLink.message.writerId = id;
-            dummyMessageLink.message.createTime = new Date();
-        }
-        return dummyMessageLink;
-    }
-
+    @Override
     public void addAll(int position, List<ResMessages.Link> links) {
 
         if (links == null || links.isEmpty()) {
             return;
         }
 
-        Observable.from(links)
-                .filter(link -> TextUtils.equals(link.status, "archived"))
-                .subscribe(link -> {
+        int minPosition = Math.min(position, getItemCount());
+
+        if (minPosition != 0) {
+            for (int idx = links.size() - 1; idx >= 0; idx--) {
+                ResMessages.Link link = links.get(idx);
+                if (TextUtils.equals(link.status, "archived")) {
+                    links.remove(idx);
                     int searchedPosition = indexByMessageId(link.messageId);
                     if (searchedPosition < 0) {
-                        return;
+                        continue;
                     }
 
                     if (TextUtils.equals(link.message.contentType, "file")) {
                         ResMessages.Link originLink = MainMessageListAdapter.this.getItem(searchedPosition);
                         originLink.message = link.message;
                         originLink.status = "archived";
+                        itemTypes.remove(originLink);
+                        getItemViewType(searchedPosition);
                     } else {
-                        MainMessageListAdapter.this.remove(searchedPosition);
+                        remove(searchedPosition);
+                        minPosition--;
                     }
-                });
+                }
+            }
+        }
+
+        int dummyMessageCount = getDummyMessageCount();
+        int beforePosition;
+        if (minPosition > dummyMessageCount) {
+            this.links.addAll(minPosition - dummyMessageCount, links);
+            beforePosition = minPosition - dummyMessageCount - 1;
+            for (int idx = 0; idx < links.size(); idx++) {
+                getItemViewType(minPosition - dummyMessageCount + idx);
+            }
+        } else {
+            this.links.addAll(minPosition, links);
+            beforePosition = minPosition - 1;
+            for (int idx = 0; idx < links.size(); idx++) {
+                getItemViewType(minPosition + idx);
+            }
+        }
+        if (beforePosition >= 0) {
+            itemTypes.remove(getItem(beforePosition));
+            getItemViewType(beforePosition);
+        }
+
+        if (beforePosition + links.size() + 1 < getItemCount()) {
+            itemTypes.remove(getItem(beforePosition + links.size() + 1));
+            getItemViewType(beforePosition + links.size() + 1);
+        }
     }
 
+    @Override
     public void remove(int position) {
-        lock.lock();
 
         try {
-            links.remove(position);
+
+            ResMessages.Link removed = links.remove(position);
+            itemTypes.remove(removed);
+
+            if (position > 0) {
+                itemTypes.remove(links.get(position - 1));
+                getItemViewType(position - 1);
+            }
+            if (position < getItemCount() - 1) {
+                itemTypes.remove(links.get(position));
+                getItemViewType(position);
+            }
+
         } catch (Exception e) {
             LogUtil.e(Log.getStackTraceString(e));
-        } finally {
-            lock.unlock();
         }
+
     }
 
-    public void clear() {
-        lock.lock();
-        try {
-            links.clear();
-        } finally {
-            lock.unlock();
-        }
+    @Override
+    public void updateCachedType(int position) {
+        itemTypes.remove(links.get(position));
+        getItemViewType(position);
     }
 
+    @Override
     public ResMessages.Link getItem(int position) {
-        lock.lock();
-
-        try {
-            return links.get(position);
-        } finally {
-            lock.unlock();
+        if (position >= getItemCount()) {
+            return null;
         }
+        return links.get(position);
     }
 
+    @Override
     public void setOldLoadingComplete() {
         oldMoreState = MoreState.Idle;
     }
 
+    @Override
     public void setOldNoMoreLoading() {
         oldMoreState = MoreState.Nope;
     }
 
+    @Override
     public int indexByMessageId(long messageId) {
         int count = getItemCount();
         for (int idx = 0; idx < count; idx++) {
@@ -394,6 +265,19 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         return -1;
     }
 
+    @Override
+    public int indexOfDummyMessageId(long messageId) {
+        int count = getItemCount();
+        for (int idx = count; idx > 0; idx--) {
+            ResMessages.Link item = getItem(idx);
+            if (item instanceof DummyMessageLink
+                    && item.messageId == messageId)
+                return idx;
+        }
+        return -1;
+    }
+
+    @Override
     public int getLastIndexByMessageId(long messageId) {
         int lastIndex = -1;
         int count = getItemCount();
@@ -405,6 +289,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         return lastIndex;
     }
 
+    @Override
     public int indexOfLinkId(long linkId) {
         int size = getItemCount();
         for (int idx = size - 1; idx >= 0; --idx) {
@@ -415,6 +300,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         return -1;
     }
 
+    @Override
     public List<Integer> indexByFeedbackId(long messageId) {
 
         List<Integer> indexList = new ArrayList<Integer>();
@@ -435,6 +321,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         return indexList;
     }
 
+    @Override
     public int getDummyMessagePositionByLocalId(long localId) {
         if (localId <= 0) {
             return -1;
@@ -461,14 +348,17 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         this.lastMarker = lastMarker;
     }
 
+    @Override
     public void setMoreFromNew(boolean moreFromNew) {
         this.moreFromNew = moreFromNew;
     }
 
+    @Override
     public void setNewLoadingComplete() {
         newMoreState = MoreState.Idle;
     }
 
+    @Override
     public void setNewNoMoreLoading() {
         newMoreState = MoreState.Nope;
     }
@@ -481,10 +371,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         this.onItemLongClickListener = onItemLongClickListener;
     }
 
-    public void setTeamId(long teamId) {
-        this.teamId = teamId;
-    }
-
     @Override
     public long getItemId(int position) {
         return position;
@@ -492,15 +378,16 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     @Override
     public int getItemCount() {
-        lock.lock();
 
-        try {
-            return links.size();
-        } finally {
-            lock.unlock();
-        }
+        return links.size();
     }
 
+    @Override
+    public int getCount() {
+        return getItemCount();
+    }
+
+    @Override
     public int getDummyMessageCount() {
 
         int total = 0;
@@ -515,21 +402,28 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         return total;
     }
 
-    public long getRoomId() {
-        return roomId;
+    @Override
+    public void removeAllDummy() {
+        for (int idx = getItemCount(); idx > 0; idx--) {
+            ResMessages.Link item = getItem(idx);
+            if (item instanceof DummyMessageLink) {
+                remove(idx);
+            }
+        }
     }
 
-    public void setRoomId(long roomId) {
-        this.roomId = roomId;
+    @Override
+    public void add(ResMessages.Link dummyMessage) {
+        int itemCount = getItemCount();
+        if (itemCount > 0) {
+            itemTypes.remove(links.get(itemCount - 1));
+        }
+        links.add(dummyMessage);
     }
 
-    public void setEntityId(long entityId) {
-        this.entityId = entityId;
-    }
-
+    @Override
     public void modifyStarredStateByPosition(int position, boolean isStarred) {
         getItem(position).message.isStarred = isStarred;
-        notifyItemChanged(position);
     }
 
     @Override
@@ -544,6 +438,11 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     public void setMessagePointer(MessagePointer messagPointer) {
         this.messagePointer = messagPointer;
+    }
+
+    @Override
+    public void refresh() {
+        notifyDataSetChanged();
     }
 
     enum MoreState {

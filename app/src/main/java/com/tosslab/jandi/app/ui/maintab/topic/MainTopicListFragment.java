@@ -273,7 +273,7 @@ public class MainTopicListFragment extends Fragment
         }
     }
 
-    @Click(R.id.vg_main_topic_order_title)
+    @Click(R.id.vg_main_topic_order)
     void onOrderTitleClick() {
         boolean currentFolder = isCurrentFolder();
         changeTopicSort(currentFolder, !currentFolder);
@@ -289,7 +289,6 @@ public class MainTopicListFragment extends Fragment
                     AnalyticsValue.Label.Folder);
         }
     }
-
 
     private boolean isCurrentFolder() {
         RecyclerView.Adapter adapter = lvMainTopic.getAdapter();

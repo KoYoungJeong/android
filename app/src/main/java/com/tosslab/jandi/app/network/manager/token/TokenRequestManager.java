@@ -81,7 +81,7 @@ public class TokenRequestManager {
     }
 
     private ResAccessToken requestRefreshTokenAndSave(ReqAccessToken reqAccessToken) throws Exception {
-        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.newInstance()).getAccessToken(reqAccessToken);
+        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.getInstance()).getAccessToken(reqAccessToken);
         TokenUtil.saveTokenInfoByRefresh(accessToken);
         return accessToken;
     }

@@ -11,12 +11,9 @@ import android.text.TextUtils;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.facebook.cache.disk.DiskCacheConfig;
-import com.facebook.common.logging.FLog;
 import com.facebook.common.util.ByteConstants;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import com.facebook.imagepipeline.listener.RequestListener;
-import com.facebook.imagepipeline.listener.RequestLoggingListener;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
@@ -38,19 +35,15 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.image.BitmapMemoryCacheSupplier;
 import com.tosslab.jandi.app.utils.image.fresco.integreation.okhttp3.OkHttpImagePipelineConfigFactory;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 
 import org.androidannotations.api.BackgroundExecutor;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.logging.LogManager;
 
@@ -124,11 +117,6 @@ public class JandiApplication extends MultiDexApplication {
     }
 
     void initParse() {
-        boolean oldParseFileCacheDeleted = JandiPreference.isOldParseFileCacheDeleted(this);
-        if (!oldParseFileCacheDeleted) {
-            ParseUpdateUtil.removeFileAndCacheIfNeed(this);
-            JandiPreference.setOldParseFileCacheDeleted(this, true);
-        }
 
         // For Parse Push Notification
         if (BuildConfig.DEBUG) {
@@ -139,36 +127,20 @@ public class JandiApplication extends MultiDexApplication {
                 JandiConstantsForFlavors.PARSE_APPLICATION_ID,
                 JandiConstantsForFlavors.PARSE_CLIENT_KEY);
 
-
-        boolean oldParseChannelDeleted = JandiPreference.isOldParseChannelDeleted(this);
-        if (!oldParseChannelDeleted) {
-            ParseUpdateUtil.refreshChannelOnServer();
-            JandiPreference.setOldParseChannelDeleted(this, true);
-        }
     }
 
     private void initRetrofitBuilder() {
-        RetrofitBuilder.newInstance();
+        RetrofitBuilder.getInstance();
     }
 
     private void initFresco() {
-        Set<RequestListener> listeners = new HashSet<>();
-        if (BuildConfig.DEBUG) {
-            listeners.add(new RequestLoggingListener());
-        }
-
-        // Fresco
         ImagePipelineConfig config =
                 OkHttpImagePipelineConfigFactory.newBuilder(this, getOkHttpClient())
                         .setBitmapMemoryCacheParamsSupplier(new BitmapMemoryCacheSupplier(this))
                         .setMainDiskCacheConfig(getMainDiskConfig())
-                        .setRequestListeners(listeners)
                         .build();
 
         Fresco.initialize(context, config);
-        if (BuildConfig.DEBUG) {
-            FLog.setMinimumLoggingLevel(Logger.LogLevel.VERBOSE);
-        }
     }
 
     private void addLogConfigIfDebug() {
@@ -191,7 +163,7 @@ public class JandiApplication extends MultiDexApplication {
     }
 
     private DiskCacheConfig getMainDiskConfig() {
-        return DiskCacheConfig.newBuilder(this)
+        return DiskCacheConfig.newBuilder()
                 .setBaseDirectoryPathSupplier(() -> context.getApplicationContext().getCacheDir())
                 .setBaseDirectoryName("image_cache")
                 .setMaxCacheSize(1024 * ByteConstants.MB)
@@ -293,7 +265,7 @@ public class JandiApplication extends MultiDexApplication {
         SimpleApiRequester.request(() -> {
             ReqUpdatePlatformStatus req = new ReqUpdatePlatformStatus(active);
             try {
-                new PlatformApi(RetrofitBuilder.newInstance()).updatePlatformStatus(req);
+                new PlatformApi(RetrofitBuilder.getInstance()).updatePlatformStatus(req);
             } catch (RetrofitException e) {
             }
         }, () -> LogUtil.i("PlatformApi", "Success(updatePlatformStatus)"));

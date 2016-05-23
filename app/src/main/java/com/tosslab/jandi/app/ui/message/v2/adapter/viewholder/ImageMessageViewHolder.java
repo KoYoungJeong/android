@@ -1,34 +1,33 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
-import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.listener.BaseOnResourceReadyCallback;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
-
-import de.greenrobot.event.EventBus;
 
 public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
@@ -41,90 +40,84 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
     public static final int IMAGE_WIDTH_RIGHT_MARGIN = 59;
     public static final int MAX_IMAGE_HEIGHT = 150;
 
+    private final float MIN_WIDTH_RATIO;
+    private final float MAX_WIDTH_RATIO;
+
     private SimpleDraweeView ivProfile;
     private TextView tvName;
     private SimpleDraweeView ivFileImage;
     private TextView tvFileName;
-    private View vDisableCover;
     private View vDisableLineThrough;
-    private Context context;
 
     private int minImageWidth;
     private int minImageHeight;
     private int maxImageWidth;
     private int maxImageHeight;
-    private RelativeLayout vgFileImageWrapper;
+    private View vgFileImageWrapper;
     private TextView tvFileSize;
+    private View vProfileCover;
 
     private ImageMessageViewHolder() {
+        DisplayMetrics displayMetrics = JandiApplication.getContext().getResources().getDisplayMetrics();
+        minImageWidth = getPixelFromDp(MIN_IMAGE_WIDTH, displayMetrics);
+        minImageHeight = getPixelFromDp(MIN_IMAGE_HEIGHT, displayMetrics);
+        maxImageWidth = displayMetrics.widthPixels
+                - getPixelFromDp(IMAGE_WIDTH_LEFT_MARGIN, displayMetrics)
+                - getPixelFromDp(IMAGE_WIDTH_RIGHT_MARGIN, displayMetrics);
+        maxImageHeight = getPixelFromDp(MAX_IMAGE_HEIGHT, displayMetrics);
+        MAX_WIDTH_RATIO = (float) maxImageWidth / (float) minImageHeight;
+        MIN_WIDTH_RATIO = (float) minImageWidth / (float) maxImageHeight;
     }
 
     @Override
     public void initView(View rootView) {
         super.initView(rootView);
-        ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
-        tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
-        vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
-        vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+        if (hasProfile) {
+            ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
+            vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
+            tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
+            vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+        }
 
-        vgFileImageWrapper = (RelativeLayout) rootView.findViewById(R.id.vg_message_photo_wrapper);
+        vgFileImageWrapper = rootView.findViewById(R.id.vg_message_photo_wrapper);
         ivFileImage = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_photo);
         tvFileName = (TextView) rootView.findViewById(R.id.tv_image_message_file_name);
         tvFileSize = (TextView) rootView.findViewById(R.id.tv_file_size);
-
-        context = rootView.getContext();
 
         initViewSizes();
     }
 
     @Override
-    protected void initObjects() {
-        vgMessageContent.setVisibility(View.GONE);
-        vgStickerMessageContent.setVisibility(View.GONE);
-        vgFileMessageContent.setVisibility(View.GONE);
-        vgImageMessageContent.setVisibility(View.VISIBLE);
+    public int getLayoutId() {
+        if (hasProfile) {
+            return R.layout.item_message_image_v3;
+        } else {
+            return R.layout.item_message_image_collapse_v3;
+        }
     }
 
     // 계속 계산하지 않도록
     private void initViewSizes() {
-        minImageWidth = getPixelFromDp(MIN_IMAGE_WIDTH);
-        minImageHeight = getPixelFromDp(MIN_IMAGE_HEIGHT);
-        maxImageWidth = getDisplayWidth()
-                - getPixelFromDp(IMAGE_WIDTH_LEFT_MARGIN) - getPixelFromDp(IMAGE_WIDTH_RIGHT_MARGIN);
-        maxImageHeight = getPixelFromDp(MAX_IMAGE_HEIGHT);
     }
 
     @Override
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
-        setProfileInfos(link);
+        setMarginVisible();
+        setTimeVisible();
+        if (hasProfile) {
+            ProfileUtil.setProfile(link.fromEntity, ivProfile, vProfileCover, tvName, vDisableLineThrough);
+        }
         bindFileImage(link, teamId, roomId);
+        setFileTitleBackground(link);
     }
 
-    public void setProfileInfos(ResMessages.Link link) {
-        long fromEntityId = link.fromEntity;
-
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity entity = entityManager.getEntityById(fromEntityId);
-        ResLeftSideMenu.User fromEntity = entity.getUser();
-
-        String profileUrl = entity.getUserLargeProfileUrl();
-
-        ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);
-
-        if (fromEntity != null && entity.isEnabled()) {
-            tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
-            vDisableCover.setVisibility(View.GONE);
-            vDisableLineThrough.setVisibility(View.GONE);
+    private void setFileTitleBackground(ResMessages.Link link) {
+        long writerId = link.fromEntity;
+        if (EntityManager.getInstance().isMe(writerId)) {
+            tvFileName.setBackgroundResource(R.drawable.bg_round_bottom_for_item_name_mine);
         } else {
-            tvName.setTextColor(
-                    tvName.getResources().getColor(R.color.deactivate_text_color));
-            vDisableCover.setVisibility(View.VISIBLE);
-            vDisableLineThrough.setVisibility(View.VISIBLE);
+            tvFileName.setBackgroundResource(R.drawable.bg_round_bottom_for_item_name);
         }
-
-        tvName.setText(fromEntity.name);
-        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Image)));
-        tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntity.id, ShowProfileEvent.From.Name)));
     }
 
     private void bindFileImage(ResMessages.Link link, long teamId, long roomId) {
@@ -155,6 +148,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
         if (TextUtils.equals(fileMessage.status, "archived")) {
             tvFileName.setText(R.string.jandi_deleted_file);
+            setImageViewSizeToDefault();
             ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.file_icon_deleted));
             return;
         }
@@ -162,6 +156,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         tvFileName.setText(fileContent.title);
 
         if (!ImageUtil.hasImageUrl(fileContent)) {
+            setImageViewSizeToDefault();
             ImageLoader.newBuilder()
                     .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
                     .load(R.drawable.file_icon_img)
@@ -171,6 +166,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
         // Google, Dropbox 파일이 인 경우
         if (isFileFromGoogleOrDropbox(sourceType)) {
+            setImageViewSizeToDefault();
             String serverUrl = fileContent.serverUrl;
             String icon = fileContent.icon;
             int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, icon);
@@ -194,20 +190,21 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             final ViewGroup.LayoutParams layoutParams = ivFileImage.getLayoutParams();
 
             ImageLoader.Builder imageRequestBuilder = ImageLoader.newBuilder();
-            imageRequestBuilder.error(R.drawable.preview_no_img, ScalingUtils.ScaleType.CENTER_INSIDE);
+            imageRequestBuilder.error(
+                    R.drawable.preview_no_img, ScalingUtils.ScaleType.CENTER_INSIDE);
 
             // 유효한 확장자가 아닌 경우, Local File Path 도 없고 Thumbnail Path 도 없는 경우
             boolean shouldSupportImageExtensions =
                     FileExtensionsUtil.shouldSupportImageExtensions(fileContent.ext);
+            final Resources resources = vgFileImageWrapper.getResources();
             if (!shouldSupportImageExtensions
                     || (!isFromLocalFilePath && TextUtils.isEmpty(remoteFilePth))) {
                 LogUtil.i(TAG, "Thumbnail's are empty.");
 
-                ViewGroup.LayoutParams wrapperLayoutParams = vgFileImageWrapper.getLayoutParams();
-                wrapperLayoutParams.height = maxImageHeight;
-                vgFileImageWrapper.setLayoutParams(wrapperLayoutParams);
-                vgFileImageWrapper.setBackgroundDrawable(JandiApplication.getContext()
-                        .getResources().getDrawable(R.drawable.bg_round_top_green_for_message));
+                layoutParams.height = maxImageHeight;
+                ivFileImage.setLayoutParams(layoutParams);
+                vgFileImageWrapper.setBackgroundColor(
+                        resources.getColor(R.color.jandi_messages_big_size_image_view_bg));
 
                 imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE);
                 imageRequestBuilder.load(R.drawable.preview_no_img)
@@ -218,78 +215,106 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             imageRequestBuilder.placeHolder(
                     R.drawable.comment_image_preview_download, ScalingUtils.ScaleType.CENTER_INSIDE);
 
-            int width = maxImageWidth;
-            int height = maxImageHeight;
-
-            if (extraInfo != null && extraInfo.width > 0 && extraInfo.height > 0) {
-
-                int extraInfoWidth = extraInfo.width;
-                int extraInfoHeight = extraInfo.height;
-
-                if (ImageUtil.isVerticalPhoto(extraInfo.orientation)) {
-                    int temp = extraInfoWidth;
-                    extraInfoWidth = extraInfoHeight;
-                    extraInfoHeight = temp;
-                }
-
-                if (extraInfo.height < minImageHeight) {
-                    height = minImageHeight;
-                } else if (extraInfo.height > maxImageHeight) {
-                    height = maxImageHeight;
-                } else {
-                    height = extraInfoHeight;
-                }
-
-                int convertedWidthByRatio = (int) ((float) extraInfoWidth * ((float) height / (float) extraInfoHeight));
-
-                if (convertedWidthByRatio < minImageWidth) {
-                    width = minImageWidth;
-                } else if (convertedWidthByRatio > maxImageWidth) {
-                    width = maxImageWidth;
-                } else {
-                    width = convertedWidthByRatio;
-                }
-
+            ImageLoadInfo imageInfo = getImageInfo(extraInfo);
+            if (imageInfo.needCrop) {
+                imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
+            } else {
+                imageRequestBuilder.actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
             }
 
-            ViewGroup.LayoutParams wrapperLayoutParams = vgFileImageWrapper.getLayoutParams();
-            wrapperLayoutParams.height = height;
-            vgFileImageWrapper.setLayoutParams(wrapperLayoutParams);
-            vgFileImageWrapper.setBackgroundDrawable(JandiApplication.getContext()
-                    .getResources().getDrawable(R.drawable.bg_round_top_gray_for_message));
+            vgFileImageWrapper.setBackgroundColor(
+                    resources.getColor(R.color.jandi_messages_image_view_bg));
 
-            layoutParams.width = width;
-            layoutParams.height = height;
+            layoutParams.width = imageInfo.width;
+            layoutParams.height = imageInfo.height;
             ivFileImage.setLayoutParams(layoutParams);
+            ivFileImage.setBackgroundColor(Color.TRANSPARENT);
 
             Uri uri = isFromLocalFilePath
                     ? UriFactory.getFileUri(localFilePath) : Uri.parse(remoteFilePth);
 
             imageRequestBuilder
-                    .actualScaleType(ScalingUtils.ScaleType.FIT_XY)
+                    .callback(new BaseOnResourceReadyCallback() {
+                        @Override
+                        public void onFail(Throwable cause) {
+                            ivFileImage.setImageURI(UriFactory.getResourceUri(R.drawable.comment_no_img));
+                            vgFileImageWrapper.setBackgroundColor(
+                                    resources.getColor(R.color.jandi_messages_big_size_image_view_bg));
+                        }
+                    })
                     .load(uri)
                     .into(ivFileImage);
         }
     }
 
+    private ImageLoadInfo getImageInfo(ResMessages.ThumbnailUrls extraInfo) {
+        float width = maxImageWidth;
+        float height = maxImageHeight;
+
+        if (extraInfo != null && extraInfo.width > 0 && extraInfo.height > 0) {
+
+            float extraInfoWidth = extraInfo.width;
+            float extraInfoHeight = extraInfo.height;
+
+            if (ImageUtil.isVerticalPhoto(extraInfo.orientation)) {
+                float temp = extraInfoWidth;
+                extraInfoWidth = extraInfoHeight;
+                extraInfoHeight = temp;
+            }
+
+            float ratio = extraInfoWidth / extraInfoHeight;
+
+            boolean needCrop = false;
+            if (ratio > 1) {
+                // 가로 > 세로
+                if (ratio > MAX_WIDTH_RATIO) {
+                    needCrop = true;
+                    height = minImageHeight;
+                    width = maxImageWidth;
+                } else {
+                    width = maxImageWidth;
+                    height = width / ratio;
+                }
+            } else if (ratio < 1) {
+                // 세로 > 가로
+                if (ratio < MIN_WIDTH_RATIO) {
+                    needCrop = true;
+                    width = minImageWidth;
+                    height = maxImageHeight;
+                } else {
+                    width = maxImageWidth;
+                    height = width * ratio;
+                }
+            }
+
+            height = height > maxImageHeight ? maxImageHeight : height;
+            return new ImageLoadInfo(needCrop, width, height);
+
+        }
+        return new ImageLoadInfo(false, width, height);
+    }
+
     @Override
     public void setOnItemClickListener(View.OnClickListener itemClickListener) {
-        super.setOnItemClickListener(itemClickListener);
-        vgImageMessageContent.setOnClickListener(itemClickListener);
+        vgFileImageWrapper.setOnClickListener(itemClickListener);
     }
 
     @Override
     public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
-        super.setOnItemLongClickListener(itemLongClickListener);
-        vgImageMessageContent.setOnLongClickListener(itemLongClickListener);
+        vgFileImageWrapper.setOnLongClickListener(itemLongClickListener);
     }
 
-    private int getPixelFromDp(int dp) {
-        return (int) (dp * context.getResources().getDisplayMetrics().density);
+    private void setImageViewSizeToDefault() {
+        int height = ivFileImage.getResources()
+                .getDimensionPixelSize(R.dimen.jandi_messages_image_height);
+        ViewGroup.LayoutParams layoutParams = ivFileImage.getLayoutParams();
+        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        layoutParams.height = height;
+        ivFileImage.setLayoutParams(layoutParams);
     }
 
-    private int getDisplayWidth() {
-        return context.getResources().getDisplayMetrics().widthPixels;
+    private int getPixelFromDp(int dp, DisplayMetrics displayMetrics) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, displayMetrics);
     }
 
     private boolean isFileFromGoogleOrDropbox(MimeTypeUtil.SourceType sourceType) {
@@ -310,4 +335,17 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         }
     }
 
+
+    private static class ImageLoadInfo {
+        private boolean needCrop;
+        private int width;
+        private int height;
+
+        public ImageLoadInfo(boolean needCrop, float width, float height) {
+            this.needCrop = needCrop;
+            this.width = Math.round(width);
+            this.height = Math.round(height);
+        }
+
+    }
 }

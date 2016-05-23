@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.local.orm.domain.DownloadInfo;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.domain.LeftSideMenu;
+import com.tosslab.jandi.app.local.orm.domain.PushHistory;
 import com.tosslab.jandi.app.local.orm.domain.ReadyComment;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.RecentSticker;
@@ -23,6 +24,7 @@ import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.domain.UploadedFileInfo;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.upgrade.UpgradeChecker;
+import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
@@ -56,7 +58,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_DOWNLOAD_INFO = 10;
     private static final int DATABASE_VERSION_ADD_INTEGRATION = 11;
     private static final int DATABASE_VERSION_MODIFY_DATE_TYPE = 12;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_MODIFY_DATE_TYPE;
+    private static final int DATABASE_VERSION_PUSH_TOKEN = 13;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_PUSH_TOKEN;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -134,6 +137,9 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, ResAccessToken.class);
 
             createTable(connectionSource, DownloadInfo.class);
+            createTable(connectionSource, PushToken.class);
+            createTable(connectionSource, PushHistory.class);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -149,6 +155,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, ResFolderItem.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_BADGE, () -> {
+                        // for Parse
                         createTable(connectionSource, BadgeCount.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_FOLDER_MODIFY, () -> {
@@ -218,6 +225,12 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, UploadedFileInfo.class);
 
                         MessageRepository.getRepository().deleteAllLink();
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_PUSH_TOKEN, () -> {
+                        createTable(connectionSource, PushToken.class);
+                        createTable(connectionSource, PushHistory.class);
+                        Dao<ResAccessToken, ?> dao = DaoManager.createDao(connectionSource, ResAccessToken.class);
+                        dao.executeRawNoArgs("ALTER TABLE `token` ADD COLUMN deviceId VARCHAR;");
                     }));
 
 
@@ -293,8 +306,12 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(getConnectionSource(), ResFolderItem.class);
         clearTable(getConnectionSource(), FolderExpand.class);
 
+        // for parse
         clearTable(getConnectionSource(), BadgeCount.class);
+
         clearTable(getConnectionSource(), ResAccessToken.class);
+        clearTable(getConnectionSource(), PushToken.class);
+        clearTable(getConnectionSource(), PushHistory.class);
     }
 
     private void clearTable(ConnectionSource connectionSource, Class<?> dataClass) {

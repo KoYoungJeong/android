@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SignOutUtil;
@@ -90,6 +91,7 @@ public class OpenAction implements Action {
             TokenUtil.saveTokenInfoByRefresh(accessToken);
             ResAccountInfo accountInfo = accountApi.get().getAccountInfo();
 
+            AccountUtil.removeDuplicatedTeams(accountInfo);
             AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
 
             successAccessToken(accountInfo);

@@ -1,19 +1,16 @@
 package com.tosslab.jandi.app.push.model;
 
 import android.app.ActivityManager;
-import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.BadgeCountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
@@ -21,14 +18,16 @@ import com.tosslab.jandi.app.network.client.main.ConfigApi;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
-import com.tosslab.jandi.app.push.to.PushTO;
-import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.push.to.PushRoomType;
+import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -36,10 +35,10 @@ import org.androidannotations.annotations.SystemService;
 
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
 import javax.inject.Inject;
 
 import dagger.Lazy;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
@@ -67,16 +66,8 @@ public class JandiInterfaceModel {
                 .inject(this);
     }
 
-    public int getInstalledAppVersion(Context context) {
-        try {
-            PackageManager packageManager = context.getPackageManager();
-            String packageName = context.getPackageName();
-            PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
-            return packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            return 0;
-        }
+    public int getInstalledAppVersion() {
+        return ApplicationUtil.getAppVersionCode();
     }
 
     public ResConfig getConfigInfo() throws RetrofitException {
@@ -86,16 +77,13 @@ public class JandiInterfaceModel {
     public void refreshAccountInfo() throws RetrofitException {
         ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
 
+        AccountUtil.removeDuplicatedTeams(resAccountInfo);
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
         EntityClientManager entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
         LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
 
-        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-        BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-        badgeCountRepository.upsertBadgeCount(totalEntitiesInfo.team.id, totalUnreadCount);
-        BadgeUtils.setBadge(JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
     }
 
     public boolean hasBackStackActivity() {
@@ -171,10 +159,6 @@ public class JandiInterfaceModel {
             EntityClientManager entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
             ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-            BadgeCountRepository badgeCountRepository = BadgeCountRepository.getRepository();
-            badgeCountRepository.upsertBadgeCount(totalEntitiesInfo.team.id, totalUnreadCount);
-            BadgeUtils.setBadge(JandiApplication.getContext(), badgeCountRepository.getTotalBadgeCount());
             EntityManager.getInstance().refreshEntity();
             return true;
         } catch (RetrofitException e) {
@@ -192,9 +176,9 @@ public class JandiInterfaceModel {
             getEntityInfo();
             if (hasEntity(roomId)) {
                 if (!EntityManager.getInstance().getEntityById(roomId).isUser()) {
-                    roomType = PushTO.RoomType.CHANNEL.getName();
+                    roomType = PushRoomType.CHANNEL.getName();
                 } else {
-                    roomType = PushTO.RoomType.CHAT.getName();
+                    roomType = PushRoomType.CHAT.getName();
                 }
             } else {
                 return roomId;
@@ -222,7 +206,7 @@ public class JandiInterfaceModel {
     }
 
     private boolean isKnowRoomType(String roomTypeRaw) {
-        return Observable.from(PushTO.RoomType.values())
+        return Observable.from(PushRoomType.values())
                 .filter(roomType -> TextUtils.equals(roomTypeRaw, roomType.getName()))
                 .map(roomType1 -> true)
                 .firstOrDefault(false)
@@ -265,7 +249,7 @@ public class JandiInterfaceModel {
     }
 
     private boolean isChatType(String roomType) {
-        return TextUtils.equals(roomType, PushTO.RoomType.CHAT.getName());
+        return TextUtils.equals(roomType, PushRoomType.CHAT.getName());
     }
 
     public long getCachedLastLinkId(int roomId) {
@@ -274,4 +258,10 @@ public class JandiInterfaceModel {
 
         return lastMessage.id;
     }
+
+    public boolean hasNotRegisteredAtNewPushService() {
+        List<PushToken> pushTokenList = PushTokenRepository.getInstance().getPushTokenList();
+        return pushTokenList == null || pushTokenList.isEmpty();
+    }
+
 }
