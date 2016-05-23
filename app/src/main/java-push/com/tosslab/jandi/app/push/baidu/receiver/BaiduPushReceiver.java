@@ -4,19 +4,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.baidu.android.pushservice.PushServiceReceiver;
 import com.baidu.android.pushservice.message.PublicMsg;
 import com.tosslab.jandi.app.push.receiver.JandiPushIntentService;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-public class CustomPushReceiver extends PushServiceReceiver {
+public class BaiduPushReceiver extends PushServiceReceiver {
 
-    private static final String TAG = "CustomPushReceiver";
+    private static final String TAG = "BaiduPushReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onReceive() called");
+        LogUtil.d(TAG, "onReceive() called");
         if (TextUtils.equals(intent.getAction(), "com.baidu.android.pushservice.action.notification.SHOW")) {
             String pushServicePackageName = intent.getStringExtra("pushService_package_name");
             String serviceName = intent.getStringExtra("service_name");
@@ -26,12 +26,13 @@ public class CustomPushReceiver extends PushServiceReceiver {
                 publicMsg = (PublicMsg) publicMsgParcelable;
             }
 
-
+            LogUtil.i(TAG, "pushServicePackageName = " + pushServicePackageName + " serviceName = "+ serviceName + " publicMsg = " + publicMsg);
             if (TextUtils.isEmpty(pushServicePackageName) || TextUtils.isEmpty(serviceName) || publicMsg == null) {
                 return;
             }
 
             String notifyType = intent.getStringExtra("notify_type");
+            LogUtil.d(TAG, "notifyType = " + notifyType);
             if ("private".equals(notifyType)) {
                 sendNotificationService(context, publicMsg);
 
@@ -47,6 +48,7 @@ public class CustomPushReceiver extends PushServiceReceiver {
     private void sendNotificationService(Context context, PublicMsg publicMsg) {
         String mCustomContent = publicMsg.mCustomContent;
         if (!TextUtils.isEmpty(mCustomContent)) {
+            LogUtil.d(TAG, "sendNotificationService");
             JandiPushIntentService.startService(context, mCustomContent);
         }
     }
