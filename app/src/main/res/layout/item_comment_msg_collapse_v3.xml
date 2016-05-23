@@ -15,9 +15,9 @@
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
         android:orientation="horizontal"
-        android:paddingBottom="4dp"
+        android:paddingBottom="8dp"
         android:paddingRight="@dimen/jandi_comment_name_margin_right"
-        android:paddingTop="4dp">
+        android:paddingTop="7dp">
 
         <TextView
             android:id="@+id/tv_profile_nested_comment_content"

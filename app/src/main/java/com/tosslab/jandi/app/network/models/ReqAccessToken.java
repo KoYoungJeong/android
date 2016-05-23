@@ -31,8 +31,8 @@ public class ReqAccessToken {
 
     protected ReqAccessToken(String grantType) {
         this.grantType = grantType;
-        deviceModel = Build.DEVICE;
-        deviceName = Build.MODEL;
+        deviceModel = Build.MODEL;
+        deviceName = Build.MANUFACTURER + Build.PRODUCT;
         platform = "android";
         platformVersion = String.valueOf(Build.VERSION.SDK_INT);
         appVersion = ApplicationUtil.getAppVersionName();

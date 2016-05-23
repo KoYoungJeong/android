@@ -30,7 +30,7 @@
         <ViewStub
             android:id="@+id/vg_read_more"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="32dp"
             android:layout_below="@+id/iv_comment_bubble_tail"
             android:inflatedId="@+id/vg_read_more"
             android:layout="@layout/layout_comment_read_more"/>
@@ -47,11 +47,11 @@
             android:focusable="true"
             android:foreground="?android:attr/selectableItemBackground"
             android:orientation="horizontal"
-            android:paddingBottom="4dp"
+            android:paddingBottom="8dp"
             android:paddingRight="@dimen/jandi_comment_name_margin_right"
-            android:paddingTop="4dp">
+            android:paddingTop="7dp">
 
-            <ImageView
+            <iv_profile_nested_comment_user_profile
                 android:id="@+id/iv_profile_nested_comment_user_profile"
                 android:layout_width="25dp"
                 android:layout_height="25dp"

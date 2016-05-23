@@ -14,12 +14,15 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.In
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi.JandiBotViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 
 /*
  소스 추적은 getContentType 부터 따라가면 쉽게 파악할 수 있음.
@@ -94,6 +97,10 @@ public class BodyViewFactory {
             builder.setHasFlatTop(true);
         }
 
+        if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_TOP_MARGIN)) {
+            builder.setHasTopMargin(true);
+        }
+
         return builder.build();
 
     }
@@ -156,9 +163,17 @@ public class BodyViewFactory {
 
         if (isPureMessage(previousLink, currentLink)) {
             type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
+
+            // "분"이 차이나는 경우 - Top margin
+            boolean since1min = isSameMinute(previousLink, currentLink);
+            if (!since1min
+                    && isSameWriter(previousLink.message, currentLink.message)
+                    && isTextMessage(previousLink) && isTextMessage(currentLink)) {
+                type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_TOP_MARGIN);
+            }
         }
 
-        if (isNextMessageSameWriterAndSameTime(currentLink, nextLink)) {
+        if (isNextLinkSameWriterAndSameTime(currentLink, nextLink)) {
             // Next Link와 같은 작성자인데 시간이 같다면 시간 생략
             return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_ONLY_BADGE);
         } else if (isNextLinkSameWriterAndCloseTime(currentLink, nextLink)) {
@@ -188,7 +203,7 @@ public class BodyViewFactory {
             type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_PURE);
         }
 
-        if (isNextMessageSameWriterAndSameTime(currentLink, nextLink)) {
+        if (isNextLinkSameWriterAndSameTime(currentLink, nextLink)) {
             // Next Link와 같은 작성자인데 시간이 같다면 시간 생략
             return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_ONLY_BADGE);
         } else if (isNextLinkSameWriterAndCloseTime(currentLink, nextLink)) {
@@ -199,8 +214,8 @@ public class BodyViewFactory {
         return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
     }
 
-    private static boolean isNextMessageSameWriterAndSameTime(ResMessages.Link currentLink,
-                                                              ResMessages.Link nextLink) {
+    private static boolean isNextLinkSameWriterAndSameTime(ResMessages.Link currentLink,
+                                                           ResMessages.Link nextLink) {
         return hasNextMessage(nextLink) &&
                 DateComparatorUtil.isSameTime(
                         currentLink.message.createTime, nextLink.message.createTime) &&
@@ -215,6 +230,18 @@ public class BodyViewFactory {
                         nextLink.message.createTime, currentLink.message.createTime) &&
                 isSameWriter(currentLink.message, nextLink.message) &&
                 (isTextMessage(nextLink) || isStickerMessage(nextLink));
+    }
+
+    private static boolean isSameMinute(ResMessages.Link currentLink,
+                                        ResMessages.Link nextLink) {
+
+        SimpleDateFormat format = new SimpleDateFormat("mm");
+        Date next = nextLink.message.createTime == null
+                ? new Date() : nextLink.message.createTime;
+        Date current = currentLink.message.createTime == null
+                ? new Date() : currentLink.message.createTime;
+
+        return format.format(next).equals(format.format(current));
     }
 
 

@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
+import com.tosslab.jandi.app.utils.parse.PushUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -168,7 +168,7 @@ public class IntroActivityPresenter {
         model.sleep(initTime, MAX_DELAY_MS);
 
         if (model.hasSelectedTeam() && !startForInvite) {
-            ParseUpdateUtil.registPush();
+            PushUtil.registPush();
 
             if (!model.hasLeftSideMenu() && NetworkCheckUtil.isConnected()) {
                 // LeftSideMenu 가 없는 경우 대비

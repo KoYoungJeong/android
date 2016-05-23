@@ -7,7 +7,7 @@ import android.os.Bundle;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.interfaces.actions.Action;
 import com.tosslab.jandi.app.ui.interfaces.actions.ActionFactory;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
+import com.tosslab.jandi.app.utils.parse.PushUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EActivity;
@@ -30,7 +30,7 @@ public class JandiInterfaceActivity extends BaseAppCompatActivity {
         // renew parse push infomation before getting access
         boolean used = (getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;
 
-        ParseUpdateUtil.deleteChannelOnServer();
+        PushUtil.unsubscribeParsePush();
 
         Intent intent = getIntent();
         Uri data;

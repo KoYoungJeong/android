@@ -7,6 +7,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -20,6 +21,7 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPr
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.utils.UiUtils;
 
 public class MessageViewHolder extends BaseMessageViewHolder {
 
@@ -41,16 +43,28 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         super.initView(rootView);
         context = rootView.getContext();
 
+        tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
+        initTextMessageMathWidth();
+
+        int topMargin = (int) UiUtils.getPixelFromDp(5f);
         if (hasProfile) {
             ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
             vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
 
             tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
             vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+        } else {
+            if(hasTopMargin) {
+                topMargin = (int) UiUtils.getPixelFromDp(12f);
+            } else {
+                topMargin = (int) UiUtils.getPixelFromDp(6f);
+            }
         }
 
-        tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
-        initTextMessageMathWidth();
+        ViewGroup.MarginLayoutParams layoutParams =
+                (ViewGroup.MarginLayoutParams) tvMessage.getLayoutParams();
+        layoutParams.topMargin = topMargin;
+        tvMessage.setLayoutParams(layoutParams);
 
         linkPreviewViewModel = new LinkPreviewViewModel(context);
         linkPreviewViewModel.initView(rootView);
@@ -180,6 +194,7 @@ public class MessageViewHolder extends BaseMessageViewHolder {
             messageViewHolder.setHasOnlyBadge(hasOnlyBadge);
             messageViewHolder.setHasBottomMargin(hasBottomMargin);
             messageViewHolder.setHasProfile(hasProfile);
+            messageViewHolder.setHasTopMargin(hasTopMargin);
             return messageViewHolder;
         }
     }

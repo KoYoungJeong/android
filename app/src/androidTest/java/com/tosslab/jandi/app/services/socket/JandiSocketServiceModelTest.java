@@ -25,10 +25,10 @@ public class JandiSocketServiceModelTest {
     @Before
     public void setUp() throws Exception {
         jandiSocketServiceModel = new JandiSocketServiceModel(JandiApplication.getContext(),
-                () -> new AccountApi(RetrofitBuilder.newInstance()),
-                () -> new MessageApi(RetrofitBuilder.newInstance()),
-                () -> new LoginApi(RetrofitBuilder.newInstance()),
-                () -> new EventsApi(RetrofitBuilder.newInstance()));
+                () -> new AccountApi(RetrofitBuilder.getInstance()),
+                () -> new MessageApi(RetrofitBuilder.getInstance()),
+                () -> new LoginApi(RetrofitBuilder.getInstance()),
+                () -> new EventsApi(RetrofitBuilder.getInstance()));
     }
 
 

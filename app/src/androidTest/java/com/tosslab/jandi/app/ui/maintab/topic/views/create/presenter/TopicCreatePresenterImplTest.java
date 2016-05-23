@@ -100,7 +100,7 @@ public class TopicCreatePresenterImplTest {
         if (teamId[0] > 0) {
             verify(mockView, times(1)).createTopicSuccess(eq(teamId[0]), eq(topicId[0]), eq(topicName), eq(true));
             // restore
-            new ChannelApi(RetrofitBuilder.newInstance()).deleteTopic(topicId[0], new ReqDeleteTopic(teamId[0]));
+            new ChannelApi(RetrofitBuilder.getInstance()).deleteTopic(topicId[0], new ReqDeleteTopic(teamId[0]));
         }
 
     }

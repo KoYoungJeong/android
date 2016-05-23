@@ -30,7 +30,7 @@
         <ViewStub
             android:id="@+id/vg_read_more"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="32dp"
             android:layout_below="@+id/iv_comment_bubble_tail"
             android:inflatedId="@+id/vg_read_more"
             android:layout="@layout/layout_comment_read_more"/>

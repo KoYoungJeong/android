@@ -34,13 +34,10 @@ import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import org.androidannotations.api.BackgroundExecutor;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.logging.LogManager;
 
@@ -126,7 +123,7 @@ public class JandiApplication extends MultiDexApplication {
     }
 
     private void initRetrofitBuilder() {
-        RetrofitBuilder.newInstance();
+        RetrofitBuilder.getInstance();
     }
 
     private void addLogConfigIfDebug() {
@@ -241,7 +238,7 @@ public class JandiApplication extends MultiDexApplication {
         SimpleApiRequester.request(() -> {
             ReqUpdatePlatformStatus req = new ReqUpdatePlatformStatus(active);
             try {
-                new PlatformApi(RetrofitBuilder.newInstance()).updatePlatformStatus(req);
+                new PlatformApi(RetrofitBuilder.getInstance()).updatePlatformStatus(req);
             } catch (RetrofitException e) {
             }
         }, () -> LogUtil.i("PlatformApi", "Success(updatePlatformStatus)"));

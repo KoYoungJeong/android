@@ -9,7 +9,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/deactivate_text_color" />
+        android:background="@color/jandi_line_gray" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -66,7 +66,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/deactivate_text_color" />
+        android:background="@color/jandi_line_gray" />
 
     <HorizontalScrollView
         android:layout_width="match_parent"

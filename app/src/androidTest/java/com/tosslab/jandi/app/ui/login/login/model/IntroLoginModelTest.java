@@ -114,11 +114,11 @@ public class IntroLoginModelTest {
 
     @Test
     public void testSaveAccountInfo() throws Exception {
-        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.newInstance()).getAccessToken(
+        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.getInstance()).getAccessToken(
                 ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_EMAIL, BaseInitUtil.TEST_PASSWORD));
 
         TokenUtil.saveTokenInfoByPassword(accessToken);
-        ResAccountInfo accountInfo = new AccountApi(RetrofitBuilder.newInstance()).getAccountInfo();
+        ResAccountInfo accountInfo = new AccountApi(RetrofitBuilder.getInstance()).getAccountInfo();
         boolean isSaved = introLoginModel.saveAccountInfo(accountInfo);
         assertThat(isSaved, is(true));
 
@@ -140,7 +140,7 @@ public class IntroLoginModelTest {
     @Test
     public void testGetAccountInfo_Has_Token() throws Exception {
 
-        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.newInstance()).getAccessToken(
+        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.getInstance()).getAccessToken(
                 ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_EMAIL, BaseInitUtil.TEST_PASSWORD));
 
         TokenUtil.saveTokenInfoByPassword(accessToken);

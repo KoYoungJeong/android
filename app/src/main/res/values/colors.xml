@@ -178,7 +178,7 @@
     <!-- CUSTOMISING PagerSlidingTabStrip -->
     <color name="background_tab_pressed">#6633B5E5</color>
     <color name="activate_text_color">#FF666666</color>
-    <color name="deactivate_text_color">#FFCCCCCC</color>
+    <color name="deactivate_text_color">#FF666666</color>
     <color name="transparent">#00000000</color>
 
 
@@ -235,6 +235,8 @@
     <color name="jandi_sticker_view_background">#FFEFF2F6</color>
     <color name="jandi_sticker_view_selector">#FFDDE4E9</color>
 
+    <color name="jandi_line_gray">#FFCCCCCC</color>
+
     <color name="jandi_file_upload_divider">#B5B5B5</color>
 
     <color name="jandi_topic_is_public_divider">#FFF0F0F0</color>
@@ -244,7 +246,7 @@
 
     <color name="jandi_message_indicator">#FF303030</color>
 
-    <color name="jandi_comment_divider">#FFE1E1E1</color>
+    <color name="jandi_comment_divider">#FFE9E9E9</color>
 
     <color name="jandi_create_topic">#FF00ABE8</color>
 
@@ -264,11 +266,13 @@
     <color name="message_controller_popup_text_color">#FF212121</color>
     <color name="message_controller_popup_background">#FF212121</color>
 
-
     <color name="jandi_settings_background">#FFFAFAFA</color>
 
     <color name="jandi_grey_black">#FF191B1E</color>
     <color name="jandi_grey_black_pressed">#FF101113</color>
+
+    <color name="dialog_button_text_color">#ff00abe8</color>
+    <color name="dialog_button_text_color_dim">#7600abe8</color>
 
 
     <color name="jandi_web_button_retry_background_selected">#FFE0E0E0</color>

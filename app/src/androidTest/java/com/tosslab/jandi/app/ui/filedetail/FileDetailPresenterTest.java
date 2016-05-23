@@ -163,7 +163,7 @@ public class FileDetailPresenterTest {
         reqSearchFile.startMessageId = -1;
         reqSearchFile.keyword = "";
         reqSearchFile.teamId = EntityManager.getInstance().getTeamId();
-        ResSearchFile resSearchFile = new FileApi(RetrofitBuilder.newInstance()).searchFile(reqSearchFile);
+        ResSearchFile resSearchFile = new FileApi(RetrofitBuilder.getInstance()).searchFile(reqSearchFile);
 
         ResMessages.OriginalMessage originalMessage = resSearchFile.files.get(0);
 

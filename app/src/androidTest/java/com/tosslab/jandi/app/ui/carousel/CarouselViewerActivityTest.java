@@ -89,7 +89,7 @@ public class CarouselViewerActivityTest {
         reqSearchFile.sharedEntityId = roomId;
         reqSearchFile.startMessageId = -1;
         reqSearchFile.teamId = teamId;
-        return new FileApi(RetrofitBuilder.newInstance()).searchFile(reqSearchFile).firstIdOfReceivedList;
+        return new FileApi(RetrofitBuilder.getInstance()).searchFile(reqSearchFile).firstIdOfReceivedList;
     }
 
     private List<CarouselFileInfo> getCarousel() throws RetrofitException {

@@ -45,7 +45,7 @@ public class DirectMessageApiTest {
 
     @Before
     public void setUp() throws Exception {
-        api = new DirectMessageApi(RetrofitBuilder.newInstance());
+        api = new DirectMessageApi(RetrofitBuilder.getInstance());
     }
 
     @Test

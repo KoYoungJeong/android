@@ -7,6 +7,7 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -24,13 +25,10 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHo
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
 import com.tosslab.jandi.app.utils.image.transform.TransformConfig;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -85,13 +83,18 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
             vBottomMargin.setVisibility(View.GONE);
         }
 
+        ViewGroup.MarginLayoutParams layoutParams =
+                (ViewGroup.MarginLayoutParams) tvMessage.getLayoutParams();
         if (hasBotProfile) {
             ivProfile.setVisibility(View.VISIBLE);
             tvName.setVisibility(View.VISIBLE);
+            layoutParams.topMargin = (int) UiUtils.getPixelFromDp(5f);
         } else {
             ivProfile.setVisibility(View.GONE);
             tvName.setVisibility(View.GONE);
+            layoutParams.topMargin = (int) UiUtils.getPixelFromDp(6f);
         }
+        tvMessage.setLayoutParams(layoutParams);
     }
 
     @Override

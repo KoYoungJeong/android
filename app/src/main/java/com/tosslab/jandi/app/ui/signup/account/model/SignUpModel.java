@@ -130,7 +130,7 @@ public class SignUpModel {
 
         ReqSignUpInfo signUpInfo = new ReqSignUpInfo(email, password, name, lang);
 
-        return new SignUpApi(RetrofitBuilder.newInstance()).signUpAccount(signUpInfo);
+        return new SignUpApi(RetrofitBuilder.getInstance()).signUpAccount(signUpInfo);
 
     }
 

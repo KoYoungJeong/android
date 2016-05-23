@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="33dp"
+    android:layout_height="32dp"
     android:background="@drawable/bg_message_item_selector_flat_bottom"
     android:clickable="true"
     android:focusable="true"
@@ -10,9 +10,11 @@
 
     <ImageView
         android:id="@+id/iv_comment_read_more"
-        android:layout_width="41dp"
+        android:layout_width="25dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="7dp"
+        android:layout_marginLeft="9dp"
+        android:layout_marginRight="7dp"
+        android:layout_centerVertical="true"
         android:scaleType="centerInside"
         android:src="@drawable/comment_more"/>
 

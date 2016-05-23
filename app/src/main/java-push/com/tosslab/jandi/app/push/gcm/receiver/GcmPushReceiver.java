@@ -22,24 +22,25 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
 import com.tosslab.jandi.app.push.receiver.JandiPushIntentService;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-public class MyGcmListenerService extends GcmListenerService {
+public class GcmPushReceiver extends GcmListenerService {
 
-    private static final String TAG = "MyGcmListenerService";
-
+    private static final String TAG = "GcmPushReceiver";
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
+        LogUtil.i(TAG, "onMessageReceived");
         String dataPayload = data.getString("data");
         if (!TextUtils.isEmpty(dataPayload)) {
             // Old type Push
             return;
         }
 
-        Log.d(TAG, "onMessageReceived() called with: " + "from = [" + from + "], data = [" + data + "]");
+        Log.d(TAG, "called with: " + "from = [" + from + "], data = [" + data + "]");
 
         String customContent = data.getString("custom_content");
-        JandiPushIntentService.startService(MyGcmListenerService.this, customContent);
+        JandiPushIntentService.startService(GcmPushReceiver.this, customContent);
 
     }
 

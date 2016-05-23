@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.text.SpannableStringBuilder;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 public class DummyMessageViewHolder implements BodyViewHolder {
@@ -41,6 +43,15 @@ public class DummyMessageViewHolder implements BodyViewHolder {
         ivStatus = (ImageView) rootView.findViewById(R.id.iv_dummy_send_status);
         vBottomMargin = rootView.findViewById(R.id.v_margin);
 
+        int topMargin = (int) UiUtils.getPixelFromDp(5f);
+        if(!hasProfile) {
+            topMargin = (int) UiUtils.getPixelFromDp(6f);
+        }
+
+        ViewGroup.MarginLayoutParams layoutParams =
+                (ViewGroup.MarginLayoutParams) tvMessage.getLayoutParams();
+        layoutParams.topMargin = topMargin;
+        tvMessage.setLayoutParams(layoutParams);
     }
 
     private void setProfileVisible() {

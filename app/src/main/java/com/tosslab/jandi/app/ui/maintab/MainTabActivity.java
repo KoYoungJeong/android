@@ -850,7 +850,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
     private ResConfig getConfigInfo() {
         try {
-            return new ConfigApi(RetrofitBuilder.newInstance()).getConfig();
+            return new ConfigApi(RetrofitBuilder.getInstance()).getConfig();
         } catch (RetrofitException e) {
             e.printStackTrace();
         }

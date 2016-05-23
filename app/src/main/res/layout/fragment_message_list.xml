@@ -50,9 +50,9 @@
             android:paddingRight="10dp"
             android:paddingTop="6dp"
             android:text="When"
-            android:visibility="gone"
             android:textColor="@color/white"
-            android:textSize="11sp" />
+            android:textSize="11sp"
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/layout_messages_empty"
@@ -107,7 +107,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/layout_search_bar"
-            android:background="@color/jandi_disabled_user_background"
+            android:background="@color/jandi_black_b2"
+            android:gravity="center"
+            android:orientation="horizontal"
             android:paddingBottom="14dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
@@ -211,7 +213,7 @@
             android:layout_height="1dp"
             android:layout_above="@+id/vg_messages_input"
             android:layout_alignWithParentIfMissing="true"
-            android:background="@color/deactivate_text_color"/>
+            android:background="@color/jandi_line_gray"/>
 
         <LinearLayout
             android:id="@+id/vg_messages_input"
@@ -219,8 +221,8 @@
             android:layout_alignParentBottom="true">
 
             <FrameLayout
-                android:layout_gravity="bottom"
-                style="@style/JandiChat.ActionButton.Wrapper">
+                style="@style/JandiChat.ActionButton.Wrapper"
+                android:layout_gravity="bottom">
 
                 <ImageView
                     android:id="@+id/btn_message_action_button_1"
@@ -228,8 +230,8 @@
             </FrameLayout>
 
             <FrameLayout
-                android:layout_gravity="bottom"
-                style="@style/JandiChat.ActionButton.Wrapper">
+                style="@style/JandiChat.ActionButton.Wrapper"
+                android:layout_gravity="bottom">
                 <ImageView
                     android:id="@+id/btn_message_action_button_2"
                     style="@style/JandiChat.ActionButton.Sticker"/>

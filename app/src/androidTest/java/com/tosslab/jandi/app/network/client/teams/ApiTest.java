@@ -24,7 +24,7 @@ public class ApiTest {
         int memberId = 11169482;
 
         ResCommon resCommon =
-                new RoomsApi(RetrofitBuilder.newInstance()).assignToTopicOwner(teamId, topicId, new ReqOwner(memberId));
+                new RoomsApi(RetrofitBuilder.getInstance()).assignToTopicOwner(teamId, topicId, new ReqOwner(memberId));
 
         assertNotNull(resCommon);
     }

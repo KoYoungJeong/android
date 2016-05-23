@@ -69,7 +69,7 @@ public class TopicCreateModelTest {
             assertThat(entity.isAutoJoin(), is(true));
 
             // Restore
-            new ChannelApi(RetrofitBuilder.newInstance()).deleteTopic(topic.id, new ReqDeleteTopic(EntityManager.getInstance().getTeamId()));
+            new ChannelApi(RetrofitBuilder.getInstance()).deleteTopic(topic.id, new ReqDeleteTopic(EntityManager.getInstance().getTeamId()));
         }
 
         {
@@ -102,7 +102,7 @@ public class TopicCreateModelTest {
             assertThat(entity.isAutoJoin(), is(false));
 
             // Restore
-            new GroupApi(RetrofitBuilder.newInstance()).deleteGroup(EntityManager.getInstance().getTeamId(), topic.id);
+            new GroupApi(RetrofitBuilder.getInstance()).deleteGroup(EntityManager.getInstance().getTeamId(), topic.id);
         }
 
     }

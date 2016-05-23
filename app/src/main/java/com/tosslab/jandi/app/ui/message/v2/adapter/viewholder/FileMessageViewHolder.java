@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -114,6 +116,10 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
 
         tvMessageTime.setText(DateTransformator.getTimeStringForSimple(link.time));
 
+        Resources resources = tvFileName.getResources();
+
+        tvFileUploaderName.setTypeface(Typeface.DEFAULT_BOLD);
+        tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text));
 
         FormattedEntity entity = entityManager.getEntityById(fromEntityId);
 
@@ -154,8 +160,8 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
                 tvFileName.setText(R.string.jandi_deleted_file);
                 ivFileImage.setImageResource(R.drawable.file_icon_deleted);
 
-                tvFileName.setTextColor(tvFileName.getResources().getColor(R.color
-                        .jandi_text_light));
+                tvFileName.setTextColor(resources.getColor(R.color.jandi_text_light));
+                tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text_light));
                 tvFileUploaderName.setVisibility(View.GONE);
                 tvFileInfoDivider.setVisibility(View.GONE);
                 tvCommonFileSize.setVisibility(View.GONE);
@@ -174,13 +180,14 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
 
                 ivFileImage.setClickable(false);
                 tvFileUploaderName.setText(R.string.jandi_unshared_file);
-                tvFileName.setTextColor(tvFileName.getResources().getColor(R.color.jandi_text_light));
-                tvFileUploaderName.setTextColor(tvFileName.getResources().getColor(R.color.jandi_text_light));
+                tvFileName.setTextColor(resources.getColor(R.color.jandi_text_light));
+                tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text_light));
                 tvCommonFileSize.setVisibility(View.GONE);
                 tvFileInfoDivider.setVisibility(View.GONE);
                 tvFileUploaderName.setVisibility(View.VISIBLE);
+                tvFileUploaderName.setTypeface(Typeface.DEFAULT);
             } else {
-                tvFileName.setTextColor(tvFileName.getResources().getColor(R.color.dark_gray));
+                tvFileName.setTextColor(resources.getColor(R.color.dark_gray));
                 tvFileName.setText(fileMessage.content.title);
                 String name = EntityManager.getInstance()
                         .getEntityById(fileMessage.writerId).getName();
@@ -198,6 +205,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
                 tvFileInfoDivider.setVisibility(View.VISIBLE);
                 tvFileUploaderName.setVisibility(View.VISIBLE);
 
+                tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text));
             }
 
             if (loadIcon) {

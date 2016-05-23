@@ -59,7 +59,7 @@ public class SettingsPresenterImpl implements SettingsPresenter {
             if (TextUtils.isEmpty(deviceId)) {
                 deviceId = UUID.randomUUID().toString();
             }
-            new LoginApi(RetrofitBuilder.newInstance())
+            new LoginApi(RetrofitBuilder.getInstance())
                     .deleteToken(TokenUtil.getRefreshToken(), deviceId);
 
             ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();

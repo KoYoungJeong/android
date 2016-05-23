@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:layout_below="@+id/iv_message_photo"
-            android:background="#ffe1e1e1" />
+            android:background="@color/jandi_comment_divider" />
 
         <TextView
             android:id="@+id/tv_image_message_file_name"
@@ -44,10 +44,10 @@
             android:layout_below="@id/v_divider"
             android:background="@drawable/bg_round_bottom_white_for_message"
             android:ellipsize="middle"
-            android:paddingBottom="9dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="9dp"
+            android:paddingRight="9dp"
+            android:paddingTop="7dp"
             android:singleLine="true"
             android:text="가로 긴 이미지.png"
             android:textColor="@color/dark_gray"

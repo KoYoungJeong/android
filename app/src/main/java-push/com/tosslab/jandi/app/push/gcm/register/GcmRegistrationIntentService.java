@@ -18,6 +18,7 @@ package com.tosslab.jandi.app.push.gcm.register;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -26,15 +27,18 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.push.PushTokenRegister;
+import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.parse.PushUtil;
 
 import java.io.IOException;
 
-public class RegistrationIntentService extends IntentService {
+public class GcmRegistrationIntentService extends IntentService {
 
-    private static final String TAG = "RegIntentService";
+    private static final String TAG = GcmRegistrationIntentService.class.getSimpleName();
     private static final String[] TOPICS = {"global"};
 
-    public RegistrationIntentService() {
+    public GcmRegistrationIntentService() {
         super(TAG);
     }
 
@@ -44,13 +48,22 @@ public class RegistrationIntentService extends IntentService {
         try {
             synchronized (TAG) {
                 InstanceID instanceID = InstanceID.getInstance(this);
-                String token = instanceID.getToken(JandiConstantsForFlavors.Push.GCM_SENDER_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                String token =
+                        instanceID.getToken(JandiConstantsForFlavors.Push.GCM_SENDER_ID,
+                                GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                LogUtil.e(TAG, "token = " + token);
                 subscribeTopics(token);
                 // TODO: Implement this method to send any registration to your app's servers.
                 PushTokenRepository.getInstance().upsertPushToken(new PushToken("gcm", token));
                 PushTokenRegister.getInstance().updateToken();
+
+                if (!JandiPreference.isParsePushRemoved()) {
+                    PushUtil.unsubscribeParsePush();
+                    JandiPreference.setParsePushRemoved(true);
+                }
             }
         } catch (Exception e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
         }
     }
 

@@ -99,17 +99,15 @@ public class CommentViewHolder extends BaseCommentViewHolder {
             vProfileCover = rootView.findViewById(R.id.v_profile_nested_comment_user_profile_cover);
             tvProfileNestedCommentUserName = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_user_name);
             ivProfileNestedNameLineThrough = (ImageView) rootView.findViewById(R.id.iv_profile_nested_name_line_through);
+
+            ivProfileNestedCommentUserProfile.setVisibility(View.VISIBLE);
+            tvProfileNestedCommentUserName.setVisibility(View.VISIBLE);
+            ivProfileNestedNameLineThrough.setVisibility(View.VISIBLE);
         }
 
         tvProfileNestedCommentContent = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_content);
 
         context = rootView.getContext();
-
-        if (hasNestedProfile) {
-            ivProfileNestedCommentUserProfile.setVisibility(View.VISIBLE);
-            tvProfileNestedCommentUserName.setVisibility(View.VISIBLE);
-            ivProfileNestedNameLineThrough.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override
@@ -265,6 +263,8 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     }
 
     private void settingFileInfo(ResMessages.Link link, long roomId) {
+        final Resources resources = tvMessageCommonFileName.getResources();
+
         EntityManager entityManager = EntityManager.getInstance();
         FormattedEntity room = entityManager.getEntityById(roomId);
 
@@ -275,6 +275,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
         tvFileUploaderName.setTypeface(Typeface.DEFAULT_BOLD);
         tvFileUploaderName.setText(feedbackEntityById.getName());
+        tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text));
 
         ResMessages.FileContent fileContent = link.feedback.content;
 
@@ -306,7 +307,6 @@ public class CommentViewHolder extends BaseCommentViewHolder {
                 }
             }
 
-            final Resources resources = tvMessageCommonFileName.getResources();
             boolean needFileUploader = true;
             boolean needFileUploaderDivider = true;
             boolean needFileSize = true;
@@ -324,8 +324,6 @@ public class CommentViewHolder extends BaseCommentViewHolder {
                 ivMessageCommonFile.setOnClickListener(null);
             } else {
                 final ResMessages.FileContent content = feedbackFileMessage.content;
-
-                LogUtil.d("tony", content.name);
 
                 if (!isSharedFile) {
                     needFileUploaderDivider = false;
@@ -358,7 +356,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
                 } else {
                     tvMessageCommonFileName.setText(content.title);
                     tvMessageCommonFileName.setTextColor(resources.getColor(R.color.dark_gray));
-                    tvFileUploaderName.setTextColor(resources.getColor(R.color.dark_gray));
+                    tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text));
 
                     String serverUrl = content.serverUrl;
                     String fileType = content.icon;
