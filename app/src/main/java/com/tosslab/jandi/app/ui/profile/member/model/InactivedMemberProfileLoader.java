@@ -11,8 +11,6 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.utils.UriUtil;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import uk.co.senab.photoview.PhotoView;
 
@@ -40,8 +38,7 @@ public class InactivedMemberProfileLoader implements ProfileLoader {
 
     @Override
     public void loadSmallThumb(ImageView ivProfileImageSmall, FormattedEntity member) {
-        ImageUtil.loadProfileImage(
-                ivProfileImageSmall, UriUtil.getResourceUri(R.drawable.profile_img_dummyaccount_80), R.drawable.profile_img);
+        ivProfileImageSmall.setImageResource(R.drawable.profile_img_dummyaccount_80);
     }
 
     @Override

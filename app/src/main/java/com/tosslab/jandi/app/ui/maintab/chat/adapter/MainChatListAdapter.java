@@ -16,9 +16,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
-import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemLongClickListener;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
@@ -148,17 +146,13 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (!item.isInactive()) {
                 ImageUtil.loadProfileImage(ivIcon, Uri.parse(item.getPhoto()), R.drawable.profile_img);
             } else {
-                ImageUtil.loadProfileImage(ivIcon,
-                        UriUtil.getResourceUri(R.drawable.profile_img_dummyaccount_43),
-                        R.drawable.profile_img_dummyaccount_43);
+                ivIcon.setImageResource(R.drawable.profile_img_dummyaccount_43);
             }
+            ivIcon.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
         } else {
-            ImageLoader.newInstance()
-                    .placeHolder(R.drawable.bot_80x100, ImageView.ScaleType.CENTER_INSIDE)
-                    .actualImageScaleType(ImageView.ScaleType.CENTER_INSIDE)
-                    .uri(UriUtil.getResourceUri(R.drawable.bot_80x100))
-                    .into(ivIcon);
+            ivIcon.setImageResource(R.drawable.bot_80x100);
+            ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         }
 
         if (onRecyclerItemClickListener != null) {

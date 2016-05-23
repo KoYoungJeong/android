@@ -16,9 +16,7 @@ import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.domain.DisableDummyItem;
 import com.tosslab.jandi.app.ui.entities.chats.domain.EmptyChatChooseItem;
 import com.tosslab.jandi.app.ui.members.adapter.searchable.viewholder.EmptySearchedMemberViewHolder;
-import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
 import java.util.ArrayList;
@@ -222,16 +220,12 @@ public class ChatChooseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 if (!item.isInactive()) {
                     ImageUtil.loadProfileImage(imageViewIcon, item.getPhotoUrl(), R.drawable.profile_img);
                 } else {
-                    ImageUtil.loadProfileImage(imageViewIcon,
-                            UriUtil.getResourceUri(R.drawable.profile_img_dummyaccount_43),
-                            R.drawable.profile_img_dummyaccount_43);
+                    imageViewIcon.setImageResource(R.drawable.profile_img_dummyaccount_43);
                 }
+                imageViewIcon.setScaleType(ImageView.ScaleType.FIT_CENTER);
             } else {
-                ImageLoader.newInstance()
-                        .placeHolder(R.drawable.bot_43x54, ImageView.ScaleType.CENTER_INSIDE)
-                        .actualImageScaleType(ImageView.ScaleType.CENTER_INSIDE)
-                        .uri(UriUtil.getResourceUri(R.drawable.bot_43x54))
-                        .into(imageViewIcon);
+                imageViewIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                imageViewIcon.setImageResource(R.drawable.bot_43x54);
             }
         }
     }

@@ -28,13 +28,6 @@ public class UriUtil {
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, String.valueOf(imageId));
     }
 
-    public static Uri getResourceUri(int resId) {
-        return new Uri.Builder()
-                .scheme(LOCAL_RESOURCE_SCHEME)
-                .path(String.valueOf(resId))
-                .build();
-    }
-
     /**
      * http scheme for URIs
      */

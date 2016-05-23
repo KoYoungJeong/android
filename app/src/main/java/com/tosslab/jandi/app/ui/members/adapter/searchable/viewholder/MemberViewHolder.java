@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.utils.UiUtils;
-import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import butterknife.Bind;
@@ -67,9 +66,7 @@ public class MemberViewHolder extends BaseViewHolder<FormattedEntity> {
                 ImageUtil.loadProfileImage(
                         ivProfile, user.getUserLargeProfileUrl(), R.drawable.profile_img);
             } else {
-                ImageUtil.loadProfileImage(ivProfile,
-                        UriUtil.getResourceUri(R.drawable.profile_img_dummyaccount_43),
-                        R.drawable.profile_img_dummyaccount_43);
+                ivProfile.setImageResource(R.drawable.profile_img_dummyaccount_43);
             }
         }
     }

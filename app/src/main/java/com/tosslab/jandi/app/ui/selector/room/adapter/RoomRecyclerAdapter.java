@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
-import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
@@ -147,9 +146,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     ImageUtil.loadProfileImage(ivIcon, fileUrl, R.drawable.profile_img_comment);
                     name.append(item.getName());
                 } else {
-                    ImageUtil.loadProfileImage(ivIcon,
-                            UriUtil.getResourceUri(R.drawable.profile_img_dummyaccount_32),
-                            R.drawable.profile_img_dummyaccount_32);
+                    ivIcon.setImageResource(R.drawable.profile_img_dummyaccount_32);
                     name.append(item.getEmail());
                 }
 

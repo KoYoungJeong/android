@@ -17,7 +17,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
-import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -250,9 +249,7 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
                 if (!item.isInactive()) {
                     ImageUtil.loadProfileImage(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
                 } else {
-                    ImageUtil.loadProfileImage(ivIcon,
-                            UriUtil.getResourceUri(R.drawable.profile_img_dummyaccount_43),
-                            R.drawable.profile_img_dummyaccount_43);
+                    ivIcon.setImageResource(R.drawable.profile_img_dummyaccount_43);
                 }
             } else {
                 ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();

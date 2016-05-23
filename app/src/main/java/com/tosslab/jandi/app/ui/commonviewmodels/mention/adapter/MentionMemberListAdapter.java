@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.viewholder.MentionMemberListViewHolder;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
-import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import java.util.List;
@@ -87,8 +86,7 @@ public class MentionMemberListAdapter extends ArrayAdapter<SearchedItemVO> {
                 ImageUtil.loadProfileImage(ivIcon,
                         item.getSmallProfileImageUrl(), R.drawable.profile_img);
             } else {
-                ImageUtil.loadProfileImage(ivIcon,
-                        UriUtil.getResourceUri(R.drawable.profile_img_dummyaccount_43), R.drawable.profile_img_dummyaccount_43);
+                ivIcon.setImageResource(R.drawable.profile_img_dummyaccount_43);
             }
             holder.getTvName().setText(item.getName());
         }
