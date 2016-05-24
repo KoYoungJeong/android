@@ -27,9 +27,7 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.push.PushTokenRegister;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.parse.PushUtil;
 
 import java.io.IOException;
 
@@ -57,10 +55,6 @@ public class GcmRegistrationIntentService extends IntentService {
                 PushTokenRepository.getInstance().upsertPushToken(new PushToken("gcm", token));
                 PushTokenRegister.getInstance().updateToken();
 
-                if (!JandiPreference.isParsePushRemoved()) {
-                    PushUtil.unsubscribeParsePush();
-                    JandiPreference.setParsePushRemoved(true);
-                }
             }
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
