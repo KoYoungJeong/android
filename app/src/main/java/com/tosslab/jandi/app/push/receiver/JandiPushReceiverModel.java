@@ -19,11 +19,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.domain.PushHistory;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushHistoryRepository;
-import com.tosslab.jandi.app.network.client.main.LeftSideApi;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.to.BaseMessagePushInfo;
 import com.tosslab.jandi.app.push.to.CommentPushInfo;
@@ -35,23 +31,16 @@ import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import java.util.List;
-
-import dagger.Lazy;
-
 public class JandiPushReceiverModel {
     public static final String TAG = JandiPushReceiverModel.class.getSimpleName();
     private static final int PENDING_INTENT_REQUEST_CODE = 2012;
 
     AudioManager audioManager;
 
-    Lazy<LeftSideApi> leftSideApi;
-
     NotificationManager notificationManager;
 
-    public JandiPushReceiverModel(AudioManager audioManager, Lazy<LeftSideApi> leftSideApi, NotificationManager notificationManager) {
+    public JandiPushReceiverModel(AudioManager audioManager, NotificationManager notificationManager) {
         this.audioManager = audioManager;
-        this.leftSideApi = leftSideApi;
         this.notificationManager = notificationManager;
     }
 
@@ -93,21 +82,6 @@ public class JandiPushReceiverModel {
         }
     }
 
-    public boolean isTopicPushOn(ResLeftSideMenu leftSideMenu, long roomId) {
-        boolean isTopicPushOn = true;
-
-        ResLeftSideMenu.User user = leftSideMenu.user;
-        List<ResLeftSideMenu.MessageMarker> markers = user.u_messageMarkers;
-        for (int i = 0; i < markers.size(); i++) {
-            ResLeftSideMenu.MessageMarker messageMarker = markers.get(i);
-            if (messageMarker.entityId == roomId) {
-                isTopicPushOn = messageMarker.subscribe;
-                break;
-            }
-        }
-        return isTopicPushOn;
-    }
-
     public String getPlainMarkdownContent(Context context, BaseMessagePushInfo messagePushInfo) {
 
         String originMessage;
@@ -127,62 +101,9 @@ public class JandiPushReceiverModel {
         return contentWrapper.toString();
     }
 
-    public ResLeftSideMenu getLeftSideMenuFromDB(long teamId) {
-        return LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
-    }
-
-    public ResLeftSideMenu getLeftSideMenuFromServer(long teamId) {
-        ResLeftSideMenu leftSideMenu = null;
-        try {
-            leftSideMenu = leftSideApi.get().getInfosForSideMenu(teamId);
-        } catch (RetrofitException e) {
-        }
-        return leftSideMenu;
-    }
-
-    public void upsertLeftSideMenu(ResLeftSideMenu leftSideMenu) {
-        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
-    }
-
-    public boolean isMentionToMe(List<MessagePushInfo.Mention> mentions, ResLeftSideMenu leftSideMenu) {
-        boolean isMentionToMe = false;
-        if (mentions == null || mentions.isEmpty()) {
-            return false;
-        }
-
-        long myTeamMemberId = leftSideMenu.user.id;
-        List<ResLeftSideMenu.Entity> joinEntities = leftSideMenu.joinEntities;
-
-        for (MessagePushInfo.Mention mention : mentions) {
-            long entityId = mention.getId();
-            String mentionType = mention.getType();
-            if ("room".equals(mentionType)) {
-                if (amIJoined(joinEntities, entityId)) {
-                    isMentionToMe = true;
-                    break;
-                }
-            } else {
-                if (myTeamMemberId == entityId) {
-                    isMentionToMe = true;
-                    break;
-                }
-            }
-        }
-
-        return isMentionToMe;
-    }
-
-    private boolean amIJoined(List<ResLeftSideMenu.Entity> joinEntities, long mentionedEntityId) {
-        if (joinEntities != null && !joinEntities.isEmpty()) {
-            for (ResLeftSideMenu.Entity joinEntity : joinEntities) {
-                if (joinEntity.id == mentionedEntityId) {
-                    LogUtil.d(TAG, "I am joined topic.");
-                    return true;
-                }
-            }
-        }
-
-        return false;
+    public boolean isMentionToMe(String mentioned) {
+        return BaseMessagePushInfo.MENTION_TO_ME.equals(mentioned)
+                || BaseMessagePushInfo.MENTION_TO_ALL.equals(mentioned);
     }
 
     private NotificationCompat.Builder getNotification(Context context,
