@@ -266,12 +266,6 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".push.legacy.PreviousBroadCastReceiver">
-            <intent-filter>
-                <action android:name="com.tosslab.jandi.app.Push" />
-            </intent-filter>
-        </receiver>
-
 
         <!--Parse-->
         <receiver
@@ -292,6 +286,12 @@
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
                 <category android:name="${applicationId}" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".push.legacy.ParsePushBroadCastReceiver">
+            <intent-filter>
+                <action android:name="com.tosslab.jandi.app.Push" />
             </intent-filter>
         </receiver>
         <!--EOF Parse-->
@@ -602,9 +602,6 @@
 
         <!-- Push Intent Service -->
         <service android:name=".push.receiver.JandiPushIntentService" />
-
-        <!-- Previous Push Intent Service -->
-        <service android:name=".push.legacy.PreviousJandiPushIntentService" />
 
         <!-- Log Out Service -->
         <service android:name=".services.SignOutService" />
