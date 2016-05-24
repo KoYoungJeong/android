@@ -48,7 +48,8 @@ public class PushHandler {
         pushSubject
                 .onBackpressureBuffer()
                 .filter(pushInfo -> PushHistoryRepository.getRepository().isLatestPush(pushInfo.getMessageId()))
-                .doOnNext(pushInfo -> PushHistoryRepository.getRepository().insertPushHistory(pushInfo.getMessageId()))
+                .doOnNext(pushInfo -> PushHistoryRepository.getRepository().insertPushHistory(
+                        pushInfo.getRoomId(), pushInfo.getMessageId()))
                 .buffer(300, TimeUnit.MILLISECONDS)
                 .filter(pushTOs -> pushTOs != null && !pushTOs.isEmpty())
                 .subscribe(pushTOs -> {
@@ -124,5 +125,9 @@ public class PushHandler {
 
     public void addPushQueue(BaseMessagePushInfo baseMessagePushInfo) {
         pushSubject.onNext(baseMessagePushInfo);
+    }
+
+    public void removeNotificationIfNeed(long roomId) {
+        jandiPushReceiverModel.removeNotificationIfNeed(roomId);
     }
 }

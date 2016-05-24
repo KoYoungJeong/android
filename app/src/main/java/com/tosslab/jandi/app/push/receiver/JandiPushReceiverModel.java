@@ -18,7 +18,9 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.local.orm.domain.PushHistory;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.PushHistoryRepository;
 import com.tosslab.jandi.app.network.client.main.LeftSideApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -305,7 +307,6 @@ public class JandiPushReceiverModel {
         String message = getPlainMarkdownContent(context, baseMessagePushInfo);
         String outMessage = getOutMessage(roomTypeInt, message);
 
-
         NotificationCompat.Builder notificationBuilder =
                 getNotification(context, notificationTitle,
                         roomName, outMessage, profileImage, badgeCount,
@@ -316,7 +317,6 @@ public class JandiPushReceiverModel {
         // 노티를 터치할 경우엔 자동 삭제되나, 노티를 삭제하지 않고 앱으로 진입했을 때,
         // 해당 채팅 방에 들어갈 때만 이 노티가 삭제되도록...
         JandiPreference.setChatIdFromPush(context, roomId);
-
         sendNotification(context, notificationBuilder.build());
     }
 
@@ -357,4 +357,10 @@ public class JandiPushReceiverModel {
         }
     }
 
+    public void removeNotificationIfNeed(long roomId) {
+        PushHistory latestPushHistory = PushHistoryRepository.getRepository().getLatestPushHistory();
+        if (latestPushHistory.getRoomId() == roomId) {
+            notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
+        }
+    }
 }

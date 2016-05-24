@@ -60,6 +60,8 @@ public class JandiPushIntentService extends IntentService {
 
         if (basePushInfo instanceof MarkerPushInfo) {
             BadgeUtils.setBadge(JandiApplication.getContext(), basePushInfo.getBadgeCount());
+            // 마커가 업데이트 된 roomId 와 마지막으로 받은 푸쉬 메세지의 roomId 가 같으면 노티를 지움.
+            PushHandler.getInstance().removeNotificationIfNeed(basePushInfo.getRoomId());
             return;
         }
 
@@ -69,7 +71,7 @@ public class JandiPushIntentService extends IntentService {
         }
 
         BaseMessagePushInfo messagePushInfo = (BaseMessagePushInfo) basePushInfo;
-
+        LogUtil.i(TAG, messagePushInfo.toString());
         // writerId 가 본인 ID 면 작성자가 본인인 노티이기 때문에 무시한다.
         if (isMyEntityId(messagePushInfo.getWriterId())) {
             return;

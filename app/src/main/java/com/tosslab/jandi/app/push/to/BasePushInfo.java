@@ -26,7 +26,8 @@ public class BasePushInfo {
     private int badgeCount;
     @JsonProperty("account_id")
     private String accountId;
-
+    @JsonProperty("room_id")
+    private long roomId;
 
     public int getBadgeCount() {
         return badgeCount;
@@ -35,7 +36,6 @@ public class BasePushInfo {
     public void setBadgeCount(int badgeCount) {
         this.badgeCount = badgeCount;
     }
-
 
     public String getPushType() {
         return pushType;
@@ -51,5 +51,13 @@ public class BasePushInfo {
 
     public void setAccountId(String accountId) {
         this.accountId = accountId;
+    }
+
+    public long getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(long roomId) {
+        this.roomId = roomId;
     }
 }

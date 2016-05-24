@@ -8,9 +8,16 @@ public class PushHistory {
     @DatabaseField(id = true)
     private long messageId;
 
-    public PushHistory() {}
+    @DatabaseField
+    private long roomId;
 
-    public PushHistory(long messageId) {this.messageId = messageId;}
+    public PushHistory() {
+    }
+
+    public PushHistory(long roomId, long messageId) {
+        this.roomId = roomId;
+        this.messageId = messageId;
+    }
 
     public long getMessageId() {
         return messageId;
@@ -18,5 +25,13 @@ public class PushHistory {
 
     public void setMessageId(long messageId) {
         this.messageId = messageId;
+    }
+
+    public long getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(long roomId) {
+        this.roomId = roomId;
     }
 }

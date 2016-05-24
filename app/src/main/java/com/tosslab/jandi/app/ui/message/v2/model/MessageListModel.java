@@ -379,7 +379,8 @@ public class MessageListModel {
 
         long chatIdFromPush = JandiPreference.getChatIdFromPush(activity);
         if (chatIdFromPush == entityId) {
-            NotificationManager notificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationManager notificationManager =
+                    (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
         }
 
@@ -738,7 +739,8 @@ public class MessageListModel {
                     } else {
                         presetCommentMessage(link);
                     }
-                }, throwable -> {});
+                }, throwable -> {
+                });
     }
 
     private void presetCommentMessage(ResMessages.Link link) {
