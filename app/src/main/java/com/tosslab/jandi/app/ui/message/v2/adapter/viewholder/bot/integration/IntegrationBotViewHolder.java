@@ -5,9 +5,10 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -46,7 +47,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
     private TextView tvMessageBadge;
     private View vgConnectInfoWrapper;
     private LinearLayout vgConnectInfo;
-    private View vLastRead;
+    private ViewGroup vLastRead;
     private View vBottomMargin;
 
     private boolean hasBottomMargin = false;
@@ -70,7 +71,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
         vgConnectInfoWrapper = rootView.findViewById(R.id.vg_message_connect_info_wrapper);
         vgConnectInfo = ((LinearLayout) rootView.findViewById(R.id.vg_message_sub_menu));
-        vLastRead = rootView.findViewById(R.id.vg_message_last_read);
+        vLastRead = (ViewGroup) rootView.findViewById(R.id.vg_message_last_read);
 
         linkPreviewViewModel = new LinkPreviewViewModel(rootView.getContext());
         linkPreviewViewModel.initView(rootView);
@@ -176,10 +177,15 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
     @Override
     public void setLastReadViewVisible(long currentLinkId, long lastReadLinkId) {
-        if (currentLinkId == lastReadLinkId) {
-            vLastRead.setVisibility(View.VISIBLE);
-        } else {
-            vLastRead.setVisibility(View.GONE);
+        if (vLastRead != null) {
+            if (currentLinkId == lastReadLinkId) {
+                vLastRead.removeAllViews();
+                LayoutInflater.from(vLastRead.getContext())
+                        .inflate(R.layout.item_message_last_read_v2, vLastRead);
+                vLastRead.setVisibility(View.VISIBLE);
+            } else {
+                vLastRead.setVisibility(View.GONE);
+            }
         }
     }
 

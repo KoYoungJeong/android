@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -36,7 +37,7 @@ public class JandiBotViewHolder implements BodyViewHolder {
     private View vDisableCover;
     private View vDisableLineThrough;
     private LinkPreviewViewModel linkPreviewViewModel;
-    private View vLastRead;
+    private ViewGroup vLastRead;
     private View contentView;
     private boolean hasOnlyBadge;
     private boolean hasBottomMargin;
@@ -65,7 +66,7 @@ public class JandiBotViewHolder implements BodyViewHolder {
 
         linkPreviewViewModel = new LinkPreviewViewModel(context);
         linkPreviewViewModel.initView(rootView);
-        vLastRead = rootView.findViewById(R.id.vg_message_last_read);
+        vLastRead = (ViewGroup) rootView.findViewById(R.id.vg_message_last_read);
 
         if (hasBottomMargin) {
             vMargin.setVisibility(View.VISIBLE);
@@ -170,10 +171,15 @@ public class JandiBotViewHolder implements BodyViewHolder {
 
     @Override
     public void setLastReadViewVisible(long currentLinkId, long lastReadLinkId) {
-        if (currentLinkId == lastReadLinkId) {
-            vLastRead.setVisibility(View.VISIBLE);
-        } else {
-            vLastRead.setVisibility(View.GONE);
+        if (vLastRead != null) {
+            if (currentLinkId == lastReadLinkId) {
+                vLastRead.removeAllViews();
+                LayoutInflater.from(vLastRead.getContext())
+                        .inflate(R.layout.item_message_last_read_v2, vLastRead);
+                vLastRead.setVisibility(View.VISIBLE);
+            } else {
+                vLastRead.setVisibility(View.GONE);
+            }
         }
     }
 

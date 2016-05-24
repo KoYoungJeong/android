@@ -491,10 +491,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         Idle, Loading, End
     }
 
-    public interface NotifyDataSetChangedCallback {
-        void callBack();
-    }
-
     public interface OnItemClickListener {
         void onItemClick(RecyclerView.Adapter adapter, int position);
     }
