@@ -1,10 +1,10 @@
 package com.tosslab.jandi.app.push.model;
 
 import android.app.ActivityManager;
+import android.support.v4.util.Pair;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
@@ -38,9 +38,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dagger.Lazy;
-import de.greenrobot.event.EventBus;
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
 
 /**
@@ -123,34 +121,14 @@ public class JandiInterfaceModel {
 
             AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
-            return getEntityInfo();
-
-        } else {
-
-            if (hasBackStackActivity()) {
+            if (LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId) != null) {
                 return true;
-            }
-
-            try {
-                EntityManager.getInstance();
-
-                Observable.just(getEntityInfo())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(entityRefreshed -> {
-                            if (!entityRefreshed) {
-                                return;
-                            }
-                            EventBus eventBus = EventBus.getDefault();
-                            if (eventBus.hasSubscriberForEvent(EntitiesUpdatedEvent.class)) {
-                                eventBus.post(EntitiesUpdatedEvent.class);
-                            }
-                        });
-
-                return true;
-            } catch (Exception e) {
+            } else {
                 return getEntityInfo();
             }
 
+        } else {
+            return true;
         }
     }
 
@@ -170,10 +148,19 @@ public class JandiInterfaceModel {
         }
     }
 
-    public long getEntityId(long teamId, long roomId, String roomType) {
+    /**
+     * LeftSideMenu 를 갱신함
+     * @return (갱신 여부, 요청한 entityId)
+     */
+    public Pair<Boolean, Long> getEntityInfo(long teamId, long roomId, String roomType) {
+
+        boolean entityRefreshed = false;
+        long entityId = -1L;
+
 
         if (!isKnowRoomType(roomType)) {
-            getEntityInfo();
+            entityRefreshed = getEntityInfo();
+
             if (hasEntity(roomId)) {
                 if (!EntityManager.getInstance().getEntityById(roomId).isUser()) {
                     roomType = PushRoomType.CHANNEL.getName();
@@ -181,7 +168,7 @@ public class JandiInterfaceModel {
                     roomType = PushRoomType.CHAT.getName();
                 }
             } else {
-                return roomId;
+                entityId = roomId;
             }
         }
 
@@ -189,20 +176,22 @@ public class JandiInterfaceModel {
         if (!isChatType(roomType)) {
             // Room Type 은 RoomId = EntityId
             if (hasEntity(roomId)) {
-                return roomId;
+                entityId = roomId;
             } else {
-                getEntityInfo();
-                return roomId;
+                entityRefreshed = getEntityInfo();
+                entityId = roomId;
             }
         } else {
             EntityManager entityManager = EntityManager.getInstance();
             long chatMemberId = getChatMemberId(teamId, roomId, entityManager);
 
             if (!hasEntity(chatMemberId)) {
-                getEntityInfo();
+                entityRefreshed = getEntityInfo();
             }
-            return chatMemberId;
+            entityId = chatMemberId;
         }
+
+        return new Pair<>(entityRefreshed, entityId);
     }
 
     private boolean isKnowRoomType(String roomTypeRaw) {
@@ -261,7 +250,7 @@ public class JandiInterfaceModel {
 
     public boolean hasNotRegisteredAtNewPushService() {
         List<PushToken> pushTokenList = PushTokenRepository.getInstance().getPushTokenList();
-        return pushTokenList == null || pushTokenList.isEmpty();
+        return pushTokenList.isEmpty();
     }
 
 }
