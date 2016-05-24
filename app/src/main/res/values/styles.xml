@@ -575,6 +575,12 @@
         <item name="android:textSize">@dimen/jandi_mention_star_list_item_font_size</item>
     </style>
 
+    <style name="JandiIntegration.Sub.Image">
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:textSize">@dimen/jandi_text_size_medium</item>
+        <item name="android:textColor">@color/jandi_text_messages_integration_image</item>
+    </style>
+
     <style name="JandiSettings"/>
 
     <style name="JandiSettings.Group">

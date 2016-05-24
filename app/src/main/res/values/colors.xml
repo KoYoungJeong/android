@@ -128,6 +128,7 @@
     <color name="jandi_messages_big_size_image_view_bg">#FFC5E1D6</color>
     <color name="jandi_messages_50_black_file_size">#80000000</color>
     <color name="jandi_messages_blue_background">#FFF0F9FC</color>
+    <color name="jandi_text_messages_integration_image">#FF00ACE9</color>
 
     <!-- Main panel -->
     <color name="jandi_messages_bottom_bg">#FFFFFF</color>

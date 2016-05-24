@@ -374,6 +374,8 @@ public class ResMessages {
         @DatabaseField
         public String title;
         @DatabaseField
+        public String imageUrl;
+        @DatabaseField
         public String description;
 
         @Override

@@ -59,7 +59,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_ADD_INTEGRATION = 11;
     private static final int DATABASE_VERSION_MODIFY_DATE_TYPE = 12;
     private static final int DATABASE_VERSION_PUSH_TOKEN = 13;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_PUSH_TOKEN;
+    private static final int DATABASE_VERSION_CONNECT_INFO_IMAGE = 14;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_CONNECT_INFO_IMAGE;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -231,6 +232,12 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, PushHistory.class);
                         Dao<ResAccessToken, ?> dao = DaoManager.createDao(connectionSource, ResAccessToken.class);
                         dao.executeRawNoArgs("ALTER TABLE `token` ADD COLUMN deviceId VARCHAR;");
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_CONNECT_INFO_IMAGE, () -> {
+                        Dao<ResMessages.ConnectInfo, ?> dao = DaoManager.createDao(connectionSource, ResMessages.ConnectInfo.class);
+                        dao.executeRawNoArgs("ALTER TABLE `message_text_content_connectInfo` ADD COLUMN imageUrl VARCHAR;");
+                        MessageRepository.getRepository().deleteAllLink();
+
                     }));
 
 
