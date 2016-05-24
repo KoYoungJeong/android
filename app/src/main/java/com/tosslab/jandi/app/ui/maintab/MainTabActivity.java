@@ -217,9 +217,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
         // onResume -> AfterViews 로 이동
         // (소켓에서 필요한 갱신을 다 처리한다고 간주)
-        if (NetworkCheckUtil.isConnected()) {
-            getEntities(true);
-        }
+        getEntities(true);
+
 
         initializeTeamsView();
 
@@ -637,6 +636,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
      */
     @Background(serial = "getEntities")
     public void getEntities(boolean setProfile) {
+        if (!NetworkCheckUtil.isConnected()) {
+            return;
+        }
         try {
             ResLeftSideMenu resLeftSideMenu = entityClientManager.getTotalEntitiesInfo();
             LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
