@@ -252,6 +252,11 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         } else {
             vpMainTab.setCurrentItem(JandiPreference.getLastSelectedTab());
         }
+
+        if (vpMainTab.getCurrentItem() != 0) {
+            setFABMenuVisibility(false);
+        }
+
         mainTapStrip.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
