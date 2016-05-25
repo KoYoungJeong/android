@@ -139,6 +139,8 @@ public class AnalyticsValue {
         ViewPhoto,
         TurnOnStar,
         TurnOffStar,
+        ResendInvitation,
+        CancelInvitation,
         FileSubMenu,
         FileSubMenu_Download,
         FileSubMenu_Share,
