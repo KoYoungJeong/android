@@ -38,6 +38,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
+import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
 import com.tosslab.jandi.app.events.entities.MoveSharedEntityEvent;
 import com.tosslab.jandi.app.events.entities.ShowMoreSharedEntitiesEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
@@ -336,11 +337,17 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             mentionControlViewModel.refreshMembers(sharedTopicIds);
         }
 
-        boolean isEmpty = !mentionControlViewModel.hasMentionMember();
-        ivMention.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
-
         removeClipboardListenerForMention();
         registerClipboardListenerForMention();
+    }
+
+    public void onEvent(MentionableMembersRefreshEvent event) {
+        if (!isForeground) {
+            return;
+        }
+
+        ivMention.setVisibility(mentionControlViewModel.hasMentionMember()
+                ? View.VISIBLE : View.GONE);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

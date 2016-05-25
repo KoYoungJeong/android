@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -134,19 +135,30 @@ public class MainTopicListPresenter {
     }
 
     public void onUpdatedTopicClick(Topic item) {
+        LogUtil.e("tony", "111111111111111111111");
         AnalyticsValue.Action action = item.isPublic() ? AnalyticsValue.Action.ChoosePublicTopic : AnalyticsValue.Action.ChoosePrivateTopic;
+        LogUtil.e("tony", "2222222222222222222222");
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, action);
+        LogUtil.e("tony", "33333333333333333333333");
 
         updateBadgeCount(item.getUnreadCount());
+        LogUtil.e("tony", "4444444444444444444444444");
         item.setUnreadCount(0);
+        LogUtil.e("tony", "55555555555555555555555555");
         mainTopicModel.resetBadge(item.getEntityId());
+        LogUtil.e("tony", "66666666666666666666666666");
 
         long teamId = EntityManager.getInstance().getTeamId();
+        LogUtil.e("tony", "77777777777777777777777777");
         int unreadCount = mainTopicModel.getUnreadCount();
+        LogUtil.e("tony", "8888888888888888888888888");
         EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+        LogUtil.e("tony", "99999999999999999999999999");
         int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
+        LogUtil.e("tony", "00000000000000000000000000");
         view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
                 item.getMarkerLinkId());
+        LogUtil.e("tony", "11111111111111111111111111");
     }
 
     public void onChildItemClick(RecyclerView.Adapter adapter, int groupPosition, int childPosition) {

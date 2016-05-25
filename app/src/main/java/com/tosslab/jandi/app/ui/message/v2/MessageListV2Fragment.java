@@ -56,6 +56,7 @@ import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
 import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
+import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RefreshConnectBotEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
@@ -779,8 +780,6 @@ public class MessageListV2Fragment extends Fragment implements
         if (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) {
             return;
         }
-
-        btnShowMention.setVisibility(View.VISIBLE);
 
         List<Long> roomIds = new ArrayList<>();
         roomIds.add(room.getRoomId());
@@ -1621,6 +1620,15 @@ public class MessageListV2Fragment extends Fragment implements
         }
 
         notifyDataSetChanged();
+    }
+
+    public void onEvent(MentionableMembersRefreshEvent event) {
+        if (!isForeground) {
+            return;
+        }
+
+        btnShowMention.setVisibility(mentionControlViewModel.hasMentionMember()
+                ? View.VISIBLE : View.GONE);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
