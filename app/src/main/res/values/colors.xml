@@ -271,8 +271,8 @@
     <color name="jandi_grey_black">#FF191B1E</color>
     <color name="jandi_grey_black_pressed">#FF101113</color>
 
-    <color name="dialog_button_text_color">#ff00abe8</color>
-    <color name="dialog_button_text_color_dim">#7600abe8</color>
+    <color name="button_text_color">#ff00abe8</color>
+    <color name="button_text_color_dim">#7600abe8</color>
 
 
     <color name="jandi_web_button_retry_background_selected">#FFE0E0E0</color>
@@ -290,5 +290,7 @@
     <color name="jandi_chat_list_default_background">#ffe1e6eb</color>
 
     <color name="jandi_press_gray">#fff0f0f0</color>
+
+    <color name="jandi_54_opacity_black">#8A000000</color>
 
 </resources>

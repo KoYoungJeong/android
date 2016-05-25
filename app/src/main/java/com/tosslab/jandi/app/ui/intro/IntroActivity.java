@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.presenter.IntroActivityPresenter;
-import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
+import com.tosslab.jandi.app.ui.intro.home.MainHomeActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -48,7 +48,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     void startOn() {
         presenter.setView(this);
         presenter.checkNewVersion(getApplicationContext(), startForInvite);
-
         JandiPreference.setLastExecutedTime(System.currentTimeMillis());
     }
 
@@ -78,10 +77,12 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     @Override
     public void moveToIntroTutorialActivity() {
         // Move TutorialActivity
-        IntroMainActivity_
-                .intent(IntroActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-                .start();
+//        IntroMainActivity_
+//                .intent(IntroActivity.this)
+//                .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+//                .start();
+        Intent intent = new Intent(this, MainHomeActivity.class);
+        startActivity(intent);
 
         finish();
     }
