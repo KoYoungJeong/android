@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.commonviewmodels.mention.model;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -16,30 +17,33 @@ import com.tosslab.jandi.app.utils.StringCompareUtil;
 import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.functions.Action1;
 import rx.functions.Func0;
 import rx.functions.Func2;
+import rx.schedulers.Schedulers;
 
 @EBean
 public class SearchMemberModel {
 
 
-    LinkedHashMap<Long, SearchedItemVO> selectableMembersLinkedHashMap = new LinkedHashMap<>();
+    Map<Long, SearchedItemVO> selectableMembersLinkedHashMap = new ConcurrentHashMap<>();
 
     public List<SearchedItemVO> getUserSearchByName(String subNameString) {
 
-        LinkedHashMap<Long, SearchedItemVO> searchedItemsHashMap;
         List<SearchedItemVO> searchedItems = new ArrayList<>();
 
         if (selectableMembersLinkedHashMap == null || selectableMembersLinkedHashMap.size() == 0) {
             return searchedItems;
         }
 
-        searchedItemsHashMap =
-                (LinkedHashMap<Long, SearchedItemVO>) selectableMembersLinkedHashMap.clone();
+        Map<Long, SearchedItemVO> searchedItemsHashMap = new HashMap<>(selectableMembersLinkedHashMap);
 
         Observable.from(searchedItemsHashMap.keySet())
                 .filter(integer ->
@@ -53,9 +57,9 @@ public class SearchMemberModel {
 
     }
 
-    public LinkedHashMap<Long, SearchedItemVO> refreshSelectableMembers(long teamId,
-                                                                        List<Long> topicIds,
-                                                                        String mentionType) {
+    public void refreshSelectableMembers(long teamId,
+                                         List<Long> topicIds,
+                                         String mentionType, final Action1<Map<Long, SearchedItemVO>> action) {
 
         selectableMembersLinkedHashMap.clear();
 
@@ -90,41 +94,45 @@ public class SearchMemberModel {
                         .setEnabled(entity.isEnabled())
                         .setStarred(entity.isStarred))
                 .collect(() -> selectableMembersLinkedHashMap,
-                        (selectableMembersLinkedHashMap, searchedItem) -> selectableMembersLinkedHashMap.put(searchedItem.getId(), searchedItem))
+                        (selectableMembersLinkedHashMap, searchedItem) ->
+                                selectableMembersLinkedHashMap.put(searchedItem.getId(), searchedItem))
+                .subscribeOn(Schedulers.computation())
                 .subscribe(map -> {
-                }, Throwable::printStackTrace);
+                    if (TextUtils.equals(mentionType, MentionControlViewModel.MENTION_TYPE_MESSAGE)) {
+                        SearchedItemVO searchedItemForAll = new SearchedItemVO();
+                        searchedItemForAll
+                                .setId(topicIds.get(0))
+                                .setName("all")
+                                .setType(SearchType.room.name());
 
-        if (TextUtils.equals(mentionType, MentionControlViewModel.MENTION_TYPE_MESSAGE)) {
-            SearchedItemVO searchedItemForAll = new SearchedItemVO();
-            searchedItemForAll
-                    .setId(topicIds.get(0))
-                    .setName("all")
-                    .setType(SearchType.room.name());
+                        selectableMembersLinkedHashMap.put(searchedItemForAll.getId(), searchedItemForAll);
+                    }
 
-            selectableMembersLinkedHashMap.put(searchedItemForAll.getId(), searchedItemForAll);
-        }
+                    if (selectableMembersLinkedHashMap.size() > 0
+                            && EntityManager.getInstance().hasJandiBot()) {
+                        BotEntity botEntity = (BotEntity) EntityManager.getInstance().getJandiBot();
+                        if (botEntity.isEnabled()) {
+                            SearchedItemVO jandiBot = new SearchedItemVO();
+                            jandiBot.setId(botEntity.getId())
+                                    .setName(botEntity.getName())
+                                    .setEnabled(true)
+                                    .setStarred(false)
+                                    .setBot(true)
+                                    .setType(SearchType.member.name());
+                            selectableMembersLinkedHashMap.put(jandiBot.getId(), jandiBot);
+                        }
+                    }
 
+                    EventBus.getDefault().post(new MentionableMembersRefreshEvent());
 
-        if (selectableMembersLinkedHashMap.size() > 0
-                && EntityManager.getInstance().hasJandiBot()) {
-            BotEntity botEntity = (BotEntity) EntityManager.getInstance().getJandiBot();
-            if (botEntity.isEnabled()) {
-                SearchedItemVO jandiBot = new SearchedItemVO();
-                jandiBot.setId(botEntity.getId())
-                        .setName(botEntity.getName())
-                        .setEnabled(true)
-                        .setStarred(false)
-                        .setBot(true)
-                        .setType(SearchType.member.name());
-                selectableMembersLinkedHashMap.put(jandiBot.getId(), jandiBot);
-            }
-        }
-
-        return selectableMembersLinkedHashMap;
-
+                }, Throwable::printStackTrace, () -> {
+                    if (action != null) {
+                        action.call(selectableMembersLinkedHashMap);
+                    }
+                });
     }
 
-    public LinkedHashMap<Long, SearchedItemVO> getAllSelectableMembers() {
+    public Map<Long, SearchedItemVO> getAllSelectableMembers() {
         return selectableMembersLinkedHashMap;
     }
 
