@@ -1627,7 +1627,12 @@ public class MessageListV2Fragment extends Fragment implements
             return;
         }
 
-        btnShowMention.setVisibility(mentionControlViewModel.hasMentionMember()
+        setMentionButtonVisibility(mentionControlViewModel.hasMentionMember());
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void setMentionButtonVisibility(boolean show) {
+        btnShowMention.setVisibility(show
                 ? View.VISIBLE : View.GONE);
     }
 

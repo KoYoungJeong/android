@@ -346,7 +346,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             return;
         }
 
-        ivMention.setVisibility(mentionControlViewModel.hasMentionMember()
+        setMentionButtonVisibility(mentionControlViewModel.hasMentionMember());
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void setMentionButtonVisibility(boolean show) {
+        ivMention.setVisibility(show
                 ? View.VISIBLE : View.GONE);
     }
 
