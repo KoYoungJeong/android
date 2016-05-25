@@ -84,15 +84,17 @@ public class JandiPushReceiverModel {
 
     public String getPlainMarkdownContent(Context context, BaseMessagePushInfo messagePushInfo) {
 
-        String originMessage;
-        if (messagePushInfo instanceof MessagePushInfo) {
+        String originMessage = "";
+        if("sticker".equals(messagePushInfo.getMessageType())) {
+            originMessage = "(Sticker)";
+        } else if (messagePushInfo instanceof MessagePushInfo) {
             originMessage = ((MessagePushInfo) messagePushInfo).getMessageContent().getBody();
         } else if (messagePushInfo instanceof CommentPushInfo) {
             originMessage = ((CommentPushInfo) messagePushInfo).getMessageContent().getBody();
         } else if (messagePushInfo instanceof FilePushInfo) {
             return ((FilePushInfo) messagePushInfo).getMessageContent().title;
         } else {
-            return "";
+            return originMessage;
         }
         SpannableStringBuilder contentWrapper = new SpannableStringBuilder(originMessage);
         SpannableLookUp.text(contentWrapper)

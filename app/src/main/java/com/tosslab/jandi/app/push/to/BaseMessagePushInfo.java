@@ -22,7 +22,7 @@ public class BaseMessagePushInfo extends BasePushInfo {
     private String roomType;
     @JsonProperty("message_id")
     private long messageId;
-    @JsonProperty("message_type")
+    @JsonProperty("message_content_type")
     private String messageType;
     @JsonProperty("message_mentions")
     private List<Mention> mentions;
@@ -235,6 +235,14 @@ public class BaseMessagePushInfo extends BasePushInfo {
 
         public void setConnectInfos(List<ResMessages.ConnectInfo> connectInfos) {
             this.connectInfos = connectInfos;
+        }
+
+        @Override
+        public String toString() {
+            return "MessageContent{" +
+                    "body='" + body + '\'' +
+                    ", connectInfos=" + connectInfos +
+                    '}';
         }
     }
 }
