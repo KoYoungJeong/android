@@ -656,7 +656,8 @@ public class MessageListV2Presenter {
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    void addMessages(long firstCursorLinkId, List<ResMessages.Link> newMessages, boolean firstLoadNewMessage, List<ResMessages.Link> archivedList) {
+    void addMessages(long firstCursorLinkId, List<ResMessages.Link> newMessages, boolean firstLoadNewMessage,
+                     List<ResMessages.Link> archivedList) {
         for (ResMessages.Link link : newMessages) {
             if (link.message instanceof ResMessages.StickerMessage
                     || link.message instanceof ResMessages.TextMessage) {
@@ -1230,8 +1231,6 @@ public class MessageListV2Presenter {
         void dismissOldLoadProgress();
 
         void finish();
-
-        void moveLastReadLink();
 
         void insertTeamMemberEmptyLayout();
 

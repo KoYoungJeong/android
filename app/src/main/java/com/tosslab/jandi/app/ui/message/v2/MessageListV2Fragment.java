@@ -138,7 +138,6 @@ import com.tosslab.jandi.app.utils.RecyclerScrollStateListener;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
-import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -913,7 +912,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             showPreviewIfNotLastItem(lastUpdatedMessage);
         } else {
             if (isFirstLoad) {
-                moveLastReadLink();
+                messageRecyclerViewManager.scrollToLast();
             } else {
                 messageRecyclerViewManager.scrollToLinkId(lastUpdatedMessage.id);
             }
@@ -1779,22 +1778,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         getActivity().finish();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void moveLastReadLink() {
-        long lastReadLinkId = messagePointer.getLastReadLinkId();
-
-        if (lastReadLinkId <= 0) {
-            return;
-        }
-        int measuredHeight = lvMessages.getMeasuredHeight() / 2;
-        if (measuredHeight <= 0) {
-            measuredHeight = (int) UiUtils.getPixelFromDp(100f);
-        }
-        messageRecyclerViewManager.scrollToLinkId(lastReadLinkId, measuredHeight);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void insertTeamMemberEmptyLayout() {
 
