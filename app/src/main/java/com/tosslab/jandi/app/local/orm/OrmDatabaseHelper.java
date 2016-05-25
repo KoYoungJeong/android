@@ -34,6 +34,14 @@ import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.start.Bot;
+import com.tosslab.jandi.app.network.models.start.Chat;
+import com.tosslab.jandi.app.network.models.start.Folder;
+import com.tosslab.jandi.app.network.models.start.Human;
+import com.tosslab.jandi.app.network.models.start.InitializeInfo;
+import com.tosslab.jandi.app.network.models.start.Marker;
+import com.tosslab.jandi.app.network.models.start.Team;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import java.sql.SQLException;
@@ -59,7 +67,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_ADD_INTEGRATION = 11;
     private static final int DATABASE_VERSION_MODIFY_DATE_TYPE = 12;
     private static final int DATABASE_VERSION_PUSH_TOKEN = 13;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_PUSH_TOKEN;
+    private static final int DATABASE_VERSION_START_API = 14;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_START_API;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -139,6 +148,19 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, DownloadInfo.class);
             createTable(connectionSource, PushToken.class);
             createTable(connectionSource, PushHistory.class);
+
+            createTable(connectionSource, InitializeInfo.class);
+            createTable(connectionSource, InitializeInfo.Self.class);
+            createTable(connectionSource, Team.class);
+            createTable(connectionSource, Folder.class);
+            createTable(connectionSource, Topic.class);
+            createTable(connectionSource, Topic.Announcement.class);
+            createTable(connectionSource, Chat.class);
+            createTable(connectionSource, Chat.LastMessage.class);
+            createTable(connectionSource, Marker.class);
+            createTable(connectionSource, Human.class);
+            createTable(connectionSource, Human.Profile.class);
+            createTable(connectionSource, Bot.class);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -231,6 +253,20 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, PushHistory.class);
                         Dao<ResAccessToken, ?> dao = DaoManager.createDao(connectionSource, ResAccessToken.class);
                         dao.executeRawNoArgs("ALTER TABLE `token` ADD COLUMN deviceId VARCHAR;");
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_START_API, () -> {
+                        createTable(connectionSource, InitializeInfo.class);
+                        createTable(connectionSource, InitializeInfo.Self.class);
+                        createTable(connectionSource, Team.class);
+                        createTable(connectionSource, Folder.class);
+                        createTable(connectionSource, Topic.class);
+                        createTable(connectionSource, Topic.Announcement.class);
+                        createTable(connectionSource, Chat.class);
+                        createTable(connectionSource, Chat.LastMessage.class);
+                        createTable(connectionSource, Marker.class);
+                        createTable(connectionSource, Human.class);
+                        createTable(connectionSource, Human.Profile.class);
+                        createTable(connectionSource, Bot.class);
                     }));
 
 
@@ -312,6 +348,19 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(getConnectionSource(), ResAccessToken.class);
         clearTable(getConnectionSource(), PushToken.class);
         clearTable(getConnectionSource(), PushHistory.class);
+
+        clearTable(getConnectionSource(), InitializeInfo.class);
+        clearTable(getConnectionSource(), InitializeInfo.Self.class);
+        clearTable(getConnectionSource(), Team.class);
+        clearTable(getConnectionSource(), Folder.class);
+        clearTable(getConnectionSource(), Topic.class);
+        clearTable(getConnectionSource(), Topic.Announcement.class);
+        clearTable(getConnectionSource(), Chat.class);
+        clearTable(getConnectionSource(), Chat.LastMessage.class);
+        clearTable(getConnectionSource(), Marker.class);
+        clearTable(getConnectionSource(), Human.class);
+        clearTable(getConnectionSource(), Human.Profile.class);
+        clearTable(getConnectionSource(), Bot.class);
     }
 
     private void clearTable(ConnectionSource connectionSource, Class<?> dataClass) {
