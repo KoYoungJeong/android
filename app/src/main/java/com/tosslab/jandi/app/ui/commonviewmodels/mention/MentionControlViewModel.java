@@ -27,9 +27,8 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.views.spannable.MentionMessageSpannable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -95,6 +94,85 @@ public class MentionControlViewModel {
                 teamId,
                 roomIds,
                 mentionType);
+    }
+
+    // 현재까지의 editText에서 멘션 가공된 message와 mention object 리스트를 얻어오는 메서드
+    public static ResultMentionsVO getMentionInfoObject(String message,
+                                                        Map<Long, SearchedItemVO> selectableMembers) {
+
+        if (TextUtils.isEmpty(message)) {
+            return new ResultMentionsVO("", new ArrayList<>());
+        }
+
+        StringBuilder builder = new StringBuilder(message);
+        String findId;
+//        Pattern p = Pattern.compile("(?:@)([^\\u2063]+)(?:\\u2063)(\\d+)(?:\\u2063)");
+        Matcher matcher = MENTION_PATTERN.matcher(message);
+
+        List<SearchedItemVO> orderedSearchedMember = new ArrayList<>();
+
+        List<Pair<Integer, Integer>> replaceIndex = new ArrayList<>();
+
+        while (matcher.find()) {
+            findId = matcher.group(2);
+            try {
+                long id = Long.parseLong(findId);
+                if (selectableMembers.containsKey(id)) {
+                    orderedSearchedMember.add(selectableMembers.get(id));
+                } else {
+                    replaceIndex.add(new Pair<>(matcher.start(2) - 1, matcher.end(2) + 1));
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (int idx = replaceIndex.size() - 1; idx >= 0; idx--) {
+            Pair<Integer, Integer> replace = replaceIndex.get(idx);
+            if (replace != null && replace.first >= 0 && replace.second >= 0) {
+                builder.replace(replace.first, replace.second, "");
+            }
+        }
+
+        List<MentionObject> mentions = new ArrayList<>();
+
+        StringBuilder memberInfoStringSB;
+
+        for (SearchedItemVO searchedItemVO : orderedSearchedMember) {
+
+            memberInfoStringSB = new StringBuilder();
+
+            if (searchedItemVO == null) {
+                continue;
+            }
+
+            String name = searchedItemVO.getName();
+            String id = String.valueOf(searchedItemVO.getId());
+            String type = searchedItemVO.getType();
+
+            memberInfoStringSB
+                    .append(name)
+                    .append("\u2063")
+                    .append(id)
+                    .append("\u2063");
+
+            int startIndexOfMemberString = builder.indexOf(memberInfoStringSB.toString());
+
+            if (startIndexOfMemberString >= 0) {
+
+                builder.replace(startIndexOfMemberString,
+                        startIndexOfMemberString + memberInfoStringSB.length(), name);
+                int offset = startIndexOfMemberString - 1;
+                int length = name.length() + 1;
+                MentionObject mentionInfo = new MentionObject(searchedItemVO.getId(), type, offset, length);
+                mentions.add(mentionInfo);
+            }
+
+
+        }
+
+        return new ResultMentionsVO(builder.toString(), mentions);
+
     }
 
     private void init(Activity activity, EditText editText, long teamId, List<Long> roomIds) {
@@ -311,13 +389,13 @@ public class MentionControlViewModel {
     }
 
     // 현재 토픽 또는 파일에서 멘션 가능한 모든 멤버들을 얻어오는 메서드
-    public LinkedHashMap<Long, SearchedItemVO> getAllSelectableMembers() {
+    public Map<Long, SearchedItemVO> getAllSelectableMembers() {
         return searchMemberModel.getAllSelectableMembers();
     }
 
     // 토픽 또는 파일의 정보 갱신으로 갱신된 멘션가능한 멤버들을 얻어오는 메서드
     public void refreshSelectableMembers(long teamId, List<Long> roomIds) {
-        searchMemberModel.refreshSelectableMembers(teamId, roomIds, mentionType);
+        searchMemberModel.refreshSelectableMembers(teamId, roomIds, mentionType, null);
     }
 
     // 멘션된 멤버들을 etMessage 뷰 단에서 하일라이트 처리하는 로직
@@ -367,7 +445,7 @@ public class MentionControlViewModel {
 
         List<Pair<Integer, Integer>> replaceIndex = new ArrayList<>();
 
-        LinkedHashMap<Long, SearchedItemVO> selectableMembers = getAllSelectableMembers();
+        Map<Long, SearchedItemVO> selectableMembers = getAllSelectableMembers();
 
         String findId;
         // 해제할 멘션 정보.
@@ -419,85 +497,6 @@ public class MentionControlViewModel {
         etMessage.setSelection(etMessage.length());
     }
 
-    // 현재까지의 editText에서 멘션 가공된 message와 mention object 리스트를 얻어오는 메서드
-    private static ResultMentionsVO getMentionInfoObject(String message,
-                                                  LinkedHashMap<Long, SearchedItemVO> selectableMembers) {
-
-        if (TextUtils.isEmpty(message)) {
-            return new ResultMentionsVO("", new ArrayList<>());
-        }
-
-        StringBuilder builder = new StringBuilder(message);
-        String findId;
-//        Pattern p = Pattern.compile("(?:@)([^\\u2063]+)(?:\\u2063)(\\d+)(?:\\u2063)");
-        Matcher matcher = MENTION_PATTERN.matcher(message);
-
-        List<SearchedItemVO> orderedSearchedMember = new ArrayList<>();
-
-        List<Pair<Integer, Integer>> replaceIndex = new ArrayList<>();
-
-        while (matcher.find()) {
-            findId = matcher.group(2);
-            try {
-                long id = Long.parseLong(findId);
-                if (selectableMembers.containsKey(id)) {
-                    orderedSearchedMember.add(selectableMembers.get(id));
-                } else {
-                    replaceIndex.add(new Pair<>(matcher.start(2) - 1, matcher.end(2) + 1));
-                }
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        }
-
-        for (int idx = replaceIndex.size() - 1; idx >= 0; idx--) {
-            Pair<Integer, Integer> replace = replaceIndex.get(idx);
-            if (replace != null && replace.first >= 0 && replace.second >= 0) {
-                builder.replace(replace.first, replace.second, "");
-            }
-        }
-
-        List<MentionObject> mentions = new ArrayList<>();
-
-        StringBuilder memberInfoStringSB;
-
-        for (SearchedItemVO searchedItemVO : orderedSearchedMember) {
-
-            memberInfoStringSB = new StringBuilder();
-
-            if (searchedItemVO == null) {
-                continue;
-            }
-
-            String name = searchedItemVO.getName();
-            String id = String.valueOf(searchedItemVO.getId());
-            String type = searchedItemVO.getType();
-
-            memberInfoStringSB
-                    .append(name)
-                    .append("\u2063")
-                    .append(id)
-                    .append("\u2063");
-
-            int startIndexOfMemberString = builder.indexOf(memberInfoStringSB.toString());
-
-            if (startIndexOfMemberString >= 0) {
-
-                builder.replace(startIndexOfMemberString,
-                        startIndexOfMemberString + memberInfoStringSB.length(), name);
-                int offset = startIndexOfMemberString - 1;
-                int length = name.length() + 1;
-                MentionObject mentionInfo = new MentionObject(searchedItemVO.getId(), type, offset, length);
-                mentions.add(mentionInfo);
-            }
-
-
-        }
-
-        return new ResultMentionsVO(builder.toString(), mentions);
-
-    }
-
     public ResultMentionsVO getMentionInfoObject() {
         return getMentionInfoObject(etMessage.getText().toString().trim(),
                 getAllSelectableMembers());
@@ -507,18 +506,6 @@ public class MentionControlViewModel {
     public ResultMentionsVO getMentionInfoObject(String message) {
         return getMentionInfoObject(message,
                 getAllSelectableMembers());
-    }
-
-    public static ResultMentionsVO getMentionInfoObject(long teamId,
-                                                        long roomId,
-                                                        String message,
-                                                        String mentionType) {
-
-        SearchMemberModel model = new SearchMemberModel();
-        model.refreshSelectableMembers(teamId, Arrays.asList(roomId), mentionType);
-
-        return getMentionInfoObject(message,
-                model.getAllSelectableMembers());
     }
 
     public boolean hasMentionMember() {

@@ -17,8 +17,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = MarkerPushInfo.class, name = "marker_updated"),
         @JsonSubTypes.Type(value = MessagePushInfo.class, name = "message_created"),
-        @JsonSubTypes.Type(value = MessagePushInfo.class, name = "comment_created"),
-        @JsonSubTypes.Type(value = MessagePushInfo.class, name = "file_shared")})
+        @JsonSubTypes.Type(value = CommentPushInfo.class, name = "comment_created"),
+        @JsonSubTypes.Type(value = FilePushInfo.class, name = "file_shared")})
 public class BasePushInfo {
     public static final String MENTION_TO_ME = "member";
     public static final String MENTION_TO_ALL = "room";

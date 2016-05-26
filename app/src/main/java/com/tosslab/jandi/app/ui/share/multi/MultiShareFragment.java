@@ -47,6 +47,7 @@ import butterknife.OnClick;
 import butterknife.OnPageChange;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func0;
 
 public class MultiShareFragment extends Fragment implements MultiSharePresenter.View, MainShareActivity.Share {
@@ -259,10 +260,13 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @Override
     public void moveRoom(long teamId, long roomId) {
+        Observable.just(1)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(integer -> {
+                    UploadNotificationActivity.startActivity(getActivity(), teamId, roomId);
 
-        UploadNotificationActivity.startActivity(getActivity(), teamId, roomId);
-
-        getActivity().finish();
+                    getActivity().finish();
+                });
     }
 
     @Override
