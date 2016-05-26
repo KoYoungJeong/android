@@ -5,10 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.tosslab.jandi.app.local.orm.dao.HumanDaoImpl;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@DatabaseTable(tableName = "initial_info_human")
+@DatabaseTable(tableName = "initial_info_human", daoClass = HumanDaoImpl.class)
 public class Human {
     @DatabaseField(id = true)
     private long id;
@@ -22,7 +23,7 @@ public class Human {
     private String role;
     @DatabaseField
     private String accountId;
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Profile profile;
     @DatabaseField
     private String status;

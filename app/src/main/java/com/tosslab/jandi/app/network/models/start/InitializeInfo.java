@@ -20,9 +20,9 @@ public class InitializeInfo {
     @JsonIgnore
     @DatabaseField(id = true)
     private long teamId;
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Self self;
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Team team;
     @ForeignCollectionField
     private Collection<Folder> folders;

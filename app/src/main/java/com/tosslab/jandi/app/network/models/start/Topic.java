@@ -52,7 +52,7 @@ public class Topic {
     private boolean isStarred;
     @DatabaseField
     private boolean subscribe;
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Announcement announcement;
     @DatabaseField
     private long readLinkId;

@@ -6,13 +6,14 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.tosslab.jandi.app.local.orm.dao.ChatDaoImpl;
 import com.tosslab.jandi.app.local.orm.persister.CollectionLongConverter;
 
 import java.util.Collection;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@DatabaseTable(tableName = "initial_info_chat")
+@DatabaseTable(tableName = "initial_info_chat", daoClass = ChatDaoImpl.class)
 public class Chat {
     @DatabaseField(id = true)
     private long id;
@@ -36,7 +37,7 @@ public class Chat {
     private long readLinkId;
     @DatabaseField
     private int unreadCount;
-    @DatabaseField(foreign = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private LastMessage lastMessage;
     @JsonIgnore
     @DatabaseField(foreign = true)
