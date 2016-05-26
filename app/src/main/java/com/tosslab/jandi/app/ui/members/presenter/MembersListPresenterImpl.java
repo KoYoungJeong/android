@@ -78,9 +78,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     void initObject() {
         objectPublishSubject = PublishSubject.create();
         subscribe = objectPublishSubject
-                .doOnNext(s -> {
-                    view.showProgressWheel();
-                })
+                .doOnNext(s -> view.showProgressWheel())
                 .throttleWithTimeout(300, TimeUnit.MILLISECONDS)
                 .map(s -> {
                     List<ChatChooseItem> members = getChatChooseItems();
