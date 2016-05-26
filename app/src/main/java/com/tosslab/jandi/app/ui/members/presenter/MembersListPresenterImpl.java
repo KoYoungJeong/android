@@ -78,15 +78,14 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     void initObject() {
         objectPublishSubject = PublishSubject.create();
         subscribe = objectPublishSubject
-                .doOnNext(s -> view.showProgressWheel())
                 .throttleWithTimeout(300, TimeUnit.MILLISECONDS)
                 .map(s -> {
                     List<ChatChooseItem> members = getChatChooseItems();
                     return getFilteredChatChooseItems(s, members);
                 })
                 .doOnNext(topicMembers -> {
-                    view.showListMembers(topicMembers);
                     view.dismissProgressWheel();
+                    view.showListMembers(topicMembers);
                 })
                 .subscribe();
 
@@ -156,6 +155,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void initMemberList() {
+        view.showProgressWheel();
         objectPublishSubject.onNext(view.getSearchText());
     }
 
