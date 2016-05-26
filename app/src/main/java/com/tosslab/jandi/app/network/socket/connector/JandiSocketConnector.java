@@ -18,6 +18,8 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import io.socket.engineio.client.transports.WebSocket;
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 1..
@@ -26,6 +28,7 @@ public class JandiSocketConnector implements SocketConnector {
     public static final String TAG = "SocketConnector";
     private Socket socket;
     private Status status = Status.READY;
+    private boolean isInDisconnecting = false;
 
     @Override
     public Emitter connect(String url, EventListener disconnectListener) {
@@ -92,22 +95,36 @@ public class JandiSocketConnector implements SocketConnector {
 
     @Override
     public void disconnect() {
+        if (isInDisconnecting) {
+            return;
+        }
+
         if (socket != null && socket.connected()) {
+            isInDisconnecting = true;
+
             status = Status.DISCONNECTING;
             socket.off();
             socket.disconnect();
 
-            while (socket.connected()) {
-                try {
-                    Thread.sleep(100);
-                    LogUtil.d(TAG, "Socket Stopping...");
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            //FIXME NullPointerException 여지가 있을지?
-            socket = null;
-            status = Status.READY;
+            Observable.just(1)
+                    .doOnNext(integer -> {
+                        while (socket.connected()) {
+                            try {
+                                Thread.sleep(100);
+                                LogUtil.d(TAG, "Socket Stopping...");
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    })
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(Schedulers.immediate())
+                    .subscribe(disconnected -> {
+                        //FIXME NullPointerException 여지가 있을지?
+                        socket = null;
+                        status = Status.READY;
+                        isInDisconnecting = false;
+                    });
         }
     }
 

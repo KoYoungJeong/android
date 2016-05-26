@@ -2008,8 +2008,4 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
         return false;
     }
-
-    enum ButtonAction {
-        UPLOAD, STICKER, KEYBOARD
-    }
 }
