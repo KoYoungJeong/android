@@ -52,6 +52,7 @@
         android:layout_marginTop="24dp"
         android:background="@drawable/btn_blue_selector"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:text="SIGN IN"
         android:textColor="@color/white"

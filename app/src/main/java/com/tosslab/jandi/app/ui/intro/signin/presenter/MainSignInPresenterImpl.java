@@ -1,9 +1,22 @@
 package com.tosslab.jandi.app.ui.intro.signin.presenter;
 
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.intro.signin.model.MainSignInModel;
-import com.tosslab.jandi.app.utils.FormatConverter;
+import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.parse.PushUtil;
 
 import javax.inject.Inject;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by tee on 16. 5. 25..
@@ -15,18 +28,110 @@ public class MainSignInPresenterImpl implements MainSignInPresenter {
     private MainSignInPresenter.View view;
 
     @Inject
-    public MainSignInPresenterImpl(MainSignInPresenter.View view,
-                                   MainSignInModel model) {
+    public MainSignInPresenterImpl(MainSignInPresenter.View view, MainSignInModel model) {
         this.view = view;
         this.model = model;
     }
 
-    private void checkValidEmail(String email) {
-        if (!FormatConverter.isInvalidEmailString(email)) {
-
-        } else {
-
+    @Override
+    public void CheckEmailValidation(String email) {
+        if (email.equals("")) {
+            view.showErrorInsertEmail();
+        } else if (!model.isValidEmailFormat(email)) {
+            view.showErrorInvalidEmail();
         }
+
+    }
+
+    @Override
+    public void CheckPasswordValidation(String password) {
+        if (password.equals("")) {
+            view.showErrorInsertPassword();
+        } else if (password.length() < 8) {
+            view.showErrorInvalidEmail();
+        }
+    }
+
+    @Override
+    public void trySignIn(String email, String password) {
+        view.showProgressDialog();
+
+        Observable.create(new Observable.OnSubscribe<ResAccessToken>() {
+            @Override
+            public void call(Subscriber<? super ResAccessToken> subscriber) {
+                try {
+                    ResAccessToken accessToken = model.login(email, password);
+                    subscriber.onNext(accessToken);
+                    subscriber.onCompleted();
+                } catch (RetrofitException e) {
+                    subscriber.onError(e);
+                }
+
+            }
+        }).subscribeOn(Schedulers.io())
+                .doOnNext(accessToken -> {
+                    model.saveTokenInfo(accessToken);
+                    PushUtil.registPush();
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(accessToken -> {
+                    getAccountInfo();
+                }, t -> {
+                    if (!(t instanceof RetrofitException)) {
+                        return;
+                    }
+                    RetrofitException error = (RetrofitException) t;
+                    if (error.getStatusCode() < 500) {
+                        try {
+                            switch (error.getResponseCode()) {
+                                case 40000:
+                                case 40021:
+                                case 40007:
+                                    view.showErrorInvalidEmailOrPassword();
+                                    break;
+                            }
+                            model.trackSignInFail(JandiConstants.NetworkError.DATA_NOT_FOUND);
+                        } catch (Exception e) {
+                            view.showNetworkErrorToast();
+                            model.trackSignInFail(JandiConstants.NetworkError.BAD_REQUEST);
+                        }
+                    } else {
+                        view.showNetworkErrorToast();
+                        model.trackSignInFail(JandiConstants.NetworkError.BAD_REQUEST);
+                    }
+
+                    view.dismissProgressDialog();
+                });
+
+    }
+
+    private void getAccountInfo() {
+        Observable.create(new Observable.OnSubscribe<ResAccountInfo>() {
+            @Override
+            public void call(Subscriber<? super ResAccountInfo> subscriber) {
+                try {
+                    ResAccountInfo accountInfo = model.getAccountInfo();
+                    subscriber.onNext(accountInfo);
+                    subscriber.onCompleted();
+                } catch (RetrofitException e) {
+                    subscriber.onError(e);
+                }
+            }
+        }).subscribeOn(Schedulers.io())
+                .doOnNext(accountInfo -> {
+                    model.saveAccountInfo(accountInfo);
+                    ResAccessToken accessToken = TokenUtil.getTokenObject();
+                    model.subscribePush(accessToken.getDeviceId());
+                    JandiPreference.setFirstLogin(JandiApplication.getContext());
+
+                    MixpanelAccountAnalyticsClient
+                            .getInstance(JandiApplication.getContext(), accountInfo.getId())
+                            .trackAccountSingingIn();
+
+                    model.trackSignInSuccess();
+                }).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(o -> {
+                }, t -> view.showNetworkErrorToast(), () -> view.dismissProgressDialog());
     }
 
 }
