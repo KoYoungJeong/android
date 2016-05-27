@@ -24,12 +24,10 @@ import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
-import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
@@ -37,6 +35,8 @@ import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by tee on 16. 4. 7..
@@ -243,22 +243,23 @@ public class CommentViewHolder extends BaseCommentViewHolder {
                 builderWithBadge.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
-            int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                    link.id, link.fromEntity, myId);
+            UnreadCountUtil.getUnreadCount(teamId, roomId, link.id, link.fromEntity, myId)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(unreadCount -> {
+                        if (unreadCount > 0) {
+                            NameSpannable unreadCountSpannable =
+                                    new NameSpannable(
+                                            (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 9f, context.getResources().getDisplayMetrics())
+                                            , context.getResources().getColor(R.color.jandi_accent_color));
+                            int beforeLength = builderWithBadge.length();
+                            builderWithBadge.append(" ");
+                            builderWithBadge.append(String.valueOf(unreadCount))
+                                    .setSpan(unreadCountSpannable, beforeLength, builderWithBadge.length(),
+                                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }
+                        tvProfileNestedCommentContent.setText(builderWithBadge, TextView.BufferType.SPANNABLE);
+                    });
 
-            if (unreadCount > 0) {
-                NameSpannable unreadCountSpannable =
-                        new NameSpannable(
-                                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 9f, context.getResources().getDisplayMetrics())
-                                , context.getResources().getColor(R.color.jandi_accent_color));
-                int beforeLength = builderWithBadge.length();
-                builderWithBadge.append(" ");
-                builderWithBadge.append(String.valueOf(unreadCount))
-                        .setSpan(unreadCountSpannable, beforeLength, builderWithBadge.length(),
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-
-            tvProfileNestedCommentContent.setText(builderWithBadge, TextView.BufferType.SPANNABLE);
         }
     }
 

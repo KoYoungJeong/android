@@ -6,8 +6,8 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.ImageView;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -22,6 +22,8 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
+
+import rx.android.schedulers.AndroidSchedulers;
 
 public class MessageViewHolder extends BaseMessageViewHolder {
 
@@ -155,16 +157,19 @@ public class MessageViewHolder extends BaseMessageViewHolder {
     }
 
     private void setBadge(long teamId, long roomId, ResMessages.Link link) {
-        int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
+        UnreadCountUtil.getUnreadCount(teamId, roomId,
+                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(unreadCount -> {
+                    if (unreadCount > 0) {
+                        tvMessageBadge.setText(String.valueOf(unreadCount));
+                        tvMessageBadge.setVisibility(View.VISIBLE);
+                    } else {
+                        tvMessageBadge.setVisibility(View.GONE);
+                    }
+                });
 
 
-        if (unreadCount > 0) {
-            tvMessageBadge.setText(String.valueOf(unreadCount));
-            tvMessageBadge.setVisibility(View.VISIBLE);
-        } else {
-            tvMessageBadge.setVisibility(View.GONE);
-        }
     }
 
     @Override

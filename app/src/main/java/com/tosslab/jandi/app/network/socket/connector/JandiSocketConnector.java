@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.network.socket.connector;
 
+import android.os.Looper;
+
 import com.tosslab.jandi.app.network.socket.events.EventListener;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -19,6 +21,7 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import io.socket.engineio.client.transports.WebSocket;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
@@ -118,7 +121,7 @@ public class JandiSocketConnector implements SocketConnector {
                         }
                     })
                     .subscribeOn(Schedulers.newThread())
-                    .observeOn(Schedulers.immediate())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(disconnected -> {
                         //FIXME NullPointerException 여지가 있을지?
                         socket = null;

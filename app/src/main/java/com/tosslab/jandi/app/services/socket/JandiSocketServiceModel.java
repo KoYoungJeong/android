@@ -800,25 +800,29 @@ public class JandiSocketServiceModel {
 
     // 확장성 생각하여 추후 모듈로 빼내야 함.
     public void updateEventHistory() {
-        long ts = JandiPreference.getSocketConnectedLastTime();
-        EntityManager entityManager = EntityManager.getInstance();
-        long userId = entityManager.getMe().getId();
-        LogUtil.e("ts", ts + "");
-        if (ts > -1) {
-            try {
-                ResEventHistory eventHistory =
-                        eventsApi.get().getEventHistory(ts, userId, "file_unshared");
-                Observable.from(eventHistory.records)
-                        .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketFileUnsharedEvent)
-                        .map(eventHistoryInfo -> (SocketFileUnsharedEvent) eventHistoryInfo)
-                        .subscribe(eventHistoryInfo -> {
-                            int fileId = eventHistoryInfo.getFile().getId();
-                            int roomId = eventHistoryInfo.room.id;
-                            MessageRepository.getRepository().updateUnshared(fileId, roomId);
-                        }, Throwable::printStackTrace);
-            } catch (RetrofitException e) {
-                e.printStackTrace();
-            }
-        }
+
+        Observable.just(JandiPreference.getSocketConnectedLastTime())
+                .observeOn(Schedulers.io())
+                .filter(ts -> ts == -1 || ts > 0)
+                .map(ts -> {
+                    try {
+                        EntityManager entityManager = EntityManager.getInstance();
+                        long userId = entityManager.getMe().getId();
+                        return eventsApi.get().getEventHistory(ts, userId, "file_unshared");
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                        ResEventHistory resEventHistory = new ResEventHistory();
+                        resEventHistory.records = new ArrayList<>(0);
+                        return resEventHistory;
+                    }
+                })
+                .flatMap(resEventHistory -> Observable.from(resEventHistory.records))
+                .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketFileUnsharedEvent)
+                .map(eventHistoryInfo -> (SocketFileUnsharedEvent) eventHistoryInfo)
+                .subscribe(eventHistoryInfo -> {
+                    int fileId = eventHistoryInfo.getFile().getId();
+                    int roomId = eventHistoryInfo.room.id;
+                    MessageRepository.getRepository().updateUnshared(fileId, roomId);
+                }, Throwable::printStackTrace);
     }
 }
