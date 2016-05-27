@@ -35,8 +35,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-import rx.android.schedulers.AndroidSchedulers;
-
 public class IntegrationBotViewHolder implements BodyViewHolder {
 
     private static final String TAG = "IntegrationBotViewHolder";
@@ -150,7 +148,6 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
         UnreadCountUtil.getUnreadCount(teamId, roomId,
                 link.id, link.fromEntity, EntityManager.getInstance().getMe().getId())
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(unreadCount -> {
                     if (unreadCount > 0) {
                         tvMessageBadge.setText(String.valueOf(unreadCount));

@@ -28,7 +28,6 @@ import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 
 import de.greenrobot.event.EventBus;
-import rx.android.schedulers.AndroidSchedulers;
 
 public class JandiBotViewHolder implements BodyViewHolder {
     protected Context context;
@@ -150,7 +149,6 @@ public class JandiBotViewHolder implements BodyViewHolder {
 
             UnreadCountUtil.getUnreadCount(teamId, roomId,
                     link.id, link.fromEntity, EntityManager.getInstance().getMe().getId())
-                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(unreadCount -> {
                         if (unreadCount > 0) {
                             tvMessageBadge.setText(String.valueOf(unreadCount));

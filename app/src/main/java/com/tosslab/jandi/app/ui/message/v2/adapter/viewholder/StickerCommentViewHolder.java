@@ -28,8 +28,6 @@ import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import rx.android.schedulers.AndroidSchedulers;
-
 /**
  * Created by tee on 16. 4. 7..
  */
@@ -208,7 +206,6 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
         }
         UnreadCountUtil.getUnreadCount(teamId, roomId,
                 link.id, link.fromEntity, EntityManager.getInstance().getMe().getId())
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(unreadCount -> {
                     if (unreadCount > 0) {
                         tvProfileNestedCommentStickerUnread.setText(String.valueOf(unreadCount));

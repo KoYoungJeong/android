@@ -23,8 +23,6 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
 
-import rx.android.schedulers.AndroidSchedulers;
-
 public class MessageViewHolder extends BaseMessageViewHolder {
 
     protected Context context;
@@ -159,7 +157,6 @@ public class MessageViewHolder extends BaseMessageViewHolder {
     private void setBadge(long teamId, long roomId, ResMessages.Link link) {
         UnreadCountUtil.getUnreadCount(teamId, roomId,
                 link.id, link.fromEntity, EntityManager.getInstance().getMe().getId())
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(unreadCount -> {
                     if (unreadCount > 0) {
                         tvMessageBadge.setText(String.valueOf(unreadCount));

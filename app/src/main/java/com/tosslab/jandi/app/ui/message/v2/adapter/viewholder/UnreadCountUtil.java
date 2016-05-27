@@ -5,7 +5,6 @@ import com.tosslab.jandi.app.network.models.ResRoomInfo;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 15..
@@ -24,7 +23,6 @@ public class UnreadCountUtil {
                 subscriber.onCompleted();
             }
         })
-                .subscribeOn(Schedulers.io())
                 .map(roomMarkerCount -> {
                     ResRoomInfo.MarkerInfo myMarker = MarkerRepository.getRepository().getMyMarker(roomId, myId);
                     long myLastLinkId = myMarker.getLastLinkId();
