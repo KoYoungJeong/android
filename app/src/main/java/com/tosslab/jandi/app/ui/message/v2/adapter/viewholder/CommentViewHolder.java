@@ -36,6 +36,8 @@ import com.tosslab.jandi.app.views.spannable.NameSpannable;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import rx.android.schedulers.AndroidSchedulers;
+
 /**
  * Created by tee on 16. 4. 7..
  */
@@ -242,6 +244,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
             }
 
             UnreadCountUtil.getUnreadCount(teamId, roomId, link.id, link.fromEntity, myId)
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(unreadCount -> {
                         if (unreadCount > 0) {
                             NameSpannable unreadCountSpannable =

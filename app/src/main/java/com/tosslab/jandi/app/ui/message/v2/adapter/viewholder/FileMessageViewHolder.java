@@ -24,6 +24,8 @@ import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import rx.android.schedulers.AndroidSchedulers;
+
 public class FileMessageViewHolder extends BaseMessageViewHolder {
 
     private ImageView ivProfile;
@@ -104,6 +106,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
 
         UnreadCountUtil.getUnreadCount(
                 teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(unreadCount -> {
 
                     tvMessageBadge.setText(String.valueOf(unreadCount));
