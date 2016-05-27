@@ -3,8 +3,6 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 
-import java.util.Collection;
-
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
@@ -14,34 +12,29 @@ import rx.schedulers.Schedulers;
  */
 public class UnreadCountUtil {
 
-    public static Observable<Integer> getUnreadCount(long teamId, long roomId, long linkId,
-                                                     long fromEntityId, long myId) {
+    public static Observable<Long> getUnreadCount(long teamId, long roomId, long linkId,
+                                                  long fromEntityId, long myId) {
 
 
-        return Observable.create(new Observable.OnSubscribe<ResRoomInfo.MarkerInfo>() {
+        return Observable.create(new Observable.OnSubscribe<Long>() {
             @Override
-            public void call(Subscriber<? super ResRoomInfo.MarkerInfo> subscriber) {
-                Collection<ResRoomInfo.MarkerInfo> roomMarker = MarkerRepository.getRepository().getRoomMarker(roomId);
-                for (ResRoomInfo.MarkerInfo markerInfo : roomMarker) {
-                    subscriber.onNext(markerInfo);
-                }
-
+            public void call(Subscriber<? super Long> subscriber) {
+                long roomMarkerCount = MarkerRepository.getRepository().getRoomMarkerCount(roomId, linkId);
+                subscriber.onNext(roomMarkerCount);
                 subscriber.onCompleted();
             }
         })
                 .subscribeOn(Schedulers.io())
-                .filter(markerInfo ->
-                        // -1 이면 읽음 처리
-                        markerInfo.getLastLinkId() >= 0)
-
-                .filter(markerInfo ->
-                        // 유저의 마지막 마커가 크면 읽음 처리
-                        markerInfo.getLastLinkId() < linkId)
-
-                .filter(markerInfo ->
-                        // 내 메세지이면 읽음 처리
-                        !(fromEntityId == myId && markerInfo.getMemberId() == myId))
-                .count();
+                .map(roomMarkerCount -> {
+                    ResRoomInfo.MarkerInfo myMarker = MarkerRepository.getRepository().getMyMarker(roomId, myId);
+                    long myLastLinkId = myMarker.getLastLinkId();
+                    if ((fromEntityId == myId
+                            && (0 <= myLastLinkId && myLastLinkId < linkId))) {
+                        return roomMarkerCount - 1;
+                    } else {
+                        return roomMarkerCount;
+                    }
+                });
 
     }
 }

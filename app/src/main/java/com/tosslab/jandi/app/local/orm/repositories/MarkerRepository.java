@@ -6,8 +6,6 @@ import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplat
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Created by Steve SeongUg Jung on 15. 7. 23..
@@ -95,23 +93,23 @@ public class MarkerRepository extends LockExecutorTemplate {
         });
     }
 
-    public Collection<ResRoomInfo.MarkerInfo> getRoomMarker(long roomId) {
+    public long getRoomMarkerCount(long roomId, long linkId) {
         return execute(() -> {
             try {
-                Dao<ResRoomInfo, Long> roomInfoDao = getHelper().getDao(ResRoomInfo.class);
-                roomInfoDao.setObjectCache(true);
-                ResRoomInfo roomInfo = roomInfoDao.queryForId(roomId);
-
-                if (roomInfo != null) {
-                    return roomInfo.getMarkers();
-                } else {
-                    return new ArrayList<ResRoomInfo.MarkerInfo>();
-                }
+                Dao<ResRoomInfo.MarkerInfo, ?> dao = getHelper().getDao(ResRoomInfo.MarkerInfo.class);
+                return dao.queryBuilder()
+                        .where()
+                        .eq("roomId", roomId)
+                        .and()
+                        .ge("lastLinkId", 0)
+                        .and()
+                        .lt("lastLinkId", linkId)
+                        .countOf();
 
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            return new ArrayList<ResRoomInfo.MarkerInfo>();
+            return 0L;
 
         });
     }
