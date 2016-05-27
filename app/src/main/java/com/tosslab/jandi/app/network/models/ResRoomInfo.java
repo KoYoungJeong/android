@@ -115,7 +115,7 @@ public class ResRoomInfo {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class MarkerInfo {
-        @DatabaseField(columnName = "roomId", foreign = true, foreignAutoRefresh = true)
+        @DatabaseField(columnName = "roomId", foreign = true)
         private ResRoomInfo room;
 
         @DatabaseField(generatedId = true)

@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 
 import de.greenrobot.event.EventBus;
+import rx.android.schedulers.AndroidSchedulers;
 
 public class JandiBotViewHolder implements BodyViewHolder {
     protected Context context;
@@ -147,8 +148,17 @@ public class JandiBotViewHolder implements BodyViewHolder {
             messageStringBuilder.setSpan(spannable,
                     startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                    link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
+            UnreadCountUtil.getUnreadCount(teamId, roomId,
+                    link.id, link.fromEntity, EntityManager.getInstance().getMe().getId())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(unreadCount -> {
+                        if (unreadCount > 0) {
+                            tvMessageBadge.setText(String.valueOf(unreadCount));
+                            tvMessageBadge.setVisibility(View.VISIBLE);
+                        } else {
+                            tvMessageBadge.setVisibility(View.GONE);
+                        }
+                    });
 
             if (!hasOnlyBadge) {
                 tvMessageTime.setVisibility(View.VISIBLE);
@@ -157,9 +167,6 @@ public class JandiBotViewHolder implements BodyViewHolder {
                 tvMessageTime.setVisibility(View.GONE);
             }
 
-            if (unreadCount > 0) {
-                tvMessageBadge.setText(String.valueOf(unreadCount));
-            }
 
         }
 

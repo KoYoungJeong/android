@@ -35,6 +35,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
+import rx.android.schedulers.AndroidSchedulers;
+
 public class IntegrationBotViewHolder implements BodyViewHolder {
 
     private static final String TAG = "IntegrationBotViewHolder";
@@ -146,8 +148,18 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
         LinkifyUtil.setOnLinkClick(tvMessage);
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
+        UnreadCountUtil.getUnreadCount(teamId, roomId,
+                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(unreadCount -> {
+                    if (unreadCount > 0) {
+                        tvMessageBadge.setText(String.valueOf(unreadCount));
+                        tvMessageBadge.setVisibility(View.VISIBLE);
+                    } else {
+                        tvMessageBadge.setVisibility(View.GONE);
+                    }
+                });
+
 
         if (!hasOnlyBadge) {
             tvMessageTime.setVisibility(View.VISIBLE);
@@ -156,9 +168,6 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
             tvMessageTime.setVisibility(View.GONE);
         }
 
-        if (unreadCount > 0) {
-            tvMessageBadge.setText(String.valueOf(unreadCount));
-        }
 
         tvMessage.setText(messageStringBuilder);
 
@@ -235,7 +244,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
         Iterator<ResMessages.ConnectInfo> iterator = connectInfos.iterator();
         while (iterator.hasNext()) {
             ResMessages.ConnectInfo connectInfo = iterator.next();
-            if(!TextUtils.isEmpty(connectInfo.title) || !TextUtils.isEmpty(connectInfo.description)) {
+            if (!TextUtils.isEmpty(connectInfo.title) || !TextUtils.isEmpty(connectInfo.description)) {
                 isEmpty = false;
                 break;
             }
