@@ -924,6 +924,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         long lastReadLinkId = messagePointer.getLastReadLinkId();
 
         if (lastReadLinkId <= 0) {
+            messageRecyclerViewManager.scrollToLast();
             return;
         }
         int measuredHeight = lvMessages.getMeasuredHeight() / 2;
