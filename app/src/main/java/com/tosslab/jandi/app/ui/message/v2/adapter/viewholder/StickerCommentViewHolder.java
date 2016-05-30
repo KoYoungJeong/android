@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -23,12 +22,13 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by tee on 16. 4. 7..
@@ -206,14 +206,17 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
             tvProfileNestedCommentStickerCreateDate.setText(DateTransformator.getTimeStringForSimple(message.createTime));
 
         }
-        int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
-        if (unreadCount > 0) {
-            tvProfileNestedCommentStickerUnread.setText(String.valueOf(unreadCount));
-            tvProfileNestedCommentStickerUnread.setVisibility(View.VISIBLE);
-        } else {
-            tvProfileNestedCommentStickerUnread.setVisibility(View.GONE);
-        }
+        UnreadCountUtil.getUnreadCount(teamId, roomId,
+                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(unreadCount -> {
+                    if (unreadCount > 0) {
+                        tvProfileNestedCommentStickerUnread.setText(String.valueOf(unreadCount));
+                        tvProfileNestedCommentStickerUnread.setVisibility(View.VISIBLE);
+                    } else {
+                        tvProfileNestedCommentStickerUnread.setVisibility(View.GONE);
+                    }
+                });
     }
 
     private void settingFileInfo(ResMessages.Link link, long roomId) {

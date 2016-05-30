@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -24,6 +23,8 @@ import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import rx.android.schedulers.AndroidSchedulers;
 
 public class FileMessageViewHolder extends BaseMessageViewHolder {
 
@@ -103,16 +104,20 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
 
         boolean isPublicTopic = room.isPublicTopic();
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(
-                teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
+        UnreadCountUtil.getUnreadCount(
+                teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(unreadCount -> {
 
-        tvMessageBadge.setText(String.valueOf(unreadCount));
+                    tvMessageBadge.setText(String.valueOf(unreadCount));
 
-        if (unreadCount <= 0) {
-            tvMessageBadge.setVisibility(View.GONE);
-        } else {
-            tvMessageBadge.setVisibility(View.VISIBLE);
-        }
+                    if (unreadCount <= 0) {
+                        tvMessageBadge.setVisibility(View.GONE);
+                    } else {
+                        tvMessageBadge.setVisibility(View.VISIBLE);
+                    }
+                });
+
 
         tvMessageTime.setText(DateTransformator.getTimeStringForSimple(link.time));
 

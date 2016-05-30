@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -29,6 +28,8 @@ import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
+
+import rx.android.schedulers.AndroidSchedulers;
 
 public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
@@ -130,16 +131,20 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
         EntityManager entityManager = EntityManager.getInstance();
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(
-                teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
+        UnreadCountUtil.getUnreadCount(
+                teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(unreadCount -> {
 
-        tvMessageBadge.setText(String.valueOf(unreadCount));
+                    tvMessageBadge.setText(String.valueOf(unreadCount));
 
-        if (unreadCount <= 0) {
-            tvMessageBadge.setVisibility(View.GONE);
-        } else {
-            tvMessageBadge.setVisibility(View.VISIBLE);
-        }
+                    if (unreadCount <= 0) {
+                        tvMessageBadge.setVisibility(View.GONE);
+                    } else {
+                        tvMessageBadge.setVisibility(View.VISIBLE);
+                    }
+                });
+
 
         tvMessageTime.setText(DateTransformator.getTimeStringForSimple(link.time));
 

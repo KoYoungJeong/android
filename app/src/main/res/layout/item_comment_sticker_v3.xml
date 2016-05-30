@@ -119,7 +119,6 @@
                 android:layout_alignBottom="@+id/tv_profile_nested_comment_sticker_create_date"
                 android:layout_marginLeft="4dp"
                 android:layout_toRightOf="@+id/tv_profile_nested_comment_sticker_create_date"
-                android:text="10"
                 android:textColor="@color/jandi_accent_color"
                 android:textSize="9sp"
                 android:textStyle="bold"/>

@@ -139,14 +139,15 @@ import com.tosslab.jandi.app.utils.RecyclerScrollStateListener;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
-import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.utils.image.transform.TransformConfig;
+import com.tosslab.jandi.app.utils.imeissue.EditableAccomodatingLatinIMETypeNullIssues;
 import com.tosslab.jandi.app.views.BackPressCatchEditText;
 import com.tosslab.jandi.app.views.SoftInputDetectLinearLayout;
 import com.tosslab.jandi.app.views.controller.SoftInputAreaController;
@@ -911,12 +912,28 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             showPreviewIfNotLastItem(lastUpdatedMessage);
         } else {
             if (isFirstLoad) {
-                messageRecyclerViewManager.scrollToLast();
+                moveLastReadLink();
             } else {
                 messageRecyclerViewManager.scrollToLinkId(lastUpdatedMessage.id);
             }
         }
     }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void moveLastReadLink() {
+        long lastReadLinkId = messagePointer.getLastReadLinkId();
+
+        if (lastReadLinkId <= 0) {
+            messageRecyclerViewManager.scrollToLast();
+            return;
+        }
+        int measuredHeight = lvMessages.getMeasuredHeight() / 2;
+        if (measuredHeight <= 0) {
+            measuredHeight = (int) UiUtils.getPixelFromDp(100f);
+        }
+        messageRecyclerViewManager.scrollToLinkId(lastReadLinkId, measuredHeight);
+    }
+
 
     @UiThread
     public void showPreviewIfNotLastItem(ResMessages.Link lastUpdatedMessage) {

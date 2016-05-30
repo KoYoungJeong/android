@@ -434,10 +434,12 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     @Override
     public void removeAllDummy() {
-        for (int idx = getItemCount(); idx > 0; idx--) {
+        for (int idx = getItemCount() - 1; idx >= 0; idx--) {
             ResMessages.Link item = getItem(idx);
             if (item instanceof DummyMessageLink) {
                 remove(idx);
+            } else {
+                break;
             }
         }
     }
