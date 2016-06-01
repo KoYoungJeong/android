@@ -10,8 +10,8 @@ import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.interfaces.actions.OpenAction;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
+import com.tosslab.jandi.app.ui.intro.signup.verify.model.SignUpVerifyModel;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.login.login.model.IntroLoginModel;
 import com.tosslab.jandi.app.ui.maintab.chat.model.MainChatListModel;
 import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.EntityMenuDialogModel;
@@ -26,7 +26,6 @@ import com.tosslab.jandi.app.ui.profile.defaultimage.model.ProfileImageSelectorM
 import com.tosslab.jandi.app.ui.search.messages.model.MessageSearchManager;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
 import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
-import com.tosslab.jandi.app.ui.signup.verify.model.SignUpVerifyModel;
 import com.tosslab.jandi.app.ui.starmention.model.StarMentionListModel;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 
@@ -39,8 +38,6 @@ public interface ApiClientComponent {
     void inject(EntityClientManager injector);
 
     void inject(JandiInterfaceModel jandiInterfaceModel);
-
-    void inject(IntroLoginModel introLoginModel);
 
     void inject(IntroActivityModel introActivityModel);
 

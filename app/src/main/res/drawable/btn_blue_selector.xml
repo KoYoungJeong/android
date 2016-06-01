@@ -2,7 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:drawable="@drawable/bg_round_dark_blue_rect" android:state_pressed="true" />
-    <item android:drawable="@drawable/bg_round_30_blue_rect" android:state_enabled="false" />
+    <item android:drawable="@drawable/bg_round_gray_rect" android:state_enabled="false" />
     <item android:drawable="@drawable/bg_round_blue_rect" />
 
 </selector>

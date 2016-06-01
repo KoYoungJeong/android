@@ -6,11 +6,13 @@ package com.tosslab.jandi.app.ui.intro.signin.presenter;
 
 public interface MainSignInPresenter {
 
-    void CheckEmailValidation(String email);
+    boolean checkEmailValidation(String email);
 
-    void CheckPasswordValidation(String password);
+    boolean checkPasswordValidation(String password);
 
     void trySignIn(String email, String password);
+
+    void forgotPassword(String email);
 
     interface View {
 
@@ -18,17 +20,15 @@ public interface MainSignInPresenter {
 
         void showErrorInvalidEmail();
 
+        void removeErrorEmail();
+
         void showErrorInsertPassword();
 
         void showErrorInvalidPassword();
 
+        void removeErrorPassword();
+
         void showErrorInvalidEmailOrPassword();
-
-        void showSignInButtonEnabled();
-
-        void showSignInButtonDisabled();
-
-        void moveToSignUp();
 
         void showNetworkErrorToast();
 
@@ -36,6 +36,11 @@ public interface MainSignInPresenter {
 
         void dismissProgressDialog();
 
+        void moveToTeamSelectionActivity(String myEmailId);
+
+        void showSuccessPasswordResetToast();
+
+        void showFailPasswordResetToast();
     }
 
 }

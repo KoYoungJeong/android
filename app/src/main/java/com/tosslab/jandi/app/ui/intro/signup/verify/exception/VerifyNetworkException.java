@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.signup.verify.exception;
+package com.tosslab.jandi.app.ui.intro.signup.verify.exception;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

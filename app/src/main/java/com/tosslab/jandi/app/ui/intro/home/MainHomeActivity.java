@@ -28,14 +28,16 @@ public class MainHomeActivity extends BaseAppCompatActivity {
     @OnClick(R.id.tv_sign_up_button)
     public void onClickSignUp() {
         Intent intent = new Intent(this, MainSignUpActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 
     @OnClick(R.id.tv_sign_in_button)
     public void onClickSignIn() {
         Intent intent = new Intent(this, MainSignInActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 

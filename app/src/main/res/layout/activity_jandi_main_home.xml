@@ -17,9 +17,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="40dp"
-            android:layout_marginRight="1dp"
+            android:layout_marginRight="2dp"
             android:gravity="center"
-            android:text="Already have an account?"
+            android:text="@string/jandi_already_has_account"
             android:textSize="12sp" />
 
         <TextView
@@ -29,7 +29,7 @@
             android:layout_marginBottom="40dp"
             android:clickable="true"
             android:gravity="center"
-            android:text="SIGN IN"
+            android:text="@string/jandi_sign_in_block"
             android:textColor="@color/button_text_color"
             android:textSize="12sp" />
     </LinearLayout>
@@ -46,7 +46,7 @@
         android:background="@drawable/btn_blue_selector"
         android:clickable="true"
         android:gravity="center"
-        android:text="SIGN UP"
+        android:text="@string/jandi_action_start"
         android:textColor="@color/white"
         android:textSize="14sp" />
 

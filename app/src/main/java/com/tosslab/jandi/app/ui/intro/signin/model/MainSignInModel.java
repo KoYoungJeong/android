@@ -22,8 +22,6 @@ import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
-import javax.inject.Inject;
-
 import dagger.Lazy;
 
 /**
@@ -32,22 +30,26 @@ import dagger.Lazy;
 
 public class MainSignInModel {
 
-    @Inject
     Lazy<LoginApi> loginApi;
 
-    @Inject
     Lazy<AccountApi> accountApi;
 
-    @Inject
     Lazy<DeviceApi> deviceApi;
 
-    public ResAccessToken login(String myEmailId, String password) throws RetrofitException {
-        // 팀이 아무것도 없는 사용자일 경우의 에러 메시지
-//        final int errStringResNotRegisteredId = R.string.err_login_unregistered_id;
+    public MainSignInModel(Lazy<LoginApi> loginApi, Lazy<AccountApi> accountApi, Lazy<DeviceApi> deviceApi) {
+        this.loginApi = loginApi;
+        this.accountApi = accountApi;
+        this.deviceApi = deviceApi;
+    }
 
-        // Get Access Token
+    public ResAccessToken login(String myEmailId, String password) throws RetrofitException {
         ReqAccessToken passwordReqToken = ReqAccessToken.createPasswordReqToken(myEmailId, password);
         return loginApi.get().getAccessToken(passwordReqToken);
+    }
+
+    public ResCommon requestPasswordReset(String email) throws RetrofitException {
+        return new AccountPasswordApi(RetrofitBuilder.getInstance())
+                .resetPassword(new ReqAccountEmail(email, LanguageUtil.getLanguage()));
     }
 
     public boolean saveTokenInfo(ResAccessToken accessToken) {
@@ -76,10 +78,6 @@ public class MainSignInModel {
         return password.equals("");
     }
 
-    public ResCommon requestPasswordReset(String email) throws RetrofitException {
-        return new AccountPasswordApi(RetrofitBuilder.getInstance()).resetPassword(new ReqAccountEmail(email, LanguageUtil.getLanguage()));
-    }
-
     public void trackSignInSuccess() {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(Event.SignIn)
@@ -96,7 +94,6 @@ public class MainSignInModel {
                 .property(PropertyKey.ErrorCode, errorCode)
                 .build());
         AnalyticsUtil.flushSprinkler();
-
     }
 
     public void subscribePush(String deviceId) {
@@ -107,8 +104,8 @@ public class MainSignInModel {
         }
     }
 
-
     public boolean isValidPassword(String password) {
         return password.length() >= 8;
     }
+
 }

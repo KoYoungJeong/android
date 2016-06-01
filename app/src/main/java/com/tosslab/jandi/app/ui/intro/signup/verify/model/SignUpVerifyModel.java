@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.signup.verify.model;
+package com.tosslab.jandi.app.ui.intro.signup.verify.model;
 
 import android.text.TextUtils;
 
@@ -13,7 +13,7 @@ import com.tosslab.jandi.app.network.models.ReqAccountVerification;
 import com.tosslab.jandi.app.network.models.ResAccountActivate;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.ui.signup.verify.exception.VerifyNetworkException;
+import com.tosslab.jandi.app.ui.intro.signup.verify.exception.VerifyNetworkException;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;

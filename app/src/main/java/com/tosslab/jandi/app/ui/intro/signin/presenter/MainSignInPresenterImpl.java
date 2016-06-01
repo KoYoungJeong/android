@@ -21,50 +21,67 @@ import rx.schedulers.Schedulers;
 /**
  * Created by tee on 16. 5. 25..
  */
+
 public class MainSignInPresenterImpl implements MainSignInPresenter {
 
-    private MainSignInModel model;
+    @Inject
+    MainSignInModel model;
 
     private MainSignInPresenter.View view;
 
     @Inject
-    public MainSignInPresenterImpl(MainSignInPresenter.View view, MainSignInModel model) {
+    public MainSignInPresenterImpl(MainSignInPresenter.View view) {
         this.view = view;
-        this.model = model;
     }
 
     @Override
-    public void CheckEmailValidation(String email) {
-        if (email.equals("")) {
+    public boolean checkEmailValidation(String email) {
+        if (model.isEmptyEmail(email)) {
             view.showErrorInsertEmail();
+            return false;
         } else if (!model.isValidEmailFormat(email)) {
             view.showErrorInvalidEmail();
+            return false;
         }
-
+        view.removeErrorEmail();
+        return true;
     }
 
     @Override
-    public void CheckPasswordValidation(String password) {
-        if (password.equals("")) {
+    public boolean checkPasswordValidation(String password) {
+        if (model.isEmptyPassword(password)) {
             view.showErrorInsertPassword();
-        } else if (password.length() < 8) {
-            view.showErrorInvalidEmail();
+            return false;
+        } else if (!model.isValidPassword(password)) {
+            view.showErrorInvalidPassword();
+            return false;
         }
+        view.removeErrorPassword();
+        return true;
     }
 
     @Override
     public void trySignIn(String email, String password) {
         view.showProgressDialog();
 
+        final boolean emailValidation = checkEmailValidation(email);
+        final boolean passwordValidation = checkPasswordValidation(password);
+
         Observable.create(new Observable.OnSubscribe<ResAccessToken>() {
             @Override
             public void call(Subscriber<? super ResAccessToken> subscriber) {
                 try {
-                    ResAccessToken accessToken = model.login(email, password);
-                    subscriber.onNext(accessToken);
-                    subscriber.onCompleted();
+                    if (emailValidation && passwordValidation) {
+                        ResAccessToken accessToken = model.login(email, password);
+                        subscriber.onNext(accessToken);
+                        subscriber.onCompleted();
+                    } else {
+                        subscriber.onCompleted();
+                    }
                 } catch (RetrofitException e) {
                     subscriber.onError(e);
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
                 }
 
             }
@@ -75,7 +92,7 @@ public class MainSignInPresenterImpl implements MainSignInPresenter {
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(accessToken -> {
-                    getAccountInfo();
+                    getAccountInfo(email);
                 }, t -> {
                     if (!(t instanceof RetrofitException)) {
                         return;
@@ -94,18 +111,17 @@ public class MainSignInPresenterImpl implements MainSignInPresenter {
                         } catch (Exception e) {
                             view.showNetworkErrorToast();
                             model.trackSignInFail(JandiConstants.NetworkError.BAD_REQUEST);
+                        } finally {
+                            view.dismissProgressDialog();
                         }
                     } else {
                         view.showNetworkErrorToast();
                         model.trackSignInFail(JandiConstants.NetworkError.BAD_REQUEST);
                     }
-
-                    view.dismissProgressDialog();
-                });
-
+                }, () -> view.dismissProgressDialog());
     }
 
-    private void getAccountInfo() {
+    private void getAccountInfo(String email) {
         Observable.create(new Observable.OnSubscribe<ResAccountInfo>() {
             @Override
             public void call(Subscriber<? super ResAccountInfo> subscriber) {
@@ -131,7 +147,25 @@ public class MainSignInPresenterImpl implements MainSignInPresenter {
                     model.trackSignInSuccess();
                 }).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
+                    view.moveToTeamSelectionActivity(email);
                 }, t -> view.showNetworkErrorToast(), () -> view.dismissProgressDialog());
     }
 
+    @Override
+    public void forgotPassword(String email) {
+        Observable.create(subscriber -> {
+            try {
+                model.requestPasswordReset(email);
+                subscriber.onCompleted();
+            } catch (Exception e) {
+                subscriber.onError(e);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(o -> {
+                        },
+                        e -> view.showFailPasswordResetToast(),
+                        () -> view.showSuccessPasswordResetToast());
+
+    }
 }

@@ -1,13 +1,13 @@
-package com.tosslab.jandi.app.ui.signup.verify.presenter;
+package com.tosslab.jandi.app.ui.intro.signup.verify.presenter;
 
 import android.content.Context;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountActivate;
-import com.tosslab.jandi.app.ui.signup.verify.exception.VerifyNetworkException;
-import com.tosslab.jandi.app.ui.signup.verify.model.SignUpVerifyModel;
-import com.tosslab.jandi.app.ui.signup.verify.view.SignUpVerifyView;
+import com.tosslab.jandi.app.ui.intro.signup.verify.exception.VerifyNetworkException;
+import com.tosslab.jandi.app.ui.intro.signup.verify.model.SignUpVerifyModel;
+import com.tosslab.jandi.app.ui.intro.signup.verify.view.SignUpVerifyView;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -15,7 +15,6 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-
 
 
 /**

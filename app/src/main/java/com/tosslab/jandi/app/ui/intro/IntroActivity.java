@@ -7,8 +7,8 @@ import android.os.Bundle;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.intro.presenter.IntroActivityPresenter;
 import com.tosslab.jandi.app.ui.intro.home.MainHomeActivity;
+import com.tosslab.jandi.app.ui.intro.presenter.IntroActivityPresenter;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -76,12 +76,9 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     @UiThread
     @Override
     public void moveToIntroTutorialActivity() {
-        // Move TutorialActivity
-//        IntroMainActivity_
-//                .intent(IntroActivity.this)
-//                .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-//                .start();
+        // Move intro activity
         Intent intent = new Intent(this, MainHomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
 
         finish();

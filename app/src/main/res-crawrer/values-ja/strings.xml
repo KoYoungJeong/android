@@ -73,6 +73,7 @@
 	<string name="jandi_action_share">"共有する"</string>
 	<string name="jandi_action_starred">"スター付き"</string>
 	<string name="jandi_action_start">"新規アカウント作成"</string>
+	<string name="jandi_action_start_block">"<u>新規アカウント作成</u>"</string>
 	<string name="jandi_action_unshare">"非共有"</string>
 	<string name="jandi_action_update">"アップデートする"</string>
 	<string name="jandi_add">"追加"</string>
@@ -80,6 +81,7 @@
 	<string name="jandi_add_to_contacts">"連絡先を追加する"</string>
 	<string name="jandi_alert_already_topic_owenr">"あなたはすでにこのトピックの管理者です。"</string>
 	<string name="jandi_all_of_topic_members">"@all（トピック内）"</string>
+	<string name="jandi_already_has_account">"すでにチームがある場合はこちら"</string>
 	<string name="jandi_already_in_team">"このメールはすでに%sのメンバーです"</string>
 	<string name="jandi_already_linked_email">"このメールアドレスは既にアカウントに登録されています"</string>
 	<string name="jandi_announcement_create">"告知に登録する"</string>
@@ -88,11 +90,11 @@
 	<string name="jandi_announcement_delete">"削除"</string>
 	<string name="jandi_announcement_delete_question">"この告知を削除します。続きますか？"</string>
 	<string name="jandi_announcement_deleted">"%sさんが告知を削除しました。"</string>
-	<string name="jandi_announcement_minimize">"環境設定"</string>
+	<string name="jandi_announcement_minimize">"最小化"</string>
 	<string name="jandi_another_invitation_sent">"メールでもう一度招待しました"</string>
-	<string name="jandi_are_you_sure_disable_external_link">"削除すると、リンクはこれから使用できず、本当に削除しますか？"</string>
+	<string name="jandi_are_you_sure_disable_external_link">"削除すると、リンクをもう使用することができません。本当に削除しますか？"</string>
 	<string name="jandi_ask_assign_topic_owner">"このメンバーにトピック管理者の権限を譲りますか？"</string>
-	<string name="jandi_ask_kick_user_from_topic">"本当にこのメンバーをトピックから退室させますか？"</string>
+	<string name="jandi_ask_kick_user_from_topic">"本当にこのメンバーをトピックから退出させますか？"</string>
 	<string name="jandi_ask_to_leave_if_private_topic_owner">"あなたはこのトピックの管理者です。他のメンバーに管理者の権限を譲った後トピックから退出できます。"</string>
 	<string name="jandi_ask_to_leave_if_topic_owner">"あなたはこのトピックの管理者です。トピックから退出するには管理者権限を他のメンバーに譲ってください。"</string>
 	<string name="jandi_assign">"譲る"</string>
@@ -190,11 +192,14 @@
 	<string name="jandi_entity_create_entity_name">"名前"</string>
 	<string name="jandi_entity_joined_topic">"参加中のトピック"</string>
 	<string name="jandi_entity_unjoined_topic">"未参加のトピック"</string>
+	<string name="jandi_err_input_email">"メールアドレスを入力してください"</string>
+	<string name="jandi_err_input_password">"パスワードを入力してください"</string>
+	<string name="jandi_err_invalid_email">"メールアドレスが正しくありません"</string>
 	<string name="jandi_err_unexpected">"不明な問題が発生しました"</string>
 	<string name="jandi_error_web_token">"ログイン中にエラーが発生しました。もう一度お試しください"</string>
 	<string name="jandi_exceeded_max_text_length">"５０００文字まで入力できます"</string>
 	<string name="jandi_expired_invitation_link">"この招待リンクの有効期限が切れています。新しいリンクをリクエストしてください"</string>
-	<string name="jandi_explain_global_push_off">"アプリの通知がオフに設定されています。もっと見る > 設定で通知をオンにすることができます。"</string>
+	<string name="jandi_explain_global_push_off">"アプリの通知がオフに設定されています。「もっと見る > 設定」で通知をオンにしてください。"</string>
 	<string name="jandi_explain_topic_description">"トピックの説明（選択）"</string>
 	<string name="jandi_export">"エクスポート"</string>
 	<string name="jandi_export_to_app">"他のアプリにエクスポート"</string>
@@ -242,6 +247,8 @@
 	<string name="jandi_folder_removed">"フォルダが削除されました"</string>
 	<string name="jandi_folder_rename">"リネーム"</string>
 	<string name="jandi_folder_renamed">"フォルダ名が変更されました"</string>
+	<string name="jandi_forget_password">"パスワードをお忘れですか？"</string>
+	<string name="jandi_forget_password_block">"<u>パスワードをお忘れですか？</u>"</string>
 	<string name="jandi_forgot_password">"<u>パスワードを忘れた場合</u>"</string>
 	<string name="jandi_go_to_latest">"最新のメッセージに移動"</string>
 	<string name="jandi_go_to_setting">"設定に移動"</string>
@@ -259,6 +266,7 @@
 	<string name="jandi_input_password">"選択したチームのパスワードを入力してください"</string>
 	<string name="jandi_input_search_keyword">"キーワードで検索"</string>
 	<string name="jandi_input_topic_name">"トピック名を入力してください"</string>
+	<string name="jandi_input_user_name">"検索するメンバーの名前を入力"</string>
 	<string name="jandi_invitation">"招待"</string>
 	<string name="jandi_invitation_help">"あなたのチームメンバーをJANDIに招待しましょう！"</string>
 	<string name="jandi_invitation_succeed">"招待しました"</string>
@@ -276,7 +284,7 @@
 	<string name="jandi_invite_succes_copy_link">"あなたのチームへの招待リンクがコピーされました。チームに招待したい人に送りましょう"</string>
 	<string name="jandi_invite_succes_send">"招待メールが以下のアドレスに正常に送信されました"</string>
 	<string name="jandi_invite_success">"招待メールが送信されました"</string>
-	<string name="jandi_invite_to_dummy_account_again">"入力しましたメールアドレスはすでに他のメンバーが招待中です。
+	<string name="jandi_invite_to_dummy_account_again">"入力したメールアドレスはすでに他のメンバーが招待中です。
 招待メールを再送信しますか？"</string>
 	<string name="jandi_invite_to_team">"チームに招待する"</string>
 	<string name="jandi_invite_wechat">"WeChat"</string>
@@ -286,7 +294,7 @@
 	<string name="jandi_it_has_no_topic_description">"（トピック説明なし）"</string>
 	<string name="jandi_join_topic">"参加"</string>
 	<string name="jandi_joined_team">"すでに%1$sのメンバーです。チームリストを確認してください"</string>
-	<string name="jandi_kicked_message">"%sの管理者からトピックから退出させられました。"</string>
+	<string name="jandi_kicked_message">"%sの管理者によってトピックから退出させられました。"</string>
 	<string name="jandi_later">"後で"</string>
 	<string name="jandi_launch">"JANDIを利用する"</string>
 	<string name="jandi_left_topic">"%sが退出しました"</string>
@@ -335,6 +343,7 @@
 	<string name="jandi_msg_network_offline_warn">"現在ネットワークに接続されていません。"</string>
 	<string name="jandi_my_files">"<b>自分</b>"</string>
 	<string name="jandi_mypage">"マイページ"</string>
+	<string name="jandi_name">"名前"</string>
 	<string name="jandi_name_in_jandi">"アカウント名"</string>
 	<string name="jandi_need_to_assign_topic_owner">"あなたはこのトピックの管理者です。
 トピックメニューからトピックの管理者を変更してから退出できます。"</string>
@@ -367,6 +376,7 @@
 	<string name="jandi_play_store">"Google Playストア"</string>
 	<string name="jandi_please_retry">"正しいパスワードを入力してください"</string>
 	<string name="jandi_plz_input_topic_description">"トピックの説明（選択）"</string>
+	<string name="jandi_pp">"プライバシーポリシー"</string>
 	<string name="jandi_preview_message_contents">"メッセージプレビュー"</string>
 	<string name="jandi_privacy_policy">"プライバシーポリシー"</string>
 	<string name="jandi_privacy_protection">"プライバシー"</string>
@@ -398,7 +408,7 @@
 	<string name="jandi_push_preview_all_message">"全メッセージ"</string>
 	<string name="jandi_push_preview_public_only">"公開トピックのみ"</string>
 	<string name="jandi_question_team_create">"JANDIにチームを作成していない方はこちら"</string>
-	<string name="jandi_r_u_sure_cancel_invitation">"本当にい招待をキャンセルしますか?"</string>
+	<string name="jandi_r_u_sure_cancel_invitation">"本当に招待をキャンセルしますか?"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"プライマリアドレスは削除できません"</string>
 	<string name="jandi_reorder_from_long_press">"フォルダを長押しして順番が調整できます。"</string>
 	<string name="jandi_resend_invitation">"招待メールを再発信"</string>
@@ -419,6 +429,7 @@
 	<string name="jandi_select_gallery">"写真を選択"</string>
 	<string name="jandi_select_maximum_10">"最大10枚まで選択できます"</string>
 	<string name="jandi_select_team">"チームを選択してください"</string>
+	<string name="jandi_send">"送信"</string>
 	<string name="jandi_send_invitation">"招待メールを送信"</string>
 	<string name="jandi_send_to_email">"メールを送る"</string>
 	<string name="jandi_sent_password_reset_mail">"パスワード再設定メールが送信されました"</string>
@@ -445,6 +456,7 @@
 	<string name="jandi_share_to_jandi">"JANDIにシェア"</string>
 	<string name="jandi_shared">"共有"</string>
 	<string name="jandi_shared_in_room">"共有範囲"</string>
+	<string name="jandi_sign_in_block">"<u>ログインする</u>"</string>
 	<string name="jandi_sign_in_ids_explain">"JANDIからのメールを受信するメールアドレスを一つ選択してください。メールアドレスを追加しチームごとに使い分けられます"</string>
 	<string name="jandi_sign_out_message">"本当にログアウトしますか？"</string>
 	<string name="jandi_signup_agree_all">"以下のサービス利用規約・プライバシーポリシーを全て読み、同意します"</string>
@@ -460,7 +472,7 @@
 	<string name="jandi_signup_title">"新規登録"</string>
 	<string name="jandi_signup_verification_code">"認証コードを送信しました。\n入力してアカウントを認証してください"</string>
 	<string name="jandi_signup_verify_title">"コードの認証"</string>
-	<string name="jandi_sort_folder">"フォルダーで見る"</string>
+	<string name="jandi_sort_folder">"フォルダで見る"</string>
 	<string name="jandi_sort_updated">"アップデート順"</string>
 	<string name="jandi_sounds">"音声"</string>
 	<string name="jandi_sounds_air_pop">"バブル"</string>
@@ -490,7 +502,7 @@
 	<string name="jandi_storage_access_permission">"ストレージにアクセスするにはアプリの権限を許可してください。"</string>
 	<string name="jandi_success_copy_clipboard_external_link">"共有リンクがクリップボードにコピーされました"</string>
 	<string name="jandi_success_disable_external_link">"共有用リンクが削除されました"</string>
-	<string name="jandi_success_kick_user_from_topic">"選択したメンバーがトピックから退室されました。"</string>
+	<string name="jandi_success_kick_user_from_topic">"選択したメンバーがトピックから退出されました。"</string>
 	<string name="jandi_success_to_cancel_invitation">"%sさんの招待をキャンセルしました"</string>
 	<string name="jandi_success_update_account_profile">"アカウント情報が更新されました"</string>
 	<string name="jandi_success_web_token">"ログインしました。"</string>
@@ -502,6 +514,7 @@
 	<string name="jandi_tab_private_group">"プライベートグループ"</string>
 	<string name="jandi_tab_to_view_original">"原本を見るにはこちらをタップ"</string>
 	<string name="jandi_tab_topic">"トピックス"</string>
+	<string name="jandi_tab_tos_and_pp">"「次へ」をクリックすることによって、弊社のサービス%1$sと%2$sに同意いただいたことになります。"</string>
 	<string name="jandi_team">"チーム"</string>
 	<string name="jandi_team_creation_succeed">"チームの作成に成功しました。メールを確認してください"</string>
 	<string name="jandi_team_info">"チーム"</string>
@@ -516,7 +529,7 @@
 	<string name="jandi_team_switch">"チーム切替"</string>
 	<string name="jandi_term_of_service">"サービス利用規約"</string>
 	<string name="jandi_this_is_disabled_user_explain">"このメンバーは現在無効化されています。詳細はチーム管理者にお問い合わせ下さい"</string>
-	<string name="jandi_this_member_is_pending_to_join">"チームに招待中のユーザーです。"</string>
+	<string name="jandi_this_member_is_pending_to_join">"チームに招待中のメンバーです。"</string>
 	<string name="jandi_title_activity_file_explorer">"ファイルを探す"</string>
 	<string name="jandi_title_cdp_to_be_shared">"共有範囲を選択してください"</string>
 	<string name="jandi_title_cdp_to_be_unshared">"非共有とする範囲を選択"</string>
@@ -540,6 +553,7 @@
 	<string name="jandi_topic_title">"タイトル"</string>
 	<string name="jandi_topic_title_hint">"タイトル"</string>
 	<string name="jandi_topic_was_removed">"すでに参加していないトピックなので原本が表示できません"</string>
+	<string name="jandi_tos">"サービス利用規約"</string>
 	<string name="jandi_tos_and_pp">"サービス利用規約"</string>
 	<string name="jandi_try_again">"閉じる"</string>
 	<string name="jandi_tutorial_file">"たった数回のタップでファイルを共有"</string>
@@ -554,7 +568,7 @@
 	<string name="jandi_unread_messages_below">"ここから未読メッセージ"</string>
 	<string name="jandi_unshare_succeed">"%sが非共有にされました"</string>
 	<string name="jandi_unshared_file">"共有解除されたファイル"</string>
-	<string name="jandi_unshared_file_in_dm">"このファイルは非共有化されました"</string>
+	<string name="jandi_unshared_file_in_dm">"このファイルは共有解除されました"</string>
 	<string name="jandi_unshared_message">"原本ファイルへのアクセス権がありません。"</string>
 	<string name="jandi_unstarred">"お気に入りから削除する"</string>
 	<string name="jandi_unsupported_share_contents">"共有できないファイル（メッセージ）です"</string>

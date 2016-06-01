@@ -4,10 +4,45 @@ package com.tosslab.jandi.app.ui.intro.signup.presenter;
  * Created by tee on 16. 5. 25..
  */
 
-public class MainSignUpPresenter {
+public interface MainSignUpPresenter {
 
-    public interface View {
+    boolean checkNameValidation(String name);
 
+    boolean checkPasswordValidation(String password);
+
+    boolean checkEmailValidation(String email);
+
+    void trySignUp(String name, String email, String password);
+
+    interface View {
+
+        void showProgressWheel();
+
+        void dismissProgressWheel();
+
+        void showErrorInsertEmail();
+
+        void showErrorInvalidEmail();
+
+        void removeErrorEmail();
+
+        void showErrorInsertPassword();
+
+        void removeErrorPassword();
+
+        void showErrorShortPassword();
+
+        void showErrorInsertName();
+
+        void removeErrorName();
+
+        void showErrorWeakPassword();
+
+        void showNetworkErrorToast();
+
+        void showErrorDuplicationEmail();
+
+        void startSignUpRequestVerifyActivity();
     }
 
 }

@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.signup.verify.view;
+package com.tosslab.jandi.app.ui.intro.signup.verify.view;
 
 /**
  * Created by tonyjs on 15. 5. 19..

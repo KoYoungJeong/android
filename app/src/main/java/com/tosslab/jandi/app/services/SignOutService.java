@@ -10,7 +10,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
-import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
+import com.tosslab.jandi.app.ui.intro.signin.MainSignInActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -39,10 +39,9 @@ public class SignOutService extends IntentService {
 
         final Context context = getApplicationContext();
         JandiSocketService.stopService(context);
-        IntroMainActivity_
-                .intent(context)
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                .start();
+        Intent intentForSignIn = new Intent(this, MainSignInActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intentForSignIn);
 
         new Handler(Looper.getMainLooper())
                 .post(() -> ColoredToast.show(context.getString(R.string.err_expired_session)));

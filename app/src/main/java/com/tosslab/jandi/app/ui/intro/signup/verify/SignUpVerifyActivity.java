@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.signup.verify;
+package com.tosslab.jandi.app.ui.intro.signup.verify;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,8 +22,8 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.signup.verify.presenter.SignUpVerifyPresenter;
-import com.tosslab.jandi.app.ui.signup.verify.view.SignUpVerifyView;
+import com.tosslab.jandi.app.ui.intro.signup.verify.presenter.SignUpVerifyPresenter;
+import com.tosslab.jandi.app.ui.intro.signup.verify.view.SignUpVerifyView;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;

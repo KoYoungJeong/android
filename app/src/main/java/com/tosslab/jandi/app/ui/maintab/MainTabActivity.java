@@ -58,8 +58,8 @@ import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.ui.MixpanelAnalytics;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
+import com.tosslab.jandi.app.ui.intro.home.MainHomeActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.maintab.teams.adapter.TeamsAdapter;
 import com.tosslab.jandi.app.ui.maintab.teams.component.DaggerTeamsComponent;
 import com.tosslab.jandi.app.ui.maintab.teams.module.TeamsModule;
@@ -683,9 +683,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         if (isFinishing()) {
             return;
         }
-        IntroMainActivity_.intent(MainTabActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                .start();
+        Intent intent = new Intent(this, MainHomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
         finish();
     }
 

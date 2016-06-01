@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.intro.signin.dagger;
 
+import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.account.devices.DeviceApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.intro.signin.model.MainSignInModel;
@@ -23,8 +25,9 @@ public class MainSignInModule {
 
     @Provides
     @Singleton
-    public MainSignInModel provideMainSignInModel() {
-        return new MainSignInModel();
+    public MainSignInModel provideMainSignInModel(
+            Lazy<LoginApi> loginApi, Lazy<AccountApi> accountApi, Lazy<DeviceApi> deviceApi) {
+        return new MainSignInModel(loginApi, accountApi, deviceApi);
     }
 
     @Provides
