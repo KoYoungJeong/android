@@ -145,6 +145,11 @@ public class MessageListV2Presenter {
 
     // 같은 쓰레드에서 처리를 위함
     private void initAnnouncement() {
+        if (announcementModel == null || room == null || view == null) {
+            LogUtil.e(TAG, "announcementModel == null || room == null || view == null");
+            return;
+        }
+
         ResAnnouncement announcement = announcementModel.getAnnouncement(room.getTeamId(), room.getEntityId());
         view.dismissProgressWheel();
         if (announcement != null) {

@@ -10,13 +10,11 @@ import com.tosslab.jandi.app.push.queue.dagger.DaggerPushHandlerComponent;
 import com.tosslab.jandi.app.push.receiver.JandiPushReceiverModel;
 import com.tosslab.jandi.app.push.to.BaseMessagePushInfo;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-
 import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
-
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 public class PushHandler {
@@ -44,7 +42,7 @@ public class PushHandler {
 
     private void initPushQueue() {
         pushSubject
-                .onBackpressureBuffer()
+                .subscribeOn(Schedulers.immediate())
                 .filter(pushInfo -> PushHistoryRepository.getRepository().isLatestPush(pushInfo.getMessageId()))
                 .doOnNext(pushInfo -> PushHistoryRepository.getRepository().insertPushHistory(
                         pushInfo.getRoomId(), pushInfo.getMessageId()))

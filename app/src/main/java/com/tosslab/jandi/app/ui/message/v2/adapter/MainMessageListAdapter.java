@@ -262,7 +262,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     public ResMessages.Link getItem(int position) {
         lock.lock();
         try {
-            if (position >= getItemCount()) {
+            if (position < 0 || position >= getItemCount()) {
                 return null;
             }
             return links.get(position);

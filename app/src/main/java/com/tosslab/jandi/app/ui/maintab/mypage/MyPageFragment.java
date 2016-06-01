@@ -231,7 +231,6 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
     public void onDestroyView() {
         presenter.clearMentionInitializeQueue();
         EventBus.getDefault().unregister(this);
-        ButterKnife.unbind(this);
         super.onDestroyView();
     }
 

@@ -146,11 +146,14 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                     shareAdapterDataModel.clear();
                     shareAdapterDataModel.addAll(shareDatas);
                 }, t -> view.moveIntro(), () -> {
+                    view.dismissProgress();
                     ShareData item = shareAdapterDataModel.getShareData(0);
+                    if (item == null) {
+                        return;
+                    }
                     String fileName = getFileName(item.getData());
                     view.setFileTitle(fileName);
                     view.updateFiles(shareAdapterDataModel.size());
-                    view.dismissProgress();
                 });
 
     }
@@ -178,6 +181,9 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                     Observable.range(0, shareAdapterDataModel.size())
                             .subscribe(idx -> {
                                 ShareData item = shareAdapterDataModel.getShareData(idx);
+                                if (item == null) {
+                                    return;
+                                }
                                 ResultMentionsVO mentionInfoObject = MentionControlViewModel.getMentionInfoObject(comments.get(idx), map);
                                 List<MentionObject> mentions = mentionInfoObject.getMentions();
                                 String message = mentionInfoObject.getMessage();
@@ -196,6 +202,9 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     @Override
     public void onFilePageChanged(int position, String comment) {
         ShareData item = shareAdapterDataModel.getShareData(position);
+        if (item == null) {
+            return;
+        }
         String fileName = getFileName(item.getData());
         comments.set(lastPageIndex, comment);
         view.setCommentText(comments.get(position));

@@ -29,10 +29,10 @@ public class ShareFragmentPageAdapter extends FragmentStatePagerAdapter implemen
     @Override
     public Fragment getItem(int position) {
         ShareData item = getShareData(position);
-        if (item instanceof FileShareData) {
-            return ShareFileItemFragment.create(item.getData());
-        } else {
+        if (item == null || !(item instanceof FileShareData)) {
             return new Fragment();
+        } else {
+            return ShareFileItemFragment.create(item.getData());
         }
     }
 
@@ -48,6 +48,10 @@ public class ShareFragmentPageAdapter extends FragmentStatePagerAdapter implemen
 
     @Override
     public ShareData getShareData(int position) {
+        int size = size();
+        if (size <= 0 || position >= size) {
+            return null;
+        }
         return shareDatas.get(position);
     }
 

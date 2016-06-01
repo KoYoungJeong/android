@@ -20,6 +20,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -332,6 +333,11 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @Override
     public void onResume() {
         super.onResume();
+
+        if (room == null) {
+            AlertUtil.showConfirmDialog(getActivity(), "room == null", null, false);
+        }
+
         isForeground = true;
 
         PushMonitor.getInstance().register(roomId);
@@ -735,7 +741,12 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                     calendar.set(Calendar.SECOND, 0);
                     calendar.set(Calendar.MILLISECOND, 0);
 
-                    tvMessageDate.setText(DateTransformator.getTimeStringForDivider(calendar.getTimeInMillis()));
+                    long timeInMillis = calendar.getTimeInMillis();
+                    if(DateUtils.isToday(timeInMillis)) {
+                        tvMessageDate.setText(R.string.today);
+                    } else {
+                        tvMessageDate.setText(DateTransformator.getTimeStringForDivider(timeInMillis));
+                    }
                 }
             }
 
