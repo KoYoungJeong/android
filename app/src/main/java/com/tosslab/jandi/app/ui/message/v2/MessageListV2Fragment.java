@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -333,10 +334,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @Override
     public void onResume() {
         super.onResume();
-
-        if (room == null) {
-            AlertUtil.showConfirmDialog(getActivity(), "room == null", null, false);
-        }
 
         isForeground = true;
 
@@ -742,7 +739,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                     calendar.set(Calendar.MILLISECOND, 0);
 
                     long timeInMillis = calendar.getTimeInMillis();
-                    if(DateUtils.isToday(timeInMillis)) {
+                    if (DateUtils.isToday(timeInMillis)) {
                         tvMessageDate.setText(R.string.today);
                     } else {
                         tvMessageDate.setText(DateTransformator.getTimeStringForDivider(timeInMillis));
@@ -1464,19 +1461,19 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     public void onEventMainThread(ChatCloseEvent event) {
         if (entityId == event.getCompanionId()) {
-            getActivity().finish();
+            finish();
         }
     }
 
     public void onEventMainThread(TopicDeleteEvent event) {
         if (entityId == event.getId()) {
-            getActivity().finish();
+            finish();
         }
     }
 
     public void onEventMainThread(TopicKickedoutEvent event) {
         if (room.getRoomId() == event.getRoomId()) {
-            getActivity().finish();
+            finish();
             CharSequence topicName = ((AppCompatActivity) getActivity()).getSupportActionBar().getTitle();
             String msg = JandiApplication.getContext().getString(R.string.jandi_kicked_message, topicName);
             showToast(msg, true /* isError */);
@@ -1816,7 +1813,10 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void finish() {
-        getActivity().finish();
+        FragmentActivity activity = getActivity();
+        if (activity != null && !activity.isFinishing()) {
+            activity.finish();
+        }
     }
 
     @Override

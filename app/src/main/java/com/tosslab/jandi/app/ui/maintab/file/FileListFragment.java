@@ -42,6 +42,7 @@ import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -172,7 +173,13 @@ public class FileListFragment extends Fragment
         lvSearchFiles.addItemDecoration(new SimpleDividerItemDecoration());
         lvSearchFiles.setAdapter(searchedFileItemListAdapter);
 
-        selectedTeamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
+        // TODO Why null?
+        if (selectedTeamInfo == null) {
+            return;
+        }
+
+        selectedTeamId = selectedTeamInfo.getTeamId();
 
         searchedFileItemListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
             moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position)

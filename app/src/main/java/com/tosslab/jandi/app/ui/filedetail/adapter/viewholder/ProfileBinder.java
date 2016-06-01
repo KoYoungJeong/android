@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.filedetail.adapter.viewholder;
 
 import android.content.res.Resources;
+import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -44,11 +45,15 @@ public class ProfileBinder {
         String profileUrl = writer.getUserSmallProfileUrl();
         ImageUtil.loadProfileImage(ivUserProfile, profileUrl, R.drawable.profile_img);
 
-        tvUserName.setText(writer.getName());
+        String writerName = writer.getName();
+        tvUserName.setText(writerName);
 
         tvUserName.post(() -> {
             int gap = (int) UiUtils.getPixelFromDp(2);
-            int width = (int) tvUserName.getLayout().getLineWidth(0) + gap;
+
+            Rect bounds = new Rect();
+            tvUserName.getPaint().getTextBounds(writerName, 0, writerName.length(), bounds);
+            int width = bounds.width() + gap;
 
             ViewGroup.LayoutParams params = vUserNameDisableIndicator.getLayoutParams();
             params.width = width;
