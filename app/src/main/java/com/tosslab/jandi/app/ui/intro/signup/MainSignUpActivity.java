@@ -315,7 +315,7 @@ public class MainSignUpActivity extends BaseAppCompatActivity implements MainSig
             @Override
             public void updateDrawState(TextPaint ds) {
                 super.updateDrawState(ds);
-                ds.setUnderlineText(true);
+                ds.setUnderlineText(false);
             }
         };
 
@@ -330,7 +330,7 @@ public class MainSignUpActivity extends BaseAppCompatActivity implements MainSig
             @Override
             public void updateDrawState(TextPaint ds) {
                 super.updateDrawState(ds);
-                ds.setUnderlineText(true);
+                ds.setUnderlineText(false);
             }
         };
 

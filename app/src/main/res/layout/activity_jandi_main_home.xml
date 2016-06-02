@@ -29,11 +29,10 @@
             android:layout_marginBottom="30dp"
             android:clickable="true"
             android:gravity="center"
-            android:text="@string/jandi_signup_title"
+            android:text="@string/jandi_action_login"
             android:textColor="@color/button_text_color"
             android:textSize="12sp" />
     </LinearLayout>
-
 
     <TextView
         android:id="@+id/tv_sign_up_button"
