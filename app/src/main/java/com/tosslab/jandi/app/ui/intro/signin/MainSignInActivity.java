@@ -135,6 +135,7 @@ public class MainSignInActivity extends BaseAppCompatActivity implements MainSig
 
     @OnClick(R.id.tv_sign_in_button)
     void onClickSignInButton() {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignIn, AnalyticsValue.Action.Submit);
         if (NetworkCheckUtil.isConnected()) {
             mainSignInPresenter.trySignIn(etEmail.getText().toString(), etPassword.getText().toString());
         } else {

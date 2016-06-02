@@ -15,8 +15,8 @@
         <TextView
             android:id="@+id/tv_bottom"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="40dp"
+            android:layout_height="22dp"
+            android:layout_marginBottom="30dp"
             android:layout_marginRight="2dp"
             android:gravity="center"
             android:text="@string/jandi_already_has_account"
@@ -25,11 +25,11 @@
         <TextView
             android:id="@+id/tv_sign_in_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="40dp"
+            android:layout_height="22dp"
+            android:layout_marginBottom="30dp"
             android:clickable="true"
             android:gravity="center"
-            android:text="@string/jandi_sign_in_block"
+            android:text="@string/jandi_signup_title"
             android:textColor="@color/button_text_color"
             android:textSize="12sp" />
     </LinearLayout>

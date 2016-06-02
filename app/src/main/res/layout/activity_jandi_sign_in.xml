@@ -100,23 +100,24 @@
                 <TextView
                     android:id="@+id/tv_new_to_jandi"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="22dp"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="40dp"
+                    android:layout_marginBottom="30dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="4dp"
-                    android:gravity="center"
+                    android:gravity="center_horizontal"
                     android:text="@string/jandi_is_newcomer"
                     android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/tv_sign_up_button"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="22dp"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="40dp"
+                    android:layout_marginBottom="30dp"
                     android:layout_toRightOf="@id/tv_new_to_jandi"
-                    android:text="@string/jandi_action_start_block"
+                    android:gravity="center_horizontal"
+                    android:text="@string/jandi_action_start"
                     android:textColor="@color/button_text_color"
                     android:textSize="12sp" />
 

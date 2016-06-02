@@ -33,6 +33,8 @@ import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import javax.inject.Inject;
 
@@ -307,6 +309,7 @@ public class MainSignUpActivity extends BaseAppCompatActivity implements MainSig
             @Override
             public void onClick(android.view.View textView) {
                 clickAgreeTosLink();
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.TermofService);
             }
 
             @Override
@@ -320,6 +323,8 @@ public class MainSignUpActivity extends BaseAppCompatActivity implements MainSig
             @Override
             public void onClick(android.view.View textView) {
                 clickAgreePPLink();
+                AnalyticsUtil.sendEvent(
+                        AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.PrivacyPolicy);
             }
 
             @Override

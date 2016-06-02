@@ -8,6 +8,8 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.signin.MainSignInActivity;
 import com.tosslab.jandi.app.ui.intro.signup.MainSignUpActivity;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -32,6 +34,7 @@ public class MainHomeActivity extends BaseAppCompatActivity {
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.StartPage, AnalyticsValue.Action.SignUp);
     }
 
     @OnClick(R.id.tv_sign_in_button)
@@ -39,6 +42,7 @@ public class MainHomeActivity extends BaseAppCompatActivity {
         Intent intent = new Intent(this, MainSignInActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.StartPage, AnalyticsValue.Action.SignIn);
     }
 
 }
