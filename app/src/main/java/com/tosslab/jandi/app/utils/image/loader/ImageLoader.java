@@ -1,42 +1,21 @@
 package com.tosslab.jandi.app.utils.image.loader;
 
-import android.content.res.Resources;
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.view.ViewGroup;
+import android.widget.ImageView;
 
-import com.facebook.common.executors.CallerThreadExecutor;
-import com.facebook.common.executors.UiThreadImmediateExecutorService;
-import com.facebook.common.references.CloseableReference;
-import com.facebook.datasource.BaseDataSubscriber;
-import com.facebook.datasource.DataSource;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.controller.ControllerListener;
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
-import com.facebook.drawee.generic.RoundingParams;
-import com.facebook.drawee.interfaces.DraweeController;
-import com.facebook.drawee.view.GenericDraweeView;
-import com.facebook.imagepipeline.animated.factory.AnimatedDrawableFactory;
-import com.facebook.imagepipeline.common.ImageDecodeOptions;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.core.ImagePipeline;
-import com.facebook.imagepipeline.image.CloseableAnimatedImage;
-import com.facebook.imagepipeline.image.CloseableBitmap;
-import com.facebook.imagepipeline.image.CloseableImage;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
-import com.facebook.imagepipeline.request.Postprocessor;
-import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.utils.UriFactory;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.listener.OnResourceReadyCallback;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
-
-import java.util.concurrent.ExecutorService;
+import com.bumptech.glide.DrawableRequestBuilder;
+import com.bumptech.glide.DrawableTypeRequest;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.Transformation;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.ViewPropertyAnimation;
+import com.tosslab.jandi.app.utils.image.target.DynamicImageViewTarget;
 
 /**
  * Created by tonyjs on 15. 12. 21..
@@ -45,472 +24,160 @@ public class ImageLoader {
 
     public static final String TAG = ImageLoader.class.getSimpleName();
 
-    private Builder builder;
+    private int backgroundColor = Integer.MAX_VALUE;
+    private int placeHolder;
+    private Drawable placeHolderDrawable;
+    private ImageView.ScaleType placeHolderScaleType;
+    private ImageView.ScaleType actualImageScaleType;
+    private int error;
+    private ImageView.ScaleType errorScaleType;
+    private ViewPropertyAnimation.Animator animator;
+    private int anim = -1;
+    private Transformation<Bitmap> transformation;
+    private boolean blockNetworking = false;
+    private RequestListener<Uri, GlideDrawable> listener;
+    private Uri uri;
 
-    ImageLoader(Builder builder) {
-        this.builder = builder;
+    ImageLoader() {
     }
 
-    public static Builder newBuilder() {
-        return new Builder();
+    public static ImageLoader newInstance() {
+        return new ImageLoader();
     }
 
-    public static void loadWithCallback(Uri uri, final OnResourceReadyCallback onResourceReadyCallback) {
-        loadWithCallback(uri, null, false, onResourceReadyCallback);
-    }
-
-    public static void loadWithCallback(Uri uri,
-                                        ResizeOptions resizeOptions,
-                                        final OnResourceReadyCallback onResourceReadyCallback) {
-        loadWithCallback(uri, resizeOptions, false, onResourceReadyCallback);
-    }
-
-    public static void loadWithCallback(Uri uri,
-                                        ResizeOptions resizeOptions,
-                                        boolean executeIntoCallerThread,
-                                        final OnResourceReadyCallback onResourceReadyCallback) {
-        if (resizeOptions == null) {
-            final int maximumSize = ImageUtil.STANDARD_IMAGE_SIZE;
-            resizeOptions = new ResizeOptions(maximumSize, maximumSize);
-        }
-
-        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
-                .setAutoRotateEnabled(true)
-                .setResizeOptions(resizeOptions)
-                .build();
-
-        loadWithPipeline(imageRequest, executeIntoCallerThread, onResourceReadyCallback);
-    }
-
-    private static void loadWithPipeline(ImageRequest imageRequest, boolean executeIntoCallerThread,
-                                         OnResourceReadyCallback onResourceReadyCallback) {
-        ImagePipeline imagePipeline = Fresco.getImagePipeline();
-        DataSource<CloseableReference<CloseableImage>> dataSource =
-                imagePipeline.fetchDecodedImage(imageRequest, JandiApplication.getContext());
-
-        ExecutorService executorService = executeIntoCallerThread
-                ? CallerThreadExecutor.getInstance()
-                : UiThreadImmediateExecutorService.getInstance();
-
-        dataSource.subscribe(new BitmapDataSubscriber(onResourceReadyCallback), executorService);
-    }
-
-    public ImageLoader into(GenericDraweeView draweeView) {
-        draweeView.setAspectRatio(builder.getAspectRatio());
-
-        setHierarchy(draweeView);
-
-        ImageRequest imageRequest = getImageRequest(draweeView.getLayoutParams());
-
-        DraweeController controller = getController(imageRequest, draweeView.getController());
-
-        draweeView.setController(controller);
+    public ImageLoader backgroundColor(int color) {
+        this.backgroundColor = color;
         return this;
     }
 
-    private void setHierarchy(GenericDraweeView draweeView) {
-        final Resources resources = JandiApplication.getContext().getResources();
-
-        GenericDraweeHierarchyBuilder hierarchyBuilder = new GenericDraweeHierarchyBuilder(resources);
-
-        if (builder.getBackgroundColor() != 0) {
-            hierarchyBuilder.setBackground(new ColorDrawable(builder.getBackgroundColor()));
-        }
-
-        ScalingUtils.ScaleType actualScaleType =
-                getScaleType(builder.getActualImageScaleType(), ScalingUtils.ScaleType.CENTER_CROP);
-        hierarchyBuilder.setActualImageScaleType(actualScaleType);
-
-        final int placeHolder = builder.getPlaceHolder();
-        final Drawable placeHolderDrawable = builder.getPlaceHolderDrawable();
-        if (placeHolder <= 0 && placeHolderDrawable == null) {
-            hierarchyBuilder.setPlaceholderImage(null);
-        } else {
-            ScalingUtils.ScaleType scaleType = getScaleType(builder.getPlaceHolderScaleType());
-            Drawable drawable = placeHolderDrawable != null
-                    ? placeHolderDrawable : resources.getDrawable(builder.getPlaceHolder());
-            hierarchyBuilder.setPlaceholderImage(drawable, scaleType);
-        }
-
-        final int error = builder.getError();
-        final Drawable errorDrawable = builder.getErrorDrawable();
-        if (error <= 0 && errorDrawable == null) {
-            hierarchyBuilder.setFailureImage(null);
-        } else {
-            ScalingUtils.ScaleType scaleType = getScaleType(builder.getErrorScaleType());
-            Drawable drawable = errorDrawable != null
-                    ? errorDrawable : resources.getDrawable(builder.getError());
-            hierarchyBuilder.setFailureImage(drawable, scaleType);
-        }
-
-        final Drawable progressDrawable = builder.getProgressDrawable();
-        if (progressDrawable != null) {
-            ScalingUtils.ScaleType scaleType = getScaleType(
-                    builder.getPlaceHolderScaleType(), ScalingUtils.ScaleType.CENTER);
-            hierarchyBuilder.setProgressBarImage(progressDrawable, scaleType);
-        } else {
-            hierarchyBuilder.setProgressBarImage(null);
-        }
-
-        final RoundingParams roundingParams = builder.getRoundingParams();
-        if (roundingParams != null) {
-            hierarchyBuilder.setRoundingParams(roundingParams);
-        } else {
-            hierarchyBuilder.setRoundingParams(null);
-        }
-
-        draweeView.setHierarchy(hierarchyBuilder.build());
+    public ImageLoader placeHolder(int placeHolder) {
+        return placeHolder(placeHolder, ImageView.ScaleType.FIT_CENTER);
     }
 
-    private ImageRequest getImageRequest(ViewGroup.LayoutParams layoutParams) {
-        ImageRequestBuilder requestBuilder = null;
-        final int actualImageResourceId = builder.getActualImageResourceId();
-        if (actualImageResourceId > 0) {
-            requestBuilder = ImageRequestBuilder.newBuilderWithResourceId(actualImageResourceId);
-        } else {
-            final Uri uri = builder.getUri();
+    public ImageLoader placeHolder(int placeHolder, ImageView.ScaleType scaleType) {
+        this.placeHolder = placeHolder;
+        this.placeHolderScaleType = scaleType;
+        return this;
+    }
 
-            Uri requestUri = uri != null ? uri
-                    : builder.isFromFile()
-                    ? UriFactory.getFileUri(builder.getPath())
-                    : Uri.parse(builder.getPath());
+    public ImageLoader placeHolder(Drawable placeHolder) {
+        return placeHolder(placeHolder, ImageView.ScaleType.FIT_CENTER);
+    }
 
-            requestBuilder = ImageRequestBuilder.newBuilderWithSource(requestUri);
-        }
+    public ImageLoader placeHolder(Drawable placeHolder, ImageView.ScaleType scaleType) {
+        this.placeHolderDrawable = placeHolder;
+        this.placeHolderScaleType = scaleType;
+        return this;
+    }
 
-        requestBuilder.setAutoRotateEnabled(true);
-        requestBuilder.setLocalThumbnailPreviewsEnabled(true);
-        requestBuilder.setPostprocessor(builder.getProcessor());
+    public ImageLoader actualImageScaleType(ImageView.ScaleType scaleType) {
+        this.actualImageScaleType = scaleType;
+        return this;
+    }
 
-        ImageDecodeOptions imageDecodeOptions = ImageDecodeOptions.newBuilder()
-                .setDecodePreviewFrame(true)
-                .setUseLastFrameForPreview(true)
-                .build();
+    public ImageLoader error(int error) {
+        return error(error, ImageView.ScaleType.FIT_CENTER);
+    }
 
-        requestBuilder.setImageDecodeOptions(imageDecodeOptions);
+    public ImageLoader error(int error, ImageView.ScaleType scaleType) {
+        this.error = error;
+        this.errorScaleType = scaleType;
+        return this;
+    }
 
-        int resizeWidth = builder.getResizeWidth();
-        if (resizeWidth <= 0) {
-            resizeWidth = layoutParams.width > 0
-                    ? layoutParams.width : ImageUtil.STANDARD_IMAGE_SIZE;
-        }
-        int resizeHeight = builder.getResizeHeight();
-        if (resizeHeight <= 0) {
-            final float aspectRatio = builder.getAspectRatio();
-            if (aspectRatio > 0) {
-                resizeHeight = (int) (resizeWidth * aspectRatio);
-            } else {
-                resizeHeight = layoutParams.height > 0
-                        ? layoutParams.height : ImageUtil.STANDARD_IMAGE_SIZE;
-            }
-        }
+    public ImageLoader animate(int animResId) {
+        this.anim = animResId;
+        return this;
+    }
 
-        ResizeOptions resizeOptions = new ResizeOptions(resizeWidth, resizeHeight);
-        requestBuilder.setResizeOptions(resizeOptions);
+    public ImageLoader animator(ViewPropertyAnimation.Animator animator) {
+        this.animator = animator;
+        return this;
+    }
 
-        return requestBuilder.build();
+    public ImageLoader transformation(Transformation<Bitmap> transformation) {
+        this.transformation = transformation;
+        return this;
+    }
+
+    public ImageLoader blockNetworking(boolean blockNetworking) {
+        this.blockNetworking = blockNetworking;
+        return this;
+    }
+
+    public ImageLoader listener(RequestListener<Uri, GlideDrawable> listener) {
+        this.listener = listener;
+        return this;
+    }
+
+    public ImageLoader uri(Uri uri) {
+        this.uri = uri;
+        return this;
     }
 
     @SuppressWarnings("unchecked")
-    private DraweeController getController(ImageRequest imageRequest, DraweeController oldController) {
-        return Fresco.newDraweeControllerBuilder()
-                .setAutoPlayAnimations(true)
-                .setImageRequest(imageRequest)
-                .setOldController(oldController)
-                .setControllerListener(builder.getControllerListener())
-                .build();
+    public void into(ImageView imageView) {
+        Context context = imageView.getContext();
+        if (context == null) {
+            return;
+        }
+
+        if (context instanceof Activity
+                && (((Activity) context).isFinishing())) {
+            return;
+        }
+
+        if (backgroundColor != Integer.MAX_VALUE) {
+            imageView.setBackgroundColor(backgroundColor);
+        }
+
+        DrawableRequestBuilder<Uri> request = getRequest(imageView).fitCenter();
+
+        request.diskCacheStrategy(DiskCacheStrategy.ALL);
+
+        if (placeHolderDrawable != null) {
+            request.placeholder(placeHolderDrawable);
+        } else if (placeHolder != -1) {
+            request.placeholder(placeHolder);
+        }
+
+        request.error(error);
+
+        if (transformation != null) {
+            request.bitmapTransform(transformation);
+        }
+
+        if (anim != -1) {
+            request.animate(anim);
+        } else if (animator != null) {
+            request.animate(animator);
+        } else {
+            // crossFade 가 동작하면 fitCenter 가 정상동작하지 않는다.(TransitionDrawable issue)
+            request.animate(view -> {
+                view.setAlpha(0.0f);
+                view.animate()
+                        .alpha(1.0f)
+                        .setDuration(300);
+            });
+        }
+
+        request.listener(listener)
+                .into(DynamicImageViewTarget.newBuilder()
+                        .placeHolderScaleType(placeHolderScaleType)
+                        .actualImageScaleType(actualImageScaleType)
+                        .errorScaleType(errorScaleType)
+                        .build(imageView));
     }
 
-    private ScalingUtils.ScaleType getScaleType(ScalingUtils.ScaleType scaleType) {
-        return getScaleType(scaleType, ScalingUtils.ScaleType.FIT_XY);
-    }
-
-    private ScalingUtils.ScaleType getScaleType(ScalingUtils.ScaleType scaleType,
-                                                ScalingUtils.ScaleType defaultScaleType) {
-        return scaleType != null ? scaleType : defaultScaleType;
-    }
-
-    public static final class Builder {
-        private int placeHolder;
-        private Drawable placeHolderDrawable;
-        private ScalingUtils.ScaleType placeHolderScaleType;
-
-        private Drawable progressDrawable;
-        private ScalingUtils.ScaleType progressScaleType;
-
-        private ScalingUtils.ScaleType actualImageScaleType;
-
-        private int error;
-        private Drawable errorDrawable;
-        private ScalingUtils.ScaleType errorScaleType;
-
-        private int backgroundColor;
-
-        private RoundingParams roundingParams;
-
-        private int resizeWidth;
-        private int resizeHeight;
-        private float aspectRatio;
-
-        private Postprocessor processor;
-
-        private OnResourceReadyCallback callback;
-        private ControllerListener controllerListener;
-
-        private Uri uri;
-
-        private int actualImageResourceId;
-        private String path;
-        private boolean fromFile;
-
-        Builder() {
-
-        }
-
-        public Builder placeHolder(int resId, ScalingUtils.ScaleType scaleType) {
-            this.placeHolder = resId;
-            this.placeHolderScaleType = scaleType;
-            return this;
-        }
-
-        public Builder placeHolder(Drawable drawable, ScalingUtils.ScaleType scaleType) {
-            this.placeHolderDrawable = drawable;
-            this.placeHolderScaleType = scaleType;
-            return this;
-        }
-
-        public Builder actualScaleType(ScalingUtils.ScaleType scaleType) {
-            this.actualImageScaleType = scaleType;
-            return this;
-        }
-
-        public Builder error(int resId, ScalingUtils.ScaleType scaleType) {
-            this.error = resId;
-            this.errorScaleType = scaleType;
-            return this;
-        }
-
-        public Builder error(Drawable drawable, ScalingUtils.ScaleType scaleType) {
-            this.errorDrawable = drawable;
-            this.errorScaleType = scaleType;
-            return this;
-        }
-
-        public Builder progress(Drawable drawable, ScalingUtils.ScaleType scaleType) {
-            this.progressDrawable = drawable;
-            this.progressScaleType = scaleType;
-            return this;
-        }
-
-        public Builder aspectRatio(float ratio) {
-            this.aspectRatio = ratio;
-            return this;
-        }
-
-        public Builder backgroundColor(int backgroundColor) {
-            this.backgroundColor = backgroundColor;
-            return this;
-        }
-
-        public Builder roundingParams(RoundingParams roundingParams) {
-            this.roundingParams = roundingParams;
-            return this;
-        }
-
-        public Builder resize(int width, int height) {
-            this.resizeWidth = width;
-            this.resizeHeight = height;
-            return this;
-        }
-
-        public Builder processor(Postprocessor postprocessor) {
-            this.processor = postprocessor;
-            return this;
-        }
-
-        public Builder callback(OnResourceReadyCallback callback) {
-            this.callback = callback;
-            return this;
-        }
-
-        public Builder controllerListener(ControllerListener listener) {
-            this.controllerListener = listener;
-            return this;
-        }
-
-        public ImageLoader load(Uri uri) {
-            this.uri = uri;
-            return new ImageLoader(this);
-        }
-
-        public ImageLoader load(String path, boolean fromFile) {
-            this.path = path;
-            this.fromFile = fromFile;
-            return new ImageLoader(this);
-        }
-
-        public ImageLoader load(int resId) {
-            this.actualImageResourceId = resId;
-            return new ImageLoader(this);
-        }
-
-        public int getPlaceHolder() {
-            return placeHolder;
-        }
-
-        public Drawable getPlaceHolderDrawable() {
-            return placeHolderDrawable;
-        }
-
-        public ScalingUtils.ScaleType getPlaceHolderScaleType() {
-            return placeHolderScaleType;
-        }
-
-        public Drawable getProgressDrawable() {
-            return progressDrawable;
-        }
-
-        public ScalingUtils.ScaleType getProgressScaleType() {
-            return progressScaleType;
-        }
-
-        public ScalingUtils.ScaleType getActualImageScaleType() {
-            return actualImageScaleType;
-        }
-
-        public int getError() {
-            return error;
-        }
-
-        public Drawable getErrorDrawable() {
-            return errorDrawable;
-        }
-
-        public ScalingUtils.ScaleType getErrorScaleType() {
-            return errorScaleType;
-        }
-
-        public float getAspectRatio() {
-            return aspectRatio;
-        }
-
-        public int getBackgroundColor() {
-            return backgroundColor;
-        }
-
-        public RoundingParams getRoundingParams() {
-            return roundingParams;
-        }
-
-        public int getResizeWidth() {
-            return resizeWidth;
-        }
-
-        public int getResizeHeight() {
-            return resizeHeight;
-        }
-
-        public Postprocessor getProcessor() {
-            return processor;
-        }
-
-        public OnResourceReadyCallback getCallback() {
-            return callback;
-        }
-
-        public ControllerListener getControllerListener() {
-            return controllerListener;
-        }
-
-        public Uri getUri() {
-            return uri;
-        }
-
-        public int getActualImageResourceId() {
-            return actualImageResourceId;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public boolean isFromFile() {
-            return fromFile;
-        }
-
-    }
-
-    public static class BitmapDataSubscriber
-            extends BaseDataSubscriber<CloseableReference<CloseableImage>> {
-
-        private OnResourceReadyCallback onResourceReadyCallback;
-
-        public BitmapDataSubscriber(OnResourceReadyCallback onResourceReadyCallback) {
-            this.onResourceReadyCallback = onResourceReadyCallback;
-        }
-
-        @Override
-        public void onNewResultImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-            if (!dataSource.isFinished() || onResourceReadyCallback == null) {
-                return;
-            }
-            CloseableReference<CloseableImage> imageReference = dataSource.getResult();
-            if (imageReference != null) {
-                CloseableImage closeableImage = imageReference.get();
-                Drawable drawable = getDrawable(closeableImage);
-                if (drawable != null) {
-                    onResourceReadyCallback.onReady(drawable, imageReference);
-                } else {
-                    onResourceReadyCallback.onFail(new NullPointerException("Drawable is empty."));
-                    CloseableReference.closeSafely(imageReference);
-                }
-            } else {
-                onResourceReadyCallback.onFail(new NullPointerException("ImageReference is empty."));
-            }
-        }
-
-        private Drawable getDrawable(CloseableImage closeableImage) {
-            if (closeableImage instanceof CloseableBitmap) {
-                return getBitmapDrawable((CloseableBitmap) closeableImage);
-            } else if (closeableImage instanceof CloseableAnimatedImage) {
-                return getAnimatedDrawable((CloseableAnimatedImage) closeableImage);
-            }
-            return null;
-        }
-
-        private Drawable getAnimatedDrawable(CloseableAnimatedImage animatedImage) {
-            LogUtil.i(TAG, "AnimatedImage loaded");
-            AnimatedDrawableFactory animatedDrawableFactory =
-                    Fresco.getImagePipelineFactory().getAnimatedDrawableFactory();
-            return animatedDrawableFactory.create(animatedImage.getImageResult());
-        }
-
-        private Drawable getBitmapDrawable(CloseableBitmap closeableBitmap) {
-            Bitmap underlyingBitmap = closeableBitmap.getUnderlyingBitmap();
-            if (isValidateBitmap(underlyingBitmap)) {
-                return new BitmapDrawable(
-                        JandiApplication.getContext().getResources(), underlyingBitmap);
-            }
-            return null;
-        }
-
-        private boolean isValidateBitmap(Bitmap bitmap) {
-            return bitmap != null && !bitmap.isRecycled();
-        }
-
-        @Override
-        public void onFailureImpl(DataSource dataSource) {
-            // handle failure
-            if (onResourceReadyCallback != null) {
-                onResourceReadyCallback.onFail(dataSource.getFailureCause());
-            }
-        }
-
-        @Override
-        public void onProgressUpdate(DataSource<CloseableReference<CloseableImage>> dataSource) {
-            if (!dataSource.isFinished() && onResourceReadyCallback != null) {
-                onResourceReadyCallback.onProgressUpdate(dataSource.getProgress());
-            }
+    private DrawableTypeRequest<Uri> getRequest(ImageView imageView) {
+        if (blockNetworking) {
+            return Glide.with(imageView.getContext())
+                    // cache 되어 있는지 확인하기 위해 네트워킹 작업이 실행되면 exception 발생시킨다.
+                    .using(new ThrowIOExceptionStreamLoader<Uri>())
+                    .load(uri);
+        } else {
+            return Glide.with(imageView.getContext()).load(uri);
         }
     }
+
 }

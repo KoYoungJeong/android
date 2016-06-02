@@ -8,9 +8,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
@@ -41,8 +41,8 @@ public class AssignTopicOwnerDialog extends DialogFragment {
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_assign_topic_owner, null);
 
-        SimpleDraweeView ivProfile =
-                (SimpleDraweeView) view.findViewById(R.id.iv_assign_topic_owner_profile);
+        ImageView ivProfile =
+                (ImageView) view.findViewById(R.id.iv_assign_topic_owner_profile);
         TextView tvName = (TextView) view.findViewById(R.id.tv_assign_topic_owner_name);
 
         ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);

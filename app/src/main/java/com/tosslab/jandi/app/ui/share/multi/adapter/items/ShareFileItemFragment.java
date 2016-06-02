@@ -10,12 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
-import com.tosslab.jandi.app.views.FrescoImageView;
 
 import java.io.File;
 
@@ -25,7 +23,7 @@ import butterknife.ButterKnife;
 public class ShareFileItemFragment extends Fragment {
     public static final String EXTRA_FILE_PATH = "file_path";
     @Bind(R.id.iv_item_share_file_image)
-    FrescoImageView ivImageThumb;
+    ImageView ivImageThumb;
     @Bind(R.id.vg_item_share_file_icon)
     View vgFileType;
     @Bind(R.id.iv_item_share_file_icon)
@@ -61,10 +59,9 @@ public class ShareFileItemFragment extends Fragment {
         if (isImageFile(filePath)) {
             vgFileType.setVisibility(View.GONE);
             ivImageThumb.setVisibility(View.VISIBLE);
-            ImageLoader.newBuilder()
-                    .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                    .resize(ImageUtil.STANDARD_IMAGE_SIZE, ImageUtil.STANDARD_IMAGE_SIZE)
-                    .load(Uri.fromFile(new File(filePath)))
+            ImageLoader.newInstance()
+                    .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
+                    .uri(Uri.fromFile(new File(filePath)))
                     .into(ivImageThumb);
         } else {
             ivImageThumb.setVisibility(View.GONE);

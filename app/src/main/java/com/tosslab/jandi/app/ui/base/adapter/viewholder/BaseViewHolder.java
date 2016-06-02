@@ -19,4 +19,6 @@ public abstract class BaseViewHolder<ITEM> extends RecyclerView.ViewHolder {
 
     public abstract void onBindView(ITEM item);
 
+    public void onViewDetachedFromWindow() {
+    }
 }

@@ -10,10 +10,7 @@
         android:layout_height="match_parent"
         android:background="@color/white"
         android:clipToPadding="false"
-        android:overScrollMode="never"
-        android:paddingTop="40dp"
-        android:scrollbars="vertical"
-        android:smoothScrollbar="true" />
+        android:layout_below="@+id/vg_main_topic_order"/>
 
     <RelativeLayout
         android:id="@+id/vg_main_topic_order"

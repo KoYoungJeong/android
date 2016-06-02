@@ -252,6 +252,11 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         } else {
             vpMainTab.setCurrentItem(JandiPreference.getLastSelectedTab());
         }
+
+        if (vpMainTab.getCurrentItem() != 0) {
+            setFABMenuVisibility(false);
+        }
+
         mainTapStrip.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -810,6 +815,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
     @UiThread
     public void showUpdateVersionDialog(ResConfig configInfo) {
+        if (isFinishing()) {
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(MainTabActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(getString(R.string.jandi_update_title))
                 .setMessage(getString(R.string.jandi_update_message))

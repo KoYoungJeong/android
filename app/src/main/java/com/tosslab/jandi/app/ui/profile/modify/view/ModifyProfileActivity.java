@@ -17,9 +17,9 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
@@ -76,7 +76,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     ModifyProfilePresenter modifyProfilePresenter;
 
     @ViewById(R.id.profile_photo)
-    SimpleDraweeView ivProfilePhoto;
+    ImageView ivProfilePhoto;
     @ViewById(R.id.profile_user_realname)
     TextView tvProfileRealName;
     @ViewById(R.id.profile_user_status_message)

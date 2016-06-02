@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -25,13 +24,15 @@ import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import rx.android.schedulers.AndroidSchedulers;
+
 public class FileMessageViewHolder extends BaseMessageViewHolder {
 
-    private SimpleDraweeView ivProfile;
+    private ImageView ivProfile;
     private TextView tvName;
     private View vDisableLineThrough;
 
-    private SimpleDraweeView ivFileImage;
+    private ImageView ivFileImage;
     private TextView tvFileName;
     private TextView tvFileUploaderName;
     private TextView tvCommonFileSize;
@@ -47,13 +48,13 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
     public void initView(View rootView) {
         super.initView(rootView);
         if (hasProfile) {
-            ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
+            ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
             vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
             tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
             vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         }
 
-        ivFileImage = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_common_file);
+        ivFileImage = (ImageView) rootView.findViewById(R.id.iv_message_common_file);
         vFileIconBorder = rootView.findViewById(R.id.v_message_common_file_border);
         tvFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
         tvFileUploaderName = (TextView) rootView.findViewById(R.id.tv_uploader_name);
@@ -103,16 +104,20 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
 
         boolean isPublicTopic = room.isPublicTopic();
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(
-                teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
+        UnreadCountUtil.getUnreadCount(
+                teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(unreadCount -> {
 
-        tvMessageBadge.setText(String.valueOf(unreadCount));
+                    tvMessageBadge.setText(String.valueOf(unreadCount));
 
-        if (unreadCount <= 0) {
-            tvMessageBadge.setVisibility(View.GONE);
-        } else {
-            tvMessageBadge.setVisibility(View.VISIBLE);
-        }
+                    if (unreadCount <= 0) {
+                        tvMessageBadge.setVisibility(View.GONE);
+                    } else {
+                        tvMessageBadge.setVisibility(View.VISIBLE);
+                    }
+                });
+
 
         tvMessageTime.setText(DateTransformator.getTimeStringForSimple(link.time));
 

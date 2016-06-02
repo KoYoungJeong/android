@@ -14,14 +14,13 @@
         android:layout_marginTop="5dp"
         app:boundWidth="59dp">
 
-        <com.tosslab.jandi.app.views.FrescoImageView
+        <ImageView
             android:id="@+id/iv_message_photo"
             android:layout_width="match_parent"
             android:layout_height="@dimen/jandi_messages_image_height"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            app:placeholderImage="@drawable/image_preview_download"
-            app:placeholderImageScaleType="centerInside" />
+            android:scaleType="centerInside"/>
 
         <View
             android:id="@+id/iv_message_photo_cover"
@@ -90,7 +89,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="1dp"
-            android:text="1"
             android:textColor="#ff00ace9"
             android:textSize="9sp"
             android:textStyle="bold" />

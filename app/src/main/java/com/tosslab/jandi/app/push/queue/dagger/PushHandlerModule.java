@@ -5,11 +5,9 @@ import android.content.Context;
 import android.media.AudioManager;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.network.client.main.LeftSideApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.push.receiver.JandiPushReceiverModel;
 
-import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
 
@@ -27,8 +25,8 @@ public class PushHandlerModule {
     }
 
     @Provides
-    JandiPushReceiverModel provideJandiPushReceiverModel(AudioManager am, Lazy<LeftSideApi> api, NotificationManager nm) {
-        return new JandiPushReceiverModel(am, api, nm);
+    JandiPushReceiverModel provideJandiPushReceiverModel(AudioManager am, NotificationManager nm) {
+        return new JandiPushReceiverModel(am, nm);
     }
 
 }

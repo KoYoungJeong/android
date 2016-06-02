@@ -4,15 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.baidu.android.pushservice.PushServiceReceiver;
 import com.baidu.android.pushservice.message.PublicMsg;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tosslab.jandi.app.push.receiver.JandiPushIntentService;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+
+import java.util.Map;
 
 public class BaiduPushReceiver extends PushServiceReceiver {
 
     private static final String TAG = "BaiduPushReceiver";
+    public static final String KEY_PUSH_CONTENT = "content";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -35,8 +41,6 @@ public class BaiduPushReceiver extends PushServiceReceiver {
             LogUtil.d(TAG, "notifyType = " + notifyType);
             if ("private".equals(notifyType)) {
                 sendNotificationService(context, publicMsg);
-
-            } else if ("rich_media".equals(notifyType)) {
             }
         } else {
             super.onReceive(context, intent);
@@ -46,10 +50,22 @@ public class BaiduPushReceiver extends PushServiceReceiver {
     }
 
     private void sendNotificationService(Context context, PublicMsg publicMsg) {
-        String mCustomContent = publicMsg.mCustomContent;
-        if (!TextUtils.isEmpty(mCustomContent)) {
-            LogUtil.d(TAG, "sendNotificationService");
-            JandiPushIntentService.startService(context, mCustomContent);
+        String customContent = publicMsg.mCustomContent;
+        if (!TextUtils.isEmpty(customContent)) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                Map<String, String> map =
+                        objectMapper.readValue(customContent, new TypeReference<Map<String, String>>(){});
+                if (map != null && map.containsKey(KEY_PUSH_CONTENT)) {
+                    String content = map.get(KEY_PUSH_CONTENT);
+                    LogUtil.d(TAG, "content - " + content);
+                    JandiPushIntentService.startService(context, content);
+                } else {
+                    throw new NullPointerException(TAG + " content is null");
+                }
+            } catch (Exception e) {
+                LogUtil.e(TAG, Log.getStackTraceString(e));
+            }
         }
     }
 

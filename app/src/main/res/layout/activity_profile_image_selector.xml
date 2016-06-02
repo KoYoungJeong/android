@@ -91,7 +91,7 @@
         android:layout_below="@id/my_toolbar"
         android:background="@color/black">
 
-        <com.facebook.drawee.view.SimpleDraweeView
+        <ImageView
             android:id="@+id/iv_main_image"
             android:layout_width="260dp"
             android:layout_height="260dp"

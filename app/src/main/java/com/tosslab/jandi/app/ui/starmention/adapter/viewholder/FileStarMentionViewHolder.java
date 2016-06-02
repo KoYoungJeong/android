@@ -1,9 +1,9 @@
 package com.tosslab.jandi.app.ui.starmention.adapter.viewholder;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
@@ -16,12 +16,12 @@ public class FileStarMentionViewHolder extends CommonStarMentionViewHolder {
 
     private final View vFileRound;
     private TextView tvName;
-    private SimpleDraweeView ivFile;
+    private ImageView ivFile;
 
     public FileStarMentionViewHolder(View itemView) {
         super(itemView);
         tvName = (TextView) itemView.findViewById(R.id.tv_star_mention_file_name);
-        ivFile = (SimpleDraweeView) itemView.findViewById(R.id.iv_star_file);
+        ivFile = (ImageView) itemView.findViewById(R.id.iv_star_file);
         vFileRound = itemView.findViewById(R.id.v_star_file_round);
     }
 

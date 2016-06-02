@@ -4,6 +4,7 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.push.legacy.PreviousJandiPushReceiverModel;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
+import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
 import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
 import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenterImpl;
 import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
@@ -50,9 +51,6 @@ public interface ApiClientComponent {
     void inject(TeamDomainInfoModel teamDomainInfoModel);
 
     void inject(AccountHomeModel accountHomeModel);
-
-    // todo parse
-    void inject(PreviousJandiPushReceiverModel previousjandiPushReceiverModel);
 
     void inject(ShareModel shareModel);
 

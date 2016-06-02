@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -27,6 +28,7 @@ import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 
 import de.greenrobot.event.EventBus;
+import rx.android.schedulers.AndroidSchedulers;
 
 public class JandiBotViewHolder implements BodyViewHolder {
     protected Context context;
@@ -36,7 +38,7 @@ public class JandiBotViewHolder implements BodyViewHolder {
     private View vDisableCover;
     private View vDisableLineThrough;
     private LinkPreviewViewModel linkPreviewViewModel;
-    private View vLastRead;
+    private ViewGroup vLastRead;
     private View contentView;
     private boolean hasOnlyBadge;
     private boolean hasBottomMargin;
@@ -65,7 +67,7 @@ public class JandiBotViewHolder implements BodyViewHolder {
 
         linkPreviewViewModel = new LinkPreviewViewModel(context);
         linkPreviewViewModel.initView(rootView);
-        vLastRead = rootView.findViewById(R.id.vg_message_last_read);
+        vLastRead = (ViewGroup) rootView.findViewById(R.id.vg_message_last_read);
 
         if (hasBottomMargin) {
             vMargin.setVisibility(View.VISIBLE);
@@ -146,8 +148,17 @@ public class JandiBotViewHolder implements BodyViewHolder {
             messageStringBuilder.setSpan(spannable,
                     startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                    link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
+            UnreadCountUtil.getUnreadCount(teamId, roomId,
+                    link.id, link.fromEntity, EntityManager.getInstance().getMe().getId())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(unreadCount -> {
+                        if (unreadCount > 0) {
+                            tvMessageBadge.setText(String.valueOf(unreadCount));
+                            tvMessageBadge.setVisibility(View.VISIBLE);
+                        } else {
+                            tvMessageBadge.setVisibility(View.GONE);
+                        }
+                    });
 
             if (!hasOnlyBadge) {
                 tvMessageTime.setVisibility(View.VISIBLE);
@@ -156,9 +167,6 @@ public class JandiBotViewHolder implements BodyViewHolder {
                 tvMessageTime.setVisibility(View.GONE);
             }
 
-            if (unreadCount > 0) {
-                tvMessageBadge.setText(String.valueOf(unreadCount));
-            }
 
         }
 
@@ -170,10 +178,15 @@ public class JandiBotViewHolder implements BodyViewHolder {
 
     @Override
     public void setLastReadViewVisible(long currentLinkId, long lastReadLinkId) {
-        if (currentLinkId == lastReadLinkId) {
-            vLastRead.setVisibility(View.VISIBLE);
-        } else {
-            vLastRead.setVisibility(View.GONE);
+        if (vLastRead != null) {
+            if (currentLinkId == lastReadLinkId) {
+                vLastRead.removeAllViews();
+                LayoutInflater.from(vLastRead.getContext())
+                        .inflate(R.layout.item_message_last_read_v2, vLastRead);
+                vLastRead.setVisibility(View.VISIBLE);
+            } else {
+                vLastRead.setVisibility(View.GONE);
+            }
         }
     }
 

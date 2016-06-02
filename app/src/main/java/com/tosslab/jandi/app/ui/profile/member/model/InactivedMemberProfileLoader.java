@@ -4,15 +4,13 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.utils.UriFactory;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import uk.co.senab.photoview.PhotoView;
 
@@ -39,9 +37,8 @@ public class InactivedMemberProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void loadSmallThumb(SimpleDraweeView ivProfileImageSmall, FormattedEntity member) {
-        ImageUtil.loadProfileImage(
-                ivProfileImageSmall, UriFactory.getResourceUri(R.drawable.profile_img_dummyaccount_80), R.drawable.profile_img);
+    public void loadSmallThumb(ImageView ivProfileImageSmall, FormattedEntity member) {
+        ivProfileImageSmall.setImageResource(R.drawable.profile_img_dummyaccount_80);
     }
 
     @Override

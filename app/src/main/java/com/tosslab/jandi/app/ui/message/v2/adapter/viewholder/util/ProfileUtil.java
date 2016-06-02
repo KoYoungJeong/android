@@ -5,9 +5,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -18,7 +18,7 @@ import de.greenrobot.event.EventBus;
 
 public class ProfileUtil {
     public static void setProfile(long fromEntityId,
-                                  SimpleDraweeView ivProfile,
+                                  ImageView ivProfile,
                                   View vProfileCover,
                                   TextView tvName,
                                   View vDisableLineThrough) {

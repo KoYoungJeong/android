@@ -23,9 +23,11 @@ import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.ui.carousel.presenter.CarouselViewerPresenter;
 import com.tosslab.jandi.app.ui.carousel.presenter.CarouselViewerPresenterImpl;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
+import com.tosslab.jandi.app.ui.photo.PhotoViewFragment;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
 import com.tosslab.jandi.app.utils.file.FileUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -46,7 +48,8 @@ import java.util.List;
 @EActivity(R.layout.activity_carousel_viewer)
 @OptionsMenu(R.menu.carousel_menu)
 public class CarouselViewerActivity extends BaseAppCompatActivity
-        implements CarouselViewerPresenter.View, OnSwipeExitListener {
+        implements CarouselViewerPresenter.View, PhotoViewFragment.ShouldOpenImmediatelyUrlProvider,
+        OnSwipeExitListener {
 
     public static final long CAROUSEL_MODE = 0x00;
     public static final long SINGLE_IMAGE_MODE = 0x01;
@@ -92,6 +95,9 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
 
     @Extra
     long imageSize = -1;
+
+    @Extra
+    boolean shouldOpenImmediately = false;
 
     @Bean(CarouselViewerPresenterImpl.class)
     CarouselViewerPresenter carouselViewerPresenter;
@@ -165,7 +171,6 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         } else if (mode == SINGLE_IMAGE_MODE) {
             if (imageExt != null
                     && imageOriginUrl != null
-                    && imageThumbUrl != null
                     && imageType != null
                     && imageName != null
                     && imageSize != -1) {
@@ -374,6 +379,11 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         }
 
         overridePendingTransition(0, anim);
+    }
+
+    @Override
+    public String getShouldOpenImmediatelyUrl() {
+        return shouldOpenImmediately ? imageOriginUrl : "";
     }
 
     public interface OnCarouselImageClickListener {

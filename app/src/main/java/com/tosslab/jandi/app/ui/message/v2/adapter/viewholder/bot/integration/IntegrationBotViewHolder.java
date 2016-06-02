@@ -1,17 +1,17 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.RoundingParams;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.BotEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -27,18 +27,20 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPr
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
-import com.tosslab.jandi.app.utils.transform.TransformConfig;
+import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
+import com.tosslab.jandi.app.utils.image.transform.TransformConfig;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
+import rx.android.schedulers.AndroidSchedulers;
+
 public class IntegrationBotViewHolder implements BodyViewHolder {
 
     private static final String TAG = "IntegrationBotViewHolder";
-    private SimpleDraweeView ivProfile;
+    private ImageView ivProfile;
     private TextView tvName;
     private TextView tvMessage;
     private View vDisableLineThrough;
@@ -47,7 +49,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
     private TextView tvMessageBadge;
     private View vgConnectInfoWrapper;
     private LinearLayout vgConnectInfo;
-    private View vLastRead;
+    private ViewGroup vLastRead;
     private View vBottomMargin;
 
     private boolean hasBottomMargin = false;
@@ -59,10 +61,9 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
     private IntegrationBotViewHolder() {
     }
 
-
     @Override
     public void initView(View rootView) {
-        ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
+        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
         tvMessageTime = (TextView) rootView.findViewById(R.id.tv_message_time);
@@ -72,7 +73,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
         vgConnectInfoWrapper = rootView.findViewById(R.id.vg_message_connect_info_wrapper);
         vgConnectInfo = ((LinearLayout) rootView.findViewById(R.id.vg_message_sub_menu));
-        vLastRead = rootView.findViewById(R.id.vg_message_last_read);
+        vLastRead = (ViewGroup) rootView.findViewById(R.id.vg_message_last_read);
 
         linkPreviewViewModel = new LinkPreviewViewModel(rootView.getContext());
         linkPreviewViewModel.initView(rootView);
@@ -112,14 +113,14 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
         BotEntity botEntity = (BotEntity) entity;
         ResLeftSideMenu.Bot bot = botEntity.getBot();
 
-        RoundingParams circleRoundingParams = ImageUtil.getCircleRoundingParams(
-                TransformConfig.DEFAULT_CIRCLE_LINE_COLOR, TransformConfig.DEFAULT_CIRCLE_LINE_WIDTH);
-
-        ImageLoader.newBuilder()
-                .placeHolder(R.drawable.profile_img, ScalingUtils.ScaleType.FIT_CENTER)
-                .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
-                .roundingParams(circleRoundingParams)
-                .load(Uri.parse(botEntity.getUserLargeProfileUrl()))
+        ImageLoader.newInstance()
+                .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
+                .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                .transformation(new JandiProfileTransform(ivProfile.getContext(),
+                        TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
+                        TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
+                        Color.WHITE))
+                .uri(Uri.parse(botEntity.getUserLargeProfileUrl()))
                 .into(ivProfile);
 
         tvName.setText(botEntity.getName());
@@ -147,8 +148,18 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
         LinkifyUtil.setOnLinkClick(tvMessage);
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
+        UnreadCountUtil.getUnreadCount(teamId, roomId,
+                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(unreadCount -> {
+                    if (unreadCount > 0) {
+                        tvMessageBadge.setText(String.valueOf(unreadCount));
+                        tvMessageBadge.setVisibility(View.VISIBLE);
+                    } else {
+                        tvMessageBadge.setVisibility(View.GONE);
+                    }
+                });
+
 
         if (!hasOnlyBadge) {
             tvMessageTime.setVisibility(View.VISIBLE);
@@ -157,9 +168,6 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
             tvMessageTime.setVisibility(View.GONE);
         }
 
-        if (unreadCount > 0) {
-            tvMessageBadge.setText(String.valueOf(unreadCount));
-        }
 
         tvMessage.setText(messageStringBuilder);
 
@@ -178,10 +186,15 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
     @Override
     public void setLastReadViewVisible(long currentLinkId, long lastReadLinkId) {
-        if (currentLinkId == lastReadLinkId) {
-            vLastRead.setVisibility(View.VISIBLE);
-        } else {
-            vLastRead.setVisibility(View.GONE);
+        if (vLastRead != null) {
+            if (currentLinkId == lastReadLinkId) {
+                vLastRead.removeAllViews();
+                LayoutInflater.from(vLastRead.getContext())
+                        .inflate(R.layout.item_message_last_read_v2, vLastRead);
+                vLastRead.setVisibility(View.VISIBLE);
+            } else {
+                vLastRead.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -231,7 +244,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
         Iterator<ResMessages.ConnectInfo> iterator = connectInfos.iterator();
         while (iterator.hasNext()) {
             ResMessages.ConnectInfo connectInfo = iterator.next();
-            if(!TextUtils.isEmpty(connectInfo.title) || !TextUtils.isEmpty(connectInfo.description)) {
+            if (!TextUtils.isEmpty(connectInfo.title) || !TextUtils.isEmpty(connectInfo.description)) {
                 isEmpty = false;
                 break;
             }

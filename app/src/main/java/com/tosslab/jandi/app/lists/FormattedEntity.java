@@ -122,7 +122,11 @@ public class FormattedEntity {
             return "";
         }
 
-        return getEntity().name;
+        ResLeftSideMenu.Entity entity = getEntity();
+        if (entity == null) {
+            return "";
+        }
+        return entity.name;
     }
 
     public int getMemberCount() {

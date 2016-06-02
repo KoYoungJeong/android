@@ -4,36 +4,35 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
-import com.facebook.cache.disk.DiskCacheConfig;
-import com.facebook.common.util.ByteConstants;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
+import com.parse.ParseInstallation;
+import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.network.SimpleApiRequester;
 import com.tosslab.jandi.app.network.client.platform.PlatformApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
 import com.tosslab.jandi.app.network.manager.okhttp.OkHttpClientFactory;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceCloser;
+import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.utils.ApplicationActivateDetector;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.image.BitmapMemoryCacheSupplier;
-import com.tosslab.jandi.app.utils.image.fresco.integreation.okhttp3.OkHttpImagePipelineConfigFactory;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 
@@ -43,6 +42,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.logging.LogManager;
@@ -113,7 +113,27 @@ public class JandiApplication extends MultiDexApplication {
 
         initRetrofitBuilder();
 
-        initFresco();
+        migrationParsePush();
+
+    }
+
+    private void migrationParsePush() {
+        List<PushToken> pushTokenList = PushTokenRepository.getInstance().getPushTokenList();
+        String refreshToken = TokenUtil.getRefreshToken();
+        if (!TextUtils.isEmpty(refreshToken) && !pushTokenList.isEmpty()) {
+            return;
+        }
+
+        ParseInstallation currentInstallation = ParseInstallation.getCurrentInstallation();
+        if (currentInstallation.containsKey("activate")) {
+            boolean isParsePushOff = "off".equals(currentInstallation.getString("activate"));
+            if (isParsePushOff) {
+                PreferenceManager.getDefaultSharedPreferences(this)
+                        .edit()
+                        .putBoolean(Settings.SETTING_PUSH_AUTO_ALARM, false)
+                        .commit();
+            }
+        }
     }
 
     void initParse() {
@@ -133,16 +153,6 @@ public class JandiApplication extends MultiDexApplication {
         RetrofitBuilder.getInstance();
     }
 
-    private void initFresco() {
-        ImagePipelineConfig config =
-                OkHttpImagePipelineConfigFactory.newBuilder(this, getOkHttpClient())
-                        .setBitmapMemoryCacheParamsSupplier(new BitmapMemoryCacheSupplier(this))
-                        .setMainDiskCacheConfig(getMainDiskConfig())
-                        .build();
-
-        Fresco.initialize(context, config);
-    }
-
     private void addLogConfigIfDebug() {
         if (!BuildConfig.DEBUG) return;
 
@@ -160,16 +170,6 @@ public class JandiApplication extends MultiDexApplication {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private DiskCacheConfig getMainDiskConfig() {
-        return DiskCacheConfig.newBuilder()
-                .setBaseDirectoryPathSupplier(() -> context.getApplicationContext().getCacheDir())
-                .setBaseDirectoryName("image_cache")
-                .setMaxCacheSize(1024 * ByteConstants.MB)
-                .setMaxCacheSizeOnLowDiskSpace(10 * ByteConstants.MB)
-                .setMaxCacheSizeOnVeryLowDiskSpace(2 * ByteConstants.MB)
-                .build();
     }
 
     /**

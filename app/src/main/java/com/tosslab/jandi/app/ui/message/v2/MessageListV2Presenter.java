@@ -43,6 +43,7 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.UiThread;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -144,6 +145,11 @@ public class MessageListV2Presenter {
 
     // 같은 쓰레드에서 처리를 위함
     private void initAnnouncement() {
+        if (announcementModel == null || room == null || view == null) {
+            LogUtil.e(TAG, "announcementModel == null || room == null || view == null");
+            return;
+        }
+
         ResAnnouncement announcement = announcementModel.getAnnouncement(room.getTeamId(), room.getEntityId());
         view.dismissProgressWheel();
         if (announcement != null) {
@@ -482,6 +488,7 @@ public class MessageListV2Presenter {
                 }
                 updateMarker(teamId, resOldMessage.entityId, resOldMessage.lastLinkId);
                 adapterModel.removeAllDummy();
+                view.refreshMessages();
                 messageListModel.deleteCompletedSendingMessage(resOldMessage.entityId);
             }
             // 첫 대화인 경우 해당 채팅방의 보내는 중인 메세지 캐시 데이터 삭제함
@@ -590,15 +597,8 @@ public class MessageListV2Presenter {
         }
 
         boolean cacheMode = messageContainer.isCacheMode();
-        messageListModel.sortByTime(newMessages);
         boolean firstLoadNewMessage = currentMessageState.isFirstLoadNewMessage();
-        if (firstLoadNewMessage) {
-            int messagesCount = MessageRepository.getRepository()
-                    .getMessagesCount(roomId, messagePointer.getLastReadLinkId());
-            if (messagesCount <= 1) {
-                messagePointer.setLastReadLinkId(-1);
-            }
-        }
+        messageListModel.sortByTime(newMessages);
 
         view.updateRecyclerViewInfo();
 
@@ -610,6 +610,14 @@ public class MessageListV2Presenter {
 
         if (cacheMode) {
             messageListModel.upsertMessages(roomId, newMessages);
+
+            if (firstLoadNewMessage) {
+                int messagesCount = MessageRepository.getRepository()
+                        .getMessagesCount(roomId, messagePointer.getLastReadLinkId());
+                if (messagesCount <= 1) {
+                    messagePointer.setLastReadLinkId(-1);
+                }
+            }
 
             int size = newMessages.size();
             long minLinkId = -1;
@@ -637,6 +645,24 @@ public class MessageListV2Presenter {
 
         }
 
+        messageListModel.presetTextContent(newMessages);
+
+        addMessages(firstCursorLinkId, newMessages, firstLoadNewMessage, archivedList);
+
+        if (newMessages.size() > 0) {
+            long lastLinkId = newMessages.get(newMessages.size() - 1).id;
+            messageListModel.upsertMyMarker(roomId, lastLinkId);
+        }
+        try {
+            messageListModel.updateLastLinkId(lastUpdateLinkId);
+        } catch (RetrofitException e) {
+        }
+        messageListModel.updateMarkerInfo(teamId, roomId);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void addMessages(long firstCursorLinkId, List<ResMessages.Link> newMessages, boolean firstLoadNewMessage,
+                     List<ResMessages.Link> archivedList) {
         for (ResMessages.Link link : newMessages) {
             if (link.message instanceof ResMessages.StickerMessage
                     || link.message instanceof ResMessages.TextMessage) {
@@ -650,7 +676,6 @@ public class MessageListV2Presenter {
         }
 
         adapterModel.addAll(adapterModel.getCount(), archivedList);
-        messageListModel.presetTextContent(newMessages);
         adapterModel.addAll(adapterModel.getCount(), newMessages);
         view.refreshMessages();
 
@@ -658,20 +683,8 @@ public class MessageListV2Presenter {
 
         currentMessageState.setIsFirstLoadNewMessage(false);
 
-        currentItemCount = adapterModel.getCount();
-
-        boolean hasMessages = hasMessages(firstCursorLinkId, currentItemCount);
+        boolean hasMessages = hasMessages(firstCursorLinkId, adapterModel.getCount());
         view.showEmptyView(!hasMessages);
-
-        if (newMessages.size() > 0) {
-            long lastLinkId = newMessages.get(newMessages.size() - 1).id;
-            messageListModel.upsertMyMarker(roomId, lastLinkId);
-        }
-        try {
-            messageListModel.updateLastLinkId(lastUpdateLinkId);
-        } catch (RetrofitException e) {
-        }
-        messageListModel.updateMarkerInfo(teamId, roomId);
     }
 
     private boolean hasMessages(long firstCursorLinkId, int currentItemCount) {
@@ -998,9 +1011,9 @@ public class MessageListV2Presenter {
             int position = adapterModel.indexByMessageId(messageId);
             if (position >= 0) {
                 adapterModel.remove(position);
+                view.refreshMessages();
             }
 
-            view.refreshMessages();
 
             messageListModel.trackMessageDeleteSuccess(messageId);
 
@@ -1223,8 +1236,6 @@ public class MessageListV2Presenter {
         void dismissOldLoadProgress();
 
         void finish();
-
-        void moveLastReadLink();
 
         void insertTeamMemberEmptyLayout();
 

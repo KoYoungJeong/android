@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
 import com.tosslab.jandi.app.ui.share.model.ShareModel_;
@@ -26,6 +27,7 @@ import com.tosslab.jandi.app.utils.file.ImageFilePath;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -144,11 +146,14 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                     shareAdapterDataModel.clear();
                     shareAdapterDataModel.addAll(shareDatas);
                 }, t -> view.moveIntro(), () -> {
+                    view.dismissProgress();
                     ShareData item = shareAdapterDataModel.getShareData(0);
+                    if (item == null) {
+                        return;
+                    }
                     String fileName = getFileName(item.getData());
                     view.setFileTitle(fileName);
                     view.updateFiles(shareAdapterDataModel.size());
-                    view.dismissProgress();
                 });
 
     }
@@ -168,25 +173,38 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     @Override
     public void startShare() {
 
-        Observable.range(0, shareAdapterDataModel.size())
-                .subscribe(idx -> {
-                    ShareData item = shareAdapterDataModel.getShareData(idx);
-                    ResultMentionsVO mentionInfoObject = MentionControlViewModel.getMentionInfoObject(shareTarget.getTeamId(), shareTarget.getRoomId(), comments.get(idx), MentionControlViewModel.MENTION_TYPE_FILE_COMMENT);
-                    List<MentionObject> mentions = mentionInfoObject.getMentions();
-                    String message = mentionInfoObject.getMessage();
-                    Pair<String, List<MentionObject>> stringListPair = new Pair<>(message, mentions);
-                    FileUploadDTO object = new FileUploadDTO(item.getData(), getFileName(item.getData()), shareTarget.getRoomId(), stringListPair.first);
-                    object.setTeamId(shareTarget.getTeamId());
-                    object.setMentions(stringListPair.second);
-                    FileUploadManager.getInstance().add(object);
-                }, t -> {});
+        SearchMemberModel model = new SearchMemberModel();
+        model.refreshSelectableMembers(shareTarget.getTeamId(),
+                Arrays.asList(shareTarget.getRoomId()),
+                MentionControlViewModel.MENTION_TYPE_FILE_COMMENT,
+                map -> {
+                    Observable.range(0, shareAdapterDataModel.size())
+                            .subscribe(idx -> {
+                                ShareData item = shareAdapterDataModel.getShareData(idx);
+                                if (item == null) {
+                                    return;
+                                }
+                                ResultMentionsVO mentionInfoObject = MentionControlViewModel.getMentionInfoObject(comments.get(idx), map);
+                                List<MentionObject> mentions = mentionInfoObject.getMentions();
+                                String message = mentionInfoObject.getMessage();
+                                Pair<String, List<MentionObject>> stringListPair = new Pair<>(message, mentions);
+                                FileUploadDTO object = new FileUploadDTO(item.getData(), getFileName(item.getData()), shareTarget.getRoomId(), stringListPair.first);
+                                object.setTeamId(shareTarget.getTeamId());
+                                object.setMentions(stringListPair.second);
+                                FileUploadManager.getInstance().add(object);
+                            }, t -> {
+                            });
 
-        view.moveRoom(shareTarget.getTeamId(), shareTarget.getRoomId());
+                    view.moveRoom(shareTarget.getTeamId(), shareTarget.getRoomId());
+                });
     }
 
     @Override
     public void onFilePageChanged(int position, String comment) {
         ShareData item = shareAdapterDataModel.getShareData(position);
+        if (item == null) {
+            return;
+        }
         String fileName = getFileName(item.getData());
         comments.set(lastPageIndex, comment);
         view.setCommentText(comments.get(position));

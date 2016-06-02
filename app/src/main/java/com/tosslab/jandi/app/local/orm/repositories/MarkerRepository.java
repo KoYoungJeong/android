@@ -6,8 +6,6 @@ import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplat
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Created by Steve SeongUg Jung on 15. 7. 23..
@@ -29,6 +27,7 @@ public class MarkerRepository extends LockExecutorTemplate {
             try {
 
                 Dao<ResRoomInfo, ?> roomInfoDao = getHelper().getDao(ResRoomInfo.class);
+                roomInfoDao.clearObjectCache();
                 roomInfoDao.createOrUpdate(roomInfo);
 
                 Dao<ResRoomInfo.MarkerInfo, ?> markerInfoDao = getHelper().getDao(ResRoomInfo.MarkerInfo.class);
@@ -61,43 +60,31 @@ public class MarkerRepository extends LockExecutorTemplate {
 
         return execute(() -> {
             try {
-
                 Dao<ResRoomInfo, ?> roomInfoDao = getHelper().getDao(ResRoomInfo.class);
-                ResRoomInfo roomInfo = roomInfoDao.queryBuilder()
+                roomInfoDao.clearObjectCache();
+                Dao<ResRoomInfo.MarkerInfo, ?> markerInfoDao = getHelper().getDao(ResRoomInfo.MarkerInfo.class);
+                ResRoomInfo.MarkerInfo markerInfo = markerInfoDao.queryBuilder()
                         .where()
-                        .eq("roomId", roomId)
-                        .and()
-                        .eq("teamId", teamId)
+                        .eq("memberId", memberId)
                         .queryForFirst();
 
-                if (roomInfo != null) {
-                    boolean find = false;
-                    ResRoomInfo.MarkerInfo savedMarker = null;
-                    for (ResRoomInfo.MarkerInfo markerInfo : roomInfo.getMarkers()) {
-                        if (markerInfo.getMemberId() == memberId) {
-                            find = true;
-                            markerInfo.setLastLinkId(lastLinkId);
-                            savedMarker = markerInfo;
-                            break;
-                        }
-
-                    }
-
-                    Dao<ResRoomInfo.MarkerInfo, ?> markerInfoDao = getHelper().getDao(ResRoomInfo.MarkerInfo.class);
-
-                    if (!find) {
-                        ResRoomInfo.MarkerInfo markerInfo = new ResRoomInfo.MarkerInfo();
-                        markerInfo.setLastLinkId(lastLinkId);
-                        markerInfo.setMemberId(memberId);
-                        markerInfo.setRoom(roomInfo);
-                        return markerInfoDao.create(markerInfo) > 0;
-                    } else {
-                        return markerInfoDao.update(savedMarker) > 0;
-                    }
-
+                if (markerInfo != null) {
+                    markerInfo.setLastLinkId(lastLinkId);
+                    return markerInfoDao.update(markerInfo) > 0;
                 } else {
-                    return false;
+                    ResRoomInfo roomInfo = roomInfoDao.queryBuilder()
+                            .where()
+                            .eq("roomId", roomId)
+                            .and()
+                            .eq("teamId", teamId)
+                            .queryForFirst();
+                    ResRoomInfo.MarkerInfo data = new ResRoomInfo.MarkerInfo();
+                    data.setRoom(roomInfo);
+                    data.setLastLinkId(lastLinkId);
+                    data.setMemberId(memberId);
+                    return markerInfoDao.create(data) > 0;
                 }
+
             } catch (SQLException e) {
                 e.printStackTrace();
                 return false;
@@ -106,27 +93,23 @@ public class MarkerRepository extends LockExecutorTemplate {
         });
     }
 
-    public Collection<ResRoomInfo.MarkerInfo> getRoomMarker(long teamId, long roomId) {
+    public long getRoomMarkerCount(long roomId, long linkId) {
         return execute(() -> {
             try {
-                Dao<ResRoomInfo, ?> roomInfoDao = getHelper().getDao(ResRoomInfo.class);
-                ResRoomInfo roomInfo = roomInfoDao.queryBuilder()
+                Dao<ResRoomInfo.MarkerInfo, ?> dao = getHelper().getDao(ResRoomInfo.MarkerInfo.class);
+                return dao.queryBuilder()
                         .where()
-                        .eq("teamId", teamId)
-                        .and()
                         .eq("roomId", roomId)
-                        .queryForFirst();
-
-                if (roomInfo != null) {
-                    return roomInfo.getMarkers();
-                } else {
-                    return new ArrayList<ResRoomInfo.MarkerInfo>();
-                }
+                        .and()
+                        .ge("lastLinkId", 0)
+                        .and()
+                        .lt("lastLinkId", linkId)
+                        .countOf();
 
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            return new ArrayList<ResRoomInfo.MarkerInfo>();
+            return 0L;
 
         });
     }

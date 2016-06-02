@@ -11,8 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -24,12 +22,13 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by tee on 16. 4. 7..
@@ -37,13 +36,13 @@ import java.util.Collection;
 public class StickerCommentViewHolder extends BaseCommentViewHolder {
 
     private ViewGroup vgMessageCommonFile;
-    private SimpleDraweeView ivMessageCommonFile;
+    private ImageView ivMessageCommonFile;
 
-    private SimpleDraweeView ivProfileNestedUserProfileForSticker;
+    private ImageView ivProfileNestedUserProfileForSticker;
     private TextView tvProfileNestedUserNameForSticker;
     private ImageView ivProfileNestedLineThroughForSticker;
 
-    private SimpleDraweeView ivProfileNestedCommentSticker;
+    private ImageView ivProfileNestedCommentSticker;
     private TextView tvProfileNestedCommentStickerCreateDate;
     private TextView tvProfileNestedCommentStickerUnread;
     private TextView tvMessageCommonFileName;
@@ -81,7 +80,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
         // 파일 정보
         if (hasFileInfoView()) {
             vgMessageCommonFile = (ViewGroup) rootView.findViewById(R.id.vg_message_common_file);
-            ivMessageCommonFile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_common_file);
+            ivMessageCommonFile = (ImageView) rootView.findViewById(R.id.iv_message_common_file);
             tvMessageCommonFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
             vFileIconBorder = rootView.findViewById(R.id.v_message_common_file_border);
             tvFileUploaderName = (TextView) rootView.findViewById(R.id.tv_uploader_name);
@@ -91,14 +90,14 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
 
         // 커멘트 스티커 프로필
         if (hasNestedProfile) {
-            ivProfileNestedUserProfileForSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_profile_nested_user_profile_for_sticker);
+            ivProfileNestedUserProfileForSticker = (ImageView) rootView.findViewById(R.id.iv_profile_nested_user_profile_for_sticker);
             vProfileCover = rootView.findViewById(R.id.v_profile_nested_user_profile_for_sticker_cover);
             tvProfileNestedUserNameForSticker = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_user_name_for_sticker);
             ivProfileNestedLineThroughForSticker = (ImageView) rootView.findViewById(R.id.iv_profile_nested_name_line_through_for_sticker);
         }
 
         // 스티커
-        ivProfileNestedCommentSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_profile_nested_comment_sticker);
+        ivProfileNestedCommentSticker = (ImageView) rootView.findViewById(R.id.iv_profile_nested_comment_sticker);
         tvProfileNestedCommentStickerCreateDate = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_sticker_create_date);
         tvProfileNestedCommentStickerUnread = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_sticker_unread);
         context = rootView.getContext();
@@ -207,14 +206,17 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
             tvProfileNestedCommentStickerCreateDate.setText(DateTransformator.getTimeStringForSimple(message.createTime));
 
         }
-        int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
-        if (unreadCount > 0) {
-            tvProfileNestedCommentStickerUnread.setText(String.valueOf(unreadCount));
-            tvProfileNestedCommentStickerUnread.setVisibility(View.VISIBLE);
-        } else {
-            tvProfileNestedCommentStickerUnread.setVisibility(View.GONE);
-        }
+        UnreadCountUtil.getUnreadCount(teamId, roomId,
+                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(unreadCount -> {
+                    if (unreadCount > 0) {
+                        tvProfileNestedCommentStickerUnread.setText(String.valueOf(unreadCount));
+                        tvProfileNestedCommentStickerUnread.setVisibility(View.VISIBLE);
+                    } else {
+                        tvProfileNestedCommentStickerUnread.setVisibility(View.GONE);
+                    }
+                });
     }
 
     private void settingFileInfo(ResMessages.Link link, long roomId) {
@@ -271,10 +273,8 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
                 needFileUploaderDivider = false;
                 needFileSize = false;
 
-                ImageLoader.newBuilder()
-                        .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                        .load(R.drawable.file_icon_deleted)
-                        .into(ivMessageCommonFile);
+                ivMessageCommonFile.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                ivMessageCommonFile.setImageResource(R.drawable.file_icon_deleted);
                 vFileIconBorder.setVisibility(View.GONE);
                 ivMessageCommonFile.setOnClickListener(null);
             } else {

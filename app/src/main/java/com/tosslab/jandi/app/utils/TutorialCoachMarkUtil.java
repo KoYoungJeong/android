@@ -6,8 +6,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ImageView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -58,8 +58,8 @@ public class TutorialCoachMarkUtil {
         EntityManager entityManager = EntityManager.getInstance();
 
         if (coachMarkType == COACH_MARK_MORE) {
-            SimpleDraweeView profileImageView =
-                    (SimpleDraweeView) masterView.findViewById(R.id.iv_profile_guide_image_icon);
+            ImageView profileImageView =
+                    (ImageView) masterView.findViewById(R.id.iv_profile_guide_image_icon);
             if (profileImageView != null) {
                 if (entityManager != null) {
                     FormattedEntity me = entityManager.getMe();

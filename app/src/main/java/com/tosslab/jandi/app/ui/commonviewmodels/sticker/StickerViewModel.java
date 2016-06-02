@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.views.ViewPagerIndicator;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -31,8 +32,10 @@ import java.util.Locale;
 public class StickerViewModel {
 
     public static final int STICKER_GROUP_RECENT = 0;
-    public static final int STICKER_GROUP_DAY = 1;
-    public static final int STICKER_GROUP_MOZZI = 2;
+    public static final int STICKER_GROUP_DINGO = 1;
+    public static final int STICKER_GROUP_DAY = 2;
+    public static final int STICKER_GROUP_MOZZI = 3;
+
 
     public static final int TYPE_MESSAGE = 11;
     public static final int TYPE_TOPIC = 12;
@@ -95,6 +98,9 @@ public class StickerViewModel {
         switch (groupIdx) {
             case STICKER_GROUP_RECENT:
                 stickers = stickerRepository.getRecentStickers();
+                break;
+            case STICKER_GROUP_DINGO:
+                stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_DINGO);
                 break;
             case STICKER_GROUP_DAY:
                 Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
@@ -210,7 +216,7 @@ public class StickerViewModel {
         if (recentStickers != null && !recentStickers.isEmpty()) {
             return STICKER_GROUP_RECENT;
         }
-        return STICKER_GROUP_DAY;
+        return STICKER_GROUP_DINGO;
     }
 
     public void setOnStickerClick(OnStickerClick onStickerClick) {

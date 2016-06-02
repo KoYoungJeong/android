@@ -12,9 +12,9 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
@@ -62,7 +62,7 @@ public class SetProfileFirstPageFragment extends Fragment
     SetProfileFirstPagePresenter presenter;
 
     @ViewById(R.id.iv_profile_picture)
-    SimpleDraweeView ivProfilePicture;
+    ImageView ivProfilePicture;
     @ViewById(R.id.tv_name)
     TextView tvName;
     @ViewById(R.id.tv_name_length)

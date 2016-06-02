@@ -5,10 +5,10 @@
     android:orientation="vertical"
     android:padding="0.5dp">
 
-    <com.tosslab.jandi.app.views.FrescoImageView
+    <ImageView
         android:id="@+id/iv_item_image_picture_thumb"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />]
+        android:layout_height="match_parent" />
 
     <ImageView
         android:id="@+id/iv_item_image_picture_selected"

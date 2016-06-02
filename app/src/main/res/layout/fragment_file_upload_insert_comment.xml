@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
-    <com.tosslab.jandi.app.views.FrescoImageView
+    <ImageView
         android:id="@+id/iv_file_upload_preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        fresco:placeholderImage="@drawable/file_icon_img_198"
-        fresco:placeholderImageScaleType="center"
-        fresco:actualImageScaleType="fitCenter" />
+        android:layout_height="match_parent"/>
 
     <!-- 액션바(56dp), 파일 제목, 엔티티, 댓글 영역(186dp)을 제외한 나머지 영역 -->
     <FrameLayout

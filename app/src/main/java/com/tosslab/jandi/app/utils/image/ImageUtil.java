@@ -11,24 +11,22 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.ImageView;
 
-import com.facebook.datasource.DataSource;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.controller.BaseControllerListener;
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.RoundingParams;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.image.ImageInfo;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.target.Target;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.UploadedFileInfoRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
-import com.tosslab.jandi.app.utils.transform.TransformConfig;
+import com.tosslab.jandi.app.utils.image.transform.TransformConfig;
 
 import java.io.File;
 
@@ -39,19 +37,6 @@ public class ImageUtil {
     public static final String TAG = ImageUtil.class.getSimpleName();
 
     public static final int STANDARD_IMAGE_SIZE = 2048;
-
-    public static boolean hasCache(Uri uri) {
-        final boolean isInMemoryCache = Fresco.getImagePipeline().isInBitmapMemoryCache(uri);
-        LogUtil.i(TAG, "isInMemoryCache - " + isInMemoryCache);
-        return isInMemoryCache || isInDiskCache(uri);
-    }
-
-    public static boolean isInDiskCache(Uri uri) {
-        DataSource<Boolean> dataSource = Fresco.getImagePipeline().isInDiskCache(uri);
-        boolean isInDiskCache = dataSource.getResult() != null && dataSource.getResult();
-        LogUtil.d(TAG, "isInDiskCache - " + isInDiskCache);
-        return isInDiskCache;
-    }
 
     public static String getImageFileUrl(String url) {
         if (TextUtils.isEmpty(url)) {
@@ -184,63 +169,42 @@ public class ImageUtil {
         return small;
     }
 
-    public static void loadProfileImage(SimpleDraweeView draweeView, String url, int placeHolder) {
-        loadProfileImage(draweeView, Uri.parse(url), placeHolder);
+    public static void loadProfileImage(ImageView imageView, String url, int placeHolder) {
+        loadProfileImage(imageView, Uri.parse(url), placeHolder);
     }
 
-    public static void loadProfileImage(SimpleDraweeView draweeView, Uri uri, int placeHolderResId) {
-        RoundingParams circleRoundingParams = getCircleRoundingParams(
-                TransformConfig.DEFAULT_CIRCLE_LINE_COLOR, TransformConfig.DEFAULT_CIRCLE_LINE_WIDTH);
-        ImageLoader.newBuilder()
-                .placeHolder(placeHolderResId, ScalingUtils.ScaleType.FIT_CENTER)
-                .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
-                .roundingParams(circleRoundingParams)
-                .backgroundColor(Color.BLACK)
-                .load(uri)
-                .into(draweeView);
+    public static void loadProfileImage(ImageView imageView, Uri uri, int placeHolderResId) {
+        ImageLoader.newInstance()
+                .placeHolder(placeHolderResId, ImageView.ScaleType.FIT_CENTER)
+                .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                .transformation(new JandiProfileTransform(imageView.getContext()))
+                .uri(uri)
+                .into(imageView);
     }
 
-    public static void loadProfileImage(SimpleDraweeView draweeView, Uri uri, int placeHolderResId, int backgroundColor) {
-        RoundingParams circleRoundingParams = getCircleRoundingParams(
-                TransformConfig.DEFAULT_CIRCLE_LINE_COLOR, TransformConfig.DEFAULT_CIRCLE_LINE_WIDTH);
-        ImageLoader.newBuilder()
-                .placeHolder(placeHolderResId, ScalingUtils.ScaleType.CENTER_CROP)
-                .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
-                .roundingParams(circleRoundingParams)
-                .backgroundColor(backgroundColor)
-                .load(uri)
-                .into(draweeView);
+    public static void loadProfileImage(ImageView imageView,
+                                        Uri uri, int placeHolderResId, int backgroundColor) {
+        ImageLoader.newInstance()
+                .placeHolder(placeHolderResId, ImageView.ScaleType.FIT_CENTER)
+                .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                .transformation(new JandiProfileTransform(imageView.getContext(),
+                        TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
+                        TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
+                        backgroundColor))
+                .uri(uri)
+                .into(imageView);
     }
 
-
-    public static void loadProfileImageWithoutRounding(SimpleDraweeView draweeView, Uri uri, int placeHolderResId) {
-        ImageLoader.newBuilder()
-                .placeHolder(placeHolderResId, ScalingUtils.ScaleType.CENTER_CROP)
-                .actualScaleType(ScalingUtils.ScaleType.CENTER_CROP)
-                .load(uri)
-                .into(draweeView);
-    }
-
-    public static RoundingParams getCircleRoundingParams(int color, int width) {
-        RoundingParams roundingParams = RoundingParams.asCircle();
-        roundingParams.setBorder(color, width);
-        return roundingParams;
-    }
-
-    public static void setResourceIconOrLoadImageForComment(final SimpleDraweeView draweeView,
+    public static void setResourceIconOrLoadImage(final ImageView imageView,
                                                   final View vOutLine,
                                                   final String fileUrl,
                                                   final String thumbnailUrl,
                                                   final String serverUrl,
                                                   final String fileType) {
-
         if (vOutLine != null) {
             vOutLine.setVisibility(View.VISIBLE);
         }
 
-        ImageLoader.Builder builder = ImageLoader.newBuilder()
-                .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
-
         int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, fileType);
 
         boolean hasImageUrl = !TextUtils.isEmpty(fileUrl) || !TextUtils.isEmpty(thumbnailUrl);
@@ -249,8 +213,8 @@ public class ImageUtil {
                 vOutLine.setVisibility(View.GONE);
             }
 
-            builder.backgroundColor(Color.TRANSPARENT)
-                    .load(mimeTypeIconImage).into(draweeView);
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            imageView.setImageResource(mimeTypeIconImage);
             return;
         }
 
@@ -260,52 +224,54 @@ public class ImageUtil {
                 vOutLine.setVisibility(View.GONE);
             }
 
-            builder.backgroundColor(Color.TRANSPARENT)
-                    .load(mimeTypeIconImage).into(draweeView);
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            imageView.setImageResource(mimeTypeIconImage);
         } else {
             if (TextUtils.isEmpty(thumbnailUrl)) {
-                builder.actualScaleType(ScalingUtils.ScaleType.FIT_XY);
-                builder.load(R.drawable.comment_no_img).into(draweeView);
+                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                imageView.setImageResource(R.drawable.comment_no_img);
                 return;
             }
 
-            builder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-            builder.backgroundColor(draweeView.getResources().getColor(R.color.jandi_messages_image_view_bg));
-            builder.placeHolder(
-                    R.drawable.comment_img_preview, ScalingUtils.ScaleType.FIT_XY);
-            builder.error(R.drawable.comment_no_img, ScalingUtils.ScaleType.FIT_XY);
-            builder.load(Uri.parse(thumbnailUrl)).into(draweeView);
+            ImageLoader loader = ImageLoader.newInstance()
+                    .actualImageScaleType(ImageView.ScaleType.CENTER_CROP);
+            loader.placeHolder(
+                    R.drawable.comment_img_preview, ImageView.ScaleType.FIT_XY);
+            loader.error(R.drawable.comment_no_img, ImageView.ScaleType.FIT_XY);
+            loader.uri(Uri.parse(thumbnailUrl)).into(imageView);
         }
     }
 
-    public static void setResourceIconOrLoadImage(final SimpleDraweeView draweeView,
-                                                  final View vOutLine,
-                                                  final String fileUrl,
-                                                  final String thumbnailUrl,
-                                                  final String serverUrl,
-                                                  final String fileType) {
+    public static void setResourceIconOrLoadImageForComment(final ImageView imageView,
+                                                            final View vOutLine,
+                                                            final String fileUrl,
+                                                            final String thumbnailUrl,
+                                                            final String serverUrl,
+                                                            final String fileType) {
+
         if (vOutLine != null) {
             vOutLine.setVisibility(View.GONE);
         }
 
-        ImageLoader.Builder builder = ImageLoader.newBuilder()
-                .actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
-
         int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, fileType);
 
         boolean hasImageUrl = !TextUtils.isEmpty(fileUrl) || !TextUtils.isEmpty(thumbnailUrl);
         if (!TextUtils.equals(fileType, "image") || !hasImageUrl) {
-            builder.load(mimeTypeIconImage).into(draweeView);
+            imageView.setBackgroundColor(Color.TRANSPARENT);
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            imageView.setImageResource(mimeTypeIconImage);
             return;
         }
 
         MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
         if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
-            builder.load(mimeTypeIconImage).into(draweeView);
+            imageView.setBackgroundColor(Color.TRANSPARENT);
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            imageView.setImageResource(mimeTypeIconImage);
         } else {
             if (TextUtils.isEmpty(thumbnailUrl)) {
-                builder.actualScaleType(ScalingUtils.ScaleType.FIT_CENTER);
-                builder.load(R.drawable.file_icon_img).into(draweeView);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                imageView.setImageResource(R.drawable.comment_no_img);
                 return;
             }
 
@@ -313,20 +279,25 @@ public class ImageUtil {
                 vOutLine.setVisibility(View.VISIBLE);
             }
 
-            builder.actualScaleType(ScalingUtils.ScaleType.CENTER_CROP);
-            builder.placeHolder(
-                    R.drawable.comment_image_preview_download, ScalingUtils.ScaleType.FIT_XY);
-            builder.error(R.drawable.file_icon_img, ScalingUtils.ScaleType.FIT_CENTER);
-            builder.controllerListener(new BaseControllerListener<ImageInfo>() {
+            ImageLoader loader = ImageLoader.newInstance();
+            loader.actualImageScaleType(ImageView.ScaleType.CENTER_CROP);
+            loader.backgroundColor(imageView.getResources().getColor(R.color.jandi_messages_image_view_bg));
+            loader.placeHolder(
+                    R.drawable.comment_img_preview, ImageView.ScaleType.CENTER_INSIDE);
+            loader.error(R.drawable.comment_no_img, ImageView.ScaleType.CENTER_INSIDE);
+            loader.listener(new SimpleRequestListener<Uri, GlideDrawable>() {
                 @Override
-                public void onFailure(String id, Throwable throwable) {
+                public boolean onException(Exception e, Uri model,
+                                           Target<GlideDrawable> target,
+                                           boolean isFirstResource) {
                     if (vOutLine != null) {
                         vOutLine.setVisibility(View.GONE);
                     }
+                    return false;
                 }
             });
 
-            builder.load(Uri.parse(thumbnailUrl)).into(draweeView);
+            loader.uri(Uri.parse(thumbnailUrl)).into(imageView);
         }
     }
 

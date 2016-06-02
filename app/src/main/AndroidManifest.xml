@@ -12,6 +12,10 @@
         android:theme="@style/JandiTheme"
         tools:replace="android:icon, android:allowBackup">
 
+        <meta-data
+            android:name="com.tosslab.jandi.app.utils.image.JandiGlideModule"
+            android:value="GlideModule" />
+
         <!--삼성폰 멀티윈도우-->
         <meta-data
             android:name="com.samsung.android.sdk.multiwindow.enable"
@@ -250,12 +254,6 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".push.legacy.PreviousBroadCastReceiver">
-            <intent-filter>
-                <action android:name="com.tosslab.jandi.app.Push" />
-            </intent-filter>
-        </receiver>
-
 
         <!--Parse-->
         <receiver
@@ -276,6 +274,12 @@
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
                 <category android:name="${applicationId}" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".push.legacy.ParsePushBroadCastReceiver">
+            <intent-filter>
+                <action android:name="com.tosslab.jandi.app.Push" />
             </intent-filter>
         </receiver>
         <!--EOF Parse-->
@@ -605,9 +609,6 @@
 
         <!-- Push Intent Service -->
         <service android:name=".push.receiver.JandiPushIntentService" />
-
-        <!-- Previous Push Intent Service -->
-        <service android:name=".push.legacy.PreviousJandiPushIntentService" />
 
         <!-- Log Out Service -->
         <service android:name=".services.SignOutService" />

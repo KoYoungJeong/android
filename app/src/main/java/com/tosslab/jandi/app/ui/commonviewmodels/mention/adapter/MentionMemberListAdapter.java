@@ -6,16 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
+import android.widget.ImageView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.viewholder.MentionMemberListViewHolder;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
-import com.tosslab.jandi.app.utils.UriFactory;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import java.util.List;
 
@@ -64,7 +61,7 @@ public class MentionMemberListAdapter extends ArrayAdapter<SearchedItemVO> {
     public void onBindViewHolder(MentionMemberListViewHolder holder, int position) {
         SearchedItemVO item = getItem(position);
 
-        SimpleDraweeView ivIcon = holder.getIvIcon();
+        ImageView ivIcon = holder.getIvIcon();
 
         boolean isBot = item.isBot();
 
@@ -78,21 +75,18 @@ public class MentionMemberListAdapter extends ArrayAdapter<SearchedItemVO> {
         ivIcon.setLayoutParams(layoutParams);
 
         if (item.getName().equals("all") && item.getType().equals("room")) {
-            ImageLoader.newBuilder().load(R.drawable.thum_all_member).into(ivIcon);
+            ivIcon.setImageResource(R.drawable.thum_all_member);
             holder.getTvName().setText(R.string.jandi_all_of_topic_members);
         } else if (isBot) {
-            ImageLoader.newBuilder()
-                    .actualScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
-                    .load(R.drawable.bot_32x40)
-                    .into(ivIcon);
+            ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            ivIcon.setImageResource(R.drawable.bot_32x40);
             holder.getTvName().setText(item.getName());
         } else {
             if (!item.isInactive()) {
                 ImageUtil.loadProfileImage(ivIcon,
                         item.getSmallProfileImageUrl(), R.drawable.profile_img);
             } else {
-                ImageUtil.loadProfileImage(ivIcon,
-                        UriFactory.getResourceUri(R.drawable.profile_img_dummyaccount_43), R.drawable.profile_img_dummyaccount_43);
+                ivIcon.setImageResource(R.drawable.profile_img_dummyaccount_43);
             }
             holder.getTvName().setText(item.getName());
         }

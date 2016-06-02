@@ -16,7 +16,7 @@
             android:layout_height="100dp"
             android:background="?attr/selectableItemBackground">
 
-            <com.tosslab.jandi.app.views.FrescoImageView
+            <ImageView
                 android:id="@+id/iv_mypage_my_profile"
                 android:layout_width="64dp"
                 android:layout_height="64dp"

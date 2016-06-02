@@ -2,9 +2,9 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -13,15 +13,17 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHo
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
+import rx.android.schedulers.AndroidSchedulers;
+
 public class StickerMessageViewHolder extends BaseMessageViewHolder {
 
     protected Context context;
 
-    private SimpleDraweeView ivProfile;
+    private ImageView ivProfile;
 
     private TextView tvName;
     private View vDisableLineThrough;
-    private SimpleDraweeView ivSticker;
+    private ImageView ivSticker;
     private View vProfileCover;
 
     private StickerMessageViewHolder() {
@@ -32,12 +34,12 @@ public class StickerMessageViewHolder extends BaseMessageViewHolder {
         super.initView(rootView);
         context = rootView.getContext();
         if (hasProfile) {
-            ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
+            ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
             vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
             tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
             vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         }
-        ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_sticker);
+        ivSticker = (ImageView) rootView.findViewById(R.id.iv_message_sticker);
     }
 
     @Override
@@ -72,15 +74,17 @@ public class StickerMessageViewHolder extends BaseMessageViewHolder {
 
     private void setBadge(ResMessages.Link link, long teamId, long roomId) {
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId());
-        tvMessageBadge.setText(String.valueOf(unreadCount));
-
-        if (unreadCount > 0) {
-            tvMessageBadge.setVisibility(View.VISIBLE);
-        } else {
-            tvMessageBadge.setVisibility(View.GONE);
-        }
+        UnreadCountUtil.getUnreadCount(teamId, roomId,
+                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(unreadCount -> {
+                    if (unreadCount > 0) {
+                        tvMessageBadge.setText(String.valueOf(unreadCount));
+                        tvMessageBadge.setVisibility(View.VISIBLE);
+                    } else {
+                        tvMessageBadge.setVisibility(View.GONE);
+                    }
+                });
     }
 
     @Override

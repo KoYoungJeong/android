@@ -5,14 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import java.util.List;
 
@@ -55,7 +54,7 @@ public class EntitySimpleListAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_select_cdp, viewGroup, false);
             holder = new ViewHolder();
             holder.textView = (TextView) convertView.findViewById(R.id.tv_select_cdp);
-            holder.imageView = (SimpleDraweeView) convertView.findViewById(R.id.iv_select_cdp);
+            holder.imageView = (ImageView) convertView.findViewById(R.id.iv_select_cdp);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -70,7 +69,7 @@ public class EntitySimpleListAdapter extends BaseAdapter {
             holder.textView.setText(entity.getName());
         }
 
-        SimpleDraweeView ivIcon = holder.imageView;
+        ImageView ivIcon = holder.imageView;
         ivIcon.clearColorFilter();
         // user 는 개별 프로필 사진이 존재하기에 별도로 가져온다.
         ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
@@ -85,9 +84,7 @@ public class EntitySimpleListAdapter extends BaseAdapter {
             ImageUtil.loadProfileImage(ivIcon,
                     entity.getUserSmallProfileUrl(), R.drawable.profile_img_comment);
         } else {
-            ImageLoader.newBuilder()
-                    .load(entity.getIconImageResId())
-                    .into(ivIcon);
+            ivIcon.setImageResource(entity.getIconImageResId());
         }
 
         return convertView;
@@ -95,6 +92,6 @@ public class EntitySimpleListAdapter extends BaseAdapter {
 
     static class ViewHolder {
         TextView textView;
-        SimpleDraweeView imageView;
+        ImageView imageView;
     }
 }

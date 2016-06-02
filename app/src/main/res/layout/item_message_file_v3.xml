@@ -5,14 +5,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.tosslab.jandi.app.views.FrescoImageView
+    <ImageView
         android:id="@+id/iv_message_user_profile"
         android:layout_width="@dimen/jandi_messages_profile_size"
         android:layout_height="@dimen/jandi_messages_profile_size"
         android:layout_marginLeft="@dimen/jandi_messages_profile_margin_right"
-        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
-        app:backgroundImage="@color/black"
-        app:roundAsCircle="true"/>
+        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"/>
 
     <View
         android:id="@+id/v_message_user_profile_cover"
@@ -64,7 +62,7 @@
         android:paddingTop="8dp"
         app:boundWidth="59dp">
 
-        <com.facebook.drawee.view.SimpleDraweeView
+        <ImageView
             android:id="@+id/iv_message_common_file"
             android:layout_width="42dp"
             android:layout_height="42dp"
@@ -157,7 +155,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="1dp"
-            android:text="1"
             android:textColor="#ff00ace9"
             android:textSize="9dp"
             android:textStyle="bold"/>

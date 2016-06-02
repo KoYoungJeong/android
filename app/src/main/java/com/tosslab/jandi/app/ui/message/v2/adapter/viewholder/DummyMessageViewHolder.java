@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -22,10 +21,10 @@ import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 public class DummyMessageViewHolder implements BodyViewHolder {
-    private SimpleDraweeView ivProfile;
+    private ImageView ivProfile;
     private TextView tvName;
     private TextView tvMessage;
-    private SimpleDraweeView ivSticker;
+    private ImageView ivSticker;
     private ImageView ivStatus;
 
     private boolean hasBottomMargin = false;
@@ -37,10 +36,10 @@ public class DummyMessageViewHolder implements BodyViewHolder {
 
     @Override
     public void initView(View rootView) {
-        ivProfile = (SimpleDraweeView) rootView.findViewById(R.id.iv_message_user_profile);
+        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_profile_user_name);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_dummy_message_content);
-        ivSticker = (SimpleDraweeView) rootView.findViewById(R.id.iv_dummy_message_sticker);
+        ivSticker = (ImageView) rootView.findViewById(R.id.iv_dummy_message_sticker);
         ivStatus = (ImageView) rootView.findViewById(R.id.iv_dummy_send_status);
         vBottomMargin = rootView.findViewById(R.id.v_margin);
 

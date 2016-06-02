@@ -30,6 +30,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import de.greenrobot.event.EventBus;
 
@@ -49,6 +51,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     private MessagePointer messagePointer;
 
     private Map<ResMessages.Link, Integer> itemTypes;
+    private Lock lock;
 
     public MainMessageListAdapter(Context context, Room room) {
         this.context = context;
@@ -58,6 +61,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         setHasStableIds(true);
         itemTypes = new WeakHashMap<>();
 
+        lock = new ReentrantLock();
     }
 
     @Override
@@ -72,8 +76,18 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     @Override
     public void onBindViewHolder(RecyclerBodyViewHolder viewHolder, int position) {
         ResMessages.Link item = getItem(position);
+        if (item == null) {
+            LogUtil.e("onBindViewHolder / Item is Null!!!!!!!!!!!");
+            return;
+        }
+
         BodyViewHolder bodyViewHolder = viewHolder.getViewHolder();
-        bodyViewHolder.bindData(item, room.getTeamId(), room.getRoomId(), room.getEntityId());
+
+        try {
+            bodyViewHolder.bindData(item, room.getTeamId(), room.getRoomId(), room.getEntityId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (item.id == lastMarker) {
             if (markerAnimState == MainMessageListAdapter.AnimState.Idle) {
@@ -152,97 +166,109 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     @Override
     public void addAll(int position, List<ResMessages.Link> links) {
 
-        if (links == null || links.isEmpty()) {
-            return;
-        }
+        lock.lock();
+        try {
+            if (links == null || links.isEmpty()) {
+                return;
+            }
 
-        int minPosition = Math.min(position, getItemCount());
+            int minPosition = Math.min(position, getItemCount());
 
-        if (minPosition != 0) {
-            for (int idx = links.size() - 1; idx >= 0; idx--) {
-                ResMessages.Link link = links.get(idx);
-                if (TextUtils.equals(link.status, "archived")) {
-                    links.remove(idx);
-                    int searchedPosition = indexByMessageId(link.messageId);
-                    if (searchedPosition < 0) {
-                        continue;
-                    }
+            if (minPosition != 0) {
+                for (int idx = links.size() - 1; idx >= 0; idx--) {
+                    ResMessages.Link link = links.get(idx);
+                    if (TextUtils.equals(link.status, "archived")) {
+                        links.remove(idx);
+                        int searchedPosition = indexByMessageId(link.messageId);
+                        if (searchedPosition < 0) {
+                            continue;
+                        }
 
-                    if (TextUtils.equals(link.message.contentType, "file")) {
-                        ResMessages.Link originLink = MainMessageListAdapter.this.getItem(searchedPosition);
-                        originLink.message = link.message;
-                        originLink.status = "archived";
-                        itemTypes.remove(originLink);
-                        getItemViewType(searchedPosition);
-                    } else {
-                        remove(searchedPosition);
-                        minPosition--;
+                        if (TextUtils.equals(link.message.contentType, "file")) {
+                            ResMessages.Link originLink = MainMessageListAdapter.this.getItem(searchedPosition);
+                            originLink.message = link.message;
+                            originLink.status = "archived";
+                            itemTypes.remove(originLink);
+                            getItemViewType(searchedPosition);
+                        } else {
+                            remove(searchedPosition);
+                            minPosition--;
+                        }
                     }
                 }
             }
-        }
 
-        int dummyMessageCount = getDummyMessageCount();
-        int beforePosition;
-        if (minPosition > dummyMessageCount) {
-            this.links.addAll(minPosition - dummyMessageCount, links);
-            beforePosition = minPosition - dummyMessageCount - 1;
-            for (int idx = 0; idx < links.size(); idx++) {
-                getItemViewType(minPosition - dummyMessageCount + idx);
+            int dummyMessageCount = getDummyMessageCount();
+            int beforePosition;
+            if (minPosition > dummyMessageCount) {
+                this.links.addAll(minPosition - dummyMessageCount, links);
+                beforePosition = minPosition - dummyMessageCount - 1;
+                for (int idx = 0; idx < links.size(); idx++) {
+                    getItemViewType(minPosition - dummyMessageCount + idx);
+                }
+            } else {
+                this.links.addAll(minPosition, links);
+                beforePosition = minPosition - 1;
+                for (int idx = 0; idx < links.size(); idx++) {
+                    getItemViewType(minPosition + idx);
+                }
             }
-        } else {
-            this.links.addAll(minPosition, links);
-            beforePosition = minPosition - 1;
-            for (int idx = 0; idx < links.size(); idx++) {
-                getItemViewType(minPosition + idx);
+            if (beforePosition >= 0) {
+                itemTypes.remove(getItem(beforePosition));
+                getItemViewType(beforePosition);
             }
-        }
-        if (beforePosition >= 0) {
-            itemTypes.remove(getItem(beforePosition));
-            getItemViewType(beforePosition);
-        }
 
-        if (beforePosition + links.size() + 1 < getItemCount()) {
-            itemTypes.remove(getItem(beforePosition + links.size() + 1));
-            getItemViewType(beforePosition + links.size() + 1);
+            if (beforePosition + links.size() + 1 < getItemCount()) {
+                itemTypes.remove(getItem(beforePosition + links.size() + 1));
+                getItemViewType(beforePosition + links.size() + 1);
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
     public void remove(int position) {
-
+        lock.lock();
         try {
 
             ResMessages.Link removed = links.remove(position);
             itemTypes.remove(removed);
 
             if (position > 0) {
-                itemTypes.remove(links.get(position - 1));
+                itemTypes.remove(getItem(position - 1));
                 getItemViewType(position - 1);
             }
             if (position < getItemCount() - 1) {
-                itemTypes.remove(links.get(position));
+                itemTypes.remove(getItem(position));
                 getItemViewType(position);
             }
 
         } catch (Exception e) {
             LogUtil.e(Log.getStackTraceString(e));
+        } finally {
+            lock.unlock();
         }
 
     }
 
     @Override
     public void updateCachedType(int position) {
-        itemTypes.remove(links.get(position));
+        itemTypes.remove(getItem(position));
         getItemViewType(position);
     }
 
     @Override
     public ResMessages.Link getItem(int position) {
-        if (position >= getItemCount()) {
-            return null;
+        lock.lock();
+        try {
+            if (position < 0 || position >= getItemCount()) {
+                return null;
+            }
+            return links.get(position);
+        } finally {
+            lock.unlock();
         }
-        return links.get(position);
     }
 
     @Override
@@ -378,8 +404,12 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     @Override
     public int getItemCount() {
-
-        return links.size();
+        lock.lock();
+        try {
+            return links.size();
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -404,21 +434,31 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     @Override
     public void removeAllDummy() {
-        for (int idx = getItemCount(); idx > 0; idx--) {
+        for (int idx = getItemCount() - 1; idx >= 0; idx--) {
             ResMessages.Link item = getItem(idx);
             if (item instanceof DummyMessageLink) {
                 remove(idx);
+            } else {
+                break;
             }
         }
     }
 
     @Override
     public void add(ResMessages.Link dummyMessage) {
-        int itemCount = getItemCount();
-        if (itemCount > 0) {
-            itemTypes.remove(links.get(itemCount - 1));
+        lock.lock();
+        try {
+            links.add(dummyMessage);
+            int itemCount = getItemCount();
+            if (itemCount > 1) {
+                itemTypes.remove(getItem(itemCount - 2));
+                getItemViewType(itemCount - 2);
+            }
+            getItemViewType(itemCount - 1);
+        } finally {
+            lock.unlock();
         }
-        links.add(dummyMessage);
+
     }
 
     @Override
@@ -451,10 +491,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     enum AnimState {
         Idle, Loading, End
-    }
-
-    public interface NotifyDataSetChangedCallback {
-        void callBack();
     }
 
     public interface OnItemClickListener {

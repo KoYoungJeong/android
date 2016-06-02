@@ -59,6 +59,11 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(chatItems -> {
+                    if (chatItems.isEmpty()) {
+                        view.showEmptyLayout();
+                    } else {
+                        view.hideEmptyLayout();
+                    }
                     view.setChatItems(chatItems);
                     int count = mainChatListModel.getUnreadCount(chatItems);
                     boolean isBadge = count > 0;

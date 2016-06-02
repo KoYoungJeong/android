@@ -83,7 +83,11 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                     List<ChatChooseItem> members = getChatChooseItems();
                     return getFilteredChatChooseItems(s, members);
                 })
-                .subscribe(topicMembers -> view.showListMembers(topicMembers), Throwable::printStackTrace);
+                .doOnNext(topicMembers -> {
+                    view.dismissProgressWheel();
+                    view.showListMembers(topicMembers);
+                })
+                .subscribe();
 
         entityRefreshPublishSubject = PublishSubject.create();
         entityRefreshSubscriber = entityRefreshPublishSubject.throttleWithTimeout(500, TimeUnit.MILLISECONDS)
@@ -151,6 +155,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void initMemberList() {
+        view.showProgressWheel();
         objectPublishSubject.onNext(view.getSearchText());
     }
 
@@ -323,23 +328,23 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     private void trackTopicMemberInviteSuccess(int memberCount, long entityId) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                        .event(Event.TopicMemberInvite)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, true)
-                        .property(PropertyKey.TopicId, entityId)
-                        .property(PropertyKey.MemberCount, memberCount)
-                        .build());
+                .event(Event.TopicMemberInvite)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.TopicId, entityId)
+                .property(PropertyKey.MemberCount, memberCount)
+                .build());
     }
 
     private void trackTopicMemberInviteFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                        .event(Event.TopicMemberInvite)
-                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                        .property(PropertyKey.ResponseSuccess, false)
-                        .property(PropertyKey.ErrorCode, errorCode)
-                        .build());
+                .event(Event.TopicMemberInvite)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
 
     }
 

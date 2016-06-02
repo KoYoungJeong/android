@@ -169,7 +169,7 @@ public class ImageFilePath {
                         && !TextUtils.equals("null", mimeType)) {
                     String extensionFromMimeType = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
                     if (!TextUtils.isEmpty(extensionFromMimeType)
-                            && fileName.lastIndexOf(extensionFromMimeType) <= 0) {
+                            && fileName.toLowerCase().lastIndexOf(extensionFromMimeType) <= 0) {
                         fileExt = "." + extensionFromMimeType;
                     } else {
                         fileExt = "";

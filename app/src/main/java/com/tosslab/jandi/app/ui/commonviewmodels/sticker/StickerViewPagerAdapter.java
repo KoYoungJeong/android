@@ -2,23 +2,19 @@ package com.tosslab.jandi.app.ui.commonviewmodels.sticker;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.views.FrescoImageView;
 
 import java.util.List;
 
@@ -40,7 +36,6 @@ class StickerViewPagerAdapter extends PagerAdapter {
 
         this.onStickerClick = onStickerClick;
         stickerMax = STICKER_MAX_VIEW_PORTAIT;
-
     }
 
     @Override
@@ -48,7 +43,6 @@ class StickerViewPagerAdapter extends PagerAdapter {
         if (stickers == null) {
             return 0;
         }
-
         return ((stickers.size() - 1) / stickerMax) + 1;
     }
 
@@ -82,7 +76,8 @@ class StickerViewPagerAdapter extends PagerAdapter {
         int padding = resources.getDimensionPixelSize(R.dimen.jandi_sticker_view_pager_padding);
 
         LinearLayout linearLayout = new LinearLayout(context);
-        linearLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        int matchParent = ViewGroup.LayoutParams.MATCH_PARENT;
+        linearLayout.setLayoutParams(new ViewGroup.LayoutParams(matchParent, matchParent));
         linearLayout.setPadding(padding / 2 + 1, padding / 2 + 1, padding / 2 + 1, 0);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         linearLayout.setGravity(Gravity.CENTER);
@@ -107,36 +102,42 @@ class StickerViewPagerAdapter extends PagerAdapter {
             linearLayout.addView(childBottom);
         }
 
+        LinearLayout.LayoutParams wrapperLayoutParams = new LinearLayout.LayoutParams(0, matchParent);
+        wrapperLayoutParams.weight = 1;
+        wrapperLayoutParams.leftMargin = padding / 2;
+        wrapperLayoutParams.rightMargin = padding / 2;
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
-        layoutParams.weight = 1;
-        layoutParams.leftMargin = padding / 2;
-        layoutParams.rightMargin = padding / 2;
+        ViewGroup.LayoutParams imageViewLayoutParams = new ViewGroup.LayoutParams(matchParent, matchParent);
 
         int maxWidth = resources.getDimensionPixelSize(R.dimen.jandi_sticker_view_pager_items_max_width);
 
-        Drawable pressedDrawable = new ColorDrawable(Color.parseColor("#45ffffff"));
-
         for (int idx = 0; idx < size; idx++) {
-            GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(resources)
-                    .setActualImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE)
-                    .setPressedStateOverlay(pressedDrawable)
-                    .build();
+            FrameLayout wrapper = new FrameLayout(context);
+            wrapper.setLayoutParams(wrapperLayoutParams);
 
-            SimpleDraweeView child = new FrescoImageView(context, hierarchy);
-            child.setLayoutParams(layoutParams);
+            ImageView child = new ImageView(context);
+            child.setLayoutParams(imageViewLayoutParams);
             child.setMaxWidth(maxWidth);
             child.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            child.setDuplicateParentStateEnabled(true);
+
+            wrapper.addView(child);
+
+            View view = new View(context);
+            view.setLayoutParams(imageViewLayoutParams);
+            view.setBackgroundDrawable(getStickerBackground(context));
+
+            wrapper.addView(view);
 
             if (idx / columnCount < 1) {
-                childTop.addView(child);
+                childTop.addView(wrapper);
             } else if (childBottom != null) {
-                childBottom.addView(child);
+                childBottom.addView(wrapper);
             }
 
             final ResMessages.StickerContent resSticker = stickers.get(idx + page * stickerMax);
 
-            child.setOnClickListener(v -> {
+            wrapper.setOnClickListener(v -> {
                 if (onStickerClick != null) {
                     onStickerClick.onStickerClick(resSticker.groupId, resSticker.stickerId);
                 }
@@ -147,9 +148,23 @@ class StickerViewPagerAdapter extends PagerAdapter {
             options.isFadeAnimation = false;
             StickerManager.getInstance()
                     .loadSticker(child, resSticker.groupId, resSticker.stickerId, options);
-
         }
 
         return linearLayout;
     }
+
+    private Drawable getStickerBackground(Context context) {
+        int selectableItemBackground = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                ? android.R.attr.selectableItemBackgroundBorderless
+                : android.R.attr.selectableItemBackground;
+        int[] attrs = new int[] {selectableItemBackground};
+
+        TypedArray ta = context.obtainStyledAttributes(attrs);
+
+        Drawable drawable = ta.getDrawable(0 /* index */);
+
+        ta.recycle();
+        return drawable;
+    }
+
 }

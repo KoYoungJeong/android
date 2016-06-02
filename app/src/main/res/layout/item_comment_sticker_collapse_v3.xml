@@ -20,7 +20,7 @@
         android:paddingTop="8dp">
 
 
-        <com.tosslab.jandi.app.views.FrescoImageView
+        <ImageView
             android:id="@+id/iv_profile_nested_comment_sticker"
             android:layout_width="107dp"
             android:layout_height="107dp"
@@ -47,7 +47,6 @@
             android:layout_alignBottom="@+id/tv_profile_nested_comment_sticker_create_date"
             android:layout_marginLeft="4dp"
             android:layout_toRightOf="@+id/tv_profile_nested_comment_sticker_create_date"
-            android:text="10"
             android:textColor="@color/jandi_accent_color"
             android:textSize="9sp"
             android:textStyle="bold" />

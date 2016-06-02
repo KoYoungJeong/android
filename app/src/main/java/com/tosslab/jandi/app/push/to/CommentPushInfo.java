@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class CommentPushInfo extends BaseMessagePushInfo {
     @JsonProperty("message_content")
-    private BaseMessagePushInfo.MessageContent messageContent;
+    private MessageContent messageContent;
 
     public CommentPushInfo() {
         setPushType("comment_created");

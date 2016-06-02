@@ -5,9 +5,12 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.util.Log;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -72,8 +75,23 @@ public class ImageCropPickerActivity extends BaseAppCompatActivity {
         }
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void showUnexpectedErrorToast() {
+        ColoredToast.show(R.string.jandi_err_unexpected);
+    }
+
     private void saveUploadCroppedImage() {
-        boolean saved = imageCropPickerViewModel.saveOutput(ivPhoto.getCroppedImage(), saveUri);
+        Bitmap croppedImage;
+        try {
+            croppedImage = ivPhoto.getCroppedImage();
+        } catch (Exception e) {
+            LogUtil.e("ImageCropPickerActivity", Log.getStackTraceString(e));
+            showUnexpectedErrorToast();
+            return;
+        }
+
+        boolean saved = imageCropPickerViewModel.saveOutput(croppedImage, saveUri);
+
         if (saved) {
             Intent intent = new Intent();
             intent.putExtra("output", saveUri);
