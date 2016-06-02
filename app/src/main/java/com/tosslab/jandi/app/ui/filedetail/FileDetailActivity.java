@@ -51,8 +51,6 @@ import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.ReadyComment;
 import com.tosslab.jandi.app.local.orm.repositories.ReadyCommentRepository;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
@@ -61,6 +59,9 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.permissions.Check;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
@@ -76,7 +77,6 @@ import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
-import com.tosslab.jandi.app.views.controller.SoftInputAreaController;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
@@ -88,6 +88,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.BackPressCatchEditText;
 import com.tosslab.jandi.app.views.SoftInputDetectLinearLayout;
+import com.tosslab.jandi.app.views.controller.SoftInputAreaController;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -714,8 +715,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             return;
         }
 
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity me = entityManager.getMe();
+        long myId = TeamInfoLoader.getInstance().getMyId();
+        User me = TeamInfoLoader.getInstance().getUser(myId);
 
         boolean isMine = me != null
                 && (me.getId() == comment.writerId || me.isTeamOwner());
@@ -742,26 +743,43 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     private void moveToSharedEntity(long entityId) {
-        EntityManager entityManager = EntityManager.getInstance();
+        TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
 
-        FormattedEntity entity = entityManager.getEntityById(entityId);
+        int entityType;
+        boolean isStarred = false;
+        boolean isUser = false;
+        boolean isBot = false;
 
-        int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC
-                : entity.isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC
-                : JandiConstants.TYPE_DIRECT_MESSAGE;
-        boolean isStarred = entity.isStarred;
-
-        if (entity.isUser() || entityManager.isBot(entityId)) {
-            moveToMessageListActivity(entityId, entityType, -1, isStarred);
-            return;
+        if (teamInfoLoader.isTopic(entityId)) {
+            if (teamInfoLoader.isPublicTopic(entityId)) {
+                entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
+            } else {
+                entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
+            }
+            isStarred = teamInfoLoader.isStarred(entityId);
+        } else if (teamInfoLoader.isUser(entityId)) {
+            entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
+            isStarred = teamInfoLoader.isChatStarred(entityId);
+            isUser = true;
+            if (teamInfoLoader.isJandiBot(entityId)) {
+                isBot = true;
+            }
+        } else {
+            entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
         }
 
-        // 공개 토픽인 경우 참여하고 있는지 확인, 비공개토픽인 경우 바로 이동
-        if ((entity.isPublicTopic() && entity.isJoined)
-                || entity.isPrivateGroup()) {
-            moveToMessageListActivity(entityId, entityType, entityId, isStarred);
+        if (isUser || isBot) {
+            moveToMessageListActivity(entityId, entityType, -1, isStarred);
+            return;
         } else {
-            fileDetailPresenter.joinAndMove(entity);
+            TopicRoom topic = teamInfoLoader.getTopic(entityId);
+            if (topic.isJoined()) {
+
+                moveToMessageListActivity(entityId, entityType, entityId, isStarred);
+            } else {
+                fileDetailPresenter.joinAndMove(topic);
+
+            }
         }
     }
 
@@ -986,12 +1004,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public void moveToMessageListActivity(long entityId, int entityType, long roomId,
                                           boolean isStarred) {
         MessageListV2Activity_.intent(FileDetailActivity.this)
-                .teamId(EntityManager.getInstance().getTeamId())
+                .teamId(TeamInfoLoader.getInstance().getTeamId())
                 .entityId(entityId)
                 .entityType(entityType)
                 .roomId(roomId)
                 .isFromPush(false)
-                .isFavorite(isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
     }

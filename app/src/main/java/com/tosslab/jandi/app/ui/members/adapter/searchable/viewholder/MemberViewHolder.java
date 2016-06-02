@@ -8,8 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.BotEntity;
-import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -20,7 +19,7 @@ import butterknife.ButterKnife;
 /**
  * Created by tonyjs on 16. 3. 15..
  */
-public class MemberViewHolder extends BaseViewHolder<FormattedEntity> {
+public class MemberViewHolder extends BaseViewHolder<User> {
 
     @Bind(R.id.tv_team_member_name)
     TextView tvName;
@@ -41,20 +40,20 @@ public class MemberViewHolder extends BaseViewHolder<FormattedEntity> {
     }
 
     @Override
-    public void onBindView(FormattedEntity user) {
-        boolean inavtived = user.isInavtived();
+    public void onBindView(User user) {
+        boolean inavtived = user.isInactive();
         if (!inavtived) {
             tvName.setText(user.getName());
         } else {
-            tvName.setText(user.getUserEmail());
+            tvName.setText(user.getEmail());
         }
 
-        String userStatusMessage = user.getUserStatusMessage();
+        String userStatusMessage = user.getStatusMessage();
         tvStatus.setVisibility(TextUtils.isEmpty(userStatusMessage) ? View.GONE : View.VISIBLE);
         tvStatus.setText(userStatusMessage);
 
         ViewGroup.LayoutParams ivProfileLayoutParams = ivProfile.getLayoutParams();
-        if (user instanceof BotEntity) {
+        if (user.isBot()) {
             ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(54f);
             ivProfile.setLayoutParams(ivProfileLayoutParams);
 
@@ -64,7 +63,7 @@ public class MemberViewHolder extends BaseViewHolder<FormattedEntity> {
             ivProfile.setLayoutParams(ivProfileLayoutParams);
             if (!inavtived) {
                 ImageUtil.loadProfileImage(
-                        ivProfile, user.getUserLargeProfileUrl(), R.drawable.profile_img);
+                        ivProfile, user.getPhotoUrl(), R.drawable.profile_img);
             } else {
                 ivProfile.setImageResource(R.drawable.profile_img_dummyaccount_43);
             }

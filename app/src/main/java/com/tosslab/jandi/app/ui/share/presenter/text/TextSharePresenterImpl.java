@@ -3,18 +3,13 @@ package com.tosslab.jandi.app.ui.share.presenter.text;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
-import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
-import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
@@ -31,8 +26,8 @@ public class TextSharePresenterImpl implements TextSharePresenter {
     ShareModel shareModel;
     long roomId;
     long teamId;
+    TeamInfoLoader teamInfoLoader;
     private View view;
-    ShareSelectModel shareSelectModel;
 
     @Override
     public void initViews() {
@@ -41,8 +36,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
             view.finishOnUiThread();
             return;
         }
-        EntityManager entityManager = EntityManager.getInstance();
-        initEntityData(entityManager.getTeamId());
+        initEntityData(TeamInfoLoader.getInstance().getTeamId());
     }
 
     @Override
@@ -52,8 +46,8 @@ public class TextSharePresenterImpl implements TextSharePresenter {
 
         if (!shareModel.hasLeftSideMenu(teamId)) {
             try {
-                ResLeftSideMenu leftSideMenu = shareModel.getLeftSideMenu(teamId);
-                shareModel.updateLeftSideMenu(leftSideMenu);
+                InitialInfo initialInfo = shareModel.getInitialInfo(teamId);
+                shareModel.updateInitialInfo(initialInfo);
             } catch (Exception e) {
                 e.printStackTrace();
                 view.moveIntro();
@@ -61,11 +55,11 @@ public class TextSharePresenterImpl implements TextSharePresenter {
             }
         }
 
-        shareSelectModel = shareModel.getShareSelectModel(teamId);
+        teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
 
-        String teamName = shareSelectModel.getTeamName();
-        this.roomId = shareSelectModel.getDefaultTopicId();
-        String roomName = shareSelectModel.getEntityById(roomId).getName();
+        String teamName = teamInfoLoader.getTeamName();
+        this.roomId = teamInfoLoader.getDefaultTopicId();
+        String roomName = teamInfoLoader.getName(roomId);
         int roomType = JandiConstants.TYPE_PUBLIC_TOPIC;
 
         view.setTeamName(teamName);
@@ -74,12 +68,14 @@ public class TextSharePresenterImpl implements TextSharePresenter {
 
     }
 
-    private int getRoomType(FormattedEntity entity) {
+    private int getRoomType(long entityId) {
 
-        if (entity.isPrivateGroup()) {
-            return JandiConstants.TYPE_PRIVATE_TOPIC;
-        } else if (entity.isPublicTopic()) {
-            return JandiConstants.TYPE_PUBLIC_TOPIC;
+        if (teamInfoLoader.isTopic(entityId)) {
+            if (teamInfoLoader.isPublicTopic(entityId)) {
+                return JandiConstants.TYPE_PUBLIC_TOPIC;
+            } else {
+                return JandiConstants.TYPE_PRIVATE_TOPIC;
+            }
         } else {
             return JandiConstants.TYPE_DIRECT_MESSAGE;
         }
@@ -88,11 +84,10 @@ public class TextSharePresenterImpl implements TextSharePresenter {
     @Override
     public void setEntity(long roomId) {
         this.roomId = roomId;
-        FormattedEntity entity = shareSelectModel.getEntityById(roomId);
-        int roomType = getRoomType(entity);
+        int roomType = getRoomType(roomId);
 
-        view.setTeamName(shareSelectModel.getTeamName());
-        view.setRoomName(entity.getName());
+        view.setTeamName(teamInfoLoader.getTeamName());
+        view.setRoomName(teamInfoLoader.getName(roomId));
         view.setMentionInfo(teamId, roomId, roomType);
 
 
@@ -112,7 +107,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
     @Background
     public void sendMessage(String messageText, List<MentionObject> mentions) {
         view.showProgressBar();
-        int roomType = getRoomType(shareSelectModel.getEntityById(roomId));
+        int roomType = getRoomType(roomId);
         try {
             shareModel.sendMessage(teamId, roomId, roomType, messageText, mentions);
             view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_share_succeed, messageText));
@@ -131,31 +126,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         if ((selectedTeamInfo == null || selectedTeamInfo.getTeamId() != teamId)) {
             AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
-            return getEntityInfo();
-        } else {
-            try {
-                EntityManager.getInstance();
-                return true;
-            } catch (Exception e) {
-                return getEntityInfo();
-            }
         }
+        return true;
     }
-
-    private boolean getEntityInfo() {
-        try {
-            EntityClientManager entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
-            ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
-            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-            EntityManager.getInstance().refreshEntity();
-            return true;
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-            return false;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
 }

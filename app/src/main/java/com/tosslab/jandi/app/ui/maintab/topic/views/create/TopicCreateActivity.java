@@ -260,7 +260,6 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
                 .roomId(entityId)
                 .entityType(entityType)
                 .entityId(entityId)
-                .isFavorite(false)
                 .start();
 
         TopicCreateActivity.this.finish();

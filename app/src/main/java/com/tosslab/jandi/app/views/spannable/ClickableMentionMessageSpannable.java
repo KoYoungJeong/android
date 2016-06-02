@@ -1,8 +1,7 @@
 package com.tosslab.jandi.app.views.spannable;
 
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import de.greenrobot.event.EventBus;
 
@@ -19,13 +18,13 @@ public class ClickableMentionMessageSpannable extends MentionMessageSpannable im
         this.entityId = entityId;
     }
 
+    @Override
     public void onClick() {
 
-        FormattedEntity entity = EntityManager.getInstance()
-                .getEntityById(entityId);
+        boolean user = TeamInfoLoader.getInstance().isUser(entityId);
+        boolean jandiBot = TeamInfoLoader.getInstance().isJandiBot(entityId);
 
-        if (entity != EntityManager.UNKNOWN_USER_ENTITY
-                && (entity.isUser() || EntityManager.getInstance().isJandiBot(entityId))) {
+        if ((user || jandiBot)) {
             EventBus.getDefault().post(new ShowProfileEvent(entityId, ShowProfileEvent.From.Mention));
         }
 

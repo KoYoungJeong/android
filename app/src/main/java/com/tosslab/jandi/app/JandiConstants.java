@@ -32,6 +32,11 @@ public class JandiConstants {
         public static final String TYPE_PRIVATE = "privateGroups";
     }
 
+    public static class Entity {
+
+        public static final int TYPE_EVERYWHERE = 6;
+    }
+
     public static class NetworkError {
         public static final int UNAUTHORIZED = 401;
         public static final int SERVICE_UNAVAILABLE = 503;

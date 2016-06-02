@@ -16,10 +16,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 
-/**
- * Created by Steve SeongUg Jung on 14. 12. 3..
- */
-
 @EBean
 public class IntroActivityPresenter {
 

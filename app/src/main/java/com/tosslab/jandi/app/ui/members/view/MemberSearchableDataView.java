@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.members.view;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.team.member.User;
 
 /**
  * Created by tonyjs on 16. 4. 7..
@@ -12,6 +12,6 @@ public interface MemberSearchableDataView {
     void notifyDataSetChanged();
 
     interface OnMemberClickListener {
-        void onMemberClick(FormattedEntity member);
+        void onMemberClick(User member);
     }
 }

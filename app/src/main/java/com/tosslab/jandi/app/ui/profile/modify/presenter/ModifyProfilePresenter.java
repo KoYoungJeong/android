@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.profile.modify.presenter;
 import android.app.Activity;
 
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.team.member.User;
 
 import java.io.File;
 
@@ -25,7 +25,7 @@ public interface ModifyProfilePresenter {
 
     void onStartUpload(Activity activity, String filePath);
 
-    void onProfileChange(ResLeftSideMenu.User member);
+    void onProfileChange(User member);
 
     void onRequestCamera(Activity activity);
 
@@ -37,7 +37,7 @@ public interface ModifyProfilePresenter {
 
         void showProgressWheel();
 
-        void displayProfile(ResLeftSideMenu.User me);
+        void displayProfile(User me);
 
         void showFailProfile();
 

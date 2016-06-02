@@ -6,20 +6,20 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.DatabaseConsts;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.main.ConfigApi;
-import com.tosslab.jandi.app.network.client.main.LeftSideApi;
+import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -51,7 +51,7 @@ public class IntroActivityModel {
     @Inject
     Lazy<AccountApi> accountApi;
     @Inject
-    Lazy<LeftSideApi> leftSideApi;
+    Lazy<StartApi> startApi;
     @Inject
     Lazy<ConfigApi> configApi;
 
@@ -122,10 +122,9 @@ public class IntroActivityModel {
         }
         try {
             long selectedTeamId = selectedTeamInfo.getTeamId();
-            ResLeftSideMenu totalEntitiesInfo =
-                    leftSideApi.get().getInfosForSideMenu(selectedTeamId);
-            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-            EntityManager.getInstance().refreshEntity();
+            InitialInfo totalEntitiesInfo = startApi.get().getInitializeInfo(selectedTeamId);
+            InitialInfoRepository.getInstance().upsertInitialInfo(totalEntitiesInfo);
+            TeamInfoLoader.getInstance().refresh();
             return true;
         } catch (RetrofitException e) {
             e.printStackTrace();
@@ -190,7 +189,8 @@ public class IntroActivityModel {
     }
 
     public boolean hasLeftSideMenu() {
-        return LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu() != null;
+        long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+        return InitialInfoRepository.getInstance().hasInitialInfo(selectedTeamId);
     }
 
     public boolean hasSelectedTeam() {

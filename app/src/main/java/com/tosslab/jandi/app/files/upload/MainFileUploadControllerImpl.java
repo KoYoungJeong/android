@@ -5,20 +5,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 
 import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity_;
-import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
-import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.file.FileUtil;
-import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
@@ -32,9 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-/**
- * Created by Steve SeongUg Jung on 15. 6. 12..
- */
 @EBean
 public class MainFileUploadControllerImpl implements FileUploadController {
 
@@ -196,61 +187,11 @@ public class MainFileUploadControllerImpl implements FileUploadController {
 
     }
 
-    @Background
-    void downloadImageAndShowFileUploadDialog(Context context, FragmentManager fragmentManager, long entityId, ProgressDialog downloadProgress, String url, String downloadDir, String downloadName) {
-
-        try {
-            File file = GoogleImagePickerUtil.downloadFile(context, downloadProgress, url, downloadDir, downloadName);
-            dismissProgressDialog(downloadProgress);
-            showFileUploadDialog(context, fragmentManager, file.getAbsolutePath(), entityId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void dismissProgressDialog(ProgressDialog uploadProgressDialog) {
         if (uploadProgressDialog != null && uploadProgressDialog.isShowing()) {
             uploadProgressDialog.dismiss();
         }
-    }
-
-    // File Upload 대화상자 보여주기
-    @Override
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void showFileUploadDialog(Context context, FragmentManager fragmentManager, String realFilePath, long entityId) {
-
-        if (GoogleImagePickerUtil.isUrl(realFilePath)) {
-
-            String downloadDir = FileUtil.getDownloadPath();
-            String downloadName = GoogleImagePickerUtil.getWebImageName();
-            ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(context, downloadDir, downloadName);
-            downloadImageAndShowFileUploadDialog(context, fragmentManager, entityId, downloadProgress, realFilePath, downloadDir, downloadName);
-        } else {
-
-            // 업로드 파일 용량 체크
-            if (filePickerModel.isOverSize(realFilePath)) {
-                exceedMaxFileSizeError(context);
-            } else {
-                DialogFragment newFragment = FileUploadDialogFragment.newInstance(realFilePath, entityId);
-                newFragment.show(fragmentManager, "dialog");
-            }
-        }
-
-    }
-
-    @Override
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void moveInsertFileCommnetActivity(Context context, List<String> realFilePath, int entityId) {// 업로드 파일 용량 체크
-        if (filePickerModel.isOverSize(realFilePath)) {
-            exceedMaxFileSizeError(context);
-        } else {
-            FileUploadPreviewActivity_.intent(context)
-                    .realFilePathList(new ArrayList<>(realFilePath))
-                    .selectedEntityIdToBeShared(entityId)
-                    .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
-        }
-
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

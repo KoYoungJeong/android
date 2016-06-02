@@ -6,9 +6,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 
 /**
@@ -42,7 +42,7 @@ public class MessageStarMentionViewHolder extends CommonStarMentionViewHolder {
 
         SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder(starMentionVO.getBody());
 
-        long myId = EntityManager.getInstance().getMe().getId();
+        long myId = TeamInfoLoader.getInstance().getMyId();
         MentionAnalysisInfo mentionAnalysisInfo =
                 MentionAnalysisInfo.newBuilder(myId, starMentionVO.getMentions())
                         .textSizeFromResource(R.dimen.jandi_mention_star_list_item_font_size)

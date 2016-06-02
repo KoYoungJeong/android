@@ -16,12 +16,13 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -38,9 +39,6 @@ import java.util.Collection;
 
 import rx.android.schedulers.AndroidSchedulers;
 
-/**
- * Created by tee on 16. 4. 7..
- */
 public class CommentViewHolder extends BaseCommentViewHolder {
 
     private ImageView ivMessageCommonFile;
@@ -154,14 +152,14 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     private boolean isFromMe(ResMessages.Link link) {
         boolean isMe = false;
         if (link.feedback != null) {
-            isMe = EntityManager.getInstance().isMe(link.feedback.writerId);
+            isMe = TeamInfoLoader.getInstance().getMyId() == link.feedback.writerId;
         }
         return isMe;
     }
 
     private void setBackground(ResMessages.Link link) {
 
-        boolean isMe = EntityManager.getInstance().isMe(link.message.writerId);
+        boolean isMe = TeamInfoLoader.getInstance().getMyId() == link.feedback.writerId;
 
         int resId;
 
@@ -203,7 +201,7 @@ public class CommentViewHolder extends BaseCommentViewHolder {
         if (link.message instanceof ResMessages.CommentMessage) {
             ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) link.message;
 
-            long myId = EntityManager.getInstance().getMe().getId();
+            long myId = TeamInfoLoader.getInstance().getMyId();
             if (commentMessage.content.contentBuilder == null) {
 
                 SpannableStringBuilder messageBuilder = new SpannableStringBuilder();
@@ -266,13 +264,13 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     private void settingFileInfo(ResMessages.Link link, long roomId) {
         final Resources resources = tvMessageCommonFileName.getResources();
 
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity room = entityManager.getEntityById(roomId);
+
+        Room room = TeamInfoLoader.getInstance().getRoom(roomId);
 
         boolean isPublicTopic = room.isPublicTopic();
 
-        FormattedEntity feedbackEntityById =
-                entityManager.getEntityById(link.feedback.writerId);
+        User feedbackEntityById =
+                TeamInfoLoader.getInstance().getUser(link.feedback.writerId);
 
         tvFileUploaderName.setTypeface(Typeface.DEFAULT_BOLD);
         tvFileUploaderName.setText(feedbackEntityById.getName());

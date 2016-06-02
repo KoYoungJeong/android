@@ -13,9 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -75,7 +75,7 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
 
         SpannableStringBuilder ssb = new SpannableStringBuilder(mentionMessage.getContentBody());
 
-        long myId = EntityManager.getInstance().getMe().getId();
+        long myId = TeamInfoLoader.getInstance().getMyId();
         MentionAnalysisInfo mentionAnalysisInfo =
                 MentionAnalysisInfo.newBuilder(myId, mentionMessage.getMentions())
                         .textSizeFromResource(R.dimen.jandi_mention_star_list_item_font_size)
@@ -100,8 +100,8 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
     private void bindWriter(MentionMessage mentionMessage) {
         tvWriter.setText(mentionMessage.getWriterName());
 
-        boolean isBot = EntityManager.getInstance().isBot(mentionMessage.getWriterId());
-        boolean isJandiBot = EntityManager.getInstance().isJandiBot(mentionMessage.getWriterId());
+        boolean isBot = TeamInfoLoader.getInstance().isBot(mentionMessage.getWriterId());
+        boolean isJandiBot = TeamInfoLoader.getInstance().isJandiBot(mentionMessage.getWriterId());
         ViewGroup.MarginLayoutParams layoutParams =
                 (ViewGroup.MarginLayoutParams) ivProfile.getLayoutParams();
 
@@ -120,7 +120,7 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
         if (!isJandiBot && !isBot) {
             ImageUtil.loadProfileImage(ivProfile, uri, R.drawable.profile_img);
 
-            if (EntityManager.getInstance().getEntityById(mentionMessage.getWriterId()).isEnabled()) {
+            if (TeamInfoLoader.getInstance().getUser(mentionMessage.getWriterId()).isEnabled()) {
                 vProfileCover.setBackgroundColor(Color.TRANSPARENT);
 
                 tvWriter.setTextColor(resources.getColor(R.color.jandi_star_mention_item_name_content_text));

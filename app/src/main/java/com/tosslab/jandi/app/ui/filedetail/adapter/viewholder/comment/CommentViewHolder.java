@@ -8,11 +8,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.ProfileBinder;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -52,7 +52,7 @@ public class CommentViewHolder extends BaseViewHolder<ResMessages.CommentMessage
 
     @Override
     public void onBindView(ResMessages.CommentMessage commentMessage) {
-        FormattedEntity writer = EntityManager.getInstance().getEntityById(commentMessage.writerId);
+        User writer = TeamInfoLoader.getInstance().getUser(commentMessage.writerId);
         ProfileBinder.newInstance(tvUserName, vUserNameDisableIndicator,
                 ivUserProfile, vUserProfileDisableIndicator)
                 .bind(writer);
@@ -69,7 +69,7 @@ public class CommentViewHolder extends BaseViewHolder<ResMessages.CommentMessage
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         spannableStringBuilder.append(commentMessage.content.body);
 
-        long myId = EntityManager.getInstance().getMe().getId();
+        long myId = TeamInfoLoader.getInstance().getMyId();
 
         MentionAnalysisInfo mentionAnalysisInfo =
                 MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)

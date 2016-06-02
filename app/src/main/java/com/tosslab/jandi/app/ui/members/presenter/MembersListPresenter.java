@@ -45,7 +45,7 @@ public interface MembersListPresenter {
 
         int getType();
 
-        void moveDirectMessageActivity(long teamId, long userId, boolean isStarred);
+        void moveDirectMessageActivity(long teamId, long userId);
 
         String getSearchText();
 

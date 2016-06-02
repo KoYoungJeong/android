@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -42,8 +41,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ItemClick;
-import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
@@ -168,13 +165,12 @@ public class MainChatListFragment extends Fragment
     }
 
     @Override
-    public void moveMessageActivity(long teamId, long entityId, long roomId, boolean isStarred, long lastLinkId) {
+    public void moveMessageActivity(long teamId, long entityId, long roomId, long lastLinkId) {
         MessageListV2Activity_.intent(getActivity())
                 .teamId(teamId)
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(entityId)
                 .roomId(roomId)
-                .isFavorite(isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .lastReadLinkId(lastLinkId)
                 .start();
@@ -303,6 +299,7 @@ public class MainChatListFragment extends Fragment
     void onEntityLongItemClick(ChatItem chatItem) {
         EntityMenuDialogFragment_.builder()
                 .entityId(chatItem.getEntityId())
+                .roomId(chatItem.getRoomId())
                 .build()
                 .show(getFragmentManager(), "dialog");
     }

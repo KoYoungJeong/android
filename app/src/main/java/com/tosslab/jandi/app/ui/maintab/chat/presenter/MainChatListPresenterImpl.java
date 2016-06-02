@@ -5,9 +5,8 @@ import android.content.Context;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResChat;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.chat.model.MainChatListModel;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -53,7 +52,6 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
                     mainChatListModel.saveChatList(teamId, chatList);
 
                     return mainChatListModel.convertChatItems(JandiApplication.getContext(),
-                            teamId,
                             chatList);
                 })
                 .subscribeOn(Schedulers.io())
@@ -89,7 +87,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
         if (!view.hasChatItems()) {
             List<ResChat> savedChatList = mainChatListModel.getSavedChatList();
-            List<ChatItem> chatItems = mainChatListModel.convertChatItems(context, teamId,
+            List<ChatItem> chatItems = mainChatListModel.convertChatItems(context,
                     savedChatList);
             if (chatItems == null || chatItems.isEmpty()) {
                 view.showEmptyLayout();
@@ -106,7 +104,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
         try {
             List<ResChat> chatList = mainChatListModel.getChatList(memberId);
             mainChatListModel.saveChatList(teamId, chatList);
-            List<ChatItem> chatItems = mainChatListModel.convertChatItems(context, teamId,
+            List<ChatItem> chatItems = mainChatListModel.convertChatItems(context,
                     chatList);
             if (chatItems == null || chatItems.isEmpty()) {
                 view.showEmptyLayout();
@@ -153,13 +151,12 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
     @Override
     public void onMoveDirectMessage(Context context, long entityId) {
-        EntityManager entityManager = EntityManager.getInstance();
         long roomId = mainChatListModel.getRoomId(entityId);
 
-        view.moveMessageActivity(entityManager.getTeamId(),
+        view.moveMessageActivity(TeamInfoLoader.getInstance().getTeamId(),
                 entityId,
                 roomId,
-                mainChatListModel.isStarred(entityId), -1);
+                -1);
     }
 
     @Override
@@ -177,19 +174,14 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
         long entityId = chatItem.getEntityId();
 
-        boolean isStarred = EntityManager.getInstance()
-                .getEntityById(entityId)
-                .isStarred;
-
-        view.moveMessageActivity(mainChatListModel.getTeamId(), entityId, chatItem
-                .getRoomId(), isStarred, chatItem.getLastLinkId());
+        view.moveMessageActivity(mainChatListModel.getTeamId(), entityId, chatItem.getRoomId(),
+                chatItem.getLastLinkId());
 
     }
 
     @Override
     public void onEntityStarredUpdate(long entityId) {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        boolean isStarred = entity.isStarred;
+        boolean isStarred = TeamInfoLoader.getInstance().isChatStarred(entityId);
         view.setStarred(entityId, isStarred);
     }
 }

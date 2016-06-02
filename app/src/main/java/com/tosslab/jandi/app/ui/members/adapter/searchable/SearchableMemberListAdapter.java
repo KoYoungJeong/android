@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.members.adapter.searchable;
 
 import android.view.ViewGroup;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.members.adapter.searchable.viewholder.EmptySearchedMemberViewHolder;
@@ -26,7 +26,7 @@ public class SearchableMemberListAdapter extends MultiItemRecyclerAdapter
     public static final int VIEW_TYPE_EMPTY_QUERY = 2;
 
     private OnMemberClickListener onMemberClickListener;
-    private List<FormattedEntity> initializedMembers;
+    private List<User> initializedMembers;
 
     public void setOnMemberClickListener(OnMemberClickListener onMemberClickListener) {
         this.onMemberClickListener = onMemberClickListener;
@@ -57,17 +57,17 @@ public class SearchableMemberListAdapter extends MultiItemRecyclerAdapter
     }
 
     @Override
-    public List<FormattedEntity> getInitializedMembers() {
+    public List<User> getInitializedMembers() {
         return initializedMembers;
     }
 
     @Override
-    public synchronized void setInitializedMembers(List<FormattedEntity> currentMembers) {
+    public synchronized void setInitializedMembers(List<User> currentMembers) {
         this.initializedMembers = currentMembers;
     }
 
     @Override
-    public synchronized void addAll(List<FormattedEntity> members) {
+    public synchronized void addAll(List<User> members) {
         MultiItemRecyclerAdapter.Row<Integer> memberCountRow =
                 new MultiItemRecyclerAdapter.Row<>(members.size(),
                         SearchableMemberListAdapter.VIEW_TYPE_MEMBER_COUNT);
@@ -75,7 +75,7 @@ public class SearchableMemberListAdapter extends MultiItemRecyclerAdapter
                 .concat(Observable.just(memberCountRow),
                         Observable.from(members)
                                 .map(entity ->
-                                        new MultiItemRecyclerAdapter.Row<FormattedEntity>(
+                                        new MultiItemRecyclerAdapter.Row<User>(
                                                 entity, SearchableMemberListAdapter.VIEW_TYPE_MEMBER)))
                 .subscribe(this::addRow, Throwable::printStackTrace);
     }

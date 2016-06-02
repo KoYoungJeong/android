@@ -8,12 +8,12 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
@@ -79,14 +79,14 @@ public class DummyMessageViewHolder implements BodyViewHolder {
 
         DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
-        FormattedEntity entity = EntityManager.getInstance()
-                .getEntityById(dummyMessageLink.message.writerId);
+        User user = TeamInfoLoader.getInstance()
+                .getUser(dummyMessageLink.message.writerId);
 
-        String profileUrl = entity.getUserLargeProfileUrl();
+        String profileUrl = user.getPhotoUrl();
 
         ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);
 
-        tvName.setText(entity.getName());
+        tvName.setText(user.getName());
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
 
@@ -98,7 +98,7 @@ public class DummyMessageViewHolder implements BodyViewHolder {
 
             setTextSendingStatus(dummyMessageLink);
 
-            long myId = EntityManager.getInstance().getMe().getId();
+            long myId = TeamInfoLoader.getInstance().getMyId();
             MentionAnalysisInfo mentionAnalysisInfo =
                     MentionAnalysisInfo.newBuilder(myId, ((DummyMessageLink) link).getMentions())
                             .textSize(tvMessage.getTextSize())

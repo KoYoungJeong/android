@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -40,8 +40,8 @@ public class ProfileBinder {
                 vUserNameDisableIndicator, ivUserProfile, vUserProfileDisableIndicator);
     }
 
-    public void bind(FormattedEntity writer) {
-        String profileUrl = writer.getUserSmallProfileUrl();
+    public void bind(User writer) {
+        String profileUrl = writer.getPhotoUrl();
         ImageUtil.loadProfileImage(ivUserProfile, profileUrl, R.drawable.profile_img);
 
         tvUserName.setText(writer.getName());

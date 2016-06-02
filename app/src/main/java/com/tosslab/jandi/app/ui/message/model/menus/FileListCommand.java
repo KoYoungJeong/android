@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.message.model.menus;
 import android.app.Activity;
 import android.view.MenuItem;
 
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -28,7 +28,7 @@ class FileListCommand implements MenuCommand {
                 .entityId(entityId)
                 .start();
 
-        if (EntityManager.getInstance().getEntityById(entityId).isUser()) {
+        if (TeamInfoLoader.getInstance().isUser(entityId)) {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Message, AnalyticsValue.Action.Message_File);
         } else {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.TopicChat_File);

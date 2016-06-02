@@ -5,9 +5,9 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.share.MainShareActivity;
 
 import org.androidannotations.annotations.EBean;
@@ -65,7 +65,7 @@ public class MainShareModel {
     public boolean hasEntityInfo() {
 
         try {
-            EntityManager entityManager = EntityManager.getInstance();
+            TeamInfoLoader entityManager = TeamInfoLoader.getInstance()
             return entityManager != null;
         } catch (Exception e) {
 

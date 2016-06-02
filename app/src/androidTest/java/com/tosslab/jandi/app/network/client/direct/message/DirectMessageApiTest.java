@@ -2,8 +2,6 @@ package com.tosslab.jandi.app.network.client.direct.message;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
@@ -11,6 +9,8 @@ import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import rx.Observable;
+import rx.functions.Func0;
 import setup.BaseInitUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,8 +39,12 @@ public class DirectMessageApiTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
-        teamId = EntityManager.getInstance().getTeamId();
-        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe();
+        teamId = TeamInfoLoader.getInstance().getTeamId();
+        List<User> formattedUsersWithoutMe = Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .filter(user -> TeamInfoLoader.getInstance().getMyId() != user.getId())
+                .collect((Func0<ArrayList<User>>) ArrayList::new, ArrayList::add)
+                .toBlocking()
+                .first();
         entityId = formattedUsersWithoutMe.get((int) (Math.random() * formattedUsersWithoutMe.size())).getId();
 
     }

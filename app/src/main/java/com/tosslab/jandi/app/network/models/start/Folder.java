@@ -23,7 +23,7 @@ public class Folder {
     private Collection<Long> rooms;
     @JsonIgnore
     @DatabaseField(foreign = true)
-    private InitializeInfo initialInfo;
+    private InitialInfo initialInfo;
 
     public long getId() {
         return id;
@@ -57,11 +57,11 @@ public class Folder {
         this.rooms = rooms;
     }
 
-    public InitializeInfo getInitialInfo() {
+    public InitialInfo getInitialInfo() {
         return initialInfo;
     }
 
-    public void setInitialInfo(InitializeInfo initialInfo) {
+    public void setInitialInfo(InitialInfo initialInfo) {
         this.initialInfo = initialInfo;
     }
 }

@@ -2,13 +2,13 @@ package com.tosslab.jandi.app.network.client;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
-import com.tosslab.jandi.app.network.client.main.LeftSideApi;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.client.messages.comments.CommentApi;
 import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
 import com.tosslab.jandi.app.network.client.profile.ProfileApi;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.client.settings.StarredEntityApi;
+import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
@@ -27,8 +27,9 @@ import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.team.member.User;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -47,7 +48,7 @@ import dagger.Lazy;
 public class EntityClientManager {
 
     @Inject
-    Lazy<LeftSideApi> leftSideApi;
+    Lazy<StartApi> startApi;
     @Inject
     Lazy<ChannelApi> channelApi;
     @Inject
@@ -84,8 +85,8 @@ public class EntityClientManager {
      * **********************************************************
      */
 
-    public ResLeftSideMenu getTotalEntitiesInfo() throws RetrofitException {
-        return leftSideApi.get().getInfosForSideMenu(selectedTeamId);
+    public InitialInfo getTotalEntitiesInfo() throws RetrofitException {
+        return startApi.get().getInitializeInfo(selectedTeamId);
     }
 
     public ResCommon createPublicTopic(String entityName, String topicDescription, boolean isAutojoin) throws RetrofitException {
@@ -156,11 +157,11 @@ public class EntityClientManager {
         return starredEntityApi.get().disableFavorite(selectedTeamId, entityId);
     }
 
-    public ResLeftSideMenu.User getUserProfile(final long entityId) throws RetrofitException {
+    public User getUserProfile(final long entityId) throws RetrofitException {
         return profileApi.get().getMemberProfile(selectedTeamId, entityId);
     }
 
-    public ResLeftSideMenu.User updateUserProfile(final long entityId, final ReqUpdateProfile reqUpdateProfile) throws RetrofitException {
+    public ResCommon updateUserProfile(final long entityId, final ReqUpdateProfile reqUpdateProfile) throws RetrofitException {
         return profileApi.get().updateMemberProfile(entityId, reqUpdateProfile);
     }
 
@@ -168,7 +169,7 @@ public class EntityClientManager {
         return profileApi.get().updateMemberName(entityId, profileName);
     }
 
-    public ResLeftSideMenu.User updateMemberEmail(long entityId, String email) throws RetrofitException {
+    public ResCommon updateMemberEmail(long entityId, String email) throws RetrofitException {
         return profileApi.get().updateMemberEmail(entityId, new ReqAccountEmail(email));
     }
 

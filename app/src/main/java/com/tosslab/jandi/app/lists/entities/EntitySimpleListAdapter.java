@@ -9,25 +9,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import java.util.List;
 
-/**
- * Created by justinygchoi on 2014. 8. 18..
- */
 public class EntitySimpleListAdapter extends BaseAdapter {
     private final Context context;
-    private List<FormattedEntity> mFormattedEntities;
+    private List<SimpleEntity> mFormattedEntities;
 
-    public EntitySimpleListAdapter(Context context, List<FormattedEntity> formattedEntities) {
+    public EntitySimpleListAdapter(Context context, List<SimpleEntity> formattedEntities) {
         this.mFormattedEntities = formattedEntities;
         this.context = context;
     }
 
-    public void setEntities(List<FormattedEntity> entities) {
+    public void setEntities(List<SimpleEntity> entities) {
         mFormattedEntities = entities;
         notifyDataSetChanged();
     }
@@ -38,7 +34,7 @@ public class EntitySimpleListAdapter extends BaseAdapter {
     }
 
     @Override
-    public FormattedEntity getItem(int i) {
+    public SimpleEntity getItem(int i) {
         return mFormattedEntities.get(i);
     }
 
@@ -60,11 +56,11 @@ public class EntitySimpleListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        FormattedEntity entity = getItem(i);
+        SimpleEntity entity = getItem(i);
 
         // dummy entity는 이름이 없다. 지정된 string resource id 만 가져옴.
         if (entity.isDummy()) {
-            holder.textView.setText(entity.getDummyNameRes());
+            holder.textView.setText(R.string.jandi_file_category_everywhere);
         } else {
             holder.textView.setText(entity.getName());
         }
@@ -73,7 +69,7 @@ public class EntitySimpleListAdapter extends BaseAdapter {
         ivIcon.clearColorFilter();
         // user 는 개별 프로필 사진이 존재하기에 별도로 가져온다.
         ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
-        if (!EntityManager.getInstance().isBot(entity.getId())) {
+        if (!TeamInfoLoader.getInstance().isJandiBot(entity.getId())) {
             layoutParams.height = layoutParams.width;
         } else {
             layoutParams.height = layoutParams.width * 5 / 4;
@@ -82,7 +78,7 @@ public class EntitySimpleListAdapter extends BaseAdapter {
         if (entity.isUser()) {
             // 프로필 사진
             ImageUtil.loadProfileImage(ivIcon,
-                    entity.getUserSmallProfileUrl(), R.drawable.profile_img_comment);
+                    entity.getPhotoUrl(), R.drawable.profile_img_comment);
         } else {
             ivIcon.setImageResource(entity.getIconImageResId());
         }
@@ -93,5 +89,83 @@ public class EntitySimpleListAdapter extends BaseAdapter {
     static class ViewHolder {
         TextView textView;
         ImageView imageView;
+    }
+
+    public static class SimpleEntity {
+        private long id;
+        private String name;
+        private String photoUrl;
+        private boolean isUser;
+        private boolean isDummy;
+        private boolean isPublic;
+        private boolean starred;
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public boolean isPublic() {
+            return isPublic;
+        }
+
+        public void setPublic(boolean aPublic) {
+            isPublic = aPublic;
+        }
+
+        public boolean isStarred() {
+            return starred;
+        }
+
+        public void setStarred(boolean starred) {
+            this.starred = starred;
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getPhotoUrl() {
+            return photoUrl;
+        }
+
+        public void setPhotoUrl(String photoUrl) {
+            this.photoUrl = photoUrl;
+        }
+
+        public boolean isUser() {
+            return isUser;
+        }
+
+        public void setUser(boolean user) {
+            isUser = user;
+        }
+
+        public boolean isDummy() {
+            return isDummy;
+        }
+
+        public void setDummy(boolean dummy) {
+            isDummy = dummy;
+        }
+
+        public int getIconImageResId() {
+            if (isPublic) {
+                return starred ? R.drawable.topiclist_icon_topic_fav : R.drawable.topiclist_icon_topic;
+            } else if (isDummy()) {
+                return R.drawable.topiclist_icon_topic;
+            } else {
+                return starred
+                        ? R.drawable.topiclist_icon_topic_private_fav
+                        : R.drawable.topiclist_icon_topic_private;
+            }
+        }
     }
 }

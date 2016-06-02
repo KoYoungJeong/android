@@ -3,13 +3,11 @@ package com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.model;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
@@ -36,43 +34,22 @@ public class JoinableTopicListModel {
         entityClientManager.joinChannel(id);
     }
 
-    public boolean refreshEntity() {
-        try {
-            ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
-            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-            EntityManager.getInstance().refreshEntity();
-            return true;
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-            return false;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     public List<Topic> getSearchedTopics(final String query) {
-        final List<Topic> topics = new ArrayList<>();
-        List<FormattedEntity> unjoinedChannels = EntityManager.getInstance().getUnjoinedChannels();
-        if (unjoinedChannels == null || unjoinedChannels.isEmpty()) {
-            return topics;
-        }
-
-        Observable.from(unjoinedChannels)
-                .map(formattedEntity -> {
-                    long creatorId =
-                            ((ResLeftSideMenu.Channel) formattedEntity.getEntity()).ch_creatorId;
+        List<Topic> topics = new ArrayList<>();
+        Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                .map(topicRoom -> {
+                    long creatorId = topicRoom.getCreatorId();
                     return new Topic.Builder()
-                            .entityId(formattedEntity.getId())
-                            .description(formattedEntity.getDescription())
+                            .entityId(topicRoom.getId())
+                            .description(topicRoom.getDescription())
                             .isJoined(false)
                             .creatorId(creatorId)
-                            .isPublic(formattedEntity.isPublicTopic())
-                            .isStarred(formattedEntity.isStarred)
-                            .memberCount(formattedEntity.getMemberCount())
-                            .name(formattedEntity.getName())
-                            .markerLinkId(formattedEntity.lastLinkId)
-                            .unreadCount(formattedEntity.alarmCount)
+                            .isPublic(topicRoom.isPublicTopic())
+                            .isStarred(topicRoom.isStarred())
+                            .memberCount(topicRoom.getMemberCount())
+                            .name(topicRoom.getName())
+                            .markerLinkId(topicRoom.getReadLinkId())
+                            .unreadCount(topicRoom.getUnreadCount())
                             .build();
                 })
                 .filter(topic -> TextUtils.isEmpty(query)
@@ -87,12 +64,11 @@ public class JoinableTopicListModel {
         return Observable.<Topic>create(subscriber -> {
             try {
                 joinPublicTopic(topic.getEntityId());
-
-                refreshEntity();
-
-                EntityManager entityManager = EntityManager.getInstance();
+                TopicRepository.getInstance().updateTopicJoin(topic.getEntityId(), true);
+                TeamInfoLoader.getInstance().refresh();
+                String distictId = TeamInfoLoader.getInstance().getMyId() + "-" + TeamInfoLoader.getInstance().getTeamId();
                 MixpanelMemberAnalyticsClient
-                        .getInstance(JandiApplication.getContext(), entityManager.getDistictId())
+                        .getInstance(JandiApplication.getContext(), distictId)
                         .trackJoinChannel();
                 subscriber.onNext(topic);
             } catch (RetrofitException error) {

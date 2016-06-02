@@ -15,6 +15,9 @@ import java.util.Collection;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @DatabaseTable(tableName = "initial_info_chat", daoClass = ChatDaoImpl.class)
 public class Chat {
+    @JsonIgnore
+    @DatabaseField(foreign = true)
+    private InitialInfo initialInfo;
     @DatabaseField(id = true)
     private long id;
     @DatabaseField
@@ -39,9 +42,6 @@ public class Chat {
     private int unreadCount;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private LastMessage lastMessage;
-    @JsonIgnore
-    @DatabaseField(foreign = true)
-    private InitializeInfo initialInfo;
 
     public long getId() {
         return id;
@@ -139,11 +139,11 @@ public class Chat {
         this.lastMessage = lastMessage;
     }
 
-    public InitializeInfo getInitialInfo() {
+    public InitialInfo getInitialInfo() {
         return initialInfo;
     }
 
-    public void setInitialInfo(InitializeInfo initialInfo) {
+    public void setInitialInfo(InitialInfo initialInfo) {
         this.initialInfo = initialInfo;
     }
 

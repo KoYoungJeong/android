@@ -4,22 +4,21 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
-import com.tosslab.jandi.app.network.client.main.LeftSideApi;
 import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
+import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -47,11 +46,12 @@ public class AccountHomeModel {
     @Inject
     Lazy<InvitationApi> invitationApi;
     @Inject
-    Lazy<LeftSideApi> leftSideApi;
-    @Inject
     Lazy<AccountApi> accountApi;
     @Inject
     Lazy<AccountProfileApi> accountProfileApi;
+
+    @Inject
+    Lazy<StartApi> startApi;
 
     @AfterInject
     void initObject() {
@@ -138,15 +138,12 @@ public class AccountHomeModel {
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
     }
 
-    public ResLeftSideMenu getEntityInfo(long teamId) throws RetrofitException {
-        return leftSideApi.get().getInfosForSideMenu(teamId);
+    public InitialInfo getEntityInfo(long teamId) throws RetrofitException {
+        return startApi.get().getInitializeInfo(teamId);
     }
 
-    public EntityManager updateEntityInfo(Context context, ResLeftSideMenu entityInfo) {
-        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(entityInfo);
-        EntityManager entityManager = EntityManager.getInstance();
-        entityManager.refreshEntity();
-        return entityManager;
+    public void updateEntityInfo(InitialInfo entityInfo) {
+        InitialInfoRepository.getInstance().upsertInitialInfo(entityInfo);
     }
 
     public ResAccountInfo.UserTeam getSelectedTeamInfo() {

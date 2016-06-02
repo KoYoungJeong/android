@@ -4,14 +4,8 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
-import com.tosslab.jandi.app.lists.BotEntity;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
-import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel_;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import org.androidannotations.annotations.EBean;

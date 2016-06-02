@@ -15,7 +15,7 @@ public class Bot {
     @DatabaseField
     private long teamId;
     @DatabaseField
-    private String botType;
+    private String type;
     @DatabaseField
     private String name;
     @DatabaseField
@@ -24,7 +24,7 @@ public class Bot {
     private String status;
     @JsonIgnore
     @DatabaseField(foreign = true)
-    private InitializeInfo initialInfo;
+    private InitialInfo initialInfo;
 
     public long getId() {
         return id;
@@ -42,12 +42,12 @@ public class Bot {
         this.teamId = teamId;
     }
 
-    public String getBotType() {
-        return botType;
+    public String getType() {
+        return type;
     }
 
-    public void setBotType(String botType) {
-        this.botType = botType;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getName() {
@@ -74,11 +74,11 @@ public class Bot {
         this.photoUrl = photoUrl;
     }
 
-    public InitializeInfo getInitialInfo() {
+    public InitialInfo getInitialInfo() {
         return initialInfo;
     }
 
-    public void setInitialInfo(InitializeInfo initialInfo) {
+    public void setInitialInfo(InitialInfo initialInfo) {
         this.initialInfo = initialInfo;
     }
 }

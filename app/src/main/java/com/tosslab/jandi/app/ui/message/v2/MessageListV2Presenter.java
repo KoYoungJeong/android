@@ -4,12 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
-import com.tosslab.jandi.app.lists.BotEntity;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
@@ -21,6 +17,8 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
@@ -211,8 +209,7 @@ public class MessageListV2Presenter {
     private long getRoomId() {
         long entityId = room.getEntityId();
 
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        boolean isInTopic = !entity.isUser() && !(entity instanceof BotEntity);
+        boolean isInTopic = !TeamInfoLoader.getInstance().isUser(entityId);
         if (isInTopic) {
             if (entityId <= 0) {
                 return Room.INVALID_ROOM_ID;
@@ -280,7 +277,7 @@ public class MessageListV2Presenter {
             adapterModel.setNewLoadingComplete();
         }
 
-        long myId = EntityManager.getInstance().getMe().getId();
+        long myId = TeamInfoLoader.getInstance().getMyId();
 
         messageListModel.updateMarkerInfo(teamId, roomId);
 
@@ -661,7 +658,7 @@ public class MessageListV2Presenter {
         for (ResMessages.Link link : newMessages) {
             if (link.message instanceof ResMessages.StickerMessage
                     || link.message instanceof ResMessages.TextMessage) {
-                if (EntityManager.getInstance().isMe(link.fromEntity)) {
+                if (TeamInfoLoader.getInstance().getMyId() == link.fromEntity) {
                     int idxOfMessageId = adapterModel.indexOfDummyMessageId(link.messageId);
                     if (idxOfMessageId >= 0) {
                         adapterModel.remove(idxOfMessageId);
@@ -797,12 +794,11 @@ public class MessageListV2Presenter {
     }
 
     public void onInitializeEmptyLayout(long entityId) {
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity entity = entityManager.getEntityById(entityId);
-        boolean isTopic = messageListModel.isTopic(entity);
+        boolean isTopic = messageListModel.isTopic(entityId);
         if (isTopic) {
-            int topicMemberCount = entity.getMemberCount();
-            int teamMemberCount = entityManager.getFormattedUsersWithoutMe().size();
+            TopicRoom topic = TeamInfoLoader.getInstance().getTopic(entityId);
+            int topicMemberCount = topic.getMemberCount();
+            int teamMemberCount = TeamInfoLoader.getInstance().getUserList().size() - 1;
 
             if (teamMemberCount <= 0) {
                 view.insertTeamMemberEmptyLayout();
@@ -835,32 +831,6 @@ public class MessageListV2Presenter {
         long roomId = room.getRoomId();
         long teamId = room.getTeamId();
         messageListModel.updateMarkerInfo(teamId, roomId);
-    }
-
-    @Background
-    public void onModifyEntityAction(int entityType, long entityId, String name) {
-        view.showProgressWheel();
-
-        try {
-            messageListModel.modifyTopicName(entityType, entityId, name);
-
-            view.modifyTitle(name);
-
-            messageListModel.trackChangingEntityName(entityType);
-
-            EntityManager.getInstance().getEntityById(entityId).getEntity().name = name;
-
-        } catch (RetrofitException e) {
-            view.dismissProgressWheel();
-            if (e.getStatusCode() == JandiConstants.NetworkError.DUPLICATED_NAME) {
-                view.showDuplicatedTopicName();
-            } else {
-                view.showModifyEntityError();
-            }
-        } catch (Exception e) {
-            view.dismissProgressWheel();
-            view.showModifyEntityError();
-        }
     }
 
     @Background(serial = "send_message")
@@ -1045,7 +1015,7 @@ public class MessageListV2Presenter {
         }
 
         if (memberId == room.getEntityId()) {
-            String name = EntityManager.getInstance().getEntityNameById(memberId);
+            String name = TeamInfoLoader.getInstance().getName(memberId);
             view.showLeavedMemberDialog(name);
             view.showDisabledUserLayer();
         }

@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -73,7 +73,7 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
         if (isCheckMode) {
             ((MemberChoiceViewHolder) holder).bindView(item);
         } else {
-            long myId = EntityManager.getInstance().getMe().getId();
+            long myId = TeamInfoLoader.getInstance().getMyId();
             ((MemberViewHolder) holder).bindView(item, ownerType, kickMode, myId, v -> {
                 if (onKickClickListener != null) {
                     onKickClickListener.onKickClick(ModdableMemberListAdapter.this, holder, position);

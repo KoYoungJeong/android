@@ -1,14 +1,14 @@
 package com.tosslab.jandi.app.ui.starmention.model;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 
@@ -108,11 +108,11 @@ public class StarMentionListModel {
 
             long messageId = getMessageId(categoryType, starMentionedMessageObject);
 
-            FormattedEntity entity = EntityManager.getInstance()
-                    .getEntityById(starMentionedMessageObject.getMessage().writerId);
+            User entity = TeamInfoLoader.getInstance()
+                    .getUser(starMentionedMessageObject.getMessage().writerId);
             starMentionVO.setWriterName(entity.getName());
             starMentionVO.setWriterId(starMentionedMessageObject.getMessage().writerId);
-            starMentionVO.setWriterPictureUrl(entity.getUserSmallProfileUrl());
+            starMentionVO.setWriterPictureUrl(entity.getPhotoUrl());
             starMentionVO.setTeamId(starMentionedMessageObject.getTeamId());
             starMentionVO.setMessageId(starMentionedMessageObject.getMessage().id);
 
@@ -131,10 +131,10 @@ public class StarMentionListModel {
                 } else if (starMentionedMessageObject.getRoom().type.equals("chat")) {
                     starMentionVO.setRoomType(JandiConstants.TYPE_DIRECT_MESSAGE);
                     String userId = starMentionedMessageObject.getRoom().name.replaceAll(
-                            EntityManager.getInstance().getMe().getId() + "", "");
+                            TeamInfoLoader.getInstance().getMyId() + "", "");
                     userId = userId.replace(":", "");
-                    starMentionVO.setRoomName(EntityManager.getInstance().
-                            getEntityById(Integer.valueOf(userId)).getName());
+                    starMentionVO.setRoomName(TeamInfoLoader.getInstance().
+                            getName(Integer.valueOf(userId)));
                     starMentionVO.setRoomId(Integer.valueOf(userId));
                 }
                 starMentionVO.setBody(starMentionedMessageObject.getMessage().content.body);

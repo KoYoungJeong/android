@@ -7,13 +7,13 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.folder.ExpandableTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;
@@ -137,7 +137,7 @@ public class MainTopicListPresenter {
         item.setUnreadCount(0);
         mainTopicModel.resetBadge(item.getEntityId());
 
-        long teamId = EntityManager.getInstance().getTeamId();
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
         int unreadCount = mainTopicModel.getUnreadCount();
         EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
         int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
@@ -162,7 +162,7 @@ public class MainTopicListPresenter {
 
         mainTopicModel.resetBadge(item.getEntityId());
 
-        long teamId = EntityManager.getInstance().getTeamId();
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
 
         int unreadCount = getUnreadCount(Observable.from(topicAdapter.getAllTopicItemData()));
         EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
@@ -231,14 +231,6 @@ public class MainTopicListPresenter {
     public void onFolderCollapse(TopicFolderData topicFolderData) {
         TopicFolderRepository.getRepository()
                 .upsertFolderExpands(topicFolderData.getFolderId(), false);
-    }
-
-    public List<ResFolder> onGetTopicFolders() {
-        return topicFolders;
-    }
-
-    public List<ResFolderItem> onGetTopicFolderItems() {
-        return topicFolderItems;
     }
 
     public List<FolderExpand> onGetFolderExpands() {

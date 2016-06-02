@@ -27,10 +27,8 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.BotEntity;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
@@ -38,6 +36,9 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.Member;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
@@ -179,9 +180,9 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     @AfterInject
     void initObject() {
-        boolean isBot = EntityManager.getInstance().isBot(memberId);
+        boolean isBot = TeamInfoLoader.getInstance().isJandiBot(memberId);
         if (!isBot) {
-            if (!EntityManager.getInstance().getEntityById(memberId).isInavtived()) {
+            if (!TeamInfoLoader.getInstance().getUser(memberId).isInactive()) {
                 profileLoader = new MemberProfileLoader();
             } else {
                 profileLoader = new InactivedMemberProfileLoader();
@@ -195,15 +196,14 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     @AfterViews
     void initViews() {
 
-        if (EntityManager.getInstance().isBot(memberId)
-                && !EntityManager.getInstance().isJandiBot(memberId)) {
+        if (TeamInfoLoader.getInstance().isBot(memberId)) {
             // 잔디봇이 아닌 봇은 예외 처리
             finish();
             return;
         }
 
-        FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
-        final String profileImageUrlLarge = member.getUserLargeProfileUrl();
+        Member member = TeamInfoLoader.getInstance().getMember(memberId);
+        final String profileImageUrlLarge = member.getPhotoUrl();
 
         hasChangedProfileImage = profileLoader.hasChangedProfileImage(member);
 
@@ -246,16 +246,19 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             return;
         }
 
-        String userEmail = member.getUserEmail();
+        String userEmail = member.getEmail();
         tvProfileEmail.setText(userEmail);
         if (TextUtils.isEmpty(userEmail)) {
             tvProfileEmail.setVisibility(View.GONE);
         }
 
-        String userPhoneNumber = member.getUserPhoneNumber();
-        tvProfilePhone.setText(userPhoneNumber);
-        if (TextUtils.isEmpty(userPhoneNumber)) {
-            tvProfilePhone.setVisibility(View.GONE);
+        if (!isJandiBot(member)) {
+
+            String userPhoneNumber = ((User) member).getPhoneNumber();
+            tvProfilePhone.setText(userPhoneNumber);
+            if (TextUtils.isEmpty(userPhoneNumber)) {
+                tvProfilePhone.setVisibility(View.GONE);
+            }
         }
 
         profileLoader.setStarButton(btnProfileStar, member);
@@ -265,8 +268,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         AnalyticsUtil.sendScreenName(getScreen());
     }
 
-    private boolean isBot(FormattedEntity member) {
-        return member instanceof BotEntity;
+    private boolean isJandiBot(Member member) {
+        return TeamInfoLoader.getInstance().isJandiBot(member.getId());
     }
 
     private void initSwipeLayout(boolean setViewToAlpha) {
@@ -353,7 +356,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     @Click(R.id.iv_member_profile_img_small)
     void showFullImage(View v) {
-        if (!hasChangedProfileImage || isBot(EntityManager.getInstance().getEntityById(memberId))) {
+        if (!hasChangedProfileImage || TeamInfoLoader.getInstance().isJandiBot(memberId)) {
             return;
         }
 
@@ -438,16 +441,17 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 entityClientManager.disableFavorite(memberId);
             }
 
-            EntityManager.getInstance().getEntityById(memberId).isStarred = star;
+            long chatId = TeamInfoLoader.getInstance().getChatId(memberId);
+            ChatRepository.getInstance().updateStarred(chatId, star);
+            TeamInfoLoader.getInstance().refresh();
+
         } catch (RetrofitException e) {
             e.printStackTrace();
         }
     }
 
-    private void addButtons(final FormattedEntity member) {
+    private void addButtons(Member member) {
         vgProfileTeamButtons.removeAllViews();
-
-        final EntityManager entityManager = EntityManager.getInstance();
 
         if (isMe()) {
             vgProfileTeamButtons.addView(
@@ -463,7 +467,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                                 startStarMentionListActivity();
                                 AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Mentions);
                             }));
-        } else if (member.isInavtived()) {
+        } else if (member.isInactive()) {
             vgProfileTeamButtons.addView(
                     getButton(R.drawable.icon_profile_mail,
                             getString(R.string.jandi_resend_invitation),
@@ -481,37 +485,38 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             vgProfileTeamButtons.addView(
                     getButton(R.drawable.icon_profile_message,
                             getString(R.string.jandi_member_profile_dm), (v) -> {
-                                long teamId = entityManager.getTeamId();
+                                long teamId = TeamInfoLoader.getInstance().getTeamId();
                                 long entityId = member.getId();
-                                boolean isStarred = member.isStarred;
-                                startMessageListActivity(teamId, entityId, isStarred);
+                                startMessageListActivity(teamId, entityId);
                                 AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.DirectMessage);
                             }));
         } else {
-            final String userPhoneNumber = member.getUserPhoneNumber();
-            if (!TextUtils.isEmpty(userPhoneNumber)) {
-                vgProfileTeamButtons.addView(
-                        getButton(R.drawable.icon_profile_mobile,
-                                getString(R.string.jandi_member_profile_call), v -> {
-                                    callIfHasPermission();
-                                    AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Call);
-                                }));
+            if (!isJandiBot(member)) {
+                User user = (User) member;
+                String phoneNumber = user.getPhoneNumber();
+                if (!TextUtils.isEmpty(phoneNumber)) {
+                    vgProfileTeamButtons.addView(
+                            getButton(R.drawable.icon_profile_mobile,
+                                    getString(R.string.jandi_member_profile_call), v -> {
+                                        callIfHasPermission();
+                                        AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Call);
+                                    }));
+                }
+                final String userEmail = user.getEmail();
+                if (!TextUtils.isEmpty(userEmail)) {
+                    vgProfileTeamButtons.addView(
+                            getButton(R.drawable.icon_profile_mail,
+                                    getString(R.string.jandi_member_profile_email), (v) -> sendEmail()));
+                }
             }
 
-            final String userEmail = member.getUserEmail();
-            if (!TextUtils.isEmpty(userEmail)) {
-                vgProfileTeamButtons.addView(
-                        getButton(R.drawable.icon_profile_mail,
-                                getString(R.string.jandi_member_profile_email), (v) -> sendEmail()));
-            }
 
             vgProfileTeamButtons.addView(
                     getButton(R.drawable.icon_profile_message,
                             getString(R.string.jandi_member_profile_dm), (v) -> {
-                                long teamId = entityManager.getTeamId();
+                                long teamId = TeamInfoLoader.getInstance().getTeamId();
                                 long entityId = member.getId();
-                                boolean isStarred = member.isStarred;
-                                startMessageListActivity(teamId, entityId, isStarred);
+                                startMessageListActivity(teamId, entityId);
                                 AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.DirectMessage);
                             }));
         }
@@ -531,7 +536,10 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     @Background
     void requestRejectUser() {
-        String userEmail = EntityManager.getInstance().getEntityById(memberId).getUserEmail();
+        if (!TeamInfoLoader.getInstance().isUser(memberId)) {
+            return;
+        }
+        String userEmail = TeamInfoLoader.getInstance().getUser(memberId).getEmail();
         long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
         try {
             teamApi.get().cancelInviteTeam(teamId, memberId);
@@ -559,10 +567,15 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     @Background
     void requestReInvite() {
-        showProgress();
-        long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
 
-        List<String> invites = Arrays.asList(EntityManager.getInstance().getEntityById(memberId).getUserEmail());
+        if (TeamInfoLoader.getInstance().isJandiBot(memberId)) {
+            return;
+        }
+
+        showProgress();
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+
+        List<String> invites = Arrays.asList(TeamInfoLoader.getInstance().getUser(memberId).getEmail());
         try {
             teamApi.get().inviteToTeam(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage()));
             showSuccessReinvite();
@@ -625,10 +638,13 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     private void addToContacts() {
         try {
-            FormattedEntity entity = EntityManager.getInstance().getEntityById(memberId);
+            if (!TeamInfoLoader.getInstance().isUser(memberId)) {
+                return;
+            }
+            User entity = TeamInfoLoader.getInstance().getUser(memberId);
             String name = entity.getName();
-            String phoneNumber = entity.getUserPhoneNumber();
-            String userEmail = entity.getUserEmail();
+            String phoneNumber = entity.getPhoneNumber();
+            String userEmail = entity.getEmail();
 
             Intent insertIntent = new Intent(ContactsContract.Intents.Insert.ACTION);
             insertIntent.setType(ContactsContract.RawContacts.CONTENT_TYPE);
@@ -644,9 +660,11 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     private void copyPhoneToClipboard() {
         try {
-            String userPhoneNumber = EntityManager.getInstance()
-                    .getEntityById(memberId)
-                    .getUserPhoneNumber();
+            if (!TeamInfoLoader.getInstance().isUser(memberId)) {
+                return;
+            }
+            String userPhoneNumber = TeamInfoLoader.getInstance()
+                    .getUser(memberId).getPhoneNumber();
             ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             clipboardManager.setPrimaryClip(ClipData.newPlainText(null, userPhoneNumber));
             ColoredToast.show(R.string.jandi_copied_to_clipboard);
@@ -659,7 +677,10 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 .activity(MemberProfileActivity.this)
                 .permission(() -> Manifest.permission.CALL_PHONE)
                 .hasPermission(() -> {
-                    call(EntityManager.getInstance().getEntityById(memberId).getUserPhoneNumber());
+                    if (!TeamInfoLoader.getInstance().isUser(memberId)) {
+                        return;
+                    }
+                    call(TeamInfoLoader.getInstance().getUser(memberId).getPhoneNumber());
                 })
                 .noPermission(() -> {
                     String[] permissions = {Manifest.permission.CALL_PHONE};
@@ -676,8 +697,11 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 .activity(MemberProfileActivity.this)
                 .addRequestCode(REQ_CALL_PERMISSION)
                 .addPermission(Manifest.permission.CALL_PHONE, () -> {
-                    FormattedEntity member = EntityManager.getInstance().getEntityById(memberId);
-                    call(member.getUserPhoneNumber());
+                    if (!TeamInfoLoader.getInstance().isUser(memberId)) {
+                        return;
+                    }
+                    User member = TeamInfoLoader.getInstance().getUser(memberId);
+                    call(member.getPhoneNumber());
                     AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Profile_Cellphone);
                 })
                 .neverAskAgain(() -> {
@@ -746,9 +770,10 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     private void copyEmailToClipboard() {
         try {
-            String userPhoneNumber = EntityManager.getInstance()
-                    .getEntityById(memberId)
-                    .getUserEmail();
+            if (!TeamInfoLoader.getInstance().isUser(memberId)) {
+                return;
+            }
+            String userPhoneNumber = TeamInfoLoader.getInstance().getUser(memberId).getEmail();
             ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             clipboardManager.setPrimaryClip(ClipData.newPlainText(null, userPhoneNumber));
             ColoredToast.show(R.string.jandi_copied_to_clipboard);
@@ -757,7 +782,10 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     void sendEmail() {
-        String userEmail = EntityManager.getInstance().getEntityById(memberId).getUserEmail();
+        if (!TeamInfoLoader.getInstance().isUser(memberId)) {
+            return;
+        }
+        String userEmail = TeamInfoLoader.getInstance().getUser(memberId).getEmail();
         AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Email);
         if (TextUtils.isEmpty(userEmail)) {
             return;
@@ -784,19 +812,18 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         }
     }
 
-    private void startMessageListActivity(long teamId, long entityId, boolean isStarred) {
+    private void startMessageListActivity(long teamId, long entityId) {
         MessageListV2Activity_.intent(MemberProfileActivity.this)
                 .teamId(teamId)
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(entityId)
                 .roomId(-1)
-                .isFavorite(isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
     }
 
     private boolean isMe() {
-        return EntityManager.getInstance().isMe(memberId);
+        return TeamInfoLoader.getInstance().getMyId() == memberId;
     }
 
     private boolean isLandscape() {

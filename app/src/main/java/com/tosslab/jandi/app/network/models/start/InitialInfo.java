@@ -16,7 +16,7 @@ import java.util.Collection;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(converter = InitializeInfoConverter.class)
 @DatabaseTable(tableName = "initial_info_base", daoClass = InitializeInfoDaoImpl.class)
-public class InitializeInfo {
+public class InitialInfo {
     @JsonIgnore
     @DatabaseField(id = true)
     private long teamId;

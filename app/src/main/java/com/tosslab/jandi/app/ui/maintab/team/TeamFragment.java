@@ -20,12 +20,12 @@ import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.dialog.UsageInformationDialogFragment_;
-import com.tosslab.jandi.app.ui.members.adapter.searchable.SearchableMemberListAdapter;
 import com.tosslab.jandi.app.ui.maintab.team.component.DaggerTeamComponent;
 import com.tosslab.jandi.app.ui.maintab.team.module.TeamModule;
 import com.tosslab.jandi.app.ui.maintab.team.presenter.TeamPresenter;
 import com.tosslab.jandi.app.ui.maintab.team.view.TeamView;
 import com.tosslab.jandi.app.ui.maintab.team.vo.Team;
+import com.tosslab.jandi.app.ui.members.adapter.searchable.SearchableMemberListAdapter;
 import com.tosslab.jandi.app.ui.members.search.MemberSearchActivity;
 import com.tosslab.jandi.app.ui.members.view.MemberSearchableDataView;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
@@ -192,7 +192,7 @@ public class TeamFragment extends Fragment implements TeamView, ListScroller {
         tvTeamDomain.setText(team.getDomain());
         String owner = JandiApplication.getContext()
                 .getResources()
-                .getString(R.string.jandi_team_owner_with_format, team.getOwner().name);
+                .getString(R.string.jandi_team_owner_with_format, team.getOwner().getName());
         tvTeamOwner.setText(owner);
     }
 

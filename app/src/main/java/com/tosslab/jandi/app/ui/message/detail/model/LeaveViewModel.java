@@ -7,13 +7,12 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.chat.ChatApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -61,40 +60,44 @@ public class LeaveViewModel {
     }
 
     public void leave() {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        if (entity.isPublicTopic() || entity.isUser() || EntityManager.getInstance().isBot(entityId)) {
-            leaveEntityInBackground(entity);
+        if (TeamInfoLoader.getInstance().isPublicTopic(entityId)
+                || TeamInfoLoader.getInstance().isUser(entityId)) {
+            leaveEntityInBackground();
         } else {
-            showPrivateTopicLeaveDialog(entity);
+            showPrivateTopicLeaveDialog();
         }
     }
 
-    private void showPrivateTopicLeaveDialog(FormattedEntity entity) {
+    private void showPrivateTopicLeaveDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context,
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
-        builder.setTitle(entity.getName())
+        builder.setTitle(TeamInfoLoader.getInstance().getName(entityId))
                 .setMessage(R.string.jandi_message_leave_private_topic)
                 .setNegativeButton(R.string.jandi_cancel, null)
-                .setPositiveButton(R.string.jandi_action_leave, (dialog, which) -> leaveEntityInBackground(entity))
+                .setPositiveButton(R.string.jandi_action_leave, (dialog, which) -> leaveEntityInBackground())
                 .create()
                 .show();
     }
 
 
     @Background
-    void leaveEntityInBackground(FormattedEntity entity) {
+    void leaveEntityInBackground() {
         try {
-            long entityId = entity.getId();
-            if (entity.isPublicTopic()) {
-                entityClientManager.leaveChannel(entityId);
-            } else if (entity.isPrivateGroup()) {
-                entityClientManager.leavePrivateGroup(entityId);
-            } else if (entity.isUser() || EntityManager.getInstance().isBot(entityId)) {
-                long memberId = EntityManager.getInstance().getMe().getId();
+            int type = -1;
+            if (TeamInfoLoader.getInstance().isTopic(entityId)) {
+                if (TeamInfoLoader.getInstance().isPublicTopic(entityId)) {
+                    entityClientManager.leaveChannel(entityId);
+                    type = JandiConstants.TYPE_PUBLIC_TOPIC;
+                } else {
+                    entityClientManager.leavePrivateGroup(entityId);
+                    type = JandiConstants.TYPE_PRIVATE_TOPIC;
+                }
+            } else if (TeamInfoLoader.getInstance().isUser(entityId)) {
+                long memberId = TeamInfoLoader.getInstance().getMyId();
                 chatApi.get().deleteChat(memberId, entityId);
+                type = JandiConstants.TYPE_DIRECT_MESSAGE;
             }
-            trackLeavingEntity(entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity
-                    .isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE);
+            trackLeavingEntity(type);
 
             trackTopicLeaveSuccess(entityId);
 
@@ -113,7 +116,8 @@ public class LeaveViewModel {
     }
 
     private void trackLeavingEntity(int entityType) {
-        String distictId = EntityManager.getInstance().getDistictId();
+        String distictId = TeamInfoLoader.getInstance().getMyId()
+                + "-" + TeamInfoLoader.getInstance().getTeamId();
         try {
             MixpanelMemberAnalyticsClient
                     .getInstance(context, distictId)

@@ -14,8 +14,8 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.target.Target;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -115,7 +115,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
     private void setFileTitleBackground(ResMessages.Link link) {
         long writerId = link.fromEntity;
-        if (EntityManager.getInstance().isMe(writerId)) {
+        if (TeamInfoLoader.getInstance().getMyId() == writerId) {
             tvFileName.setBackgroundResource(R.drawable.bg_round_bottom_for_item_name_mine);
         } else {
             tvFileName.setBackgroundResource(R.drawable.bg_round_bottom_for_item_name);
@@ -129,10 +129,9 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
         long fromEntityId = link.fromEntity;
 
-        EntityManager entityManager = EntityManager.getInstance();
 
         UnreadCountUtil.getUnreadCount(
-                teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId())
+                teamId, roomId, link.id, fromEntityId, TeamInfoLoader.getInstance().getMyId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(unreadCount -> {
 

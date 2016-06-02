@@ -4,8 +4,6 @@ import android.app.ProgressDialog;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -13,6 +11,9 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -23,6 +24,7 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
 import setup.BaseInitUtil;
 
 import static com.jayway.awaitility.Awaitility.await;
@@ -138,8 +140,9 @@ public class FileDetailPresenterTest {
     private List<ResMessages.OriginalMessage.IntegerWrapper> getSharedEntities() {
         List<ResMessages.OriginalMessage.IntegerWrapper> integerWrappers = new ArrayList<>();
 
-        FormattedEntity topic = EntityManager.getInstance().getJoinedChannels().get(0);
-        FormattedEntity user = EntityManager.getInstance().getFormattedUsers().get(0);
+        TopicRoom topic = Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                .takeFirst(TopicRoom::isJoined).toBlocking().first();
+        User user = TeamInfoLoader.getInstance().getUserList().get(0);
 
         ResMessages.OriginalMessage.IntegerWrapper object = new ResMessages.OriginalMessage.IntegerWrapper();
         object.setShareEntity(topic.getId());
@@ -162,7 +165,7 @@ public class FileDetailPresenterTest {
 
         reqSearchFile.startMessageId = -1;
         reqSearchFile.keyword = "";
-        reqSearchFile.teamId = EntityManager.getInstance().getTeamId();
+        reqSearchFile.teamId = TeamInfoLoader.getInstance().getTeamId();
         ResSearchFile resSearchFile = new FileApi(RetrofitBuilder.getInstance()).searchFile(reqSearchFile);
 
         ResMessages.OriginalMessage originalMessage = resSearchFile.files.get(0);

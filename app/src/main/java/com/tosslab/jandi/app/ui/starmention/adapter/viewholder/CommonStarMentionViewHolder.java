@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -18,9 +18,6 @@ import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
 import com.tosslab.jandi.app.utils.image.transform.TransformConfig;
 
-/**
- * Created by tee on 15. 8. 2..
- */
 public class CommonStarMentionViewHolder extends RecyclerView.ViewHolder {
 
     private ImageView ivProfile;
@@ -49,8 +46,8 @@ public class CommonStarMentionViewHolder extends RecyclerView.ViewHolder {
     public void bindView(StarMentionVO starMentionVO) {
 
 
-        boolean isBot = EntityManager.getInstance().isBot(starMentionVO.getWriterId());
-        boolean isJandiBot = EntityManager.getInstance().isJandiBot(starMentionVO.getWriterId());
+        boolean isBot = TeamInfoLoader.getInstance().isBot(starMentionVO.getWriterId());
+        boolean isJandiBot = TeamInfoLoader.getInstance().isJandiBot(starMentionVO.getWriterId());
         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) ivProfile.getLayoutParams();
         if (!isJandiBot) {
             layoutParams.topMargin = ivProfile.getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin);

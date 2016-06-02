@@ -8,8 +8,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.BotEntity;
-import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.team.member.Member;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.selector.room.RoomSelector;
@@ -23,7 +23,6 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -71,18 +70,9 @@ public class FileShareActivity extends BaseAppCompatActivity {
     }
 
     public void showList() {
-        final List<FormattedEntity> unSharedEntities = fileDetailModel.getUnsharedEntities();
 
-        List<FormattedEntity> topics = new ArrayList<>();
-        List<FormattedEntity> users = new ArrayList<>();
-
-        for (FormattedEntity entity : unSharedEntities) {
-            if (entity.isUser() || entity instanceof BotEntity) {
-                users.add(entity);
-            } else {
-                topics.add(entity);
-            }
-        }
+        List<TopicRoom> topics = fileDetailModel.getTopicRooms();
+        List<Member> users = fileDetailModel.getMembers();
 
         if (!topics.isEmpty() || !users.isEmpty()) {
             RoomSelector roomSelector = new RoomSelectorImpl(topics, users);

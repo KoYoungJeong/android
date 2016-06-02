@@ -4,12 +4,11 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqMessageSearchQeury;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.search.messages.adapter.strategy.TextStrategy;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -25,7 +24,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 /**
@@ -48,22 +46,25 @@ public class MessageSearchModel {
     }
 
     public boolean hasEntity(long entityId) {
-        return EntityManager.getInstance().getEntityById(entityId) != EntityManager.UNKNOWN_USER_ENTITY;
+        return TeamInfoLoader.getInstance().isTopic(entityId)
+                || TeamInfoLoader.getInstance().isUser(entityId);
     }
 
     public int getEntityType(long entityId) {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        if (entity.isPublicTopic()) {
-            return JandiConstants.TYPE_PUBLIC_TOPIC;
-        } else if (entity.isPrivateGroup()) {
-            return JandiConstants.TYPE_PRIVATE_TOPIC;
+        if (TeamInfoLoader.getInstance().isTopic(entityId)) {
+            if (TeamInfoLoader.getInstance().isPublicTopic(entityId)) {
+                return JandiConstants.TYPE_PUBLIC_TOPIC;
+            } else {
+                return JandiConstants.TYPE_PRIVATE_TOPIC;
+            }
         } else {
             return JandiConstants.TYPE_DIRECT_MESSAGE;
         }
     }
 
     public boolean isStarredEntity(long entityId) {
-        return EntityManager.getInstance().getEntityById(entityId).isStarred;
+        return TeamInfoLoader.getInstance().isStarred(entityId)
+                || TeamInfoLoader.getInstance().isChatStarred(entityId);
     }
 
     public List<SearchResult> convertSearchResult(List<ResMessageSearch.SearchRecord> searchRecordList, String query) {
@@ -107,7 +108,7 @@ public class MessageSearchModel {
     }
 
     public String getEntityName(long entityId) {
-        return EntityManager.getInstance().getEntityNameById(entityId);
+        return TeamInfoLoader.getInstance().getName(entityId);
     }
 
     public void trackMessageKeywordSearchSuccess(String keyword) {
@@ -140,9 +141,7 @@ public class MessageSearchModel {
     }
 
     public long getRoomId(long entityId) {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        if (entity.isPublicTopic()
-                || entity.isPrivateGroup()) {
+        if (TeamInfoLoader.getInstance().isTopic(entityId)) {
             return entityId;
         } else {
             return -1;

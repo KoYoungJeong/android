@@ -4,10 +4,12 @@ import android.app.Activity;
 
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.files.upload.ProfileFileUploadControllerImpl;
+import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -36,7 +38,7 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
     public void onRequestProfile() {
         view.showProgressWheel();
         try {
-            ResLeftSideMenu.User me;
+            User me;
             if (!NetworkCheckUtil.isConnected()) {
                 me = modifyProfileModel.getSavedProfile();
             } else {
@@ -44,10 +46,6 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
             }
             view.dismissProgressWheel();
             view.displayProfile(me);
-        } catch (RetrofitException e) {
-            LogUtil.e("get profile failed", e);
-            view.dismissProgressWheel();
-            view.showFailProfile();
         } catch (Exception e) {
             LogUtil.e("get profile failed", e);
             view.dismissProgressWheel();
@@ -60,9 +58,16 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
     public void onUpdateProfileExtraInfo(ReqUpdateProfile reqUpdateProfile) {
         view.showProgressWheel();
         try {
-            ResLeftSideMenu.User me = modifyProfileModel.updateProfile(reqUpdateProfile);
+            modifyProfileModel.updateProfile(reqUpdateProfile);
+            HumanRepository.getInstance().updateProfile(TeamInfoLoader.getInstance().getMyId(),
+                    reqUpdateProfile.department,
+                    reqUpdateProfile.phoneNumber,
+                    reqUpdateProfile.position,
+                    reqUpdateProfile.statusMessage);
+
+            TeamInfoLoader.getInstance().refresh();
             view.updateProfileSucceed();
-            view.displayProfile(me);
+            view.displayProfile(null);
         } catch (RetrofitException e) {
             e.printStackTrace();
             LogUtil.e("get profile failed", e);
@@ -78,6 +83,8 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
         view.showProgressWheel();
         try {
             modifyProfileModel.updateProfileName(new ReqProfileName(name));
+            HumanRepository.getInstance().updateName(TeamInfoLoader.getInstance().getMyId(), name);
+            TeamInfoLoader.getInstance().refresh();
             view.updateProfileSucceed();
             view.successUpdateNameColor();
         } catch (RetrofitException e) {
@@ -99,6 +106,8 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
 
         try {
             modifyProfileModel.updateProfileEmail(email);
+            HumanRepository.getInstance().updateEmail(TeamInfoLoader.getInstance().getMyId(), email);
+            TeamInfoLoader.getInstance().refresh();
             view.updateProfileSucceed();
             view.successUpdateEmailColor();
         } catch (RetrofitException e) {
@@ -112,8 +121,8 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
     }
 
     @Override
-    public void onProfileChange(ResLeftSideMenu.User member) {
-        if (member != null && modifyProfileModel.isMyId(member.id)) {
+    public void onProfileChange(User member) {
+        if (member != null && modifyProfileModel.isMyId(member.getId())) {
             view.displayProfile(member);
             view.closeDialogFragment();
         }

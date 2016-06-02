@@ -4,8 +4,8 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -73,7 +73,7 @@ public class ModifyProfilePresenterImplTest {
 
     @Test
     public void testUpdateProfileName() throws Exception {
-        String originName = EntityManager.getInstance().getMe().getName();
+        String originName = TeamInfoLoader.getInstance().getName(TeamInfoLoader.getInstance().getMyId());
 
         final boolean[] finish = {false};
         Mockito.doAnswer(invocationOnMock -> {
@@ -118,7 +118,7 @@ public class ModifyProfilePresenterImplTest {
                 return invocationOnMock;
             }).when(mockView).updateProfileSucceed();
 
-            String userEmail = EntityManager.getInstance().getMe().getUserEmail();
+            String userEmail = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId()).getEmail();
             presenter.onUploadEmail(userEmail);
 
             Awaitility.await().until(() -> finish[0]);
@@ -138,13 +138,13 @@ public class ModifyProfilePresenterImplTest {
         }
 
         {
-            ResLeftSideMenu.User user = new ResLeftSideMenu.User();
+            User user = Mockito.mock(User.class);
             presenter.onProfileChange(user);
             Mockito.verifyZeroInteractions(mockView);
         }
 
         {
-            ResLeftSideMenu.User user = EntityManager.getInstance().getMe().getUser();
+            User user = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
             presenter.onProfileChange(user);
             Mockito.verify(mockView).displayProfile(Mockito.eq(user));
             Mockito.verify(mockView).closeDialogFragment();

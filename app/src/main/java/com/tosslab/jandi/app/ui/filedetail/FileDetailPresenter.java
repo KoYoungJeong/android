@@ -9,7 +9,6 @@ import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -18,6 +17,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.permissions.Check;
 import com.tosslab.jandi.app.services.download.DownloadService;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.filedetail.domain.FileStarredInfo;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -312,19 +312,19 @@ public class FileDetailPresenter {
     }
 
     @Background
-    public void joinAndMove(FormattedEntity entity) {
+    public void joinAndMove(TopicRoom topicRoom) {
         view.showProgress();
 
         try {
-            fileDetailModel.joinEntity(entity);
+            fileDetailModel.joinEntity(topicRoom);
 
             int entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
 
-            fileDetailModel.refreshEntity();
+            fileDetailModel.updateJoinedTopic(topicRoom.getId());
 
             view.dismissProgress();
 
-            view.moveToMessageListActivity(entity.getId(), entityType, entity.getId(), false);
+            view.moveToMessageListActivity(topicRoom.getId(), entityType, topicRoom.getId(), false);
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
@@ -338,7 +338,8 @@ public class FileDetailPresenter {
         try {
             fileDetailModel.shareMessage(fileId, entityId);
 
-            fileDetailModel.refreshEntity();
+            // FIXME "왜 share/unshare 후 entity 갱신이 있지"
+//            fileDetailModel.refreshEntity();
 
             fileDetailModel.trackFileShareSuccess(entityId, fileId);
 
@@ -369,7 +370,7 @@ public class FileDetailPresenter {
         try {
             fileDetailModel.unshareMessage(fileId, entityId);
 
-            fileDetailModel.refreshEntity();
+//            fileDetailModel.refreshEntity();
 
             fileDetailModel.trackFileUnShareSuccess(entityId, fileId);
 

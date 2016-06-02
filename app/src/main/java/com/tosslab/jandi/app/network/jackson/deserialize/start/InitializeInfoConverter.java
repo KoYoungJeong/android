@@ -7,15 +7,15 @@ import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.Human;
-import com.tosslab.jandi.app.network.models.start.InitializeInfo;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
 import java.util.Collection;
 
-public class InitializeInfoConverter implements Converter<InitializeInfo, InitializeInfo> {
+public class InitializeInfoConverter implements Converter<InitialInfo, InitialInfo> {
     @Override
-    public InitializeInfo convert(InitializeInfo value) {
+    public InitialInfo convert(InitialInfo value) {
         value.setTeamId(value.getTeam().getId());
         Collection<Folder> folders = value.getFolders();
         if (folders != null && !folders.isEmpty()) {
@@ -69,11 +69,11 @@ public class InitializeInfoConverter implements Converter<InitializeInfo, Initia
 
     @Override
     public JavaType getInputType(TypeFactory typeFactory) {
-        return typeFactory.constructType(InitializeInfo.class);
+        return typeFactory.constructType(InitialInfo.class);
     }
 
     @Override
     public JavaType getOutputType(TypeFactory typeFactory) {
-        return typeFactory.constructType(InitializeInfo.class);
+        return typeFactory.constructType(InitialInfo.class);
     }
 }

@@ -12,7 +12,7 @@ import android.support.v4.app.FragmentManager;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
@@ -110,7 +110,7 @@ public class MultiShareFragmentTest {
         rule.runOnUiThread(fragment::onRoomNameClick);
 
         Intents.intending(IntentMatchers.hasComponent(ShareSelectRoomActivity_.class.getName()));
-        Intents.intending(IntentMatchers.hasExtra("teamId", EntityManager.getInstance().getTeamId()));
+        Intents.intending(IntentMatchers.hasExtra("teamId", TeamInfoLoader.getInstance().getTeamId()));
 
     }
 
@@ -119,7 +119,7 @@ public class MultiShareFragmentTest {
         rule.runOnUiThread(fragment::onRoomNameClick);
 
         Intents.intending(IntentMatchers.hasComponent(ShareSelectRoomActivity_.class.getName()));
-        Intents.intending(IntentMatchers.hasExtra("teamId", EntityManager.getInstance().getTeamId()));
+        Intents.intending(IntentMatchers.hasExtra("teamId", TeamInfoLoader.getInstance().getTeamId()));
 
     }
 

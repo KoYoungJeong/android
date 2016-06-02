@@ -27,8 +27,7 @@ import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
@@ -180,9 +179,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     public void onEventMainThread(RetrieveTopicListEvent event) {
-        FormattedEntity entity =
-                EntityManager.getInstance().getEntityById(entityId);
-        if (entity == EntityManager.UNKNOWN_USER_ENTITY) {
+        if (TeamInfoLoader.getInstance().isTopic(entityId)) {
             return;
         }
         topicDetailPresenter.onInit(getActivity(), entityId);

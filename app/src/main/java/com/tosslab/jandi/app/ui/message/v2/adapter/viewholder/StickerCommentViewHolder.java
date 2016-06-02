@@ -12,10 +12,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
@@ -30,9 +30,6 @@ import java.util.Collection;
 
 import rx.android.schedulers.AndroidSchedulers;
 
-/**
- * Created by tee on 16. 4. 7..
- */
 public class StickerCommentViewHolder extends BaseCommentViewHolder {
 
     private ViewGroup vgMessageCommonFile;
@@ -151,13 +148,13 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
     private boolean isFromMe(ResMessages.Link link) {
         boolean isMe = false;
         if (link.feedback != null) {
-            isMe = EntityManager.getInstance().isMe(link.feedback.writerId);
+            isMe = TeamInfoLoader.getInstance().getMyId() == link.feedback.writerId;
         }
         return isMe;
     }
 
     private void setBackground(ResMessages.Link link) {
-        boolean isMe = EntityManager.getInstance().isMe(link.message.writerId);
+        boolean isMe = TeamInfoLoader.getInstance().getMyId() == link.message.writerId;
 
         int resId;
         if (hasFlatTop) {
@@ -207,7 +204,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
 
         }
         UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId())
+                link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(unreadCount -> {
                     if (unreadCount > 0) {
@@ -220,12 +217,9 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
     }
 
     private void settingFileInfo(ResMessages.Link link, long roomId) {
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity room = entityManager.getEntityById(roomId);
-        boolean isPublicTopic = room.isPublicTopic();
+        boolean isPublicTopic = TeamInfoLoader.getInstance().isPublicTopic(roomId);
 
-        FormattedEntity feedbackEntityById =
-                entityManager.getEntityById(link.feedback.writerId);
+        User feedbackEntityById = TeamInfoLoader.getInstance().getUser(link.feedback.writerId);
 
         tvFileUploaderName.setText(feedbackEntityById.getName());
 

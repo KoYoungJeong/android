@@ -13,12 +13,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.BotEntity;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.WebhookBot;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.UnreadCountUtil;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.util.IntegrationBotUtil;
@@ -104,14 +102,12 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
         long fromEntityId = link.fromEntity;
 
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity entity = entityManager.getEntityById(fromEntityId);
-        if (!(entity instanceof BotEntity)) {
+        TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
+        if (!(teamInfoLoader.isBot(fromEntityId))) {
             return;
         }
 
-        BotEntity botEntity = (BotEntity) entity;
-        ResLeftSideMenu.Bot bot = botEntity.getBot();
+        WebhookBot webhookBot = TeamInfoLoader.getInstance().getBot(fromEntityId);
 
         ImageLoader.newInstance()
                 .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
@@ -120,12 +116,12 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
                         TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
                         TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
                         Color.WHITE))
-                .uri(Uri.parse(botEntity.getUserLargeProfileUrl()))
+                .uri(Uri.parse(webhookBot.getPhotoUrl()))
                 .into(ivProfile);
 
-        tvName.setText(botEntity.getName());
+        tvName.setText(webhookBot.getName());
 
-        if (bot != null && TextUtils.equals(bot.status, "enabled")) {
+        if (webhookBot.isEnabled()) {
             tvName.setTextColor(tvName.getResources().getColor(R.color.jandi_messages_name));
             vDisableLineThrough.setVisibility(View.GONE);
         } else {
@@ -149,7 +145,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
         LinkifyUtil.setOnLinkClick(tvMessage);
 
         UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId())
+                link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(unreadCount -> {
                     if (unreadCount > 0) {

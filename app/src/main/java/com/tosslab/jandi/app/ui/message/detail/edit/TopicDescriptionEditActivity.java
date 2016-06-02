@@ -8,11 +8,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 
 import org.androidannotations.annotations.AfterViews;
@@ -51,28 +51,18 @@ public class TopicDescriptionEditActivity extends BaseAppCompatActivity {
 
         setUpActionbar();
 
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
-        if (entity.isUser()) {
+        if (!TeamInfoLoader.getInstance().isTopic(entityId)) {
             finish();
             return;
         }
+        TopicRoom topicRoom = TeamInfoLoader.getInstance().getTopic(entityId);
 
-        String description = getTopicDescription(entity);
+        String description = topicRoom.getDescription();
 
         etDescpription.setText(description);
         etDescpription.setSelection(etDescpription.length());
 
-    }
-
-    private String getTopicDescription(FormattedEntity entity) {
-        String description;
-        if (entity.isPublicTopic()) {
-            description = ((ResLeftSideMenu.Channel) entity.getEntity()).description;
-        } else {
-            description = ((ResLeftSideMenu.PrivateGroup) entity.getEntity()).description;
-        }
-        return description;
     }
 
     private void setUpActionbar() {
@@ -98,22 +88,19 @@ public class TopicDescriptionEditActivity extends BaseAppCompatActivity {
     @OptionsItem(R.id.action_topic_description_save)
     @Background
     void onSaveOptionSelected() {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
+        TopicRoom topicRoom = TeamInfoLoader.getInstance().getTopic(entityId);
 
         String description = etDescpription.getText().toString().trim();
 
         try {
-            if (entity.isPublicTopic()) {
+            if (topicRoom.isPublicTopic()) {
                 entityClientManager.modifyChannelDescription(entityId, description);
             } else {
                 entityClientManager.modifyPrivateGroupDescription(entityId, description);
             }
 
-            if (entity.isPublicTopic()) {
-                ((ResLeftSideMenu.Channel) entity.getEntity()).description = description;
-            } else {
-                ((ResLeftSideMenu.PrivateGroup) entity.getEntity()).description = description;
-            }
+            TopicRepository.getInstance().updateDescription(entityId, description);
+            TeamInfoLoader.getInstance().refresh();
 
             setResult(RESULT_OK);
             finish();

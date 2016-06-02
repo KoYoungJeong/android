@@ -378,7 +378,6 @@ public class MainTopicListFragment extends Fragment
                 .teamId(teamId)
                 .roomId(entityId)
                 .lastReadLinkId(lastReadLinkId)
-                .isFavorite(starred)
                 .startForResult(MOVE_MESSAGE_ACTIVITY);
     }
 
@@ -422,6 +421,7 @@ public class MainTopicListFragment extends Fragment
     public void showEntityMenuDialog(long entityId, long folderId) {
         EntityMenuDialogFragment_.builder()
                 .entityId(entityId)
+                .roomId(entityId)
                 .folderId(folderId)
                 .build()
                 .show(getFragmentManager(), "dialog");

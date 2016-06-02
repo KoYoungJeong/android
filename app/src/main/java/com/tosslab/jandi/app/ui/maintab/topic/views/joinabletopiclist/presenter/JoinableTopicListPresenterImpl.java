@@ -5,7 +5,6 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.model.JoinableTopicDataModel;

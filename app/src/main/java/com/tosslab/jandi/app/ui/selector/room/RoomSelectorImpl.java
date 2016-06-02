@@ -13,12 +13,14 @@ import android.view.ViewGroup;
 import android.widget.PopupWindow;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
 import com.tosslab.jandi.app.network.models.ResFolder;
 import com.tosslab.jandi.app.network.models.ResFolderItem;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.Member;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.selector.room.adapter.RoomRecyclerAdapter;
 import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
@@ -40,11 +42,11 @@ public class RoomSelectorImpl implements RoomSelector {
     private PopupWindow popupWindow;
     private OnRoomDismissListener onRoomDismissListener;
     private boolean isIncludeAllMember;
-    private List<FormattedEntity> users;
-    private List<FormattedEntity> topics;
+    private List<Member> users;
+    private List<TopicRoom> topics;
     private int type = TYPE_POPUP;
 
-    public RoomSelectorImpl(List<FormattedEntity> topics, List<FormattedEntity> users) {
+    public RoomSelectorImpl(List<TopicRoom> topics, List<Member> users) {
         this.users = users;
         this.topics = topics;
     }
@@ -139,7 +141,7 @@ public class RoomSelectorImpl implements RoomSelector {
 
     }
 
-    public List<FormattedEntity> getTopics() {
+    public List<TopicRoom> getTopics() {
         if (topics != null) {
             return topics;
         } else {
@@ -147,7 +149,7 @@ public class RoomSelectorImpl implements RoomSelector {
         }
     }
 
-    public List<FormattedEntity> getUsers() {
+    public List<Member> getUsers() {
         if (users != null) {
             return users;
         } else {
@@ -183,23 +185,23 @@ public class RoomSelectorImpl implements RoomSelector {
     }
 
     // Join된 Topic에 관한 정보를 가져오기
-    public LinkedHashMap<Long, FormattedEntity> getJoinTopics(List<FormattedEntity> entities) {
-        LinkedHashMap<Long, FormattedEntity> topicHashMap = new LinkedHashMap<>();
+    public LinkedHashMap<Long, TopicRoom> getJoinTopics(List<TopicRoom> entities) {
+        LinkedHashMap<Long, TopicRoom> topicHashMap = new LinkedHashMap<>();
         Observable.from(entities)
                 .toSortedList((lhs, rhs) -> {
 
-                    if (lhs.isStarred && rhs.isStarred) {
+                    if (lhs.isStarred() && rhs.isStarred()) {
                         return StringCompareUtil.compare(lhs.getName(), rhs.getName());
-                    } else if (lhs.isStarred) {
+                    } else if (lhs.isStarred()) {
                         return -1;
-                    } else if (rhs.isStarred) {
+                    } else if (rhs.isStarred()) {
                         return 1;
                     } else {
                         return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                     }
 
                 }).subscribe(topics -> {
-            for (FormattedEntity topic : topics) {
+            for (TopicRoom topic : topics) {
                 topicHashMap.put(topic.getId(), topic);
             }
         });
@@ -215,12 +217,12 @@ public class RoomSelectorImpl implements RoomSelector {
         List<ResFolderItem> topicFolderItems = repository.getFolderItems();
         List<ResFolder> topicFolders = repository.getFolders();
 
-        LinkedHashMap<Long, FormattedEntity> joinTopics = getJoinTopics(getTopics());
+        LinkedHashMap<Long, TopicRoom> joinTopics = getJoinTopics(getTopics());
 
         // File Search에서 모든 대화방을 표시하는 더미 데이터가 필요
         if (isIncludeAllMember) {
             ExpandRoomData dummyData = new ExpandRoomData();
-            dummyData.setType(FormattedEntity.TYPE_EVERYWHERE);
+            dummyData.setType(JandiConstants.Entity.TYPE_EVERYWHERE);
             topicDatas.add(dummyData);
         }
 
@@ -236,16 +238,15 @@ public class RoomSelectorImpl implements RoomSelector {
                 .filter(item -> item.folderId > 0)
                 .subscribe(item -> {
                     ExpandRoomData topicData = new ExpandRoomData();
-                    FormattedEntity topic = joinTopics.get(item.roomId);
+                    TopicRoom topic = joinTopics.get(item.roomId);
                     if (topic != null) {
                         joinTopics.remove(item.roomId);
                         topicData.setEntityId(item.roomId);
                         topicData.setIsUser(false);
                         topicData.setName(topic.getName());
-                        topicData.setType(topic.type);
                         topicData.setIsFolder(false);
                         topicData.setIsPublicTopic(topic.isPublicTopic());
-                        topicData.setIsStarred(topic.isStarred);
+                        topicData.setIsStarred(topic.isStarred());
                         topicDataMap.get(item.folderId).add(topicData);
                     }
                 });
@@ -279,17 +280,16 @@ public class RoomSelectorImpl implements RoomSelector {
         boolean FirstAmongNoFolderItem = true;
 
         for (long key : joinTopics.keySet()) {
-            FormattedEntity entity = joinTopics.get(key);
+            TopicRoom entity = joinTopics.get(key);
             ExpandRoomData topicData = new ExpandRoomData();
             topicData.setIsFirstAmongNoFolderItem(FirstAmongNoFolderItem);
             FirstAmongNoFolderItem = false;
             topicData.setEntityId(entity.getId());
             topicData.setIsUser(false);
             topicData.setName(entity.getName());
-            topicData.setType(entity.type);
             topicData.setIsFolder(false);
             topicData.setIsPublicTopic(entity.isPublicTopic());
-            topicData.setIsStarred(entity.isStarred);
+            topicData.setIsStarred(entity.isStarred());
             topicDatas.add(topicData);
 
         }
@@ -301,19 +301,19 @@ public class RoomSelectorImpl implements RoomSelector {
 
         if (isIncludeAllMember) {
             ExpandRoomData dummyData = new ExpandRoomData();
-            dummyData.setType(FormattedEntity.TYPE_EVERYWHERE);
+            dummyData.setType(JandiConstants.Entity.TYPE_EVERYWHERE);
             roomDatas.add(dummyData);
         }
 
-        List<FormattedEntity> users = getUsers();
+        List<Member> users = getUsers();
         Observable<List<ExpandRoomData>> enabledUsers = Observable.from(users)
-                .filter(FormattedEntity::isEnabled)
-                .map(ExpandRoomData::newRoomData)
+                .filter(Member::isEnabled)
+                .map(ExpandRoomData::newMemberData)
                 .toSortedList(this::getCompareRooms);
 
         Observable<List<ExpandRoomData>> disabledUsers = Observable.from(users)
                 .filter(entity -> !entity.isEnabled())
-                .map(ExpandRoomData::newRoomData)
+                .map(ExpandRoomData::newMemberData)
                 .toSortedList(this::getCompareRooms);
 
         boolean hasDisabledUser = hasDisabledUser(users);
@@ -341,9 +341,9 @@ public class RoomSelectorImpl implements RoomSelector {
 
     @NonNull
     private Integer getCompareRooms(ExpandRoomData lhs, ExpandRoomData rhs) {
-        if (EntityManager.getInstance().isBot(lhs.getEntityId())) {
+        if (TeamInfoLoader.getInstance().isJandiBot(lhs.getEntityId())) {
             return -1;
-        } else if (EntityManager.getInstance().isBot(rhs.getEntityId())) {
+        } else if (TeamInfoLoader.getInstance().isJandiBot(rhs.getEntityId())) {
             return 1;
         }
         String lhsName, rhsName;
@@ -362,7 +362,7 @@ public class RoomSelectorImpl implements RoomSelector {
         return StringCompareUtil.compare(lhsName, rhsName);
     }
 
-    private int getDisabledUserCount(List<FormattedEntity> users) {
+    private int getDisabledUserCount(List<Member> users) {
         return Observable.from(users)
                 .filter(formattedEntity -> !formattedEntity.isEnabled())
                 .count()
@@ -370,7 +370,7 @@ public class RoomSelectorImpl implements RoomSelector {
                 .first();
     }
 
-    private boolean hasDisabledUser(List<FormattedEntity> users) {
+    private boolean hasDisabledUser(List<Member> users) {
         return Observable.from(users)
                 .filter(formattedEntity -> !formattedEntity.isEnabled())
                 .map(formattedEntity1 -> true)

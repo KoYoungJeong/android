@@ -46,15 +46,12 @@ import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
-import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
 import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
-import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RefreshConnectBotEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
-import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
@@ -82,8 +79,6 @@ import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
@@ -100,6 +95,8 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketServiceStopEvent;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
@@ -533,7 +530,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
-        actionBar.setTitle(EntityManager.getInstance().getEntityNameById(room.getEntityId()));
+        actionBar.setTitle(TeamInfoLoader.getInstance().getName(room.getEntityId()));
     }
 
     private void trackScreenView() {
@@ -944,12 +941,12 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             return;
         }
 
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(item.message.writerId);
-        tvPreviewUserName.setText(entity.getName());
+        User user = TeamInfoLoader.getInstance().getUser(item.message.writerId);
+        tvPreviewUserName.setText(user.getName());
 
-        String url = ImageUtil.getImageFileUrl(entity.getUserSmallProfileUrl());
+        String url = ImageUtil.getImageFileUrl(user.getPhotoUrl());
         Uri uri = Uri.parse(url);
-        if (!EntityManager.getInstance().isBot(entity.getId())) {
+        if (!TeamInfoLoader.getInstance().isBot(user.getId())) {
             ImageUtil.loadProfileImage(ivPreviewProfile, uri, R.drawable.profile_img);
         } else {
             ImageLoader.newInstance()
@@ -1472,17 +1469,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
-    public void onEvent(TopicInfoUpdateEvent event) {
-        if (event.getId() == entityId) {
-            FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-            isFavorite = entity.isStarred;
-            refreshActionbar();
-            if (isForeground) {
-                closeDialogFragment();
-            }
-        }
-    }
-
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void closeDialogFragment() {
         android.app.Fragment dialogFragment =
@@ -1492,28 +1478,12 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
-    public void onEvent(MemberStarredEvent memberStarredEvent) {
-        if (memberStarredEvent.getId() == entityId) {
-            FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-            isFavorite = entity.isStarred;
-            refreshActionbar();
-        }
-    }
-
     public void onEvent(ProfileChangeEvent event) {
         refreshMessages();
     }
 
     public void onEvent(RefreshConnectBotEvent event) {
         refreshMessages();
-    }
-
-    public void onEvent(ConfirmModifyTopicEvent event) {
-        if (!isForeground) {
-            return;
-        }
-
-        messageListPresenter.onModifyEntityAction(entityType, entityId, event.inputName);
     }
 
     public void onEvent(SocketAnnouncementEvent event) {
@@ -1662,13 +1632,12 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             return;
         }
 
-        EntityManager entityManager = EntityManager.getInstance();
+
         MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                .teamId(entityManager.getTeamId())
+                .teamId(TeamInfoLoader.getInstance().getTeamId())
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(event.userId)
-                .isFavorite(entityManager.getEntityById(event.userId).isStarred)
                 .isFromPush(isFromPush)
                 .start();
     }

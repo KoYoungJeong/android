@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.entities.chats.presenter;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapterDataModel;
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
@@ -98,6 +98,6 @@ public class ChatChoosePresenterImplTest {
         }).when(mockView).moveChatMessage(anyLong(), anyLong());
         presenter.onMoveChatMessage(1L);
         await().until(() -> finish[0]);
-        verify(mockView).moveChatMessage(eq(EntityManager.getInstance().getTeamId()), eq(1L));
+        verify(mockView).moveChatMessage(eq(TeamInfoLoader.getInstance().getTeamId()), eq(1L));
     }
 }

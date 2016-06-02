@@ -13,9 +13,9 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
@@ -59,24 +59,24 @@ public class EventMessageViewHolder implements BodyViewHolder {
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
 
-        EntityManager entityManager = EntityManager.getInstance();
+        TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
 
         if (eventInfo instanceof ResMessages.AnnouncementCreateEvent) {
             buildAnnouncementCreateEvent((ResMessages.AnnouncementCreateEvent) eventInfo,
-                    link.fromEntity, builder, entityManager);
+                    link.fromEntity, builder, teamInfoLoader);
 
         } else if (eventInfo instanceof ResMessages.AnnouncementUpdateEvent) {
             buildAnnouncementUpdateEvent((ResMessages.AnnouncementUpdateEvent) eventInfo,
-                    link.fromEntity, builder, entityManager);
+                    link.fromEntity, builder, teamInfoLoader);
 
         } else if (eventInfo instanceof ResMessages.AnnouncementDeleteEvent) {
-            buildAnnouncementDeleteEvent(link.fromEntity, builder, entityManager);
+            buildAnnouncementDeleteEvent(link.fromEntity, builder, teamInfoLoader);
 
         } else if (eventInfo instanceof ResMessages.CreateEvent) {
-            buildCreateEvent((ResMessages.CreateEvent) eventInfo, builder, entityManager);
+            buildCreateEvent((ResMessages.CreateEvent) eventInfo, builder, teamInfoLoader);
 
         } else if (eventInfo instanceof ResMessages.InviteEvent) {
-            buildInviteEvent((ResMessages.InviteEvent) eventInfo, builder, entityManager);
+            buildInviteEvent((ResMessages.InviteEvent) eventInfo, builder, teamInfoLoader);
 
         } else {
             long fromEntity = link.fromEntity;
@@ -124,16 +124,16 @@ public class EventMessageViewHolder implements BodyViewHolder {
     }
 
     private void buildCreateEvent(ResMessages.CreateEvent eventInfo,
-                                  SpannableStringBuilder builder, EntityManager entityManager) {
+                                  SpannableStringBuilder builder, TeamInfoLoader teamInfoLoader) {
         if (eventInfo.createInfo instanceof ResMessages.PublicCreateInfo) {
             ResMessages.PublicCreateInfo publicCreateInfo =
                     (ResMessages.PublicCreateInfo) eventInfo.createInfo;
             long creatorId = publicCreateInfo.creatorId;
-            FormattedEntity creatorEntity = entityManager.getEntityById(creatorId);
+            User creator = teamInfoLoader.getUser(creatorId);
 
             ClickableNameSpannable profileSpannable = new ClickableNameSpannable(creatorId, textSize11sp, Color.WHITE);
             int beforeLength = builder.length();
-            builder.append(creatorEntity.getName());
+            builder.append(creator.getName());
             int afterLength = builder.length();
             builder.setSpan(profileSpannable,
                     beforeLength, afterLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -145,7 +145,7 @@ public class EventMessageViewHolder implements BodyViewHolder {
                     (ResMessages.PrivateCreateInfo) eventInfo.createInfo;
 
             long creatorId = privateCreateInfo.creatorId;
-            FormattedEntity creatorEntity = entityManager.getEntityById(creatorId);
+            User creatorEntity = teamInfoLoader.getUser(creatorId);
 
             ClickableNameSpannable profileSpannable = new ClickableNameSpannable(creatorId, textSize11sp, Color.WHITE);
             int beforeLength = builder.length();
@@ -160,9 +160,9 @@ public class EventMessageViewHolder implements BodyViewHolder {
     }
 
     private void buildInviteEvent(ResMessages.InviteEvent eventInfo,
-                                  SpannableStringBuilder builder, EntityManager entityManager) {
+                                  SpannableStringBuilder builder, TeamInfoLoader teamInfoLoader) {
         long invitorId = eventInfo.invitorId;
-        FormattedEntity invitorEntity = entityManager.getEntityById(invitorId);
+        User invitorEntity = teamInfoLoader.getUser(invitorId);
 
         String invitorName = invitorEntity.getName();
 
@@ -180,14 +180,14 @@ public class EventMessageViewHolder implements BodyViewHolder {
 
         int tempIndex = nameIndexOf;
 
-        FormattedEntity tempEntity;
+        User tempEntity;
         Collection<ResMessages.InviteEvent.IntegerWrapper> inviteUsers = eventInfo.inviteUsers;
         int size = inviteUsers.size();
         Iterator<ResMessages.InviteEvent.IntegerWrapper> iterator = inviteUsers.iterator();
         boolean first = true;
         while (iterator.hasNext()) {
-            tempEntity = entityManager.getEntityById(iterator.next().getInviteUserId());
-            if (tempEntity != EntityManager.UNKNOWN_USER_ENTITY) {
+            tempEntity = teamInfoLoader.getUser(iterator.next().getInviteUserId());
+            if (tempEntity != null) {
                 if (!first) {
                     builder.insert(tempIndex, ", ");
                     tempIndex += 2;
@@ -207,10 +207,10 @@ public class EventMessageViewHolder implements BodyViewHolder {
     }
 
     private void buildJoinEvent(SpannableStringBuilder builder, long fromEntity) {
-        FormattedEntity entity =
-                EntityManager.getInstance().getEntityById(fromEntity);
+        User entity =
+                TeamInfoLoader.getInstance().getInstance().getUser(fromEntity);
         String name;
-        if (entity != EntityManager.UNKNOWN_USER_ENTITY) {
+        if (entity != null) {
             name = entity.getName();
         } else {
             name = " ";
@@ -227,8 +227,8 @@ public class EventMessageViewHolder implements BodyViewHolder {
     }
 
     private void buildLeaveEvent(SpannableStringBuilder builder, long fromEntity) {
-        FormattedEntity entity =
-                EntityManager.getInstance().getEntityById(fromEntity);
+        User entity =
+                TeamInfoLoader.getInstance().getUser(fromEntity);
         String name = entity.getName();
 
         ClickableNameSpannable profileSpannable = new ClickableNameSpannable(fromEntity, textSize11sp, Color.WHITE);
@@ -242,13 +242,13 @@ public class EventMessageViewHolder implements BodyViewHolder {
     }
 
     private void buildAnnouncementCreateEvent(ResMessages.AnnouncementCreateEvent event, long creatorId,
-                                              SpannableStringBuilder builder, EntityManager entityManager) {
+                                              SpannableStringBuilder builder, TeamInfoLoader teamInfoLoader) {
 
-        FormattedEntity creatorEntity = entityManager.getEntityById(creatorId);
+        User creatorEntity = teamInfoLoader.getUser(creatorId);
         String creator = creatorEntity.getName();
 
         long writerId = event.getEventInfo().getWriterId();
-        FormattedEntity entity = entityManager.getEntityById(writerId);
+        User entity = teamInfoLoader.getUser(writerId);
         String writer = entity.getName();
 
         String format = context.getResources().getString(R.string.jandi_announcement_created, creator, writer);
@@ -268,12 +268,12 @@ public class EventMessageViewHolder implements BodyViewHolder {
     }
 
     private void buildAnnouncementUpdateEvent(ResMessages.AnnouncementUpdateEvent event, long creatorId,
-                                              SpannableStringBuilder builder, EntityManager entityManager) {
-        FormattedEntity creatorEntity = entityManager.getEntityById(creatorId);
+                                              SpannableStringBuilder builder, TeamInfoLoader entityManager) {
+        User creatorEntity = entityManager.getUser(creatorId);
         String creator = creatorEntity.getName();
 
         long writerId = event.getEventInfo().getWriterId();
-        FormattedEntity entity = entityManager.getEntityById(writerId);
+        User entity = entityManager.getUser(writerId);
         String writer = entity.getName();
 
         String format = context.getResources().getString(R.string.jandi_announcement_created, creator, writer);
@@ -294,8 +294,8 @@ public class EventMessageViewHolder implements BodyViewHolder {
     }
 
     private void buildAnnouncementDeleteEvent(long from,
-                                              SpannableStringBuilder builder, EntityManager entityManager) {
-        FormattedEntity entity = entityManager.getEntityById(from);
+                                              SpannableStringBuilder builder, TeamInfoLoader teamInfoLoader) {
+        User entity = teamInfoLoader.getUser(from);
         String name = entity.getName();
 
         ClickableNameSpannable profileSpannable = new ClickableNameSpannable(from, textSize11sp, Color.WHITE);

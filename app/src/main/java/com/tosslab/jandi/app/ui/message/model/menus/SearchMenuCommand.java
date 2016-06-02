@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.message.model.menus;
 import android.content.Context;
 import android.view.MenuItem;
 
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -27,7 +27,7 @@ public class SearchMenuCommand implements MenuCommand {
                 .entityId(entityId)
                 .start();
 
-        if (EntityManager.getInstance().getEntityById(entityId).isUser()) {
+        if (TeamInfoLoader.getInstance().isUser(entityId)) {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Message, AnalyticsValue.Action.Message_Search);
         } else {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.TopicChat_Search);

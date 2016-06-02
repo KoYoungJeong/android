@@ -6,10 +6,8 @@ import android.support.v4.app.Fragment;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.BotEntity;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.starmention.model.StarMentionListModel;
@@ -20,8 +18,8 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
+import java.util.Collection;
 import java.util.List;
-
 
 
 /**
@@ -66,14 +64,16 @@ public class StarMentionListPresentor {
         int contentType = starMentionVO.getContentType();
         if (contentType == StarMentionVO.Type.Text.getValue()) {
             boolean isJoinedTopic = false;
-            EntityManager entityManager = EntityManager.getInstance();
-            FormattedEntity formattedEntity = entityManager.getEntityById(starMentionVO.getRoomId());
 
-            if (formattedEntity != EntityManager.UNKNOWN_USER_ENTITY) {
+            if (TeamInfoLoader.getInstance().isTopic(starMentionVO.getRoomId())
+                    || TeamInfoLoader.getInstance().isUser(starMentionVO.getRoomId())) {
 
-                if (!formattedEntity.isUser() && !(formattedEntity instanceof BotEntity)) {
-                    for (long memberId : formattedEntity.getMembers()) {
-                        if (memberId == entityManager.getMe().getId()) {
+                if (TeamInfoLoader.getInstance().isTopic(starMentionVO.getRoomId())) {
+                    Collection<Long> members = TeamInfoLoader.getInstance()
+                            .getTopic(starMentionVO.getRoomId())
+                            .getMembers();
+                    for (long memberId : members) {
+                        if (memberId == TeamInfoLoader.getInstance().getMyId()) {
                             isJoinedTopic = true;
                         }
                     }

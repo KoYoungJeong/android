@@ -5,14 +5,11 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
-/**
- * Created by Steve SeongUg Jung on 15. 3. 13..
- */
 public class WriterTextVisitor implements TextVisitor {
 
     private Context context;
@@ -25,16 +22,16 @@ public class WriterTextVisitor implements TextVisitor {
 
     @Override
     public void visit(SpannableStringBuilder builder, ResMessageSearch.Record record) {
-        FormattedEntity formattedEntity = EntityManager.getInstance().getEntityById(record.getMemberId());
 
-        if (formattedEntity == EntityManager.UNKNOWN_USER_ENTITY) {
+        if (TeamInfoLoader.getInstance().isUser(record.getMemberId())) {
             return;
         }
+        User user = TeamInfoLoader.getInstance().getUser(record.getMemberId());
 
         int textSize = (int) context.getResources().getDimension(R.dimen.jandi_message_search_item_large_txt_size);
         NameSpannable nameSpannable = new NameSpannable(textSize, textColor);
 
-        String name = formattedEntity.getName();
+        String name = user.getName();
         int start = builder.length();
         builder.append(name);
 

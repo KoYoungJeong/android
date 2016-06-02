@@ -6,12 +6,12 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -56,7 +56,6 @@ public class InvitationDialogExecutor {
     Lazy<TeamApi> teamApi;
     private int from;
     private ProgressWheel progressWheel;
-    private EntityManager entityManager;
 
     @AfterInject
     void initObject() {
@@ -71,11 +70,10 @@ public class InvitationDialogExecutor {
             return;
         }
 
-        entityManager = EntityManager.getInstance();
         showProgressWheel();
 
         try {
-            ResTeamDetailInfo.InviteTeam inviteTeam = getTeamInfo(entityManager.getTeamId());
+            ResTeamDetailInfo.InviteTeam inviteTeam = getTeamInfo(TeamInfoLoader.getInstance().getTeamId());
             AvailableState availableState = availableState(inviteTeam);
             switch (availableState) {
                 case AVAIL:
@@ -156,15 +154,12 @@ public class InvitationDialogExecutor {
     }
 
     private String getOwnerName() {
-        List<FormattedEntity> users = entityManager.getFormattedUsers();
-        FormattedEntity tempDefaultEntity = new FormattedEntity();
-        FormattedEntity owner = Observable.from(users)
-                .filter(formattedEntity ->
-                        formattedEntity.isTeamOwner())
-                .firstOrDefault(tempDefaultEntity)
+        List<User> users = TeamInfoLoader.getInstance().getUserList();
+        return Observable.from(users)
+                .filter(User::isTeamOwner)
+                .map(User::getName)
                 .toBlocking()
-                .first();
-        return owner.getUser().name;
+                .firstOrDefault("");
     }
 
     public void setFrom(int from) {

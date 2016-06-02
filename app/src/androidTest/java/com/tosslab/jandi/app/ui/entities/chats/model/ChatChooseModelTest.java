@@ -2,8 +2,8 @@ package com.tosslab.jandi.app.ui.entities.chats.model;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 
 import org.junit.AfterClass;
@@ -36,28 +36,28 @@ public class ChatChooseModelTest {
     public static void tearDownClass() throws Exception {
         BaseInitUtil.releaseDatabase();
     }
+
     @Before
     public void setUp() throws Exception {
         chatChooseModel = new ChatChooseModel();
     }
 
 
-
     @Test
     public void testGetChatListWithoutMe() throws Exception {
-        List<ChatChooseItem> chatListWithoutMe = chatChooseModel.getChatListWithoutMe(EntityManager.getInstance().getFormattedUsersWithoutMe().get(0).getName().substring(0, 1));
+        List<ChatChooseItem> chatListWithoutMe = chatChooseModel.getChatListWithoutMe(TeamInfoLoader.getInstance().getUserList().get(0).getName().substring(0, 1));
         assertThat(chatListWithoutMe.size(), is(greaterThanOrEqualTo(0)));
     }
 
     @Test
     public void testGetTeamId() throws Exception {
         long teamId = chatChooseModel.getTeamId();
-        assertThat(EntityManager.getInstance().getTeamId(), is(equalTo(teamId)));
+        assertThat(AccountRepository.getRepository().getSelectedTeamId(), is(equalTo(teamId)));
     }
 
     @Test
     public void testGetUsers() throws Exception {
         List<ChatChooseItem> users = chatChooseModel.getUsers();
-        assertThat(users.size(), is(lessThanOrEqualTo(EntityManager.getInstance().getFormattedUsersWithoutMe().size() + 2)));
+        assertThat(users.size(), is(lessThanOrEqualTo(TeamInfoLoader.getInstance().getUserList().size() + 1)));
     }
 }

@@ -7,17 +7,13 @@ import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
-import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
-import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -30,7 +26,6 @@ import org.androidannotations.annotations.EBean;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
 
 
 @EBean
@@ -47,7 +42,7 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
     private String roomName;
     private boolean isPublic;
     private int roomType;
-    private ShareSelectModel shareSelectModel;
+    private TeamInfoLoader teamInfoLoader;
 
     @Override
     public void setView(View view) {
@@ -56,9 +51,9 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
 
     @AfterInject
     void initObject() {
-        EntityManager entityManager = EntityManager.getInstance();
-        teamId = entityManager.getTeamId();
-        teamName = entityManager.getTeamName();
+        TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
+        teamId = teamInfoLoader.getTeamId();
+        teamName = teamInfoLoader.getTeamName();
     }
 
     @Override
@@ -95,8 +90,8 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
 
         if (!shareModel.hasLeftSideMenu(teamId)) {
             try {
-                ResLeftSideMenu leftSideMenu = shareModel.getLeftSideMenu(teamId);
-                shareModel.updateLeftSideMenu(leftSideMenu);
+                InitialInfo initialInfo = shareModel.getInitialInfo(teamId);
+                shareModel.updateInitialInfo(initialInfo);
             } catch (Exception e) {
                 e.printStackTrace();
                 view.moveIntro();
@@ -104,10 +99,10 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
             }
         }
 
-        shareSelectModel = shareModel.getShareSelectModel(teamId);
+        teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
 
-        this.roomId = shareSelectModel.getDefaultTopicId();
-        FormattedEntity entity = shareSelectModel.getEntityById(roomId);
+        this.roomId = teamInfoLoader.getDefaultTopicId();
+        TopicRoom entity = teamInfoLoader.getTopic(roomId);
         this.roomName = entity.getName();
         this.roomType = JandiConstants.TYPE_PUBLIC_TOPIC;
         isPublic = true;
@@ -177,28 +172,8 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         if ((selectedTeamInfo == null || selectedTeamInfo.getTeamId() != teamId)) {
             AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
-            return getEntityInfo();
-        } else {
-            try {
-                EntityManager.getInstance();
-                return true;
-            } catch (Exception e) {
-                return getEntityInfo();
-            }
         }
-    }
-
-    private boolean getEntityInfo() {
-        try {
-            EntityClientManager entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
-            ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
-            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-            EntityManager.getInstance().refreshEntity();
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        return true;
     }
 
     @Background

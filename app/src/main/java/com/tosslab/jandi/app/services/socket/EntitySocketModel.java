@@ -1,16 +1,9 @@
 package com.tosslab.jandi.app.services.socket;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
-import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -31,18 +24,15 @@ public class EntitySocketModel {
 
     private final PublishSubject<EntityRefreshEventWrapper> refreshEntityPublishSubject;
     private final Subscription refreshEntitySubscribe;
-    private final Context context;
 
-    public EntitySocketModel(Context context) {
-        this.context = context;
+    public EntitySocketModel() {
         refreshEntityPublishSubject = PublishSubject.create();
         refreshEntitySubscribe = refreshEntityPublishSubject
                 .observeOn(Schedulers.io())
                 .onBackpressureBuffer()
                 .buffer(500, TimeUnit.MILLISECONDS)
                 .filter(entityRefreshEventWrappers -> !entityRefreshEventWrappers.isEmpty())
-                .subscribe(eventWrappers -> handleEvent(EntitySocketModel.this.context,
-                        eventWrappers)
+                .subscribe(eventWrappers -> handleEvent(eventWrappers)
                         , throwable -> LogUtil.e("Socket RefreshEntity Error", throwable));
     }
 
@@ -58,32 +48,23 @@ public class EntitySocketModel {
         }
     }
 
-    private void handleEvent(Context context, List<EntityRefreshEventWrapper> eventWrappers) {
-        try {
-            EntityClientManager jandiEntityClient = EntityClientManager_.getInstance_(context);
-            ResLeftSideMenu resLeftSideMenu = jandiEntityClient.getTotalEntitiesInfo();
+    private void handleEvent(List<EntityRefreshEventWrapper> eventWrappers) {
 
-            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
+        Observable.from(eventWrappers)
+                .takeFirst(eventWrapper -> eventWrapper.postRetrieveEvent)
+                .subscribe(eventWrapper -> postRetrieveTopicEvent());
 
-            EntityManager.getInstance().refreshEntity();
+        Observable.from(eventWrappers)
+                .takeFirst(eventWrapper ->
+                        !TextUtils.isEmpty(eventWrapper.socketMessageEventContent))
+                .subscribe(eventWrapper -> postSocketMessageEvent
+                        (eventWrapper.socketMessageEventContent));
 
-            Observable.from(eventWrappers)
-                    .takeFirst(eventWrapper -> eventWrapper.postRetrieveEvent)
-                    .subscribe(eventWrapper -> postRetrieveTopicEvent());
-
-            Observable.from(eventWrappers)
-                    .takeFirst(eventWrapper ->
-                            !TextUtils.isEmpty(eventWrapper.socketMessageEventContent))
-                    .subscribe(eventWrapper -> postSocketMessageEvent
-                            (eventWrapper.socketMessageEventContent));
-
-            Observable.from(eventWrappers)
-                    .filter(eventWrapper -> eventWrapper.event != null)
-                    .subscribe(eventWrapper -> postHandledEvent(eventWrapper.event));
+        Observable.from(eventWrappers)
+                .filter(eventWrapper -> eventWrapper.event != null)
+                .subscribe(eventWrapper -> postHandledEvent(eventWrapper.event));
 
 
-        } catch (RetrofitException e) {
-        }
     }
 
     private void postHandledEvent(Object event) {

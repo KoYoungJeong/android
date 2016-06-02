@@ -18,6 +18,8 @@ public class Human {
     @DatabaseField
     private String name;
     @DatabaseField
+    private String type;
+    @DatabaseField
     private String photoUrl;
     @DatabaseField
     private String role;
@@ -29,7 +31,7 @@ public class Human {
     private String status;
     @JsonIgnore
     @DatabaseField(foreign = true)
-    private InitializeInfo initialInfo;
+    private InitialInfo initialInfo;
 
 
     public long getId() {
@@ -96,12 +98,20 @@ public class Human {
         this.photoUrl = photoUrl;
     }
 
-    public InitializeInfo getInitialInfo() {
+    public InitialInfo getInitialInfo() {
         return initialInfo;
     }
 
-    public void setInitialInfo(InitializeInfo initialInfo) {
+    public void setInitialInfo(InitialInfo initialInfo) {
         this.initialInfo = initialInfo;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -170,6 +180,10 @@ public class Human {
 
         public void setIsUpdated(boolean updated) {
             isUpdated = updated;
+        }
+
+        public long get_id() {
+            return _id;
         }
     }
 }

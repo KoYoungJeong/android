@@ -43,8 +43,6 @@ public interface MessageSearchListPresenter {
 
     void deleteMessage(int messageType, long messageId);
 
-    void onModifyEntity(String inputName);
-
     void registStarredMessage(long teamId, long messageId);
 
     void unregistStarredMessage(long teamId, long messageId);

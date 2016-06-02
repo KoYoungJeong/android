@@ -16,13 +16,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SelectMemberEvent;
 import com.tosslab.jandi.app.events.search.MoreSearchRequestEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.events.search.SelectEntityEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.Member;
+import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.messages.adapter.MessageSearchResultAdapter;
@@ -57,6 +60,7 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.functions.Func0;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 10..
@@ -243,24 +247,23 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
         setUpCategoryView(vgEntity, entityTextView, true);
 
-        EntityManager entityManager = EntityManager.getInstance();
-        List<FormattedEntity> joinedChannels = entityManager.getJoinedChannels();
-        List<FormattedEntity> groups = entityManager.getGroups();
-        List<FormattedEntity> allTopics = new ArrayList<>();
-        Observable.merge(Observable.from(joinedChannels), Observable.from(groups))
-                .subscribe(entity -> {
-                            allTopics.add(entity);
-                        }
-                );
-        List<FormattedEntity> users = EntityManager.getInstance().getFormattedUsersWithoutMe();
-        if (entityManager.hasJandiBot()) {
-            users.add(0, EntityManager.getInstance().getJandiBot());
+        List<TopicRoom> allTopics = new ArrayList<>();
+        Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                .filter(TopicRoom::isJoined)
+                .collect(() -> allTopics, List::add)
+                .subscribe();
+        List<Member> users = Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .filter(User::isEnabled)
+                .collect((Func0<ArrayList<Member>>) ArrayList::new, ArrayList::add)
+                .toBlocking().first();
+        if (TeamInfoLoader.getInstance().hasJandiBot()) {
+            users.add(0, TeamInfoLoader.getInstance().getJandiBot());
         }
 
         RoomSelector roomSelector = new RoomSelectorImpl(allTopics, users);
 
         roomSelector.setOnRoomSelectListener(item -> {
-            if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
+            if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
                 EventBus.getDefault().post(new SelectEntityEvent(-1, getString(R.string.jandi_file_category_everywhere)));
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.ChooseTopicFilter, AnalyticsValue.Label.AllTopic);
             } else {
@@ -292,7 +295,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
         UserSelector userSelector = new UserSelectorImpl();
         userSelector.setOnUserSelectListener(item -> {
-            if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
+            if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
                 EventBus.getDefault().post(new SelectMemberEvent(-1, getString(R.string.jandi_file_category_everyone)));
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.ChooseMemberFilter, AnalyticsValue.Label.AllMember);
             } else {
@@ -358,7 +361,6 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
                 .entityId(entityId)
                 .entityType(entityType)
                 .roomId(roomId)
-                .isFavorite(isStarred)
                 .isFromSearch(true)
                 .lastReadLinkId(linkId)
                 .start();

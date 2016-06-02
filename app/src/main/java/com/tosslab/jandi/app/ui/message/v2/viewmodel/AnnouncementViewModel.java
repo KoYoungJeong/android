@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,9 +17,11 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.info.BotRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
+import com.tosslab.jandi.app.network.models.start.Bot;
+import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
@@ -104,20 +107,33 @@ public class AnnouncementViewModel {
         String writtenAt = announcement.getWrittenAt();
         String content = announcement.getContent();
 
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity fromEntity = entityManager.getEntityById(writerId);
-        if (fromEntity == EntityManager.UNKNOWN_USER_ENTITY) {
+        Human human = HumanRepository.getInstance().getHuman(writerId);
+        Bot bot = BotRepository.getInstance().getBot(writerId);
+
+        boolean isBot = false;
+        boolean isJandiBot = false;
+        String name;
+        String profileUrl;
+
+        if (human != null) {
+            name = human.getName();
+            profileUrl = human.getPhotoUrl();
+        } else if (bot != null) {
+            isBot = true;
+            name = bot.getName();
+            profileUrl = bot.getPhotoUrl();
+            if (TextUtils.equals(bot.getType(), "jandi_bot")) {
+                isJandiBot = true;
+            }
+        } else {
             vgAnnouncement.setVisibility(View.GONE);
             return;
         }
 
         vgAnnouncement.setVisibility(View.VISIBLE);
 
-        String profileUrl = fromEntity.getUserLargeProfileUrl();
-
-
-        if (entityManager.isBot(writerId)) {
-            if (entityManager.isJandiBot(writerId)) {
+        if (isBot) {
+            if (isJandiBot) {
                 ivAnnouncementUser.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 ivAnnouncementUser.setImageResource(R.drawable.bot_80x100);
             } else {
@@ -128,16 +144,17 @@ public class AnnouncementViewModel {
                                 TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
                                 TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
                                 Color.TRANSPARENT))
-                        .uri(Uri.parse(fromEntity.getUserLargeProfileUrl()))
+                        .uri(Uri.parse(profileUrl))
                         .into(ivAnnouncementUser);
             }
         } else {
             ImageUtil.loadProfileImage(ivAnnouncementUser, profileUrl, R.drawable.profile_img);
         }
 
+        final boolean finalIsBot = isBot;
+        final boolean finalIsJandiBot = isJandiBot;
         ivAnnouncementUser.setOnClickListener(v -> {
-            if (EntityManager.getInstance().isBot(writerId)
-                    && !EntityManager.getInstance().isJandiBot(writerId)) {
+            if (finalIsBot && !finalIsJandiBot) {
                 // 잔디봇이 아닌 봇은 예외 처리
                 return;
             }
@@ -146,7 +163,7 @@ public class AnnouncementViewModel {
         });
 
         String date = DateTransformator.getTimeStringFromISO(writtenAt);
-        String announcementInfo = String.format("%s %s", fromEntity.getName(), date);
+        String announcementInfo = String.format("%s %s", name, date);
         tvAnnouncementInfo.setText(announcementInfo);
 
         SpannableStringBuilder messageStringBuilder = SpannableLookUp.text(content)

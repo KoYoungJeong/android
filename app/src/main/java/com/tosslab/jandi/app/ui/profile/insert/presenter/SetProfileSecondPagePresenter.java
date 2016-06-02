@@ -39,10 +39,6 @@ public class SetProfileSecondPagePresenter {
             }
             view.displayProfileInfos(me);
             view.dismissProgressWheel();
-        } catch (RetrofitException e) {
-            LogUtil.e("get profile failed", e);
-            view.dismissProgressWheel();
-            view.showFailProfile();
         } catch (Exception e) {
             LogUtil.e("get profile failed", e);
             view.dismissProgressWheel();

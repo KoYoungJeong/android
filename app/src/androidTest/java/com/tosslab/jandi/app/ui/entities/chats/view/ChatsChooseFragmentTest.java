@@ -8,7 +8,8 @@ import android.support.test.espresso.intent.matcher.IntentMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.entities.chats.presenter.ChatChoosePresenter;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -20,6 +21,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import rx.Observable;
 import setup.BaseInitUtil;
 
 import static org.hamcrest.core.Is.is;
@@ -64,7 +66,7 @@ public class ChatsChooseFragmentTest {
     public void testMoveChatMessage() throws Throwable {
         Intents.init();
 
-        rule.runOnUiThread(() -> fragment.moveChatMessage(EntityManager.getInstance().getTeamId(), getOtherMemberId()));
+        rule.runOnUiThread(() -> fragment.moveChatMessage(TeamInfoLoader.getInstance().getTeamId(), getOtherMemberId()));
         Intents.intended(IntentMatchers.hasComponent(MessageListV2Activity_.class.getName()));
         assertThat(activity.isFinishing(), is(true));
 
@@ -83,7 +85,9 @@ public class ChatsChooseFragmentTest {
     }
 
     private long getOtherMemberId() {
-        return EntityManager.getInstance().getFormattedUsersWithoutMe().get(0).getId();
+        return Observable.from(TeamInfoLoader.getInstance().getUserList()).takeFirst(user -> user.getId() != TeamInfoLoader.getInstance().getMyId())
+                .map(User::getId)
+                .toBlocking().first();
     }
 
     @Test

@@ -5,8 +5,8 @@ import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.Menu;
 
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.message.v2.search.view.MessageSearchListFragment_;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -15,9 +15,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 
-/**
- * Created by Steve SeongUg Jung on 15. 1. 20..
- */
 @EActivity
 public class MessageListV2Activity extends BaseAppCompatActivity {
 
@@ -56,7 +53,7 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
 
     void initViews() {
         if (teamId <= 0) {
-            teamId = EntityManager.getInstance().getTeamId();
+            teamId = TeamInfoLoader.getInstance().getTeamId();
         }
 
         Fragment messageListFragment = getSupportFragmentManager()
@@ -68,7 +65,6 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
                         .entityId(entityId)
                         .roomId(roomId)
                         .entityType(entityType)
-                        .isFavorite(isFavorite)
                         .isFromPush(isFromPush)
                         .teamId(teamId)
                         .lastReadLinkId(lastReadLinkId)
@@ -79,7 +75,6 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
                         .entityId(entityId)
                         .roomId(roomId)
                         .entityType(entityType)
-                        .isFavorite(isFavorite)
                         .teamId(teamId)
                         .lastMarker(lastReadLinkId)
                         .build();

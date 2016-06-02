@@ -17,8 +17,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.MentionMemberListAdapter;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel_;
@@ -76,7 +76,7 @@ public class MentionControlViewModel {
                                                       EditText editText,
                                                       List<Long> roomIds,
                                                       String mentionType) {
-        long teamId = EntityManager.getInstance().getTeamId();
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
         return new MentionControlViewModel(activity,
                 editText,
                 teamId,
@@ -199,7 +199,7 @@ public class MentionControlViewModel {
     }
 
     public void refreshMembers(List<Long> roomIds) {
-        refreshMembers(EntityManager.getInstance().getTeamId(), roomIds);
+        refreshMembers(TeamInfoLoader.getInstance().getTeamId(), roomIds);
     }
 
     public void refreshMembers(long teamId, List<Long> roomIds) {

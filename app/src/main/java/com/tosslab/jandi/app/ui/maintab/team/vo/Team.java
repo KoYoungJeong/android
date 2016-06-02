@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.team.vo;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.team.member.User;
 
 import java.util.List;
 
@@ -12,10 +11,10 @@ public class Team {
     private long id;
     private String name;
     private String domain;
-    private ResLeftSideMenu.User owner;
-    private List<FormattedEntity> members;
+    private User owner;
+    private List<User> members;
 
-    private Team(long id, String name, String domain, ResLeftSideMenu.User owner, List<FormattedEntity> members) {
+    private Team(long id, String name, String domain, User owner, List<User> members) {
         this.id = id;
         this.name = name;
         this.domain = domain;
@@ -23,7 +22,7 @@ public class Team {
         this.members = members;
     }
 
-    public static Team create(long id, String name, String domain, ResLeftSideMenu.User owner, List<FormattedEntity> members) {
+    public static Team create(long id, String name, String domain, User owner, List<User> members) {
         return new Team(id, name, domain, owner, members);
     }
 
@@ -35,7 +34,7 @@ public class Team {
         return name;
     }
 
-    public ResLeftSideMenu.User getOwner() {
+    public User getOwner() {
         return owner;
     }
 
@@ -48,7 +47,7 @@ public class Team {
                 '}';
     }
 
-    public void setMembers(List<FormattedEntity> members) {
+    public void setMembers(List<User> members) {
         this.members = members;
     }
 
@@ -56,7 +55,7 @@ public class Team {
         return domain;
     }
 
-    public List<FormattedEntity> getMembers() {
+    public List<User> getMembers() {
         return members;
     }
 }

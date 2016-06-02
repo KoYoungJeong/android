@@ -1,8 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2.domain;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 public class Room {
     public static final long INVALID_ROOM_ID = -1;
@@ -26,13 +25,15 @@ public class Room {
     }
 
     public static Room create(long entityId, long roomId, boolean fromPush) {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
         int entityType;
 
-        if (entity.isPublicTopic()) {
-            entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
-        } else if (entity.isPrivateGroup()) {
-            entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
+        if (TeamInfoLoader.getInstance().isTopic(entityId)) {
+            if (TeamInfoLoader.getInstance().isPublicTopic(entityId)) {
+                entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
+            } else {
+                entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
+            }
+
         } else {
             entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
         }
@@ -41,7 +42,7 @@ public class Room {
             roomId = entityId;
         }
 
-        long teamId = EntityManager.getInstance().getTeamId();
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
 
         return new Room(entityType, entityId, teamId, fromPush, roomId);
     }

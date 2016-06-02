@@ -6,11 +6,11 @@ import android.support.v4.util.Pair;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
@@ -178,7 +178,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
                 moveIntroActivity();
             }
 
-            String distictId = EntityManager.getInstance().getDistictId();
+            String distictId = TeamInfoLoader.getInstance().getMyId() + "-" + TeamInfoLoader.getInstance().getTeamId();
             MixpanelMemberAnalyticsClient.getInstance(PushInterfaceActivity.this, distictId).trackMemberSingingIn();
         } else {
             moveIntroActivity();

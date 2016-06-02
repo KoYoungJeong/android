@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import de.greenrobot.event.EventBus;
@@ -22,14 +22,16 @@ public class ProfileUtil {
                                   View vProfileCover,
                                   TextView tvName,
                                   View vDisableLineThrough) {
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity entity = entityManager.getEntityById(fromEntityId);
+        if (!TeamInfoLoader.getInstance().isUser(fromEntityId)) {
+            return;
+        }
+        User entity = TeamInfoLoader.getInstance().getUser(fromEntityId);
 
-        String profileUrl = entity.getUserLargeProfileUrl();
+        String profileUrl = entity.getPhotoUrl();
 
         ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);
 
-        if (entity.getUser() != null && entity.isEnabled()) {
+        if (entity.isEnabled()) {
             tvName.setTextColor(tvName.getResources().getColor(R.color.jandi_messages_name));
             vProfileCover.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             vDisableLineThrough.setVisibility(View.GONE);

@@ -2,11 +2,10 @@ package com.tosslab.jandi.app.ui.selector.room.domain;
 
 import android.support.annotation.Nullable;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.Member;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 
-/**
- * Created by tee on 15. 9. 30..
- */
 public class ExpandRoomData {
 
     private long entityId;
@@ -22,21 +21,31 @@ public class ExpandRoomData {
     private int type;
     private boolean isFirstAmongNoFolderItem;
 
-    public static ExpandRoomData newRoomData(FormattedEntity entity) {
+    public static ExpandRoomData newRoomData(TopicRoom topicRoom) {
         ExpandRoomData userData = new ExpandRoomData();
         userData.setIsUser(true);
-        userData.setName(entity.getName());
-        userData.setEnabled(entity.isEnabled());
+        userData.setName(topicRoom.getName());
+        userData.setEnabled(topicRoom.isEnabled());
+        userData.setInactive(false);
+        userData.setEntityId(topicRoom.getId());
+        userData.setIsStarred(topicRoom.isStarred());
+        userData.setIsFolder(false);
+        return userData;
+    }
+    public static ExpandRoomData newMemberData(Member member) {
+        ExpandRoomData userData = new ExpandRoomData();
+        userData.setIsUser(true);
+        userData.setName(member.getName());
+        userData.setEnabled(member.isEnabled());
         try {
-            userData.setProfileUrl(entity.getUserSmallProfileUrl());
+            userData.setProfileUrl(member.getPhotoUrl());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        userData.setType(entity.type);
-        userData.setInactive(entity.isInavtived());
-        userData.setEmail(entity.getUserEmail());
-        userData.setEntityId(entity.getId());
-        userData.setIsStarred(entity.isStarred);
+        userData.setInactive(member.isInactive());
+        userData.setEmail(member.getEmail());
+        userData.setEntityId(member.getId());
+        userData.setIsStarred(TeamInfoLoader.getInstance().isChatStarred(member.getId()));
         userData.setIsFolder(false);
         return userData;
     }

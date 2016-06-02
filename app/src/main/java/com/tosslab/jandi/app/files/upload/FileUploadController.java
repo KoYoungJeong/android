@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 
 import java.io.File;
 import java.util.List;
@@ -26,10 +25,6 @@ public interface FileUploadController {
     List<String> getFilePath(Context context, int requestCode, Intent intent);
 
     void startUpload(Activity activity, String title, long entityId, String realFilePath, String comment);
-
-    void showFileUploadDialog(Context context, FragmentManager fragmentManager, String realFilePath, long entityId);
-
-    void moveInsertFileCommnetActivity(Context context, List<String> realFilePath, int entityId);
 
     File getUploadedFile();
 }

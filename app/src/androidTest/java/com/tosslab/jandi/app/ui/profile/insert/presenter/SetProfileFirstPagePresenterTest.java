@@ -2,16 +2,22 @@ package com.tosslab.jandi.app.ui.profile.insert.presenter;
 
 import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import setup.BaseInitUtil;
+
+import static org.mockito.Mockito.anyObject;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by tee on 16. 3. 17..
@@ -30,10 +36,11 @@ public class SetProfileFirstPagePresenterTest {
     public static void tearDownClass() throws Exception {
         BaseInitUtil.releaseDatabase();
     }
+
     @Before
     public void setUp() throws Exception {
         presenter = SetProfileFirstPagePresenter_.getInstance_(JandiApplication.getContext());
-        mockView = Mockito.mock(SetProfileFirstPagePresenter.View.class);
+        mockView = mock(SetProfileFirstPagePresenter.View.class);
         presenter.setView(mockView);
     }
 
@@ -41,7 +48,7 @@ public class SetProfileFirstPagePresenterTest {
     public void testRequestProfile() {
         // given
         final boolean[] finish = {false};
-        Mockito.doAnswer(invocationOnMock -> {
+        doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
         }).when(mockView).dismissProgressWheel();
@@ -52,18 +59,18 @@ public class SetProfileFirstPagePresenterTest {
         Awaitility.await().until(() -> finish[0]);
 
         // then
-        Mockito.verify(mockView).showProgressWheel();
-        Mockito.verify(mockView).displayProfileName(Mockito.anyString());
-        Mockito.verify(mockView).setTeamName(Mockito.anyString());
-        Mockito.verify(mockView).displayProfileImage(Mockito.anyObject());
-        Mockito.verify(mockView).dismissProgressWheel();
+        verify(mockView).showProgressWheel();
+        verify(mockView).displayProfileName(anyString());
+        verify(mockView).setTeamName(anyString());
+        verify(mockView).displayProfileImage(anyObject());
+        verify(mockView).dismissProgressWheel();
     }
 
     @Test
     public void testUpdateProfileName() {
         // given
         final boolean[] finish = {false};
-        Mockito.doAnswer(invocationOnMock -> {
+        doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
         }).when(mockView).dismissProgressWheel();
@@ -74,23 +81,24 @@ public class SetProfileFirstPagePresenterTest {
         Awaitility.await().until(() -> finish[0]);
 
         //then
-        Mockito.verify(mockView).showProgressWheel();
-        Mockito.verify(mockView).dismissProgressWheel();
-        Mockito.verify(mockView).displayProfileName(Mockito.anyString());
+        verify(mockView).showProgressWheel();
+        verify(mockView).dismissProgressWheel();
+        verify(mockView).displayProfileName(anyString());
     }
 
     @Test
     public void testOnProfileImageChange() {
         // given
-        ResLeftSideMenu resLeftSideMenu = new ResLeftSideMenu();
-        resLeftSideMenu.user = new ResLeftSideMenu.User();
-        resLeftSideMenu.user.id = EntityManager.getInstance().getMe().getId();
+        User user = mock(User.class);
+        doReturn(TeamInfoLoader.getInstance().getMyId())
+                .when(user)
+                .getId();
 
         // when
-        presenter.onProfileImageChange(resLeftSideMenu.user);
+        presenter.onProfileImageChange(user);
 
         //then
-        Mockito.verify(mockView).displayProfileImage(Mockito.anyObject());
+        verify(mockView).displayProfileImage(anyObject());
     }
 
 }

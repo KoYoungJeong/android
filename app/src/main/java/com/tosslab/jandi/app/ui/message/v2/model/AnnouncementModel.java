@@ -2,8 +2,6 @@ package com.tosslab.jandi.app.ui.message.v2.model;
 
 import android.support.annotation.Nullable;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AnnouncementRepository;
 import com.tosslab.jandi.app.network.client.rooms.AnnounceApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
@@ -12,6 +10,7 @@ import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -47,8 +46,7 @@ public class AnnouncementModel {
     }
 
     public boolean isAnnouncementOpened(long entityId) {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        return entity.announcementOpened;
+        return TeamInfoLoader.getInstance().isAnnouncementOpened(entityId);
     }
 
     @Nullable
@@ -79,7 +77,7 @@ public class AnnouncementModel {
 
     @Background
     public void updateAnnouncementStatus(long teamId, long topicId, boolean isOpened) {
-        long memberId = EntityManager.getInstance().getMe().getUser().id;
+        long memberId = TeamInfoLoader.getInstance().getMyId();
 
         try {
             ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus =

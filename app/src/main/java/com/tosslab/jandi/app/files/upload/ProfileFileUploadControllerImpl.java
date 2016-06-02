@@ -6,18 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel_;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity_;
@@ -211,16 +207,6 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
         if (uploadProgressDialog != null && uploadProgressDialog.isShowing()) {
             uploadProgressDialog.dismiss();
         }
-    }
-
-    @Override
-    public void showFileUploadDialog(Context context, FragmentManager fragmentManager, String realFilePath, long entityId) {
-
-    }
-
-    @Override
-    public void moveInsertFileCommnetActivity(Context context, List<String> realFilePath, int entityId) {
-
     }
 
     @Override

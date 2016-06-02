@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.main.ConfigApi;
-import com.tosslab.jandi.app.network.client.main.LeftSideApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.client.main.SignUpApi;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
@@ -26,6 +25,7 @@ import com.tosslab.jandi.app.network.client.rooms.AnnounceApi;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
 import com.tosslab.jandi.app.network.client.settings.StarredEntityApi;
+import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.sticker.StickerApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.client.teams.folder.FolderApi;
@@ -66,11 +66,6 @@ public class ApiClientModule {
     @Provides
     StickerApi provideStickerApi(RetrofitBuilder retrofitBuilder) {
         return new StickerApi(retrofitBuilder);
-    }
-
-    @Provides
-    LeftSideApi provideLeftSideApi(RetrofitBuilder retrofitBuilder) {
-        return new LeftSideApi(retrofitBuilder);
     }
 
     @Provides
@@ -193,4 +188,8 @@ public class ApiClientModule {
         return new ValidationApi(retrofitBuilder);
     }
 
+    @Provides
+    StartApi provideStartApi(RetrofitBuilder retrofitBuilder) {
+        return new StartApi(retrofitBuilder);
+    }
 }

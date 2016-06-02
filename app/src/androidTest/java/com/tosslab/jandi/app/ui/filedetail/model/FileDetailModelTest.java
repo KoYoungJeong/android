@@ -3,8 +3,6 @@ package com.tosslab.jandi.app.ui.filedetail.model;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
@@ -13,6 +11,7 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 
 import org.hamcrest.core.Is;
@@ -24,14 +23,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.util.List;
 
 import setup.BaseInitUtil;
 
 import static com.jayway.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
@@ -61,16 +58,6 @@ public class FileDetailModelTest {
         fileMessage = getFileMessage();
     }
 
-    @Test
-    public void testGetUnsharedEntities() throws Exception {
-
-        List<FormattedEntity> unsharedEntities = fileDetailModel.getUnsharedEntities();
-
-        assertThat(unsharedEntities, is(notNullValue()));
-        assertThat(unsharedEntities.size(), is(greaterThan(0)));
-
-    }
-
     private ResMessages.FileMessage getFileMessage() throws RetrofitException {
         ReqSearchFile reqSearchFile = new ReqSearchFile();
         reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
@@ -82,7 +69,7 @@ public class FileDetailModelTest {
 
         reqSearchFile.startMessageId = -1;
         reqSearchFile.keyword = "";
-        reqSearchFile.teamId = EntityManager.getInstance().getTeamId();
+        reqSearchFile.teamId = TeamInfoLoader.getInstance().getTeamId();
         ResSearchFile resSearchFile = new FileApi(RetrofitBuilder.getInstance()).searchFile(reqSearchFile);
 
         ResMessages.OriginalMessage originalMessage = resSearchFile.files.get(0);

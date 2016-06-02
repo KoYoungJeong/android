@@ -4,8 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.network.client.chat.ChatApi;
@@ -13,6 +11,8 @@ import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 
 import org.androidannotations.annotations.AfterInject;
@@ -58,7 +58,7 @@ public class MainChatListModel {
     }
 
     public long getTeamId() {
-        return EntityManager.getInstance().getTeamId();
+        return TeamInfoLoader.getInstance().getTeamId();
     }
 
     public List<ResChat> getChatList(long memberId) {
@@ -69,16 +69,15 @@ public class MainChatListModel {
         }
     }
 
-    public List<ChatItem> convertChatItems(Context context, long teamId, List<ResChat> chatList) {
+    public List<ChatItem> convertChatItems(Context context, List<ResChat> chatList) {
 
         List<ChatItem> chatItems = new ArrayList<ChatItem>();
 
         Observable.from(chatList)
-                .filter(resChat -> EntityManager.getInstance().getEntityById(resChat.getCompanionId()) != EntityManager.UNKNOWN_USER_ENTITY)
+                .filter(resChat -> TeamInfoLoader.getInstance().isUser(resChat.getCompanionId()))
                 .map(resChat -> {
 
-                    FormattedEntity userEntity = EntityManager.getInstance().getEntityById(resChat.getCompanionId());
-                    userEntity.alarmCount = resChat.getUnread();
+                    User userEntity = TeamInfoLoader.getInstance().getUser(resChat.getCompanionId());
 
                     ChatItem chatItem = new ChatItem();
                     chatItem.entityId(userEntity.getId())
@@ -87,13 +86,12 @@ public class MainChatListModel {
                             .lastMessage(!TextUtils.equals(resChat.getLastMessageStatus(), "archived") ? resChat.getLastMessage() : context.getString(R.string.jandi_deleted_message))
                             .lastMessageId(resChat.getLastMessageId())
                             .name(userEntity.getName())
-                            .starred(EntityManager.getInstance()
-                                    .getEntityById(resChat.getCompanionId()).isStarred)
+                            .starred(TeamInfoLoader.getInstance().isChatStarred(resChat.getCompanionId()))
                             .unread(resChat.getUnread())
                             .status(userEntity.isEnabled())
-                            .inactive(userEntity.isInavtived())
-                            .email(userEntity.getUserEmail())
-                            .photo(userEntity.getUserLargeProfileUrl());
+                            .inactive(userEntity.isInactive())
+                            .email(userEntity.getEmail())
+                            .photo(userEntity.getPhotoUrl());
 
 
                     return chatItem;
@@ -102,27 +100,6 @@ public class MainChatListModel {
                 .subscribe();
 
         return chatItems;
-    }
-
-    public ChatItem convertChatItem(Context context, int teamId, ResChat resChat) {
-        FormattedEntity userEntity = EntityManager.getInstance().getEntityById(resChat.getCompanionId());
-
-        ChatItem chatItem = new ChatItem();
-        chatItem.entityId(userEntity.getId())
-                .roomId(resChat.getEntityId())
-                .lastLinkId(resChat.getLastLinkId())
-                .lastMessage(!TextUtils.equals(resChat.getLastMessageStatus(), "archived") ? resChat.getLastMessage() : context.getString(R.string.jandi_deleted_message))
-                .lastMessageId(resChat.getLastMessageId())
-                .name(userEntity.getName())
-                .starred(EntityManager.getInstance()
-                        .getEntityById(resChat.getCompanionId()).isStarred)
-                .unread(resChat.getUnread())
-                .status(userEntity.isEnabled())
-                .inactive(userEntity.isInavtived())
-                .email(userEntity.getUserEmail())
-                .photo(userEntity.getUserLargeProfileUrl());
-
-        return chatItem;
     }
 
     public List<ResChat> getSavedChatList() {
@@ -143,7 +120,7 @@ public class MainChatListModel {
     }
 
     public boolean isStarred(long entityId) {
-        return EntityManager.getInstance().getEntityById(entityId).isStarred;
+        return TeamInfoLoader.getInstance().isChatStarred(entityId);
     }
 
     public int getUnreadCount(List<ChatItem> chatItems) {

@@ -13,12 +13,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 
-/**
- * Created by Steve SeongUg Jung on 15. 7. 8..
- */
 public class TopicInfoDialog extends DialogFragment {
 
     private static final String ARGS_NAME = "name";
@@ -66,7 +63,7 @@ public class TopicInfoDialog extends DialogFragment {
 
         tvTitle.setText(name);
         tvMemberCount.setText(String.valueOf(memberCount));
-        tvHost.setText(EntityManager.getInstance().getEntityNameById(creatorId));
+        tvHost.setText(TeamInfoLoader.getInstance().getMemberName(creatorId));
 
         if (TextUtils.isEmpty(description)) {
             tvDescription.setText(R.string.jandi_it_has_no_topic_description);

@@ -14,9 +14,10 @@ import android.view.ViewGroup;
 import android.widget.PopupWindow;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.selector.room.adapter.RoomRecyclerAdapter;
 import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
@@ -63,12 +64,12 @@ public class UserSelectorImpl implements UserSelector {
                 }))
                 .subscribe(adapter::addAll);
 
-        if (EntityManager.getInstance().hasJandiBot()) {
-            adapter.add(1, ExpandRoomData.newRoomData(EntityManager.getInstance().getJandiBot()));
+        if (TeamInfoLoader.getInstance().hasJandiBot()) {
+            adapter.add(1, ExpandRoomData.newMemberData(TeamInfoLoader.getInstance().getJandiBot()));
         }
 
         ExpandRoomData dummyData = new ExpandRoomData();
-        dummyData.setType(FormattedEntity.TYPE_EVERYWHERE);
+        dummyData.setType(JandiConstants.Entity.TYPE_EVERYWHERE);
         adapter.add(0, dummyData);
 
         adapter.setOnRecyclerItemClickListener((view, adapter1, position) -> {
@@ -105,19 +106,14 @@ public class UserSelectorImpl implements UserSelector {
     }
 
     private boolean hasDisabledMembers() {
-        return Observable.from(EntityManager.getInstance().getFormattedUsers())
-                .filter(formattedEntity -> !formattedEntity.isEnabled())
-                .map(formattedEntity1 -> true)
-                .firstOrDefault(false)
-                .toBlocking()
-                .first();
+        return TeamInfoLoader.getInstance().hasDisabledUser();
 
     }
 
     private Observable<List<ExpandRoomData>> getDisabledMembers() {
-        return Observable.from(EntityManager.getInstance().getFormattedUsers())
-                .filter(formattedEntity -> !formattedEntity.isEnabled())
-                .map(ExpandRoomData::newRoomData)
+        return Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .filter(user -> !user.isEnabled())
+                .map(ExpandRoomData::newMemberData)
                 .toSortedList((lhs, rhs) -> {
                     return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                 });
@@ -126,11 +122,10 @@ public class UserSelectorImpl implements UserSelector {
 
     protected Observable<List<ExpandRoomData>> getUsers() {
 
-        EntityManager entityManager = EntityManager.getInstance();
-        long myId = entityManager.getMe().getId();
-        return Observable.from(entityManager.getFormattedUsers())
-                .filter(FormattedEntity::isEnabled)
-                .map(ExpandRoomData::newRoomData)
+        long myId = TeamInfoLoader.getInstance().getMyId();
+        return Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .filter(User::isEnabled)
+                .map(ExpandRoomData::newMemberData)
                 .toSortedList((lhs, rhs) -> {
                     if (lhs.getEntityId() == myId) {
                         return -1;

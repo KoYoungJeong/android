@@ -38,7 +38,7 @@ import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.Human;
-import com.tosslab.jandi.app.network.models.start.InitializeInfo;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Team;
 import com.tosslab.jandi.app.network.models.start.Topic;
@@ -149,8 +149,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, PushToken.class);
             createTable(connectionSource, PushHistory.class);
 
-            createTable(connectionSource, InitializeInfo.class);
-            createTable(connectionSource, InitializeInfo.Self.class);
+            createTable(connectionSource, InitialInfo.class);
+            createTable(connectionSource, InitialInfo.Self.class);
             createTable(connectionSource, Team.class);
             createTable(connectionSource, Folder.class);
             createTable(connectionSource, Topic.class);
@@ -255,8 +255,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         dao.executeRawNoArgs("ALTER TABLE `token` ADD COLUMN deviceId VARCHAR;");
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_START_API, () -> {
-                        createTable(connectionSource, InitializeInfo.class);
-                        createTable(connectionSource, InitializeInfo.Self.class);
+                        createTable(connectionSource, InitialInfo.class);
+                        createTable(connectionSource, InitialInfo.Self.class);
                         createTable(connectionSource, Team.class);
                         createTable(connectionSource, Folder.class);
                         createTable(connectionSource, Topic.class);
@@ -349,8 +349,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(getConnectionSource(), PushToken.class);
         clearTable(getConnectionSource(), PushHistory.class);
 
-        clearTable(getConnectionSource(), InitializeInfo.class);
-        clearTable(getConnectionSource(), InitializeInfo.Self.class);
+        clearTable(getConnectionSource(), InitialInfo.class);
+        clearTable(getConnectionSource(), InitialInfo.Self.class);
         clearTable(getConnectionSource(), Team.class);
         clearTable(getConnectionSource(), Folder.class);
         clearTable(getConnectionSource(), Topic.class);

@@ -7,18 +7,18 @@ import android.util.Pair;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
-import com.tosslab.jandi.app.network.client.main.LeftSideApi;
+import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -32,15 +32,15 @@ import rx.schedulers.Schedulers;
 public class TeamsModel {
 
     Lazy<AccountApi> accountApi;
-    Lazy<LeftSideApi> leftSideApi;
+    Lazy<StartApi> startApi;
     Lazy<InvitationApi> invitationApi;
 
     public TeamsModel(Lazy<AccountApi> accountApi,
-                      Lazy<LeftSideApi> leftSideApi,
+                      Lazy<StartApi> startApi,
                       Lazy<InvitationApi> invitationApi) {
 
         this.accountApi = accountApi;
-        this.leftSideApi = leftSideApi;
+        this.startApi = startApi;
         this.invitationApi = invitationApi;
     }
 
@@ -110,29 +110,16 @@ public class TeamsModel {
     public Observable<Object> getUpdateEntityInfoObservable(final long teamId) {
         return Observable.create(subscriber -> {
             try {
-                updateSelectedTeam(teamId);
-
-                updateEntityInfo(teamId);
-
+                AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
+                InitialInfo initializeInfo = startApi.get().getInitializeInfo(teamId);
+                InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+                TeamInfoLoader.getInstance().refresh();
                 subscriber.onNext(new Object());
             } catch (Exception error) {
                 subscriber.onError(error);
             }
             subscriber.onCompleted();
         });
-    }
-
-    private void updateSelectedTeam(long teamId) {
-        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
-    }
-
-    private void updateEntityInfo(long teamId) throws Exception {
-        ResLeftSideMenu leftSideMenu =
-                leftSideApi.get().getInfosForSideMenu(teamId);
-
-        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
-        EntityManager entityManager = EntityManager.getInstance();
-        entityManager.refreshEntity();
     }
 
     public Observable<ResAccountInfo.UserTeam> getSelectedTeamObservable() {
@@ -200,6 +187,6 @@ public class TeamsModel {
     }
 
     public boolean isCurrentTeam(long teamId) {
-        return EntityManager.getInstance().getTeamId() == teamId;
+        return TeamInfoLoader.getInstance().getTeamId() == teamId;
     }
 }
