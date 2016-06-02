@@ -61,6 +61,16 @@
             </android.support.design.widget.TextInputLayout>
 
             <TextView
+                android:id="@+id/tv_error_id_or_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:text="@string/err_login_invalid_id_or_password"
+                android:textColor="@color/jandi_red"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <TextView
                 android:id="@+id/tv_sign_in_button"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"

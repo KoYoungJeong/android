@@ -69,9 +69,11 @@ public class MainSignUpPresenterImpl implements MainSignUpPresenter {
     @Override
     public void trySignUp(String name, String email, String password) {
 
-        if (!(checkNameValidation(name) &&
-                checkEmailValidation(email) &&
-                checkPasswordValidation(password))) {
+        boolean check = checkNameValidation(name);
+        check = checkEmailValidation(email) && check;
+        check = checkPasswordValidation(password) && check;
+
+        if (!check) {
             return;
         }
 

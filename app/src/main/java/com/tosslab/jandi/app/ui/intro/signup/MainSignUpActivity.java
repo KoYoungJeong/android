@@ -300,8 +300,7 @@ public class MainSignUpActivity extends BaseAppCompatActivity implements MainSig
     private void makeTermClickableMessage() {
         String tos = getString(R.string.jandi_tos);
         String pp = getString(R.string.jandi_pp);
-        String termMessage = getString(R.string.jandi_tab_tos_and_pp
-                , tos, pp);
+        String termMessage = getString(R.string.jandi_tab_tos_and_pp, tos, pp);
 
         SpannableString ss = new SpannableString(termMessage);
 
@@ -361,6 +360,7 @@ public class MainSignUpActivity extends BaseAppCompatActivity implements MainSig
     }
 
     private class EtTextWatcher implements TextWatcher {
+
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         }
 
@@ -385,6 +385,6 @@ public class MainSignUpActivity extends BaseAppCompatActivity implements MainSig
                 removeErrorPassword();
             }
         }
-    }
 
+    }
 }

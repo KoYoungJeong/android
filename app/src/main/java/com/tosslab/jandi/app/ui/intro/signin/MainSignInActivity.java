@@ -13,6 +13,7 @@ import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -65,6 +66,9 @@ public class MainSignInActivity extends BaseAppCompatActivity implements MainSig
     @Bind(R.id.tv_sign_in_button)
     TextView tvSignInButton;
 
+    @Bind(R.id.tv_error_id_or_password)
+    TextView tvErrorIdOrPassword;
+
     ProgressWheel progressWheel;
     private boolean isFirstFocus = true;
 
@@ -114,6 +118,7 @@ public class MainSignInActivity extends BaseAppCompatActivity implements MainSig
         if (focused && !isFirstFocus) {
             mainSignInPresenter.checkPasswordValidation(etPassword.getText().toString());
             removeErrorEmail();
+            tvErrorIdOrPassword.setVisibility(View.GONE);
         }
 
         if (etLayoutEmail.isErrorEnabled()) {
@@ -130,6 +135,7 @@ public class MainSignInActivity extends BaseAppCompatActivity implements MainSig
         if (focused) {
             mainSignInPresenter.checkEmailValidation(etEmail.getText().toString());
             removeErrorPassword();
+            tvErrorIdOrPassword.setVisibility(View.GONE);
         }
     }
 
@@ -207,11 +213,7 @@ public class MainSignInActivity extends BaseAppCompatActivity implements MainSig
 
     @Override
     public void showErrorInvalidEmailOrPassword() {
-        removeErrorEmail();
-        if (!etLayoutPassword.isErrorEnabled()) {
-            etLayoutPassword.setErrorEnabled(true);
-        }
-        etLayoutPassword.setError(getString(R.string.err_login_invalid_id_or_password));
+        tvErrorIdOrPassword.setVisibility(View.VISIBLE);
     }
 
     private void setMarginTopPasswordLayout(float marginDip) {
@@ -300,6 +302,7 @@ public class MainSignInActivity extends BaseAppCompatActivity implements MainSig
             if (etPassword.isFocused() && etLayoutPassword.isErrorEnabled()) {
                 removeErrorPassword();
             }
+            tvErrorIdOrPassword.setVisibility(View.GONE);
         }
     }
 
