@@ -26,6 +26,11 @@ import org.androidannotations.annotations.Fullscreen;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+
 /**
  * Created by justinygchoi on 14. 11. 6..
  * 크게 3가지 체크가 이루어진다.
@@ -73,7 +78,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                 AccountHomeActivity_
                         .intent(IntroActivity.this)
                         .start();
-                overridePendingTransition(0, 0);
             }
 
             @Override
@@ -101,7 +105,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                                 | Intent.FLAG_ACTIVITY_NEW_TASK
                                 | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         .start();
-                overridePendingTransition(0, 0);
             }
 
             @Override
@@ -124,12 +127,18 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
             @Override
             public void onAnimationEnd(Animation animation) {
                 ivJandiIcon.setVisibility(View.INVISIBLE);
-                Intent intent = new Intent(IntroActivity.this, MainHomeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        | Intent.FLAG_ACTIVITY_NEW_TASK
-                        | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
+                // 디자인 요청 사항 -바로 넘기지 말고 딜레이를 줘서 넘겨 달라는 요청
+                Observable.just(1)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .delay(300, TimeUnit.MILLISECONDS)
+                        .subscribe(i -> {
+                            Intent intent = new Intent(IntroActivity.this, MainHomeActivity.class);
+                            intent.addFlags(
+                                    Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                            | Intent.FLAG_ACTIVITY_NEW_TASK
+                                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                        });
             }
 
             @Override
@@ -145,6 +154,12 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
         fadeoutAnim.setDuration(500);
         fadeoutAnim.setAnimationListener(listener);
         ivJandiIcon.startAnimation(fadeoutAnim);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(0, 0);
     }
 
     @UiThread
