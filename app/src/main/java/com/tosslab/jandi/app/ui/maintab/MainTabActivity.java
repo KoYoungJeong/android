@@ -721,6 +721,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
     @UiThread
     public void showUpdateVersionDialog(ResConfig configInfo) {
+        if (isFinishing()) {
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(MainTabActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(getString(R.string.jandi_update_title))
                 .setMessage(getString(R.string.jandi_update_message))

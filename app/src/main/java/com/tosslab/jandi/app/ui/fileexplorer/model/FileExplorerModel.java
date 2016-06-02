@@ -41,8 +41,12 @@ public class FileExplorerModel {
     }
 
     public List<FileItem> getChildFiles(File f) {
-        File[] originFiles = f.listFiles();
         List<FileItem> files = new ArrayList<FileItem>();
+        File[] originFiles = f.listFiles();
+        if (originFiles == null || originFiles.length <= 0) {
+            return files;
+        }
+
         DateFormat formater = DateFormat.getDateTimeInstance();
         Iterator<FileItem> iterator = Observable.from(originFiles)
                 .filter(file -> !file.getName().startsWith("."))

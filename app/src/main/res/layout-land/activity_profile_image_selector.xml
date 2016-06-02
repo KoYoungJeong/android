@@ -95,14 +95,14 @@
         android:clickable="true"
         android:orientation="horizontal">
 
-        <RecyclerView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_profile_image_selector"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="10.5dp"
             android:visibility="gone" />
 
-        <RecyclerView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_profile_color_selector"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

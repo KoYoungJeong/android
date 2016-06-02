@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.utils.image.loader;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -115,6 +117,16 @@ public class ImageLoader {
 
     @SuppressWarnings("unchecked")
     public void into(ImageView imageView) {
+        Context context = imageView.getContext();
+        if (context == null) {
+            return;
+        }
+
+        if (context instanceof Activity
+                && (((Activity) context).isFinishing())) {
+            return;
+        }
+
         if (backgroundColor != Integer.MAX_VALUE) {
             imageView.setBackgroundColor(backgroundColor);
         }
