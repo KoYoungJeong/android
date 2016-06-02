@@ -19,9 +19,9 @@ import android.util.TypedValue;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.google.ads.conversiontracking.AdWordsConversionReporter;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -73,6 +73,9 @@ public class MainSignUpActivity extends BaseAppCompatActivity implements MainSig
 
     @Bind(R.id.tv_term_line)
     TextView tvTermLine;
+
+    @Bind(R.id.scroll_view)
+    ScrollView scrollView;
 
     ProgressWheel progressWheel;
 
@@ -164,19 +167,16 @@ public class MainSignUpActivity extends BaseAppCompatActivity implements MainSig
             }
             removeErrorPassword();
             previousFocusView = etPassword;
+            scrollView.scrollTo(0, scrollView.getBottom());
         }
     }
 
     @OnClick(R.id.tv_sign_up_button)
     void onClickSignUpButton() {
-        if (isValidInputElements()) {
-            AdWordsConversionReporter.reportWithConversionId(JandiApplication.getContext(),
-                    "957512006", "fVnsCMKD_GEQxvLJyAM", "0.00", true);
-            mainSignUpPresenter.trySignUp(
-                    etName.getText().toString()
-                    , etEmail.getText().toString()
-                    , etPassword.getText().toString());
-        }
+        mainSignUpPresenter.trySignUp(
+                etName.getText().toString()
+                , etEmail.getText().toString()
+                , etPassword.getText().toString());
     }
 
     @Override
@@ -285,14 +285,6 @@ public class MainSignUpActivity extends BaseAppCompatActivity implements MainSig
                 .start();
     }
 
-    private boolean isValidInputElements() {
-        boolean isValid = true;
-        isValid = mainSignUpPresenter.checkNameValidation(etName.getText().toString()) && isValid;
-        isValid = mainSignUpPresenter.checkEmailValidation(etEmail.getText().toString()) && isValid;
-        isValid = mainSignUpPresenter.checkPasswordValidation(etPassword.getText().toString()) && isValid;
-        return isValid;
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
@@ -377,6 +369,15 @@ public class MainSignUpActivity extends BaseAppCompatActivity implements MainSig
                 tvSignUpButton.setEnabled(true);
             } else {
                 tvSignUpButton.setEnabled(false);
+            }
+            if (etName.isFocused() && etLayoutName.isErrorEnabled()) {
+                removeErrorName();
+            }
+            if (etEmail.isFocused() && etLayoutEmail.isErrorEnabled()) {
+                removeErrorEmail();
+            }
+            if (etPassword.isFocused() && etLayoutPassword.isErrorEnabled()) {
+                removeErrorPassword();
             }
         }
     }

@@ -3,6 +3,10 @@ package com.tosslab.jandi.app.ui.intro;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.ImageView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
@@ -20,6 +24,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.Fullscreen;
 import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
 
 /**
  * Created by justinygchoi on 14. 11. 6..
@@ -33,6 +38,9 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
     @Extra
     boolean startForInvite = false;
+
+    @ViewById(R.id.iv_jandi_icon)
+    ImageView ivJandiIcon;
 
     @Bean
     IntroActivityPresenter presenter;
@@ -54,34 +62,89 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     @UiThread
     @Override
     public void moveTeamSelectActivity() {
-        AccountHomeActivity_
-                .intent(IntroActivity.this)
-                .start();
-        finish();
+        Animation.AnimationListener listener = new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                ivJandiIcon.setVisibility(View.INVISIBLE);
+                AccountHomeActivity_
+                        .intent(IntroActivity.this)
+                        .start();
+                overridePendingTransition(0, 0);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        };
+        fadeOutIcon(listener);
+
     }
 
     @UiThread
     @Override
     public void moveToMainActivity() {
         // Move MainActivity
-        MainTabActivity_.intent(IntroActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        | Intent.FLAG_ACTIVITY_NEW_TASK
-                        | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                .start();
+        Animation.AnimationListener listener = new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
 
-        finish();
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                ivJandiIcon.setVisibility(View.INVISIBLE);
+                MainTabActivity_.intent(IntroActivity.this)
+                        .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                | Intent.FLAG_ACTIVITY_NEW_TASK
+                                | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        .start();
+                overridePendingTransition(0, 0);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        };
+
+        fadeOutIcon(listener);
     }
 
     @UiThread
     @Override
     public void moveToIntroTutorialActivity() {
         // Move intro activity
-        Intent intent = new Intent(this, MainHomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        Animation.AnimationListener listener = new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
 
-        finish();
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                ivJandiIcon.setVisibility(View.INVISIBLE);
+                Intent intent = new Intent(IntroActivity.this, MainHomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        | Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        };
+
+        fadeOutIcon(listener);
+    }
+
+    private void fadeOutIcon(Animation.AnimationListener listener) {
+        Animation fadeoutAnim = new AlphaAnimation(1.1f, 0.0f);
+        fadeoutAnim.setDuration(500);
+        fadeoutAnim.setAnimationListener(listener);
+        ivJandiIcon.startAnimation(fadeoutAnim);
     }
 
     @UiThread

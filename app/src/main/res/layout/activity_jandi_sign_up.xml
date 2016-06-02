@@ -11,6 +11,7 @@
         android:visibility="visible" />
 
     <ScrollView
+        android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -98,6 +99,7 @@
                 android:id="@+id/tv_term_line"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:layout_marginTop="16dp"
                 android:clickable="true"
                 android:gravity="center_horizontal"

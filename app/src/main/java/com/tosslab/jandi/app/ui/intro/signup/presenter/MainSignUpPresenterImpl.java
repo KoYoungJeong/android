@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.intro.signup.presenter;
 
+import com.google.ads.conversiontracking.AdWordsConversionReporter;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.ui.intro.signup.model.MainSignUpModel;
 import com.tosslab.jandi.app.utils.LanguageUtil;
@@ -66,6 +68,13 @@ public class MainSignUpPresenterImpl implements MainSignUpPresenter {
 
     @Override
     public void trySignUp(String name, String email, String password) {
+
+        if (!(checkNameValidation(name) &&
+                checkEmailValidation(email) &&
+                checkPasswordValidation(password))) {
+            return;
+        }
+
         String lang = LanguageUtil.getLanguage();
 
         view.showProgressWheel();
@@ -74,6 +83,8 @@ public class MainSignUpPresenterImpl implements MainSignUpPresenter {
             try {
                 model.requestSignUp(email, password, name, lang);
                 model.trackSendEmailSuccess(email);
+                AdWordsConversionReporter.reportWithConversionId(JandiApplication.getContext(),
+                        "957512006", "fVnsCMKD_GEQxvLJyAM", "0.00", true);
                 subscriber.onCompleted();
             } catch (RetrofitException e) {
                 subscriber.onError(e);
@@ -82,6 +93,7 @@ public class MainSignUpPresenterImpl implements MainSignUpPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                 }, e -> {
+                    view.dismissProgressWheel();
                     if (!(e instanceof RetrofitException)) {
                         return;
                     }
@@ -91,7 +103,6 @@ public class MainSignUpPresenterImpl implements MainSignUpPresenter {
                     } else {
                         view.showNetworkErrorToast();
                     }
-                    view.dismissProgressWheel();
                     model.trackSendEmailFail(exception.getResponseCode());
                 }, () -> {
                     view.startSignUpRequestVerifyActivity();

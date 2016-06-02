@@ -62,22 +62,24 @@ public class MainSignInPresenterImpl implements MainSignInPresenter {
 
     @Override
     public void trySignIn(String email, String password) {
-        view.showProgressDialog();
 
         final boolean emailValidation = checkEmailValidation(email);
         final boolean passwordValidation = checkPasswordValidation(password);
+
+        if (!(emailValidation && passwordValidation)) {
+
+            return;
+        }
+
+        view.showProgressDialog();
 
         Observable.create(new Observable.OnSubscribe<ResAccessToken>() {
             @Override
             public void call(Subscriber<? super ResAccessToken> subscriber) {
                 try {
-                    if (emailValidation && passwordValidation) {
-                        ResAccessToken accessToken = model.login(email, password);
-                        subscriber.onNext(accessToken);
-                        subscriber.onCompleted();
-                    } else {
-                        subscriber.onCompleted();
-                    }
+                    ResAccessToken accessToken = model.login(email, password);
+                    subscriber.onNext(accessToken);
+                    subscriber.onCompleted();
                 } catch (RetrofitException e) {
                     subscriber.onError(e);
                 } catch (NullPointerException e) {
@@ -94,6 +96,7 @@ public class MainSignInPresenterImpl implements MainSignInPresenter {
                 .subscribe(accessToken -> {
                     getAccountInfo(email);
                 }, t -> {
+                    view.dismissProgressDialog();
                     if (!(t instanceof RetrofitException)) {
                         return;
                     }
@@ -111,8 +114,6 @@ public class MainSignInPresenterImpl implements MainSignInPresenter {
                         } catch (Exception e) {
                             view.showNetworkErrorToast();
                             model.trackSignInFail(JandiConstants.NetworkError.BAD_REQUEST);
-                        } finally {
-                            view.dismissProgressDialog();
                         }
                     } else {
                         view.showNetworkErrorToast();

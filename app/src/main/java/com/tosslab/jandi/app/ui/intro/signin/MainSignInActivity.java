@@ -161,13 +161,18 @@ public class MainSignInActivity extends BaseAppCompatActivity implements MainSig
 
     @Override
     public void showErrorInsertEmail() {
+        if (!etLayoutEmail.isErrorEnabled()) {
+            etLayoutEmail.setErrorEnabled(true);
+        }
         etLayoutEmail.setError(getString(R.string.jandi_err_input_email));
 
     }
 
     @Override
     public void showErrorInvalidEmail() {
-        etLayoutEmail.setErrorEnabled(true);
+        if (!etLayoutEmail.isErrorEnabled()) {
+            etLayoutEmail.setErrorEnabled(true);
+        }
         etLayoutEmail.setError(getString(R.string.jandi_err_invalid_email));
     }
 
@@ -179,13 +184,17 @@ public class MainSignInActivity extends BaseAppCompatActivity implements MainSig
 
     @Override
     public void showErrorInsertPassword() {
-        etLayoutPassword.setErrorEnabled(true);
+        if (!etLayoutPassword.isErrorEnabled()) {
+            etLayoutPassword.setErrorEnabled(true);
+        }
         etLayoutPassword.setError(getString(R.string.jandi_err_input_password));
     }
 
     @Override
     public void showErrorInvalidPassword() {
-        etLayoutPassword.setErrorEnabled(true);
+        if (!etLayoutPassword.isErrorEnabled()) {
+            etLayoutPassword.setErrorEnabled(true);
+        }
         etLayoutPassword.setError(getString(R.string.jandi_password_strength_too_short));
     }
 
@@ -198,6 +207,9 @@ public class MainSignInActivity extends BaseAppCompatActivity implements MainSig
     @Override
     public void showErrorInvalidEmailOrPassword() {
         removeErrorEmail();
+        if (!etLayoutPassword.isErrorEnabled()) {
+            etLayoutPassword.setErrorEnabled(true);
+        }
         etLayoutPassword.setError(getString(R.string.err_login_invalid_id_or_password));
     }
 
@@ -280,6 +292,12 @@ public class MainSignInActivity extends BaseAppCompatActivity implements MainSig
                 tvSignInButton.setEnabled(true);
             } else {
                 tvSignInButton.setEnabled(false);
+            }
+            if (etEmail.isFocused() && etLayoutEmail.isErrorEnabled()) {
+                removeErrorEmail();
+            }
+            if (etPassword.isFocused() && etLayoutPassword.isErrorEnabled()) {
+                removeErrorPassword();
             }
         }
     }
