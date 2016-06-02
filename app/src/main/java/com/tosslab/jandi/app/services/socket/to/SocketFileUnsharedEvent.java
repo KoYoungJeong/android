@@ -17,7 +17,7 @@ import java.util.List;
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(1)
 public class SocketFileUnsharedEvent extends SocketFileEvent {
-    public int writer;
+    public long writer;
     public Room_ room;
 
     private long ts;
@@ -40,7 +40,7 @@ public class SocketFileUnsharedEvent extends SocketFileEvent {
     }
 
     public static class Room_ {
-        public int id;
+        public long id;
         public String type;
         public List<Integer> members;
     }

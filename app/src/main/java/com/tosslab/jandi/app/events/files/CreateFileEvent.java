@@ -4,19 +4,19 @@ package com.tosslab.jandi.app.events.files;
  * Created by Steve SeongUg Jung on 15. 4. 22..
  */
 public class CreateFileEvent {
-    private final int teamId;
-    private final int id;
+    private final long teamId;
+    private final long id;
 
-    public CreateFileEvent(int teamId, int id) {
+    public CreateFileEvent(long teamId, long id) {
         this.teamId = teamId;
         this.id = id;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 }

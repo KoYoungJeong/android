@@ -425,6 +425,7 @@ public class JandiSocketService extends Service {
             for (Object o : objects) {
                 sb.append(o.toString() + "\n");
             }
+            LogUtil.e(TAG, "Socket disconnected. " + sb.toString());
             long socketReconnectDelay = JandiPreference.getSocketReconnectDelay();
             if (socketReconnectDelay == 0) {
                 JandiPreference.setSocketReconnectDelay(1000l);

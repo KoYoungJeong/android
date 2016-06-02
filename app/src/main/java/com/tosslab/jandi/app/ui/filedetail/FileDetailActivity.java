@@ -832,11 +832,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     public void onEvent(FileCommentRefreshEvent event) {
-        if (roomId <= 0) {
-            fileDetailPresenter.onInitializeFileDetail(event.getFileId(), false);
-            return;
-        }
-
         if (event.getFileId() == fileId) {
             fileDetailPresenter.onInitializeFileDetail(event.getFileId(), false);
         }
@@ -874,7 +869,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         if (!isForeground) {
             return;
         }
-
 
         if (fileId == entityId) {
             fileDetailPresenter.onInitializeFileDetail(fileId, true /* withProgress */);

@@ -204,6 +204,7 @@ public class JandiSocketServiceModel {
                     getObject(object.toString(), SocketFileCommentEvent.class);
             postEvent(
                     new FileCommentRefreshEvent(socketFileEvent.getEvent(),
+                            socketFileEvent.getTeamId(),
                             socketFileEvent.getFile().getId(),
                             socketFileEvent.getComment().getId(),
                             TextUtils.equals(socketFileEvent.getEvent(), "file_comment_created")));
@@ -218,6 +219,7 @@ public class JandiSocketServiceModel {
             SocketFileCommentDeleteEvent socketCommentEvent =
                     getObject(object.toString(), SocketFileCommentDeleteEvent.class);
             FileCommentRefreshEvent event = new FileCommentRefreshEvent(socketCommentEvent.getEvent(),
+                    socketCommentEvent.getTeamId(),
                     socketCommentEvent.getFile().getId(),
                     socketCommentEvent.getComment().getId(),
                     false /* isAdded */);
@@ -319,8 +321,8 @@ public class JandiSocketServiceModel {
             SocketFileUnsharedEvent socketFileEvent =
                     getObject(object.toString(), SocketFileUnsharedEvent.class);
 
-            int fileId = socketFileEvent.getFile().getId();
-            int roomId = socketFileEvent.room.id;
+            long fileId = socketFileEvent.getFile().getId();
+            long roomId = socketFileEvent.room.id;
 
             // DB 업데이트 작업 실시
             MessageRepository.getRepository().updateUnshared(fileId, roomId);
@@ -820,8 +822,8 @@ public class JandiSocketServiceModel {
                 .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketFileUnsharedEvent)
                 .map(eventHistoryInfo -> (SocketFileUnsharedEvent) eventHistoryInfo)
                 .subscribe(eventHistoryInfo -> {
-                    int fileId = eventHistoryInfo.getFile().getId();
-                    int roomId = eventHistoryInfo.room.id;
+                    long fileId = eventHistoryInfo.getFile().getId();
+                    long roomId = eventHistoryInfo.room.id;
                     MessageRepository.getRepository().updateUnshared(fileId, roomId);
                 }, Throwable::printStackTrace);
     }

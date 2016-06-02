@@ -16,10 +16,10 @@ public class SocketMessageEvent {
     private int version;
     private String event;
     private String messageType;
-    private int messageId;
-    private int teamId;
+    private long messageId;
+    private long teamId;
     private MessageRoom room;
-    private int writer;
+    private long writer;
     private List<MessageRoom> rooms;
     private CommentInfo comment;
     private long linkId;
@@ -32,7 +32,6 @@ public class SocketMessageEvent {
     public void setTs(long ts) {
         this.ts = ts;
     }
-
 
     @Override
     public String toString() {
@@ -89,27 +88,27 @@ public class SocketMessageEvent {
         this.messageType = messageType;
     }
 
-    public int getWriter() {
+    public long getWriter() {
         return writer;
     }
 
-    public void setWriter(int writer) {
+    public void setWriter(long writer) {
         this.writer = writer;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 
-    public int getMessageId() {
+    public long getMessageId() {
         return messageId;
     }
 
-    public void setMessageId(int messageId) {
+    public void setMessageId(long messageId) {
         this.messageId = messageId;
     }
 
@@ -132,15 +131,15 @@ public class SocketMessageEvent {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class MessageRoom {
-        private int id;
+        private long id;
         private String type;
-        private List<Integer> members;
+        private List<Long> members;
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(long id) {
             this.id = id;
         }
 
@@ -152,11 +151,11 @@ public class SocketMessageEvent {
             this.type = type;
         }
 
-        public List<Integer> getMembers() {
+        public List<Long> getMembers() {
             return members;
         }
 
-        public void setMembers(List<Integer> members) {
+        public void setMembers(List<Long> members) {
             this.members = members;
         }
     }
@@ -164,13 +163,13 @@ public class SocketMessageEvent {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class CommentInfo {
-        private int id;
+        private long id;
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(long id) {
             this.id = id;
         }
     }

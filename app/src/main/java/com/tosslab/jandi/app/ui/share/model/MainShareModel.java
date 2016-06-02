@@ -3,8 +3,6 @@ package com.tosslab.jandi.app.ui.share.model;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
-
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -37,12 +35,9 @@ public class MainShareModel {
     }
 
     public MainShareActivity.IntentType getIntentType(String action, String type) {
-        Log.e("tony", "action = " + action);
-        Log.e("tony", "type = " + type);
         if (TextUtils.equals(action, Intent.ACTION_SEND) && !TextUtils.isEmpty(type)) {
             if (type.toLowerCase().matches("text/.*")
                     || type.toLowerCase().matches("message/.*")) {
-                Log.e("tony", "type.toLowerCase().matches(\"text/(.*)\")");
                 return MainShareActivity.IntentType.Text;
             } else {
                 return MainShareActivity.IntentType.File;
