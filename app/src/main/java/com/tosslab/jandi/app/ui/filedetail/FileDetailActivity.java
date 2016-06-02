@@ -303,6 +303,10 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             return;
         }
 
+        if (mentionControlViewModel == null) {
+            return;
+        }
+
         setMentionButtonVisibility(mentionControlViewModel.hasMentionMember());
     }
 

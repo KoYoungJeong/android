@@ -105,6 +105,7 @@ public class FileDetailPresenter {
         }
 
         if (fileDetail == null || fileDetail.messageCount <= 0) {
+            LogUtil.e(TAG, "fileDetail == null || fileDetail.messageCount <= 0");
             view.showUnexpectedErrorToast();
             view.finish();
             return;
@@ -114,6 +115,8 @@ public class FileDetailPresenter {
                 fileDetailModel.getEnableMessages(fileDetail.messageDetails);
         if (messages == null || messages.size() <= 0
                 || !(messages.get(messages.size() - 1) instanceof ResMessages.FileMessage)) {
+            LogUtil.e(TAG, "messages == null || messages.size() <= 0\n" +
+                    "|| !(messages.get(messages.size() - 1) instanceof ResMessages.FileMessage)");
             view.showUnexpectedErrorToast();
             view.finish();
             return;

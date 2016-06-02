@@ -1401,6 +1401,10 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             return;
         }
 
+        if (mentionControlViewModel == null) {
+            return;
+        }
+
         setMentionButtonVisibility(mentionControlViewModel.hasMentionMember());
     }
 
