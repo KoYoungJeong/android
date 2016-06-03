@@ -1116,7 +1116,7 @@ public class MessageListV2Presenter {
         this.adapterModel = adapterModel;
     }
 
-    public void updateCachedTypeOfMessageId(int fileId) {
+    public void updateCachedTypeOfMessageId(long fileId) {
         int indexOfUnsharedFile = adapterModel.indexByMessageId(fileId);
         adapterModel.updateCachedType(indexOfUnsharedFile);
         view.refreshMessages();

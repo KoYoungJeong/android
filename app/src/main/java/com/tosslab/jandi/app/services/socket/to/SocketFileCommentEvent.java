@@ -3,6 +3,10 @@ package com.tosslab.jandi.app.services.socket.to;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
+
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by Steve SeongUg Jung on 15. 4. 7..
  */
@@ -10,18 +14,8 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @Version(1)
 public class SocketFileCommentEvent extends SocketFileEvent {
+    private long writer;
     private EventCommentInfo comment;
-
-    private long ts;
-
-    public long getTs() {
-        return ts;
-    }
-
-    public void setTs(long ts) {
-        this.ts = ts;
-    }
-
 
     public EventCommentInfo getComment() {
         return comment;
@@ -31,17 +25,60 @@ public class SocketFileCommentEvent extends SocketFileEvent {
         this.comment = comment;
     }
 
+    public long getWriter() {
+        return writer;
+    }
+
+    public void setWriter(long writer) {
+        this.writer = writer;
+    }
+
+    @Override
+    public String toString() {
+        return "SocketFileCommentEvent{" +
+                "writer=" + writer +
+                ", comment=" + comment +
+                super.toString();
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class EventCommentInfo {
-        private int id;
+        private long id;
+        private long linkId;
+        private List<Long> shareEntities;
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(long id) {
             this.id = id;
+        }
+
+        public long getLinkId() {
+            return linkId;
+        }
+
+        public void setLinkId(long linkId) {
+            this.linkId = linkId;
+        }
+
+        public List<Long> getShareEntities() {
+            return shareEntities;
+        }
+
+        public void setShareEntities(List<Long> shareEntities) {
+            this.shareEntities = shareEntities;
+        }
+
+        @Override
+        public String toString() {
+            return "EventCommentInfo{" +
+                    "id=" + id +
+                    ", linkId=" + linkId +
+                    ", shareEntities=" + shareEntities +
+                    '}';
         }
     }
 }

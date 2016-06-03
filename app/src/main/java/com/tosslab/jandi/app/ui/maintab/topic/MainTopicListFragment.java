@@ -264,9 +264,11 @@ public class MainTopicListFragment extends Fragment
     @Override
     public void changeTopicSort(boolean currentFolder, boolean changeToFolder) {
         if (currentFolder && !changeToFolder) {
+            mainTopicListPresenter.onRefreshUpdatedTopicList();
             lvMainTopic.setAdapter(updatedTopicAdapter);
             tvSortTitle.setText(R.string.jandi_sort_updated);
         } else if (!currentFolder && changeToFolder) {
+            mainTopicListPresenter.refreshList();
             lvMainTopic.setAdapter(wrappedAdapter);  // requires *wrapped* expandableTopicAdapter
             lvMainTopic.setHasFixedSize(false);
             tvSortTitle.setText(R.string.jandi_sort_folder);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -15,15 +16,6 @@ import java.util.List;
 public class SocketFileCommentDeleteEvent extends SocketFileEvent {
     private EventCommentInfo comment;
     private List<Room> rooms;
-    private long ts;
-
-    public long getTs() {
-        return ts;
-    }
-
-    public void setTs(long ts) {
-        this.ts = ts;
-    }
 
     public EventCommentInfo getComment() {
         return comment;
@@ -44,14 +36,41 @@ public class SocketFileCommentDeleteEvent extends SocketFileEvent {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class EventCommentInfo {
-        private int id;
+        private long id;
+        private long linkId;
+        private List<Long> shareEntities;
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(long id) {
             this.id = id;
+        }
+
+        public long getLinkId() {
+            return linkId;
+        }
+
+        public void setLinkId(long linkId) {
+            this.linkId = linkId;
+        }
+
+        public List<Long> getShareEntities() {
+            return shareEntities;
+        }
+
+        public void setShareEntities(List<Long> shareEntities) {
+            this.shareEntities = shareEntities;
+        }
+
+        @Override
+        public String toString() {
+            return "EventCommentInfo{" +
+                    "id=" + id +
+                    ", linkId=" + linkId +
+                    ", shareEntities=" + shareEntities +
+                    '}';
         }
     }
 

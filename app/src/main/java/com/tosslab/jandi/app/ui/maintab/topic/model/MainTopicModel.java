@@ -252,7 +252,7 @@ public class MainTopicModel {
         EntityManager.getInstance().getEntityById(entityId).alarmCount = 0;
     }
 
-    public boolean isMe(int writer) {
+    public boolean isMe(long writer) {
         return EntityManager.getInstance().getMe().getId() == writer;
     }
 
@@ -269,10 +269,11 @@ public class MainTopicModel {
                         } else {
                             return topicItemData.getEntityId() == event.getRoom().getId();
                         }
-                    } else if (TextUtils.equals(event.getMessageType(), "link_preview_create")) {
-                        // 단순 메세지 업데이트인 경우
-                        return false;
                     } else {
+                        if (TextUtils.equals(event.getMessageType(), "link_preview_create")) {
+                            // 단순 메세지 업데이트인 경우
+                            return false;
+                        }
                         for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
                             if (topicItemData.getEntityId() == messageRoom.getId()) {
                                 return true;
@@ -299,10 +300,12 @@ public class MainTopicModel {
                         } else {
                             return topic.getEntityId() == event.getRoom().getId();
                         }
-                    } else if (TextUtils.equals(event.getMessageType(), "link_preview_create")) {
-                        // 단순 메세지 업데이트인 경우
-                        return false;
                     } else {
+                        if (TextUtils.equals(event.getMessageType(), "link_preview_create")) {
+                            // 단순 메세지 업데이트인 경우
+                            return false;
+                        }
+
                         for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
                             if (topic.getEntityId() == messageRoom.getId()) {
                                 return true;
@@ -311,7 +314,8 @@ public class MainTopicModel {
                         return false;
                     }
                 })
-//                .doOnNext(topic -> topic.setUnreadCount(topic.getUnreadCount() + 1))
+                .doOnNext(topic -> topic.setUnreadCount(topic.getUnreadCount() + 1))
+                .doOnNext(topic -> EntityManager.getInstance().getEntityById(topic.getEntityId()).alarmCount++)
                 .filter(topic -> event.getLinkId() > 0)
                 .doOnNext(topic -> {
                     EntityManager.getInstance().getEntityById(topic.getEntityId()).setTopicGlobalLastLinkId(event.getLinkId());

@@ -216,6 +216,10 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
 
     @Override
     public void updateComment(int currentItem, String comment) {
-        comments.set(lastPageIndex, comment);
+        if (comments.size() <= lastPageIndex) {
+            comments.add(comment);
+        } else {
+            comments.set(lastPageIndex, comment);
+        }
     }
 }
