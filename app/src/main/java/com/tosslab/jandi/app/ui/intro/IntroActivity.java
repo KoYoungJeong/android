@@ -1,35 +1,37 @@
 package com.tosslab.jandi.app.ui.intro;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.widget.ImageView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.intro.home.MainHomeActivity;
 import com.tosslab.jandi.app.ui.intro.presenter.IntroActivityPresenter;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
+import com.tosslab.jandi.app.ui.sign.SignHomeActivity;
+import com.tosslab.jandi.app.ui.sign.signin.SignInActivity;
+import com.tosslab.jandi.app.ui.sign.signup.SignUpActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.Fullscreen;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-
-import java.util.concurrent.TimeUnit;
-
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by justinygchoi on 14. 11. 6..
@@ -64,96 +66,60 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
         JandiPreference.setLastExecutedTime(System.currentTimeMillis());
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveTeamSelectActivity() {
-        Animation.AnimationListener listener = new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                ivJandiIcon.setVisibility(View.INVISIBLE);
-                AccountHomeActivity_
-                        .intent(IntroActivity.this)
-                        .start();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        };
-        fadeOutIcon(listener);
-
+        Intent intent = AccountHomeActivity_.intent(IntroActivity.this).get();
+        moveToActivityWithAnimationAndFinish(intent);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveToMainActivity() {
-        // Move MainActivity
-        Animation.AnimationListener listener = new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                ivJandiIcon.setVisibility(View.INVISIBLE);
-                MainTabActivity_.intent(IntroActivity.this)
-                        .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                | Intent.FLAG_ACTIVITY_NEW_TASK
-                                | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                        .start();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        };
-
-        fadeOutIcon(listener);
+        Intent intent = MainTabActivity_.intent(IntroActivity.this)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        | Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK).get();
+        moveToActivityWithAnimationAndFinish(intent);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void moveToIntroTutorialActivity() {
-        // Move intro activity
-        Animation.AnimationListener listener = new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                ivJandiIcon.setVisibility(View.INVISIBLE);
-                // 디자인 요청 사항 -바로 넘기지 말고 딜레이를 줘서 넘겨 달라는 요청
-                Observable.just(1)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .delay(300, TimeUnit.MILLISECONDS)
-                        .subscribe(i -> {
-                            Intent intent = new Intent(IntroActivity.this, MainHomeActivity.class);
-                            intent.addFlags(
-                                    Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                            | Intent.FLAG_ACTIVITY_NEW_TASK
-                                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                        });
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        };
-
-        fadeOutIcon(listener);
+    public void moveToSignHomeActivity() {
+        Intent intent = new Intent(IntroActivity.this, SignHomeActivity.class);
+        intent.addFlags(
+                Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        | Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ActivityOptionsCompat options =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(this, ivJandiIcon, "icon_anim");
+            startActivity(intent, options.toBundle());
+            finish();
+        } else {
+            moveToActivityWithAnimationAndFinish(intent);
+        }
     }
 
-    private void fadeOutIcon(Animation.AnimationListener listener) {
-        Animation fadeoutAnim = new AlphaAnimation(1.1f, 0.0f);
-        fadeoutAnim.setDuration(500);
-        fadeoutAnim.setAnimationListener(listener);
-        ivJandiIcon.startAnimation(fadeoutAnim);
+    private void moveToActivityWithAnimationAndFinish(final Intent intent) {
+        if (ApplicationUtil.isActivityDestroyed(IntroActivity.this)) {
+            return;
+        }
+
+        ivJandiIcon.animate()
+                .alpha(0.0f)
+                .setDuration(800)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        if (ApplicationUtil.isActivityDestroyed(IntroActivity.this)) {
+                            return;
+                        }
+
+                        startActivity(intent);
+                        finish();
+                    }
+                });
     }
 
     @Override
@@ -162,19 +128,19 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
         overridePendingTransition(0, 0);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showCheckNetworkDialog() {
         AlertUtil.showConfirmDialog(IntroActivity.this, R.string.jandi_cannot_connect_service_try_again, (dialog, which) -> finish(), false);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showWarningToast(String message) {
         ColoredToast.showWarning(message);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showMaintenanceDialog() {
         AlertUtil.showConfirmDialog(IntroActivity.this,
@@ -182,7 +148,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                 false);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showUpdateDialog() {
         AlertUtil.showConfirmDialog(IntroActivity.this, R.string.jandi_update_title,
@@ -201,7 +167,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                 false);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void finishOnUiThread() {
         finish();

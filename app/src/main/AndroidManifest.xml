@@ -46,7 +46,7 @@
         -->
 
         <activity
-            android:name=".ui.intro.signup.verify.SignUpVerifyActivity_"
+            android:name=".ui.sign.signup.verify.SignUpVerifyActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_signup_verify_title"
             android:screenOrientation="portrait"
@@ -536,19 +536,19 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.intro.home.MainHomeActivity"
+            android:name=".ui.sign.SignHomeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.intro.signin.MainSignInActivity"
+            android:name=".ui.sign.signin.SignInActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_action_login"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateVisible" />
 
         <activity
-            android:name=".ui.intro.signup.MainSignUpActivity"
+            android:name=".ui.sign.signup.SignUpActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_signup_title"
             android:screenOrientation="portrait"

@@ -54,7 +54,7 @@ public class IntroActivityPresenter {
             } else {
                 // 디자인 요청사항 처음에 딜레이가 있어달라는..
                 model.sleep(initTime, MAX_DELAY_MS);
-                view.moveToIntroTutorialActivity();
+                view.moveToSignHomeActivity();
             }
 
             return;
@@ -105,7 +105,7 @@ public class IntroActivityPresenter {
                     }
                 } else {
                     model.sleep(initTime, MAX_DELAY_MS);
-                    view.moveToIntroTutorialActivity();
+                    view.moveToSignHomeActivity();
                 }
             }
 
@@ -189,7 +189,7 @@ public class IntroActivityPresenter {
     }
 
     public interface View {
-        void moveToIntroTutorialActivity();
+        void moveToSignHomeActivity();
 
         void moveToMainActivity();
 
