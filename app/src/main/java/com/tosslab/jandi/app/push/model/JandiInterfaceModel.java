@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
-import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
@@ -23,7 +22,6 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -250,13 +248,6 @@ public class JandiInterfaceModel {
 
     private boolean isChatType(String roomType) {
         return TextUtils.equals(roomType, PushRoomType.CHAT.getName());
-    }
-
-    public long getCachedLastLinkId(int roomId) {
-
-        ResMessages.Link lastMessage = MessageRepository.getRepository().getLastMessage(roomId);
-
-        return lastMessage.id;
     }
 
     public boolean hasNotRegisteredAtNewPushService() {

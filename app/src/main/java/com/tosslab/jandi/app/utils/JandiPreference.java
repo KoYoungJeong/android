@@ -325,9 +325,11 @@ public class JandiPreference {
     }
 
     public static void setSocketConnectedLastTime(long ts) {
-        getSharedPreferences().edit()
-                .putLong(PREF_SOCKET_CONNECTED_LAST_TIME, ts)
-                .commit();
+        if (getSocketConnectedLastTime() < ts) {
+            getSharedPreferences().edit()
+                    .putLong(PREF_SOCKET_CONNECTED_LAST_TIME, ts)
+                    .commit();
+        }
     }
 
     public static long getLastExecutedTime() {

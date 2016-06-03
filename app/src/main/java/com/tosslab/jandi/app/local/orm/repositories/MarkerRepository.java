@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.local.orm.repositories;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 
@@ -27,7 +28,6 @@ public class MarkerRepository extends LockExecutorTemplate {
             try {
 
                 Dao<ResRoomInfo, ?> roomInfoDao = getHelper().getDao(ResRoomInfo.class);
-                roomInfoDao.clearObjectCache();
                 roomInfoDao.createOrUpdate(roomInfo);
 
                 Dao<ResRoomInfo.MarkerInfo, ?> markerInfoDao = getHelper().getDao(ResRoomInfo.MarkerInfo.class);
@@ -61,7 +61,6 @@ public class MarkerRepository extends LockExecutorTemplate {
         return execute(() -> {
             try {
                 Dao<ResRoomInfo, ?> roomInfoDao = getHelper().getDao(ResRoomInfo.class);
-                roomInfoDao.clearObjectCache();
                 Dao<ResRoomInfo.MarkerInfo, ?> markerInfoDao = getHelper().getDao(ResRoomInfo.MarkerInfo.class);
                 ResRoomInfo.MarkerInfo markerInfo = markerInfoDao.queryBuilder()
                         .where()
@@ -69,8 +68,14 @@ public class MarkerRepository extends LockExecutorTemplate {
                         .queryForFirst();
 
                 if (markerInfo != null) {
-                    markerInfo.setLastLinkId(lastLinkId);
-                    return markerInfoDao.update(markerInfo) > 0;
+
+                    UpdateBuilder<ResRoomInfo.MarkerInfo, ?> markerInfoUpdateBuilder = markerInfoDao.updateBuilder();
+                    markerInfoUpdateBuilder.updateColumnValue("lastLinkId", lastLinkId)
+                            .where()
+                            .eq("roomId", roomId)
+                            .and()
+                            .eq("memberId", memberId);
+                    return markerInfoUpdateBuilder.update() > 0;
                 } else {
                     ResRoomInfo roomInfo = roomInfoDao.queryBuilder()
                             .where()
