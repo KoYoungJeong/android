@@ -5,7 +5,6 @@ import android.support.test.espresso.intent.matcher.IntentMatchers;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -13,6 +12,7 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.services.download.DownloadService;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel_;
@@ -67,7 +67,7 @@ public class CarouselViewerPresenterImplTest {
         mockView = mock(CarouselViewerPresenter.View.class);
 
         teamId = AccountRepository.getRepository().getSelectedTeamId();
-        roomId = EntityManager.getInstance().getDefaultTopicId();
+        roomId = TeamInfoLoader.getInstance().getDefaultTopicId();
         lastImageMessageId = getLatestFileId();
         presenter.setView(mockView);
         presenter.setRoomId(roomId);

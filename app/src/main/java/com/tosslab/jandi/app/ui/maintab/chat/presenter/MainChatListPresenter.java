@@ -36,7 +36,7 @@ public interface MainChatListPresenter {
 
         void setSelectedItem(long selectedEntityId);
 
-        void moveMessageActivity(long teamId, long entityId, long roomId, boolean isStarred, long lastLinkId);
+        void moveMessageActivity(long teamId, long entityId, long roomId, long lastLinkId);
 
         void scrollToPosition(int selectedEntityPosition);
 

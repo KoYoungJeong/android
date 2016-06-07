@@ -15,8 +15,8 @@ import android.view.WindowManager;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 
@@ -27,9 +27,6 @@ import java.util.List;
 
 import rx.Observable;
 
-/**
- * Created by tonyjs on 16. 4. 1..
- */
 @EFragment
 public class UsageInformationDialogFragment extends DialogFragment {
 
@@ -37,7 +34,7 @@ public class UsageInformationDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        String userName = EntityManager.getInstance().getMe().getName();
+        String userName = TeamInfoLoader.getInstance().getMemberName(TeamInfoLoader.getInstance().getMyId());
 
         CharSequence message = getMessage();
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
@@ -75,13 +72,15 @@ public class UsageInformationDialogFragment extends DialogFragment {
         userInfos.add(new Pair<>("Account Name",
                 AccountRepository.getRepository().getAccountInfo().getName()));
         userInfos.add(new Pair<>("Member ID",
-                String.valueOf(EntityManager.getInstance().getMe().getId())));
+                String.valueOf(TeamInfoLoader.getInstance().getMyId())));
         userInfos.add(new Pair<>("Member Email",
-                EntityManager.getInstance().getMe().getUserEmail()));
+                TeamInfoLoader.getInstance()
+                        .getUser(TeamInfoLoader.getInstance().getMyId())
+                        .getEmail()));
 
-        userInfos.add(new Pair<>("Team", EntityManager.getInstance().getTeamName()));
+        userInfos.add(new Pair<>("Team", TeamInfoLoader.getInstance().getTeamName()));
         userInfos.add(new Pair<>("Team ID",
-                String.valueOf(EntityManager.getInstance().getTeamId())));
+                String.valueOf(TeamInfoLoader.getInstance().getTeamId())));
 
         userInfos.add(new Pair<>("Account ID",
                 String.valueOf(AccountUtil.getAccountId(JandiApplication.getContext()))));

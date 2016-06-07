@@ -9,10 +9,10 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.message.detail.model.LeaveViewModel;
@@ -119,7 +119,8 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.On);
             }
 
-            EntityManager.getInstance().getEntityById(entityId).isStarred = !isStarred;
+            TopicRepository.getInstance().updateStarred(entityId, !isStarred);
+            TeamInfoLoader.getInstance().refresh();
 
             view.setStarred(!isStarred);
 
@@ -207,7 +208,8 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             view.setTopicName(topicName);
 
             topicDetailModel.trackChangingEntityName(context, entityId, entityType);
-            EntityManager.getInstance().getEntityById(entityId).getEntity().name = topicName;
+            TopicRepository.getInstance().updateName(entityId, topicName);
+            TeamInfoLoader.getInstance().refresh();
             EventBus.getDefault().post(new TopicInfoUpdateEvent(entityId));
 
         } catch (RetrofitException e) {
@@ -236,7 +238,8 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
         try {
             topicDetailModel.updatePushStatus(teamId, entityId, pushOn);
-            EntityManager.getInstance().getEntityById(entityId).isTopicPushOn = pushOn;
+            TopicRepository.getInstance().updatePushSubscribe(entityId, pushOn);
+            TeamInfoLoader.getInstance().refresh();
             view.dismissProgressWheel();
         } catch (RetrofitException e) {
             e.printStackTrace();
@@ -285,7 +288,8 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         try {
             topicDetailModel.updateAutoJoin(entityId, autoJoin);
             view.dismissProgressWheel();
-            ((ResLeftSideMenu.Channel) EntityManager.getInstance().getEntityById(entityId).getEntity()).autoJoin = autoJoin;
+            TopicRepository.getInstance().updateAutoJoin(entityId, autoJoin);
+            TeamInfoLoader.getInstance().refresh();
             onInit(JandiApplication.getContext(), entityId);
         } catch (RetrofitException e) {
             e.printStackTrace();

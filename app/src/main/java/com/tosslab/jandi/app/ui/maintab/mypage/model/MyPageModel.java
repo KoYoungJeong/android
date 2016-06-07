@@ -2,12 +2,13 @@ package com.tosslab.jandi.app.ui.maintab.mypage.model;
 
 import android.util.Pair;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
 
 import java.util.ArrayList;
@@ -28,12 +29,12 @@ public class MyPageModel {
         this.messageApi = messageApi;
     }
 
-    public FormattedEntity getMe() {
-        return EntityManager.getInstance().getMe();
+    public User getMe() {
+        return TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
     }
 
     public Observable<ResStarMentioned> getMentionsObservable(long offset, int limit) {
-        final long teamId = EntityManager.getInstance().getTeamId();
+        final long teamId = TeamInfoLoader.getInstance().getTeamId();
 
         Observable.OnSubscribe<ResStarMentioned> requestMentionsSubscriber = subscriber -> {
             try {
@@ -66,18 +67,17 @@ public class MyPageModel {
             return mentions;
         }
 
-        final EntityManager entityManager = EntityManager.getInstance();
         Observable.from(records)
                 .map(mentionMessage -> {
-                    FormattedEntity user =
-                            entityManager.getEntityById(
+                    User user =
+                            TeamInfoLoader.getInstance().getUser(
                                     mentionMessage.getMessage().writerId);
-                    FormattedEntity room =
-                            entityManager.getEntityById(mentionMessage.getRoom().id);
+                    TopicRoom room =
+                            TeamInfoLoader.getInstance().getTopic(mentionMessage.getRoom().id);
 
                     return MentionMessage.create(mentionMessage,
                             room.getName(),
-                            user.getName(), user.getUserLargeProfileUrl());
+                            user.getName(), user.getPhotoUrl());
                 })
                 .subscribe(mentions::add);
         return mentions;

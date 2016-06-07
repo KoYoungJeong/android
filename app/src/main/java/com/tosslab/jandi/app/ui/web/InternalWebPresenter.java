@@ -3,11 +3,9 @@ package com.tosslab.jandi.app.ui.web;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -16,11 +14,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.messages.ShareEntityEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.views.listeners.WebLoadingBar;
@@ -30,28 +24,21 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.List;
-
-import de.greenrobot.event.EventBus;
-
 /**
  * Created by Steve SeongUg Jung on 15. 2. 24..
  */
 @EBean
 public class InternalWebPresenter {
 
+    public static final String SUPPORT_URL = "http://support.jandi.com";
     @ViewById(R.id.web_internal_web)
     WebView webView;
-
     @ViewById(R.id.loading_internal_web)
     WebLoadingBar webLoadingBar;
-
     private WebViewClient webViewClient;
     private WebChromeClient webCromeClient;
     private String url;
     private ProgressWheel progressWheel;
-
-    public static final String SUPPORT_URL = "http://support.jandi.com";
 
     public void initObject(Activity activity) {
         progressWheel = new ProgressWheel(activity);
@@ -128,53 +115,6 @@ public class InternalWebPresenter {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public boolean hasBackHistory() {
-        return webView.canGoBack();
-    }
-
-    public void moveBack() {
-        webView.goBack();
-    }
-
-    public String getCurrentUrl() {
-        return webView.getUrl();
-    }
-
-    public void showShareEntity(Activity activity, List<FormattedEntity> entities, String text) {
-        /**
-         * CDP 리스트 Dialog 를 보여준 뒤, 선택된 CDP에 Share
-         */
-        AlertDialog.Builder dialog = new AlertDialog.Builder(activity,
-                R.style.JandiTheme_AlertDialog_FixWidth_280);
-
-        EntitySimpleListAdapter adapter =
-                new EntitySimpleListAdapter(activity.getApplicationContext(), entities);
-
-        dialog.setTitle(R.string.jandi_title_cdp_to_be_shared)
-                .setAdapter(adapter, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        FormattedEntity item = ((EntitySimpleListAdapter) ((AlertDialog) dialog).getListView().getAdapter()).getItem(which);
-                        long entityId = item.getId();
-                        int entityType;
-                        if (item.isPublicTopic()) {
-                            entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
-                        } else if (item.isPrivateGroup()) {
-                            entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
-                        } else {
-                            entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
-                        }
-                        EventBus.getDefault().post(new ShareEntityEvent(entityId, entityType, text));
-                    }
-                })
-                .create().show();
-
-    }
-
-    public String getCurrentTitle() {
-        return webView.getTitle();
     }
 
     @UiThread

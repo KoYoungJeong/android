@@ -2,8 +2,7 @@ package com.tosslab.jandi.app.ui.members.search.model;
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.lists.BotEntity;
-import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
 
 import java.util.ArrayList;
@@ -16,10 +15,10 @@ import rx.Observable;
  */
 public class MemberSearchModel {
 
-    public Observable<List<FormattedEntity>> getEnabledMembersObservable() {
-        return Observable.<List<FormattedEntity>>create(subscriber -> {
+    public Observable<List<User>> getEnabledMembersObservable() {
+        return Observable.<List<User>>create(subscriber -> {
             try {
-                List<FormattedEntity> enabledTeamMember = MembersModel.getEnabledTeamMember();
+                List<User> enabledTeamMember = MembersModel.getEnabledTeamMember();
                 subscriber.onNext(enabledTeamMember);
             } catch (Exception e) {
                 subscriber.onError(e);
@@ -28,9 +27,9 @@ public class MemberSearchModel {
         });
     }
 
-    public List<FormattedEntity> getSearchedMembers(final String query,
-                                                    List<FormattedEntity> currentMembers) {
-        List<FormattedEntity> searchedMembers = new ArrayList<>();
+    public List<User> getSearchedMembers(final String query,
+                                                    List<User> currentMembers) {
+        List<User> searchedMembers = new ArrayList<>();
         if (currentMembers == null || currentMembers.isEmpty()) {
             return searchedMembers;
         }
@@ -44,9 +43,9 @@ public class MemberSearchModel {
                     return member.getName().toLowerCase().contains(query.toLowerCase());
                 })
                 .toSortedList((entity, entity2) -> {
-                    if (entity instanceof BotEntity) {
+                    if (entity.isBot()) {
                         return -1;
-                    } else if (entity2 instanceof BotEntity) {
+                    } else if (entity2.isBot()) {
                         return 1;
                     } else {
                         return entity.getName().toLowerCase()

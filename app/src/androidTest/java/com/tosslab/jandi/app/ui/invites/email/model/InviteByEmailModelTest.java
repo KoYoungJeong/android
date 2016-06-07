@@ -1,9 +1,10 @@
 package com.tosslab.jandi.app.ui.invites.email.model;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -66,15 +67,18 @@ public class InviteByEmailModelTest {
     @Test
     public void testIsInactivedUser() throws Exception {
 
-        // When
-        FormattedEntity user = Observable.from(EntityManager.getInstance().getFormattedUsersWithoutMe())
-                .filter(entity -> entity.getUserEmail().equals(BaseInitUtil.TEST2_EMAIL))
+        // Given
+        User user = Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .filter(entity -> entity.getEmail().equals(BaseInitUtil.TEST2_EMAIL))
                 .toBlocking()
                 .first();
-        user.getUser().status = "inactive";
+
+        // When
+        HumanRepository.getInstance().updateStatus(user.getId(), "inactive");
+        TeamInfoLoader.getInstance().refresh();
 
         // Then
-        assertTrue(model.isInactivedUser(user.getUserEmail()));
+        assertTrue(model.isInactivedUser(user.getEmail()));
 
     }
 }

@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RefreshConnectBotEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
+import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
 import com.tosslab.jandi.app.events.files.CreateFileEvent;
@@ -26,14 +27,13 @@ import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
-import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
-import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
+import com.tosslab.jandi.app.local.orm.repositories.info.BotRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.RoomMarkerRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
@@ -44,11 +44,13 @@ import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResEventHistory;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.start.Folder;
+import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketConnectBotEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentDeleteEvent;
@@ -68,9 +70,12 @@ import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamLeaveEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicKickedoutEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -123,7 +128,7 @@ public class JandiSocketServiceModel {
         this.loginApi = loginApi;
         this.eventsApi = eventsApi;
         this.objectMapper = JacksonMapper.getInstance().getObjectMapper();
-        entitySocketModel = new EntitySocketModel(context);
+        entitySocketModel = new EntitySocketModel();
     }
 
     public ConnectTeam getConnectTeam() {
@@ -134,19 +139,20 @@ public class JandiSocketServiceModel {
             return null;
         }
 
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity me = entityManager.getMe();
+        long myId = TeamInfoLoader.getInstance().getMyId();
 
-        if (me == null) {
+        if (myId <= 0) {
             return null;
         }
+
+        String memberName = TeamInfoLoader.getInstance().getMemberName(myId);
 
         String token = TokenUtil.getAccessToken();
         return new ConnectTeam(token,
                 UserAgentUtil.getDefaultUserAgent(),
                 selectedTeamInfo.getTeamId(),
                 selectedTeamInfo.getName(),
-                selectedTeamInfo.getMemberId(), me.getName());
+                selectedTeamInfo.getMemberId(), memberName);
     }
 
     public void refreshEntity() {
@@ -302,9 +308,11 @@ public class JandiSocketServiceModel {
             SocketMemberProfileEvent socketTopicEvent =
                     getObject(object.toString(), SocketMemberProfileEvent.class);
 
-            ResLeftSideMenu.User member = socketTopicEvent.getMember();
+            Human member = socketTopicEvent.getMember();
+            HumanRepository.getInstance().updateHuman(member);
+            TeamInfoLoader.getInstance().refresh();
 
-            refreshEntity(new ProfileChangeEvent(member), false);
+            postEvent(new ProfileChangeEvent(member));
             JandiPreference.setSocketConnectedLastTime(socketTopicEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
@@ -369,10 +377,15 @@ public class JandiSocketServiceModel {
         try {
             SocketRoomMarkerEvent event =
                     getObject(object.toString(), SocketRoomMarkerEvent.class);
-            MarkerRepository.getRepository().upsertRoomMarker(event.getTeamId(), event.getRoom().getId(),
-                    event.getMarker().getMemberId(), event.getMarker().getLastLinkId());
-            postEvent(event);
 
+            SocketRoomMarkerEvent.Marker marker = event.getMarker();
+            SocketRoomMarkerEvent.MarkerRoom room = event.getRoom();
+            long roomId = room.getId();
+            long memberId = marker.getMemberId();
+            long lastLinkId = marker.getLastLinkId();
+            RoomMarkerRepository.getInstance().updateRoomMarker(roomId, memberId, lastLinkId);
+
+            postEvent(event);
             markerPublishSubject.onNext(event);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
         } catch (Exception e) {
@@ -453,20 +466,35 @@ public class JandiSocketServiceModel {
         return false;
     }
 
+    public void createAnnouncement(Object object) {
+        // 공지사항 정보 추가
+
+        try {
+            SocketAnnouncementCreatedEvent event =
+                    getObject(object.toString(), SocketAnnouncementCreatedEvent.class);
+
+            SocketAnnouncementCreatedEvent.Data data = event.getData();
+            int topicId = data.getTopicId();
+            TopicRepository.getInstance().createAnnounce(topicId, data.getAnnouncement());
+            TeamInfoLoader.getInstance().refresh();
+            postEvent(event);
+            JandiPreference.setSocketConnectedLastTime(event.getTs());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public void refreshAnnouncement(Object object) {
         try {
-            EntityClientManager jandiEntityClient = EntityClientManager_.getInstance_(context);
-            ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
-            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-            EntityManager.getInstance().refreshEntity();
 
+            // 공지사항 정보 갱신 로직
             SocketAnnouncementEvent socketAnnouncementEvent =
                     getObject(object.toString(), SocketAnnouncementEvent.class);
 
             postEvent(socketAnnouncementEvent);
+            TeamInfoLoader.getInstance().refresh();
             JandiPreference.setSocketConnectedLastTime(socketAnnouncementEvent.getTs());
-        } catch (RetrofitException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -474,13 +502,16 @@ public class JandiSocketServiceModel {
 
     public void updateTopicPushSubscribe(Object object) {
         try {
-            EntityClientManager jandiEntityClient = EntityClientManager_.getInstance_(context);
-            ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
-            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-            EntityManager.getInstance().refreshEntity();
 
+            // 푸시 정보 갱신 로직 추가
             SocketTopicPushEvent socketTopicPushEvent =
                     getObject(object.toString(), SocketTopicPushEvent.class);
+
+            SocketTopicPushEvent.Data data = socketTopicPushEvent.getData();
+            int roomId = data.getRoomId();
+            boolean subscribe = data.isSubscribe();
+            TopicRepository.getInstance().updatePushSubscribe(roomId, subscribe);
+            TeamInfoLoader.getInstance().refresh();
 
             postEvent(socketTopicPushEvent);
             JandiPreference.setSocketConnectedLastTime(socketTopicPushEvent.getTs());
@@ -514,14 +545,8 @@ public class JandiSocketServiceModel {
                 .subscribe(event -> {
 
                     try {
-                        if (event.getTeamId() == EntityManager.getInstance().getTeamId()) {
+                        if (event.getTeamId() == TeamInfoLoader.getInstance().getTeamId()) {
                             // 같은 팀의 내 마커가 갱신된 경우
-                            EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
-                            ResLeftSideMenu entitiesInfo = entityClientManager.getTotalEntitiesInfo();
-                            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(entitiesInfo);
-
-                            EntityManager.getInstance().refreshEntity();
-
                             postEvent(new RetrieveTopicListEvent());
                         } else {
                             // 다른 팀의 내 마커가 갱신된 경우
@@ -636,6 +661,7 @@ public class JandiSocketServiceModel {
         }
     }
 
+
     public void refreshStarredMessage(Object object) {
         try {
             SocketMessageStarredEvent socketFileEvent
@@ -653,36 +679,68 @@ public class JandiSocketServiceModel {
         }
     }
 
-
-    //todo
     public void refreshTopicFolder(Object object) {
         try {
-            SocketTopicFolderEvent socketTopicFolderEvent
+            SocketTopicFolderEvent event
                     = getObject(object.toString(), SocketTopicFolderEvent.class);
 
-            postEvent(socketTopicFolderEvent);
 
-            JandiPreference.setSocketConnectedLastTime(socketTopicFolderEvent.getTs());
+            if (event.getEvent().equals("folder_deleted")) {
+                long folderId = event.getData().getFolderId();
+                FolderRepository.getInstance().deleteFolder(folderId);
+            } else if (event.getEvent().equals("folder_item_created")) {
+                long folderId = event.getData().getFolderId();
+                long roomId = event.getData().getRoomId();
+                FolderRepository.getInstance().addTopic(folderId, roomId);
+            } else if (event.getEvent().equals("folder_item_deleted")) {
+                long folderId = event.getData().getFolderId();
+                long roomId = event.getData().getRoomId();
+                FolderRepository.getInstance().removeTopic(folderId, roomId);
 
+            }
 
-            //todo
-//            ResFolder resFolder = new ResFolder();
-//
-//            if (socketTopicFolderEvent.getEvent().equals("folder_create")) {
-//
-//            } else if (socketTopicFolderEvent.getEvent().equals("folder_update")) {
-//
-//            } else if (socketTopicFolderEvent.getEvent().equals("folder_deleted")) {
-//
-//            } else if (socketTopicFolderEvent.getEvent().equals("folder_item_created")) {
-//
-//            } else if (socketTopicFolderEvent.getEvent().equals("folder_item_deleted")) {
-//
-//            }
+            TeamInfoLoader.getInstance().refresh();
+
+            postEvent(event);
+            JandiPreference.setSocketConnectedLastTime(event.getTs());
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void onTopicFolderCreated(Object object) {
+        try {
+            SocketTopicFolderCreatedEvent event
+                    = getObject(object.toString(), SocketTopicFolderCreatedEvent.class);
+
+            FolderRepository.getInstance().addFolder(event.getTeamId(), event.getData().getFolder());
+            TeamInfoLoader.getInstance().refresh();
+
+            postEvent(new TopicFolderRefreshEvent());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    public void onTopicFolderUpdated(Object object) {
+        try {
+            SocketTopicFolderUpdatedEvent event
+                    = getObject(object.toString(), SocketTopicFolderUpdatedEvent.class);
+
+            Folder folder = event.getData().getFolder();
+            FolderRepository.getInstance().updateFolderName(folder.getId(), folder.getName());
+            FolderRepository.getInstance().updateFolderSeq(folder.getId(), folder.getSeq());
+
+            TeamInfoLoader.getInstance().refresh();
+            postEvent(new TopicFolderRefreshEvent());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void refreshLeaveMember(Object object) {
@@ -691,7 +749,7 @@ public class JandiSocketServiceModel {
             TeamLeaveEvent teamLeaveEvent = new TeamLeaveEvent(socketTeamLeaveEvent.getTeam().getId(), socketTeamLeaveEvent.getMember().getId());
 
             int leaveMemberId = socketTeamLeaveEvent.getMember().getId();
-            long myId = EntityManager.getInstance().getMe().getId();
+            long myId = TeamInfoLoader.getInstance().getMyId();
 
             if (leaveMemberId != myId) {
                 refreshEntity(teamLeaveEvent, false);
@@ -723,7 +781,7 @@ public class JandiSocketServiceModel {
 
             long teamId = event.getTeam().getId();
 
-            long selectedTeamId = EntityManager.getInstance().getTeamId();
+            long selectedTeamId = TeamInfoLoader.getInstance().getTeamId();
 
             if (teamId != selectedTeamId) {
                 refreshEntity(new TeamDeletedEvent(teamId), true);
@@ -839,10 +897,36 @@ public class JandiSocketServiceModel {
         }
     }
 
-    public void refreshConnectBot(Object object) {
+    public void onConnectBotCreated(Object object) {
         try {
             SocketConnectBotEvent event = getObject(object, SocketConnectBotEvent.class);
-            refreshEntity(new RefreshConnectBotEvent(event.getData().getBot()), true);
+            BotRepository.getInstance().addBot(event.getData().getBot());
+            TeamInfoLoader.getInstance().refresh();
+            postEvent(new RefreshConnectBotEvent(event.getData().getBot()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onConnectBotDeleted(Object object) {
+        try {
+            SocketConnectBotEvent event = getObject(object, SocketConnectBotEvent.class);
+            BotRepository.getInstance().removeBot(event.getData().getBot().getId());
+            TeamInfoLoader.getInstance().refresh();
+
+            postEvent(new RefreshConnectBotEvent(event.getData().getBot()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onConnectBotUpdated(Object object) {
+        try {
+            SocketConnectBotEvent event = getObject(object, SocketConnectBotEvent.class);
+            BotRepository.getInstance().updateBot(event.getData().getBot());
+            TeamInfoLoader.getInstance().refresh();
+
+            postEvent(new RefreshConnectBotEvent(event.getData().getBot()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -908,9 +992,8 @@ public class JandiSocketServiceModel {
                 .filter(ts -> ts == -1 || ts > 0)
                 .map(ts -> {
                     try {
-                        EntityManager entityManager = EntityManager.getInstance();
-                        long userId = entityManager.getMe().getId();
-                        return eventsApi.get().getEventHistory(ts, userId, eventType);
+                        long userId = TeamInfoLoader.getInstance().getMyId();
+                        return eventsApi.get().getEventHistory(ts, userId, "file_unshared");
                     } catch (RetrofitException e) {
                         e.printStackTrace();
                         ResEventHistory resEventHistory = new ResEventHistory();

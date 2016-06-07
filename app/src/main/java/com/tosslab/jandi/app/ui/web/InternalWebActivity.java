@@ -21,7 +21,7 @@ import android.webkit.WebViewClient;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.web.presenter.InternalWebPresenter;
@@ -43,10 +43,6 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
-
-/**
- * Created by tee on 16. 1. 13..
- */
 
 @EActivity(R.layout.activity_internal_web)
 @OptionsMenu(R.menu.internal_web)
@@ -132,7 +128,7 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
 
     @OptionsItem(R.id.action_share_to_topic)
     public void onShareToTopicOptionSelect() {
-        long teamId = EntityManager.getInstance().getTeamId();
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
         ShareSelectRoomActivity_
                 .intent(this)
                 .teamId(teamId)

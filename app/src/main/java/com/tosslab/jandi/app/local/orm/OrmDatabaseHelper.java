@@ -27,10 +27,6 @@ import com.tosslab.jandi.app.local.orm.upgrade.UpgradeChecker;
 import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResAnnouncement;
-import com.tosslab.jandi.app.network.models.ResChat;
-import com.tosslab.jandi.app.network.models.ResFolder;
-import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
@@ -38,7 +34,7 @@ import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.Human;
-import com.tosslab.jandi.app.network.models.start.InitializeInfo;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Team;
 import com.tosslab.jandi.app.network.models.start.Topic;
@@ -122,7 +118,6 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             createTable(connectionSource, MentionObject.class);
 
-            createTable(connectionSource, ResChat.class);
 
             createTable(connectionSource, ReadyMessage.class);
             createTable(connectionSource, ReadyComment.class);
@@ -132,12 +127,9 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, ResRoomInfo.class);
             createTable(connectionSource, ResRoomInfo.MarkerInfo.class);
 
-            createTable(connectionSource, ResAnnouncement.class);
 
             createTable(connectionSource, FileDetail.class);
 
-            createTable(connectionSource, ResFolder.class);
-            createTable(connectionSource, ResFolderItem.class);
             createTable(connectionSource, FolderExpand.class);
 
             createTable(connectionSource, UploadedFileInfo.class);
@@ -150,8 +142,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, PushToken.class);
             createTable(connectionSource, PushHistory.class);
 
-            createTable(connectionSource, InitializeInfo.class);
-            createTable(connectionSource, InitializeInfo.Self.class);
+            createTable(connectionSource, InitialInfo.class);
+            createTable(connectionSource, InitialInfo.Self.class);
             createTable(connectionSource, Team.class);
             createTable(connectionSource, Folder.class);
             createTable(connectionSource, Topic.class);
@@ -174,16 +166,12 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             List<UpgradeChecker> upgradeCheckers = Arrays.asList(
                     UpgradeChecker.create(() -> DATABASE_VERSION_FOLDER, () -> {
                         createTable(connectionSource, UploadedFileInfo.class);
-                        createTable(connectionSource, ResFolder.class);
-                        createTable(connectionSource, ResFolderItem.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_BADGE, () -> {
                         // for Parse
                         createTable(connectionSource, BadgeCount.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_FOLDER_MODIFY, () -> {
-                        dropTable(connectionSource, ResFolderItem.class);
-                        createTable(connectionSource, ResFolderItem.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_STICKER_SEND_STATUS, () -> {
                         Dao<SendMessage, ?> dao = DaoManager.createDao(connectionSource, SendMessage.class);
@@ -241,8 +229,6 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         dropTable(connectionSource, RecentSticker.class);
                         createTable(connectionSource, RecentSticker.class);
 
-                        dropTable(connectionSource, ResFolder.class);
-                        createTable(connectionSource, ResFolder.class);
 
                         dropTable(connectionSource, UploadedFileInfo.class);
                         createTable(connectionSource, UploadedFileInfo.class);
@@ -260,8 +246,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         dao.executeRawNoArgs("ALTER TABLE `message_link` ADD COLUMN dirty SMALLINT;");
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_START_API, () -> {
-                        createTable(connectionSource, InitializeInfo.class);
-                        createTable(connectionSource, InitializeInfo.Self.class);
+                        createTable(connectionSource, InitialInfo.class);
+                        createTable(connectionSource, InitialInfo.Self.class);
                         createTable(connectionSource, Team.class);
                         createTable(connectionSource, Folder.class);
                         createTable(connectionSource, Topic.class);
@@ -329,22 +315,16 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(getConnectionSource(), ResMessages.CommentStickerMessage.class);
         clearTable(getConnectionSource(), ResMessages.CommentMessage.class);
 
-        clearTable(getConnectionSource(), ResChat.class);
 
         clearTable(getConnectionSource(), ResRoomInfo.class);
         clearTable(getConnectionSource(), ResRoomInfo.MarkerInfo.class);
 
-        clearTable(getConnectionSource(), ResAnnouncement.class);
 
         clearTable(getConnectionSource(), FileDetail.class);
 
-        clearTable(getConnectionSource(), ResFolder.class);
-        clearTable(getConnectionSource(), ResFolderItem.class);
         clearTable(getConnectionSource(), UploadedFileInfo.class);
 
 
-        clearTable(getConnectionSource(), ResFolder.class);
-        clearTable(getConnectionSource(), ResFolderItem.class);
         clearTable(getConnectionSource(), FolderExpand.class);
 
         // for parse
@@ -354,8 +334,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(getConnectionSource(), PushToken.class);
         clearTable(getConnectionSource(), PushHistory.class);
 
-        clearTable(getConnectionSource(), InitializeInfo.class);
-        clearTable(getConnectionSource(), InitializeInfo.Self.class);
+        clearTable(getConnectionSource(), InitialInfo.class);
+        clearTable(getConnectionSource(), InitialInfo.Self.class);
         clearTable(getConnectionSource(), Team.class);
         clearTable(getConnectionSource(), Folder.class);
         clearTable(getConnectionSource(), Topic.class);

@@ -10,12 +10,10 @@ import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.InvitationSuccessEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
@@ -192,8 +190,8 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     }
 
     public void onEventMainThread(final RequestMoveDirectMessageEvent event) {
-        EntityManager entityManager = EntityManager.getInstance();
-        view.moveDirectMessageActivity(entityManager.getTeamId(), event.userId, entityManager.getEntityById(event.userId).isStarred);
+
+        view.moveDirectMessageActivity(TeamInfoLoader.getInstance().getTeamId(), event.userId);
     }
 
     public void onEventMainThread(ShowProfileEvent event) {
@@ -210,17 +208,17 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     @Override
     public void inviteInBackground(List<Long> invitedUsers, long entityId) {
         try {
-            FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
-            if (entity.isPublicTopic()) {
+
+            if (TeamInfoLoader.getInstance().isPublicTopic(entityId)) {
                 entityClientManager.inviteChannel(entityId, invitedUsers);
-            } else if (entity.isPrivateGroup()) {
+            } else {
                 entityClientManager.invitePrivateGroup(entityId, invitedUsers);
             }
 
-            ResLeftSideMenu resLeftSideMenu = entityClientManager.getTotalEntitiesInfo();
-            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
-            EntityManager.getInstance().refreshEntity();
+            TopicRepository.getInstance().addMember(entityId, invitedUsers);
+
+            TeamInfoLoader.getInstance().refresh();
             EventBus.getDefault().post(new InvitationSuccessEvent());
             trackTopicMemberInviteSuccess(invitedUsers.size(), entityId);
             view.showInviteSucceed(invitedUsers.size());
@@ -239,7 +237,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     public void initKickableMode(long entityId) {
         boolean topicOwner = memberModel.isMyTopic(entityId);
         boolean teamOwner = memberModel.isTeamOwner();
-        boolean isDefaultTopic = EntityManager.getInstance().getDefaultTopicId() == entityId;
+        boolean isDefaultTopic = TeamInfoLoader.getInstance().getDefaultTopicId() == entityId;
         // 내 토픽이되 기본 토픽이 아니어야 함
         view.setKickMode((topicOwner || teamOwner) && !isDefaultTopic);
     }
@@ -263,7 +261,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
             return;
         }
 
-        long teamId = EntityManager.getInstance().getTeamId();
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
         view.showProgressWheel();
         try {
             memberModel.kickUser(teamId, topicId, userEntityId);
@@ -285,8 +283,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     @Override
     public void onMemberClickForAssignOwner(long topicId, final ChatChooseItem item) {
-        if (EntityManager.getInstance().isBot(item.getEntityId())) {
-            //TODO
+        if (TeamInfoLoader.getInstance().isBot(item.getEntityId())) {
             return;
         }
 
@@ -308,7 +305,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
         view.showProgressWheel();
 
-        long teamId = EntityManager.getInstance().getTeamId();
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
         try {
             memberModel.assignToTopicOwner(teamId, topicId, memberId);
             view.dismissProgressWheel();

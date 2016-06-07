@@ -15,10 +15,12 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.EntityMenuDialogModel;
 import com.tosslab.jandi.app.ui.settings.main.SettingsActivity_;
 import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
@@ -44,6 +46,9 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
     @FragmentArg
     long entityId;
+
+    @FragmentArg
+    long roomId;
 
     @FragmentArg
     long folderId;
@@ -72,13 +77,19 @@ public class EntityMenuDialogFragment extends DialogFragment {
     }
 
     void initView() {
-        FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
-        tvTitle.setText(entity.getName());
 
-        boolean isBot = entityMenuDialogModel.isBot(entityId);
-        boolean isDirectMessage = entity.isUser() || isBot;
+        Room room = TeamInfoLoader.getInstance().getRoom(roomId);
+
+        if (room == null) {
+            dismiss();
+            return;
+        }
+
+        tvTitle.setText(TeamInfoLoader.getInstance().getName(entityId));
+
+        boolean isDirectMessage = roomId != entityId;
         if (isDirectMessage) {
-            if (!entity.isEnabled()) {
+            if (!TeamInfoLoader.getInstance().isEnabled(entityId)) {
                 btnStarred.setVisibility(View.GONE);
             }
             btnMoveFolder.setVisibility(View.GONE);
@@ -86,7 +97,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
         } else {
             btnNotification.setVisibility(View.VISIBLE);
 
-            final boolean isTopicPushOn = entity.isTopicPushOn;
+            final boolean isTopicPushOn = TeamInfoLoader.getInstance().isPushSubscribe(entityId);
 
             String notificationText = getActivity().getResources().getString(R.string.jandi_notification_off);
             if (!isTopicPushOn) {
@@ -104,7 +115,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
             });
         }
 
-        setStarredButtonText(entity.isStarred);
+        setStarredButtonText(TeamInfoLoader.getInstance().isStarred(roomId));
 
         if (entityMenuDialogModel.isDefaultTopic(entityId)) {
             btnLeave.setVisibility(View.GONE);
@@ -172,28 +183,33 @@ public class EntityMenuDialogFragment extends DialogFragment {
         showProgressWheel();
         requestStarred();
 
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        AnalyticsValue.Screen category = entity.isUser() ? AnalyticsValue.Screen.MessageTab : AnalyticsValue.Screen.TopicsTab;
-        AnalyticsValue.Action action = entity.isStarred ? AnalyticsValue.Action.TopicSubMenu_Unstar : AnalyticsValue.Action.TopicSubMenu_Star;
+        boolean starred = TeamInfoLoader.getInstance().isStarred(roomId);
+        AnalyticsValue.Screen category = roomId != entityId ? AnalyticsValue.Screen.MessageTab : AnalyticsValue.Screen.TopicsTab;
+        AnalyticsValue.Action action = starred ? AnalyticsValue.Action.TopicSubMenu_Unstar : AnalyticsValue.Action.TopicSubMenu_Star;
         AnalyticsUtil.sendEvent(category, action);
     }
 
     @Background
     void requestStarred() {
-        FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
+        boolean starred = TeamInfoLoader.getInstance().isStarred(roomId);
+
         try {
-            if (entity.isStarred) {
+            if (starred) {
                 entityMenuDialogModel.requestUnstarred(entityId);
             } else {
                 entityMenuDialogModel.requestStarred(entityId);
             }
-            entity.isStarred = !entity.isStarred;
-
-            entityMenuDialogModel.refreshEntities();
+            boolean isUser = roomId != entityId;
+            if (isUser) {
+                ChatRepository.getInstance().updateStarred(roomId, !starred);
+            } else {
+                TopicRepository.getInstance().updateStarred(roomId, !starred);
+            }
+            TeamInfoLoader.getInstance().refresh();
 
             dismissProgressWheel();
 
-            if (entity.isStarred) {
+            if (!starred) {
                 showToast(getString(R.string.jandi_message_starred));
             } else {
                 showToast(getString(R.string.jandi_message_no_starred));
@@ -231,18 +247,20 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void onLeaveClick() {
-        FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
-        final boolean isPublicTopic = entity.isPublicTopic();
-        boolean isTopicOwner = entityMenuDialogModel.isTopicOwner(entityId);
-        boolean isBot = entityMenuDialogModel.isBot(entityId);
+        long myId = TeamInfoLoader.getInstance().getMyId();
+        int memberCount = TeamInfoLoader.getInstance().getTopicMemberCount(entityId);
+        boolean isPublicTopic = TeamInfoLoader.getInstance().isPublicTopic(entityId);
+        boolean isTopicOwner = TeamInfoLoader.getInstance().isTopicOwner(entityId, myId);
+        boolean isJandiBot = entityMenuDialogModel.isJandiBot(entityId);
+        String name = TeamInfoLoader.getInstance().getName(entityId);
 
-        if (isTopicOwner
-                && entity.getMemberCount() > 1
-                && !entity.isUser()
-                && !isBot) {
-            onAssignToTopicOwner(entity.getName());
+        if (roomId == entityId // 토픽이고
+                && isTopicOwner // 내가 토픽 오너
+                && memberCount > 1 // 1명초과 토픽에 있는 경우
+                ) {
+            onAssignToTopicOwner(name);
         } else {
-            onLeaveEntity(entity.getName(), isPublicTopic, entity.isUser(), isBot);
+            onLeaveEntity(name, isPublicTopic, roomId != entityId, isJandiBot);
         }
 
     }
@@ -284,21 +302,22 @@ public class EntityMenuDialogFragment extends DialogFragment {
     @Background
     void leaveEntity(long entityId, boolean publicTopic, boolean isUser) {
         try {
-            FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
-
-            if (entity != EntityManager.UNKNOWN_USER_ENTITY) {
-                entityMenuDialogModel.leaveEntity(entity.isPublicTopic());
-            }
+            entityMenuDialogModel.leaveEntity(publicTopic);
 
             if (!isUser) {
                 entityMenuDialogModel.requestLeaveEntity(entityId, publicTopic);
             } else {
-                long memberId = EntityManager.getInstance().getMe().getId();
+                long memberId = TeamInfoLoader.getInstance().getMyId();
                 entityMenuDialogModel.requestDeleteChat(memberId, entityId);
             }
-            entityMenuDialogModel.refreshEntities();
+            if (!isUser) {
+                TopicRepository.getInstance().deleteTopic(entityId);
+            } else {
+                ChatRepository.getInstance().deleteChat(roomId);
+            }
+            TeamInfoLoader.getInstance().refresh();
 
-            if (entity.isUser()) {
+            if (TeamInfoLoader.getInstance().isUser(entityId)) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.TopicSubMenu_Leave);
             } else {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicSubMenu_Leave);

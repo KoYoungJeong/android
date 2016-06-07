@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.maintab.team.model;
 import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.maintab.team.vo.Team;
 
 import org.junit.AfterClass;
@@ -11,8 +10,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.List;
 
 import rx.Observable;
 import rx.observers.TestSubscriber;
@@ -61,7 +58,7 @@ public class TeamModelTest {
         System.out.println("size = " + team.getMembers().size());
 
         assertTrue(team.getOwner() != null
-                && TextUtils.equals(team.getOwner().u_email, "ekuvekez-9240@yopmail.com"));
+                && TextUtils.equals(team.getOwner().getEmail(), "ekuvekez-9240@yopmail.com"));
         assertEquals(team.getMembers().size(), 3 + 1 /* JandiBot */);
 
         teamTestSubscriber.assertCompleted();

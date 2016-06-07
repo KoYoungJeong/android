@@ -36,31 +36,6 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
     private static final String IS_MINE = "isMine";
     private static final String IS_DIRECT_MESSAGE = "isDirectMessage";
 
-    public static ManipulateMessageDialogFragment newInstance(MessageItem item) {
-        return newInstance(item, false);
-    }
-
-    public static ManipulateMessageDialogFragment newInstanceForMyMessage(MessageItem item) {
-        return newInstance(item, true);
-    }
-
-    private static ManipulateMessageDialogFragment newInstance(MessageItem item, boolean isMine) {
-        String title = DateTransformator.getTimeString(item.getLinkTime());
-
-        ManipulateMessageDialogFragment frag = new ManipulateMessageDialogFragment();
-        Bundle args = new Bundle();
-        args.putString(TITLE, title);
-        args.putLong(MESSAGE_ID, item.getMessageId());
-        args.putInt(MESSAGE_TYPE, item.getContentType());
-        args.putString(CURRENT_MESSAGE, item.getContentString());
-        args.putBoolean(IS_MINE, isMine);
-        if (item.getContentType() == MessageItem.TYPE_COMMENT) {
-            args.putLong(FEEDBACK_ID, item.getFeedbackId());
-        }
-        frag.setArguments(args);
-        return frag;
-    }
-
     public static ManipulateMessageDialogFragment newInstanceByTextMessage(
             ResMessages.TextMessage item, boolean isMine, boolean isDirectMessage) {
         String title = DateTransformator.getTimeString(item.createTime);
@@ -154,7 +129,6 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         final TextView actionSetAnnouncement =
                 (TextView) mainView.findViewById(R.id.tv_action_announce_message);
 
-        //todo
         final TextView actionStarred = (TextView) mainView.findViewById(R.id.tv_action_starred);
         final TextView actionUnStarred = (TextView) mainView.findViewById(R.id.tv_action_unstarred);
 

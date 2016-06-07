@@ -9,24 +9,24 @@ import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.Human;
-import com.tosslab.jandi.app.network.models.start.InitializeInfo;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Team;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
 import java.sql.SQLException;
 import java.util.Collection;
 
-public class InitializeInfoDaoImpl extends BaseDaoImpl<InitializeInfo, Long> {
+public class InitializeInfoDaoImpl extends BaseDaoImpl<InitialInfo, Long> {
     public InitializeInfoDaoImpl(ConnectionSource connectionSource) throws SQLException {
-        super(connectionSource, InitializeInfo.class);
+        super(connectionSource, InitialInfo.class);
     }
 
     @Override
-    public int create(InitializeInfo data) throws SQLException {
+    public int create(InitialInfo data) throws SQLException {
         int id = super.create(data);
 
         if (data.getSelf() != null) {
-            Dao<InitializeInfo.Self, ?> dao = DaoManager.createDao(getConnectionSource(), InitializeInfo.Self.class);
+            Dao<InitialInfo.Self, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.Self.class);
             dao.create(data.getSelf());
         }
 
@@ -38,7 +38,7 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitializeInfo, Long> {
         upsertFolders(data.getTeamId(), data.getFolders());
         upsertTopics(data.getTeamId(), data.getTopics());
         upsertChats(data.getTeamId(), data.getChats());
-        upsertHumans(data.getTeamId(), data.getHumans());
+        upsertHumans(data.getTeamId(), data.getMembers());
         upsertBots(data.getTeamId(), data.getBots());
 
 
@@ -153,11 +153,11 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitializeInfo, Long> {
     }
 
     @Override
-    public int update(InitializeInfo data) throws SQLException {
+    public int update(InitialInfo data) throws SQLException {
         int row = super.update(data);
 
         if (data.getSelf() != null) {
-            Dao<InitializeInfo.Self, ?> dao = DaoManager.createDao(getConnectionSource(), InitializeInfo.Self.class);
+            Dao<InitialInfo.Self, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.Self.class);
             dao.update(data.getSelf());
         }
 
@@ -169,7 +169,7 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitializeInfo, Long> {
         upsertFolders(data.getTeamId(), data.getFolders());
         upsertTopics(data.getTeamId(), data.getTopics());
         upsertChats(data.getTeamId(), data.getChats());
-        upsertHumans(data.getTeamId(), data.getHumans());
+        upsertHumans(data.getTeamId(), data.getMembers());
         upsertBots(data.getTeamId(), data.getBots());
 
         return row;

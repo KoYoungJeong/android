@@ -8,8 +8,8 @@ import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
@@ -66,7 +66,7 @@ public class CarouselViewerActivityTest {
     public void setUp() throws Exception {
 
         teamId = AccountRepository.getRepository().getSelectedTeamId();
-        roomId = EntityManager.getInstance().getDefaultTopicId();
+        roomId = TopicRepository.getInstance().getDefaultTopic(teamId).getId();
         latestFileId = getLatestFileId();
 
         Intent startIntent = new Intent();

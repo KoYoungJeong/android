@@ -3,13 +3,16 @@ package com.tosslab.jandi.app.ui.share.views.model;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
-import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.start.Human;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -34,7 +37,7 @@ import static org.junit.Assert.assertThat;
 @LargeTest
 public class ShareSelectModelTest {
 
-    ShareSelectModel shareSelectModel;
+    TeamInfoLoader teamInfoLoader;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -51,13 +54,13 @@ public class ShareSelectModelTest {
         List<ResAccountInfo.UserTeam> accountTeams = AccountRepository.getRepository().getAccountTeams();
         AccountRepository.getRepository().updateSelectedTeamInfo(accountTeams.get(0).getTeamId());
 
-        shareSelectModel = ShareSelectModel_.getInstance_(JandiApplication.getContext());
+        teamInfoLoader = TeamInfoLoader.getInstance();
 
         Observable.from(accountTeams)
                 .subscribe(userTeam -> {
                     try {
-                        ResLeftSideMenu leftSideMenu = shareSelectModel.getLeftSideMenu(userTeam.getTeamId());
-                        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+                        InitialInfo initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(userTeam.getTeamId());
+                        InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
                     } catch (RetrofitException e) {
                         e.printStackTrace();
                     }
@@ -69,12 +72,17 @@ public class ShareSelectModelTest {
 
         long teamId = AccountRepository.getRepository().getAccountTeams().get(0).getTeamId();
 
-        ResLeftSideMenu currentLeftSideMenu = LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
-        shareSelectModel.initFormattedEntities(currentLeftSideMenu);
-        FormattedEntity entity = shareSelectModel.getEntityById(currentLeftSideMenu.user.id);
+        InitialInfo initialInfo = InitialInfoRepository.getInstance().getInitialInfo(teamId);
+
+        TeamInfoLoader instance = TeamInfoLoader.getInstance(teamId);
+        User entity = instance.getUser(initialInfo.getSelf().getId());
 
         assertThat(entity, is(notNullValue()));
-        assertThat(entity.getName(), is(equalTo(currentLeftSideMenu.user.name)));
+        assertThat(entity.getName(), is(equalTo(Observable.from(initialInfo.getMembers())
+                .takeFirst(human -> human.getId() == initialInfo.getSelf().getId())
+                .map(Human::getName)
+                .toBlocking()
+                .firstOrDefault(""))));
 
     }
 }

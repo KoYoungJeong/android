@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAvatarsInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.team.member.User;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -23,7 +23,7 @@ public class ProfileApi extends ApiTemplate<ProfileApi.Api> {
         super(Api.class, retrofitBuilder);
     }
 
-    public ResLeftSideMenu.User updateMemberProfile(long memberId, ReqUpdateProfile reqUpdateProfile) throws RetrofitException {
+    public ResCommon updateMemberProfile(long memberId, ReqUpdateProfile reqUpdateProfile) throws RetrofitException {
         return call(() -> getApi().updateMemberProfile(memberId, reqUpdateProfile));
     }
 
@@ -31,7 +31,7 @@ public class ProfileApi extends ApiTemplate<ProfileApi.Api> {
         return call(() -> getApi().updateMemberName(memberId, reqProfileName));
     }
 
-    public ResLeftSideMenu.User updateMemberEmail(long memberId, ReqAccountEmail reqAccountEmail) throws RetrofitException {
+    public ResCommon updateMemberEmail(long memberId, ReqAccountEmail reqAccountEmail) throws RetrofitException {
         return call(() -> getApi().updateMemberEmail(memberId, reqAccountEmail));
     }
 
@@ -39,7 +39,7 @@ public class ProfileApi extends ApiTemplate<ProfileApi.Api> {
         return call(() -> getApi().getAvartarsInfo());
     }
 
-    public ResLeftSideMenu.User getMemberProfile(long teamId, long memberId) throws RetrofitException {
+    public User getMemberProfile(long teamId, long memberId) throws RetrofitException {
         return call(() -> getApi().getMemberProfile(teamId, memberId));
     }
 
@@ -48,20 +48,23 @@ public class ProfileApi extends ApiTemplate<ProfileApi.Api> {
 
         @GET("teams/{teamId}/members/{memberId}")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResLeftSideMenu.User> getMemberProfile(@Path("teamId") long teamId,
-                                                    @Path("memberId") long memberId);
+        Call<User> getMemberProfile(@Path("teamId") long teamId,
+                                         @Path("memberId") long memberId);
 
         @PUT("members/{memberId}/profile")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResLeftSideMenu.User> updateMemberProfile(@Path("memberId") long memberId, @Body ReqUpdateProfile reqUpdateProfile);
+        Call<ResCommon> updateMemberProfile(@Path("memberId") long memberId,
+                                            @Body ReqUpdateProfile reqUpdateProfile);
 
         @PUT("members/{memberId}/name")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResCommon> updateMemberName(@Path("memberId") long memberId, @Body ReqProfileName reqProfileName);
+        Call<ResCommon> updateMemberName(@Path("memberId") long memberId,
+                                         @Body ReqProfileName reqProfileName);
 
         @PUT("members/{memberId}/email")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResLeftSideMenu.User> updateMemberEmail(@Path("memberId") long memberId, @Body ReqAccountEmail reqAccountEmail);
+        Call<ResCommon> updateMemberEmail(@Path("memberId") long memberId,
+                                          @Body ReqAccountEmail reqAccountEmail);
 
         @GET("avatars")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)

@@ -20,21 +20,19 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.views.create.TopicCreateActivity_;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.adapter.JoinableTopicListAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.component.DaggerJoinableTopicListComponent;
-import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.view.TopicInfoDialog;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.module.JoinableTopicListModule;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.presenter.JoinableTopicListPresenter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.view.JoinableTopicDataView;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.view.JoinableTopicListView;
+import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.view.TopicInfoDialog;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
@@ -43,7 +41,6 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import de.greenrobot.event.EventBus;
 
@@ -143,7 +140,6 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
                 .teamId(teamId)
                 .roomId(entityId)
                 .lastReadLinkId(lastReadLinkId)
-                .isFavorite(starred)
                 .start();
 
         finish();
@@ -267,13 +263,6 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
     @Override
     public void hideEmptyQueryMessage() {
         vgEmptySearchedTopic.setVisibility(View.GONE);
-    }
-
-    public void onEvent(SocketTopicPushEvent event) {
-        if (!isForeground) {
-            return;
-        }
-        mainTopicListPresenter.onSearchTopic(false, etSearch.getText());
     }
 
     public void onEvent(RetrieveTopicListEvent event) {

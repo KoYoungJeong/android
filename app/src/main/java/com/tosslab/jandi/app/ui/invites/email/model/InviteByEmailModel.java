@@ -2,12 +2,12 @@ package com.tosslab.jandi.app.ui.invites.email.model;
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 
@@ -60,10 +60,11 @@ public class InviteByEmailModel {
                 return true;
             }
         }
-        List<FormattedEntity> users = EntityManager.getInstance().getFormattedUsersWithoutMe();
+        List<User> users = TeamInfoLoader.getInstance().getUserList();
 
         Boolean isContain = Observable.from(users)
-                .filter(entity -> TextUtils.equals(entity.getUserEmail(), emailText)
+                .filter(user -> user.getId() != TeamInfoLoader.getInstance().getMyId())
+                .filter(entity -> TextUtils.equals(entity.getEmail(), emailText)
                         && entity.isEnabled())
                 .map(entity -> true)
                 .firstOrDefault(false)
@@ -74,13 +75,13 @@ public class InviteByEmailModel {
     }
 
     public String getCurrentTeamName() {
-        return EntityManager.getInstance().getTeamName();
+        return TeamInfoLoader.getInstance().getTeamName();
     }
 
     public boolean isInactivedUser(String email) {
-        return Observable.from(EntityManager.getInstance().getFormattedUsersWithoutMe())
-                .filter(FormattedEntity::isInavtived)
-                .filter(entity -> TextUtils.equals(entity.getUserEmail(), email))
+        return Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .filter(User::isInactive)
+                .filter(user -> TextUtils.equals(user.getEmail(), email))
                 .map(entity -> true)
                 .firstOrDefault(false)
                 .toBlocking()

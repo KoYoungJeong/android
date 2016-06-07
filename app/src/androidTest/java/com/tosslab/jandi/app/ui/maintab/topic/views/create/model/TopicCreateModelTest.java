@@ -3,14 +3,14 @@ package com.tosslab.jandi.app.ui.maintab.topic.views.create.model;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -26,7 +26,6 @@ import static junit.framework.Assert.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 
 @RunWith(AndroidJUnit4.class)
@@ -58,18 +57,17 @@ public class TopicCreateModelTest {
             String topicName = "haha";
             String topicDescription = "haha2";
             ResCommon topic = topicCreateModel.createTopic(topicName, true, topicDescription, true);
-            topicCreateModel.refreshEntity();
 
             // Then
-            FormattedEntity entity = EntityManager.getInstance().getEntityById(topic.id);
-            assertThat(entity, is(notNullValue()));
-            assertThat(entity, is(not(EntityManager.UNKNOWN_USER_ENTITY)));
-            assertThat(entity.getName(), is(equalTo(topicName)));
-            assertThat(entity.getDescription(), is(equalTo(topicDescription)));
-            assertThat(entity.isAutoJoin(), is(true));
+            TopicRoom topicRoom = TeamInfoLoader.getInstance().getTopic(topic.id);
+            assertThat(topicRoom, is(notNullValue()));
+            assertThat(topicRoom.getName(), is(equalTo(topicName)));
+            assertThat(topicRoom.getDescription(), is(equalTo(topicDescription)));
+            assertThat(topicRoom.isAutoJoin(), is(true));
 
             // Restore
-            new ChannelApi(RetrofitBuilder.getInstance()).deleteTopic(topic.id, new ReqDeleteTopic(EntityManager.getInstance().getTeamId()));
+            new ChannelApi(RetrofitBuilder.getInstance())
+                    .deleteTopic(topic.id, new ReqDeleteTopic(TeamInfoLoader.getInstance().getTeamId()));
         }
 
         {
@@ -91,18 +89,17 @@ public class TopicCreateModelTest {
             String topicDescription = "haha2" + new Date().toString();
             ResCommon topic = topicCreateModel.createTopic(topicName, false, topicDescription, false);
             Thread.sleep(200);
-            topicCreateModel.refreshEntity();
 
             // Then
-            FormattedEntity entity = EntityManager.getInstance().getEntityById(topic.id);
+            TopicRoom entity = TeamInfoLoader.getInstance().getTopic(topic.id);
             assertThat(entity, is(notNullValue()));
-            assertThat(entity, is(not(EntityManager.UNKNOWN_USER_ENTITY)));
             assertThat(entity.getName(), is(equalTo(topicName)));
             assertThat(entity.getDescription(), is(equalTo(topicDescription)));
             assertThat(entity.isAutoJoin(), is(false));
 
             // Restore
-            new GroupApi(RetrofitBuilder.getInstance()).deleteGroup(EntityManager.getInstance().getTeamId(), topic.id);
+            new GroupApi(RetrofitBuilder.getInstance())
+                    .deleteGroup(TeamInfoLoader.getInstance().getTeamId(), topic.id);
         }
 
     }

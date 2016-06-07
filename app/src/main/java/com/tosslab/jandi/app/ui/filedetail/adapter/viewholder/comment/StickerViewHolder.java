@@ -7,9 +7,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.ProfileBinder;
@@ -49,7 +49,7 @@ public class StickerViewHolder extends BaseViewHolder<ResMessages.CommentSticker
 
     @Override
     public void onBindView(ResMessages.CommentStickerMessage stickerMessage) {
-        FormattedEntity writer = EntityManager.getInstance().getEntityById(stickerMessage.writerId);
+        User writer = TeamInfoLoader.getInstance().getUser(stickerMessage.writerId);
         ProfileBinder.newInstance(tvUserName, vUserNameDisableIndicator,
                 ivUserProfile, vUserProfileDisableIndicator)
                 .bind(writer);

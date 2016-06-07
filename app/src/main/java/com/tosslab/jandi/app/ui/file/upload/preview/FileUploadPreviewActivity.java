@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.file.upload.preview;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -8,11 +7,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,15 +19,12 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
@@ -41,7 +35,6 @@ import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
-import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -64,7 +57,6 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func0;
 import rx.subjects.PublishSubject;
 
 /**
@@ -357,60 +349,6 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 
         tvEntity.setText(entity);
 
-    }
-
-    @Override
-    public void showEntitySelectDialog(List<FormattedEntity> entityList) {
-        android.view.View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.dialog_invite_to_topic, null);
-        ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
-        EditText et = (EditText) view.findViewById(R.id.et_cdp_search);
-
-        final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, entityList);
-
-        PublishSubject<String> publishSubject = PublishSubject.create();
-        Subscription subscribe = publishSubject.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
-                .flatMap(s -> {
-                    String searchText = s.toLowerCase();
-
-                    return Observable.from(entityList)
-                            .filter(formattedEntity -> formattedEntity.getName().toLowerCase()
-                                    .contains(searchText))
-                            .collect((Func0<ArrayList<FormattedEntity>>) ArrayList::new, ArrayList::add);
-
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(adapter::setEntities);
-
-        publishSubject.onNext("");
-
-        et.addTextChangedListener(new SimpleTextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                publishSubject.onNext(s.toString());
-            }
-        });
-
-        Dialog dialog = new AlertDialog.Builder(FileUploadPreviewActivity.this,
-                R.style.JandiTheme_AlertDialog_FixWidth_300)
-                .setTitle(R.string.jandi_title_cdp_to_be_shared)
-                .setView(view)
-                .create();
-        dialog.show();
-
-        dialog.setOnDismissListener(dialog1 -> subscribe.unsubscribe());
-
-        lv.setAdapter(adapter);
-
-        lv.setOnItemClickListener((adapterView, view1, position, l) -> {
-
-            if (dialog != null && dialog.isShowing()) {
-                dialog.dismiss();
-            }
-
-            FormattedEntity item = ((EntitySimpleListAdapter) adapterView.getAdapter()).getItem(position);
-
-            fileUploadPresenter.onEntityUpdate(item);
-        });
     }
 
     @Override

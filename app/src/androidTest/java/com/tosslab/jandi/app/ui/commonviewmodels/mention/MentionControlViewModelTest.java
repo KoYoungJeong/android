@@ -9,9 +9,8 @@ import android.text.Spanned;
 import android.widget.AutoCompleteTextView;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.views.spannable.MentionMessageSpannable;
@@ -25,6 +24,7 @@ import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 
+import rx.Observable;
 import setup.BaseInitUtil;
 
 import static junit.framework.Assert.assertTrue;
@@ -62,7 +62,7 @@ public class MentionControlViewModelTest {
 
     private void init() {
         textView = new AutoCompleteTextView(JandiApplication.getContext());
-        long t_defaultChannelId = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu().team.t_defaultChannelId;
+        long t_defaultChannelId = TeamInfoLoader.getInstance().getDefaultTopicId();
         mentionControlViewModel = MentionControlViewModel.newInstance(rule.getActivity(), textView, Arrays.asList(t_defaultChannelId), MentionControlViewModel.MENTION_TYPE_MESSAGE);
     }
 
@@ -90,7 +90,9 @@ public class MentionControlViewModelTest {
         });
 
         rule.getActivity().runOnUiThread(() -> {
-            FormattedEntity user = EntityManager.getInstance().getFormattedUsersWithoutMe().get(0);
+            User user = Observable.from(TeamInfoLoader.getInstance().getUserList())
+                    .takeFirst(user1 -> user1.getId() != TeamInfoLoader.getInstance().getMyId())
+                    .toBlocking().first();
             StringBuffer buffer = new StringBuffer();
             buffer.append("@").append(user.getName()).append("\u2063").append(user.getId()).append("\u2063");
             mentionControlViewModel.setUpMention(buffer.toString());
@@ -114,8 +116,10 @@ public class MentionControlViewModelTest {
         rule.getActivity().runOnUiThread(this::init);
 
         rule.getActivity().runOnUiThread(() -> {
-            FormattedEntity user = EntityManager.getInstance().getFormattedUsersWithoutMe().get(0);
-
+            User user = Observable.from(TeamInfoLoader.getInstance().getUserList())
+                    .takeFirst(user1 -> user1.getId() != TeamInfoLoader.getInstance().getMyId())
+                    .toBlocking().first();
+            
             SearchedItemVO searchedItemVO = new SearchedItemVO();
             searchedItemVO.setId(user.getId());
             searchedItemVO.setName(user.getName());

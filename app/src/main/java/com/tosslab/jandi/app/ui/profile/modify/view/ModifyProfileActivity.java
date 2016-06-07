@@ -29,10 +29,10 @@ import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenter;
 import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenterImpl;
@@ -281,7 +281,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     }
 
     public void onEvent(ProfileChangeEvent event) {
-        modifyProfilePresenter.onProfileChange(event.getMember());
+        modifyProfilePresenter.onProfileChange(new User(event.getMember()));
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -401,43 +401,38 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     @Override
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void displayProfile(ResLeftSideMenu.User user) {
+    public void displayProfile(User user) {
         // 프로필 사진
 
-        String profileImageUrlPath = null;
-        if (user.u_photoThumbnailUrl != null) {
-            profileImageUrlPath = !TextUtils.isEmpty(user.u_photoThumbnailUrl.largeThumbnailUrl) ? user.u_photoThumbnailUrl.largeThumbnailUrl : user.u_photoUrl;
-        } else if (!TextUtils.isEmpty(user.u_photoUrl)) {
-            profileImageUrlPath = user.u_photoUrl;
-        }
+        String profileImageUrlPath = user.getPhotoUrl();
 
         displayProfileImage(profileImageUrlPath);
         // 프로필 이름
-        tvProfileRealName.setText(user.name);
+        tvProfileRealName.setText(user.getName());
         // 상태 메시지
-        String strStatus = (user.u_statusMessage);
+        String strStatus = (user.getStatusMessage());
         if (!TextUtils.isEmpty(strStatus)) {
             tvProfileStatusMessage.setText(strStatus);
             tvProfileStatusMessage.setTextColor(getResources().getColor(R.color.jandi_text));
         }
 
         // 이메일
-        tvProfileUserEmail.setText(user.u_email);
+        tvProfileUserEmail.setText(user.getEmail());
 
         // 폰넘버
-        String strPhone = (user.u_extraData.phoneNumber);
+        String strPhone = (user.getPhoneNumber());
         if (!TextUtils.isEmpty(strPhone)) {
             tvProfileUserPhone.setText(strPhone);
             tvProfileUserPhone.setTextColor(getResources().getColor(R.color.jandi_text));
         }
         // 부서
-        String strDivision = (user.u_extraData.department);
+        String strDivision = (user.getDivision());
         if (!TextUtils.isEmpty(strDivision)) {
             tvProfileUserDivision.setText(strDivision);
             tvProfileUserDivision.setTextColor(getResources().getColor(R.color.jandi_text));
         }
         // 직책
-        String strPosition = user.u_extraData.position;
+        String strPosition = user.getPosition();
         if (!TextUtils.isEmpty(strPosition)) {
             tvProfileUserPosition.setText(strPosition);
             tvProfileUserPosition.setTextColor(getResources().getColor(R.color.jandi_text));

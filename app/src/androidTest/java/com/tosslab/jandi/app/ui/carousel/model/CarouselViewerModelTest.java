@@ -3,13 +3,13 @@ package com.tosslab.jandi.app.ui.carousel.model;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 
 import org.junit.AfterClass;
@@ -50,7 +50,7 @@ public class CarouselViewerModelTest {
     public void setUp() throws Exception {
         model = CarouselViewerModel_.getInstance_(JandiApplication.getContext());
         teamId = AccountRepository.getRepository().getSelectedTeamId();
-        roomId = EntityManager.getInstance().getDefaultTopicId();
+        roomId = TeamInfoLoader.getInstance().getDefaultTopicId();
         lastImageMessageId = getLatestFileId();
 
     }
@@ -176,7 +176,7 @@ public class CarouselViewerModelTest {
             assertThat(carouselFileInfo.getFileName(), is(equalTo(fileMessage.content.name)));
             assertThat(carouselFileInfo.getFileLinkUrl(), is(equalTo(fileMessage.content.fileUrl)));
             assertThat(carouselFileInfo.getFileType(), is(equalTo(fileMessage.content.type)));
-            assertThat(carouselFileInfo.getFileWriter(), is(equalTo(EntityManager.getInstance().getEntityNameById(fileMessage.writerId))));
+            assertThat(carouselFileInfo.getFileWriter(), is(equalTo(TeamInfoLoader.getInstance().getMemberName(fileMessage.writerId))));
             assertThat(carouselFileInfo.getSize(), is(equalTo(fileMessage.content.size)));
         }
     }
@@ -184,7 +184,7 @@ public class CarouselViewerModelTest {
     @Test
     public void testGetTeamId() throws Exception {
         long teamId = model.getTeamId();
-        assertThat(teamId, is(equalTo(EntityManager.getInstance().getTeamId())));
+        assertThat(teamId, is(equalTo(TeamInfoLoader.getInstance().getTeamId())));
     }
 
     @Test

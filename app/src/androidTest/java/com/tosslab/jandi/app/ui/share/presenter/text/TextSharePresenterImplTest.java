@@ -4,10 +4,8 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
-import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel_;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -17,6 +15,7 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 
+import rx.Observable;
 import setup.BaseInitUtil;
 
 import static com.jayway.awaitility.Awaitility.await;
@@ -48,8 +47,7 @@ public class TextSharePresenterImplTest {
         textSharePresenter = TextSharePresenterImpl_.getInstance_(JandiApplication.getContext());
         mockView = mock(TextSharePresenter.View.class);
         textSharePresenter.setView(mockView);
-        textSharePresenter.shareSelectModel = ShareSelectModel_.getInstance_(JandiApplication.getContext());
-        textSharePresenter.shareSelectModel.initFormattedEntities(LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu());
+        textSharePresenter.teamInfoLoader = TeamInfoLoader.getInstance();
     }
 
     @Test
@@ -64,26 +62,26 @@ public class TextSharePresenterImplTest {
 
             await().until(() -> finish[0]);
 
-            EntityManager entityManager = EntityManager.getInstance();
-            verify(mockView).setRoomName(eq(entityManager.getEntityNameById(entityManager.getDefaultTopicId())));
-            verify(mockView).setTeamName(eq(entityManager.getTeamName()));
-            verify(mockView).setMentionInfo(eq(entityManager.getTeamId()),
-                    eq(entityManager.getDefaultTopicId()),
+            verify(mockView).setRoomName(eq(TeamInfoLoader.getInstance().getName(TeamInfoLoader.getInstance().getDefaultTopicId())));
+            verify(mockView).setTeamName(eq(TeamInfoLoader.getInstance().getTeamName()));
+            verify(mockView).setMentionInfo(eq(TeamInfoLoader.getInstance().getTeamId()),
+                    eq(TeamInfoLoader.getInstance().getDefaultTopicId()),
                     eq(JandiConstants.TYPE_PUBLIC_TOPIC));
         }
     }
 
     @Test
     public void testSetEntity() throws Exception {
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity entity = entityManager.getFormattedUsersWithoutMe().get(0);
-        textSharePresenter.teamId = entityManager.getTeamId();
+        User entity = Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .takeFirst(user -> user.getId() != TeamInfoLoader.getInstance().getMyId())
+                .toBlocking().first();
+        textSharePresenter.teamId = TeamInfoLoader.getInstance().getTeamId();
 
         textSharePresenter.setEntity(entity.getId());
 
         verify(mockView).setRoomName(eq(entity.getName()));
-        verify(mockView).setTeamName(eq(entityManager.getTeamName()));
-        verify(mockView).setMentionInfo(eq(entityManager.getTeamId()),
+        verify(mockView).setTeamName(eq(TeamInfoLoader.getInstance().getTeamName()));
+        verify(mockView).setMentionInfo(eq(TeamInfoLoader.getInstance().getTeamId()),
                 eq(entity.getId()),
                 eq(JandiConstants.TYPE_DIRECT_MESSAGE));
     }
@@ -97,8 +95,8 @@ public class TextSharePresenterImplTest {
             return invocationOnMock;
         }).when(mockView).dismissProgressBar();
 
-        textSharePresenter.teamId = EntityManager.getInstance().getTeamId();
-        textSharePresenter.roomId = EntityManager.getInstance().getDefaultTopicId();
+        textSharePresenter.teamId = TeamInfoLoader.getInstance().getTeamId();
+        textSharePresenter.roomId = TeamInfoLoader.getInstance().getDefaultTopicId();
         textSharePresenter.sendMessage("hello", new ArrayList<>());
 
         await().until(() -> finish[0]);

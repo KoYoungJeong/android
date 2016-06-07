@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter;
 
 import android.support.v7.widget.RecyclerView;
 
-import com.tosslab.jandi.app.network.models.ResFolder;
+import com.tosslab.jandi.app.network.models.start.Folder;
 
 import java.util.Collections;
 
@@ -17,7 +17,7 @@ public class TopicFolderSettingAdapter extends TopicFolderMainAdapter {
 
     @Override
     protected void addDummyFolders() {
-        folders.add(new ResFolder());
+        folders.add(new Folder());
     }
 
     @Override
@@ -33,12 +33,12 @@ public class TopicFolderSettingAdapter extends TopicFolderMainAdapter {
         super.onBindViewHolder(holder, position);
         if (holder.getItemViewType() == TYPE_FOLDER_LIST) {
             FolderAdapterViewHolder viewHolder = (FolderAdapterViewHolder) holder;
-            ResFolder resFolder = getItem(position);
+            Folder resFolder = getItem(position);
             viewHolder.btRemoveFolder.setOnClickListener(v -> {
-                onRemoveFolderListener.onRemove(resFolder.id);
+                onRemoveFolderListener.onRemove(resFolder.getId());
             });
             viewHolder.btRenameFolder.setOnClickListener(v -> {
-                onRenameFolderListener.onRename(resFolder.id, resFolder.name, resFolder.seq);
+                onRenameFolderListener.onRename(resFolder.getId(), resFolder.getName(), resFolder.getSeq());
             });
         } else if (holder.getItemViewType() == TYPE_MAKE_NEW_FOLDER) {
             holder.itemView.setOnClickListener(view -> {

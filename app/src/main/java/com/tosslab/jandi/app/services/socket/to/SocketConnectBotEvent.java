@@ -2,14 +2,14 @@ package com.tosslab.jandi.app.services.socket.to;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@Version(1)
+@Version(2)
 public class SocketConnectBotEvent {
 
     private String event;
@@ -53,15 +53,15 @@ public class SocketConnectBotEvent {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
-        private ResLeftSideMenu.Bot bot;
+        private Bot bot;
         private Connect connect;
 
 
-        public ResLeftSideMenu.Bot getBot() {
+        public Bot getBot() {
             return bot;
         }
 
-        public void setBot(ResLeftSideMenu.Bot bot) {
+        public void setBot(Bot bot) {
             this.bot = bot;
         }
 

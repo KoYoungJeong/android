@@ -9,9 +9,9 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -93,8 +93,7 @@ public class FileSharedEntityChooseActivity extends BaseAppCompatActivity {
         long myId = fileDetailModel.getMyId();
 
         List<Long> sharedEntityWithoutMe = new ArrayList<>();
-        EntityManager entityManager = EntityManager.getInstance();
-        List<FormattedEntity> sharedEntities = new ArrayList<>();
+        List<EntitySimpleListAdapter.SimpleEntity> sharedEntities = new ArrayList<>();
 
         Observable.create(new Observable.OnSubscribe<Long>() {
             @Override
@@ -107,8 +106,26 @@ public class FileSharedEntityChooseActivity extends BaseAppCompatActivity {
         })
                 .distinct()
                 .filter(integerWrapper -> integerWrapper != myId)
-                .filter(entityId -> entityManager.getEntityById(entityId) != EntityManager.UNKNOWN_USER_ENTITY)
-                .map(entityManager::getEntityById)
+                .filter(entityId -> TeamInfoLoader.getInstance().isTopic(entityId)
+                        || TeamInfoLoader.getInstance().isUser(entityId))
+                .map(entityId -> {
+
+                    EntitySimpleListAdapter.SimpleEntity simpleEntity = new EntitySimpleListAdapter.SimpleEntity();
+                    simpleEntity.setName(TeamInfoLoader.getInstance().getName(entityId));
+                    simpleEntity.setId(entityId);
+                    if (TeamInfoLoader.getInstance().isMember(entityId)) {
+                        Member member = TeamInfoLoader.getInstance().getMember(entityId);
+                        simpleEntity.setPhotoUrl(member.getPhotoUrl());
+                        simpleEntity.setStarred(TeamInfoLoader.getInstance().isChatStarred(entityId));
+                        simpleEntity.setUser(true);
+                    } else {
+                        simpleEntity.setStarred(TeamInfoLoader.getInstance().isStarred(entityId));
+                    }
+
+                    simpleEntity.setPublic(TeamInfoLoader.getInstance().isPublicTopic(entityId));
+
+                    return simpleEntity;
+                })
                 .toSortedList((lhs, rhs) -> StringCompareUtil.compare(lhs.getName(), rhs.getName()))
                 .collect(() -> sharedEntities, List::addAll)
                 .subscribe();

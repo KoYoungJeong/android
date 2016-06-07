@@ -18,18 +18,15 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
-import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ReadyMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.RoomMarkerRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
@@ -41,13 +38,15 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -112,8 +111,8 @@ public class MessageListModel {
         DaggerApiClientComponent.create().inject(this);
     }
 
-    public boolean isTopic(FormattedEntity entity) {
-        return entity != EntityManager.UNKNOWN_USER_ENTITY && !entity.isUser();
+    public boolean isTopic(long entityid) {
+        return TeamInfoLoader.getInstance().isTopic(entityid);
     }
 
     public void setEntityInfo(int entityType, long entityId) {
@@ -245,7 +244,7 @@ public class MessageListModel {
     }
 
     public boolean isMyMessage(long writerId) {
-        return EntityManager.getInstance().getMe().getId() == writerId;
+        return TeamInfoLoader.getInstance().getMyId() == writerId;
     }
 
     @Deprecated
@@ -299,46 +298,16 @@ public class MessageListModel {
         }
     }
 
-    public void modifyTopicName(int entityType, long entityId, String inputName) throws RetrofitException {
-        if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
-            entityClientManager.modifyChannelName(entityId, inputName);
-        } else if (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) {
-            entityClientManager.modifyPrivateGroupName(entityId, inputName);
-        }
-    }
-
-    public void trackChangingEntityName(int entityType) {
-
-        try {
-            String distictId = EntityManager.getInstance().getDistictId();
-
-            MixpanelMemberAnalyticsClient
-                    .getInstance(activity, distictId)
-                    .trackChangingEntityName(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
-        } catch (JSONException e) {
-        }
-    }
-
     public void trackDeletingEntity(int entityType) {
-        String distictId = EntityManager.getInstance().getDistictId();
+        String distictId = TeamInfoLoader.getInstance().getMyId() +
+                "-" +
+                TeamInfoLoader.getInstance().getTeamId();
         try {
             MixpanelMemberAnalyticsClient
                     .getInstance(activity, distictId)
                     .trackDeletingEntity(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
         } catch (JSONException e) {
         }
-    }
-
-    public List<ResMessages.Link> getDummyMessages(long roomId) {
-        List<SendMessage> sendMessage = SendMessageRepository.getRepository().getSendMessageOfRoom(roomId);
-        long id = EntityManager.getInstance().getMe().getId();
-        List<ResMessages.Link> links = new ArrayList<>();
-        for (SendMessage link : sendMessage) {
-
-            DummyMessageLink dummyMessageLink = getDummyMessageLink(id, link);
-            links.add(dummyMessageLink);
-        }
-        return links;
     }
 
     private DummyMessageLink getDummyMessageLink(long id, SendMessage link) {
@@ -388,10 +357,9 @@ public class MessageListModel {
 
     public boolean isEnabledIfUser(long entityId) {
 
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-
-        if (entity != EntityManager.UNKNOWN_USER_ENTITY && entity.isUser()) {
-            return entity.isEnabled();
+        if (TeamInfoLoader.getInstance().isUser(entityId)) {
+            User user = TeamInfoLoader.getInstance().getUser(entityId);
+            return user.isEnabled();
         } else {
             return true;
         }
@@ -403,32 +371,13 @@ public class MessageListModel {
         return messageManipulator.getBeforeMarkerMessage(linkId);
     }
 
-    public ResMessages getAfterMarkerMessage(long linkId) throws RetrofitException {
-        return messageManipulator.getAfterMarkerMessage(linkId);
-    }
-
     public ResMessages getAfterMarkerMessage(long linkId, int count) throws RetrofitException {
         return messageManipulator.getAfterMarkerMessage(linkId, count);
     }
 
-    public void updateMarkerInfo(long teamId, long roomId) {
-        if (teamId <= 0 || roomId <= 0) {
-            return;
-        }
-
-        try {
-            ResRoomInfo resRoomInfo = roomsApi.get().getRoomInfo(teamId, roomId);
-            MarkerRepository.getRepository().upsertRoomInfo(resRoomInfo);
-            EventBus.getDefault().post(new RoomMarkerEvent());
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void upsertMyMarker(long roomId, long lastLinkId) {
-        long myId = EntityManager.getInstance().getMe().getId();
-        long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
-        MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, myId, lastLinkId);
+        long myId = TeamInfoLoader.getInstance().getMyId();
+        RoomMarkerRepository.getInstance().updateRoomMarker(roomId, myId, lastLinkId);
     }
 
     public long sendStickerMessage(long teamId, long entityId, StickerInfo stickerInfo, long localId) {
@@ -525,9 +474,7 @@ public class MessageListModel {
     }
 
     public boolean isUser(long entityId) {
-        return EntityManager
-                .getInstance()
-                .getEntityById(entityId).isUser() || EntityManager.getInstance().isJandiBot(entityId);
+        return TeamInfoLoader.getInstance().isUser(entityId);
     }
 
     public String getReadyMessage(long roomId) {
@@ -553,29 +500,26 @@ public class MessageListModel {
 
     }
 
-    public long getLastReadLinkId(long roomId, long entityId) {
+    public long getLastReadLinkId(long roomId, long memberId) {
         if (roomId > 0) {
             // 기존의 마커 정보 가져오기
-            ResRoomInfo.MarkerInfo myMarker = MarkerRepository.getRepository()
-                    .getMyMarker(roomId, entityId);
+            Marker marker = RoomMarkerRepository.getInstance().getMarker(roomId, memberId);
 
-            if (myMarker != null && myMarker.getLastLinkId() > 0) {
-                return myMarker.getLastLinkId();
+            if (marker != null && marker.getReadLinkId() > 0) {
+                return marker.getReadLinkId();
             }
         }
 
         // 엔티티 기준으로 정보 가져오기
-        ResLeftSideMenu.User myUser = EntityManager.getInstance().getMe()
-                .getUser();
+        long chatId = TeamInfoLoader.getInstance().getChatId(memberId);
+        Room room = TeamInfoLoader.getInstance().getRoom(chatId);
 
-        Long lastLinkId = Observable.from(myUser.u_messageMarkers)
-                .filter(messageMarker -> messageMarker.entityId == entityId)
-                .map(messageMarker -> messageMarker.lastLinkId)
+        return Observable.from(room.getMarkers())
+                .filter(messageMarker -> messageMarker.getMemberId() == memberId)
+                .map(Marker::getReadLinkId)
                 .firstOrDefault(-1L)
                 .toBlocking()
                 .first();
-
-        return lastLinkId;
     }
 
     @Nullable
@@ -606,11 +550,11 @@ public class MessageListModel {
     }
 
     public long getMyId() {
-        return EntityManager.getInstance().getMe().getId();
+        return TeamInfoLoader.getInstance().getMyId();
     }
 
     public boolean isTeamOwner() {
-        return EntityManager.getInstance().getMe().isTeamOwner();
+        return TeamInfoLoader.getInstance().getUser(getMyId()).isTeamOwner();
     }
 
     public boolean isCurrentTeam(long teamId) {
@@ -712,7 +656,7 @@ public class MessageListModel {
     }
 
     public boolean isInactiveUser(long entityId) {
-        return EntityManager.getInstance().getEntityById(entityId).isInavtived();
+        return TeamInfoLoader.getInstance().getUser(entityId).isInactive();
     }
 
     public void deleteAllDummyMessageAtDatabase(long roomId) {
@@ -721,7 +665,7 @@ public class MessageListModel {
 
     public ResMessages.Link getDummyMessage(long localId) {
         SendMessage sendMessage = SendMessageRepository.getRepository().getSendMessageOfLocal(localId);
-        long id = EntityManager.getInstance().getMe().getId();
+        long id = TeamInfoLoader.getInstance().getMyId();
         return getDummyMessageLink(id, sendMessage);
     }
 
@@ -741,7 +685,7 @@ public class MessageListModel {
 
     private void presetCommentMessage(ResMessages.Link link) {
         ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) link.message;
-        long myId = EntityManager.getInstance().getMe().getId();
+        long myId = TeamInfoLoader.getInstance().getMyId();
         if (commentMessage.content.contentBuilder == null) {
 
             SpannableStringBuilder messageBuilder = new SpannableStringBuilder();
@@ -774,7 +718,7 @@ public class MessageListModel {
             SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
             if (!TextUtils.isEmpty(textMessage.content.body)) {
                 messageStringBuilder.append(textMessage.content.body);
-                long myId = EntityManager.getInstance().getMe().getId();
+                long myId = TeamInfoLoader.getInstance().getMyId();
                 MentionAnalysisInfo mentionInfo = MentionAnalysisInfo.newBuilder(myId, textMessage.mentions)
                         .textSize(UiUtils.getPixelFromSp(14f))
                         .clickable(true)

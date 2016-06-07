@@ -4,17 +4,14 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.BotEntity;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.IntegrationBotViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi.JandiBotViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
@@ -476,21 +473,11 @@ public class BodyViewFactory {
     }
 
     private static boolean isJandiBotMessage(ResMessages.Link link) {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(link.message.writerId);
-        boolean isBot = entity instanceof BotEntity;
-        if (isBot && TextUtils.equals(((BotEntity) entity).getBotType(), "jandi_bot")) {
-            return true;
-        }
-        return false;
+        return TeamInfoLoader.getInstance().isJandiBot(link.message.writerId);
     }
 
     private static boolean isIntegrationBotMessage(ResMessages.Link link) {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(link.message.writerId);
-        boolean isBot = entity instanceof BotEntity;
-        if (isBot && !TextUtils.equals(((BotEntity) entity).getBotType(), "jandi_bot")) {
-            return true;
-        }
-        return false;
+        return TeamInfoLoader.getInstance().isBot(link.message.writerId);
     }
 
     private static boolean isPureMessage(ResMessages.Link previousLink, ResMessages.Link currentLink) {

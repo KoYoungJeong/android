@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.share.views.domain.ExpandRoomData;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -79,7 +78,7 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         if (getItemViewType(position) == TYPE_FOLDER) {
             hasFolder = true;
             FolderViewHolder folderViewHolder = (FolderViewHolder) holder;
-            folderViewHolder.tvName.setText(item.getName().toString());
+            folderViewHolder.tvName.setText(item.getName());
             folderViewHolder.itemView.setClickable(false);
             if (position == 0) {
                 folderViewHolder.vLine.setVisibility(View.INVISIBLE);
@@ -99,12 +98,7 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
 
         ImageView ivIcon = roomholder.ivIcon;
-        if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
-            roomholder.ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            roomholder.ivIcon.setImageResource(R.drawable.icon_search_all);
-
-            roomholder.tvName.setText(R.string.jandi_file_category_everywhere);
-        } else if (item.isUser()) {
+        if (item.isUser()) {
             String fileUrl = ImageUtil.getImageFileUrl(item.getProfileUrl());
             ImageUtil.loadProfileImage(ivIcon, fileUrl, R.drawable.profile_img_comment);
             roomholder.tvName.setText(item.getName());

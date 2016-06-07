@@ -7,7 +7,7 @@ import android.provider.MediaStore;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.share.model.ShareModel_;
 import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
 import com.tosslab.jandi.app.ui.share.multi.model.ShareAdapterDataModel;
@@ -60,7 +60,7 @@ public class MultiSharePresenterImplTest {
         mockDataModel = mock(ShareAdapterDataModel.class);
         mockView = mock(MultiSharePresenter.View.class);
         multiSharePresenter = new MultiSharePresenterImpl(mockView, mockDataModel);
-        ((MultiSharePresenterImpl) multiSharePresenter).shareSelectModel = ShareModel_.getInstance_(JandiApplication.getContext()).getShareSelectModel(EntityManager.getInstance().getTeamId());
+        ((MultiSharePresenterImpl) multiSharePresenter).teamInfoLoader = ShareModel_.getInstance_(JandiApplication.getContext()).getTeamInfoLoader(TeamInfoLoader.getInstance().getTeamId());
     }
 
     @Test
@@ -72,8 +72,8 @@ public class MultiSharePresenterImplTest {
 
     @Test
     public void testOnSelectTeam() throws Exception {
-        long teamId = EntityManager.getInstance().getTeamId();
-        long defaultTopicId = EntityManager.getInstance().getDefaultTopicId();
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        long defaultTopicId = TeamInfoLoader.getInstance().getDefaultTopicId();
 
         final boolean[] finish = {false};
         doAnswer(invocationOnMock -> {
@@ -117,7 +117,7 @@ public class MultiSharePresenterImplTest {
 
     @Test
     public void testOnSelectRoom() throws Exception {
-        multiSharePresenter.onSelectRoom(EntityManager.getInstance().getDefaultTopicId());
+        multiSharePresenter.onSelectRoom(TeamInfoLoader.getInstance().getDefaultTopicId());
 
         verify(mockView).setRoomName(anyString());
         verify(mockView).setMentionInfo(anyLong(), anyLong());

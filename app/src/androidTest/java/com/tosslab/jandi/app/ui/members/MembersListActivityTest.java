@@ -5,8 +5,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.members.adapter.ModdableMemberListAdapter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl_;
@@ -68,9 +67,9 @@ public class MembersListActivityTest {
             }
         }
 
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
+        String name = TeamInfoLoader.getInstance().getName(entityId);
 
-        onView(withText(entity.getName()))
+        onView(withText(name))
                 // 체크 메소드 다시 설정해야함.
                 .check(doesNotExist());
 

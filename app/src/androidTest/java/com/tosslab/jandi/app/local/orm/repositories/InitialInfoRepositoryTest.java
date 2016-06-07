@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.local.orm.repositories;
 
 import android.support.test.runner.AndroidJUnit4;
 
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
@@ -9,7 +10,7 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.start.InitializeInfo;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.Before;
@@ -24,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class InitialInfoRepositoryTest {
     private ResAccountInfo accountInfo;
     private StartApi startApi;
-    private InitializeInfo initializeInfo;
+    private InitialInfo initialInfo;
     private long teamId;
 
     @Before
@@ -35,22 +36,22 @@ public class InitialInfoRepositoryTest {
         accountInfo = new AccountApi(RetrofitBuilder.getInstance()).getAccountInfo();
         startApi = new StartApi(RetrofitBuilder.getInstance());
         teamId = accountInfo.getMemberships().iterator().next().getTeamId();
-        initializeInfo = startApi.getInitializeInfo(teamId);
+        initialInfo = startApi.getInitializeInfo(teamId);
     }
 
     @Test
     public void testUpsertInitialInfo() throws Exception {
-        boolean success = InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+        boolean success = InitialInfoRepository.getInstance().upsertInitialInfo(initialInfo);
         assertThat(success).isTrue();
 
-        InitializeInfo initialInfo = InitialInfoRepository.getInstance().getInitialInfo(teamId);
+        InitialInfo initialInfo = InitialInfoRepository.getInstance().getInitialInfo(teamId);
 
         assertThat(initialInfo).isNotNull();
         assertThat(initialInfo.getTeam()).isNotNull();
         assertThat(initialInfo.getTopics()).isNotNull().isNotEmpty();
         assertThat(initialInfo.getChats()).isNotNull().isNotEmpty();
         assertThat(initialInfo.getFolders()).isNotNull().isNotEmpty();
-        assertThat(initialInfo.getHumans()).isNotNull().isNotEmpty();
+        assertThat(initialInfo.getMembers()).isNotNull().isNotEmpty();
         assertThat(initialInfo.getBots()).isNotNull();
 
     }

@@ -14,32 +14,38 @@ import android.view.View;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResFolder;
-import com.tosslab.jandi.app.network.models.ResFolderItem;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.TopicFolder;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.share.views.adapter.ShareRoomsAdapter;
 import com.tosslab.jandi.app.ui.share.views.domain.ExpandRoomData;
-import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.functions.Func0;
 
 
 @EActivity(R.layout.layout_room_selector)
@@ -48,8 +54,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
     @Extra
     long teamId;
 
-    @Bean
-    ShareSelectModel shareSelectModel;
+    TeamInfoLoader teamInfoLoader;
 
     @ViewById(R.id.tv_room_selector_topic)
     View topicView;
@@ -110,13 +115,13 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
     void initFormattedEntities() {
         showProgress();
         try {
-            ResLeftSideMenu leftSideMenu;
-            leftSideMenu = LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
-            if (leftSideMenu == null) {
-                leftSideMenu = shareSelectModel.getLeftSideMenu(teamId);
-                LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+
+            if (!InitialInfoRepository.getInstance().hasInitialInfo(teamId)) {
+                InitialInfo initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(teamId);
+                InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+
             }
-            shareSelectModel.initFormattedEntities(leftSideMenu);
+            teamInfoLoader = TeamInfoLoader.getInstance(teamId);
             getTopics();
         } catch (RetrofitException e) {
             e.printStackTrace();
@@ -129,22 +134,83 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
 
     @Background(serial = "share_background")
     void getTopics() {
-        List<ResFolder> topicFolders = shareSelectModel.getTopicFolders(teamId);
-        List<ResFolderItem> topicFolderItems = shareSelectModel.getTopicFolderItems(teamId);
-        LinkedHashMap<Long, FormattedEntity> joinEntities = shareSelectModel.getJoinEntities();
+        List<TopicFolder> topicFolders = teamInfoLoader.getTopicFolders();
 
-        List<ExpandRoomData> topicDatas =
-                shareSelectModel.getExpandRoomDatas(topicFolders, topicFolderItems, joinEntities);
+        List<ExpandRoomData> topicDatas = getExpandRoomDatas(topicFolders, teamInfoLoader);
+
         showTopics(topicDatas);
 
         hideProgress();
+    }
+
+    private List<ExpandRoomData> getExpandRoomDatas(List<TopicFolder> topicFolders,
+                                                    TeamInfoLoader teamInfoLoader) {
+
+        List<ExpandRoomData> expandRoomDatas = new ArrayList<>();
+        Set<Long> addedRoomIds = new HashSet<>();
+        Observable.from(topicFolders)
+                .toSortedList((topicFolder, topicFolder2) -> topicFolder.getSeq() - topicFolder2.getSeq())
+                .flatMap(Observable::from)
+                .subscribe(topicFolder1 -> {
+                    ExpandRoomData folderData = new ExpandRoomData();
+                    folderData.setIsFolder(true);
+                    folderData.setName(topicFolder1.getName());
+                    expandRoomDatas.add(folderData);
+                    List<TopicRoom> rooms = topicFolder1.getRooms();
+                    Observable.from(rooms)
+                            .map(topicRoom -> {
+                                ExpandRoomData roomData = new ExpandRoomData();
+                                roomData.setName(topicRoom.getName());
+                                roomData.setIsPublicTopic(topicRoom.isPublicTopic());
+                                roomData.setIsStarred(topicRoom.isStarred());
+                                roomData.setEntityId(topicRoom.getId());
+                                addedRoomIds.add(topicRoom.getId());
+                                return roomData;
+                            }).collect(() -> expandRoomDatas, List::add)
+                            .subscribe();
+                });
+
+        Observable.from(teamInfoLoader.getTopicList())
+                .filter(TopicRoom::isJoined)
+                .filter(topicRoom -> !addedRoomIds.contains(topicRoom.getId()))
+                .map(topicRoom -> {
+
+                    ExpandRoomData roomData = new ExpandRoomData();
+                    roomData.setEntityId(topicRoom.getId());
+                    roomData.setIsStarred(topicRoom.isStarred());
+                    roomData.setIsPublicTopic(topicRoom.isPublicTopic());
+                    roomData.setName(topicRoom.getName());
+
+                    return roomData;
+                }).toSortedList((rhs, lhs) -> StringCompareUtil.compare(rhs.getName(), lhs.getName()))
+                .subscribe(expandRoomDatas1 -> {
+                    if (expandRoomDatas1.size() > 0) {
+                        expandRoomDatas1.get(0).setIsFirstAmongNoFolderItem(true);
+                    }
+                });
+
+        return expandRoomDatas;
     }
 
     @Background
     void getDirectMessages() {
         showProgress();
 
-        List<ExpandRoomData> userRoomDatas = shareSelectModel.getUserRoomDatas();
+        List<ExpandRoomData> userRoomDatas =
+                Observable.from(teamInfoLoader.getUserList())
+                        .filter(User::isEnabled)
+                        .map(user -> {
+                            ExpandRoomData expandRoomData = new ExpandRoomData();
+                            expandRoomData.setEntityId(user.getId());
+                            expandRoomData.setIsUser(true);
+                            expandRoomData.setName(user.getName());
+                            expandRoomData.setProfileUrl(user.getPhotoUrl());
+                            return expandRoomData;
+                        })
+                        .collect((Func0<ArrayList<ExpandRoomData>>) ArrayList::new, ArrayList::add)
+                        .toBlocking()
+                        .first();
+
         showDirectMessages(userRoomDatas);
 
         hideProgress();

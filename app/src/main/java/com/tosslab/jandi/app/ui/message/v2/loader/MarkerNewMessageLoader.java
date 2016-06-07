@@ -1,16 +1,14 @@
 package com.tosslab.jandi.app.ui.message.v2.loader;
 
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.RoomMarkerRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResRoomInfo;
+import com.tosslab.jandi.app.network.models.start.Marker;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPresenter;
-
 
 
 public class MarkerNewMessageLoader implements NewsMessageLoader {
@@ -50,14 +48,12 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
                     long lastLinkId = newMessage.records.get(newMessage.records.size() - 1).id;
                     messageState.setLastUpdateLinkId(lastLinkId);
 
-                    long myId = EntityManager.getInstance().getMe().getId();
-                    ResRoomInfo.MarkerInfo myMarker = MarkerRepository.getRepository().getMyMarker(roomId, myId);
+                    long myId = TeamInfoLoader.getInstance().getMyId();
+                    Marker myMarker = RoomMarkerRepository.getInstance().getMarker(roomId, myId);
 
-                    if (myMarker.getLastLinkId() < lastLinkId) {
+                    if (myMarker.getReadLinkId() < lastLinkId) {
                         messageListModel.updateLastLinkId(messageState.getLastUpdateLinkId());
-                        messageListModel.updateMarkerInfo(AccountRepository.getRepository().getSelectedTeamId(),
-                                roomId);
-
+                        RoomMarkerRepository.getInstance().updateRoomMarker(roomId, myId, messageState.getLastUpdateLinkId());
                     }
 
                 } else {

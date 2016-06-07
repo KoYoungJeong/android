@@ -6,8 +6,8 @@ import android.text.Spanned;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 /**
@@ -35,7 +35,7 @@ public class FileInfoTextVisitor implements TextVisitor {
         int textSize = (int) context.getResources().getDimension(R.dimen.jandi_message_search_item_large_txt_size);
         NameSpannable nameSpannable;
 
-        String name = EntityManager.getInstance().getEntityById(record.getFileInfo().getWriterId()).getName();
+        String name = TeamInfoLoader.getInstance().getMemberName(record.getFileInfo().getWriterId());
         int start = builder.length();
         nameSpannable = new NameSpannable(textSize, textColor);
         builder.append(name).setSpan(nameSpannable, start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

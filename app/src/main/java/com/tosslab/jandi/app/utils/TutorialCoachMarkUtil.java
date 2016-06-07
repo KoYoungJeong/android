@@ -9,8 +9,8 @@ import android.view.Window;
 import android.widget.ImageView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 /**
@@ -55,18 +55,14 @@ public class TutorialCoachMarkUtil {
         View masterView = dialog.findViewById(R.id.coach_mark_master_view);
         masterView.setOnClickListener(view -> dialog.dismiss());
 
-        EntityManager entityManager = EntityManager.getInstance();
-
         if (coachMarkType == COACH_MARK_MORE) {
             ImageView profileImageView =
                     (ImageView) masterView.findViewById(R.id.iv_profile_guide_image_icon);
             if (profileImageView != null) {
-                if (entityManager != null) {
-                    FormattedEntity me = entityManager.getMe();
+                User me = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
 
-                    ImageUtil.loadProfileImage(
-                            profileImageView, me.getUserSmallProfileUrl(), R.drawable.profile_img);
-                }
+                ImageUtil.loadProfileImage(
+                        profileImageView, me.getPhotoUrl(), R.drawable.profile_img);
             }
         }
 

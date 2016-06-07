@@ -16,10 +16,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 
-/**
- * Created by Steve SeongUg Jung on 14. 12. 3..
- */
-
 @EBean
 public class IntroActivityPresenter {
 
@@ -148,7 +144,7 @@ public class IntroActivityPresenter {
         if (selectedTeamId > 0) {
             // 선택된 팀 정보가 있는 경우 : account 정보 > select team 설정 > Main Activity
             model.setSelectedTeamId(selectedTeamId);
-            model.refreshEntityInfo(context);
+            model.refreshEntityInfo();
             moveNextActivity(context, initTime, startForInvite);
         } else {
             // 선택된 팀 정보가 없는 경우 : account 정보 > TeamSelectActivity
@@ -172,7 +168,7 @@ public class IntroActivityPresenter {
 
             if (!model.hasLeftSideMenu() && NetworkCheckUtil.isConnected()) {
                 // LeftSideMenu 가 없는 경우 대비
-                model.refreshEntityInfo(context);
+                model.refreshEntityInfo();
             }
 
             // Track Auto Sign In (with flush)

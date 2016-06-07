@@ -4,19 +4,16 @@ import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
-import com.tosslab.jandi.app.lists.BotEntity;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
@@ -120,7 +117,6 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
             if (resMessages != null && roomId <= 0) {
                 roomId = resMessages.entityId;
                 view.setRoomId(roomId);
-                messageListModel.updateMarkerInfo(teamId, roomId);
                 messageListModel.setRoomId(roomId);
             }
 
@@ -177,8 +173,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     @Override
     public void onInitRoomInfo() {
         if (roomId <= 0) {
-            FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-            boolean user = entity.isUser() || entity instanceof BotEntity;
+            boolean user = TeamInfoLoader.getInstance().isUser(entityId);
 
             if (!user) {
                 roomId = entityId;
@@ -194,7 +189,6 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
             view.setRoomId(roomId);
         }
 
-        messageListModel.updateMarkerInfo(teamId, roomId);
         messageListModel.setRoomId(roomId);
 
 
@@ -228,9 +222,9 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     }
 
     private void getAnnouncement() {
-        ResAnnouncement announcement = announcementModel.getAnnouncement(teamId, roomId);
+        Topic.Announcement announcement = TeamInfoLoader.getInstance().getTopic(roomId).getAnnouncement();
         view.dismissProgressWheel();
-        view.setAnnouncement(announcement, announcementModel.isAnnouncementOpened(entityId));
+        view.setAnnouncement(announcement);
 
     }
 
@@ -248,12 +242,10 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
     @Background
     @Override
-    public void onCreatedAnnouncement(boolean isForeground, boolean isRoomInit) {
-        if (!isForeground) {
-            messageListModel.updateMarkerInfo(teamId, roomId);
-        } else if (isRoomInit) {
-            sendMessagePublisherEvent(new NewMessageContainer(messageState));
-            sendMessagePublisherEvent(new CheckAnnouncementContainer());
+    public void onCreatedAnnouncement(boolean isRoomInit) {
+        if (isRoomInit) {
+            Topic.Announcement announcement = TeamInfoLoader.getInstance().getTopic(roomId).getAnnouncement();
+            view.setAnnouncement(announcement);
         }
     }
 
@@ -262,7 +254,6 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     public void onUpdateAnnouncement(boolean isForeground, boolean isRoomInit, SocketAnnouncementEvent.Data data) {
         if (!isForeground) {
             announcementModel.setActionFromUser(false);
-            messageListModel.updateMarkerInfo(teamId, roomId);
             return;
         }
         if (data != null) {
@@ -276,9 +267,9 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     @Background
     @Override
     public void checkAnnouncementExistsAndCreate(long messageId) {
-        ResAnnouncement announcement = announcementModel.getAnnouncement(teamId, roomId);
+        Topic.Announcement announcement = announcementModel.getAnnouncement(teamId, roomId);
 
-        if (announcement == null || announcement.isEmpty()) {
+        if (announcement == null) {
             createAnnouncement(messageId);
             return;
         }
@@ -390,28 +381,6 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
     @Background
     @Override
-    public void onModifyEntity(String topicName) {
-        view.showProgressWheel();
-        try {
-            messageListModel.modifyTopicName(entityType, entityId, topicName);
-            view.modifyEntitySucceed(topicName);
-            messageListModel.trackChangingEntityName(entityType);
-            EntityManager.getInstance().getEntityById(entityId).getEntity().name = topicName;
-        } catch (RetrofitException e) {
-            if (e.getStatusCode() == JandiConstants.NetworkError.DUPLICATED_NAME) {
-                view.showFailToast(JandiApplication.getContext().getString(R.string.err_entity_duplicated_name));
-            } else {
-                view.showFailToast(JandiApplication.getContext().getString(R.string.err_entity_modify));
-            }
-        } catch (Exception e) {
-            view.showFailToast(JandiApplication.getContext().getString(R.string.err_entity_modify));
-        } finally {
-            view.dismissProgressWheel();
-        }
-    }
-
-    @Background
-    @Override
     public void registStarredMessage(long teamId, long messageId) {
         try {
             messageListModel.registStarredMessage(teamId, messageId);
@@ -456,6 +425,5 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
             sendMessagePublisherEvent(new OldMessageContainer(messageState));
         }
     }
-
 
 }

@@ -7,13 +7,12 @@ import android.text.TextUtils;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
-import com.tosslab.jandi.app.network.client.main.LeftSideApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
+import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
@@ -23,7 +22,7 @@ import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -135,9 +134,8 @@ public class BaseInitUtil {
             AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
             AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
-            ResLeftSideMenu leftSideMenu = new LeftSideApi(RetrofitBuilder.getInstance()).getInfosForSideMenu(AccountRepository.getRepository().getSelectedTeamId());
-            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
-            EntityManager.getInstance().refreshEntity();
+            refreshLeftSideMenu();
+
         } catch (RetrofitException e) {
             e.printStackTrace();
         }
@@ -205,9 +203,9 @@ public class BaseInitUtil {
 
     public static void refreshLeftSideMenu() {
         try {
-            ResLeftSideMenu leftSideMenu = new LeftSideApi(RetrofitBuilder.getInstance()).getInfosForSideMenu(AccountRepository.getRepository().getSelectedTeamId());
-            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
-            EntityManager.getInstance().refreshEntity();
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
+            InitialInfo initialInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(teamId);
+            InitialInfoRepository.getInstance().upsertInitialInfo(initialInfo);
         } catch (RetrofitException e) {
             e.printStackTrace();
         }

@@ -1,14 +1,14 @@
 package com.tosslab.jandi.app.ui.members.model;
 
-import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.lists.BotEntity;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqMember;
 import com.tosslab.jandi.app.network.models.ReqOwner;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
@@ -23,6 +23,7 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import rx.Observable;
+import rx.functions.Func0;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -33,33 +34,56 @@ public class MembersModel {
     @Inject
     Lazy<RoomsApi> roomsApi;
 
+    public static List<User> getEnabledTeamMember() {
+        List<User> members = new ArrayList<>();
+
+        members.addAll(TeamInfoLoader.getInstance().getUserList());
+
+        Observable.from(members)
+                .filter(User::isEnabled)
+                .toSortedList((entity, entity2) -> {
+                    if (entity.isBot()) {
+                        return -1;
+                    } else if (entity2.isBot()) {
+                        return 1;
+                    } else {
+                        return StringCompareUtil.compare(entity.getName(), entity2.getName());
+                    }
+                })
+                .subscribe(entities -> {
+                    members.clear();
+                    members.addAll(entities);
+                });
+        return members;
+    }
+
     @AfterInject
     void initObject() {
         DaggerApiClientComponent.create().inject(this);
     }
 
     public List<ChatChooseItem> getTopicMembers(long entityId) {
-        final EntityManager entityManager = EntityManager.getInstance();
 
-        Collection<Long> members = entityManager.getEntityById(entityId).getMembers();
-        List<FormattedEntity> formattedUsers = entityManager.getFormattedUsers();
+        TopicRoom topic = TeamInfoLoader.getInstance().getTopic(entityId);
+        Collection<Long> members = topic.getMembers();
+        List<User> formattedUsers = TeamInfoLoader.getInstance().getUserList();
 
         List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
         Observable.from(members)
                 .map(memberEntityId -> Observable.from(formattedUsers)
                         .filter(entity -> entity.getId() == memberEntityId)
-                        .map(entity -> {
+                        .map(user -> {
 
                             ChatChooseItem chatChooseItem = new ChatChooseItem();
-                            return chatChooseItem.entityId(entity.getId())
-                                    .statusMessage(entity.getUserStatusMessage())
-                                    .photoUrl(entity.getUserLargeProfileUrl())
-                                    .starred(entity.isStarred)
-                                    .enabled(entity.isEnabled())
-                                    .inactive(entity.isInavtived())
-                                    .email(entity.getUserEmail())
-                                    .owner(entityManager.isTopicOwner(entityId, entity.getId()))
-                                    .name(entity.getName());
+                            return chatChooseItem.entityId(user.getId())
+                                    .statusMessage(user.getStatusMessage())
+                                    .photoUrl(user.getPhotoUrl())
+                                    .starred(TeamInfoLoader.getInstance().isChatStarred(entityId))
+                                    .enabled(user.isEnabled())
+                                    .inactive(user.isInactive())
+                                    .email(user.getEmail())
+                                    .owner(topic.getCreatorId() == user.getId())
+                                    .name(user.getName());
 
                         })
                         .toBlocking()
@@ -72,32 +96,32 @@ public class MembersModel {
 
     public List<ChatChooseItem> getTeamMembers() {
 
-        List<FormattedEntity> formattedUsers = EntityManager.getInstance().getFormattedUsers();
+        List<User> formattedUsers = TeamInfoLoader.getInstance().getUserList();
 
         List<ChatChooseItem> chatChooseItems = new ArrayList<>();
         Observable.from(formattedUsers)
-                .map(entity -> {
+                .map(user -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
-                    return chatChooseItem.entityId(entity.getId())
-                            .statusMessage(entity.getUserStatusMessage())
-                            .photoUrl(entity.getUserLargeProfileUrl())
-                            .starred(entity.isStarred)
-                            .enabled(entity.isEnabled())
-                            .inactive(entity.isInavtived())
-                            .email(entity.getUserEmail())
-                            .owner(entity.isTeamOwner())
-                            .name(entity.getName());
+                    return chatChooseItem.entityId(user.getId())
+                            .statusMessage(user.getStatusMessage())
+                            .photoUrl(user.getPhotoUrl())
+                            .starred(TeamInfoLoader.getInstance().isChatStarred(user.getId()))
+                            .enabled(user.isEnabled())
+                            .inactive(user.isInactive())
+                            .email(user.getEmail())
+                            .owner(user.isTeamOwner())
+                            .name(user.getName());
                 })
                 .filter(ChatChooseItem::isEnabled)
                 .subscribe(chatChooseItems::add, Throwable::printStackTrace);
 
-        if (EntityManager.getInstance().hasJandiBot()) {
-            BotEntity botEntity = (BotEntity) EntityManager.getInstance().getJandiBot();
+        if (TeamInfoLoader.getInstance().hasJandiBot()) {
+            User jandiBot = TeamInfoLoader.getInstance().getJandiBot();
             ChatChooseItem bot = new ChatChooseItem();
-            bot.entityId(botEntity.getId())
-                    .name(botEntity.getName())
+            bot.entityId(jandiBot.getId())
+                    .name(jandiBot.getName())
                     .isBot(true)
-                    .enabled(botEntity.isEnabled());
+                    .enabled(jandiBot.isEnabled());
             chatChooseItems.add(bot);
         }
 
@@ -106,37 +130,27 @@ public class MembersModel {
 
     public List<ChatChooseItem> getUnjoinedTopicMembers(long entityId) {
 
-        EntityManager entityManager = EntityManager.getInstance();
-
-        FormattedEntity entity = entityManager.getEntityById(entityId);
-
-        int entityType = entity.isPublicTopic()
-                ? JandiConstants.TYPE_PUBLIC_TOPIC
-                : entity.isPrivateGroup()
-                ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
-
-        List<FormattedEntity> unjoinedMembersOfEntity = entityManager.getUnjoinedMembersOfEntity(entityId, entityType);
-
-        List<ChatChooseItem> chatChooseItems = new ArrayList<>();
-
-        Observable.from(unjoinedMembersOfEntity)
-                .map(unjoinedEntity -> {
+        TopicRoom topicRoom = TeamInfoLoader.getInstance().getTopic(entityId);
+        Collection<Long> topicMembers = topicRoom.getMembers();
+        List<User> userList = TeamInfoLoader.getInstance().getUserList();
+        return Observable.from(userList)
+                .filter(User::isEnabled)
+                .filter(user -> !topicMembers.contains(user.getId()))
+                .map(user -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
-                    return chatChooseItem.entityId(unjoinedEntity.getId())
-                            .statusMessage(unjoinedEntity.getUserStatusMessage())
-                            .photoUrl(unjoinedEntity.getUserLargeProfileUrl())
-                            .starred(unjoinedEntity.isStarred)
-                            .enabled(unjoinedEntity.isEnabled())
-                            .inactive(unjoinedEntity.isInavtived())
-                            .email(unjoinedEntity.getUserEmail())
-                            .owner(unjoinedEntity.isTeamOwner())
-                            .name(unjoinedEntity.getName());
+                    return chatChooseItem.entityId(user.getId())
+                            .statusMessage(user.getStatusMessage())
+                            .photoUrl(user.getPhotoUrl())
+                            .starred(TeamInfoLoader.getInstance().isChatStarred(user.getId()))
+                            .enabled(user.isEnabled())
+                            .inactive(user.isInactive())
+                            .email(user.getEmail())
+                            .owner(user.isTeamOwner())
+                            .name(user.getName());
                 })
-                .filter(ChatChooseItem::isEnabled)
-                .subscribe(chatChooseItems::add, Throwable::printStackTrace);
-
-        return chatChooseItems;
-
+                .collect((Func0<ArrayList<ChatChooseItem>>) ArrayList::new, ArrayList::add)
+                .toBlocking()
+                .firstOrDefault(new ArrayList<>());
     }
 
     public void kickUser(long teamId, long topicId, long userEntityId) throws RetrofitException {
@@ -144,59 +158,27 @@ public class MembersModel {
     }
 
     public boolean isTeamOwner() {
-        return EntityManager.getInstance().getMe().isTeamOwner();
+        return TeamInfoLoader.getInstance()
+                .getUser(TeamInfoLoader.getInstance().getMyId())
+                .isTeamOwner();
     }
 
     public boolean isMyTopic(long entityId) {
-        return EntityManager.getInstance().isMyTopic(entityId);
+        return TeamInfoLoader.getInstance().isTopicOwner(entityId, TeamInfoLoader.getInstance().getMyId());
     }
 
     public boolean isTopicOwner(long topicId, long memberId) {
-        return EntityManager.getInstance().isTopicOwner(topicId, memberId);
+        return TeamInfoLoader.getInstance().isTopicOwner(topicId, memberId);
     }
 
-    public boolean removeMember(long topicId, long userEntityId) {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(topicId);
-        if (entity.isPublicTopic()) {
-            return entity.getChannel().ch_members.remove(userEntityId);
-
-        } else if (entity.isPrivateGroup()) {
-            return entity.getPrivateGroup().pg_members.remove(userEntityId);
-        }
-
-        return false;
+    public boolean removeMember(long topicId, long memberId) {
+        boolean result = TopicRepository.getInstance().removeMember(topicId, memberId);
+        TeamInfoLoader.getInstance().refresh();
+        return result;
     }
 
     public void assignToTopicOwner(long teamId, long entityId, long memberId) throws Exception {
         roomsApi.get().assignToTopicOwner(teamId, entityId, new ReqOwner(memberId));
-    }
-
-    public static List<FormattedEntity> getEnabledTeamMember() {
-        List<FormattedEntity> members = new ArrayList<>();
-
-        EntityManager entityManager = EntityManager.getInstance();
-        members.addAll(entityManager.getFormattedUsers());
-        if (entityManager.hasJandiBot()) {
-            BotEntity botEntity = (BotEntity) entityManager.getJandiBot();
-            members.add(botEntity);
-        }
-
-        Observable.from(members)
-                .filter(FormattedEntity::isEnabled)
-                .toSortedList((entity, entity2) -> {
-                    if (entity instanceof BotEntity) {
-                        return -1;
-                    } else if (entity2 instanceof BotEntity) {
-                        return 1;
-                    } else {
-                        return StringCompareUtil.compare(entity.getName(), entity2.getName());
-                    }
-                })
-                .subscribe(entities -> {
-                    members.clear();
-                    members.addAll(entities);
-                });
-        return members;
     }
 
 }

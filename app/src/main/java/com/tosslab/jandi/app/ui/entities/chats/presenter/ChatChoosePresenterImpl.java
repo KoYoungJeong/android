@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.entities.chats.presenter;
 import android.text.TextUtils;
 import android.util.Pair;
 
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapterDataModel;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.domain.DisableDummyItem;
@@ -99,8 +99,7 @@ public class ChatChoosePresenterImpl implements ChatChoosePresenter {
         Observable.empty()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {}, Throwable::printStackTrace, () -> {
-                    EntityManager entityManager = EntityManager.getInstance();
-                    long teamId = entityManager.getTeamId();
+                    long teamId = TeamInfoLoader.getInstance().getTeamId();
                     view.moveChatMessage(teamId, entityId);
                 });
     }

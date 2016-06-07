@@ -5,12 +5,12 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
@@ -20,7 +20,6 @@ import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
 import com.tosslab.jandi.app.ui.share.multi.domain.ShareData;
 import com.tosslab.jandi.app.ui.share.multi.domain.ShareTarget;
 import com.tosslab.jandi.app.ui.share.multi.model.ShareAdapterDataModel;
-import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
@@ -41,7 +40,7 @@ import rx.schedulers.Schedulers;
 public class MultiSharePresenterImpl implements MultiSharePresenter {
     private final View view;
     ShareTarget shareTarget;
-    ShareSelectModel shareSelectModel;
+    TeamInfoLoader teamInfoLoader;
     List<String> comments;
     private ShareAdapterDataModel shareAdapterDataModel;
     private ShareModel shareModel;
@@ -65,7 +64,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
 
     @Override
     public void initShareTarget() {
-        long teamId = EntityManager.getInstance().getTeamId();
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
         onSelectTeam(teamId);
     }
 
@@ -73,27 +72,26 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     public void onSelectTeam(long teamId) {
         shareTarget.setTeamId(teamId);
         Observable
-                .create((Subscriber<? super ShareSelectModel> subscriber) -> {
+                .create((Subscriber<? super TeamInfoLoader> subscriber) -> {
                     if (!shareModel.hasLeftSideMenu(shareTarget.getTeamId())) {
                         try {
-                            ResLeftSideMenu leftSideMenu = shareModel.getLeftSideMenu(teamId);
-                            shareModel.updateLeftSideMenu(leftSideMenu);
+                            InitialInfo initialInfo = shareModel.getInitialInfo(teamId);
+                            shareModel.updateInitialInfo(initialInfo);
                         } catch (RetrofitException e) {
                             subscriber.onError(e);
                         }
                     }
 
-                    shareSelectModel = shareModel.getShareSelectModel(teamId);
-                    subscriber.onNext(shareSelectModel);
+                    teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
+                    subscriber.onNext(teamInfoLoader);
                     subscriber.onCompleted();
 
-                    subscriber.onCompleted();
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shareSelectModel -> {
                     shareTarget.setRoomId(shareSelectModel.getDefaultTopicId());
-                    String roomName = shareSelectModel.getEntityById(shareTarget.getRoomId()).getName();
+                    String roomName = shareSelectModel.getName(shareTarget.getRoomId());
                     String teamName = shareSelectModel.getTeamName();
                     view.setTeamName(teamName);
                     view.setRoomName(roomName);
@@ -165,7 +163,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     @Override
     public void onSelectRoom(long roomId) {
         shareTarget.setRoomId(roomId);
-        String entityName = shareSelectModel.getEntityById(roomId).getName();
+        String entityName = teamInfoLoader.getName(roomId);
         view.setRoomName(entityName);
         view.setMentionInfo(shareTarget.getTeamId(), shareTarget.getRoomId());
     }

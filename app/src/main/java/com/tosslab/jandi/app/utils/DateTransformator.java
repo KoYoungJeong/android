@@ -1,12 +1,8 @@
 package com.tosslab.jandi.app.utils;
 
-import android.text.TextUtils;
-
-import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.tosslab.jandi.app.JandiApplication;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -31,33 +27,6 @@ public class DateTransformator {
 
     public static String getTimeString(Date date, String format) {
         return new SimpleDateFormat(format).format(date);
-    }
-
-    public static long getTimeFromISO(String date) {
-        if (TextUtils.isEmpty(date)) {
-            return PARSE_FAIL;
-        }
-
-        ISO8601DateFormat isoFormat = new ISO8601DateFormat();
-        Date formatDate = null;
-        try {
-            formatDate = isoFormat.parse(date);
-            return formatDate.getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return PARSE_FAIL;
-    }
-
-    public static String getTimeStringFromISO(String date) {
-        try {
-            ISO8601DateFormat isoFormat = new ISO8601DateFormat();
-            Date formatDate = isoFormat.parse(date);
-            date = getTimeString(formatDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return date;
     }
 
     public static String getTimeStringForDivider(long dateTime) {

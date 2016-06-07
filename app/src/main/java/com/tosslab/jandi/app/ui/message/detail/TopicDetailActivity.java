@@ -6,9 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.BotEntity;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.message.detail.view.ChatDetailFragment_;
 import com.tosslab.jandi.app.ui.message.detail.view.TopicDetailFragment_;
@@ -30,9 +28,8 @@ public class TopicDetailActivity extends BaseAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
 
-        boolean isDirectMessage = entity.isUser() || entity instanceof BotEntity;
+        boolean isDirectMessage = TeamInfoLoader.getInstance().isUser(entityId);
 
         Fragment fragment;
 

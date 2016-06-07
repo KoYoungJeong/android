@@ -23,7 +23,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.MentionToMeEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.mypage.adapter.MyPageAdapter;
 import com.tosslab.jandi.app.ui.maintab.mypage.component.DaggerMyPageComponent;
@@ -172,10 +172,12 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
-                if (adapter.getItemCount() > 0) {
-                    vEmptyLayout.setVisibility(View.GONE);
-                } else {
-                    vEmptyLayout.setVisibility(View.VISIBLE);
+                if (vEmptyLayout != null) {
+                    if (adapter.getItemCount() > 0) {
+                        vEmptyLayout.setVisibility(View.GONE);
+                    } else {
+                        vEmptyLayout.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
@@ -260,7 +262,7 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
     }
 
     @Override
-    public void setMe(FormattedEntity me) {
+    public void setMe(User me) {
         if (isFinishing() || me == null) {
             return;
         }
@@ -279,10 +281,10 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
         }
         tvName.setText(ssb);
 
-        String userEmail = TextUtils.isEmpty(me.getUserEmail()) ? "" : me.getUserEmail();
+        String userEmail = me.getEmail();
         tvEmail.setText(userEmail);
 
-        String userLargeProfileUrl = me.getUserLargeProfileUrl();
+        String userLargeProfileUrl = me.getPhotoUrl();
         if (!TextUtils.isEmpty(userEmail)) {
             ImageUtil.loadProfileImage(ivProfile, userLargeProfileUrl, R.drawable.profile_img);
         }

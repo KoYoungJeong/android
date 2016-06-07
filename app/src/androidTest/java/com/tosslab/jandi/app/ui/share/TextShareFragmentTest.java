@@ -8,7 +8,7 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
@@ -60,7 +60,7 @@ public class TextShareFragmentTest {
                 .commit();
 
         await().until(() -> {
-            return TextUtils.equals(textShareFragment.tvTeamName.getText().toString(), EntityManager.getInstance().getTeamName());
+            return TextUtils.equals(textShareFragment.tvTeamName.getText().toString(), TeamInfoLoader.getInstance().getTeamName());
         });
     }
 
@@ -99,8 +99,8 @@ public class TextShareFragmentTest {
 
     @Test
     public void testSetMentionInfo() throws Throwable {
-        long teamId = EntityManager.getInstance().getTeamId();
-        long topicId = EntityManager.getInstance().getDefaultTopicId();
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        long topicId = TeamInfoLoader.getInstance().getDefaultTopicId();
         rule.runOnUiThread(() -> textShareFragment.setMentionInfo(teamId, topicId, JandiConstants.TYPE_PUBLIC_TOPIC));
 
         assertThat(textShareFragment.mentionControlViewModel, is(notNullValue()));
@@ -123,8 +123,8 @@ public class TextShareFragmentTest {
     @Test
     public void testMoveEntity() throws Throwable {
         Intents.init();
-        long teamId = EntityManager.getInstance().getTeamId();
-        long topicId = EntityManager.getInstance().getDefaultTopicId();
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        long topicId = TeamInfoLoader.getInstance().getDefaultTopicId();
         rule.runOnUiThread(() -> textShareFragment.moveEntity(teamId, topicId, JandiConstants.TYPE_PUBLIC_TOPIC));
 
         Intents.intended(IntentMatchers.hasComponent(MainTabActivity_.class.getName()));

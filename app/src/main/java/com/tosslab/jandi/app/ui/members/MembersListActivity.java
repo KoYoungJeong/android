@@ -364,14 +364,13 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @UiThread
     @Override
-    public void moveDirectMessageActivity(long teamId, long userId, boolean isStarred) {
+    public void moveDirectMessageActivity(long teamId, long userId) {
         MessageListV2Activity_.intent(MembersListActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .teamId(teamId)
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .roomId(-1)
                 .entityId(userId)
-                .isFavorite(isStarred)
                 .isFromPush(false)
                 .start();
     }

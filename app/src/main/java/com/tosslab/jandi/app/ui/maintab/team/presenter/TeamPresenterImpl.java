@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.team.presenter;
 
 import android.util.Log;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.maintab.team.model.TeamModel;
 import com.tosslab.jandi.app.ui.maintab.team.view.TeamView;
 import com.tosslab.jandi.app.ui.members.model.MemberSearchableDataModel;
@@ -48,7 +48,7 @@ public class TeamPresenterImpl implements TeamPresenter {
 
                     memberSearchableDataModel.clear();
 
-                    List<FormattedEntity> members = team.getMembers();
+                    List<User> members = team.getMembers();
                     if (members != null && !members.isEmpty()) {
                         memberSearchableDataModel.addAll(members);
                     }

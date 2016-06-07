@@ -9,7 +9,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.info.SelfRepository;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
@@ -85,7 +85,8 @@ public class AnalyticsUtil {
                 action = AnalyticsValue.Action.ViewProfile_Image;
                 break;
             case Mention:
-                if (userId == EntityManager.getInstance().getMe().getId()) {
+                boolean me = SelfRepository.getInstance().isMe(userId);
+                if (me) {
                     action = AnalyticsValue.Action.ViewProfile_MyMention;
                 } else {
                     action = AnalyticsValue.Action.ViewProfile_Mention;

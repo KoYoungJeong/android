@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.start.InitializeInfo;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.Before;
@@ -37,14 +37,14 @@ public class StartApiTest {
 
     @Test
     public void testGetInitializeInfo() throws Exception {
-        InitializeInfo initializeInfo = startApi.getInitializeInfo(accountInfo.getMemberships().iterator().next().getTeamId());
+        InitialInfo initialInfo = startApi.getInitializeInfo(accountInfo.getMemberships().iterator().next().getTeamId());
 
-        assertThat(initializeInfo).isNotNull();
-        assertThat(initializeInfo.getTeam()).isNotNull();
-        assertThat(initializeInfo.getTopics()).isNotNull().isNotEmpty();
-        assertThat(initializeInfo.getChats()).isNotNull().isNotEmpty();
-        assertThat(initializeInfo.getFolders()).isNotNull().isNotEmpty();
-        assertThat(initializeInfo.getHumans()).isNotNull().isNotEmpty();
-        assertThat(initializeInfo.getBots()).isNotNull();
+        assertThat(initialInfo).isNotNull();
+        assertThat(initialInfo.getTeam()).isNotNull();
+        assertThat(initialInfo.getTopics()).isNotNull().isNotEmpty();
+        assertThat(initialInfo.getChats()).isNotNull().isNotEmpty();
+        assertThat(initialInfo.getFolders()).isNotNull().isNotEmpty();
+        assertThat(initialInfo.getMembers()).isNotNull().isNotEmpty();
+        assertThat(initialInfo.getBots()).isNotNull();
     }
 }

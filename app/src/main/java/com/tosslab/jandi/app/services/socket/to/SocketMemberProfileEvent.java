@@ -2,24 +2,25 @@ package com.tosslab.jandi.app.services.socket.to;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
+
 /**
  * Created by Steve SeongUg Jung on 15. 5. 11..
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@Version(1)
+@Version(2)
 public class SocketMemberProfileEvent {
     private int version;
+    private Human member;
     private long ts;
-    private ResLeftSideMenu.User member;
 
-    public ResLeftSideMenu.User getMember() {
+    public Human getMember() {
         return member;
     }
 
-    public void setMember(ResLeftSideMenu.User member) {
+    public void setMember(Human member) {
         this.member = member;
     }
 

@@ -16,10 +16,9 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.profile.defaultimage.ProfileImageSelectorActivity_;
@@ -173,7 +172,7 @@ public class FilePickerModel {
     }
 
     public boolean isPublicEntity(long entityId) {
-        return EntityManager.getInstance().getEntityById(entityId).isPublicTopic();
+        return TeamInfoLoader.getInstance().isPublicTopic(entityId);
     }
 
     public JsonObject uploadFile(Context context, ProgressDialog progressDialog, String realFilePath, boolean isPublicTopic, String title, long entityId, String comment) throws ExecutionException, InterruptedException {
@@ -210,13 +209,11 @@ public class FilePickerModel {
 
     public void trackUploadingFile(Context context, long entityId, JsonObject result) {
 
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-
         int entityType;
-        if (entity.isPublicTopic()) {
+        if (TeamInfoLoader.getInstance().isPublicTopic(entityId)) {
             entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
         } else {
-            if (entity.isPrivateGroup()) {
+            if (!TeamInfoLoader.getInstance().isUser(entityId)) {
                 entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
             } else {
                 entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
@@ -224,8 +221,11 @@ public class FilePickerModel {
         }
 
         try {
+            String distictId = TeamInfoLoader.getInstance().getMyId() +
+                    "-" +
+                    TeamInfoLoader.getInstance().getTeamId();
             MixpanelMemberAnalyticsClient
-                    .getInstance(context, EntityManager.getInstance().getDistictId())
+                    .getInstance(context, distictId)
                     .trackUploadingFile(entityType, result);
         } catch (JSONException e) {
         }
@@ -252,12 +252,10 @@ public class FilePickerModel {
                 .build());
     }
 
-    public String uploadProfilePhoto(Context context, File file) throws ExecutionException, InterruptedException {
-
-        EntityManager entityManager = EntityManager.getInstance();
+    public JsonObject uploadProfilePhoto(Context context, File file) throws ExecutionException, InterruptedException {
 
         String requestURL
-                = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/members/" + entityManager.getMe().getId() + "/profile/photo";
+                = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/members/" + TeamInfoLoader.getInstance().getMyId() + "/profile/photo";
 
         return Ion.with(context)
                 .load("PUT", requestURL)
@@ -265,7 +263,7 @@ public class FilePickerModel {
                 .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
                 .setMultipartFile("photo", URLConnection.guessContentTypeFromName(file.getName()), file)
-                .asString()
+                .asJsonObject()
                 .get();
     }
 

@@ -1,12 +1,10 @@
 package com.tosslab.jandi.app.ui.carousel.model;
 
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -67,10 +65,8 @@ public class CarouselViewerModel {
                         .fileOriginalUrl(ImageUtil.getImageFileUrl(fileMessage.content.fileUrl))
                         .ext(fileMessage.content.ext)
                         .size(fileMessage.content.size)
-                        .fileCreateTime(
-                                DateTransformator.getTimeString(fileMessage.createTime))
-                        .fileWriter(EntityManager.getInstance()
-                                .getEntityNameById(fileMessage.writerId))
+                        .fileCreateTime(DateTransformator.getTimeString(fileMessage.createTime))
+                        .fileWriter(TeamInfoLoader.getInstance().getMemberName(fileMessage.writerId))
                         .create()).collect(() -> fileInfos, List::add)
                 .subscribe();
 
@@ -78,12 +74,7 @@ public class CarouselViewerModel {
     }
 
     public long getTeamId() {
-        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
-        if (selectedTeamInfo != null) {
-            return selectedTeamInfo.getTeamId();
-        } else {
-            return -1;
-        }
+        return TeamInfoLoader.getInstance().getTeamId();
     }
 
     public int findLinkPosition(List<CarouselFileInfo> imageFiles, long fileId) {

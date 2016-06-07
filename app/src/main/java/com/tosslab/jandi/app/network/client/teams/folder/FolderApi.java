@@ -9,17 +9,12 @@ import com.tosslab.jandi.app.network.models.ReqRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ReqUpdateFolder;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResCreateFolder;
-import com.tosslab.jandi.app.network.models.ResFolder;
-import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.network.models.ResRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ResUpdateFolder;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
-import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -39,25 +34,17 @@ public class FolderApi extends ApiTemplate<FolderApi.Api> {
     }
 
     public ResUpdateFolder updateFolder(long teamId, long folderId,
-                                 ReqUpdateFolder reqUpdateFolder) throws RetrofitException {
+                                        ReqUpdateFolder reqUpdateFolder) throws RetrofitException {
         return call(() -> getApi().updateFolder(teamId, folderId, reqUpdateFolder));
     }
 
-    public List<ResFolder> getFolders(long teamId) throws RetrofitException {
-        return call(() -> getApi().getFolders(teamId));
-    }
-
-    public List<ResFolderItem> getFolderItems(long teamId) throws RetrofitException {
-        return call(() -> getApi().getFolderItems(teamId));
-    }
-
     public ResRegistFolderItem registFolderItem(long teamId, long folderId,
-                                         ReqRegistFolderItem reqRegistFolderItem) throws RetrofitException {
+                                                ReqRegistFolderItem reqRegistFolderItem) throws RetrofitException {
         return call(() -> getApi().registFolderItem(teamId, folderId, reqRegistFolderItem));
     }
 
     public ResCommon deleteFolderItem(long teamId, long folderId,
-                               long itemId) throws RetrofitException {
+                                      long itemId) throws RetrofitException {
         return call(() -> getApi().deleteFolderItem(teamId, folderId, itemId));
     }
 
@@ -74,14 +61,6 @@ public class FolderApi extends ApiTemplate<FolderApi.Api> {
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResUpdateFolder> updateFolder(@Path("teamId") long teamId, @Path("folderId") long folderId,
                                            @Body ReqUpdateFolder reqUpdateFolder);
-
-        @GET("teams/{teamId}/folders")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<List<ResFolder>> getFolders(@Path("teamId") long teamId);
-
-        @GET("teams/{teamId}/folders/items")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<List<ResFolderItem>> getFolderItems(@Path("teamId") long teamId);
 
         @POST("teams/{teamId}/folders/{folderId}/items")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)

@@ -9,11 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -79,7 +79,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
 
     private void setFileBackground(ResMessages.Link link) {
         long writerId = link.fromEntity;
-        if (EntityManager.getInstance().isMe(writerId)) {
+        if (TeamInfoLoader.getInstance().getMyId() == writerId) {
             vgFileContent.setBackgroundResource(R.drawable.bg_message_item_selector_mine);
         } else {
             vgFileContent.setBackgroundResource(R.drawable.bg_message_item_selector);
@@ -98,14 +98,14 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
     private void setFileInfo(ResMessages.Link link, long teamId, long roomId) {
         long fromEntityId = link.fromEntity;
 
-        EntityManager entityManager = EntityManager.getInstance();
+        TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
 
-        FormattedEntity room = entityManager.getEntityById(roomId);
+        Room room = teamInfoLoader.getRoom(roomId);
 
         boolean isPublicTopic = room.isPublicTopic();
 
         UnreadCountUtil.getUnreadCount(
-                teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId())
+                teamId, roomId, link.id, fromEntityId, teamInfoLoader.getMyId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(unreadCount -> {
 
@@ -126,16 +126,13 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
         tvFileUploaderName.setTypeface(Typeface.DEFAULT_BOLD);
         tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text));
 
-        FormattedEntity entity = entityManager.getEntityById(fromEntityId);
-
-        ResLeftSideMenu.User fromEntity = entity.getUser();
+        User entity = teamInfoLoader.getUser(fromEntityId);
 
         if (link.message instanceof ResMessages.FileMessage) {
             ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
 
-            if (fromEntity.id != fileMessage.writerId) {
-                String name = EntityManager.getInstance()
-                        .getEntityById(fileMessage.writerId).getName();
+            if (fromEntityId != fileMessage.writerId) {
+                String name = TeamInfoLoader.getInstance().getMemberName(fileMessage.writerId);
                 tvFileUploaderName.setText(name);
             }
 
@@ -194,8 +191,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
             } else {
                 tvFileName.setTextColor(resources.getColor(R.color.dark_gray));
                 tvFileName.setText(fileMessage.content.title);
-                String name = EntityManager.getInstance()
-                        .getEntityById(fileMessage.writerId).getName();
+                String name = TeamInfoLoader.getInstance().getMemberName(fileMessage.writerId);
                 tvFileUploaderName.setText(name);
                 ResMessages.FileContent fileContent = ((ResMessages.FileMessage) link.message).content;
                 String fileSize = FileUtil.fileSizeCalculation(fileContent.size);

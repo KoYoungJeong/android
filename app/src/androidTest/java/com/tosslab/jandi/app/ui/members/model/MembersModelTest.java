@@ -3,9 +3,8 @@ package com.tosslab.jandi.app.ui.members.model;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 
 import org.junit.AfterClass;
@@ -15,7 +14,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import rx.Observable;
@@ -30,13 +28,11 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-/**
- * Created by tee on 15. 11. 11..
- */
 @RunWith(AndroidJUnit4.class)
 public class MembersModelTest {
 
     private MembersModel membersModel;
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
@@ -46,6 +42,7 @@ public class MembersModelTest {
     public static void tearDownClass() throws Exception {
         BaseInitUtil.releaseDatabase();
     }
+
     @Before
     public void setUp() throws Exception {
         membersModel = MembersModel_.getInstance_(JandiApplication.getContext());
@@ -54,7 +51,7 @@ public class MembersModelTest {
     @Test
     public void testRemoveMember() throws Exception {
         // Given
-        long topicId = EntityManager.getInstance().getDefaultTopicId();
+        long topicId = TeamInfoLoader.getInstance().getDefaultTopicId();
         List<ChatChooseItem> topicMembers = membersModel.getTopicMembers(topicId);
         long entityId = topicMembers.get(0).getEntityId();
 
@@ -78,8 +75,8 @@ public class MembersModelTest {
     @Test
     public void testGetTopicMembers() throws Exception {
         // Given
-        long defaultTopicId = EntityManager.getInstance().getDefaultTopicId();
-        Collection<Long> members = EntityManager.getInstance().getEntityById(defaultTopicId).getMembers();
+        long defaultTopicId = TeamInfoLoader.getInstance().getDefaultTopicId();
+        Collection<Long> members = TeamInfoLoader.getInstance().getTopic(defaultTopicId).getMembers();
         // When
         List<ChatChooseItem> topicMembers = membersModel.getTopicMembers(defaultTopicId);
         // Then
@@ -95,15 +92,10 @@ public class MembersModelTest {
     @Test
     public void testGetTeamMembers() throws Exception {
         // Given
-        List<FormattedEntity> formattedMembers = EntityManager.getInstance().getFormattedUsers();
-        Iterator i = formattedMembers.iterator();
-        int memberCnt = 0;
-        while (i.hasNext()) {
-            FormattedEntity f = (FormattedEntity) i.next();
-            if (f.isEnabled()) {
-                memberCnt++;
-            }
-        }
+        int memberCnt = Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .filter(User::isEnabled)
+                .count().toBlocking().firstOrDefault(0);
+
 
         // When
         List<ChatChooseItem> result = membersModel.getTeamMembers();
@@ -115,17 +107,13 @@ public class MembersModelTest {
     @Test
     public void testGetUnjoinedTopicMembers() throws Exception {
         // Given
-        long defaultTopicId = EntityManager.getInstance().getDefaultTopicId();
-        List<FormattedEntity> unJoinedMember = EntityManager.getInstance()
-                .getUnjoinedMembersOfEntity(defaultTopicId, JandiConstants.TYPE_PUBLIC_TOPIC);
-        int memberCnt = 0;
-        Iterator i = unJoinedMember.iterator();
-        while (i.hasNext()) {
-            FormattedEntity e = (FormattedEntity) i.next();
-            if (e.isEnabled()) {
-                memberCnt++;
-            }
-        }
+        long defaultTopicId = TeamInfoLoader.getInstance().getDefaultTopicId();
+        Collection<Long> members = TeamInfoLoader.getInstance().getTopic(defaultTopicId).getMembers();
+        int memberCnt = Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .filter(user -> !members.contains(user.getId()))
+                .count()
+                .toBlocking()
+                .firstOrDefault(0);
 
         // When
         List<ChatChooseItem> result = membersModel.getUnjoinedTopicMembers(defaultTopicId);
@@ -140,15 +128,15 @@ public class MembersModelTest {
         BaseInitUtil.inviteDummyMembers();
 
         long topicId = BaseInitUtil.tempTopicId;
-        long teamId = EntityManager.getInstance().getTeamId();
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
 
-        Collection<Long> membersBefore = EntityManager.getInstance().getEntityById(topicId).getMembers();
+        Collection<Long> membersBefore = TeamInfoLoader.getInstance().getTopic(topicId).getMembers();
 
         //When
         membersModel.kickUser(teamId, topicId, BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_EMAIL));
 
         BaseInitUtil.refreshLeftSideMenu();
-        Collection<Long> membersAfter = EntityManager.getInstance().getEntityById(topicId).getMembers();
+        Collection<Long> membersAfter = TeamInfoLoader.getInstance().getTopic(topicId).getMembers();
 
         BaseInitUtil.deleteDummyTopic();
 
@@ -165,7 +153,7 @@ public class MembersModelTest {
         BaseInitUtil.inviteDummyMembers();
 
         long topicId = BaseInitUtil.tempTopicId;
-        long teamId = EntityManager.getInstance().getTeamId();
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
 
         // When
         long memberId = BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST3_EMAIL);
@@ -175,7 +163,7 @@ public class MembersModelTest {
 
         // Then
         long target = BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_EMAIL);
-        assertTrue(!EntityManager.getInstance().isTopicOwner(topicId, target));
+        assertTrue(TeamInfoLoader.getInstance().getTopic(topicId).getCreatorId() != target);
 
         BaseInitUtil.deleteDummyTopic();
     }

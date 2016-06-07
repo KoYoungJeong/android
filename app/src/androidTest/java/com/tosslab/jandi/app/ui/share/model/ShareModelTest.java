@@ -4,15 +4,12 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
-import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -52,20 +49,8 @@ public class ShareModelTest {
     }
 
     @Test
-    public void testGetEntityById() throws Exception {
-        long teamId = EntityManager.getInstance().getTeamId();
-        long defaultTopicId = EntityManager.getInstance().getDefaultTopicId();
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(defaultTopicId);
-
-        ResRoomInfo roomInfo = shareModel.getEntityById(teamId, defaultTopicId);
-
-        assertThat(roomInfo.getName(), is(equalTo(entity.getName())));
-        assertThat(roomInfo.getMembers().size(), is(equalTo(entity.getMemberCount())));
-    }
-
-    @Test
     public void testGetTeamInfoById() throws Exception {
-        long teamId = EntityManager.getInstance().getTeamId();
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
         ResTeamDetailInfo.InviteTeam inviteTeam = shareModel.getTeamInfoById(teamId);
 
         ResAccountInfo.UserTeam userTeam = AccountRepository.getRepository().getTeamInfo(teamId);
@@ -77,8 +62,8 @@ public class ShareModelTest {
     @Test
     public void testSendMessage() throws Exception {
 
-        long teamId = EntityManager.getInstance().getTeamId();
-        long topicId = EntityManager.getInstance().getDefaultTopicId();
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        long topicId = TeamInfoLoader.getInstance().getDefaultTopicId();
 
         ResCommon result = shareModel.sendMessage(teamId, topicId, JandiConstants.TYPE_PUBLIC_TOPIC, "hello", new ArrayList<>());
         assertThat(result, is(notNullValue()));
@@ -90,13 +75,13 @@ public class ShareModelTest {
         boolean hasLeftSideMenu = shareModel.hasLeftSideMenu(1);
         assertThat(hasLeftSideMenu, is(false));
 
-        hasLeftSideMenu = shareModel.hasLeftSideMenu(EntityManager.getInstance().getTeamId());
+        hasLeftSideMenu = shareModel.hasLeftSideMenu(TeamInfoLoader.getInstance().getTeamId());
         assertThat(hasLeftSideMenu, is(true));
     }
 
     @Test
     public void testGetLeftSideMenu() throws Exception {
-        ResLeftSideMenu leftSideMenu = shareModel.getLeftSideMenu(EntityManager.getInstance().getTeamId());
+        InitialInfo leftSideMenu = shareModel.getInitialInfo(TeamInfoLoader.getInstance().getTeamId());
         assertThat(leftSideMenu, is(notNullValue()));
     }
 
@@ -109,8 +94,8 @@ public class ShareModelTest {
                 .toBlocking().first();
 
         if (teamId > 0) {
-            ResLeftSideMenu leftSideMenu = shareModel.getLeftSideMenu(teamId);
-            boolean success = shareModel.updateLeftSideMenu(leftSideMenu);
+            InitialInfo leftSideMenu = shareModel.getInitialInfo(teamId);
+            boolean success = shareModel.updateInitialInfo(leftSideMenu);
 
             assertThat(success, is(true));
         }
@@ -118,7 +103,7 @@ public class ShareModelTest {
 
     @Test
     public void testGetShareSelectModel() throws Exception {
-        ShareSelectModel shareSelectModel = shareModel.getShareSelectModel(AccountRepository.getRepository().getSelectedTeamId());
-        assertThat(shareSelectModel.getDefaultTopicId(), is(equalTo(EntityManager.getInstance().getDefaultTopicId())));
+        TeamInfoLoader shareSelectModel = shareModel.getTeamInfoLoader(AccountRepository.getRepository().getSelectedTeamId());
+        assertThat(shareSelectModel.getDefaultTopicId(), is(equalTo(TeamInfoLoader.getInstance().getDefaultTopicId())));
     }
 }

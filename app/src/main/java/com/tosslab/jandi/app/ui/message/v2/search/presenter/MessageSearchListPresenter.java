@@ -4,8 +4,8 @@ import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 
-import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
@@ -29,7 +29,7 @@ public interface MessageSearchListPresenter {
 
     void onAnnouncementClose();
 
-    void onCreatedAnnouncement(boolean isForeground, boolean isRoomInit);
+    void onCreatedAnnouncement(boolean isRoomInit);
 
     void onUpdateAnnouncement(boolean isForeground, boolean isRoomInit, SocketAnnouncementEvent.Data data);
 
@@ -42,8 +42,6 @@ public interface MessageSearchListPresenter {
     void onMessageItemLongClick(ResMessages.Link item);
 
     void deleteMessage(int messageType, long messageId);
-
-    void onModifyEntity(String inputName);
 
     void registStarredMessage(long teamId, long messageId);
 
@@ -67,7 +65,7 @@ public interface MessageSearchListPresenter {
 
         void dismissProgressWheel();
 
-        void setAnnouncement(ResAnnouncement announcement, boolean announcementOpened);
+        void setAnnouncement(Topic.Announcement announcement);
 
         void openAnnouncement(boolean opened);
 

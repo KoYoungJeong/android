@@ -9,12 +9,10 @@ import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.FileDetailRepository;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.file.FileApi;
@@ -25,10 +23,13 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.Member;
+import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -109,20 +110,6 @@ public class FileDetailModel {
         entityClientManager.sendMessageComment(fileId, message, mentions);
     }
 
-    public ResLeftSideMenu.User getUserProfile(long userEntityId) throws RetrofitException {
-        return entityClientManager.getUserProfile(userEntityId);
-    }
-
-    public boolean isMyComment(long writerId) {
-        EntityManager entityManager = EntityManager.getInstance();
-
-        if (entityManager == null) {
-            return false;
-        }
-        FormattedEntity me = entityManager.getMe();
-        return me != null && me.getId() == writerId;
-    }
-
     public void deleteComment(long messageId, long feedbackId) throws RetrofitException {
         entityClientManager.deleteMessageComment(messageId, feedbackId);
     }
@@ -151,70 +138,34 @@ public class FileDetailModel {
     public List<Long> getSharedTopicIds(ResMessages.OriginalMessage fileDetail) {
         List<Long> sharedTopicIds = new ArrayList<>();
 
-        EntityManager entityManager = EntityManager.getInstance();
+        TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
 
 
         ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
         Observable.from(fileMessage.shareEntities)
                 .map(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)
-                .filter(shareEntity -> {
-                    FormattedEntity entity = entityManager.getEntityById(shareEntity);
-                    return entity != EntityManager.UNKNOWN_USER_ENTITY && !entity.isUser();
-                })
+                .filter(shareEntity -> TeamInfoLoader.getInstance().isTopic(shareEntity))
                 .collect(() -> sharedTopicIds, List::add)
                 .subscribe();
 
         return sharedTopicIds;
     }
 
-    public List<FormattedEntity> getUnsharedEntities() {
+    public ResCommon joinEntity(TopicRoom entity) throws RetrofitException {
 
-        // 모든 대상이 공유 대상이 되도록 함
-        EntityManager entityManager = EntityManager.getInstance();
-        List<FormattedEntity> entities = entityManager.retrieveAccessableEntities();
-
-        List<FormattedEntity> formattedEntities = new ArrayList<>();
-
-        Observable.from(entities)
-                .filter(entity -> !entity.isUser() || entity.isEnabled())
-                .filter(formattedEntity -> formattedEntity.getId() != entityManager.getMe().getId())
-                .toSortedList((formattedEntity, formattedEntity2) -> {
-                    if (formattedEntity.isUser() && formattedEntity2.isUser()) {
-                        return StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
-                    } else if (!formattedEntity.isUser() && !formattedEntity2.isUser()) {
-                        return StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
-                    } else {
-                        if (formattedEntity.isUser()) {
-                            return 1;
-                        } else {
-                            return -1;
-                        }
-                    }
-                })
-                .subscribe(formattedEntities::addAll);
-
-        if (EntityManager.getInstance().hasJandiBot()) {
-            formattedEntities.add(0, EntityManager.getInstance().getJandiBot());
-        }
-
-        return formattedEntities;
-    }
-
-    public ResCommon joinEntity(FormattedEntity entity) throws RetrofitException {
-
-        return entityClientManager.joinChannel(entity.getChannel().id);
+        return entityClientManager.joinChannel(entity.getId());
 
     }
 
     public boolean refreshEntity() {
         try {
-            ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
-            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-            EntityManager.getInstance().refreshEntity();
+//            ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
+//            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
+//            EntityManager.getInstance().refreshEntity();
             return true;
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-            return false;
+//        } catch (RetrofitException e) {
+//            e.printStackTrace();
+//            return false;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -328,7 +279,7 @@ public class FileDetailModel {
     }
 
     public long getMyId() {
-        return EntityManager.getInstance().getMe().getId();
+        return TeamInfoLoader.getInstance().getMyId();
     }
 
     public ResMessages.FileMessage getFileMessage(long fileId) {
@@ -337,12 +288,12 @@ public class FileDetailModel {
     }
 
     public boolean isTeamOwner() {
-        return EntityManager.getInstance().getMe().isTeamOwner();
+        return TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId()).isTeamOwner();
     }
 
 
     public long getTeamId() {
-        return EntityManager.getInstance().getTeamId();
+        return TeamInfoLoader.getInstance().getTeamId();
     }
 
     public ResMessages.FileMessage enableExternalLink(long teamId, long fileId) throws RetrofitException {
@@ -410,8 +361,8 @@ public class FileDetailModel {
     }
 
     public boolean isMyFile(long writerId) {
-        return writerId == EntityManager.getInstance().getMe().getId()
-                || isTeamOwner();
+        return writerId == TeamInfoLoader.getInstance().getMyId()
+                || TeamInfoLoader.getInstance().getUser(writerId).isTeamOwner();
     }
 
     public boolean isDeletedFile(String status) {
@@ -424,5 +375,35 @@ public class FileDetailModel {
         }
         return TextUtils.equals(fileContent.serverUrl, "google")
                 || TextUtils.equals(fileContent.serverUrl, "dropbox");
+    }
+
+    public List<TopicRoom> getTopicRooms() {
+        List<TopicRoom> topicList = TeamInfoLoader.getInstance().getTopicList();
+
+        return Observable.from(topicList)
+                .filter(TopicRoom::isEnabled)
+                .toSortedList((formattedEntity, formattedEntity2) -> {
+                    return StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
+                })
+                .toBlocking().first();
+    }
+
+    public List<Member> getMembers() {
+        List<Member> members = new ArrayList<>();
+        List<User> first = Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .filter(User::isEnabled)
+                .toSortedList((formattedEntity, formattedEntity2) -> {
+                    return StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
+                })
+                .toBlocking().first();
+
+        members.add(TeamInfoLoader.getInstance().getJandiBot());
+        members.addAll(first);
+        return members;
+    }
+
+    public void updateJoinedTopic(long id) {
+        TopicRepository.getInstance().updateTopicJoin(id, true);
+        TeamInfoLoader.getInstance().refresh();
     }
 }

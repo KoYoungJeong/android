@@ -4,7 +4,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 
 import org.junit.AfterClass;
@@ -39,10 +39,9 @@ public class TopicDetailFragmentTest {
     @Before
     public void setUp() throws Exception {
 
-        EntityManager manager = EntityManager.getInstance();
         fragment = TopicDetailFragment_.builder()
-                .entityId(manager.getDefaultTopicId())
-                .teamId(manager.getTeamId())
+                .entityId(TeamInfoLoader.getInstance().getDefaultTopicId())
+                .teamId(TeamInfoLoader.getInstance().getTeamId())
                 .build();
 
         BaseAppCompatActivity activity = rule.getActivity();

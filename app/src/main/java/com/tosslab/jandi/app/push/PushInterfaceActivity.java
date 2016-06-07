@@ -2,13 +2,15 @@ package com.tosslab.jandi.app.push;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.util.Pair;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
@@ -27,6 +29,10 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
+
+import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 
 /**
@@ -74,11 +80,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
             PushUtil.registPush();
         }
 
-        if (!jandiInterfaceModel.hasBackStackActivity()) {
-            checkNewVersion();
-        } else {
-            checkTeamAndMoveToNextActivity();
-        }
+        checkTeamAndMoveToNextActivity();
     }
 
     @Background(serial = "push_interface_activity_background")
@@ -155,17 +157,28 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
         if (jandiInterfaceModel.setupSelectedTeam(teamId)) {
 
             long roomId = entityId;
-            long targetEntityId = jandiInterfaceModel.getEntityId(teamId, entityId, roomType);
+            Pair<Boolean, Long> entityInfo = jandiInterfaceModel.getEntityInfo(teamId, entityId, roomType);
 
-            if (targetEntityId > 0) {
+            if (entityInfo.second > 0) {
+                if (!entityInfo.first) {
+                    Observable.just(jandiInterfaceModel.getEntityInfo())
+                            .subscribeOn(Schedulers.io())
+                            .filter(success -> success)
+                            .subscribe(entityRefreshed -> {
+                                EventBus eventBus = EventBus.getDefault();
+                                if (eventBus.hasSubscriberForEvent(EntitiesUpdatedEvent.class)) {
+                                    eventBus.post(new EntitiesUpdatedEvent());
+                                }
+                            });
 
-                moveMessageListActivity(roomId, targetEntityId);
+                }
+                moveMessageListActivity(roomId, entityInfo.second);
             } else {
                 // entity 정보가 없으면 인트로로 이동하도록 지정
                 moveIntroActivity();
             }
 
-            String distictId = EntityManager.getInstance().getDistictId();
+            String distictId = TeamInfoLoader.getInstance().getMyId() + "-" + TeamInfoLoader.getInstance().getTeamId();
             MixpanelMemberAnalyticsClient.getInstance(PushInterfaceActivity.this, distictId).trackMemberSingingIn();
         } else {
             moveIntroActivity();

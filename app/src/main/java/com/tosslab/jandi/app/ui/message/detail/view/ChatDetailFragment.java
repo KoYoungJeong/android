@@ -14,10 +14,10 @@ import android.view.View;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.model.LeaveViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.TopicDetailModel;
@@ -61,8 +61,7 @@ public class ChatDetailFragment extends Fragment {
     @AfterViews
     void initViews() {
         setUpActionbar();
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        boolean isStarred = entity.isStarred;
+        boolean isStarred = TeamInfoLoader.getInstance().isChatStarred(entityId);
         setStarred(isStarred);
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MessageDescription);
 
@@ -115,8 +114,7 @@ public class ChatDetailFragment extends Fragment {
     @Background
     @Click(R.id.vg_chat_detail_starred)
     void onChatStarClick() {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        boolean isStarred = entity.isStarred;
+        boolean isStarred = TeamInfoLoader.getInstance().isChatStarred(entityId);
 
         try {
 
@@ -134,7 +132,10 @@ public class ChatDetailFragment extends Fragment {
                 showSuccessToast(getString(R.string.jandi_message_starred));
             }
 
-            EntityManager.getInstance().getEntityById(entityId).isStarred = !isStarred;
+            long chatId = TeamInfoLoader.getInstance().getChatId(entityId);
+
+            ChatRepository.getInstance().updateStarred(chatId, !isStarred);
+            TeamInfoLoader.getInstance().refresh();
 
             setStarred(!isStarred);
 

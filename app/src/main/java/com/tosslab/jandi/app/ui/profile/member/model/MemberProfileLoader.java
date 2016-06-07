@@ -10,8 +10,9 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.Member;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
@@ -25,15 +26,15 @@ public class MemberProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setName(TextView tvProfileName, FormattedEntity member) {
+    public void setName(TextView tvProfileName, Member member) {
         tvProfileName.setText(member.getName());
     }
 
     @Override
-    public void setDescription(TextView tvProfileDescription, FormattedEntity member) {
+    public void setDescription(TextView tvProfileDescription, Member member) {
         String description;
         if (isEnabled(member)) {
-            description = member.getUserStatusMessage();
+            description = ((User) member).getStatusMessage();
         } else {
             description = context.getString(R.string.jandi_disable_user_profile_explain);
         }
@@ -42,9 +43,10 @@ public class MemberProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setProfileInfo(ViewGroup vgProfileTeamInfo, TextView tvProfileDivision, TextView tvProfilePosition, FormattedEntity member) {
-        String userDivision = member.getUserDivision();
-        String userPosition = member.getUserPosition();
+    public void setProfileInfo(ViewGroup vgProfileTeamInfo, TextView tvProfileDivision, TextView tvProfilePosition, Member member) {
+        User user = (User) member;
+        String userDivision = user.getDivision();
+        String userPosition = user.getPosition();
         tvProfileDivision.setText(userDivision);
         tvProfilePosition.setText(userPosition);
         if (TextUtils.isEmpty(userDivision) && TextUtils.isEmpty(userPosition)) {
@@ -53,8 +55,8 @@ public class MemberProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void loadSmallThumb(ImageView ivProfileImageSmall, FormattedEntity member) {
-        String profileImageUrlMedium = member.getUserMediumProfileUrl();
+    public void loadSmallThumb(ImageView ivProfileImageSmall, Member member) {
+        String profileImageUrlMedium = member.getPhotoUrl();
         ImageUtil.loadProfileImage(
                 ivProfileImageSmall, profileImageUrlMedium, R.drawable.profile_img);
     }
@@ -70,21 +72,21 @@ public class MemberProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setStarButton(View btnProfileStar, FormattedEntity member) {
-        btnProfileStar.setSelected(member.isStarred);
+    public void setStarButton(View btnProfileStar, Member member) {
+        btnProfileStar.setSelected(TeamInfoLoader.getInstance().isChatStarred(member.getId()));
         boolean isMe = isMe(member.getId());
         btnProfileStar.setVisibility(isMe ? View.INVISIBLE : View.VISIBLE);
         btnProfileStar.setEnabled(!isMe);
     }
 
     @Override
-    public boolean isEnabled(FormattedEntity member) {
+    public boolean isEnabled(Member member) {
         return member.isEnabled();
     }
 
     @Override
-    public boolean hasChangedProfileImage(FormattedEntity member) {
-        String url = member.getUserLargeProfileUrl();
+    public boolean hasChangedProfileImage(Member member) {
+        String url = member.getPhotoUrl();
         return !TextUtils.isEmpty(url) && url.contains("files-profile");
     }
 
@@ -95,7 +97,7 @@ public class MemberProfileLoader implements ProfileLoader {
     }
 
     private boolean isMe(long memberId) {
-        return EntityManager.getInstance().isMe(memberId);
+        return TeamInfoLoader.getInstance().getMyId() == memberId;
     }
 
 }

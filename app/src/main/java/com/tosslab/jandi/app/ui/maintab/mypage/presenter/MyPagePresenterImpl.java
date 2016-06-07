@@ -5,9 +5,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.lists.BotEntity;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
 import com.tosslab.jandi.app.ui.maintab.mypage.model.MyPageModel;
 import com.tosslab.jandi.app.ui.maintab.mypage.view.MyPageView;
@@ -146,9 +145,9 @@ public class MyPagePresenterImpl implements MyPagePresenter {
     }
 
     private void onClickTextTypeMessage(MentionMessage mention) {
-        final EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity entity = entityManager.getEntityById(mention.getRoomId());
-        if (entity == EntityManager.UNKNOWN_USER_ENTITY) {
+
+        if (TeamInfoLoader.getInstance().isTopic(mention.getRoomId())
+                || TeamInfoLoader.getInstance().isUser(mention.getRoomId())) {
             view.showUnknownEntityToast();
             return;
         }
@@ -163,13 +162,14 @@ public class MyPagePresenterImpl implements MyPagePresenter {
                 ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
         long roomId = entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityId : -1;
         long linkId = mention.getLinkId();
-        if (entity.isUser() || entity instanceof BotEntity) {
+        if (TeamInfoLoader.getInstance().isUser(mention.getRoomId())) {
             view.moveToMessageListActivity(teamId, entityId, entityType, roomId, linkId);
             return;
         }
 
-        Long searchedMemberId = Observable.from(entity.getMembers())
-                .filter(memberId -> memberId == entityManager.getMe().getId())
+        TopicRoom topic = TeamInfoLoader.getInstance().getTopic(mention.getRoomId());
+        Long searchedMemberId = Observable.from(topic.getMembers())
+                .filter(memberId -> memberId == TeamInfoLoader.getInstance().getMyId())
                 .toBlocking()
                 .firstOrDefault(-1L);
 
@@ -182,7 +182,7 @@ public class MyPagePresenterImpl implements MyPagePresenter {
 
     @Override
     public void onNewMentionComing(long teamId, @Nullable Date latestCreatedAt) {
-        if (teamId != EntityManager.getInstance().getTeamId()) {
+        if (teamId != TeamInfoLoader.getInstance().getTeamId()) {
             return;
         }
 

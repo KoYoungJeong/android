@@ -15,9 +15,9 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.ShowMoreSharedEntitiesEvent;
 import com.tosslab.jandi.app.events.files.FileStarredStateChangeEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.filedetail.widget.LinkedEllipsizeTextView;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -97,11 +97,11 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
 
     @Override
     public void onBindView(ResMessages.FileMessage fileMessage) {
-        EntityManager entityManager = EntityManager.getInstance();
+
 
         long writerId = fileMessage.writerId;
 
-        FormattedEntity writer = entityManager.getEntityById(writerId);
+        User writer = TeamInfoLoader.getInstance().getUser(writerId);
         ProfileBinder.newInstance(tvUserName, vUserNameDisableIndicator,
                 ivUserProfile, vUserProfileDisableIndicator)
                 .bind(writer);
@@ -167,8 +167,8 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
             return;
         }
 
-        EntityManager entityManager = EntityManager.getInstance();
-        final long teamId = entityManager.getTeamId();
+
+        final long teamId = TeamInfoLoader.getInstance().getTeamId();
 
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         int sharedIndicatorSize = (int) resources.getDimension(R.dimen.jandi_text_size_small);
@@ -186,32 +186,38 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
 
         Observable.from(shareEntities)
                 .distinct(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)
-                .map(integerWrapper -> entityManager.getEntityById(integerWrapper.getShareEntity()))
-                .filter(formattedEntity -> formattedEntity != EntityManager.UNKNOWN_USER_ENTITY)
-                .doOnNext(formattedEntity1 -> {
+                .map(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)
+                .filter(id -> TeamInfoLoader.getInstance().isTopic(id)
+                        || TeamInfoLoader.getInstance().isUser(id))
+                .doOnNext(id -> {
                     if (ssb.length() > firstLength) {
                         ssb.append(", ");
                     }
                 })
-                .subscribe(formattedEntity2 -> {
+                .subscribe(id -> {
                     int entityType;
-                    if (formattedEntity2.isPrivateGroup()) {
-                        entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
-                    } else if (formattedEntity2.isPublicTopic()) {
-                        entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
+
+                    TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
+                    if (teamInfoLoader.isTopic(id)) {
+                        if (teamInfoLoader.isPublicTopic(id)) {
+                            entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
+                        } else {
+                            entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
+                        }
                     } else {
                         entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
                     }
 
                     EntitySpannable entitySpannable = new EntitySpannable(context,
-                            teamId, formattedEntity2.getId(), entityType, formattedEntity2.isStarred);
+                            teamId, id, entityType, teamInfoLoader.isStarred(id) || teamInfoLoader.isChatStarred(id));
                     entitySpannable.setColor(context.getResources().getColor(R.color.jandi_accent_color));
 
                     int length = ssb.length();
-                    ssb.append(formattedEntity2.getName());
+                    String name = teamInfoLoader.getName(id);
+                    ssb.append(name);
 
                     ssb.setSpan(entitySpannable,
-                            length, length + formattedEntity2.getName().length(),
+                            length, length + name.length(),
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }, Throwable::printStackTrace);
 

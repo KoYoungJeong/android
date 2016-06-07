@@ -5,15 +5,14 @@ import android.preference.PreferenceManager;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -30,6 +29,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dagger.Lazy;
+import rx.Observable;
 
 
 @EBean
@@ -49,33 +49,27 @@ public class TopicDetailModel {
 
     public String getTopicName(long entityId) {
 
-        return EntityManager.getInstance().getEntityById(entityId).getName();
+        return TeamInfoLoader.getInstance().getName(entityId);
     }
 
     public String getTopicDescription(long entityId) {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        ResLeftSideMenu.Entity rawEntity = entity.getEntity();
-        if (entity.isPublicTopic()) {
-            return ((ResLeftSideMenu.Channel) rawEntity).description;
-        } else if (entity.isPrivateGroup()) {
-            return ((ResLeftSideMenu.PrivateGroup) rawEntity).description;
-        } else {
-            return "";
-        }
+
+        return TeamInfoLoader.getInstance().getTopic(entityId).getDescription();
+
     }
 
     public int getTopicMemberCount(long entityId) {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        return entity.getMemberCount();
+        return TeamInfoLoader.getInstance().getTopic(entityId).getMemberCount();
     }
 
     public boolean isStarred(long entityId) {
 
-        return EntityManager.getInstance().getEntityById(entityId).isStarred;
+        return TeamInfoLoader.getInstance().isStarred(entityId);
     }
 
     public boolean isOwner(long entityId) {
-        return EntityManager.getInstance().isMyTopic(entityId);
+        return TeamInfoLoader.getInstance().getTopic(entityId).getCreatorId()
+                == TeamInfoLoader.getInstance().getMyId();
 
     }
 
@@ -89,18 +83,21 @@ public class TopicDetailModel {
 
     public int getEntityType(long entityId) {
 
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        if (entity.isPublicTopic()) {
-            return JandiConstants.TYPE_PUBLIC_TOPIC;
-        } else if (entity.isPrivateGroup()) {
-            return JandiConstants.TYPE_PRIVATE_TOPIC;
+        if (TeamInfoLoader.getInstance().isTopic(entityId)) {
+            if (TeamInfoLoader.getInstance().isPublicTopic(entityId)) {
+                return JandiConstants.TYPE_PUBLIC_TOPIC;
+            } else {
+                return JandiConstants.TYPE_PRIVATE_TOPIC;
+            }
         } else {
             return JandiConstants.TYPE_DIRECT_MESSAGE;
         }
     }
 
     public void trackDeletingEntity(Context context, int entityType) {
-        String distictId = EntityManager.getInstance().getDistictId();
+        String distictId = TeamInfoLoader.getInstance().getMyId() +
+                "-" +
+                TeamInfoLoader.getInstance().getTeamId();
         try {
             MixpanelMemberAnalyticsClient
                     .getInstance(context, distictId)
@@ -143,14 +140,15 @@ public class TopicDetailModel {
     }
 
     public boolean isPushOn(long entityId) {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        return entity.isTopicPushOn;
+        return TeamInfoLoader.getInstance().getTopic(entityId).isPushSubscribe();
     }
 
     public void trackChangingEntityName(Context context, long entityId, int entityType) {
 
         try {
-            String distictId = EntityManager.getInstance().getDistictId();
+            String distictId = TeamInfoLoader.getInstance().getMyId() +
+                    "-" +
+                    TeamInfoLoader.getInstance().getTeamId();
 
             MixpanelMemberAnalyticsClient
                     .getInstance(context, distictId)
@@ -222,46 +220,40 @@ public class TopicDetailModel {
     }
 
     public boolean isDefaultTopic(long entityId) {
-        return EntityManager.getInstance().getDefaultTopicId() == entityId;
+        return TeamInfoLoader.getInstance().getDefaultTopicId() == entityId;
     }
 
     public boolean isTeamOwner() {
-        return EntityManager.getInstance().getMe().isTeamOwner();
+        return TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId()).isTeamOwner();
     }
 
 
     public int getEnabledTeamMemberCount() {
-        List<FormattedEntity> formattedUsers = EntityManager.getInstance().getFormattedUsers();
+        List<User> userList = TeamInfoLoader.getInstance().getUserList();
 
-        int size = formattedUsers.size();
-        int total = 0;
-        for (int idx = 0; idx < size; idx++) {
-            FormattedEntity formattedEntity = formattedUsers.get(idx);
-            if (formattedEntity != null
-                    && formattedEntity.getUser() != null
-                    && formattedEntity.isEnabled()) {
-                ++total;
-            }
-        }
-
-        return total;
+        return Observable.from(userList)
+                .filter(user -> !user.isBot())
+                .filter(user -> user.isEnabled())
+                .count()
+                .toBlocking()
+                .firstOrDefault(0);
 
     }
 
     public boolean isPrivateTopic(long entityId) {
-        return EntityManager.getInstance().getEntityById(entityId).isPrivateGroup();
+        return TeamInfoLoader.getInstance().isTopic(entityId)
+                && !TeamInfoLoader.getInstance().isPublicTopic(entityId);
     }
 
     public boolean isAutoJoin(long entityId) {
-        return EntityManager.getInstance().getEntityById(entityId).isAutoJoin();
+        return TeamInfoLoader.getInstance().getTopic(entityId).isAutoJoin();
     }
 
     public boolean isStandAlone(long entityId) {
-        return EntityManager.getInstance().getEntityById(entityId).getMemberCount() <= 1;
+        return TeamInfoLoader.getInstance().getTopic(entityId).getMemberCount() <= 1;
     }
 
     public void updateAutoJoin(long entityId, boolean autoJoin) throws RetrofitException {
-        long teamId = EntityManager.getInstance().getTeamId();
         entityClientManager.modifyChannelAutoJoin(entityId, autoJoin);
     }
 

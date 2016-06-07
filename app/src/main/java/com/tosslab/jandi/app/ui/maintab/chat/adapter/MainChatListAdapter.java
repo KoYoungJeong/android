@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
@@ -134,15 +134,15 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
 
-        boolean isBot = EntityManager.getInstance().isBot(item.getEntityId());
-        if (!isBot) {
+        boolean isJandiBot = TeamInfoLoader.getInstance().isJandiBot(item.getEntityId());
+        if (!isJandiBot) {
             layoutParams.height = layoutParams.width;
         } else {
             layoutParams.height = layoutParams.width * 5 / 4;
         }
         ivIcon.setLayoutParams(layoutParams);
 
-        if (!isBot) {
+        if (!isJandiBot) {
             if (!item.isInactive()) {
                 ImageUtil.loadProfileImage(ivIcon, Uri.parse(item.getPhoto()), R.drawable.profile_img);
             } else {

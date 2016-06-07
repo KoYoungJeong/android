@@ -3,13 +3,12 @@ package com.tosslab.jandi.app.ui.maintab.topic.views.create.presenter;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.topic.views.create.model.TopicCreateModel;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
@@ -45,21 +44,19 @@ public class TopicCreatePresenterImpl implements TopicCreatePresenter {
             ResCommon topic = topicCreateModel.createTopic(topicTitle, isPublic, topicDescriptionText, isAutojoin);
 
             try {
-                EntityManager mEntityManager = EntityManager.getInstance();
-                if (mEntityManager != null) {
-                    MixpanelMemberAnalyticsClient
-                            .getInstance(JandiApplication.getContext(), mEntityManager.getDistictId())
-                            .trackCreatingEntity(true);
-                }
+                String distictId = TeamInfoLoader.getInstance().getMyId() + "-"
+                        + TeamInfoLoader.getInstance().getTeamId();
+                MixpanelMemberAnalyticsClient
+                        .getInstance(JandiApplication.getContext(), distictId)
+                        .trackCreatingEntity(true);
             } catch (JSONException e) {
-                LogUtil.e("CAN NOT MEET", e);
+                e.printStackTrace();
             }
 
-            topicCreateModel.refreshEntity();
+            // TODO 응답값 매핑해서 DB 로 넣기
 
             view.dismissProgressWheel();
 
-            EntityManager.getInstance().refreshEntity();
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
 
             topicCreateModel.trackTopicCreateSuccess(topic.id);

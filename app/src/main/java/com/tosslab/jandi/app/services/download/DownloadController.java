@@ -11,12 +11,12 @@ import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.future.ResponseFuture;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.DownloadInfo;
 import com.tosslab.jandi.app.local.orm.repositories.DownloadRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.services.download.domain.DownloadFileInfo;
 import com.tosslab.jandi.app.services.download.model.DownloadModel;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -30,9 +30,6 @@ import java.util.concurrent.CancellationException;
 
 import rx.Observable;
 
-/**
- * Created by tonyjs on 15. 11. 18..
- */
 public class DownloadController {
     public static final String TAG = DownloadService.TAG;
 
@@ -197,10 +194,10 @@ public class DownloadController {
                 .build());
 
         try {
-            EntityManager entityManager = EntityManager.getInstance();
+            String distictId = TeamInfoLoader.getInstance().getMyId() + "-" + TeamInfoLoader.getInstance().getTeamId();
 
             MixpanelMemberAnalyticsClient mixpanelMemberAnalyticsClient =
-                    MixpanelMemberAnalyticsClient.getInstance(context, entityManager.getDistictId());
+                    MixpanelMemberAnalyticsClient.getInstance(context, distictId);
             mixpanelMemberAnalyticsClient.trackDownloadFile(fileType, fileExt, fileSize);
 
         } catch (Exception e) {

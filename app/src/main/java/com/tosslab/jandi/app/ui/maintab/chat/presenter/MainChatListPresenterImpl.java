@@ -2,15 +2,12 @@ package com.tosslab.jandi.app.ui.maintab.chat.presenter;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.models.ResChat;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.ui.maintab.chat.model.MainChatListModel;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
@@ -46,15 +43,8 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
                 .onBackpressureBuffer()
                 .map(integer -> {
 
-                    long memberId = mainChatListModel.getMemberId();
-                    long teamId = mainChatListModel.getTeamId();
-
-                    List<ResChat> chatList = mainChatListModel.getChatList(memberId);
-                    mainChatListModel.saveChatList(teamId, chatList);
-
-                    return mainChatListModel.convertChatItems(JandiApplication.getContext(),
-                            teamId,
-                            chatList);
+                    List<DirectMessageRoom> savedChatList = mainChatListModel.getSavedChatList();
+                    return mainChatListModel.convertChatItems(savedChatList);
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -88,26 +78,9 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
         }
 
         if (!view.hasChatItems()) {
-            List<ResChat> savedChatList = mainChatListModel.getSavedChatList();
-            List<ChatItem> chatItems = mainChatListModel.convertChatItems(context, teamId,
+            List<DirectMessageRoom> savedChatList = mainChatListModel.getSavedChatList();
+            List<ChatItem> chatItems = mainChatListModel.convertChatItems(
                     savedChatList);
-            if (chatItems == null || chatItems.isEmpty()) {
-                view.showEmptyLayout();
-            } else {
-                view.hideEmptyLayout();
-                view.setChatItems(chatItems);
-            }
-        }
-
-        if (!NetworkCheckUtil.isConnected()) {
-            return;
-        }
-
-        try {
-            List<ResChat> chatList = mainChatListModel.getChatList(memberId);
-            mainChatListModel.saveChatList(teamId, chatList);
-            List<ChatItem> chatItems = mainChatListModel.convertChatItems(context, teamId,
-                    chatList);
             if (chatItems == null || chatItems.isEmpty()) {
                 view.showEmptyLayout();
             } else {
@@ -131,11 +104,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
             int unreadCount = mainChatListModel.getUnreadCount(chatItems);
 
             EventBus.getDefault().post(new ChatBadgeEvent(unreadCount > 0, unreadCount));
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-
     }
 
     @Override
@@ -153,13 +122,12 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
     @Override
     public void onMoveDirectMessage(Context context, long entityId) {
-        EntityManager entityManager = EntityManager.getInstance();
         long roomId = mainChatListModel.getRoomId(entityId);
 
-        view.moveMessageActivity(entityManager.getTeamId(),
+        view.moveMessageActivity(TeamInfoLoader.getInstance().getTeamId(),
                 entityId,
                 roomId,
-                mainChatListModel.isStarred(entityId), -1);
+                -1);
     }
 
     @Override
@@ -177,19 +145,14 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
         long entityId = chatItem.getEntityId();
 
-        boolean isStarred = EntityManager.getInstance()
-                .getEntityById(entityId)
-                .isStarred;
-
-        view.moveMessageActivity(mainChatListModel.getTeamId(), entityId, chatItem
-                .getRoomId(), isStarred, chatItem.getLastLinkId());
+        view.moveMessageActivity(mainChatListModel.getTeamId(), entityId, chatItem.getRoomId(),
+                chatItem.getLastLinkId());
 
     }
 
     @Override
     public void onEntityStarredUpdate(long entityId) {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        boolean isStarred = entity.isStarred;
+        boolean isStarred = TeamInfoLoader.getInstance().isChatStarred(entityId);
         view.setStarred(entityId, isStarred);
     }
 }

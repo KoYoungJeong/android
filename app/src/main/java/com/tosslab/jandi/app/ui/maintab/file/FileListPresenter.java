@@ -15,14 +15,16 @@ import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.Member;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.selector.filetype.FileTypeSelector;
@@ -206,12 +208,11 @@ public class FileListPresenter {
         UserSelector userSelector = new UserSelectorImpl();
         userSelector.setOnUserSelectListener(item -> {
 
-            if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
+            if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
                 mCurrentUserNameCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everyone);
                 textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
                 EventBus.getDefault().post(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
-            } else if (item.getEntityId() ==
-                    EntityManager.getInstance().getMe().getId()) {
+            } else if (item.getEntityId() == TeamInfoLoader.getInstance().getMyId()) {
                 mCurrentUserNameCategorizingAccodingBy = context.getString(R.string.jandi_my_files);
                 textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
                 EventBus.getDefault().post(new CategorizingAsOwner(item.getEntityId()));
@@ -229,7 +230,7 @@ public class FileListPresenter {
                 screen = AnalyticsValue.Screen.FilesTab;
             }
 
-            if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
+            if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
                 AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseMemberFilter, AnalyticsValue.Label.AllMember);
             } else {
                 AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseMemberFilter, AnalyticsValue.Label.Member);
@@ -257,24 +258,23 @@ public class FileListPresenter {
     public void showEntityDialog() {
         setUpTypeTextView(textViewFileListWhere, true);
 
-        EntityManager entityManager = EntityManager.getInstance();
-        List<FormattedEntity> joinedChannels = entityManager.getJoinedChannels();
-        List<FormattedEntity> groups = entityManager.getGroups();
-        List<FormattedEntity> allTopics = new ArrayList<>();
-        Observable.merge(Observable.from(joinedChannels), Observable.from(groups))
+        TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
+        List<TopicRoom> allTopics = new ArrayList<>();
+        Observable.from(teamInfoLoader.getTopicList())
                 .subscribe(entity -> {
                             allTopics.add(entity);
                         }
                 );
-        List<FormattedEntity> users = EntityManager.getInstance().getFormattedUsersWithoutMe();
-        if (entityManager.hasJandiBot()) {
-            users.add(0, EntityManager.getInstance().getJandiBot());
+        List<Member> users = new ArrayList<>();
+        users.addAll(teamInfoLoader.getUserList());
+        if (teamInfoLoader.hasJandiBot()) {
+            users.add(0, TeamInfoLoader.getInstance().getJandiBot());
         }
 
         RoomSelector roomSelector = new RoomSelectorImpl(allTopics, users);
         roomSelector.setOnRoomSelectListener(item -> {
             long sharedEntityId = CategorizingAsEntity.EVERYWHERE;
-            if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
+            if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
                 // 첫번째는 "Everywhere"인 더미 entity
                 mCurrentEntityCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everywhere);
             } else {
@@ -293,7 +293,7 @@ public class FileListPresenter {
                 screen = AnalyticsValue.Screen.FilesTab;
             }
 
-            if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
+            if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
                 AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseTopicFilter, AnalyticsValue.Label.AllTopic);
             } else if (item.isUser()) {
                 AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseTopicFilter, AnalyticsValue.Label.Member);

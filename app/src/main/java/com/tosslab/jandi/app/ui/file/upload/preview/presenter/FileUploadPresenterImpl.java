@@ -2,10 +2,9 @@ package com.tosslab.jandi.app.ui.file.upload.preview.presenter;
 
 import android.app.Activity;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.model.FileUploadModel;
@@ -33,23 +32,19 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
     }
 
     @Override
-    public void onInitEntity(Activity activity, long selectedEntityIdToBeShared) {
+    public void onInitEntity(Activity activity, long entityId) {
 
         String entityName;
-        long entityId;
-        if (fileUploadModel.isValid(selectedEntityIdToBeShared)) {
-            entityName = fileUploadModel.getEntityString(selectedEntityIdToBeShared);
-            entityId = selectedEntityIdToBeShared;
+        if (fileUploadModel.isValid(entityId)) {
+            entityName = fileUploadModel.getEntityString(entityId);
         } else {
-            FormattedEntity entity = fileUploadModel.getDefaultTopicEntity();
-            entityId = entity.getId();
-            entityName = entity.getName();
+            long topicId = fileUploadModel.getDefaultTopicEntity();
+            entityId = topicId;
+            entityName = fileUploadModel.getEntityName(topicId);
         }
 
-        FormattedEntity entity = fileUploadModel.getEntity(entityId);
-
         view.setEntityInfo(entityName);
-        view.setShareEntity(entityId, entity.isUser());
+        view.setShareEntity(entityId, fileUploadModel.isUser(entityId));
 
     }
 
@@ -59,13 +54,12 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
     }
 
     @Override
-    public void onEntityUpdate(FormattedEntity item) {
-        long id = item.getId();
+    public void onEntityUpdate(long entityId) {
         for (FileUploadVO fileUploadVO : fileUploadVOs) {
-            fileUploadVO.setEntity(id);
+            fileUploadVO.setEntity(entityId);
         }
 
-        view.setEntityInfo(fileUploadModel.getEntityString(id));
+        view.setEntityInfo(fileUploadModel.getEntityString(entityId));
     }
 
     @Deprecated
@@ -90,7 +84,7 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
                 ResultMentionsVO mentionInfoObject = mentionControlViewModel.getMentionInfoObject(fileUploadVO.getComment());
 
                 fileUploadDTO = new FileUploadDTO();
-                fileUploadDTO.setTeamId(EntityManager.getInstance().getTeamId());
+                fileUploadDTO.setTeamId(TeamInfoLoader.getInstance().getTeamId());
                 fileUploadDTO.setMentions(mentionInfoObject.getMentions());
                 fileUploadDTO.setComment(mentionInfoObject.getMessage());
                 fileUploadDTO.setFilePath(fileUploadVO.getFilePath());
@@ -98,7 +92,7 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
                 fileUploadDTO.setEntity(fileUploadVO.getEntity());
             } else {
                 fileUploadDTO = new FileUploadDTO(fileUploadVO);
-                fileUploadDTO.setTeamId(EntityManager.getInstance().getTeamId());
+                fileUploadDTO.setTeamId(TeamInfoLoader.getInstance().getTeamId());
                 fileUploadDTO.setMentions(new ArrayList<>());
             }
 

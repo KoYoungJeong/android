@@ -19,7 +19,7 @@ import java.util.Date;
 public class Topic {
     @JsonIgnore
     @DatabaseField(foreign = true)
-    InitializeInfo initialInfo;
+    InitialInfo initialInfo;
     @DatabaseField(id = true)
     private long id;
     @DatabaseField
@@ -59,11 +59,11 @@ public class Topic {
     @DatabaseField
     private int unreadCount;
 
-    public InitializeInfo getInitialInfo() {
+    public InitialInfo getInitialInfo() {
         return initialInfo;
     }
 
-    public void setInitialInfo(InitializeInfo initialInfo) {
+    public void setInitialInfo(InitialInfo initialInfo) {
         this.initialInfo = initialInfo;
     }
 

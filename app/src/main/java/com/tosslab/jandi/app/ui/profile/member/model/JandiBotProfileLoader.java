@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.Member;
 
 import uk.co.senab.photoview.PhotoView;
 
@@ -24,17 +24,17 @@ public class JandiBotProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setName(TextView tvProfileName, FormattedEntity member) {
+    public void setName(TextView tvProfileName, Member member) {
         tvProfileName.setText(member.getName());
     }
 
     @Override
-    public void setDescription(TextView tvProfileDescription, FormattedEntity member) {
+    public void setDescription(TextView tvProfileDescription, Member member) {
         tvProfileDescription.setText(R.string.jandi_bot_status);
     }
 
     @Override
-    public void setProfileInfo(ViewGroup vgProfileTeamInfo, TextView tvProfileDivision, TextView tvProfilePosition, FormattedEntity member) {
+    public void setProfileInfo(ViewGroup vgProfileTeamInfo, TextView tvProfileDivision, TextView tvProfilePosition, Member member) {
         tvProfileDivision.setText(R.string.jandi_bot_role);
         tvProfileDivision.setMaxLines(3);
 
@@ -42,7 +42,7 @@ public class JandiBotProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void loadSmallThumb(ImageView ivProfileImageSmall, FormattedEntity member) {
+    public void loadSmallThumb(ImageView ivProfileImageSmall, Member member) {
         RelativeLayout.LayoutParams layoutParams =
                 ((RelativeLayout.LayoutParams) ivProfileImageSmall.getLayoutParams());
         layoutParams.height = (int) TypedValue.applyDimension(
@@ -68,19 +68,19 @@ public class JandiBotProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setStarButton(View btnProfileStar, FormattedEntity member) {
-        btnProfileStar.setSelected(member.isStarred);
+    public void setStarButton(View btnProfileStar, Member member) {
+        btnProfileStar.setSelected(TeamInfoLoader.getInstance().isChatStarred(member.getId()));
         btnProfileStar.setVisibility(View.VISIBLE);
         btnProfileStar.setEnabled(true);
     }
 
     @Override
-    public boolean isEnabled(FormattedEntity member) {
+    public boolean isEnabled(Member member) {
         return member.isEnabled();
     }
 
     @Override
-    public boolean hasChangedProfileImage(FormattedEntity member) {
+    public boolean hasChangedProfileImage(Member member) {
         return false;
     }
 

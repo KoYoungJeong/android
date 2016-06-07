@@ -12,10 +12,10 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
@@ -98,7 +98,7 @@ public class MessageViewHolder extends BaseMessageViewHolder {
 
     private void setMessageBackground(ResMessages.Link link) {
         long writerId = link.fromEntity;
-        if (EntityManager.getInstance().isMe(writerId)) {
+        if (TeamInfoLoader.getInstance().getMyId() != writerId) {
             tvMessage.setBackgroundResource(R.drawable.bg_message_item_selector_mine);
         } else {
             tvMessage.setBackgroundResource(R.drawable.bg_message_item_selector);
@@ -115,11 +115,10 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
         if (textMessage.content.contentBuilder == null) {
-            EntityManager entityManager = EntityManager.getInstance();
             SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
             if (!TextUtils.isEmpty(textMessage.content.body)) {
                 messageStringBuilder.append(textMessage.content.body);
-                long myId = entityManager.getMe().getId();
+                long myId = TeamInfoLoader.getInstance().getMyId();
                 MentionAnalysisInfo mentionInfo = MentionAnalysisInfo.newBuilder(myId, textMessage.mentions)
                         .textSize(tvMessage.getTextSize())
                         .clickable(true)
@@ -158,7 +157,7 @@ public class MessageViewHolder extends BaseMessageViewHolder {
 
     private void setBadge(long teamId, long roomId, ResMessages.Link link) {
         UnreadCountUtil.getUnreadCount(teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance().getMe().getId())
+                link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(unreadCount -> {
                     if (unreadCount > 0) {

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.services.socket.to;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
+
 /**
  * Created by tee on 15. 8. 26..
  */
@@ -15,6 +16,7 @@ public class SocketTopicFolderEvent {
     private String event;
     private int version;
     private Data data;
+    private long teamId;
 
     private long ts;
 
@@ -60,43 +62,51 @@ public class SocketTopicFolderEvent {
                 '}';
     }
 
+    public long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
-        private int folderId;
-        private int memberId;
-        private int roomId;
-        private int teamId;
+        private long folderId;
+        private long memberId;
+        private long roomId;
+        private long teamId;
 
-        public int getFolderId() {
+        public long getFolderId() {
             return folderId;
         }
 
-        public void setFolderId(int folderId) {
+        public void setFolderId(long folderId) {
             this.folderId = folderId;
         }
 
-        public int getMemberId() {
+        public long getMemberId() {
             return memberId;
         }
 
-        public void setMemberId(int memberId) {
+        public void setMemberId(long memberId) {
             this.memberId = memberId;
         }
 
-        public int getRoomId() {
+        public long getRoomId() {
             return roomId;
         }
 
-        public void setRoomId(int roomId) {
+        public void setRoomId(long roomId) {
             this.roomId = roomId;
         }
 
-        public int getTeamId() {
+        public long getTeamId() {
             return teamId;
         }
 
-        public void setTeamId(int teamId) {
+        public void setTeamId(long teamId) {
             this.teamId = teamId;
         }
 

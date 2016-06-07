@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.members.model;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.team.member.User;
 
 import java.util.List;
 
@@ -9,11 +9,11 @@ import java.util.List;
  */
 public interface MemberSearchableDataModel {
 
-    List<FormattedEntity> getInitializedMembers();
+    List<User> getInitializedMembers();
 
-    void setInitializedMembers(List<FormattedEntity> members);
+    void setInitializedMembers(List<User> members);
 
-    void addAll(List<FormattedEntity> members);
+    void addAll(List<User> members);
 
     void setEmptySearchedMember(String query);
 

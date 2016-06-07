@@ -7,9 +7,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
@@ -54,9 +54,9 @@ public class SearchedFileItemView extends RelativeLayout {
         String searchedFileName = content.title;
         tvFileName.setText(searchedFileName);
 
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(searchedFile.writerId);
+        User entity = TeamInfoLoader.getInstance().getUser(searchedFile.writerId);
 
-        if (entity != EntityManager.UNKNOWN_USER_ENTITY) {
+        if (entity != null) {
             String searchedFileOwnerName = entity.getName();
             tvFileOwner.setText(searchedFileOwnerName);
         } else {
@@ -78,7 +78,7 @@ public class SearchedFileItemView extends RelativeLayout {
             tvComment.setVisibility(View.INVISIBLE);
         }
 
-        if (entity != null && entity.getUser() != null && entity.isEnabled()) {
+        if (entity != null && entity.isEnabled()) {
             tvFileOwner.setTextColor(getResources().getColor(R.color.jandi_file_search_item_owner_text));
             vLineThrough.setVisibility(View.GONE);
         } else {

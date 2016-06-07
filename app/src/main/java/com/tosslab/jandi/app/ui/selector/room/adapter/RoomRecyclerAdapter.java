@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
@@ -19,9 +19,6 @@ import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by tee on 15. 9. 30..
- */
 public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public static final int FROM_ROOM_SELECTOR = 0x01;
@@ -110,7 +107,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         }
 
-        if (item.getType() == FormattedEntity.TYPE_EVERYWHERE) {
+        if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
             if (from == FROM_ROOM_SELECTOR) {
                 ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 ivIcon.setImageResource(R.drawable.icon_search_all_rooms);
@@ -125,7 +122,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         } else if (item.isUser()) {
             String fileUrl = ImageUtil.getImageFileUrl(item.getProfileUrl());
-            boolean jandiBot = EntityManager.getInstance().isBot(item.getEntityId());
+            boolean jandiBot = TeamInfoLoader.getInstance().isJandiBot(item.getEntityId());
 
             ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
             if (!jandiBot) {

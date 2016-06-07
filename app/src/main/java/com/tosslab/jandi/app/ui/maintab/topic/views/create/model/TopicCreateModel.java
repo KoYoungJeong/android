@@ -3,12 +3,9 @@ package com.tosslab.jandi.app.ui.maintab.topic.views.create.model;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -35,12 +32,6 @@ public class TopicCreateModel {
             return entityClientManager.createPrivateGroup(entityName, topicDescription, isAutojoin);
         }
 
-    }
-
-    public void refreshEntity() throws RetrofitException {
-        ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
-        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-        EntityManager.getInstance().refreshEntity();
     }
 
     public boolean invalideTitle(String topicTitle) {

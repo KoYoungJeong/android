@@ -12,13 +12,11 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.lists.BotEntity;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.UnreadCountUtil;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
@@ -88,18 +86,14 @@ public class JandiBotViewHolder implements BodyViewHolder {
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
         long fromEntityId = link.fromEntity;
 
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity entity = entityManager.getEntityById(fromEntityId);
-        if (!(entity instanceof BotEntity)) {
+        if (!TeamInfoLoader.getInstance().isJandiBot(fromEntityId)) {
             return;
         }
-
-        BotEntity botEntity = (BotEntity) entity;
-        ResLeftSideMenu.Bot bot = botEntity.getBot();
+        User bot = TeamInfoLoader.getInstance().getUser(fromEntityId);
 
         ivProfile.setImageResource(R.drawable.bot_32x40);
 
-        if (bot != null && TextUtils.equals(bot.status, "enabled")) {
+        if (bot.isEnabled()) {
             tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
             vDisableCover.setVisibility(View.GONE);
             vDisableLineThrough.setVisibility(View.GONE);
@@ -110,7 +104,7 @@ public class JandiBotViewHolder implements BodyViewHolder {
             vDisableLineThrough.setVisibility(View.VISIBLE);
         }
 
-        tvName.setText(bot.name);
+        tvName.setText(bot.getName());
 
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
@@ -118,7 +112,7 @@ public class JandiBotViewHolder implements BodyViewHolder {
             SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
             messageStringBuilder.append(!TextUtils.isEmpty(textMessage.content.body) ? textMessage.content.body : "");
 
-            long myId = entityManager.getMe().getId();
+            long myId = TeamInfoLoader.getInstance().getMyId();
             MentionAnalysisInfo mentionAnalysisInfo =
                     MentionAnalysisInfo.newBuilder(myId, textMessage.mentions)
                             .textSize(tvMessage.getTextSize())
@@ -149,7 +143,7 @@ public class JandiBotViewHolder implements BodyViewHolder {
                     startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             UnreadCountUtil.getUnreadCount(teamId, roomId,
-                    link.id, link.fromEntity, EntityManager.getInstance().getMe().getId())
+                    link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(unreadCount -> {
                         if (unreadCount > 0) {
@@ -170,8 +164,8 @@ public class JandiBotViewHolder implements BodyViewHolder {
 
         }
 
-        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(bot.id, ShowProfileEvent.From.Image)));
-        tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(bot.id, ShowProfileEvent.From.Name)));
+        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(bot.getId(), ShowProfileEvent.From.Image)));
+        tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(bot.getId(), ShowProfileEvent.From.Name)));
 
         linkPreviewViewModel.bindData(link);
     }

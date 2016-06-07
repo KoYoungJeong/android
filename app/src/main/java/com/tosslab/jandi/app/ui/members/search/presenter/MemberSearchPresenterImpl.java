@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.members.search.presenter;
 import android.util.Log;
 import android.util.Pair;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.members.model.MemberSearchableDataModel;
 import com.tosslab.jandi.app.ui.members.search.model.MemberSearchModel;
 import com.tosslab.jandi.app.ui.members.search.view.MemberSearchView;
@@ -27,6 +27,8 @@ public class MemberSearchPresenterImpl implements MemberSearchPresenter {
     private final MemberSearchableDataModel memberSearchableDataModel;
     private final MemberSearchModel memberSearchModel;
     private final MemberSearchView memberSearchView;
+    private PublishSubject<String> searchQueryQueue;
+    private Subscription searchQueryQueueSubscription;
 
     @Inject
     public MemberSearchPresenterImpl(MemberSearchModel memberSearchModel,
@@ -38,9 +40,6 @@ public class MemberSearchPresenterImpl implements MemberSearchPresenter {
 
         initMemberSearchQueue();
     }
-
-    private PublishSubject<String> searchQueryQueue;
-    private Subscription searchQueryQueueSubscription;
 
     @Override
     public void initMemberSearchQueue() {
@@ -55,7 +54,7 @@ public class MemberSearchPresenterImpl implements MemberSearchPresenter {
                         .subscribe(pair -> {
                             memberSearchableDataModel.clear();
 
-                            List<FormattedEntity> members = pair.second;
+                            List<User> members = pair.second;
                             if (members == null || members.isEmpty()) {
                                 String query = pair.first;
                                 memberSearchableDataModel.setEmptySearchedMember(query);

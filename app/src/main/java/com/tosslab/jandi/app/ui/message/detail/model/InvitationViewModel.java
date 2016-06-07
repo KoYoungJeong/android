@@ -9,16 +9,15 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.InvitationSuccessEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.UnjoinedUserListAdapter;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
@@ -34,6 +33,8 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -41,6 +42,7 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
 import rx.subjects.PublishSubject;
 
 /**
@@ -63,9 +65,7 @@ public class InvitationViewModel {
 
         final Context context = activity.getApplicationContext();
 
-        int teamMemberCountWithoutMe = EntityManager.getInstance()
-                .getFormattedUsersWithoutMe()
-                .size();
+        int teamMemberCountWithoutMe = TeamInfoLoader.getInstance().getUserList().size() - 1;
 
         if (teamMemberCountWithoutMe <= 0) {
             ColoredToast.showWarning(context.getString(R.string.warn_all_users_are_already_invited));
@@ -77,12 +77,12 @@ public class InvitationViewModel {
         PublishSubject<String> publishSubject = PublishSubject.create();
         Subscription subscribe = publishSubject.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
                 .flatMap(s -> Observable.from(getUnjoinedEntities(entityId))
-                                .filter(formattedEntity -> {
-                                    String searchTarget = s.toLowerCase();
-                                    return formattedEntity.getName().toLowerCase()
-                                            .contains(searchTarget);
-                                })
-                                .toSortedList((formattedEntity, formattedEntity2) -> StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName()))
+                        .filter(formattedEntity -> {
+                            String searchTarget = s.toLowerCase();
+                            return formattedEntity.getName().toLowerCase()
+                                    .contains(searchTarget);
+                        })
+                        .toSortedList((formattedEntity, formattedEntity2) -> StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName()))
                 )
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(adapter::setUnjoinedEntities);
@@ -95,7 +95,7 @@ public class InvitationViewModel {
         EditText et = (EditText) view.findViewById(R.id.et_cdp_search);
 
         // 현재 채널에 가입된 사용자를 제외한 초대 대상 사용자 리스트를 획득한다.
-        List<FormattedEntity> unjoinedMembers = getUnjoinedEntities(entityId);
+        List<User> unjoinedMembers = getUnjoinedEntities(entityId);
 
         if (unjoinedMembers.size() <= 0) {
             ColoredToast.showWarning(context.getString(R.string.warn_all_users_are_already_invited));
@@ -105,8 +105,8 @@ public class InvitationViewModel {
         lv.setAdapter(adapter);
         lv.setOnItemClickListener((parent, view1, position, id) -> {
             UnjoinedUserListAdapter userListAdapter = (UnjoinedUserListAdapter) parent.getAdapter();
-            FormattedEntity item = userListAdapter.getItem(position);
-            item.isSelectedToBeJoined = !item.isSelectedToBeJoined;
+            User item = userListAdapter.getItem(position);
+            userListAdapter.toggleChecked(item);
 
             userListAdapter.notifyDataSetChanged();
         });
@@ -138,38 +138,41 @@ public class InvitationViewModel {
         dialog.show();
     }
 
-    private List<FormattedEntity> getUnjoinedEntities(long entityId) {
-        EntityManager entityManager = EntityManager.getInstance();
-        FormattedEntity entity = entityManager.getEntityById(entityId);
-        int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity
-                .isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
-        List<FormattedEntity> unjoinedMembersOfEntity = entityManager.getUnjoinedMembersOfEntity(entityId, entityType);
+    private List<User> getUnjoinedEntities(long entityId) {
 
-        for (int idx = unjoinedMembersOfEntity.size() - 1; idx >= 0; idx--) {
-            FormattedEntity formattedEntity = unjoinedMembersOfEntity.get(idx);
-            if (!formattedEntity.isEnabled()) {
-                unjoinedMembersOfEntity.remove(idx);
-            }
+        if (TeamInfoLoader.getInstance().isTopic(entityId)) {
+            TopicRoom topic = TeamInfoLoader.getInstance().getTopic(entityId);
+
+            Collection<Long> members = topic.getMembers();
+
+            List<User> userList = TeamInfoLoader.getInstance().getUserList();
+
+            return Observable.from(userList)
+                    .filter(user -> !members.contains(user.getId()))
+                    .collect((Func0<ArrayList<User>>) ArrayList::new, ArrayList::add)
+                    .toBlocking()
+                    .firstOrDefault(new ArrayList<>());
+
+        } else {
+            return new ArrayList<>();
         }
-
-        return unjoinedMembersOfEntity;
     }
 
     @Background
     public void inviteInBackground(Context context, List<Long> invitedUsers, long entityId) {
         try {
 
-            FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
+            TopicRoom entity = TeamInfoLoader.getInstance().getTopic(entityId);
 
             if (entity.isPublicTopic()) {
                 mEntityClientManager.inviteChannel(entityId, invitedUsers);
-            } else if (entity.isPrivateGroup()) {
+            } else {
                 mEntityClientManager.invitePrivateGroup(entityId, invitedUsers);
             }
 
-            ResLeftSideMenu resLeftSideMenu = mEntityClientManager.getTotalEntitiesInfo();
-            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
-            EntityManager.getInstance().refreshEntity();
+            TopicRepository.getInstance().addMember(entityId, invitedUsers);
+            TeamInfoLoader.getInstance().refresh();
+
             EventBus.getDefault().post(new InvitationSuccessEvent());
 
             trackTopicMemberInviteSuccess(invitedUsers.size(), entityId);

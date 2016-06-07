@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
+import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
 import com.tosslab.jandi.app.libraries.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
@@ -307,12 +308,16 @@ public class MainTopicListFragment extends Fragment
     @Override
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showList(TopicFolderListDataProvider topicFolderListDataProvider) {
-        expandableTopicAdapter = new ExpandableTopicAdapter(topicFolderListDataProvider);
+        if (expandableTopicAdapter == null) {
+            expandableTopicAdapter = new ExpandableTopicAdapter(topicFolderListDataProvider);
+            wrappedAdapter = expandableItemManager.createWrappedAdapter(expandableTopicAdapter);
+            // ListView를 Set함
+            expandableItemManager.attachRecyclerView(lvMainTopic);
+        } else {
+            expandableTopicAdapter.setProvider(topicFolderListDataProvider);
+        }
 
-        wrappedAdapter = expandableItemManager.createWrappedAdapter(expandableTopicAdapter);
 
-        // ListView를 Set함
-        expandableItemManager.attachRecyclerView(lvMainTopic);
         // 어떤 폴더에도 속하지 않는 토픽들을 expand된 상태에서 보여주기 위하여
         expandableItemManager.expandGroup(expandableTopicAdapter.getGroupCount() - 1);
 
@@ -380,7 +385,6 @@ public class MainTopicListFragment extends Fragment
                 .teamId(teamId)
                 .roomId(entityId)
                 .lastReadLinkId(lastReadLinkId)
-                .isFavorite(starred)
                 .startForResult(MOVE_MESSAGE_ACTIVITY);
     }
 
@@ -424,6 +428,7 @@ public class MainTopicListFragment extends Fragment
     public void showEntityMenuDialog(long entityId, long folderId) {
         EntityMenuDialogFragment_.builder()
                 .entityId(entityId)
+                .roomId(entityId)
                 .folderId(folderId)
                 .build()
                 .show(getFragmentManager(), "dialog");
@@ -509,8 +514,12 @@ public class MainTopicListFragment extends Fragment
         mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
+    public void onEvent(TopicFolderRefreshEvent event) {
+        mainTopicListPresenter.refreshList();
+    }
+
     public void onEvent(SocketTopicFolderEvent event) {
-        mainTopicListPresenter.onRefreshList(null, null);
+        mainTopicListPresenter.refreshList();
     }
 
     public void onEvent(SocketTopicPushEvent event) {

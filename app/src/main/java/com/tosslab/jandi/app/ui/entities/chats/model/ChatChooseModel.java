@@ -2,10 +2,9 @@ package com.tosslab.jandi.app.ui.entities.chats.model;
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.lists.BotEntity;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.domain.DisableDummyItem;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
@@ -97,24 +96,26 @@ public class ChatChooseModel {
 
     public List<ChatChooseItem> getChatListWithoutMe(String name) {
 
-        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe();
+        List<User> users = TeamInfoLoader.getInstance().getUserList();
+        long myId = TeamInfoLoader.getInstance().getMyId();
 
         List<ChatChooseItem> chatChooseItems = new ArrayList<>();
 
-        Observable.from(formattedUsersWithoutMe)
-                .filter(formattedEntity -> !TextUtils.isEmpty(formattedEntity.getName()) && formattedEntity.getName().toLowerCase().contains(name.toLowerCase()))
-                .map(formattedEntity -> {
+        Observable.from(users)
+                .filter(user -> user.getId() != myId)
+                .filter(user -> !TextUtils.isEmpty(user.getName()) && user.getName().toLowerCase().contains(name.toLowerCase()))
+                .map(user -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
 
-                    chatChooseItem.entityId(formattedEntity.getId())
-                            .statusMessage(formattedEntity.getUserStatusMessage())
-                            .name(formattedEntity.getName())
-                            .starred(formattedEntity.isStarred)
-                            .enabled(formattedEntity.isEnabled())
-                            .inactive(formattedEntity.isInavtived())
-                            .email(formattedEntity.getUserEmail())
-                            .owner(formattedEntity.isTeamOwner())
-                            .photoUrl(formattedEntity.getUserLargeProfileUrl());
+                    chatChooseItem.entityId(user.getId())
+                            .statusMessage(user.getStatusMessage())
+                            .name(user.getName())
+                            .starred(TeamInfoLoader.getInstance().isChatStarred(user.getId()))
+                            .enabled(user.isEnabled())
+                            .inactive(user.isInactive())
+                            .email(user.getEmail())
+                            .owner(user.isTeamOwner())
+                            .photoUrl(user.getPhotoUrl());
 
                     return chatChooseItem;
                 })
@@ -143,15 +144,7 @@ public class ChatChooseModel {
 
     private boolean hasDisabledUsers() {
 
-        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe();
-
-
-        return Observable.from(formattedUsersWithoutMe)
-                .filter(entity -> !entity.isEnabled())
-                .map(entity -> true)
-                .firstOrDefault(false)
-                .toBlocking()
-                .first();
+        return TeamInfoLoader.getInstance().hasDisabledUser();
     }
 
     public List<ChatChooseItem> getUsers() {
@@ -167,24 +160,26 @@ public class ChatChooseModel {
     }
 
     private List<ChatChooseItem> getEnableUsers() {
-        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance().getFormattedUsersWithoutMe();
+        List<User> users = TeamInfoLoader.getInstance().getUserList();
 
         List<ChatChooseItem> chatChooseItems = new ArrayList<>();
 
-        Observable.from(formattedUsersWithoutMe)
-                .filter(FormattedEntity::isEnabled)
-                .map(formattedEntity -> {
+        long myId = TeamInfoLoader.getInstance().getMyId();
+        Observable.from(users)
+                .filter(user -> user.getId() != myId)
+                .filter(User::isEnabled)
+                .map(user -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
 
-                    chatChooseItem.entityId(formattedEntity.getId())
-                            .statusMessage(formattedEntity.getUserStatusMessage())
-                            .name(formattedEntity.getName())
-                            .starred(formattedEntity.isStarred)
+                    chatChooseItem.entityId(user.getId())
+                            .statusMessage(user.getStatusMessage())
+                            .name(user.getName())
+                            .starred(TeamInfoLoader.getInstance().isChatStarred(user.getId()))
                             .enabled(true)
-                            .inactive(formattedEntity.isInavtived())
-                            .email(formattedEntity.getUserEmail())
-                            .owner(formattedEntity.isTeamOwner())
-                            .photoUrl(formattedEntity.getUserLargeProfileUrl());
+                            .inactive(user.isInactive())
+                            .email(user.getEmail())
+                            .owner(user.isTeamOwner())
+                            .photoUrl(user.getPhotoUrl());
 
                     return chatChooseItem;
                 })
@@ -204,19 +199,19 @@ public class ChatChooseModel {
     }
 
     private ChatChooseItem getJandiBot() {
-        BotEntity jandiBot = ((BotEntity) EntityManager.getInstance().getJandiBot());
+        User bot = TeamInfoLoader.getInstance().getJandiBot();
         return new ChatChooseItem()
-                .enabled(jandiBot.isEnabled())
+                .enabled(bot.isEnabled())
                 .isBot(true)
-                .entityId(jandiBot.getId())
-                .name(jandiBot.getName())
+                .entityId(bot.getId())
+                .name(bot.getName())
                 .owner(false)
-                .photoUrl(jandiBot.getUserMediumProfileUrl())
-                .starred(jandiBot.isStarred);
+                .photoUrl(bot.getPhotoUrl())
+                .starred(TeamInfoLoader.getInstance().isChatStarred(bot.getId()));
     }
 
     private boolean hasJandiBot() {
-        return EntityManager.getInstance().hasJandiBot();
+        return TeamInfoLoader.getInstance().hasJandiBot();
     }
 
 }

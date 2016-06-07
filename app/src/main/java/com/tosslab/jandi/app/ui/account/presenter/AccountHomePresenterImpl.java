@@ -8,11 +8,12 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
@@ -81,8 +82,9 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         view.showProgressWheel();
         try {
             accountHomeModel.updateSelectTeam(teamId);
-            ResLeftSideMenu entityInfo = accountHomeModel.getEntityInfo(teamId);
-            accountHomeModel.updateEntityInfo(JandiApplication.getContext(), entityInfo);
+            InitialInfo initialInfo = accountHomeModel.getEntityInfo(teamId);
+            accountHomeModel.updateEntityInfo(initialInfo);
+            JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
             view.dismissProgressWheel();
 
             // Track Team List Sign In (with flush)

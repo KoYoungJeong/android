@@ -3,7 +3,8 @@ package com.tosslab.jandi.app.ui.message.detail.model;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -11,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import rx.Observable;
 import setup.BaseInitUtil;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,13 +46,17 @@ public class TopicDetailModelTest {
     public void testIsPrivateTopic() throws Exception {
 
         {
-            long defaultTopicId = EntityManager.getInstance().getDefaultTopicId();
+            long defaultTopicId = TeamInfoLoader.getInstance().getDefaultTopicId();
             boolean privateTopic = topicDetailModel.isPrivateTopic(defaultTopicId);
             assertThat(privateTopic, is(false));
         }
 
         {
-            long privateTopicId = EntityManager.getInstance().getGroups().get(0).getId();
+            long privateTopicId = Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                    .takeFirst(topicRoom -> !topicRoom.isPublicTopic())
+                    .map(TopicRoom::getId)
+                    .toBlocking()
+                    .firstOrDefault(-1L);
             boolean privateTopic = topicDetailModel.isPrivateTopic(privateTopicId);
             assertThat(privateTopic, is(true));
         }
@@ -64,13 +70,17 @@ public class TopicDetailModelTest {
     @Test
     public void testIsAutoJoin() throws Exception {
         {
-            long defaultTopicId = EntityManager.getInstance().getDefaultTopicId();
+            long defaultTopicId = TeamInfoLoader.getInstance().getDefaultTopicId();
             boolean autoJoin = topicDetailModel.isAutoJoin(defaultTopicId);
             assertThat(autoJoin, is(true));
         }
 
         {
-            long privateTopicId = EntityManager.getInstance().getGroups().get(0).getId();
+            long privateTopicId = Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                    .takeFirst(topicRoom -> !topicRoom.isPublicTopic())
+                    .map(TopicRoom::getId)
+                    .toBlocking()
+                    .firstOrDefault(-1L);
             boolean autoJoin = topicDetailModel.isAutoJoin(privateTopicId);
             assertThat(autoJoin, is(false));
         }
@@ -87,12 +97,13 @@ public class TopicDetailModelTest {
 
         int enabledTeamMemberCount = topicDetailModel.getEnabledTeamMemberCount();
 
-        EntityManager entityManager = EntityManager.getInstance();
-        int size = entityManager.getFormattedUsers().size();
+        int size = TeamInfoLoader.getInstance().getUserList().size();
 
         assertThat(enabledTeamMemberCount, is(lessThanOrEqualTo(size)));
 
-        int memberCount = entityManager.getEntityById(entityManager.getDefaultTopicId()).getMemberCount();
+        int memberCount = TeamInfoLoader.getInstance()
+                .getTopic(TeamInfoLoader.getInstance().getDefaultTopicId())
+                .getMemberCount();
 
         assertThat(enabledTeamMemberCount, is(lessThanOrEqualTo(memberCount)));
     }

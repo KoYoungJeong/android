@@ -3,26 +3,21 @@ package com.tosslab.jandi.app.ui.maintab.topic.model;
 import android.support.v4.util.Pair;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.teams.folder.FolderApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResFolder;
-import com.tosslab.jandi.app.network.models.ResFolderItem;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.TopicFolder;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
@@ -38,6 +33,7 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import rx.Observable;
+import rx.functions.Func0;
 
 @EBean
 public class MainTopicModel {
@@ -55,62 +51,41 @@ public class MainTopicModel {
     }
 
     // 폴더 정보 가져오기
-    public List<ResFolder> getTopicFolders() throws RetrofitException {
-        if (!NetworkCheckUtil.isConnected()) {
-            return TopicFolderRepository.getRepository().getFolders();
-        }
-
-        return folderApi.get().getFolders(entityClientManager.getSelectedTeamId());
-    }
-
-    // 폴더 속 토픽 아이디 가져오기
-    public List<ResFolderItem> getTopicFolderItems() throws RetrofitException {
-        if (!NetworkCheckUtil.isConnected()) {
-            return TopicFolderRepository.getRepository().getFolderItems();
-        }
-        List<ResFolderItem> folderItems = folderApi.get().getFolderItems(entityClientManager.getSelectedTeamId());
-
-        for (ResFolderItem resFolderItem : folderItems) {
-            resFolderItem.teamId = entityClientManager.getSelectedTeamId();
-        }
-
-        return folderItems;
+    public List<TopicFolder> getTopicFolders() {
+        return TeamInfoLoader.getInstance().getTopicFolders();
     }
 
     // Join된 Topic에 관한 정보를 가져오기
     public LinkedHashMap<Long, Topic> getJoinEntities() {
 
-        EntityManager entityManager = EntityManager.getInstance();
-        List<FormattedEntity> joinedChannels = entityManager.getJoinedChannels();
-        List<FormattedEntity> groups = entityManager.getGroups();
+        List<TopicRoom> topicRooms = TeamInfoLoader.getInstance().getTopicList();
         LinkedHashMap<Long, Topic> topicHashMap = new LinkedHashMap<>();
 
-        Observable<Topic> observable = Observable.merge(Observable.from(joinedChannels), Observable.from(groups))
+        Observable.from(topicRooms)
                 .map(formattedEntity -> new Topic.Builder()
                         .entityId(formattedEntity.getId())
                         .description(formattedEntity.getDescription())
                         .isJoined(true)
                         .isPublic(formattedEntity.isPublicTopic())
-                        .isStarred(formattedEntity.isStarred)
+                        .isStarred(formattedEntity.isStarred())
                         .memberCount(formattedEntity.getMemberCount())
                         .name(formattedEntity.getName())
-                        .unreadCount(formattedEntity.alarmCount)
-                        .markerLinkId(formattedEntity.lastLinkId)
-                        .isPushOn(formattedEntity.isTopicPushOn)
-                        .build());
+                        .unreadCount(formattedEntity.getUnreadCount())
+                        .markerLinkId(formattedEntity.getLastLinkId())
+                        .isPushOn(formattedEntity.isPushSubscribe())
+                        .build())
+                .toSortedList((lhs, rhs) -> {
+                    if (lhs.isStarred() && rhs.isStarred()) {
+                        return StringCompareUtil.compare(lhs.getName(), rhs.getName());
+                    } else if (lhs.isStarred()) {
+                        return -1;
+                    } else if (rhs.isStarred()) {
+                        return 1;
+                    } else {
+                        return StringCompareUtil.compare(lhs.getName(), rhs.getName());
+                    }
 
-        observable.toSortedList((lhs, rhs) -> {
-            if (lhs.isStarred() && rhs.isStarred()) {
-                return StringCompareUtil.compare(lhs.getName(), rhs.getName());
-            } else if (lhs.isStarred()) {
-                return -1;
-            } else if (rhs.isStarred()) {
-                return 1;
-            } else {
-                return StringCompareUtil.compare(lhs.getName(), rhs.getName());
-            }
-
-        }).subscribe(topics -> {
+                }).subscribe(topics -> {
             for (Topic topic : topics) {
                 topicHashMap.put(topic.getEntityId(), topic);
             }
@@ -121,15 +96,15 @@ public class MainTopicModel {
     }
 
     // 리스트에 보여 줄 Data Provider 가져오기
-    public TopicFolderListDataProvider getDataProvider(List<ResFolder> topicFolders, List<ResFolderItem> topicFolderItems) {
-        if (topicFolders == null || topicFolderItems == null) {
+    public TopicFolderListDataProvider getDataProvider(List<TopicFolder> topicFolders, List<TopicRoom> topicRooms) {
+        if (topicFolders == null || topicRooms == null) {
             return new TopicFolderListDataProvider(new LinkedList<>());
         }
 
-        final List<ResFolder> orderedFolders = new ArrayList<>();
+        final List<TopicFolder> orderedFolders = new ArrayList<>();
 
         Observable.from(topicFolders)
-                .toSortedList((lhs, rhs) -> lhs.seq - rhs.seq)
+                .toSortedList((lhs, rhs) -> lhs.getSeq() - rhs.getSeq())
                 .subscribe(orderedFolders::addAll);
 
         List<Pair<TopicFolderData,
@@ -143,42 +118,42 @@ public class MainTopicModel {
         Map<Long, TopicFolderData> folderMap = new LinkedHashMap<>();
         Map<Long, Integer> badgeCountMap = new HashMap<>();
 
-        for (ResFolder topicFolder : orderedFolders) {
-            if (!topicItemMap.containsKey(topicFolder.id)) {
-                topicItemMap.put(topicFolder.id, new ArrayList<>());
+        for (TopicFolder topicFolder : orderedFolders) {
+            if (!topicItemMap.containsKey(topicFolder.getId())) {
+                topicItemMap.put(topicFolder.getId(), new ArrayList<>());
             }
-            if (!badgeCountMap.containsKey(topicFolder.id)) {
-                badgeCountMap.put(topicFolder.id, 0);
+            if (!badgeCountMap.containsKey(topicFolder.getId())) {
+                badgeCountMap.put(topicFolder.getId(), 0);
             }
-            if (!folderMap.containsKey(topicFolder.id)) {
-                TopicFolderData topicFolderData = new TopicFolderData(folderIndex, topicFolder.name, topicFolder.id);
-                topicFolderData.setSeq(topicFolder.seq);
-                folderMap.put(topicFolder.id, topicFolderData);
+            if (!folderMap.containsKey(topicFolder.getId())) {
+                TopicFolderData topicFolderData = new TopicFolderData(folderIndex, topicFolder.getName(), topicFolder.getId());
+                topicFolderData.setSeq(topicFolder.getSeq());
+                folderMap.put(topicFolder.getId(), topicFolderData);
             }
             folderIndex++;
         }
 
-        Observable.from(topicFolderItems)
-                .filter(topicFolderItem -> topicFolderItem.folderId > 0)
-                .filter(topicFolderItem -> joinTopics.containsKey(topicFolderItem.roomId))
-                .subscribe(topicFolderItem -> {
+        Observable.from(topicFolders)
+                .subscribe(topicFolder -> {
 
-                    Topic topic = joinTopics.remove(topicFolderItem.roomId);
+                    Observable.from(topicFolder.getRooms())
+                            .subscribe(topicRoom -> {
 
-                    long itemIndex = folderMap.get(topicFolderItem.folderId).generateNewChildId();
+                                Topic topic = joinTopics.remove(topicRoom.getId());
+                                long itemIndex = folderMap.get(topicFolder.getId()).generateNewChildId();
 
-                    TopicItemData topicItemData = TopicItemData.newInstance(
-                            itemIndex, topic.getCreatorId(), topic.getName(),
-                            topic.isStarred(), topic.isJoined(), topic.getEntityId(),
-                            topic.getUnreadCount(), topic.getMarkerLinkId(), topic.isPushOn(),
-                            topic.isSelected(), topic.getDescription(), topic.isPublic(),
-                            topic.getMemberCount());
+                                TopicItemData topicItemData = TopicItemData.newInstance(
+                                        itemIndex, topic.getCreatorId(), topic.getName(),
+                                        topic.isStarred(), topic.isJoined(), topic.getEntityId(),
+                                        topic.getUnreadCount(), topic.getMarkerLinkId(), topic.isPushOn(),
+                                        topic.isSelected(), topic.getDescription(), topic.isPublic(),
+                                        topic.getMemberCount());
+                                topicItemMap.get(topicFolder.getId()).add(topicItemData);
 
-                    topicItemMap.get(topicFolderItem.folderId).add(topicItemData);
-
-                    int badgeCount = badgeCountMap.get(topicFolderItem.folderId);
-                    badgeCountMap.put(topicFolderItem.folderId, badgeCount + topicItemData
-                            .getUnreadCount());
+                                int badgeCount = badgeCountMap.get(topicFolder.getId());
+                                badgeCountMap.put(topicFolder.getId(), badgeCount + topicItemData
+                                        .getUnreadCount());
+                            });
 
                 }, Throwable::printStackTrace);
 
@@ -232,15 +207,6 @@ public class MainTopicModel {
         return new TopicFolderListDataProvider(datas);
     }
 
-    @Background
-    public void saveFolderDataInDB(List<ResFolder> topicFolders, List<ResFolderItem> topicFolderItems) {
-        TopicFolderRepository repository = TopicFolderRepository.getRepository();
-        repository.removeAllFolders();
-        repository.removeAllFolderItems();
-        repository.insertFolders(topicFolders);
-        repository.insertFolderItems(topicFolderItems);
-    }
-
     // 그룹이 없는 Topic 들을 담아낼 더미 그룹 생성
     public TopicFolderData getFakeFolder(long lastFolderIndex) {
         TopicFolderData topicFolderData = new TopicFolderData(lastFolderIndex, "fakeFolder", -1);
@@ -249,11 +215,12 @@ public class MainTopicModel {
     }
 
     public void resetBadge(long entityId) {
-        EntityManager.getInstance().getEntityById(entityId).alarmCount = 0;
+        TopicRepository.getInstance().updateUnreadCount(entityId, 0);
+        TeamInfoLoader.getInstance().refresh();
     }
 
     public boolean isMe(long writer) {
-        return EntityManager.getInstance().getMe().getId() == writer;
+        return TeamInfoLoader.getInstance().getMyId() == writer;
     }
 
     public void updateMessageCount(SocketMessageEvent event, List<TopicItemData> joinedTopics) {
@@ -283,7 +250,11 @@ public class MainTopicModel {
                     }
                 })
                 .doOnNext(topicItemData -> topicItemData.setUnreadCount(topicItemData.getUnreadCount() + 1))
-                .doOnNext(topicItemData -> EntityManager.getInstance().getEntityById(topicItemData.getEntityId()).alarmCount++)
+                .doOnNext(topicItemData -> {
+                    int unreadCount = TeamInfoLoader.getInstance().getTopic(topicItemData.getEntityId()).getUnreadCount();
+                    TopicRepository.getInstance().updateUnreadCount(topicItemData.getEntityId(), ++unreadCount);
+                    TeamInfoLoader.getInstance().refresh();
+                })
                 .subscribe();
     }
 
@@ -315,97 +286,35 @@ public class MainTopicModel {
                     }
                 })
                 .doOnNext(topic -> topic.setUnreadCount(topic.getUnreadCount() + 1))
-                .doOnNext(topic -> EntityManager.getInstance().getEntityById(topic.getEntityId()).alarmCount++)
                 .filter(topic -> event.getLinkId() > 0)
                 .doOnNext(topic -> {
-                    EntityManager.getInstance().getEntityById(topic.getEntityId()).setTopicGlobalLastLinkId(event.getLinkId());
+                    TopicRepository.getInstance().updateLastLinkId(topic.getEntityId(), event.getLinkId());
+                    TeamInfoLoader.getInstance().refresh();
                 })
                 .subscribe(topic -> {
                 }, t -> {
                 });
     }
 
-    public boolean isFolderSame(List<ResFolder> folders1, List<ResFolder> folders2) {
-        if (folders1.size() != folders2.size()) {
-            return false;
-        } else {
-            Map<Long, ResFolder> folderMap1 = new LinkedHashMap<>();
-            Map<Long, ResFolder> folderMap2 = new HashMap<>();
-            for (int i = 0; i < folders1.size(); i++) {
-                folderMap1.put(folders1.get(i).id, folders1.get(i));
-                folderMap2.put(folders2.get(i).id, folders2.get(i));
-            }
-            for (Long i : folderMap1.keySet()) {
-                ResFolder folder1 = folderMap1.get(i);
-                ResFolder folder2 = folderMap2.get(i);
-                if (!folder1.equals(folder2)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-
-    public boolean isFolderItemSame(List<ResFolderItem> folderItems1, List<ResFolderItem> folderItems2) {
-        if (folderItems1.size() != folderItems2.size()) {
-            return false;
-        } else {
-            Map<Long, ResFolderItem> folderItemMap1 = new LinkedHashMap<>();
-            Map<Long, ResFolderItem> folderItemMap2 = new HashMap<>();
-            for (int i = 0; i < folderItems1.size(); i++) {
-                folderItemMap1.put(folderItems1.get(i).roomId, folderItems1.get(i));
-                folderItemMap2.put(folderItems2.get(i).roomId, folderItems2.get(i));
-            }
-            for (Long i : folderItemMap1.keySet()) {
-                ResFolderItem folderItem1 = folderItemMap1.get(i);
-                ResFolderItem folderItem2 = folderItemMap2.get(i);
-                if (!folderItem1.equals(folderItem2)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
 
     public Observable<List<Topic>> getUpdatedTopicList() {
-        EntityManager entityManager = EntityManager.getInstance();
-        return Observable.from(entityManager.getJoinedChannels())
-                .map(entity -> {
-                    ResLeftSideMenu.Channel channel = entity.getChannel();
-                    return new Topic.Builder()
-                            .name(entity.getName())
-                            .isStarred(entity.isStarred)
-                            .isJoined(true)
-                            .entityId(entity.getId())
-                            .memberCount(entity.getMemberCount())
-                            .unreadCount(entity.alarmCount)
-                            .isPublic(true)
-                            .description(entity.getDescription())
-                            .creatorId(channel.ch_creatorId)
-                            .markerLinkId(entity.lastLinkId)
-                            .lastLinkId(entity.getTopicGlobalLastLink())
-                            .isPushOn(entity.isTopicPushOn)
-                            .build();
-                })
-                .mergeWith(Observable.from(entityManager.getGroups())
-                        .map(entity -> {
-                            ResLeftSideMenu.PrivateGroup privateGroup = entity.getPrivateGroup();
-                            return new Topic.Builder()
-                                    .name(entity.getName())
-                                    .isStarred(entity.isStarred)
-                                    .isJoined(true)
-                                    .entityId(entity.getId())
-                                    .memberCount(entity.getMemberCount())
-                                    .unreadCount(entity.alarmCount)
-                                    .isPublic(false)
-                                    .description(entity.getDescription())
-                                    .creatorId(privateGroup.pg_creatorId)
-                                    .markerLinkId(entity.lastLinkId)
-                                    .lastLinkId(entity.getTopicGlobalLastLink())
-                                    .isPushOn(entity.isTopicPushOn)
-                                    .build();
-                        }))
+
+        return Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                .filter(TopicRoom::isJoined)
+                .map(topicRoom -> new Topic.Builder()
+                        .name(topicRoom.getName())
+                        .isStarred(topicRoom.isStarred())
+                        .isJoined(true)
+                        .entityId(topicRoom.getId())
+                        .memberCount(topicRoom.getMemberCount())
+                        .unreadCount(topicRoom.getUnreadCount())
+                        .isPublic(true)
+                        .description(topicRoom.getDescription())
+                        .creatorId(topicRoom.getCreatorId())
+                        .markerLinkId(topicRoom.getReadLinkId())
+                        .lastLinkId(topicRoom.getLastLinkId())
+                        .isPushOn(topicRoom.isPushSubscribe())
+                        .build())
                 .toSortedList((lhs, rhs) -> {
                     long lhsLastLinkId = lhs.getLastLinkId();
                     long rhsLastLinkId = rhs.getLastLinkId();
@@ -420,17 +329,30 @@ public class MainTopicModel {
     }
 
     public int getUnreadCount() {
-        final int[] unreadCount = {0};
-        EntityManager entityManager = EntityManager.getInstance();
-        Observable.merge(Observable.from(entityManager.getJoinedChannels()), Observable.from(entityManager.getGroups()))
-                .subscribe(entity -> unreadCount[0] += entity.alarmCount, t -> {
-                });
 
-        return unreadCount[0];
+        return Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                .filter(TopicRoom::isJoined)
+                .map(TopicRoom::getUnreadCount)
+                .scan((unreadCount1, unreadCount2) -> unreadCount1 + unreadCount2)
+                .toBlocking()
+                .firstOrDefault(0);
+
     }
 
-    public long findFolderId(long entityId) {
-        return TopicFolderRepository.getRepository().getFolderOfTopic(entityId).folderId;
+    public long findFolderId(long topicId) {
+        return Observable.from(TeamInfoLoader.getInstance().getTopicFolders())
+                .takeFirst(topicFolder -> topicFolder.getRooms().contains(topicId))
+                .map(TopicFolder::getId)
+                .toBlocking()
+                .firstOrDefault(-1l);
     }
 
+    public List<TopicRoom> getJoinedTopics() {
+        return Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                .filter(TopicRoom::isJoined)
+                .collect((Func0<ArrayList<TopicRoom>>) ArrayList::new, ArrayList::add)
+                .toBlocking()
+                .firstOrDefault(new ArrayList<>());
+
+    }
 }

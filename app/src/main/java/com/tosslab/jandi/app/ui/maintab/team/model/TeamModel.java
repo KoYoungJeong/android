@@ -2,10 +2,11 @@ package com.tosslab.jandi.app.ui.maintab.team.model;
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.maintab.team.vo.Team;
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
+
 import java.util.List;
 
 import rx.Observable;
@@ -16,17 +17,15 @@ import rx.Observable;
 public class TeamModel {
 
     public Observable<Team> getTeamObservable() {
-        final EntityManager entityManager = EntityManager.getInstance();
-        return Observable.from(entityManager.getFormattedUsers())
-                .filter(FormattedEntity::isTeamOwner)
-                .firstOrDefault(EntityManager.UNKNOWN_USER_ENTITY)
-                .map(ownerEntity -> {
-                    long teamId = entityManager.getTeamId();
-                    String teamName = entityManager.getTeamName();
-                    String teamDomain = getFullDomain(entityManager.getTeamDomain());
+        return Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .filter(User::isTeamOwner)
+                .map(user -> {
+                    long teamId = TeamInfoLoader.getInstance().getTeamId();
+                    String teamName = TeamInfoLoader.getInstance().getTeamName();
+                    String teamDomain = getFullDomain(TeamInfoLoader.getInstance().getTeamDomain());
 
-                    List<FormattedEntity> teamMembers = MembersModel.getEnabledTeamMember();
-                    return Team.create(teamId, teamName, teamDomain, ownerEntity.getUser(), teamMembers);
+                    List<User> teamMembers = MembersModel.getEnabledTeamMember();
+                    return Team.create(teamId, teamName, teamDomain, user, teamMembers);
                 });
     }
 

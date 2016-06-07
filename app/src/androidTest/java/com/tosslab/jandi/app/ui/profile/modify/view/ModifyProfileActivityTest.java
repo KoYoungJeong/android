@@ -8,9 +8,9 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -136,15 +136,15 @@ public class ModifyProfileActivityTest {
 
     @Test
     public void testDisplayProfile() throws Throwable {
-        ResLeftSideMenu.User user = EntityManager.getInstance().getMe().getUser();
+        User user = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
         rule.runOnUiThread(() -> activity.displayProfile(user));
 
-        assertThat(activity.tvProfileStatusMessage.getText(), is(equalTo(user.u_statusMessage)));
-        assertThat(activity.tvProfileRealName.getText(), is(equalTo(user.name)));
-        assertThat(activity.tvProfileUserDivision.getText(), is(equalTo(user.u_extraData.department)));
-        assertThat(activity.tvProfileUserEmail.getText(), is(equalTo(user.u_email)));
-        assertThat(activity.tvProfileUserPhone.getText(), is(equalTo(user.u_extraData.phoneNumber)));
-        assertThat(activity.tvProfileUserPosition.getText(), is(equalTo(user.u_extraData.position)));
+        assertThat(activity.tvProfileStatusMessage.getText(), is(equalTo(user.getStatusMessage())));
+        assertThat(activity.tvProfileRealName.getText(), is(equalTo(user.getName())));
+        assertThat(activity.tvProfileUserDivision.getText(), is(equalTo(user.getDivision())));
+        assertThat(activity.tvProfileUserEmail.getText(), is(equalTo(user.getEmail())));
+        assertThat(activity.tvProfileUserPhone.getText(), is(equalTo(user.getPhoneNumber())));
+        assertThat(activity.tvProfileUserPosition.getText(), is(equalTo(user.getPosition())));
     }
 
     @Test

@@ -3,9 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.topic.dialog.model;
 import android.preference.PreferenceManager;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.chat.ChatApi;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
@@ -14,8 +12,8 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -49,10 +47,6 @@ public class EntityMenuDialogModel {
         DaggerApiClientComponent.create().inject(this);
     }
 
-    public FormattedEntity getEntity(long entityId) {
-        return EntityManager.getInstance().getEntityById(entityId);
-    }
-
     public void requestStarred(long entityId) throws RetrofitException {
         entityClientManager.enableFavorite(entityId);
     }
@@ -69,18 +63,12 @@ public class EntityMenuDialogModel {
         }
     }
 
-    public void refreshEntities() throws RetrofitException {
-        ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
-        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-        EntityManager.getInstance().refreshEntity();
-    }
-
     public ResCommon requestDeleteChat(long memberId, long entityId) throws RetrofitException {
         return chatApi.get().deleteChat(memberId, entityId);
     }
 
     public void leaveEntity(boolean publicTopic) {
-        String distictId = EntityManager.getInstance().getDistictId();
+        String distictId = TeamInfoLoader.getInstance().getMyId() + "-" + TeamInfoLoader.getInstance().getTeamId();
         try {
             MixpanelMemberAnalyticsClient
                     .getInstance(JandiApplication.getContext(), distictId)
@@ -90,23 +78,25 @@ public class EntityMenuDialogModel {
     }
 
     public boolean isDefaultTopic(long entityId) {
-        return EntityManager.getInstance().getDefaultTopicId() == entityId;
+        return TeamInfoLoader.getInstance().isDefaultTopic(entityId);
     }
 
     @Background
     public void updateNotificationOnOff(long entityId, boolean isTopicPushOn) {
         if (!NetworkCheckUtil.isConnected()) {
-            getEntity(entityId).isTopicPushOn = isTopicPushOn;
             EventBus.getDefault().post(new SocketTopicPushEvent());
-            return;
+        } else {
+
+            final long teamId = TeamInfoLoader.getInstance().getTeamId();
+            try {
+                updatePushStatus(teamId, entityId, isTopicPushOn);
+                TopicRepository.getInstance().updatePushSubscribe(entityId, isTopicPushOn);
+                TeamInfoLoader.getInstance().refresh();
+            } catch (RetrofitException e) {
+                e.printStackTrace();
+            }
         }
 
-        final long teamId = EntityManager.getInstance().getTeamId();
-        try {
-            updatePushStatus(teamId, entityId, isTopicPushOn);
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-        }
 
     }
 
@@ -115,18 +105,12 @@ public class EntityMenuDialogModel {
         roomsApi.get().updateTopicPushSubscribe(teamId, entityId, req);
     }
 
-    public boolean isPushOn(long entityId) {
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        return entity.isTopicPushOn;
+    public boolean isPushOn(long topicId) {
+        return TeamInfoLoader.getInstance().isPushSubscribe(topicId);
     }
 
-    public boolean isBot(long entityId) {
-        return EntityManager.getInstance().isBot(entityId);
-    }
-
-    public boolean isTopicOwner(long entityId) {
-        final EntityManager entityManager = EntityManager.getInstance();
-        return entityManager.isTopicOwner(entityId, entityManager.getMe().getId());
+    public boolean isJandiBot(long id) {
+        return TeamInfoLoader.getInstance().isJandiBot(id);
     }
 
     public boolean isGlobalPushOff() {

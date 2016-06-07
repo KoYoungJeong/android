@@ -2,16 +2,11 @@ package com.tosslab.jandi.app.ui.commonviewmodels.mention.model;
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
-import com.tosslab.jandi.app.lists.BotEntity;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
-import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel_;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import org.androidannotations.annotations.EBean;
@@ -63,21 +58,17 @@ public class SearchMemberModel {
 
         selectableMembersLinkedHashMap.clear();
 
-        ShareSelectModel_ shareSelectModel = ShareSelectModel_
-                .getInstance_(JandiApplication.getContext());
 
-        ResLeftSideMenu leftSideMenu = LeftSideMenuRepository.getRepository()
-                .findLeftSideMenuByTeamId(teamId);
+        TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance(teamId);
 
-        if (leftSideMenu == null) {
-            leftSideMenu = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu();
-        }
-        shareSelectModel.initFormattedEntities(leftSideMenu);
-
-        List<FormattedEntity> usersWithoutMe = shareSelectModel.getFormattedUsersWithoutMe();
+        List<User> usersWithoutMe = Observable.from(teamInfoLoader.getUserList())
+                .filter(user -> user.getId() != teamInfoLoader.getMyId())
+                .toList()
+                .toBlocking()
+                .first();
 
         Observable.from(topicIds)
-                .flatMap(topicId -> Observable.from(shareSelectModel.getEntityById(topicId).getMembers()))
+                .flatMap(topicId -> Observable.from(teamInfoLoader.getTopic(topicId).getMembers()))
                 .collect((Func0<ArrayList<Long>>) ArrayList::new, (members, memberId) -> {
                     if (!members.contains(memberId)) {
                         members.add(memberId);
@@ -89,10 +80,10 @@ public class SearchMemberModel {
                 .map(entity -> new SearchedItemVO().setName(entity.getName())
                         .setId(entity.getId())
                         .setType(SearchType.member.name())
-                        .setSmallProfileImageUrl(entity.getUserSmallProfileUrl())
-                        .setInactive(entity.isInavtived())
+                        .setSmallProfileImageUrl(entity.getPhotoUrl())
+                        .setInactive(entity.isInactive())
                         .setEnabled(entity.isEnabled())
-                        .setStarred(entity.isStarred))
+                        .setStarred(teamInfoLoader.isChatStarred(entity.getId())))
                 .collect(() -> selectableMembersLinkedHashMap,
                         (selectableMembersLinkedHashMap, searchedItem) ->
                                 selectableMembersLinkedHashMap.put(searchedItem.getId(), searchedItem))
@@ -109,8 +100,8 @@ public class SearchMemberModel {
                     }
 
                     if (selectableMembersLinkedHashMap.size() > 0
-                            && EntityManager.getInstance().hasJandiBot()) {
-                        BotEntity botEntity = (BotEntity) EntityManager.getInstance().getJandiBot();
+                            && teamInfoLoader.getInstance().hasJandiBot()) {
+                        User botEntity = teamInfoLoader.getInstance().getJandiBot();
                         if (botEntity.isEnabled()) {
                             SearchedItemVO jandiBot = new SearchedItemVO();
                             jandiBot.setId(botEntity.getId())

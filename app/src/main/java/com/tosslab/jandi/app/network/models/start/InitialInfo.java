@@ -16,7 +16,7 @@ import java.util.Collection;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(converter = InitializeInfoConverter.class)
 @DatabaseTable(tableName = "initial_info_base", daoClass = InitializeInfoDaoImpl.class)
-public class InitializeInfo {
+public class InitialInfo {
     @JsonIgnore
     @DatabaseField(id = true)
     private long teamId;
@@ -31,7 +31,7 @@ public class InitializeInfo {
     @ForeignCollectionField
     private Collection<Chat> chats;
     @ForeignCollectionField
-    private Collection<Human> humans;
+    private Collection<Human> members;
     @ForeignCollectionField
     private Collection<Bot> bots;
     @DatabaseField
@@ -69,12 +69,12 @@ public class InitializeInfo {
         this.chats = chats;
     }
 
-    public Collection<Human> getHumans() {
-        return humans;
+    public Collection<Human> getMembers() {
+        return members;
     }
 
-    public void setHumans(Collection<Human> humans) {
-        this.humans = humans;
+    public void setMembers(Collection<Human> members) {
+        this.members = members;
     }
 
     public Collection<Bot> getBots() {

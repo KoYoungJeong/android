@@ -21,10 +21,10 @@ import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.insert.presenter.SetProfileFirstPagePresenter;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -145,14 +145,8 @@ public class SetProfileFirstPageFragment extends Fragment
 
     @Override
     @UiThread
-    public void displayProfileImage(ResLeftSideMenu.User user) {
-        String profileImageUrlPath = null;
-        if (user.u_photoThumbnailUrl != null) {
-            profileImageUrlPath = !TextUtils.isEmpty(user.u_photoThumbnailUrl.largeThumbnailUrl) ?
-                    user.u_photoThumbnailUrl.largeThumbnailUrl : user.u_photoUrl;
-        } else if (!TextUtils.isEmpty(user.u_photoUrl)) {
-            profileImageUrlPath = user.u_photoUrl;
-        }
+    public void displayProfileImage(User user) {
+        String profileImageUrlPath = user.getPhotoUrl();
 
         if (!TextUtils.isEmpty(profileImageUrlPath) && !getActivity().isFinishing()) {
             ImageUtil.loadProfileImage(ivProfilePicture,
@@ -342,7 +336,7 @@ public class SetProfileFirstPageFragment extends Fragment
     }
 
     public void onEvent(ProfileChangeEvent event) {
-        presenter.onProfileImageChange(event.getMember());
+        presenter.onProfileImageChange(new User(event.getMember()));
     }
 
     public void onEvent(ConfirmModifyProfileEvent event) {

@@ -34,11 +34,9 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
-import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
-import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.UnshareFileEvent;
@@ -52,18 +50,16 @@ import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
-import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
+import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
-import com.tosslab.jandi.app.ui.message.v2.adapter.MainMessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListSearchAdapter;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
@@ -212,7 +208,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     @AfterViews
     void initViews() {
-        int screenView = EntityManager.getInstance().getEntityById(entityId).isPublicTopic()
+        int screenView = TeamInfoLoader.getInstance().isPublicTopic(entityId)
                 ? ScreenViewProperty.PUBLIC_TOPIC : ScreenViewProperty.PRIVATE_TOPIC;
 
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
@@ -263,9 +259,9 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     @Override
     public AnalyticsValue.Screen getScreen(long entityId) {
-        return EntityManager
+        return TeamInfoLoader
                 .getInstance()
-                .getEntityById(entityId).isUser() ? AnalyticsValue.Screen.Message : AnalyticsValue.Screen.TopicChat;
+                .isUser(entityId) ? AnalyticsValue.Screen.Message : AnalyticsValue.Screen.TopicChat;
     }
 
     @Override
@@ -466,7 +462,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
-        actionBar.setTitle(EntityManager.getInstance().getEntityNameById(entityId));
+        actionBar.setTitle(TeamInfoLoader.getInstance().getName(entityId));
     }
 
     @Click(R.id.vg_messages_go_to_latest)
@@ -483,7 +479,6 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
                 .teamId(teamId)
                 .roomId(roomId)
                 .firstCursorLinkId(firstCursorLinkId)
-                .lastReadLinkId(EntityManager.getInstance().getEntityById(entityId).lastLinkId)
                 .start();
         getActivity().overridePendingTransition(0, 0);
     }
@@ -523,16 +518,6 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         }
 
     }
-
-    public void onEvent(ConfirmModifyTopicEvent event) {
-
-        if (!isForeground) {
-            return;
-        }
-
-        messageSearchListPresenter.onModifyEntity(event.inputName);
-    }
-
 
     public void onEvent(MessageStarredEvent event) {
         if (!isForeground) {
@@ -575,17 +560,6 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
             CharSequence topicName = ((AppCompatActivity) getActivity()).getSupportActionBar().getTitle();
             String msg = JandiApplication.getContext().getString(R.string.jandi_kicked_message, topicName);
             showFailToast(msg);
-        }
-    }
-
-    public void onEvent(TopicInfoUpdateEvent event) {
-        if (event.getId() == entityId) {
-            FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-            isFavorite = entity.isStarred;
-            refreshActionbar();
-            if (isForeground) {
-                closeDialogFragment();
-            }
         }
     }
 
@@ -690,9 +664,6 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         }
 
         if (event.getRoom().getId() == roomId) {
-            SocketRoomMarkerEvent.Marker marker = event.getMarker();
-            MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, marker.getMemberId(), marker
-                    .getLastLinkId());
             justRefresh();
         }
     }
@@ -703,13 +674,12 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
             return;
         }
 
-        EntityManager entityManager = EntityManager.getInstance();
+
         MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                .teamId(entityManager.getTeamId())
+                .teamId(TeamInfoLoader.getInstance().getTeamId())
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(event.userId)
-                .isFavorite(entityManager.getEntityById(event.userId).isStarred)
                 .isFromPush(false)
                 .start();
     }
@@ -770,7 +740,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     @Override
     public void showLeavedMemberDialog(long entityId) {
-        String name = EntityManager.getInstance().getEntityNameById(entityId);
+        String name = TeamInfoLoader.getInstance().getName(entityId);
         String msg = JandiApplication.getContext().getString(R.string.jandi_no_long_team_member, name);
 
         AlertUtil.showConfirmDialog(getActivity(), msg, null, false);
@@ -865,8 +835,8 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     }
 
     @Override
-    public void setAnnouncement(ResAnnouncement announcement, boolean announcementOpened) {
-        announcementViewModel.setAnnouncement(announcement, announcementOpened);
+    public void setAnnouncement(Topic.Announcement announcement) {
+        announcementViewModel.setAnnouncement(announcement);
     }
 
     @Override
@@ -1032,9 +1002,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         switch (eventType) {
             case DELETED:
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Accouncement_Delete);
-            case CREATED:
-                messageSearchListPresenter.onCreatedAnnouncement(isForeground, isRoomInit);
-
+                announcementViewModel.setAnnouncement(null);
                 break;
             case STATUS_UPDATED:
                 messageSearchListPresenter.onUpdateAnnouncement(isForeground, isRoomInit, event.getData());
@@ -1042,10 +1010,13 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         }
     }
 
+    public void onEvent(SocketAnnouncementCreatedEvent event) {
+        messageSearchListPresenter.onCreatedAnnouncement(isRoomInit);
+    }
+
     public void onEvent(AnnouncementEvent event) {
         switch (event.getAction()) {
             case CREATE:
-                messageSearchListPresenter.checkAnnouncementExistsAndCreate(event.getMessageId());
                 AnalyticsUtil.sendEvent(getScreen(entityId), AnalyticsValue.Action.MsgLongTap_Announce);
                 break;
             case DELETE:

@@ -5,10 +5,10 @@ import android.support.v4.app.Fragment;
 
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.files.upload.ProfileFileUploadControllerImpl;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -39,20 +39,16 @@ public class SetProfileFirstPagePresenter {
     public void requestProfile() {
         view.showProgressWheel();
         try {
-            ResLeftSideMenu.User me;
+            User me;
             if (!NetworkCheckUtil.isConnected()) {
                 me = model.getSavedProfile();
             } else {
                 me = model.getProfile();
             }
             view.dismissProgressWheel();
-            view.setTeamName(EntityManager.getInstance().getTeamName());
+            view.setTeamName(TeamInfoLoader.getInstance().getTeamName());
             view.displayProfileImage(me);
-            view.displayProfileName(me.name);
-        } catch (RetrofitException e) {
-            LogUtil.e("get profile failed", e);
-            view.dismissProgressWheel();
-            view.showFailProfile();
+            view.displayProfileName(me.getName());
         } catch (Exception e) {
             LogUtil.e("get profile failed", e);
             view.dismissProgressWheel();
@@ -78,8 +74,8 @@ public class SetProfileFirstPagePresenter {
         fileUploadController.startUpload(activity, null, -1, filePath, null);
     }
 
-    public void onProfileImageChange(ResLeftSideMenu.User member) {
-        if (member != null && model.isMyId(member.id)) {
+    public void onProfileImageChange(User member) {
+        if (member != null && model.isMyId(member.getId())) {
             view.displayProfileImage(member);
         }
     }
@@ -111,7 +107,7 @@ public class SetProfileFirstPagePresenter {
 
         void displayProfileName(String name);
 
-        void displayProfileImage(ResLeftSideMenu.User me);
+        void displayProfileImage(User me);
 
         void showFailProfile();
 

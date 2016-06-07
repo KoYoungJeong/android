@@ -24,7 +24,6 @@ import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.profile.defaultimage.model.ProfileImageSelectorModel;
 import com.tosslab.jandi.app.ui.search.messages.model.MessageSearchManager;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
-import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
 import com.tosslab.jandi.app.ui.signup.verify.model.SignUpVerifyModel;
 import com.tosslab.jandi.app.ui.starmention.model.StarMentionListModel;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
@@ -54,8 +53,6 @@ public interface ApiClientComponent {
     void inject(AccountHomeModel accountHomeModel);
 
     void inject(ShareModel shareModel);
-
-    void inject(ShareSelectModel shareSelectModel);
 
     void inject(CarouselViewerModel carouselViewerModel);
 

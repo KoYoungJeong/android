@@ -4,12 +4,14 @@ import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -26,6 +28,7 @@ import setup.BaseInitUtil;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -33,7 +36,7 @@ import static org.junit.Assert.fail;
 public class ModifyProfileModelTest {
 
     private ModifyProfileModel modifyProfileModel;
-    private ResLeftSideMenu.User user;
+    private User user;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -48,19 +51,19 @@ public class ModifyProfileModelTest {
     @Before
     public void setUp() throws Exception {
         modifyProfileModel = ModifyProfileModel_.getInstance_(JandiApplication.getContext());
-        user = EntityManager.getInstance().getMe().getUser();
+        user = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
     }
 
     @Test
     public void testGetProfile() throws Exception {
-        ResLeftSideMenu.User profile = modifyProfileModel.getProfile();
+        User profile = modifyProfileModel.getProfile();
 
-        assertThat(user.u_email, is(equalTo(profile.u_email)));
-        assertThat(user.u_extraData.department, is(equalTo(profile.u_extraData.department)));
-        assertThat(user.u_extraData.phoneNumber, is(equalTo(profile.u_extraData.phoneNumber)));
-        assertThat(user.u_extraData.position, is(equalTo(profile.u_extraData.position)));
-        assertThat(user.name, is(equalTo(profile.name)));
-        assertThat(user.u_photoThumbnailUrl.largeThumbnailUrl, is(equalTo(profile.u_photoThumbnailUrl.largeThumbnailUrl)));
+        assertThat(user.getEmail(), is(equalTo(profile.getEmail())));
+        assertThat(user.getDivision(), is(equalTo(profile.getDivision())));
+        assertThat(user.getPhoneNumber(), is(equalTo(profile.getPhoneNumber())));
+        assertThat(user.getPosition(), is(equalTo(profile.getPosition())));
+        assertThat(user.getName(), is(equalTo(profile.getName())));
+        assertThat(user.getPhotoUrl(), is(equalTo(profile.getPhotoUrl())));
     }
 
     @Test
@@ -72,11 +75,11 @@ public class ModifyProfileModelTest {
             reqUpdateProfile.department = "department : " + new Date().toString();
 
             // When
-            ResLeftSideMenu.User newProfile = modifyProfileModel.updateProfile(reqUpdateProfile);
+            ResCommon resCommon = modifyProfileModel.updateProfile(reqUpdateProfile);
 
             //Then
-            assertThat(user.u_extraData.department, is(not(equalTo(reqUpdateProfile.department))));
-            assertThat(newProfile.u_extraData.department, is(equalTo(reqUpdateProfile.department)));
+            assertThat(user.getDivision(), is(not(equalTo(reqUpdateProfile.department))));
+            assertThat(resCommon, is(notNullValue()));
 
         }
 
@@ -86,11 +89,12 @@ public class ModifyProfileModelTest {
             reqUpdateProfile.phoneNumber = "010-1234-5678";
 
             // When
-            ResLeftSideMenu.User newProfile = modifyProfileModel.updateProfile(reqUpdateProfile);
+            ResCommon resCommon = modifyProfileModel.updateProfile(reqUpdateProfile);
 
             //Then
-            assertThat(user.u_extraData.phoneNumber, is(not(equalTo(reqUpdateProfile.phoneNumber))));
-            assertThat(newProfile.u_extraData.phoneNumber, is(equalTo(reqUpdateProfile.phoneNumber)));
+            assertThat(user.getPhoneNumber(), is(not(equalTo(reqUpdateProfile.phoneNumber))));
+            assertThat(resCommon, is(notNullValue()));
+
 
         }
 
@@ -100,11 +104,12 @@ public class ModifyProfileModelTest {
             reqUpdateProfile.position = "position  : " + new Date().toString();
 
             // When
-            ResLeftSideMenu.User newProfile = modifyProfileModel.updateProfile(reqUpdateProfile);
+            ResCommon resCommon = modifyProfileModel.updateProfile(reqUpdateProfile);
 
             //Then
-            assertThat(user.u_extraData.position, is(not(equalTo(reqUpdateProfile.position))));
-            assertThat(newProfile.u_extraData.position, is(equalTo(reqUpdateProfile.position)));
+            assertThat(user.getPosition(), is(not(equalTo(reqUpdateProfile.position))));
+            assertThat(resCommon, is(notNullValue()));
+
 
         }
 
@@ -114,20 +119,20 @@ public class ModifyProfileModelTest {
             reqUpdateProfile.statusMessage = "statusMessage  : " + new Date().toString();
 
             // When
-            ResLeftSideMenu.User newProfile = modifyProfileModel.updateProfile(reqUpdateProfile);
+            ResCommon resCommon = modifyProfileModel.updateProfile(reqUpdateProfile);
 
             //Then
-            assertThat(user.u_statusMessage, is(not(equalTo(reqUpdateProfile.statusMessage))));
-            assertThat(newProfile.u_statusMessage, is(equalTo(reqUpdateProfile.statusMessage)));
+            assertThat(user.getStatusMessage(), is(not(equalTo(reqUpdateProfile.statusMessage))));
+            assertThat(resCommon, is(notNullValue()));
 
         }
 
 
         ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
-        reqUpdateProfile.statusMessage = user.u_statusMessage;
-        reqUpdateProfile.position = user.u_extraData.position;
-        reqUpdateProfile.department = user.u_extraData.department;
-        reqUpdateProfile.phoneNumber = user.u_extraData.phoneNumber;
+        reqUpdateProfile.statusMessage = user.getStatusMessage();
+        reqUpdateProfile.position = user.getPosition();
+        reqUpdateProfile.department = user.getDivision();
+        reqUpdateProfile.phoneNumber = user.getPhoneNumber();
 
         modifyProfileModel.updateProfile(reqUpdateProfile);
 
@@ -138,11 +143,11 @@ public class ModifyProfileModelTest {
         String newName = new Date().toString().replaceAll(" ", "");
         modifyProfileModel.updateProfileName(new ReqProfileName(newName));
 
-        ResLeftSideMenu.User newProfile = modifyProfileModel.getProfile();
-        assertThat(newProfile.name, is(equalTo(newName)));
-        assertThat(newProfile.name, is(not(equalTo(user.name))));
+        User newProfile = modifyProfileModel.getProfile();
+        assertThat(newProfile.getName(), is(equalTo(newName)));
+        assertThat(newProfile.getName(), is(not(equalTo(user.getName()))));
 
-        modifyProfileModel.updateProfileName(new ReqProfileName(user.name));
+        modifyProfileModel.updateProfileName(new ReqProfileName(user.getName()));
     }
 
     @Test
@@ -152,7 +157,7 @@ public class ModifyProfileModelTest {
         TestSubscriber<String> subscriber = new TestSubscriber<>();
         Observable.from(AccountRepository.getRepository().getAccountEmails())
                 .filter(userEmail -> TextUtils.equals(userEmail.getStatus(), "confirmed"))
-                .map(userEmail1 -> userEmail1.getId())
+                .map(ResAccountInfo.UserEmail::getId)
                 .subscribe(subscriber);
 
         subscriber.assertValueCount(accountEmails.length);
@@ -172,7 +177,7 @@ public class ModifyProfileModelTest {
 
     @Test
     public void testIsMyId() throws Exception {
-        boolean isMyId = modifyProfileModel.isMyId(EntityManager.getInstance().getMe().getId());
+        boolean isMyId = modifyProfileModel.isMyId(TeamInfoLoader.getInstance().getMyId());
         assertThat(isMyId, is(true));
         isMyId = modifyProfileModel.isMyId(-1);
         assertThat(isMyId, is(false));
@@ -180,12 +185,12 @@ public class ModifyProfileModelTest {
 
     @Test
     public void testGetSavedProfile() throws Exception {
-        ResLeftSideMenu.User savedProfile = modifyProfileModel.getSavedProfile();
-        assertThat(savedProfile.u_email, is(equalTo(user.u_email)));
-        assertThat(savedProfile.u_extraData.department, is(equalTo(user.u_extraData.department)));
-        assertThat(savedProfile.u_extraData.phoneNumber, is(equalTo(user.u_extraData.phoneNumber)));
-        assertThat(savedProfile.u_extraData.position, is(equalTo(user.u_extraData.position)));
-        assertThat(savedProfile.name, is(equalTo(user.name)));
-        assertThat(savedProfile.u_photoThumbnailUrl.largeThumbnailUrl, is(equalTo(user.u_photoThumbnailUrl.largeThumbnailUrl)));
+        User savedProfile = modifyProfileModel.getSavedProfile();
+        assertThat(savedProfile.getEmail(), is(equalTo(user.getEmail())));
+        assertThat(savedProfile.getDivision(), is(equalTo(user.getDivision())));
+        assertThat(savedProfile.getPhoneNumber(), is(equalTo(user.getPhoneNumber())));
+        assertThat(savedProfile.getPosition(), is(equalTo(user.getPosition())));
+        assertThat(savedProfile.getName(), is(equalTo(user.getName())));
+        assertThat(savedProfile.getPhotoUrl(), is(equalTo(user.getPhotoUrl())));
     }
 }

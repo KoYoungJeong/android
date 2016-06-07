@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.file.upload.preview.presenter;
 
 import android.app.Activity;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 
@@ -21,7 +20,7 @@ public interface FileUploadPresenter {
 
     void onCommentTextChange(String text, int currentItemPosition);
 
-    void onEntityUpdate(FormattedEntity item);
+    void onEntityUpdate(long entityId);
 
     @Deprecated
     void onSingleFileUpload();
@@ -37,8 +36,6 @@ public interface FileUploadPresenter {
         void setComment(String comment);
 
         void setEntityInfo(String entity);
-
-        void showEntitySelectDialog(List<FormattedEntity> entityList);
 
         void exitOnOK();
 

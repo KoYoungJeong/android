@@ -11,24 +11,21 @@ import com.koushikdutta.ion.future.ResponseFuture;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.MessageManipulator_;
-import com.tosslab.jandi.app.network.client.main.LeftSideApi;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
+import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel;
-import com.tosslab.jandi.app.ui.share.views.model.ShareSelectModel_;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
@@ -55,15 +52,11 @@ public class ShareModel {
     @Inject
     Lazy<TeamApi> teamApi;
     @Inject
-    Lazy<LeftSideApi> leftSideApi;
+    Lazy<StartApi> startApi;
 
     @AfterInject
     void initObject() {
         DaggerApiClientComponent.create().inject(this);
-    }
-
-    public ResRoomInfo getEntityById(long teamId, long roomId) throws RetrofitException {
-        return roomsApi.get().getRoomInfo(teamId, roomId);
     }
 
     public ResTeamDetailInfo.InviteTeam getTeamInfoById(long teamId) throws RetrofitException {
@@ -132,7 +125,10 @@ public class ShareModel {
     public void trackUploadingFile(int entityType, JsonObject result) {
 
         try {
-            MixpanelMemberAnalyticsClient.getInstance(JandiApplication.getContext(), EntityManager.getInstance().getDistictId()).trackUploadingFile(entityType, result);
+            String distictId = TeamInfoLoader.getInstance().getMyId() +
+                    "-" +
+                    TeamInfoLoader.getInstance().getTeamId();
+            MixpanelMemberAnalyticsClient.getInstance(JandiApplication.getContext(), distictId).trackUploadingFile(entityType, result);
         } catch (JSONException e) {
         }
     }
@@ -142,21 +138,18 @@ public class ShareModel {
     }
 
     public boolean hasLeftSideMenu(long teamId) {
-        return LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId) != null;
+        return InitialInfoRepository.getInstance().hasInitialInfo(teamId);
     }
 
-    public ResLeftSideMenu getLeftSideMenu(long teamId) throws RetrofitException {
-        return leftSideApi.get().getInfosForSideMenu(teamId);
+    public InitialInfo getInitialInfo(long teamId) throws RetrofitException {
+        return startApi.get().getInitializeInfo(teamId);
     }
 
-    public boolean updateLeftSideMenu(ResLeftSideMenu leftSideMenu) {
-        return LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
+    public boolean updateInitialInfo(InitialInfo initialInfo) {
+        return InitialInfoRepository.getInstance().upsertInitialInfo(initialInfo);
     }
 
-    public ShareSelectModel getShareSelectModel(long teamId) {
-        ResLeftSideMenu leftSideMenu = LeftSideMenuRepository.getRepository().findLeftSideMenuByTeamId(teamId);
-        ShareSelectModel shareSelectModel = ShareSelectModel_.getInstance_(JandiApplication.getContext());
-        shareSelectModel.initFormattedEntities(leftSideMenu);
-        return shareSelectModel;
+    public TeamInfoLoader getTeamInfoLoader(long teamId) {
+        return TeamInfoLoader.getInstance(teamId);
     }
 }
