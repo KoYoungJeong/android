@@ -253,10 +253,6 @@ public class JandiSocketService extends Service {
         });
         eventHashMap.put("connect_team", objects -> {
             LogUtil.d(TAG, "connect_team");
-            jandiSocketManager.sendByJson("ping", "");
-        });
-        eventHashMap.put("pong", objects -> {
-            LogUtil.d(TAG, "pong");
             jandiSocketServiceModel.updateEventHistory();
         });
         eventHashMap.put("error_connect_team", objects -> {
@@ -264,9 +260,14 @@ public class JandiSocketService extends Service {
             sendBroadcastForRestart();
         });
 
+        // @Deprecated
         EventListener messageRefreshListener = objects ->
                 jandiSocketServiceModel.refreshMessage(objects[0]);
         eventHashMap.put("message", messageRefreshListener);
+
+        EventListener messageCreatedListener = objects ->
+                jandiSocketServiceModel.createdNewMessage(objects[0]);
+        eventHashMap.put("message_created", messageCreatedListener);
 
         EventListener messageStarredListener = objects ->
                 jandiSocketServiceModel.refreshStarredMessage(objects[0]);

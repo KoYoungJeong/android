@@ -53,6 +53,7 @@ import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
+import com.tosslab.jandi.app.events.entities.MessageCreatedEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RefreshConnectBotEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
@@ -92,6 +93,7 @@ import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
@@ -344,7 +346,9 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
         messageListPresenter.restoreStatus();
         refreshMessages();
-        messageListPresenter.addNewMessageQueue(true);
+        if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
+            messageListPresenter.addNewMessageQueue(true);
+        }
     }
 
     @Override
@@ -1323,47 +1327,25 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         oldProgressBar.startAnimation(outAnim);
     }
 
-    public void onEvent(SocketMessageEvent event) {
-        boolean isSameRoomId = false;
-        String messageType = event.getMessageType();
-
-        if (!TextUtils.equals(messageType, "file_comment")) {
-
-            isSameRoomId = event.getRoom().getId() == room.getRoomId();
-        } else {
-            for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
-                if (room.getRoomId() == messageRoom.getId()) {
-                    isSameRoomId = true;
-                    break;
-                }
-            }
-        }
-
-        if (!isSameRoomId) {
+    public void onEvent(MessageCreatedEvent event) {
+        if (event.getRoomId() != room.getRoomId()) {
             return;
         }
 
-        if (TextUtils.equals(messageType, "topic_leave")
-                || TextUtils.equals(messageType, "topic_join")
-                || TextUtils.equals(messageType, "topic_invite")) {
+        if (messageListPresenter != null) {
+            messageListPresenter.addNewMessageFromLocal();
+        }
+    }
 
-            if (isForeground) {
-                initEmptyLayout();
-            }
+    public void onEvent(SocketMessageEvent event) {
 
-            messageListPresenter.updateRoomInfo(true);
+        if (event.getRoom().getId() != room.getRoomId()) {
+            return;
+        }
+        String messageType = event.getMessageType();
 
-            updateMentionInfo();
-        } else {
-            messageListPresenter.updateMarker();
-
-            if (!isForeground) {
-                return;
-            }
-
-            if (room.getRoomId() > 0) {
-                messageListPresenter.addNewMessageQueue(true);
-            }
+        if (TextUtils.equals(messageType, "message_delete")) {
+            messageListPresenter.removeOfMessageId(event.getMessageId());
         }
     }
 
@@ -1373,7 +1355,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
 
         if (room.getRoomId() > 0) {
-            messageListPresenter.addNewMessageQueue(true);
+//            messageListPresenter.addNewMessageQueue(true);
         }
     }
 
@@ -1541,7 +1523,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 }
 
                 if (room.getRoomId() > 0) {
-                    messageListPresenter.addNewMessageQueue(true);
+//                    messageListPresenter.addNewMessageQueue(true);
                     messageListPresenter.onInitAnnouncement();
                 }
                 break;
@@ -1695,9 +1677,16 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             return;
         }
 
-        if (room.getRoomId() > 0) {
-            messageListPresenter.addNewMessageQueue(true);
-        }
+
+        // 삭제된 메세지는 임의 처리
+        Observable.just(event)
+                .filter(event2 -> !event2.isAdded())
+                .flatMap(event2 -> Observable.from(event2.getSharedRooms()))
+                .takeFirst(rooomId -> rooomId == room.getRoomId())
+                .subscribe(rooomId -> {
+                    messageListPresenter.removeOfMessageId(event.getCommentId());
+                });
+
     }
 
     public void onEvent(TeamLeaveEvent event) {

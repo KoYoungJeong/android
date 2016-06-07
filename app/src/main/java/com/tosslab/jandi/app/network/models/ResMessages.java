@@ -94,6 +94,10 @@ public class ResMessages {
         public OriginalMessage message;
         @DatabaseField
         public String messageType;
+        @JsonIgnore
+        @DatabaseField
+        public boolean dirty;
+        public Long[] toEntity;
 
         public boolean hasLinkPreview() {
             boolean isTextMessage = message != null && message instanceof TextMessage;
