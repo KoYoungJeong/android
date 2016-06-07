@@ -38,10 +38,12 @@ import com.tosslab.jandi.app.ui.settings.main.SettingsActivity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.KnockListener;
 import com.tosslab.jandi.app.utils.ViewSlider;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.spannable.OwnerSpannable;
 
@@ -301,6 +303,18 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
 
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.ViewMyProfile);
         });
+
+        easterEggForLog();
+    }
+
+    private void easterEggForLog() {
+        KnockListener knockListener = KnockListener.create()
+                .expectKnockCount(10)
+                .expectKnockedIn(3000)
+                .onKnocked(() -> {
+                    LogUtil.LOG = true;
+                });
+        tvName.setOnClickListener(v -> knockListener.knock());
     }
 
     @Override

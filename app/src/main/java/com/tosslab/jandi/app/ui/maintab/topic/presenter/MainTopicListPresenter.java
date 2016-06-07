@@ -259,8 +259,20 @@ public class MainTopicListPresenter {
                                         .name(JandiApplication.getContext().getString(R.string.jandi_entity_unjoined_topic))
                                         .build())))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(topicList::addAll, t -> {}, () -> view.setUpdatedItems(topicList));
+                .subscribe(topicList::addAll, t -> {}, () -> {
+                    view.setUpdatedItems(topicList);
 
+                    int unreadCount = getUnreadCountFromUpdatedList(Observable.from(topicList));
+                    EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+                });
+
+    }
+
+    private int getUnreadCountFromUpdatedList(Observable<Topic> topicList) {
+        final int[] value = {0};
+        topicList.filter(topic -> topic.getUnreadCount() > 0)
+                .subscribe(topic -> value[0] += topic.getUnreadCount());
+        return value[0];
     }
 
     public void initUpdatedTopicList() {

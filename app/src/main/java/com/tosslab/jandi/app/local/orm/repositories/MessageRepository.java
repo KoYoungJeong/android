@@ -110,7 +110,7 @@ public class MessageRepository extends LockExecutorTemplate {
         });
     }
 
-    public ResMessages.Link getLastMessage(long roomId) {
+    public ResMessages.Link getLastMessageWitoutDirty(long roomId) {
         return execute(() -> {
             ResMessages.Link link = null;
             try {
@@ -122,6 +122,8 @@ public class MessageRepository extends LockExecutorTemplate {
                         .eq("teamId", teamId)
                         .and()
                         .eq("roomId", roomId)
+                        .and()
+                        .eq("dirty", false)
                         .queryForFirst();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -213,7 +215,7 @@ public class MessageRepository extends LockExecutorTemplate {
         });
     }
 
-    public void updateUnshared(long fileId, long roomId) {
+    public void deleteSharedRoom(long fileId, long roomId) {
         execute(() -> {
             try {
                 Dao<ResMessages.OriginalMessage.IntegerWrapper, Integer> dao = getHelper().getDao(ResMessages.OriginalMessage.IntegerWrapper.class);

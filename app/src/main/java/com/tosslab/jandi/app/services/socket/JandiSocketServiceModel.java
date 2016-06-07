@@ -2,12 +2,14 @@ package com.tosslab.jandi.app.services.socket;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
+import com.tosslab.jandi.app.events.entities.MessageCreatedEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RefreshConnectBotEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
@@ -54,6 +56,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewThumbnailEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberProfileEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
@@ -188,13 +191,17 @@ public class JandiSocketServiceModel {
             SocketFileEvent socketFileEvent =
                     getObject(object.toString(), SocketFileDeleteEvent.class);
 
-            MessageRepository.getRepository().updateStatus(socketFileEvent.getFile().getId(), "archived");
-
-            postEvent(new DeleteFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
+            updateFileDeleted(socketFileEvent);
             JandiPreference.setSocketConnectedLastTime(socketFileEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void updateFileDeleted(SocketFileEvent socketFileEvent) {
+        MessageRepository.getRepository().updateStatus(socketFileEvent.getFile().getId(), "archived");
+
+        postEvent(new DeleteFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
     }
 
     public void refreshFileComment(Object object) {
@@ -203,6 +210,7 @@ public class JandiSocketServiceModel {
                     getObject(object.toString(), SocketFileCommentEvent.class);
             postEvent(
                     new FileCommentRefreshEvent(socketFileEvent.getEvent(),
+                            socketFileEvent.getTeamId(),
                             socketFileEvent.getFile().getId(),
                             socketFileEvent.getComment().getId(),
                             TextUtils.equals(socketFileEvent.getEvent(), "file_comment_created")));
@@ -216,26 +224,34 @@ public class JandiSocketServiceModel {
         try {
             SocketFileCommentDeleteEvent socketCommentEvent =
                     getObject(object.toString(), SocketFileCommentDeleteEvent.class);
-            FileCommentRefreshEvent event = new FileCommentRefreshEvent(socketCommentEvent.getEvent(),
-                    socketCommentEvent.getFile().getId(),
-                    socketCommentEvent.getComment().getId(),
-                    false /* isAdded */);
-
-            List<SocketFileCommentDeleteEvent.Room> rooms = socketCommentEvent.getRooms();
-            if (rooms != null && !rooms.isEmpty()) {
-                List<Long> sharedRooms = new ArrayList<>();
-                Observable.from(rooms)
-                        .collect(() -> sharedRooms, (list, room) -> list.add(room.getId()))
-                        .subscribe();
-                event.setSharedRooms(sharedRooms);
-            }
-
-            postEvent(event);
+            updateCommentDeleted(socketCommentEvent);
 
             JandiPreference.setSocketConnectedLastTime(socketCommentEvent.getTs());
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void updateCommentDeleted(SocketFileCommentDeleteEvent socketCommentEvent) {
+        FileCommentRefreshEvent event = new FileCommentRefreshEvent(socketCommentEvent.getEvent(),
+                socketCommentEvent.getTeamId(),
+                socketCommentEvent.getFile().getId(),
+                socketCommentEvent.getComment().getId(),
+                false /* isAdded */);
+
+        long messageId = socketCommentEvent.getComment().getId();
+        MessageRepository.getRepository().deleteMessage(messageId);
+
+        List<SocketFileCommentDeleteEvent.Room> rooms = socketCommentEvent.getRooms();
+        if (rooms != null && !rooms.isEmpty()) {
+            List<Long> sharedRooms = new ArrayList<>();
+            Observable.from(rooms)
+                    .collect(() -> sharedRooms, (list, room) -> list.add(room.getId()))
+                    .subscribe();
+            event.setSharedRooms(sharedRooms);
+        }
+
+        postEvent(event);
     }
 
     public void refreshMessage(Object object) {
@@ -245,6 +261,10 @@ public class JandiSocketServiceModel {
                     getObject(content, SocketMessageEvent.class);
 
             String messageType = socketMessageEvent.getMessageType();
+            if (TextUtils.equals(messageType, "message_delete")) {
+                long messageId = socketMessageEvent.getMessageId();
+                MessageRepository.getRepository().deleteMessage(messageId);
+            }
             if (TextUtils.equals(messageType, "topic_leave")
                     || TextUtils.equals(messageType, "topic_join")
                     || TextUtils.equals(messageType, "topic_invite")) {
@@ -318,11 +338,11 @@ public class JandiSocketServiceModel {
             SocketFileUnsharedEvent socketFileEvent =
                     getObject(object.toString(), SocketFileUnsharedEvent.class);
 
-            int fileId = socketFileEvent.getFile().getId();
-            int roomId = socketFileEvent.room.id;
+            long fileId = socketFileEvent.getFile().getId();
+            long roomId = socketFileEvent.room.id;
 
             // DB 업데이트 작업 실시
-            MessageRepository.getRepository().updateUnshared(fileId, roomId);
+            MessageRepository.getRepository().deleteSharedRoom(fileId, roomId);
             postEvent(new UnshareFileEvent(roomId, fileId));
             JandiPreference.setSocketConnectedLastTime(socketFileEvent.getTs());
         } catch (Exception e) {
@@ -345,7 +365,7 @@ public class JandiSocketServiceModel {
 
     public void updateMarker(Object object) {
         try {
-            SocketRoomMarkerEvent socketRoomMarkerEvent =
+            SocketRoomMarkerEvent event =
                     getObject(object.toString(), SocketRoomMarkerEvent.class);
 
             SocketRoomMarkerEvent.Marker marker = socketRoomMarkerEvent.getMarker();
@@ -736,6 +756,32 @@ public class JandiSocketServiceModel {
         }
     }
 
+    public void createdNewMessage(Object object) {
+        try {
+            SocketMessageCreatedEvent event = getObject(object, SocketMessageCreatedEvent.class);
+            insertNewMessage(event);
+            JandiPreference.setSocketConnectedLastTime(event.getTs());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void insertNewMessage(SocketMessageCreatedEvent event) {
+        long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+        if (selectedTeamId == event.getTeamId()
+                && event.getData() != null
+                && event.getData().getLinkMessage() != null
+                && event.getData().getLinkMessage().toEntity.length > 0) {
+
+            long roomId = event.getData().getLinkMessage().toEntity[0];
+            ResMessages.Link linkMessage = event.getData().getLinkMessage();
+            linkMessage.roomId = roomId;
+            MessageRepository.getRepository().upsertMessage(linkMessage);
+            postEvent(new MessageCreatedEvent(event.getTeamId(), roomId, linkMessage.id));
+        }
+    }
+
     private <T> T getObject(Object object, Class<T> clazz) throws Exception {
         T t = objectMapper.readValue(object.toString(), clazz);
         throwExceptionIfInvaildVersion(t);
@@ -800,7 +846,59 @@ public class JandiSocketServiceModel {
     // 확장성 생각하여 추후 모듈로 빼내야 함.
     public void updateEventHistory() {
 
-        Observable.just(JandiPreference.getSocketConnectedLastTime())
+        long socketConnectedLastTime = JandiPreference.getSocketConnectedLastTime();
+        getEventHistory(socketConnectedLastTime, "file_unshared")
+                .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketFileUnsharedEvent)
+                .map(eventHistoryInfo -> (SocketFileUnsharedEvent) eventHistoryInfo)
+                .subscribe(eventHistoryInfo -> {
+                    long fileId = eventHistoryInfo.getFile().getId();
+                    long roomId = eventHistoryInfo.room.id;
+                    MessageRepository.getRepository().deleteSharedRoom(fileId, roomId);
+                    JandiPreference.setSocketConnectedLastTime(eventHistoryInfo.getTs());
+                }, Throwable::printStackTrace);
+
+        getEventHistory(socketConnectedLastTime, "message_created")
+                .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketMessageCreatedEvent)
+                .map(eventHistoryInfo -> (SocketMessageCreatedEvent) eventHistoryInfo)
+                .subscribe((event1) -> {
+                    insertNewMessage(event1);
+                    JandiPreference.setSocketConnectedLastTime(event1.getTs());
+                }, Throwable::printStackTrace);
+
+        getEventHistory(socketConnectedLastTime, "file_comment_deleted")
+                .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketFileCommentDeleteEvent)
+                .map(eventHistoryInfo -> (SocketFileCommentDeleteEvent) eventHistoryInfo)
+                .subscribe((socketCommentEvent) -> {
+                    updateCommentDeleted(socketCommentEvent);
+                    JandiPreference.setSocketConnectedLastTime(socketCommentEvent.getTs());
+                }, Throwable::printStackTrace);
+
+        getEventHistory(socketConnectedLastTime, "file_deleted")
+                .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketFileEvent)
+                .map(eventHistoryInfo -> (SocketFileEvent) eventHistoryInfo)
+                .subscribe((socketFileEvent) -> {
+                    updateFileDeleted(socketFileEvent);
+                    JandiPreference.setSocketConnectedLastTime(socketFileEvent.getTs());
+
+                }, Throwable::printStackTrace);
+
+        getEventHistory(socketConnectedLastTime, "message")
+                .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketMessageEvent)
+                .map(eventHistoryInfo -> (SocketMessageEvent) eventHistoryInfo)
+                .filter(event -> TextUtils.equals(event.getMessageType(), "message_delete"))
+                .subscribe(event -> {
+                    long messageId = event.getMessageId();
+                    MessageRepository.getRepository().deleteMessage(messageId);
+                    postEvent(event);
+                    JandiPreference.setSocketConnectedLastTime(event.getTs());
+
+                }, Throwable::printStackTrace);
+
+    }
+
+    @NonNull
+    private Observable<ResEventHistory.EventHistoryInfo> getEventHistory(long socketConnectedLastTime, String eventType) {
+        return Observable.just(socketConnectedLastTime)
                 .observeOn(Schedulers.io())
                 .filter(ts -> ts == -1 || ts > 0)
                 .map(ts -> {
@@ -815,12 +913,6 @@ public class JandiSocketServiceModel {
                     }
                 })
                 .flatMap(resEventHistory -> Observable.from(resEventHistory.records))
-                .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketFileUnsharedEvent)
-                .map(eventHistoryInfo -> (SocketFileUnsharedEvent) eventHistoryInfo)
-                .subscribe(eventHistoryInfo -> {
-                    int fileId = eventHistoryInfo.getFile().getId();
-                    int roomId = eventHistoryInfo.room.id;
-                    MessageRepository.getRepository().updateUnshared(fileId, roomId);
-                }, Throwable::printStackTrace);
+                .filter(this::validVersion);
     }
 }

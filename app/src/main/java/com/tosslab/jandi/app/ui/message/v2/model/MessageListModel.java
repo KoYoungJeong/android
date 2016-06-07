@@ -502,10 +502,6 @@ public class MessageListModel {
         return ReadyMessageRepository.getRepository().getReadyMessage(roomId).getText();
     }
 
-    public ResMessages.Link getLastLinkMessage(long roomId) {
-        return MessageRepository.getRepository().getLastMessage(roomId);
-    }
-
     public void clearLinks(long teamId, long roomId) {
         MessageRepository.getRepository().clearLinks(teamId, roomId);
     }

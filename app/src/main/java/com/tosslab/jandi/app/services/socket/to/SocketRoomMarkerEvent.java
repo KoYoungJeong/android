@@ -15,7 +15,7 @@ import java.util.List;
 public class SocketRoomMarkerEvent {
     private int version;
     private String event;
-    private int teamId;
+    private long teamId;
     private MarkerRoom room;
     private Marker marker;
     private long ts;
@@ -72,26 +72,26 @@ public class SocketRoomMarkerEvent {
         this.marker = marker;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class MarkerRoom {
-        private int id;
+        private long id;
         private String type;
-        private List<Integer> members;
+        private List<Long> members;
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(long id) {
             this.id = id;
         }
 
@@ -103,11 +103,11 @@ public class SocketRoomMarkerEvent {
             this.type = type;
         }
 
-        public List<Integer> getMembers() {
+        public List<Long> getMembers() {
             return members;
         }
 
-        public void setMembers(List<Integer> members) {
+        public void setMembers(List<Long> members) {
             this.members = members;
         }
     }

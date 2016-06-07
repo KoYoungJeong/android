@@ -37,12 +37,9 @@ public class MainShareModel {
     }
 
     public MainShareActivity.IntentType getIntentType(String action, String type) {
-        Log.e("tony", "action = " + action);
-        Log.e("tony", "type = " + type);
         if (TextUtils.equals(action, Intent.ACTION_SEND) && !TextUtils.isEmpty(type)) {
             if (type.toLowerCase().matches("text/.*")
                     || type.toLowerCase().matches("message/.*")) {
-                Log.e("tony", "type.toLowerCase().matches(\"text/(.*)\")");
                 return MainShareActivity.IntentType.Text;
             } else {
                 return MainShareActivity.IntentType.File;

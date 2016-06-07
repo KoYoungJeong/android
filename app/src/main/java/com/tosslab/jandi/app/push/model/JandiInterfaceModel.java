@@ -230,13 +230,6 @@ public class JandiInterfaceModel {
         return TextUtils.equals(roomType, PushRoomType.CHAT.getName());
     }
 
-    public long getCachedLastLinkId(int roomId) {
-
-        ResMessages.Link lastMessage = MessageRepository.getRepository().getLastMessage(roomId);
-
-        return lastMessage.id;
-    }
-
     public boolean hasNotRegisteredAtNewPushService() {
         List<PushToken> pushTokenList = PushTokenRepository.getInstance().getPushTokenList();
         return pushTokenList.isEmpty();

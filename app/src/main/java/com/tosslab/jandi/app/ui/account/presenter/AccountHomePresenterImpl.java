@@ -145,7 +145,6 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         onJoinedTeamSelect(selectedTeamInfo.getTeamId(), true);
     }
 
-
     @Override
     public void onAccountEmailEditClick() {
         view.moveEmailEditClick();

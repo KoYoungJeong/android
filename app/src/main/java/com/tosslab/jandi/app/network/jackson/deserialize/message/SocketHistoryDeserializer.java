@@ -8,12 +8,18 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tosslab.jandi.app.network.models.ResEventHistory;
+import com.tosslab.jandi.app.services.socket.to.SocketFileCommentDeleteEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketFileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
+
+import rx.Observable;
 
 public class SocketHistoryDeserializer extends JsonDeserializer<ResEventHistory.EventHistoryInfo> {
 
@@ -50,17 +56,10 @@ public class SocketHistoryDeserializer extends JsonDeserializer<ResEventHistory.
             return EventType.Unknown;
         }
 
-        EventType eventType = EventType.Unknown;
-        try {
-            for (EventType type : EventType.values()) {
-                if (TextUtils.equals(type.getRawType(), eventTypeValue)) {
-                    eventType = type;
-                    break;
-                }
-            }
-        } catch (IllegalArgumentException e) {
-        }
-        return eventType;
+        return Observable.from(EventType.values())
+                .takeFirst(type -> TextUtils.equals(type.getRawType(), eventTypeValue))
+                .toBlocking()
+                .firstOrDefault(EventType.Unknown);
     }
 
 
@@ -69,13 +68,26 @@ public class SocketHistoryDeserializer extends JsonDeserializer<ResEventHistory.
         switch (eventType) {
             case FileUnshared:
                 return mapper.treeToValue(root, SocketFileUnsharedEvent.class);
+            case MessageCreated:
+                return mapper.treeToValue(root, SocketMessageCreatedEvent.class);
+            case CommentDeleted:
+                return mapper.treeToValue(root, SocketFileCommentDeleteEvent.class);
+            case FileDeleted:
+                return mapper.treeToValue(root, SocketFileEvent.class);
+            case MessageDeleted:
+                return mapper.treeToValue(root, SocketMessageEvent.class);
+            case Unknown:
             default:
                 return new ResEventHistory.EventHistoryInfo();
         }
     }
 
-    private enum EventType {
+    public enum EventType {
         FileUnshared("file_unshared"),
+        MessageCreated("message_created"),
+        CommentDeleted("file_comment_deleted"),
+        FileDeleted("file_deleted"),
+        MessageDeleted("message"),
         Unknown("");
 
         private final String rawType;

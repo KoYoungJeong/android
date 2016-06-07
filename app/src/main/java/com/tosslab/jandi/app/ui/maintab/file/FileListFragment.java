@@ -765,7 +765,7 @@ public class FileListFragment extends Fragment
         if (searchedFileItemListAdapter == null) {
             return;
         }
-        int fileId = event.getFileId();
+        long fileId = event.getFileId();
         int position = searchedFileItemListAdapter.findPositionByFileId(fileId);
         if (position < 0) {
             return;
