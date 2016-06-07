@@ -4,9 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.widget.ImageView;
 
 import com.tosslab.jandi.app.R;
@@ -15,18 +13,13 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.presenter.IntroActivityPresenter;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.sign.SignHomeActivity;
-import com.tosslab.jandi.app.ui.sign.signin.SignInActivity;
-import com.tosslab.jandi.app.ui.sign.signup.SignUpActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.Fullscreen;
@@ -70,7 +63,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     @Override
     public void moveTeamSelectActivity() {
         Intent intent = AccountHomeActivity_.intent(IntroActivity.this).get();
-        moveToActivityWithAnimationAndFinish(intent);
+        startActivityWithAnimationAndFinish(intent);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -80,7 +73,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                         | Intent.FLAG_ACTIVITY_NEW_TASK
                         | Intent.FLAG_ACTIVITY_CLEAR_TASK).get();
-        moveToActivityWithAnimationAndFinish(intent);
+        startActivityWithAnimationAndFinish(intent);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -91,17 +84,10 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                 Intent.FLAG_ACTIVITY_CLEAR_TOP
                         | Intent.FLAG_ACTIVITY_NEW_TASK
                         | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ActivityOptionsCompat options =
-                    ActivityOptionsCompat.makeSceneTransitionAnimation(this, ivJandiIcon, "icon_anim");
-            startActivity(intent, options.toBundle());
-            finish();
-        } else {
-            moveToActivityWithAnimationAndFinish(intent);
-        }
+        startActivityWithAnimationAndFinish(intent);
     }
 
-    private void moveToActivityWithAnimationAndFinish(final Intent intent) {
+    private void startActivityWithAnimationAndFinish(final Intent intent) {
         if (ApplicationUtil.isActivityDestroyed(IntroActivity.this)) {
             return;
         }

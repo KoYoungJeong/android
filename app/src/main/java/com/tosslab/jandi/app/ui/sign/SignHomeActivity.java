@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.ui.sign.signup.SignUpActivity;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -22,9 +21,6 @@ import butterknife.OnClick;
  */
 public class SignHomeActivity extends BaseAppCompatActivity {
 
-    @Bind(R.id.iv_jandi_icon)
-    View vIcon;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,8 +28,6 @@ public class SignHomeActivity extends BaseAppCompatActivity {
         setNeedUnLockPassCode(false);
         setShouldReconnectSocketService(false);
         ButterKnife.bind(this);
-
-        ViewCompat.setTransitionName(vIcon, "icon_anim");
     }
 
     @OnClick(R.id.btn_sign_up)

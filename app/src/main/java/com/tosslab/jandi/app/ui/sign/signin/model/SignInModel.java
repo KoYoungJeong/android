@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.sign.signin.model;
 
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.account.devices.DeviceApi;
@@ -71,11 +73,11 @@ public class SignInModel {
     }
 
     public boolean isEmptyEmail(String email) {
-        return email.equals("");
+        return TextUtils.isEmpty(email);
     }
 
     public boolean isEmptyPassword(String password) {
-        return password.equals("");
+        return TextUtils.isEmpty(password);
     }
 
     public void trackSignInSuccess() {

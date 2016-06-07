@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.utils.LanguageUtil;
 import javax.inject.Inject;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -81,19 +80,22 @@ public class SignUpPresenterImpl implements SignUpPresenter {
 
         view.showProgressWheel();
 
-        Observable.create((Subscriber<? super Object> subscriber) -> {
+        Observable.create(subscriber -> {
             try {
                 model.requestSignUp(email, password, name, lang);
                 model.trackSendEmailSuccess(email);
                 AdWordsConversionReporter.reportWithConversionId(JandiApplication.getContext(),
                         "957512006", "fVnsCMKD_GEQxvLJyAM", "0.00", true);
-                subscriber.onCompleted();
+                subscriber.onNext(new Object());
             } catch (RetrofitException e) {
                 subscriber.onError(e);
             }
+            subscriber.onCompleted();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
+                    view.dismissProgressWheel();
+                    view.startSignUpRequestVerifyActivity();
                 }, e -> {
                     view.dismissProgressWheel();
                     if (!(e instanceof RetrofitException)) {
@@ -106,9 +108,6 @@ public class SignUpPresenterImpl implements SignUpPresenter {
                         view.showNetworkErrorToast();
                     }
                     model.trackSendEmailFail(exception.getResponseCode());
-                }, () -> {
-                    view.startSignUpRequestVerifyActivity();
-                    view.dismissProgressWheel();
                 });
     }
 

@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.sign.signup;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -11,18 +13,16 @@ import android.text.Editable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
-import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.sign.signup.dagger.DaggerSignUpComponent;
@@ -33,8 +33,11 @@ import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
+import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import javax.inject.Inject;
 
@@ -71,7 +74,7 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
     EditText etPassword;
 
     @Bind(R.id.btn_sign_up)
-    TextView tvSignUpButton;
+    TextView btnSignUp;
 
     @Bind(R.id.tv_term_line)
     TextView tvTermLine;
@@ -99,10 +102,20 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
 
         ButterKnife.bind(this);
 
-        tvSignUpButton.setEnabled(false);
-        etName.addTextChangedListener(new EtTextWatcher());
-        etEmail.addTextChangedListener(new EtTextWatcher());
-        etPassword.addTextChangedListener(new EtTextWatcher());
+        btnSignUp.setEnabled(false);
+        etName.addTextChangedListener(new TextInputWatcher());
+        etEmail.addTextChangedListener(new TextInputWatcher());
+        etPassword.addTextChangedListener(new TextInputWatcher());
+        etPassword.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (btnSignUp.isEnabled()) {
+                    signUpPresenter.trySignUp(etName.getText().toString(),
+                            etEmail.getText().toString(), etPassword.getText().toString());
+                }
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override
@@ -181,51 +194,84 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
     @OnClick(R.id.btn_sign_up)
     void onClickSignUpButton() {
         signUpPresenter.trySignUp(
-                etName.getText().toString()
-                , etEmail.getText().toString()
-                , etPassword.getText().toString());
+                etName.getText().toString(),
+                etEmail.getText().toString(),
+                etPassword.getText().toString());
     }
 
     @Override
     public void showErrorInsertName() {
         etLayoutName.setErrorEnabled(true);
         etLayoutName.setError(getString(R.string.jandi_input_user_name));
+
+        startBounceAnimation(etLayoutName.getChildAt(etLayoutName.getChildCount() - 1));
     }
 
     @Override
     public void showErrorInsertEmail() {
         etLayoutEmail.setErrorEnabled(true);
         etLayoutEmail.setError(getString(R.string.jandi_err_input_email));
+
+        startBounceAnimation(etLayoutEmail.getChildAt(etLayoutEmail.getChildCount() - 1));
     }
 
     @Override
     public void showErrorInvalidEmail() {
         etLayoutEmail.setErrorEnabled(true);
         etLayoutEmail.setError(getString(R.string.jandi_err_invalid_email));
+
+        startBounceAnimation(etLayoutEmail.getChildAt(etLayoutEmail.getChildCount() - 1));
     }
 
     @Override
     public void showErrorDuplicationEmail() {
         etLayoutEmail.setErrorEnabled(true);
         etLayoutEmail.setError(getString(R.string.jandi_duplicate_email));
+
+        startBounceAnimation(etLayoutEmail.getChildAt(etLayoutEmail.getChildCount() - 1));
     }
 
     @Override
     public void showErrorInsertPassword() {
         etLayoutPassword.setErrorEnabled(true);
         etLayoutPassword.setError(getString(R.string.jandi_err_input_password));
+
+        startBounceAnimation(etLayoutPassword.getChildAt(etLayoutPassword.getChildCount() - 1));
     }
 
     @Override
     public void showErrorShortPassword() {
         etLayoutPassword.setErrorEnabled(true);
         etLayoutPassword.setError(getString(R.string.jandi_password_strength_too_short));
+
+        startBounceAnimation(etLayoutPassword.getChildAt(etLayoutPassword.getChildCount() - 1));
     }
 
     @Override
     public void showErrorWeakPassword() {
         etLayoutPassword.setErrorEnabled(true);
         etLayoutPassword.setError(getString(R.string.jandi_password_strength_weak));
+
+        startBounceAnimation(etLayoutPassword.getChildAt(etLayoutPassword.getChildCount() - 1));
+    }
+
+    private void startBounceAnimation(View view) {
+        float startX = -UiUtils.getPixelFromDp(5);
+        float endX = UiUtils.getPixelFromDp(5);
+
+        ValueAnimator bounceAnim = ValueAnimator.ofFloat(startX, endX);
+        bounceAnim.setDuration(100);
+        bounceAnim.setRepeatCount(3);
+        bounceAnim.setRepeatMode(ValueAnimator.REVERSE);
+        bounceAnim.addUpdateListener(animation ->
+                view.setTranslationX((Float) animation.getAnimatedValue()));
+        bounceAnim.addListener(new SimpleEndAnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                view.setTranslationX(0);
+            }
+        });
+        bounceAnim.start();
     }
 
     @Override
@@ -248,18 +294,16 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
 
     private void setMarginTopEmailLayout(float marginDip) {
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) etLayoutEmail.getLayoutParams();
-        DisplayMetrics displayMetrics = JandiApplication.getContext().getResources().getDisplayMetrics();
-        int marginTop = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, marginDip, displayMetrics));
-        int marginSide = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, displayMetrics));
+        int marginTop = (int) UiUtils.getPixelFromDp(marginDip);
+        int marginSide = (int) UiUtils.getPixelFromDp(16f);
         params.setMargins(marginSide, marginTop, marginSide, 0);
         etLayoutEmail.setLayoutParams(params);
     }
 
     private void setMarginTopPasswordLayout(float marginDip) {
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) etLayoutPassword.getLayoutParams();
-        DisplayMetrics displayMetrics = JandiApplication.getContext().getResources().getDisplayMetrics();
-        int marginTop = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, marginDip, displayMetrics));
-        int marginSide = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, displayMetrics));
+        int marginTop = (int) UiUtils.getPixelFromDp(marginDip);
+        int marginSide = (int) UiUtils.getPixelFromDp(16f);
         params.setMargins(marginSide, marginTop, marginSide, 0);
         etLayoutPassword.setLayoutParams(params);
     }
@@ -364,21 +408,15 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
                 .start();
     }
 
-    private class EtTextWatcher implements TextWatcher {
-
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
+    private class TextInputWatcher extends SimpleTextWatcher {
+        @Override
         public void afterTextChanged(Editable editable) {
             if (etName.getText().length() > 0
                     && etEmail.getText().length() > 0
                     && etPassword.getText().length() > 0) {
-                tvSignUpButton.setEnabled(true);
+                btnSignUp.setEnabled(true);
             } else {
-                tvSignUpButton.setEnabled(false);
+                btnSignUp.setEnabled(false);
             }
             if (etName.isFocused() && etLayoutName.isErrorEnabled()) {
                 removeErrorName();

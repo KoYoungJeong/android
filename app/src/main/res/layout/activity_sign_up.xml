@@ -8,7 +8,7 @@
         android:id="@+id/layout_search_bar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:visibility="visible" />
+        android:visibility="visible"/>
 
     <ScrollView
         android:id="@+id/scroll_view"
@@ -35,9 +35,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/jandi_name"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
                     android:maxLength="30"
                     android:maxLines="1"
-                    android:textSize="16sp" />
+                    android:nextFocusDown="@+id/et_email"
+                    android:textSize="16sp"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -54,10 +57,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/jandi_profile_email"
+                    android:imeOptions="actionNext"
                     android:inputType="textEmailAddress"
                     android:maxLength="60"
                     android:maxLines="1"
-                    android:textSize="16sp" />
+                    android:nextFocusDown="@+id/et_password"
+                    android:textSize="16sp"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -74,10 +79,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/jandi_user_password"
+                    android:imeOptions="actionDone"
                     android:inputType="textPassword"
                     android:maxLength="20"
                     android:maxLines="1"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -93,7 +99,7 @@
                 android:gravity="center"
                 android:text="@string/jandi_next"
                 android:textColor="@color/white"
-                android:textSize="14sp" />
+                android:textSize="14sp"/>
 
             <TextView
                 android:id="@+id/tv_term_line"
@@ -106,7 +112,7 @@
                 android:lineSpacingExtra="2dp"
                 android:maxLines="2"
                 android:text="@string/jandi_tab_tos_and_pp"
-                android:textSize="12sp" />
+                android:textSize="12sp"/>
         </LinearLayout>
 
     </ScrollView>

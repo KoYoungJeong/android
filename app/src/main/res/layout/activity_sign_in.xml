@@ -9,7 +9,7 @@
         android:id="@+id/layout_search_bar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:visibility="visible" />
+        android:visibility="visible"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -30,14 +30,16 @@
                 android:layout_marginTop="16dp"
                 android:theme="@style/FloatingEditTextTheme">
 
-                <EditText
+                <AutoCompleteTextView
                     android:id="@+id/et_email"
+                    android:imeOptions="actionNext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:nextFocusDown="@+id/et_password"
                     android:hint="@string/jandi_profile_email"
                     android:inputType="textEmailAddress"
                     android:maxLength="60"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -55,8 +57,9 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/jandi_user_password"
                     android:inputType="textPassword"
+                    android:imeOptions="actionDone"
                     android:maxLength="20"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -68,7 +71,7 @@
                 android:text="@string/err_login_invalid_id_or_password"
                 android:textColor="@color/jandi_red"
                 android:textSize="12sp"
-                android:visibility="gone" />
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/btn_sign_in"
@@ -83,7 +86,7 @@
                 android:gravity="center"
                 android:text="@string/common_signin_button_text"
                 android:textColor="@color/white"
-                android:textSize="14sp" />
+                android:textSize="14sp"/>
 
             <TextView
                 android:id="@+id/tv_forget_password"
@@ -95,12 +98,7 @@
                 android:gravity="center"
                 android:text="@string/jandi_forget_password_block"
                 android:textColor="@color/jandi_54_opacity_black"
-                android:textSize="12sp" />
-
-            <!-- dummy view -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="100dp" />
+                android:textSize="12sp"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -117,7 +115,7 @@
                     android:layout_marginRight="4dp"
                     android:gravity="center_horizontal"
                     android:text="@string/jandi_is_newcomer"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"/>
 
                 <TextView
                     android:id="@+id/btn_sign_up"
@@ -129,10 +127,9 @@
                     android:gravity="center_horizontal"
                     android:text="@string/jandi_action_start"
                     android:textColor="@color/button_text_color"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"/>
 
             </RelativeLayout>
-
 
         </LinearLayout>
     </ScrollView>

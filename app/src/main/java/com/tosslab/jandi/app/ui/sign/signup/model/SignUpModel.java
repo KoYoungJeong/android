@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.sign.signup.model;
 
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.network.client.main.SignUpApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
@@ -47,11 +49,11 @@ public class SignUpModel {
     }
 
     public boolean isEmptyEmail(String email) {
-        return email.length() <= 0;
+        return TextUtils.isEmpty(email);
     }
 
     public boolean isEmptyPassword(String password) {
-        return password.length() <= 0;
+        return TextUtils.isEmpty(password);
     }
 
     public boolean isValidLengthPassword(String password) {

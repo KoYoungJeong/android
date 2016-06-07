@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.sign.signin;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -9,16 +11,13 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.profile.ForgotPasswordEvent;
@@ -30,9 +29,12 @@ import com.tosslab.jandi.app.ui.sign.signin.presenter.SignInPresenter;
 import com.tosslab.jandi.app.ui.sign.signup.SignUpActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
+import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import javax.inject.Inject;
 
@@ -45,7 +47,6 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tee on 16. 5. 25..
  */
-
 public class SignInActivity extends BaseAppCompatActivity implements SignInPresenter.View {
 
     @Inject
@@ -64,7 +65,7 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
     EditText etPassword;
 
     @Bind(R.id.btn_sign_in)
-    TextView tvSignInButton;
+    TextView btnSignIn;
 
     @Bind(R.id.tv_error_id_or_password)
     TextView tvErrorIdOrPassword;
@@ -86,9 +87,19 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
 
         ButterKnife.bind(this);
 
-        tvSignInButton.setEnabled(false);
-        etEmail.addTextChangedListener(new EtTextWatcher());
-        etPassword.addTextChangedListener(new EtTextWatcher());
+        btnSignIn.setEnabled(false);
+        etEmail.addTextChangedListener(new TextInputWatcher());
+        etPassword.addTextChangedListener(new TextInputWatcher());
+        etPassword.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (btnSignIn.isEnabled()) {
+                    signInPresenter.trySignIn(
+                            etEmail.getText().toString(), etPassword.getText().toString());
+                }
+                return true;
+            }
+            return false;
+        });
         EventBus.getDefault().register(this);
     }
 
@@ -116,7 +127,6 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
     }
-
 
     @OnFocusChange(R.id.et_email)
     void onEmailFocused(boolean focused) {
@@ -178,6 +188,7 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
         }
         etLayoutEmail.setError(getString(R.string.jandi_err_input_email));
 
+        startBounceAnimation(etLayoutEmail.getChildAt(etLayoutEmail.getChildCount() - 1));
     }
 
     @Override
@@ -186,6 +197,8 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
             etLayoutEmail.setErrorEnabled(true);
         }
         etLayoutEmail.setError(getString(R.string.jandi_err_invalid_email));
+
+        startBounceAnimation(etLayoutEmail.getChildAt(etLayoutEmail.getChildCount() - 1));
     }
 
     @Override
@@ -200,6 +213,8 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
             etLayoutPassword.setErrorEnabled(true);
         }
         etLayoutPassword.setError(getString(R.string.jandi_err_input_password));
+
+        startBounceAnimation(etLayoutPassword.getChildAt(etLayoutPassword.getChildCount() - 1));
     }
 
     @Override
@@ -208,6 +223,27 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
             etLayoutPassword.setErrorEnabled(true);
         }
         etLayoutPassword.setError(getString(R.string.jandi_password_strength_too_short));
+
+        startBounceAnimation(etLayoutPassword.getChildAt(etLayoutPassword.getChildCount() - 1));
+    }
+
+    private void startBounceAnimation(View view) {
+        float startX = -UiUtils.getPixelFromDp(5);
+        float endX = UiUtils.getPixelFromDp(5);
+
+        ValueAnimator bounceAnim = ValueAnimator.ofFloat(startX, endX);
+        bounceAnim.setDuration(100);
+        bounceAnim.setRepeatCount(3);
+        bounceAnim.setRepeatMode(ValueAnimator.REVERSE);
+        bounceAnim.addUpdateListener(animation ->
+                view.setTranslationX((Float) animation.getAnimatedValue()));
+        bounceAnim.addListener(new SimpleEndAnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                view.setTranslationX(0);
+            }
+        });
+        bounceAnim.start();
     }
 
     @Override
@@ -222,10 +258,11 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
     }
 
     private void setMarginTopPasswordLayout(float marginDip) {
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) etLayoutPassword.getLayoutParams();
-        DisplayMetrics displayMetrics = JandiApplication.getContext().getResources().getDisplayMetrics();
-        int marginTop = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, marginDip, displayMetrics));
-        int marginSide = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, displayMetrics));
+        LinearLayout.LayoutParams params =
+                (LinearLayout.LayoutParams) etLayoutPassword.getLayoutParams();
+
+        int marginTop = (int) UiUtils.getPixelFromDp(marginDip);
+        int marginSide = (int) UiUtils.getPixelFromDp(16f);
         params.setMargins(marginSide, marginTop, marginSide, 0);
         etLayoutPassword.setLayoutParams(params);
     }
@@ -287,20 +324,15 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
         return super.onOptionsItemSelected(item);
     }
 
-    private class EtTextWatcher implements TextWatcher {
-
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
+    private class TextInputWatcher extends SimpleTextWatcher {
+        @Override
         public void afterTextChanged(Editable editable) {
             if (etEmail.getText().length() > 0 && etPassword.getText().length() > 0) {
-                tvSignInButton.setEnabled(true);
+                btnSignIn.setEnabled(true);
             } else {
-                tvSignInButton.setEnabled(false);
+                btnSignIn.setEnabled(false);
             }
+
             if (etEmail.isFocused() && etLayoutEmail.isErrorEnabled()) {
                 removeErrorEmail();
             }

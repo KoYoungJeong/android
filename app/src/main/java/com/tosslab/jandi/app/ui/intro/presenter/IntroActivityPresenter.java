@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.intro.presenter;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -110,6 +111,7 @@ public class IntroActivityPresenter {
             }
 
         } catch (RetrofitException e) {
+            LogUtil.e(Log.getStackTraceString(e));
             model.sleep(initTime, MAX_DELAY_MS);
 
             int errorCode = e.getStatusCode();
@@ -122,6 +124,7 @@ public class IntroActivityPresenter {
                 view.showCheckNetworkDialog();
             }
         } catch (Exception e) {
+            LogUtil.e(Log.getStackTraceString(e));
             model.trackSignInFailAndFlush(-1);
             view.showCheckNetworkDialog();
         }

@@ -14,7 +14,6 @@ import com.tosslab.jandi.app.utils.parse.PushUtil;
 import javax.inject.Inject;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -67,26 +66,19 @@ public class SignInPresenterImpl implements SignInPresenter {
         final boolean passwordValidation = checkPasswordValidation(password);
 
         if (!(emailValidation && passwordValidation)) {
-
             return;
         }
 
         view.showProgressDialog();
 
-        Observable.create(new Observable.OnSubscribe<ResAccessToken>() {
-            @Override
-            public void call(Subscriber<? super ResAccessToken> subscriber) {
-                try {
-                    ResAccessToken accessToken = model.login(email, password);
-                    subscriber.onNext(accessToken);
-                    subscriber.onCompleted();
-                } catch (RetrofitException e) {
-                    subscriber.onError(e);
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-
+        Observable.<ResAccessToken>create(subscriber -> {
+            try {
+                ResAccessToken accessToken = model.login(email, password);
+                subscriber.onNext(accessToken);
+            } catch (RetrofitException e) {
+                subscriber.onError(e);
             }
+            subscriber.onCompleted();
         }).subscribeOn(Schedulers.io())
                 .doOnNext(accessToken -> {
                     model.saveTokenInfo(accessToken);
@@ -94,6 +86,7 @@ public class SignInPresenterImpl implements SignInPresenter {
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(accessToken -> {
+                    view.dismissProgressDialog();
                     getAccountInfo(email);
                 }, t -> {
                     view.dismissProgressDialog();
@@ -105,8 +98,9 @@ public class SignInPresenterImpl implements SignInPresenter {
                         try {
                             switch (error.getResponseCode()) {
                                 case 40000:
-                                case 40021:
-                                case 40007:
+                                case 40021: // 메일이 존재하지 않는 경우
+                                case 40007: // 인증된 계정이 아닌 경우(잔디를 처음 사용하는 사용자에 해당)
+                                case 40019: // 인증된 계정이 아닌 경우(연결된 다른 계정이 있는 경우)
                                     view.showErrorInvalidEmailOrPassword();
                                     break;
                             }
@@ -119,21 +113,18 @@ public class SignInPresenterImpl implements SignInPresenter {
                         view.showNetworkErrorToast();
                         model.trackSignInFail(JandiConstants.NetworkError.BAD_REQUEST);
                     }
-                }, () -> view.dismissProgressDialog());
+                });
     }
 
     private void getAccountInfo(String email) {
-        Observable.create(new Observable.OnSubscribe<ResAccountInfo>() {
-            @Override
-            public void call(Subscriber<? super ResAccountInfo> subscriber) {
-                try {
-                    ResAccountInfo accountInfo = model.getAccountInfo();
-                    subscriber.onNext(accountInfo);
-                    subscriber.onCompleted();
-                } catch (RetrofitException e) {
-                    subscriber.onError(e);
-                }
+        Observable.<ResAccountInfo>create(subscriber -> {
+            try {
+                ResAccountInfo accountInfo = model.getAccountInfo();
+                subscriber.onNext(accountInfo);
+            } catch (RetrofitException e) {
+                subscriber.onError(e);
             }
+            subscriber.onCompleted();
         }).subscribeOn(Schedulers.io())
                 .doOnNext(accountInfo -> {
                     model.saveAccountInfo(accountInfo);
@@ -148,25 +139,25 @@ public class SignInPresenterImpl implements SignInPresenter {
                     model.trackSignInSuccess();
                 }).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
+                    view.dismissProgressDialog();
                     view.moveToTeamSelectionActivity(email);
-                }, t -> view.showNetworkErrorToast(), () -> view.dismissProgressDialog());
+                }, t -> view.showNetworkErrorToast());
     }
 
     @Override
     public void forgotPassword(String email) {
-        Observable.create(subscriber -> {
+        Observable.<Boolean>create(subscriber -> {
             try {
                 model.requestPasswordReset(email);
-                subscriber.onCompleted();
+                subscriber.onNext(true);
             } catch (Exception e) {
                 subscriber.onError(e);
             }
+            subscriber.onCompleted();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(o -> {
-                        },
-                        e -> view.showFailPasswordResetToast(),
-                        () -> view.showSuccessPasswordResetToast());
-
+                .subscribe(o -> view.showSuccessPasswordResetToast(),
+                        e -> view.showFailPasswordResetToast());
     }
+
 }
