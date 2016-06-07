@@ -18,16 +18,15 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
-import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ReadyMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.RoomMarkerRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
@@ -40,7 +39,6 @@ import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
@@ -373,32 +371,13 @@ public class MessageListModel {
         return messageManipulator.getBeforeMarkerMessage(linkId);
     }
 
-    public ResMessages getAfterMarkerMessage(long linkId) throws RetrofitException {
-        return messageManipulator.getAfterMarkerMessage(linkId);
-    }
-
     public ResMessages getAfterMarkerMessage(long linkId, int count) throws RetrofitException {
         return messageManipulator.getAfterMarkerMessage(linkId, count);
     }
 
-    public void updateMarkerInfo(long teamId, long roomId) {
-        if (teamId <= 0 || roomId <= 0) {
-            return;
-        }
-
-        try {
-            ResRoomInfo resRoomInfo = roomsApi.get().getRoomInfo(teamId, roomId);
-            MarkerRepository.getRepository().upsertRoomInfo(resRoomInfo);
-            EventBus.getDefault().post(new RoomMarkerEvent());
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void upsertMyMarker(long roomId, long lastLinkId) {
         long myId = TeamInfoLoader.getInstance().getMyId();
-        long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
-        MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, myId, lastLinkId);
+        RoomMarkerRepository.getInstance().updateRoomMarker(roomId, myId, lastLinkId);
     }
 
     public long sendStickerMessage(long teamId, long entityId, StickerInfo stickerInfo, long localId) {
@@ -521,23 +500,22 @@ public class MessageListModel {
 
     }
 
-    public long getLastReadLinkId(long roomId, long entityId) {
+    public long getLastReadLinkId(long roomId, long memberId) {
         if (roomId > 0) {
             // 기존의 마커 정보 가져오기
-            ResRoomInfo.MarkerInfo myMarker = MarkerRepository.getRepository()
-                    .getMyMarker(roomId, entityId);
+            Marker marker = RoomMarkerRepository.getInstance().getMarker(roomId, memberId);
 
-            if (myMarker != null && myMarker.getLastLinkId() > 0) {
-                return myMarker.getLastLinkId();
+            if (marker != null && marker.getReadLinkId() > 0) {
+                return marker.getReadLinkId();
             }
         }
 
         // 엔티티 기준으로 정보 가져오기
-        long chatId = TeamInfoLoader.getInstance().getChatId(entityId);
+        long chatId = TeamInfoLoader.getInstance().getChatId(memberId);
         Room room = TeamInfoLoader.getInstance().getRoom(chatId);
 
         return Observable.from(room.getMarkers())
-                .filter(messageMarker -> messageMarker.getMemberId() == entityId)
+                .filter(messageMarker -> messageMarker.getMemberId() == memberId)
                 .map(Marker::getReadLinkId)
                 .firstOrDefault(-1L)
                 .toBlocking()

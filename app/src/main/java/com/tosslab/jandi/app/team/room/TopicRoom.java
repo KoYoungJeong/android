@@ -58,8 +58,12 @@ public class TopicRoom implements Room {
         return topic.getName();
     }
 
-    public boolean hasAnnouncement() {
-        return topic.getAnnouncement() != null;
+    public boolean isAnnouncementOpened() {
+        return topic.getAnnouncement() != null && topic.getAnnouncement().isOpened();
+    }
+
+    public Topic.Announcement getAnnouncement() {
+        return topic.getAnnouncement();
     }
 
     public boolean isPushSubscribe() {
@@ -94,6 +98,7 @@ public class TopicRoom implements Room {
         return topic.getMembers().size();
     }
 
+    @Override
     public Collection<Long> getMembers() {
         return topic.getMembers();
     }

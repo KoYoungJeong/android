@@ -7,11 +7,9 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.team.room.TopicRoom;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -48,18 +46,6 @@ public class ShareModelTest {
     @Before
     public void setUp() throws Exception {
         shareModel = ShareModel_.getInstance_(JandiApplication.getContext());
-    }
-
-    @Test
-    public void testGetEntityById() throws Exception {
-        long teamId = TeamInfoLoader.getInstance().getTeamId();
-        long defaultTopicId = TeamInfoLoader.getInstance().getDefaultTopicId();
-        TopicRoom topic = TeamInfoLoader.getInstance().getTopic(defaultTopicId);
-
-        ResRoomInfo roomInfo = shareModel.getEntityById(teamId, defaultTopicId);
-
-        assertThat(roomInfo.getName(), is(equalTo(topic.getName())));
-        assertThat(roomInfo.getMembers().size(), is(equalTo(topic.getMemberCount())));
     }
 
     @Test

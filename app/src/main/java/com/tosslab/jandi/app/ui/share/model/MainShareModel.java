@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.share.model;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -62,7 +61,7 @@ public class MainShareModel {
     public boolean hasEntityInfo() {
 
         try {
-            TeamInfoLoader entityManager = TeamInfoLoader.getInstance()
+            TeamInfoLoader entityManager = TeamInfoLoader.getInstance();
             return entityManager != null;
         } catch (Exception e) {
 

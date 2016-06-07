@@ -50,7 +50,7 @@ public class InitializeInfoConverter implements Converter<InitialInfo, InitialIn
             }
         }
 
-        Collection<Human> humans = value.getHumans();
+        Collection<Human> humans = value.getMembers();
         if (humans != null && !humans.isEmpty()) {
             for (Human human : humans) {
                 human.setInitialInfo(value);

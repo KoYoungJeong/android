@@ -336,7 +336,7 @@ public class SetProfileFirstPageFragment extends Fragment
     }
 
     public void onEvent(ProfileChangeEvent event) {
-        presenter.onProfileImageChange(event.getMember());
+        presenter.onProfileImageChange(new User(event.getMember()));
     }
 
     public void onEvent(ConfirmModifyProfileEvent event) {

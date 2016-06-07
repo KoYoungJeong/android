@@ -31,7 +31,7 @@ public class InitialInfo {
     @ForeignCollectionField
     private Collection<Chat> chats;
     @ForeignCollectionField
-    private Collection<Human> humans;
+    private Collection<Human> members;
     @ForeignCollectionField
     private Collection<Bot> bots;
     @DatabaseField
@@ -69,12 +69,12 @@ public class InitialInfo {
         this.chats = chats;
     }
 
-    public Collection<Human> getHumans() {
-        return humans;
+    public Collection<Human> getMembers() {
+        return members;
     }
 
-    public void setHumans(Collection<Human> humans) {
-        this.humans = humans;
+    public void setMembers(Collection<Human> members) {
+        this.members = members;
     }
 
     public Collection<Bot> getBots() {

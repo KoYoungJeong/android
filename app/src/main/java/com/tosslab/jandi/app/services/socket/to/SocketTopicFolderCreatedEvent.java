@@ -2,21 +2,18 @@ package com.tosslab.jandi.app.services.socket.to;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
-
-/**
- * Created by tee on 15. 8. 26..
- */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@Version(1)
-public class SocketTopicFolderEvent {
+@Version(2)
+public class SocketTopicFolderCreatedEvent {
 
     private String event;
     private int version;
-    private Data data;
     private long teamId;
+    private Data data;
 
     private long ts;
 
@@ -73,51 +70,14 @@ public class SocketTopicFolderEvent {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
-        private long folderId;
-        private long memberId;
-        private long roomId;
-        private long teamId;
+        private Folder folder;
 
-        public long getFolderId() {
-            return folderId;
+        public Folder getFolder() {
+            return folder;
         }
 
-        public void setFolderId(long folderId) {
-            this.folderId = folderId;
-        }
-
-        public long getMemberId() {
-            return memberId;
-        }
-
-        public void setMemberId(long memberId) {
-            this.memberId = memberId;
-        }
-
-        public long getRoomId() {
-            return roomId;
-        }
-
-        public void setRoomId(long roomId) {
-            this.roomId = roomId;
-        }
-
-        public long getTeamId() {
-            return teamId;
-        }
-
-        public void setTeamId(long teamId) {
-            this.teamId = teamId;
-        }
-
-        @Override
-        public String toString() {
-            return "Data{" +
-                    "folderId=" + folderId +
-                    ", memberId=" + memberId +
-                    ", roomId=" + roomId +
-                    ", teamId=" + teamId +
-                    '}';
+        public void setFolder(Folder folder) {
+            this.folder = folder;
         }
     }
 

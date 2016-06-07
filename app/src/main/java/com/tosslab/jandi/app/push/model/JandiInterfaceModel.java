@@ -5,8 +5,6 @@ import android.support.v4.util.Pair;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
-import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
@@ -17,15 +15,14 @@ import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResConfig;
-import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -126,6 +123,7 @@ public class JandiInterfaceModel {
         try {
             InitialInfo initializeInfo = startApi.get().getInitializeInfo(AccountRepository.getRepository().getSelectedTeamId());
             InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+            JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
             return true;
         } catch (RetrofitException e) {
             e.printStackTrace();
@@ -171,7 +169,7 @@ public class JandiInterfaceModel {
                 entityId = roomId;
             }
         } else {
-            long chatMemberId = getChatMemberId(teamId, roomId);
+            long chatMemberId = getChatMemberId(roomId);
 
             if (!hasEntity(chatMemberId)) {
                 entityRefreshed = getEntityInfo();
@@ -196,32 +194,15 @@ public class JandiInterfaceModel {
                 || TeamInfoLoader.getInstance().isUser(roomId);
     }
 
-    private long getChatMemberId(long teamId, long roomId) {
-        ResChat chat = ChatRepository.getRepository().getChatByRoom(roomId);
+    private long getChatMemberId(long roomId) {
+        Room room = TeamInfoLoader.getInstance().getRoom(roomId);
 
-        if (chat != null && chat.getEntityId() > 0) {
+        if (room != null && room.getId() > 0) {
             // 캐시된 정보로 확인
-            return chat.getCompanionId();
-        } else {
-            // 서버로부터 요청
-            try {
-                ResRoomInfo roomInfo = roomsApi.get().getRoomInfo(teamId, roomId);
-
-                if (roomInfo != null) {
-
-                    long myId = TeamInfoLoader.getInstance().getMyId();
-
-                    for (long member : roomInfo.getMembers()) {
-                        if (myId != member) {
-                            return member;
-                        }
-                    }
-
-                }
-            } catch (RetrofitException retrofitError) {
-                retrofitError.printStackTrace();
-                return -1;
-            }
+            return Observable.from(room.getMembers())
+                    .takeFirst(memberId -> memberId != TeamInfoLoader.getInstance().getMyId())
+                    .toBlocking()
+                    .firstOrDefault(-1L);
         }
         return -1;
     }

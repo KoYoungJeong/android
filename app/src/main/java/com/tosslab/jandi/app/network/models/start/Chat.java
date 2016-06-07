@@ -155,6 +155,8 @@ public class Chat {
         private long id;
         @DatabaseField
         private String text;
+        @DatabaseField
+        private String status;
 
         public long getId() {
             return id;
@@ -170,6 +172,14 @@ public class Chat {
 
         public void setText(String text) {
             this.text = text;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
         }
     }
 }

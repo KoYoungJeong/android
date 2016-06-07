@@ -1,15 +1,15 @@
 package com.tosslab.jandi.app.events.entities;
 
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.start.Bot;
 
 public class RefreshConnectBotEvent {
-    private final ResLeftSideMenu.Bot bot;
+    private final Bot bot;
 
-    public RefreshConnectBotEvent(ResLeftSideMenu.Bot bot) {
+    public RefreshConnectBotEvent(Bot bot) {
         this.bot = bot;
     }
 
-    public ResLeftSideMenu.Bot getBot() {
+    public Bot getBot() {
         return bot;
     }
 }

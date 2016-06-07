@@ -35,7 +35,6 @@ import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
@@ -49,6 +48,7 @@ import com.tosslab.jandi.app.push.PushInterfaceActivity;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.MixpanelAnalytics;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
@@ -281,9 +281,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     private void updateChatBadge() {
 
         final int[] total = {0};
-        Observable.from(ChatRepository.getRepository().getChats())
+        Observable.from(TeamInfoLoader.getInstance().getDirectMessageRooms())
                 .subscribe(formattedEntity -> {
-                    total[0] += formattedEntity.getUnread();
+                    total[0] += formattedEntity.getUnreadCount();
                 });
         mainTabPagerAdapter.updateChatBadge(total[0]);
 
@@ -550,8 +550,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     public void onEventMainThread(NetworkConnectEvent event) {
-        // TODO show toast
-
         if (event.isConnected()) {
             offlineLayer.dismissOfflineView();
 

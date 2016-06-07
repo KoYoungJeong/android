@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.widget.PopupWindowCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +16,9 @@ import android.widget.PopupWindow;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
-import com.tosslab.jandi.app.network.models.ResFolder;
-import com.tosslab.jandi.app.network.models.ResFolderItem;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.Member;
+import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.selector.room.adapter.RoomRecyclerAdapter;
 import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
@@ -210,12 +209,11 @@ public class RoomSelectorImpl implements RoomSelector {
     }
 
     public List<ExpandRoomData> getTopicDatas() {
-        TopicFolderRepository repository = TopicFolderRepository.getRepository();
         List<ExpandRoomData> topicDatas = new ArrayList<>();
 
         // 로컬에서 가져오기
-        List<ResFolderItem> topicFolderItems = repository.getFolderItems();
-        List<ResFolder> topicFolders = repository.getFolders();
+        List<TopicRoom> topicRooms = TeamInfoLoader.getInstance().getTopicList();
+        List<TopicFolder> topicFolders = TeamInfoLoader.getInstance().getTopicFolders();
 
         LinkedHashMap<Long, TopicRoom> joinTopics = getJoinTopics(getTopics());
 
@@ -228,31 +226,33 @@ public class RoomSelectorImpl implements RoomSelector {
 
         LinkedHashMap<Long, List<ExpandRoomData>> topicDataMap = new LinkedHashMap<>();
 
-        for (ResFolder topicFolder : topicFolders) {
-            if (!topicDataMap.containsKey(topicFolder.id)) {
-                topicDataMap.put(topicFolder.id, new ArrayList<>());
+        for (TopicFolder topicFolder : topicFolders) {
+            if (!topicDataMap.containsKey(topicFolder.getId())) {
+                topicDataMap.put(topicFolder.getId(), new ArrayList<>());
             }
         }
 
-        Observable.from(topicFolderItems)
-                .filter(item -> item.folderId > 0)
-                .subscribe(item -> {
+        Observable.from(topicFolders)
+                .flatMap(topicFolder -> Observable.from(topicFolder.getRooms())
+                        .map(topicRoom -> Pair.create(topicFolder, topicRoom))
+                )
+                .subscribe(pair -> {
                     ExpandRoomData topicData = new ExpandRoomData();
-                    TopicRoom topic = joinTopics.get(item.roomId);
+                    TopicRoom topic = joinTopics.get(pair.second.getId());
                     if (topic != null) {
-                        joinTopics.remove(item.roomId);
-                        topicData.setEntityId(item.roomId);
+                        joinTopics.remove(pair.second.getId());
+                        topicData.setEntityId(pair.second.getId());
                         topicData.setIsUser(false);
                         topicData.setName(topic.getName());
                         topicData.setIsFolder(false);
                         topicData.setIsPublicTopic(topic.isPublicTopic());
                         topicData.setIsStarred(topic.isStarred());
-                        topicDataMap.get(item.folderId).add(topicData);
+                        topicDataMap.get(pair.first.getId()).add(topicData);
                     }
                 });
 
-        for (ResFolder folder : topicFolders) {
-            Collections.sort(topicDataMap.get(folder.id), (lhs, rhs) -> {
+        for (TopicFolder folder : topicFolders) {
+            Collections.sort(topicDataMap.get(folder.getId()), (lhs, rhs) -> {
                 if (lhs.isStarred() && rhs.isStarred()) {
                     return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                 } else if (lhs.isStarred()) {
@@ -266,13 +266,13 @@ public class RoomSelectorImpl implements RoomSelector {
         }
 
         // 각 폴더와 종속된 토픽 데이터 셋팅
-        for (ResFolder folder : topicFolders) {
+        for (TopicFolder folder : topicFolders) {
             ExpandRoomData folderdata = new ExpandRoomData();
             folderdata.setIsFolder(true);
             folderdata.setIsUser(false);
-            folderdata.setName(folder.name);
+            folderdata.setName(folder.getName());
             topicDatas.add(folderdata);
-            for (ExpandRoomData roomData : topicDataMap.get(folder.id)) {
+            for (ExpandRoomData roomData : topicDataMap.get(folder.getId())) {
                 topicDatas.add(roomData);
             }
         }

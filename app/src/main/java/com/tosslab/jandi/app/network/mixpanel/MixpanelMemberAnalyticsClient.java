@@ -7,14 +7,11 @@ import com.google.gson.JsonObject;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Date;
 
 /**
  * Created by justinygchoi on 2014. 8. 22..
@@ -158,60 +155,6 @@ public class MixpanelMemberAnalyticsClient {
         props.put("mime type", mimeType);
         props.put("size", fileInfo.content.size);
         memberMixpanel.track(PROP_SHARE_FILE, props);
-    }
-
-    public void trackUnsharingFile(int entityType, ResMessages.FileMessage fileInfo)
-            throws JSONException {
-        String mimeType = fileInfo.content.type;
-        String extension = fileInfo.content.ext;
-
-        JSONObject props = new JSONObject();
-        props.put("entity type", convertEntityTypeToString(entityType));
-        props.put("category", getMimeTypeCategory(mimeType));
-        props.put("extension", extension);
-        props.put("mime type", mimeType);
-        props.put("size", fileInfo.content.size);
-        memberMixpanel.track(PROP_UNSHARE_FILE, props);
-    }
-
-    public void trackProfile(ResLeftSideMenu.User updatedMyProfile)
-            throws JSONException {
-        String mobile = "";
-        String division = "";
-        String position = "";
-        ResLeftSideMenu.ExtraData extraData = updatedMyProfile.u_extraData;
-        if (extraData != null) {
-            mobile = (extraData.phoneNumber != null) ? extraData.phoneNumber : "";
-            division = (extraData.department != null) ? extraData.department : "";
-            position = (extraData.position != null) ? extraData.position : "";
-        }
-
-        memberMixpanel.getPeople().identify(mDistictId);
-        JSONObject profile = new JSONObject();
-//        profile.put("statusMessage", updatedMyProfile.u_nickname);
-        profile.put("mobile", mobile);
-        profile.put("division", division);
-        profile.put("position", position);
-        memberMixpanel.getPeople().set(profile);
-
-        JSONObject props = new JSONObject();
-        memberMixpanel.track(PROP_PROFILE, props);
-
-    }
-
-    public void setPeoplekProfile(boolean isOwner, ResLeftSideMenu resLeftSideMenu) {
-        MixpanelAPI.People people = memberMixpanel.getPeople();
-        people.identify(mDistictId);
-        people.set("authority", isOwner ? "owner" : "member");
-        people.set("created", new Date());
-        people.set("$email", resLeftSideMenu.user.u_email);
-        people.set("invite", 0);
-        people.set("mixpanel_ID", mDistictId);
-        people.set("member_ID", resLeftSideMenu.user.id);
-        people.set("team_ID", resLeftSideMenu.team.id);
-        people.set("team_name", resLeftSideMenu.team.name);
-        people.set("team_domain", resLeftSideMenu.team.t_domain);
-        people.set("name", resLeftSideMenu.user.name);
     }
 
     private String getMimeTypeCategory(String mimeType) {

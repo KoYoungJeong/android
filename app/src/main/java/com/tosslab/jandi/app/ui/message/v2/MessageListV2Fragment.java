@@ -85,14 +85,15 @@ import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
-import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
+import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
@@ -836,8 +837,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void setAnnouncement(ResAnnouncement announcement, boolean shouldOpenAnnouncement) {
-        announcementViewModel.setAnnouncement(announcement, shouldOpenAnnouncement);
+    public void setAnnouncement(Topic.Announcement announcement) {
+        announcementViewModel.setAnnouncement(announcement);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -1482,14 +1483,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             case DELETED:
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Accouncement_Delete);
-            case CREATED:
-                if (!isForeground) {
-                    return;
-                }
-
-                if (room.getRoomId() > 0) {
-                    messageListPresenter.onInitAnnouncement();
-                }
+                announcementViewModel.setAnnouncement(null);
                 break;
             case STATUS_UPDATED:
                 if (!isForeground) {
@@ -1503,6 +1497,13 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 messageListPresenter.setAnnouncementActionFrom(false);
                 break;
         }
+    }
+
+    public void onEvent(SocketAnnouncementCreatedEvent event) {
+        if (room.getRoomId() > 0) {
+            messageListPresenter.onInitAnnouncement();
+        }
+
     }
 
     public void onEvent(AnnouncementEvent event) {

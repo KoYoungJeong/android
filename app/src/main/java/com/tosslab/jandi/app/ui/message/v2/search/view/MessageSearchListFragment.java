@@ -50,11 +50,11 @@ import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
-import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
-import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
+import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -664,9 +664,6 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         }
 
         if (event.getRoom().getId() == roomId) {
-            SocketRoomMarkerEvent.Marker marker = event.getMarker();
-            MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, marker.getMemberId(), marker
-                    .getLastLinkId());
             justRefresh();
         }
     }
@@ -838,8 +835,8 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     }
 
     @Override
-    public void setAnnouncement(ResAnnouncement announcement, boolean announcementOpened) {
-        announcementViewModel.setAnnouncement(announcement, announcementOpened);
+    public void setAnnouncement(Topic.Announcement announcement) {
+        announcementViewModel.setAnnouncement(announcement);
     }
 
     @Override
@@ -1005,9 +1002,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         switch (eventType) {
             case DELETED:
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Accouncement_Delete);
-            case CREATED:
-                messageSearchListPresenter.onCreatedAnnouncement(isForeground, isRoomInit);
-
+                announcementViewModel.setAnnouncement(null);
                 break;
             case STATUS_UPDATED:
                 messageSearchListPresenter.onUpdateAnnouncement(isForeground, isRoomInit, event.getData());
@@ -1015,10 +1010,13 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         }
     }
 
+    public void onEvent(SocketAnnouncementCreatedEvent event) {
+        messageSearchListPresenter.onCreatedAnnouncement(isRoomInit);
+    }
+
     public void onEvent(AnnouncementEvent event) {
         switch (event.getAction()) {
             case CREATE:
-                messageSearchListPresenter.checkAnnouncementExistsAndCreate(event.getMessageId());
                 AnalyticsUtil.sendEvent(getScreen(entityId), AnalyticsValue.Action.MsgLongTap_Announce);
                 break;
             case DELETE:

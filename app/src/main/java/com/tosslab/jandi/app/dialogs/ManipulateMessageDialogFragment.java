@@ -129,7 +129,6 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         final TextView actionSetAnnouncement =
                 (TextView) mainView.findViewById(R.id.tv_action_announce_message);
 
-        //todo
         final TextView actionStarred = (TextView) mainView.findViewById(R.id.tv_action_starred);
         final TextView actionUnStarred = (TextView) mainView.findViewById(R.id.tv_action_unstarred);
 

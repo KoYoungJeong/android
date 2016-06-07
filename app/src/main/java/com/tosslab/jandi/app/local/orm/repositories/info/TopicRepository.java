@@ -252,4 +252,47 @@ public class TopicRepository extends LockExecutorTemplate {
         });
 
     }
+
+    public boolean createAnnounce(int topicId, Topic.Announcement announcement) {
+        return execute(() -> {
+            try {
+                Dao<Topic.Announcement, ?> dao = getHelper().getDao(Topic.Announcement.class);
+                int announceId = dao.create(announcement);
+                Dao<Topic, ?> topicDao = getHelper().getDao(Topic.class);
+
+                UpdateBuilder<Topic, ?> topicUpdateBuilder = topicDao.updateBuilder();
+                topicUpdateBuilder.updateColumnValue("announcement_id", announcement.getMessageId())
+                        .where()
+                        .eq("id", topicId);
+                int updateResult = topicUpdateBuilder.update();
+                return announceId > 0 && updateResult > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+    }
+
+    public boolean removeAnnounce(long topicId) {
+        return execute(() -> {
+            try {
+                Dao<Topic.Announcement, Long> dao = getHelper().getDao(Topic.Announcement.class);
+                Dao<Topic, Long> topicDao = getHelper().getDao(Topic.class);
+
+                Topic topic = topicDao.queryForId(topicId);
+                long messageId = topic.getAnnouncement().getMessageId();
+                dao.deleteById(messageId);
+                UpdateBuilder<Topic, Long> topicLongUpdateBuilder = topicDao.updateBuilder();
+                topicLongUpdateBuilder.updateColumnValue("announcement_id", 0)
+                        .where()
+                        .eq("id", topicId);
+                return topicLongUpdateBuilder.update() > 0;
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+
+    }
 }

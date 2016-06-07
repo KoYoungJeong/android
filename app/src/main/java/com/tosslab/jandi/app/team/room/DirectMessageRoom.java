@@ -75,4 +75,24 @@ public class DirectMessageRoom implements Room {
     public Collection<Marker> getMarkers() {
         return chat.getMarkers();
     }
+
+    @Override
+    public Collection<Long> getMembers() {
+        return chat.getMembers();
+    }
+
+    public String getLastMessageStatus() {
+        Chat.LastMessage lastMessage = chat.getLastMessage();
+        return lastMessage != null ? lastMessage.getStatus() : "archived";
+    }
+
+    public String getLastMessage() {
+        Chat.LastMessage lastMessage = chat.getLastMessage();
+        return lastMessage != null ? lastMessage.getText() : "";
+    }
+
+    public long getLastMessageId() {
+        Chat.LastMessage lastMessage = chat.getLastMessage();
+        return lastMessage != null ? lastMessage.getId() : -1;
+    }
 }

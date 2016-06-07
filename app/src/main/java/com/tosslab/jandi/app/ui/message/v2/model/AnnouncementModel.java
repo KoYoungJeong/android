@@ -2,16 +2,15 @@ package com.tosslab.jandi.app.ui.message.v2.model;
 
 import android.support.annotation.Nullable;
 
-import com.tosslab.jandi.app.local.orm.repositories.AnnouncementRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.rooms.AnnounceApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
-import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
@@ -50,20 +49,8 @@ public class AnnouncementModel {
     }
 
     @Nullable
-    public ResAnnouncement getAnnouncement(long teamId, long topicId) {
-        ResAnnouncement announcement = null;
-        try {
-
-            if (!NetworkCheckUtil.isConnected()) {
-                return AnnouncementRepository.getRepository().getAnnounce(topicId);
-            }
-
-            announcement = announceApi.get().getAnnouncement(teamId, topicId);
-            AnnouncementRepository.getRepository().upsertAnnounce(announcement);
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-        }
-        return announcement;
+    public Topic.Announcement getAnnouncement(long teamId, long topicId) {
+        return TeamInfoLoader.getInstance().getTopic(topicId).getAnnouncement();
     }
 
     public void createAnnouncement(long teamId, long topicId, long messageId) {
@@ -92,7 +79,7 @@ public class AnnouncementModel {
         try {
             ResCommon resCommon = announceApi.get().deleteAnnouncement(teamId, topicId);
             if (resCommon != null) {
-                AnnouncementRepository.getRepository().deleteAnnouncement(topicId);
+                TopicRepository.getInstance().removeAnnounce(topicId);
             }
         } catch (RetrofitException e) {
             e.printStackTrace();

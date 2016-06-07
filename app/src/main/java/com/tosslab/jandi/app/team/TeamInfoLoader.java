@@ -58,6 +58,7 @@ public class TeamInfoLoader {
         chatRooms = new HashMap<>();
         topicRooms = new HashMap<>();
 
+        topicFolders = new ArrayList<>();
         members = new ArrayList<>();
         users = new HashMap<>();
         bots = new HashMap<>();
@@ -109,10 +110,15 @@ public class TeamInfoLoader {
     }
 
     private void setUp() {
+        setUpTeam();
         setUpRooms();
         setUpMembers();
         setUpMe();
         setUpTopicFolders();
+    }
+
+    private void setUpTeam() {
+        team = initialInfo.getTeam();
     }
 
     private void setUpMe() {
@@ -234,7 +240,7 @@ public class TeamInfoLoader {
     }
 
     private Observable<Human> getUserObservable() {
-        return Observable.from(initialInfo.getHumans());
+        return Observable.from(initialInfo.getMembers());
     }
 
     public List<User> getUserList() {
@@ -266,7 +272,7 @@ public class TeamInfoLoader {
     }
 
     public boolean isAnnouncementOpened(long topicId) {
-        return execute(() -> topicRooms.get(topicId).hasAnnouncement());
+        return execute(() -> topicRooms.get(topicId).isAnnouncementOpened());
     }
 
     public boolean isChatStarred(long userId) {
@@ -500,6 +506,10 @@ public class TeamInfoLoader {
 
     public List<TopicFolder> getTopicFolders() {
         return execute(() -> Collections.unmodifiableList(topicFolders));
+    }
+
+    public List<DirectMessageRoom> getDirectMessageRooms() {
+        return execute(() -> Collections.unmodifiableList(new ArrayList<>(chatRooms.values())));
     }
 
 

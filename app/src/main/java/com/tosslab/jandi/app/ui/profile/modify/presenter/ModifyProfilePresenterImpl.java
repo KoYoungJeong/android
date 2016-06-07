@@ -121,9 +121,9 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
     }
 
     @Override
-    public void onProfileChange(User member) {
-        if (member != null && modifyProfileModel.isMyId(member.getId())) {
-            view.displayProfile(member);
+    public void onProfileChange(User user) {
+        if (user != null && modifyProfileModel.isMyId(user.getId())) {
+            view.displayProfile(user);
             view.closeDialogFragment();
         }
     }

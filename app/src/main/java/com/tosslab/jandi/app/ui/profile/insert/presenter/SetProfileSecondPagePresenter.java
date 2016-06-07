@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.profile.insert.presenter;
 
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -31,12 +31,7 @@ public class SetProfileSecondPagePresenter {
     public void requestProfile() {
         view.showProgressWheel();
         try {
-            ResLeftSideMenu.User me;
-            if (!NetworkCheckUtil.isConnected()) {
-                me = modifyProfileModel.getSavedProfile();
-            } else {
-                me = modifyProfileModel.getProfile();
-            }
+            User me = modifyProfileModel.getSavedProfile();
             view.displayProfileInfos(me);
             view.dismissProgressWheel();
         } catch (Exception e) {
@@ -104,7 +99,7 @@ public class SetProfileSecondPagePresenter {
 
         void showFailProfile();
 
-        void displayProfileInfos(ResLeftSideMenu.User me);
+        void displayProfileInfos(User me);
 
         void setEmail(String[] accountEmails, String email);
 
@@ -115,6 +110,8 @@ public class SetProfileSecondPagePresenter {
         void updateProfileSucceed();
 
         void finish();
+
+
     }
 
 }

@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.insert.presenter.SetProfileSecondPagePresenter;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -148,29 +148,29 @@ public class SetProfileSecondPageFragment extends Fragment
 
     @Override
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void displayProfileInfos(ResLeftSideMenu.User me) {
-        presenter.setEmail(me.u_email);
+    public void displayProfileInfos(User me) {
+        presenter.setEmail(me.getEmail());
 
         // 부서
-        String strDivision = (me.u_extraData.department);
+        String strDivision = (me.getDivision());
         if (!TextUtils.isEmpty(strDivision)) {
             etDepartment.setText(strDivision);
         }
 
         // 직책
-        String strPosition = me.u_extraData.position;
+        String strPosition = me.getPosition();
         if (!TextUtils.isEmpty(strPosition)) {
             etPosition.setText(strPosition);
         }
 
         // 폰넘버
-        String strPhone = (me.u_extraData.phoneNumber);
+        String strPhone = (me.getPhoneNumber());
         if (!TextUtils.isEmpty(strPhone)) {
             etPhoneNumber.setText(strPhone);
         }
 
         // 상태 메세지
-        String strStatus = (me.u_statusMessage);
+        String strStatus = (me.getStatusMessage());
         if (!TextUtils.isEmpty(strStatus)) {
             etStatusMessage.setText(strStatus);
         }

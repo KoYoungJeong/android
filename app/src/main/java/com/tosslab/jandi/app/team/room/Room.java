@@ -29,4 +29,6 @@ public interface Room {
     boolean isJoined();
 
     Collection<Marker> getMarkers();
+
+    Collection<Long> getMembers();
 }

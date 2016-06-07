@@ -38,7 +38,7 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitialInfo, Long> {
         upsertFolders(data.getTeamId(), data.getFolders());
         upsertTopics(data.getTeamId(), data.getTopics());
         upsertChats(data.getTeamId(), data.getChats());
-        upsertHumans(data.getTeamId(), data.getHumans());
+        upsertHumans(data.getTeamId(), data.getMembers());
         upsertBots(data.getTeamId(), data.getBots());
 
 
@@ -169,7 +169,7 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitialInfo, Long> {
         upsertFolders(data.getTeamId(), data.getFolders());
         upsertTopics(data.getTeamId(), data.getTopics());
         upsertChats(data.getTeamId(), data.getChats());
-        upsertHumans(data.getTeamId(), data.getHumans());
+        upsertHumans(data.getTeamId(), data.getMembers());
         upsertBots(data.getTeamId(), data.getBots());
 
         return row;

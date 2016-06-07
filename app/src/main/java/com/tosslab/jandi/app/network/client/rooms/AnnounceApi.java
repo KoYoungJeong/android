@@ -6,12 +6,10 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
-import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
@@ -21,10 +19,6 @@ import retrofit2.http.Path;
 public class AnnounceApi extends ApiTemplate<AnnounceApi.Api> {
     public AnnounceApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
-    }
-
-    public ResAnnouncement getAnnouncement(long teamId, long topicId) throws RetrofitException {
-        return call(() -> getApi().getAnnouncement(teamId, topicId));
     }
 
     public ResCommon createAnnouncement(long teamId, long topicId, ReqCreateAnnouncement reqCreateAnnouncement) throws RetrofitException {
@@ -41,10 +35,6 @@ public class AnnounceApi extends ApiTemplate<AnnounceApi.Api> {
 
 
     interface Api {
-        @GET("teams/{teamId}/topics/{topicId}/announcement")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResAnnouncement> getAnnouncement(@Path("teamId") long teamId, @Path("topicId") long topicId);
-
         @POST("teams/{teamId}/topics/{topicId}/announcement")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResCommon> createAnnouncement(@Path("teamId") long teamId, @Path("topicId") long topicId, @Body ReqCreateAnnouncement reqCreateAnnouncement);

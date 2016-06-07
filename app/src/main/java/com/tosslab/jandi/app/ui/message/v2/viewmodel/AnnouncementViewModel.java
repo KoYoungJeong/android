@@ -19,9 +19,9 @@ import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.BotRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
-import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.network.models.start.Human;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
@@ -39,11 +39,10 @@ import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.Date;
+
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by tonyjs on 15. 6. 24..
- */
 @EBean
 public class AnnouncementViewModel {
 
@@ -68,7 +67,7 @@ public class AnnouncementViewModel {
 
     @RootContext
     Activity activity;
-    private ResAnnouncement announcement;
+    private Topic.Announcement announcement;
 
     private boolean isOpened;
     private boolean isAfterViews;
@@ -86,9 +85,9 @@ public class AnnouncementViewModel {
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void setAnnouncement(ResAnnouncement announcement, boolean isOpened) {
+    public void setAnnouncement(Topic.Announcement announcement) {
         this.announcement = announcement;
-        this.isOpened = isOpened;
+        this.isOpened = announcement != null && announcement.isOpened();
 
         if (!isAfterViews) {
             return;
@@ -97,14 +96,14 @@ public class AnnouncementViewModel {
         initAnnouncement(announcement, isOpened);
     }
 
-    private void initAnnouncement(ResAnnouncement announcement, boolean isOpened) {
-        if (announcement == null || announcement.isEmpty()) {
+    private void initAnnouncement(Topic.Announcement announcement, boolean isOpened) {
+        if (announcement == null) {
             vgAnnouncement.setVisibility(View.GONE);
             return;
         }
 
         long writerId = announcement.getWriterId();
-        String writtenAt = announcement.getWrittenAt();
+        Date writtenAt = announcement.getWrittenAt();
         String content = announcement.getContent();
 
         Human human = HumanRepository.getInstance().getHuman(writerId);
@@ -162,7 +161,7 @@ public class AnnouncementViewModel {
             EventBus.getDefault().post(event);
         });
 
-        String date = DateTransformator.getTimeStringFromISO(writtenAt);
+        String date = DateTransformator.getTimeString(writtenAt);
         String announcementInfo = String.format("%s %s", name, date);
         tvAnnouncementInfo.setText(announcementInfo);
 
@@ -267,7 +266,7 @@ public class AnnouncementViewModel {
             return;
         }
 
-        if (announcement == null || announcement.isEmpty()) {
+        if (announcement == null) {
             return;
         }
 

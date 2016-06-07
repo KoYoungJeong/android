@@ -44,7 +44,7 @@ public class StartApiTest {
         assertThat(initialInfo.getTopics()).isNotNull().isNotEmpty();
         assertThat(initialInfo.getChats()).isNotNull().isNotEmpty();
         assertThat(initialInfo.getFolders()).isNotNull().isNotEmpty();
-        assertThat(initialInfo.getHumans()).isNotNull().isNotEmpty();
+        assertThat(initialInfo.getMembers()).isNotNull().isNotEmpty();
         assertThat(initialInfo.getBots()).isNotNull();
     }
 }

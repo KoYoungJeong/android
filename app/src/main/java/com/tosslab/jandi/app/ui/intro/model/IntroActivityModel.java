@@ -114,7 +114,7 @@ public class IntroActivityModel {
         JandiPreference.clearMyToken(context);
     }
 
-    public boolean refreshEntityInfo(Context context) {
+    public boolean refreshEntityInfo() {
         ResAccountInfo.UserTeam selectedTeamInfo =
                 AccountRepository.getRepository().getSelectedTeamInfo();
         if (selectedTeamInfo == null) {
@@ -122,8 +122,9 @@ public class IntroActivityModel {
         }
         try {
             long selectedTeamId = selectedTeamInfo.getTeamId();
-            InitialInfo totalEntitiesInfo = startApi.get().getInitializeInfo(selectedTeamId);
-            InitialInfoRepository.getInstance().upsertInitialInfo(totalEntitiesInfo);
+            InitialInfo initialInfo = startApi.get().getInitializeInfo(selectedTeamId);
+            InitialInfoRepository.getInstance().upsertInitialInfo(initialInfo);
+            JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
             TeamInfoLoader.getInstance().refresh();
             return true;
         } catch (RetrofitException e) {

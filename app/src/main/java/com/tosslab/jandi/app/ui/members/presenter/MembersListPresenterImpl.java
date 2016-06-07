@@ -284,7 +284,6 @@ public class MembersListPresenterImpl implements MembersListPresenter {
     @Override
     public void onMemberClickForAssignOwner(long topicId, final ChatChooseItem item) {
         if (TeamInfoLoader.getInstance().isBot(item.getEntityId())) {
-            //TODO
             return;
         }
 

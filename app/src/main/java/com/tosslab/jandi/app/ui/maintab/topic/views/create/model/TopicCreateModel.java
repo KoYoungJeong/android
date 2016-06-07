@@ -34,10 +34,6 @@ public class TopicCreateModel {
 
     }
 
-    public void refreshEntity() throws RetrofitException {
-        // TODO "Topic Create 후의 데이터 갱신 받기"
-    }
-
     public boolean invalideTitle(String topicTitle) {
         return TextUtils.isEmpty(topicTitle) || TextUtils.getTrimmedLength(topicTitle) <= 0;
     }

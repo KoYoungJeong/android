@@ -1,16 +1,16 @@
 package com.tosslab.jandi.app.events.entities;
 
-import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.network.models.start.Human;
 
 public class ProfileChangeEvent {
-    private final User member;
+    private final Human member;
 
-    public ProfileChangeEvent(User member) {
+    public ProfileChangeEvent(Human member) {
 
         this.member = member;
     }
 
-    public User getMember() {
+    public Human getMember() {
         return member;
     }
 }

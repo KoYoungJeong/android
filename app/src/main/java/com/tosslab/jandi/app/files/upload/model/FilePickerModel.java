@@ -252,7 +252,7 @@ public class FilePickerModel {
                 .build());
     }
 
-    public String uploadProfilePhoto(Context context, File file) throws ExecutionException, InterruptedException {
+    public JsonObject uploadProfilePhoto(Context context, File file) throws ExecutionException, InterruptedException {
 
         String requestURL
                 = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/members/" + TeamInfoLoader.getInstance().getMyId() + "/profile/photo";
@@ -263,7 +263,7 @@ public class FilePickerModel {
                 .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
                 .setMultipartFile("photo", URLConnection.guessContentTypeFromName(file.getName()), file)
-                .asString()
+                .asJsonObject()
                 .get();
     }
 

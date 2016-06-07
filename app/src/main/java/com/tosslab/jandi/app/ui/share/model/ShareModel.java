@@ -22,7 +22,6 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
@@ -58,10 +57,6 @@ public class ShareModel {
     @AfterInject
     void initObject() {
         DaggerApiClientComponent.create().inject(this);
-    }
-
-    public ResRoomInfo getEntityById(long teamId, long roomId) throws RetrofitException {
-        return roomsApi.get().getRoomInfo(teamId, roomId);
     }
 
     public ResTeamDetailInfo.InviteTeam getTeamInfoById(long teamId) throws RetrofitException {

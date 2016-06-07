@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.teams.module;
 
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
-import com.tosslab.jandi.app.network.client.main.LeftSideApi;
+import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.maintab.teams.model.TeamsModel;
 import com.tosslab.jandi.app.ui.maintab.teams.presenter.TeamsPresenter;
@@ -31,9 +31,9 @@ public class TeamsModule {
     @Provides
     @Singleton
     public TeamsModel provideTeamsModel(Lazy<AccountApi> accountApi,
-                                        Lazy<LeftSideApi> leftSideApi,
+                                        Lazy<StartApi> startApi,
                                         Lazy<InvitationApi> invitationApi) {
-        return new TeamsModel(accountApi, leftSideApi, invitationApi);
+        return new TeamsModel(accountApi, startApi, invitationApi);
     }
 
     @Provides

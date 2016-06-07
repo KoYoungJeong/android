@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.tosslab.jandi.app.network.models.ResFolder;
+import com.tosslab.jandi.app.network.models.start.Folder;
 
 import java.util.List;
 
@@ -43,8 +43,8 @@ public class TopicFolderChooseAdapter extends TopicFolderMainAdapter {
     @Override
     protected void addDummyFolders() {
         if (folderId != -1) {
-            folders.add(new ResFolder());
+            folders.add(new Folder());
         }
-        folders.add(new ResFolder());
+        folders.add(new Folder());
     }
 }

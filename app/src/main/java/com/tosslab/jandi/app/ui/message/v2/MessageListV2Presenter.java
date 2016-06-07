@@ -4,20 +4,18 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
-import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.RoomMarkerRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
-import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.start.Marker;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
@@ -173,10 +171,11 @@ public class MessageListV2Presenter {
             return;
         }
 
-        ResAnnouncement announcement = announcementModel.getAnnouncement(room.getTeamId(), room.getEntityId());
+        Topic.Announcement announcement = TeamInfoLoader.getInstance().getTopic(room.getRoomId())
+                .getAnnouncement();
         view.dismissProgressWheel();
         if (announcement != null) {
-            view.setAnnouncement(announcement, announcementModel.isAnnouncementOpened(room.getEntityId()));
+            view.setAnnouncement(announcement);
         }
     }
 
@@ -196,10 +195,10 @@ public class MessageListV2Presenter {
 
     @Background
     public void onCheckAnnouncementExistsAndCreate(long messageId) {
-        ResAnnouncement announcement =
+        Topic.Announcement announcement =
                 announcementModel.getAnnouncement(room.getTeamId(), room.getRoomId());
 
-        if (announcement == null || announcement.isEmpty()) {
+        if (announcement == null) {
             createAnnouncement(messageId);
             return;
         }
@@ -307,8 +306,6 @@ public class MessageListV2Presenter {
         }
 
         long myId = TeamInfoLoader.getInstance().getMyId();
-
-        messageListModel.updateMarkerInfo(teamId, roomId);
 
         long lastReadLinkId = messageListModel.getLastReadLinkId(roomId, myId);
         messagePointer.setLastReadLinkId(lastReadLinkId);
@@ -429,10 +426,10 @@ public class MessageListV2Presenter {
 
                 int count = resOldMessage.records.size() - 1;
                 ResMessages.Link lastLink = resOldMessage.records.get(count);
-                long myId = EntityManager.getInstance().getMe().getId();
-                ResRoomInfo.MarkerInfo myMarker = MarkerRepository.getRepository().getMyMarker(room.getRoomId(), myId);
+                long myId = TeamInfoLoader.getInstance().getMyId();
+                Marker myMarker = RoomMarkerRepository.getInstance().getMarker(room.getRoomId(), myId);
 
-                if (myMarker.getLastLinkId() < lastLink.id) {
+                if (myMarker.getReadLinkId() < lastLink.id) {
                     addMarkerQueue();
                     messageListModel.upsertMyMarker(room.getRoomId(), lastLink.id);
                 }
@@ -653,9 +650,6 @@ public class MessageListV2Presenter {
         }
         addMarkerQueue();
 
-        if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
-            messageListModel.updateMarkerInfo(teamId, roomId);
-        }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -806,26 +800,6 @@ public class MessageListV2Presenter {
         } else {
             view.insertMessageEmptyLayout();
         }
-    }
-
-    private void updateMarker(long teamId, long roomId, long lastUpdateLinkId) {
-
-        try {
-            if (lastUpdateLinkId > 0) {
-                messageListModel.updateLastLinkId(lastUpdateLinkId);
-                messageListModel.updateMarkerInfo(teamId, roomId);
-            }
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void updateMarker() {
-        long roomId = room.getRoomId();
-        long teamId = room.getTeamId();
-        messageListModel.updateMarkerInfo(teamId, roomId);
     }
 
     @Background(serial = "send_message")
@@ -1180,9 +1154,6 @@ public class MessageListV2Presenter {
             addMarkerQueue();
         }
 
-        if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
-            messageListModel.updateMarkerInfo(room.getTeamId(), room.getRoomId());
-        }
     }
 
     private void addMarkerQueue() {
@@ -1214,7 +1185,7 @@ public class MessageListV2Presenter {
 
         void showInactivedUserLayer();
 
-        void setAnnouncement(ResAnnouncement announcement, boolean shouldOpenAnnouncement);
+        void setAnnouncement(Topic.Announcement announcement);
 
         void showProgressWheel();
 

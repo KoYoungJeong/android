@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.topic.views.create.model.TopicCreateModel;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
@@ -51,11 +50,10 @@ public class TopicCreatePresenterImpl implements TopicCreatePresenter {
                         .getInstance(JandiApplication.getContext(), distictId)
                         .trackCreatingEntity(true);
             } catch (JSONException e) {
-                LogUtil.e("CAN NOT MEET", e);
+                e.printStackTrace();
             }
 
-            topicCreateModel.refreshEntity();
-            TeamInfoLoader.getInstance().refresh();
+            // TODO 응답값 매핑해서 DB 로 넣기
 
             view.dismissProgressWheel();
 

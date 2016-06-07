@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
@@ -83,6 +84,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             accountHomeModel.updateSelectTeam(teamId);
             InitialInfo initialInfo = accountHomeModel.getEntityInfo(teamId);
             accountHomeModel.updateEntityInfo(initialInfo);
+            JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
             view.dismissProgressWheel();
 
             // Track Team List Sign In (with flush)

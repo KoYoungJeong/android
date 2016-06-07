@@ -281,7 +281,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     }
 
     public void onEvent(ProfileChangeEvent event) {
-        modifyProfilePresenter.onProfileChange(event.getMember());
+        modifyProfilePresenter.onProfileChange(new User(event.getMember()));
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

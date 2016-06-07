@@ -4,21 +4,20 @@ import android.support.v7.widget.RecyclerView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.orm.repositories.TopicFolderRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResFolder;
+import com.tosslab.jandi.app.network.models.start.Folder;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter.TopicFolderMainAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter.TopicFolderSettingAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.model.TopicFolderSettingModel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -44,20 +43,7 @@ public class TopicFolderSettingPresenter {
     @Background
     public void onRefreshFolders(long folderId) {
         boolean hasFolder = false;
-        List<ResFolder> folders = null;
-        if (NetworkCheckUtil.isConnected()) {
-            // 네트워크를 통해 가져오기
-            try {
-                folders = topicFolderChooseModel.getFolders();
-            } catch (RetrofitException retrofitError) {
-                retrofitError.printStackTrace();
-                folders = new ArrayList<>();
-            }
-        } else {
-            // 로컬에서 가져오기
-            TopicFolderRepository repository = TopicFolderRepository.getRepository();
-            folders = repository.getFolders();
-        }
+        List<Folder> folders = FolderRepository.getInstance().getFolders(TeamInfoLoader.getInstance().getTeamId());
 
         // 리턴하는 folder의 length=0이더라도 폴더가 1개이고 속해져있는 폴더인 케이스를 식별해야 한다.
         if (folders.size() > 0) {
@@ -104,25 +90,25 @@ public class TopicFolderSettingPresenter {
 
     public void onItemClick(RecyclerView.Adapter adapter, int position, int type, long originFolderId, long topicId) {
         TopicFolderMainAdapter topicFolderAdapter = (TopicFolderMainAdapter) adapter;
-        ResFolder item = topicFolderAdapter.getItem(position);
-        view.setCurrentTopicFolderName(item.name);
+        Folder item = topicFolderAdapter.getItem(position);
+        view.setCurrentTopicFolderName(item.getName());
         switch (type) {
             case TopicFolderSettingAdapter.TYPE_FOLDER_LIST:
-                long newfolderId = item.id;
+                long newfolderId = item.getId();
                 if (newfolderId != originFolderId) {
-                    onAddTopicIntoFolder(newfolderId, topicId, item.name);
+                    onAddTopicIntoFolder(newfolderId, topicId, item.getName());
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.ChooseFolder);
                 } else {
                     view.finishAcitivty();
                 }
                 break;
             case TopicFolderSettingAdapter.TYPE_REMOVE_FROM_FOLDER:
-                ResFolder itemById = topicFolderAdapter.getItemById(originFolderId);
+                Folder itemById = topicFolderAdapter.getItemById(originFolderId);
                 String folderName;
                 if (itemById == null) {
                     folderName = "";
                 } else {
-                    folderName = itemById.name;
+                    folderName = itemById.getName();
                 }
                 onDeleteItemFromFolder(originFolderId, topicId, folderName);
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.RemoveFromThisFolder);
@@ -173,7 +159,7 @@ public class TopicFolderSettingPresenter {
     public interface View {
         void setCurrentTopicFolderName(String name);
 
-        void showFolderList(List<ResFolder> folders, boolean hasFolder);
+        void showFolderList(List<Folder> folders, boolean hasFolder);
 
         void showCreateNewFolderDialog();
 

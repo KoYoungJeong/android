@@ -62,7 +62,7 @@ public class TextSharePresenterImplTest {
 
             await().until(() -> finish[0]);
 
-            verify(mockView).setRoomName(eq(TeamInfoLoader.getInstance().getName(entityManager.getDefaultTopicId())));
+            verify(mockView).setRoomName(eq(TeamInfoLoader.getInstance().getName(TeamInfoLoader.getInstance().getDefaultTopicId())));
             verify(mockView).setTeamName(eq(TeamInfoLoader.getInstance().getTeamName()));
             verify(mockView).setMentionInfo(eq(TeamInfoLoader.getInstance().getTeamId()),
                     eq(TeamInfoLoader.getInstance().getDefaultTopicId()),

@@ -7,14 +7,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel_;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.socket.JandiSocketManager;
+import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
@@ -35,11 +35,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import de.greenrobot.event.EventBus;
-
-/**
- * Created by Steve SeongUg Jung on 15. 6. 12..
- */
 @EBean
 public class ProfileFileUploadControllerImpl implements FileUploadController {
 
@@ -154,19 +149,18 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
     void uploadProfileImage(Activity activity, File profileFile) {
         showProgressWheel(activity);
         try {
-            filePickerModel.uploadProfilePhoto(activity.getApplicationContext(), profileFile);
+            JsonObject jsonObject = filePickerModel.uploadProfilePhoto(activity.getApplicationContext(), profileFile);
+            JsonElement photoUrlElement = jsonObject.get("photoUrl");
+            if (photoUrlElement != null) {
+                String photoUrl = photoUrlElement.getAsString();
+                long myId = TeamInfoLoader.getInstance().getMyId();
+                HumanRepository.getInstance().updatePhotoUrl(myId, photoUrl);
+                TeamInfoLoader.getInstance().refresh();
+            }
             successPhotoUpload(activity.getApplicationContext());
 
-            if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
-                // 소켓이 연동되어 있지 않는 상태인 경우..
-                ResLeftSideMenu leftSideMenu = EntityClientManager_.getInstance_(activity).getTotalEntitiesInfo();
-                LeftSideMenuRepository.getRepository().upsertLeftSideMenu(leftSideMenu);
-                EntityManager.getInstance().refreshEntity();
-                ResLeftSideMenu.User me = EntityManager.getInstance().getMe().getUser();
-                EventBus.getDefault().post(new ProfileChangeEvent(me));
-            }
             dismissProgressWheel();
-        } catch (RetrofitException | ExecutionException | InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             dismissProgressWheel();
             LogUtil.e("uploadFileDone: FAILED", e);
             failPhotoUpload(activity.getApplicationContext());

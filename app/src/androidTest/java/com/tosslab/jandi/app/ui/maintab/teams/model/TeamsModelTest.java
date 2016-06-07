@@ -5,7 +5,7 @@ import android.util.Pair;
 
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
-import com.tosslab.jandi.app.network.client.main.LeftSideApi;
+import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 
@@ -46,7 +46,7 @@ public class TeamsModelTest {
     public void setup() throws Exception {
 
         model = new TeamsModel(() -> new AccountApi(RetrofitBuilder.getInstance()),
-                () -> new LeftSideApi(RetrofitBuilder.getInstance()),
+                () -> new StartApi(RetrofitBuilder.getInstance()),
                 () -> new InvitationApi(RetrofitBuilder.getInstance()));
     }
 

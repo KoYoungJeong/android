@@ -38,4 +38,45 @@ public class RoomMarkerRepository extends LockExecutorTemplate {
             return false;
         });
     }
+
+    public Marker getMarker(long roomId, long memberId) {
+
+        return execute(() -> {
+
+            try {
+                Dao<Marker, Long> dao = getHelper().getDao(Marker.class);
+                Where<Marker, Long> where = dao.queryBuilder().where();
+                return where.or(where.eq("chat_id", roomId), where.eq("topic_id", roomId))
+                        .and()
+                        .eq("memberId", memberId)
+                        .queryForFirst();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return new Marker();
+        });
+
+    }
+
+    public long getRoomMarkerCount(long roomId, long linkId) {
+        return execute(() -> {
+
+            try {
+                Dao<Marker, Long> dao = getHelper().getDao(Marker.class);
+                Where<Marker, Long> where = dao.queryBuilder().where();
+                return where.or(where.eq("chat_id", roomId), where.eq("topic_id", roomId))
+                        .and()
+                        .ge("readLinkId", 0)
+                        .and()
+                        .lt("readLinkId", linkId)
+                        .countOf();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return 0L;
+        });
+
+    }
 }

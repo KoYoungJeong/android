@@ -78,7 +78,7 @@ public class ShareSelectModelTest {
         User entity = instance.getUser(initialInfo.getSelf().getId());
 
         assertThat(entity, is(notNullValue()));
-        assertThat(entity.getName(), is(equalTo(Observable.from(initialInfo.getHumans())
+        assertThat(entity.getName(), is(equalTo(Observable.from(initialInfo.getMembers())
                 .takeFirst(human -> human.getId() == initialInfo.getSelf().getId())
                 .map(Human::getName)
                 .toBlocking()

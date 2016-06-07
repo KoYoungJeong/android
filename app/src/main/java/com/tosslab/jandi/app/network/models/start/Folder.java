@@ -22,6 +22,9 @@ public class Folder {
     @DatabaseField(persisterClass = CollectionLongConverter.class)
     private Collection<Long> rooms;
     @JsonIgnore
+    @DatabaseField
+    private boolean isOpened;
+    @JsonIgnore
     @DatabaseField(foreign = true)
     private InitialInfo initialInfo;
 
@@ -63,5 +66,13 @@ public class Folder {
 
     public void setInitialInfo(InitialInfo initialInfo) {
         this.initialInfo = initialInfo;
+    }
+
+    public boolean isOpened() {
+        return isOpened;
+    }
+
+    public void setOpened(boolean opened) {
+        isOpened = opened;
     }
 }

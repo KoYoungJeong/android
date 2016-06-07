@@ -141,4 +141,39 @@ public class HumanRepository extends LockExecutorTemplate {
             return false;
         });
     }
+
+    public boolean updatePhotoUrl(long memberId, String photoUrl) {
+        return execute(() -> {
+            try {
+                Dao<Human, Long> dao = getHelper().getDao(Human.class);
+                UpdateBuilder<Human, Long> humanUpdateBuilder = dao.updateBuilder();
+                humanUpdateBuilder.updateColumnValue("photoUrl", photoUrl)
+                        .where()
+                        .eq("id", memberId);
+                return humanUpdateBuilder.update() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+
+        });
+    }
+
+    public boolean updateHuman(Human member) {
+        return execute(() -> {
+
+            try {
+                Dao<Human, Long> dao = getHelper().getDao(Human.class);
+                Human savedHuman = dao.queryForId(member.getId());
+                member.setInitialInfo(savedHuman.getInitialInfo());
+                return dao.update(member) > 0;
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+            return false;
+        });
+    }
 }

@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.util.List;
@@ -113,6 +114,7 @@ public class TeamsModel {
                 AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
                 InitialInfo initializeInfo = startApi.get().getInitializeInfo(teamId);
                 InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+                JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
                 TeamInfoLoader.getInstance().refresh();
                 subscriber.onNext(new Object());
             } catch (Exception error) {

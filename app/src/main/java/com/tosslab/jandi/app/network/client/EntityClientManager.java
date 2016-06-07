@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
 import com.tosslab.jandi.app.network.client.profile.ProfileApi;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.client.settings.StarredEntityApi;
-import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
@@ -28,7 +27,6 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.team.member.User;
 
 import org.androidannotations.annotations.AfterInject;
@@ -47,8 +45,6 @@ import dagger.Lazy;
 @EBean
 public class EntityClientManager {
 
-    @Inject
-    Lazy<StartApi> startApi;
     @Inject
     Lazy<ChannelApi> channelApi;
     @Inject
@@ -77,16 +73,6 @@ public class EntityClientManager {
                 .builder()
                 .build()
                 .inject(this);
-    }
-
-    /**
-     * *********************************************************
-     * Entity (Channel, Private Group, Direct Message) 관련
-     * **********************************************************
-     */
-
-    public InitialInfo getTotalEntitiesInfo() throws RetrofitException {
-        return startApi.get().getInitializeInfo(selectedTeamId);
     }
 
     public ResCommon createPublicTopic(String entityName, String topicDescription, boolean isAutojoin) throws RetrofitException {

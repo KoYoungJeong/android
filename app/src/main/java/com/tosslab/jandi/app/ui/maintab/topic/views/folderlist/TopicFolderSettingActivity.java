@@ -17,7 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.models.ResFolder;
+import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter.DragnDropTouchHelper;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter.TopicFolderChooseAdapter;
@@ -129,7 +129,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
 
     @UiThread
     @Override
-    public void showFolderList(List<ResFolder> folders, boolean hasFolder) {
+    public void showFolderList(List<Folder> folders, boolean hasFolder) {
         if (hasFolder) {
             viewGroupSelect(true);
             adapter.clear();
