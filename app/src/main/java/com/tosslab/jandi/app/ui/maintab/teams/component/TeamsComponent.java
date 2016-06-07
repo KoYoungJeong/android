@@ -13,7 +13,5 @@ import dagger.Component;
 @Component(modules = {TeamsModule.class})
 @Singleton
 public interface TeamsComponent {
-
     void inject(MainTabActivity activity);
-
 }

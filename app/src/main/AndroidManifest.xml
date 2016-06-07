@@ -44,14 +44,9 @@
             android:name="com.google.android.gms.analytics.globalConfigResource"
             android:resource="@xml/global_tracker" />
         -->
-        <activity
-            android:name=".ui.signup.account.SignUpActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_signup_title"
-            android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.signup.verify.SignUpVerifyActivity_"
+            android:name=".ui.sign.signup.verify.SignUpVerifyActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_signup_verify_title"
             android:screenOrientation="portrait"
@@ -71,13 +66,6 @@
 
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".ui.login.IntroMainActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustUnspecified" />
 
         <activity
             android:name=".services.upload.UploadNotificationActivity"
@@ -546,6 +534,25 @@
             android:name=".ui.profile.insert.SetProfileActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.sign.SignHomeActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.sign.signin.SignInActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/jandi_action_login"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible" />
+
+        <activity
+            android:name=".ui.sign.signup.SignUpActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/jandi_signup_title"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible" />
 
         <service android:name=".services.socket.JandiSocketService" />
 

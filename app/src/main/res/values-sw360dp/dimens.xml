@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="jandi_messages_link_preview_thumb_max_width">338dp</dimen>
+    <dimen name="jandi_sign_up_button_max_width">338dp</dimen>
 </resources>

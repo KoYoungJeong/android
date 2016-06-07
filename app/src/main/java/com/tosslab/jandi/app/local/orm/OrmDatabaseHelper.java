@@ -59,7 +59,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_ADD_INTEGRATION = 11;
     private static final int DATABASE_VERSION_MODIFY_DATE_TYPE = 12;
     private static final int DATABASE_VERSION_PUSH_TOKEN = 13;
-    private static final int DATABASE_VERSION_MESSAGE_DIRTY = 15;
+    private static final int DATABASE_VERSION_MESSAGE_DIRTY = 14;
+    private static final int DATABASE_VERSION_CONNECT_INFO_IMAGE = 15;
     private static final int DATABASE_VERSION = DATABASE_VERSION_CONNECT_INFO_IMAGE;
     public OrmLiteSqliteOpenHelper helper;
 

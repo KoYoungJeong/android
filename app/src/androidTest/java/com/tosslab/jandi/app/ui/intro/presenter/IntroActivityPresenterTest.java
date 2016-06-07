@@ -113,7 +113,7 @@ public class IntroActivityPresenterTest {
             presenter.checkNewVersion(context, false);
 
             // Then
-            verify(mockView, timeout(3000)).moveToIntroTutorialActivity();
+            verify(mockView, timeout(3000)).moveToSignHomeActivity();
         }
 
         /** 네트워킹이 되지 않는 경우, 로그인은 한 경우 **/
