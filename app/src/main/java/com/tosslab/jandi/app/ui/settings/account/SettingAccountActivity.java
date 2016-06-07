@@ -127,7 +127,6 @@ public class SettingAccountActivity extends BaseAppCompatActivity implements Set
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
-        ButterKnife.unbind(this);
         super.onDestroy();
     }
 

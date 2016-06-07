@@ -29,12 +29,16 @@ public class SocketServiceStarter extends BroadcastReceiver {
         Intent serviceIntent = new Intent(context, JandiSocketService.class);
         switch (action) {
             case START_SOCKET_SERVICE:
+                SocketServiceCloser.getInstance().cancel();
+
                 LogUtil.i(TAG, "restart service from(" + action + ")");
                 context.startService(serviceIntent);
                 break;
             case ACTION_CONNECTIVITY_CHANGE:
                 if (NetworkCheckUtil.isConnected()) {
                     if (!JandiSocketService.isServiceRunning(context)) {
+                        SocketServiceCloser.getInstance().cancel();
+
                         context.startService(serviceIntent);
                     }
                 }

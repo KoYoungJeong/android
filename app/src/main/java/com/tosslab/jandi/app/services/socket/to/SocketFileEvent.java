@@ -75,20 +75,30 @@ public class SocketFileEvent extends ResEventHistory.EventHistoryInfo {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class EventFileInfo {
-        private int id;
+        private int commentCount;
+        private long id;
 
-        public int getId() {
+        public int getCommentCount() {
+            return commentCount;
+        }
+
+        public void setCommentCount(int commentCount) {
+            this.commentCount = commentCount;
+        }
+
+        public long getId() {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(long id) {
             this.id = id;
         }
 
         @Override
         public String toString() {
-            return "EventFileInfo{" +
-                    "id=" + id +
+            return "FileInfo{" +
+                    "commentCount=" + commentCount +
+                    ", id=" + id +
                     '}';
         }
     }

@@ -209,7 +209,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
 
     public void onEventMainThread(SocketMessageEvent event) {
         if (TextUtils.equals(event.getMessageType(), "message_delete")) {
-            int messageId = event.getMessageId();
+            long messageId = event.getMessageId();
             starMentionListAdapter.deleteMessage(messageId);
             starMentionListAdapter.notifyDataSetChanged();
         }

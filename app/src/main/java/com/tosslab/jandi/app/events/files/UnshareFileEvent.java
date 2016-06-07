@@ -5,19 +5,19 @@ package com.tosslab.jandi.app.events.files;
  */
 public class UnshareFileEvent {
 
-    private final int roomId;
-    private final int fileId;
+    private final long roomId;
+    private final long fileId;
 
-    public UnshareFileEvent(int roomId, int fileId) {
+    public UnshareFileEvent(long roomId, long fileId) {
         this.roomId = roomId;
         this.fileId = fileId;
     }
 
-    public int getRoomId() {
+    public long getRoomId() {
         return roomId;
     }
 
-    public int getFileId() {
+    public long getFileId() {
         return fileId;
     }
 }

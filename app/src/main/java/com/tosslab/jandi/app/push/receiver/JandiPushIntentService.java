@@ -42,8 +42,13 @@ public class JandiPushIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        String accountId = AccountUtil.getAccountId(getApplicationContext());
 
+        if (intent == null || !intent.hasExtra(EXTRA_CONTENT)) {
+            LogUtil.e(TAG, "Intent or Intent.extra is empty.");
+            return;
+        }
+
+        String accountId = AccountUtil.getAccountId(getApplicationContext());
         if (TextUtils.isEmpty(accountId)) {
             LogUtil.e(TAG, "Account Id is empty.");
             return;
@@ -58,15 +63,15 @@ public class JandiPushIntentService extends IntentService {
             return;
         }
 
+        if (!isPushForMyAccountId(basePushInfo)) {
+            LogUtil.e(TAG, "Push is not for me.");
+            return;
+        }
+
         if (basePushInfo instanceof MarkerPushInfo) {
             BadgeUtils.setBadge(JandiApplication.getContext(), basePushInfo.getBadgeCount());
             // 마커가 업데이트 된 roomId 와 마지막으로 받은 푸쉬 메세지의 roomId 가 같으면 노티를 지움.
             PushHandler.getInstance().removeNotificationIfNeed(basePushInfo.getRoomId());
-            return;
-        }
-
-        if (!isPushForMyAccountId(basePushInfo)) {
-            LogUtil.e(TAG, "Push is not for me.");
             return;
         }
 
@@ -82,13 +87,17 @@ public class JandiPushIntentService extends IntentService {
         boolean isShowingEntity = PushMonitor.getInstance().hasEntityId(roomId);
         boolean userWantsNotification = isPushOn();
         boolean isRingIng = messagePushInfo.isRingIng(); // 타 플랫폼 active && 토픽 푸쉬 on
-        // 해당 채팅방에 진입해 있거나 푸시 알림 설정 Off 이거나
-        // 타 플랫폼이 active 이고 현재 플랫폼이 inactive 인 경우이거나 해당 토픽 푸시 설정이 off 인 경우
+
+        // 해당 채팅방에 진입해 있거나
+        // 푸시 알림 설정 Off 이거나
+        // 타 플랫폼이 active 이고 현재 플랫폼이 inactive 인 경우이거나
+        // 해당 토픽 푸시 설정이 off 인 경우
         if (isShowingEntity || !userWantsNotification || !isRingIng) {
             BadgeUtils.setBadge(JandiApplication.getContext(), basePushInfo.getBadgeCount());
             postEvent(roomId, messagePushInfo.getRoomType());
             return;
         }
+
         PushHandler.getInstance()
                 .addPushQueue(messagePushInfo);
     }

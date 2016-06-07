@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -120,11 +119,12 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         if (position <= 2 && oldMoreState == MoreState.Idle) {
             oldMoreState = MainMessageListAdapter.MoreState.Loading;
             EventBus.getDefault().post(new RefreshOldMessageEvent());
-        } else if (moreFromNew && position == getItemCount() - 1
+        }
+        /*else if (moreFromNew && position == getItemCount() - 1
                 && newMoreState == MainMessageListAdapter.MoreState.Idle) {
             newMoreState = MainMessageListAdapter.MoreState.Loading;
             EventBus.getDefault().post(new RefreshNewMessageEvent());
-        }
+        }*/
 
         bodyViewHolder.setOnItemClickListener(v -> {
             if (onItemClickListener != null) {
@@ -262,7 +262,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     public ResMessages.Link getItem(int position) {
         lock.lock();
         try {
-            if (position >= getItemCount()) {
+            if (position < 0 || position >= getItemCount()) {
                 return null;
             }
             return links.get(position);

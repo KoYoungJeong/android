@@ -20,7 +20,6 @@ public class SocketServiceCloser {
     private SocketServiceCloseHandler socketServiceCloseHandler;
 
     private SocketServiceCloser() {
-        socketServiceCloseHandler = new SocketServiceCloseHandler(Looper.getMainLooper());
     }
 
     public static SocketServiceCloser getInstance() {
@@ -31,11 +30,19 @@ public class SocketServiceCloser {
     }
 
     public void close() {
+        if (socketServiceCloseHandler == null) {
+            socketServiceCloseHandler = new SocketServiceCloseHandler(Looper.getMainLooper());
+        }
         socketServiceCloseHandler.sendEmptyMessageDelayed(MESSAGE_ID, DELAY_MILLIS);
     }
 
     public void cancel() {
+        if (socketServiceCloseHandler == null) {
+            return;
+        }
+
         socketServiceCloseHandler.removeMessages(MESSAGE_ID);
+        socketServiceCloseHandler = null;
     }
 
     private static class SocketServiceCloseHandler extends Handler {

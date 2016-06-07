@@ -67,7 +67,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_ADD_INTEGRATION = 11;
     private static final int DATABASE_VERSION_MODIFY_DATE_TYPE = 12;
     private static final int DATABASE_VERSION_PUSH_TOKEN = 13;
-    private static final int DATABASE_VERSION_START_API = 14;
+    private static final int DATABASE_VERSION_MESSAGE_DIRTY = 14;
+    private static final int DATABASE_VERSION_START_API = 15;
     private static final int DATABASE_VERSION = DATABASE_VERSION_START_API;
     public OrmLiteSqliteOpenHelper helper;
 
@@ -253,6 +254,10 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, PushHistory.class);
                         Dao<ResAccessToken, ?> dao = DaoManager.createDao(connectionSource, ResAccessToken.class);
                         dao.executeRawNoArgs("ALTER TABLE `token` ADD COLUMN deviceId VARCHAR;");
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_MESSAGE_DIRTY, () -> {
+                        Dao<ResMessages.Link, ?> dao = DaoManager.createDao(connectionSource, ResMessages.Link.class);
+                        dao.executeRawNoArgs("ALTER TABLE `message_link` ADD COLUMN dirty SMALLINT;");
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_START_API, () -> {
                         createTable(connectionSource, InitializeInfo.class);

@@ -4,25 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.baidu.android.pushservice.PushServiceReceiver;
 import com.baidu.android.pushservice.message.PublicMsg;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tosslab.jandi.app.push.receiver.JandiPushIntentService;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Map;
 
 public class BaiduPushReceiver extends PushServiceReceiver {
 
-    private static final String TAG = "BaiduPushReceiver";
     public static final String KEY_PUSH_CONTENT = "content";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        LogUtil.d(TAG, "onReceive() called");
         if (TextUtils.equals(intent.getAction(), "com.baidu.android.pushservice.action.notification.SHOW")) {
             String pushServicePackageName = intent.getStringExtra("pushService_package_name");
             String serviceName = intent.getStringExtra("service_name");
@@ -32,13 +28,11 @@ public class BaiduPushReceiver extends PushServiceReceiver {
                 publicMsg = (PublicMsg) publicMsgParcelable;
             }
 
-            LogUtil.i(TAG, "pushServicePackageName = " + pushServicePackageName + " serviceName = "+ serviceName + " publicMsg = " + publicMsg);
             if (TextUtils.isEmpty(pushServicePackageName) || TextUtils.isEmpty(serviceName) || publicMsg == null) {
                 return;
             }
 
             String notifyType = intent.getStringExtra("notify_type");
-            LogUtil.d(TAG, "notifyType = " + notifyType);
             if ("private".equals(notifyType)) {
                 sendNotificationService(context, publicMsg);
             }
@@ -58,13 +52,11 @@ public class BaiduPushReceiver extends PushServiceReceiver {
                         objectMapper.readValue(customContent, new TypeReference<Map<String, String>>(){});
                 if (map != null && map.containsKey(KEY_PUSH_CONTENT)) {
                     String content = map.get(KEY_PUSH_CONTENT);
-                    LogUtil.d(TAG, "content - " + content);
                     JandiPushIntentService.startService(context, content);
                 } else {
-                    throw new NullPointerException(TAG + " content is null");
+                    throw new NullPointerException("BaiduPushReceiver content is null");
                 }
             } catch (Exception e) {
-                LogUtil.e(TAG, Log.getStackTraceString(e));
             }
         }
     }

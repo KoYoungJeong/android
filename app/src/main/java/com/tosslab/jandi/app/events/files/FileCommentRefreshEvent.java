@@ -7,18 +7,26 @@ import java.util.List;
  */
 public class FileCommentRefreshEvent {
     private final String eventType;
-    private final int fileId;
-    private final int commentId;
+    private final long teamId;
+    private final long fileId;
+    private final long commentId;
     private final boolean added;
     private List<Long> sharedRooms;
-    public FileCommentRefreshEvent(String eventType, int fileId, int commentId, boolean added) {
+
+    public FileCommentRefreshEvent(String eventType, long teamId,
+                                   long fileId, long commentId, boolean added) {
         this.eventType = eventType;
+        this.teamId = teamId;
         this.fileId = fileId;
         this.commentId = commentId;
         this.added = added;
     }
 
-    public int getFileId() {
+    public long getTeamId() {
+        return teamId;
+    }
+
+    public long getFileId() {
         return fileId;
     }
 
@@ -26,7 +34,7 @@ public class FileCommentRefreshEvent {
         return eventType;
     }
 
-    public int getCommentId() {
+    public long getCommentId() {
         return commentId;
     }
 

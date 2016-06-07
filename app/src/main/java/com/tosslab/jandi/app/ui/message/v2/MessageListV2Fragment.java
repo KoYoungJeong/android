@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -51,6 +53,7 @@ import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
+import com.tosslab.jandi.app.events.entities.MessageCreatedEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RefreshConnectBotEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
@@ -332,6 +335,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @Override
     public void onResume() {
         super.onResume();
+
         isForeground = true;
 
         PushMonitor.getInstance().register(roomId);
@@ -341,7 +345,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
         messageListPresenter.restoreStatus();
         refreshMessages();
-        messageListPresenter.addNewMessageQueue(true);
     }
 
     @Override
@@ -735,7 +738,12 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                     calendar.set(Calendar.SECOND, 0);
                     calendar.set(Calendar.MILLISECOND, 0);
 
-                    tvMessageDate.setText(DateTransformator.getTimeStringForDivider(calendar.getTimeInMillis()));
+                    long timeInMillis = calendar.getTimeInMillis();
+                    if (DateUtils.isToday(timeInMillis)) {
+                        tvMessageDate.setText(R.string.today);
+                    } else {
+                        tvMessageDate.setText(DateTransformator.getTimeStringForDivider(timeInMillis));
+                    }
                 }
             }
 
@@ -890,7 +898,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     public void setUpOldMessage(boolean isFirstLoad) {
 
         if (isFirstLoad) {
-            messageRecyclerViewManager.scrollToLast();
+            moveLastReadLink();
         } else {
             messageRecyclerViewManager.scrollToCachedFirst();
         }
@@ -1315,47 +1323,25 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         oldProgressBar.startAnimation(outAnim);
     }
 
-    public void onEvent(SocketMessageEvent event) {
-        boolean isSameRoomId = false;
-        String messageType = event.getMessageType();
-
-        if (!TextUtils.equals(messageType, "file_comment")) {
-
-            isSameRoomId = event.getRoom().getId() == room.getRoomId();
-        } else {
-            for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
-                if (room.getRoomId() == messageRoom.getId()) {
-                    isSameRoomId = true;
-                    break;
-                }
-            }
-        }
-
-        if (!isSameRoomId) {
+    public void onEvent(MessageCreatedEvent event) {
+        if (event.getRoomId() != room.getRoomId()) {
             return;
         }
 
-        if (TextUtils.equals(messageType, "topic_leave")
-                || TextUtils.equals(messageType, "topic_join")
-                || TextUtils.equals(messageType, "topic_invite")) {
+        if (messageListPresenter != null) {
+            messageListPresenter.addNewMessageOfLocalQueue();
+        }
+    }
 
-            if (isForeground) {
-                initEmptyLayout();
-            }
+    public void onEvent(SocketMessageEvent event) {
 
-            messageListPresenter.updateRoomInfo(true);
+        if (event.getRoom().getId() != room.getRoomId()) {
+            return;
+        }
+        String messageType = event.getMessageType();
 
-            updateMentionInfo();
-        } else {
-            messageListPresenter.updateMarker();
-
-            if (!isForeground) {
-                return;
-            }
-
-            if (room.getRoomId() > 0) {
-                messageListPresenter.addNewMessageQueue(true);
-            }
+        if (TextUtils.equals(messageType, "message_delete")) {
+            messageListPresenter.removeOfMessageId(event.getMessageId());
         }
     }
 
@@ -1365,7 +1351,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
 
         if (room.getRoomId() > 0) {
-            messageListPresenter.addNewMessageQueue(true);
+//            messageListPresenter.addNewMessageQueue(true);
         }
     }
 
@@ -1390,6 +1376,10 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     public void onEvent(MentionableMembersRefreshEvent event) {
         if (!isForeground) {
+            return;
+        }
+
+        if (mentionControlViewModel == null) {
             return;
         }
 
@@ -1453,19 +1443,19 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     public void onEventMainThread(ChatCloseEvent event) {
         if (entityId == event.getCompanionId()) {
-            getActivity().finish();
+            finish();
         }
     }
 
     public void onEventMainThread(TopicDeleteEvent event) {
         if (entityId == event.getId()) {
-            getActivity().finish();
+            finish();
         }
     }
 
     public void onEventMainThread(TopicKickedoutEvent event) {
         if (room.getRoomId() == event.getRoomId()) {
-            getActivity().finish();
+            finish();
             CharSequence topicName = ((AppCompatActivity) getActivity()).getSupportActionBar().getTitle();
             String msg = JandiApplication.getContext().getString(R.string.jandi_kicked_message, topicName);
             showToast(msg, true /* isError */);
@@ -1524,19 +1514,16 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                         AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Accouncement_Delete);
             case CREATED:
                 if (!isForeground) {
-                    messageListPresenter.updateMarker();
                     return;
                 }
 
                 if (room.getRoomId() > 0) {
-                    messageListPresenter.addNewMessageQueue(true);
                     messageListPresenter.onInitAnnouncement();
                 }
                 break;
             case STATUS_UPDATED:
                 if (!isForeground) {
                     messageListPresenter.setAnnouncementActionFrom(false);
-                    messageListPresenter.updateMarker();
                     return;
                 }
                 SocketAnnouncementEvent.Data data = event.getData();
@@ -1679,13 +1666,19 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     public void onEvent(FileCommentRefreshEvent event) {
         if (!isForeground) {
-            messageListPresenter.updateMarker();
             return;
         }
 
-        if (room.getRoomId() > 0) {
-            messageListPresenter.addNewMessageQueue(true);
-        }
+
+        // 삭제된 메세지는 임의 처리
+        Observable.just(event)
+                .filter(event2 -> !event2.isAdded())
+                .flatMap(event2 -> Observable.from(event2.getSharedRooms()))
+                .takeFirst(rooomId -> rooomId == room.getRoomId())
+                .subscribe(rooomId -> {
+                    messageListPresenter.removeOfMessageId(event.getCommentId());
+                });
+
     }
 
     public void onEvent(TeamLeaveEvent event) {
@@ -1805,7 +1798,10 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void finish() {
-        getActivity().finish();
+        FragmentActivity activity = getActivity();
+        if (activity != null && !activity.isFinishing()) {
+            activity.finish();
+        }
     }
 
     @Override
