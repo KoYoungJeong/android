@@ -1,12 +1,10 @@
 package com.tosslab.jandi.app.utils.image.loader;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
@@ -18,7 +16,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.ViewPropertyAnimation;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.utils.image.target.DynamicImageViewTarget;
 
 /**
@@ -130,7 +127,7 @@ public class ImageLoader {
             imageView.setBackgroundColor(backgroundColor);
         }
 
-        DrawableRequestBuilder<Uri> request = getRequest(imageView).fitCenter();
+        DrawableRequestBuilder<Uri> request = getRequest(context).fitCenter();
 
         request.diskCacheStrategy(DiskCacheStrategy.ALL);
 
@@ -168,27 +165,17 @@ public class ImageLoader {
                         .build(imageView));
     }
 
-    private DrawableTypeRequest<Uri> getRequest(ImageView imageView) {
+    private DrawableTypeRequest<Uri> getRequest(Context context) {
         if (blockNetworking) {
-            return Glide.with(imageView.getContext())
+            return Glide.with(context)
                     // cache 되어 있는지 확인하기 위해 네트워킹 작업이 실행되면 exception 발생시킨다.
                     .using(new ThrowIOExceptionStreamLoader<Uri>())
                     .load(uri);
         } else {
-            return Glide.with(imageView.getContext()).load(uri);
+            return Glide.with(context).load(uri);
         }
     }
 
-    /**
-     * Glide 이미지 로드 할 때 넘겨준 Context 가 Activity 인 경우(#Glide.with(context))
-     * #Build.VERSION_CODES.JELLY_BEAN_MR1 이상인 디바이스에서 사용할 수 있는
-     * #Activity.isDestroyed() 메소드로 액티비티의 종료를 판단해서 exception 을 발생시킨다.
-     *
-     * #Build.VERSION_CODES.JELLY_BEAN_MR1 미만인 단말은 무조건 application context 를 활용하도록 하고
-     * 이상인 단말에서는 #Activity.isDestroyed() 로 판단해서 activity 가 destroy 된 경우 null 을 리턴하도록 구현함.
-     * @param imageView
-     * @return
-     */
     @Nullable
     private Context getAvailableContext(ImageView imageView) {
         Context context = imageView.getContext();
@@ -196,25 +183,16 @@ public class ImageLoader {
             return null;
         }
 
-        boolean isVersionLowerThan17 = Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1;
-        if (isVersionLowerThan17) {
-            return JandiApplication.getContext();
-        }
-
         if (context instanceof Activity) {
             Activity activity = (Activity) context;
-            if (activity.isFinishing() || isDestroyed(activity)) {
+            if (activity.isFinishing()) {
                 return null;
             }
 
             return context;
         } else {
-            return JandiApplication.getContext();
+            return context;
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    private boolean isDestroyed(Activity activity) {
-        return activity.isDestroyed();
-    }
 }
