@@ -12,8 +12,8 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 @Version(1)
 public class SocketMemberProfileEvent {
     private int version;
-    private ResLeftSideMenu.User member;
     private long ts;
+    private ResLeftSideMenu.User member;
 
     public ResLeftSideMenu.User getMember() {
         return member;

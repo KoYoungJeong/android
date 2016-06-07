@@ -10,10 +10,12 @@ import com.tosslab.jandi.app.push.queue.dagger.DaggerPushHandlerComponent;
 import com.tosslab.jandi.app.push.receiver.JandiPushReceiverModel;
 import com.tosslab.jandi.app.push.to.BaseMessagePushInfo;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+
 import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
+
 import de.greenrobot.event.EventBus;
-import rx.Observable;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -46,22 +48,10 @@ public class PushHandler {
                 .filter(pushInfo -> PushHistoryRepository.getRepository().isLatestPush(pushInfo.getMessageId()))
                 .doOnNext(pushInfo -> PushHistoryRepository.getRepository().insertPushHistory(
                         pushInfo.getRoomId(), pushInfo.getMessageId()))
-                .buffer(300, TimeUnit.MILLISECONDS)
-                .filter(pushTOs -> pushTOs != null && !pushTOs.isEmpty())
-                .subscribe(pushTOs -> {
-
-                    Observable.from(pushTOs)
-                            .reduce((prev, current) -> {
-                                if (prev.getMessageId() > current.getMessageId()) {
-                                    return prev;
-                                } else {
-                                    return current;
-                                }
-                            })
-                            .subscribe(pushInfo -> {
-                                BadgeUtils.setBadge(JandiApplication.getContext(), pushInfo.getBadgeCount());
-                                notifyPush(JandiApplication.getContext(), pushInfo);
-                            });
+                .throttleLast(300, TimeUnit.MILLISECONDS)
+                .subscribe(pushInfo -> {
+                    BadgeUtils.setBadge(JandiApplication.getContext(), pushInfo.getBadgeCount());
+                    notifyPush(JandiApplication.getContext(), pushInfo);
 
 
                 }, Throwable::printStackTrace);
