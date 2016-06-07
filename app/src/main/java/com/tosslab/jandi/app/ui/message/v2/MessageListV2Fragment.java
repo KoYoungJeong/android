@@ -93,7 +93,6 @@ import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
@@ -346,9 +345,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
         messageListPresenter.restoreStatus();
         refreshMessages();
-        if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
-            messageListPresenter.addNewMessageQueue(true);
-        }
     }
 
     @Override
@@ -902,7 +898,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     public void setUpOldMessage(boolean isFirstLoad) {
 
         if (isFirstLoad) {
-            messageRecyclerViewManager.scrollToLast();
+            moveLastReadLink();
         } else {
             messageRecyclerViewManager.scrollToCachedFirst();
         }
@@ -1333,7 +1329,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
 
         if (messageListPresenter != null) {
-            messageListPresenter.addNewMessageFromLocal();
+            messageListPresenter.addNewMessageOfLocalQueue();
         }
     }
 
@@ -1518,19 +1514,16 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                         AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Accouncement_Delete);
             case CREATED:
                 if (!isForeground) {
-                    messageListPresenter.updateMarker();
                     return;
                 }
 
                 if (room.getRoomId() > 0) {
-//                    messageListPresenter.addNewMessageQueue(true);
                     messageListPresenter.onInitAnnouncement();
                 }
                 break;
             case STATUS_UPDATED:
                 if (!isForeground) {
                     messageListPresenter.setAnnouncementActionFrom(false);
-                    messageListPresenter.updateMarker();
                     return;
                 }
                 SocketAnnouncementEvent.Data data = event.getData();
@@ -1673,7 +1666,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     public void onEvent(FileCommentRefreshEvent event) {
         if (!isForeground) {
-            messageListPresenter.updateMarker();
             return;
         }
 

@@ -27,6 +27,7 @@ import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.to.queue.MessageContainer;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageContainer;
+import com.tosslab.jandi.app.ui.message.to.queue.NewMessageFromLocalContainer;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageContainer;
 import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageContainer;
 import com.tosslab.jandi.app.ui.message.to.queue.UpdateLinkPreviewMessageContainer;
@@ -48,6 +49,7 @@ import org.androidannotations.annotations.UiThread;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
@@ -69,6 +71,7 @@ public class MessageListV2Presenter {
     View view;
 
     private PublishSubject<MessageContainer> messageRequestQueue;
+    private PublishSubject<Object> markerRequestQueue;
     private Subscription messageLoadSubscription;
     private MessageState currentMessageState;
     private Room room;
@@ -112,6 +115,9 @@ public class MessageListV2Presenter {
                         case New:
                             loadNewMessage((NewMessageContainer) messageContainer);
                             break;
+                        case NewFromLocal:
+                            addNewMessageFromLocal();
+                            break;
                         case Send:
                             sendMessage((SendingMessageContainer) messageContainer);
                             break;
@@ -125,6 +131,23 @@ public class MessageListV2Presenter {
                 }, () -> {
 
                 });
+
+        markerRequestQueue = PublishSubject.create();
+        markerRequestQueue.onBackpressureBuffer()
+                .throttleLast(500, TimeUnit.MILLISECONDS)
+                .observeOn(Schedulers.io())
+                .subscribe(o -> {
+                    int position = adapterModel.getCount() - 1;
+                    if (position >= 0) {
+
+                        ResMessages.Link item = adapterModel.getItem(position);
+                        try {
+                            messageListModel.updateLastLinkId(item.id);
+                        } catch (RetrofitException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, Throwable::printStackTrace);
     }
 
     public void onDetermineUserStatus() {
@@ -268,8 +291,7 @@ public class MessageListV2Presenter {
 
         // 1. 처음 접근 하는 토픽/DM 인 경우
         // 2. 오랜만에 접근 하는 토픽/DM 인 경우
-        NewMessageContainer newMessageQueue = new NewMessageContainer(currentMessageState);
-        newMessageQueue.setCacheMode(true);
+        NewMessageFromLocalContainer newMessageQueue = new NewMessageFromLocalContainer(currentMessageState);
 
         OldMessageContainer oldMessageQueue = new OldMessageContainer(currentMessageState);
         oldMessageQueue.setCacheMode(true);
@@ -383,8 +405,6 @@ public class MessageListV2Presenter {
             } else {
                 List<ResMessages.Link> records = resOldMessage.records;
 
-                messageListModel.sortByTime(records);
-
                 long firstLinkIdInMessage = records.get(0).id;
                 currentMessageState.setIsFirstLoadOldMessage(false);
                 boolean isFirstMessage = resOldMessage.firstLinkId == firstLinkIdInMessage;
@@ -414,7 +434,7 @@ public class MessageListV2Presenter {
                 ResRoomInfo.MarkerInfo myMarker = MarkerRepository.getRepository().getMyMarker(room.getRoomId(), myId);
 
                 if (myMarker.getLastLinkId() < lastLink.id) {
-                    messageListModel.updateLastLinkId(lastLink.id);
+                    addMarkerQueue();
                     messageListModel.upsertMyMarker(room.getRoomId(), lastLink.id);
                 }
             }
@@ -496,7 +516,6 @@ public class MessageListV2Presenter {
                 if (resOldMessage.records.get(resOldMessage.records.size() - 1).id == linkId) {
                     messagePointer.setLastReadLinkId(-1);
                 }
-                updateMarker(teamId, resOldMessage.entityId, resOldMessage.lastLinkId);
                 adapterModel.removeAllDummy();
                 view.refreshMessages();
                 messageListModel.deleteCompletedSendingMessage(resOldMessage.entityId);
@@ -633,10 +652,8 @@ public class MessageListV2Presenter {
             long lastLinkId = newMessages.get(newMessages.size() - 1).id;
             messageListModel.upsertMyMarker(roomId, lastLinkId);
         }
-        try {
-            messageListModel.updateLastLinkId(lastUpdateLinkId);
-        } catch (RetrofitException e) {
-        }
+        addMarkerQueue();
+
         if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
             messageListModel.updateMarkerInfo(teamId, roomId);
         }
@@ -753,21 +770,6 @@ public class MessageListV2Presenter {
         return messages;
     }
 
-    @Background
-    public void updateRoomInfo(boolean cacheMode) {
-        long roomId = room.getRoomId();
-        long teamId = room.getTeamId();
-
-        messageListModel.updateMarkerInfo(teamId, roomId);
-
-        if (roomId > 0) {
-            NewMessageContainer newMessageQueue = new NewMessageContainer(currentMessageState);
-            newMessageQueue.setCacheMode(cacheMode);
-            addQueue(newMessageQueue);
-        }
-
-    }
-
     private void updateLinkPreview(UpdateLinkPreviewMessageContainer messageContainer) {
         long messageId = messageContainer.getData();
 
@@ -806,26 +808,6 @@ public class MessageListV2Presenter {
         } else {
             view.insertMessageEmptyLayout();
         }
-    }
-
-    private void updateMarker(long teamId, long roomId, long lastUpdateLinkId) {
-
-        try {
-            if (lastUpdateLinkId > 0) {
-                messageListModel.updateLastLinkId(lastUpdateLinkId);
-                messageListModel.updateMarkerInfo(teamId, roomId);
-            }
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void updateMarker() {
-        long roomId = room.getRoomId();
-        long teamId = room.getTeamId();
-        messageListModel.updateMarkerInfo(teamId, roomId);
     }
 
     @Background
@@ -1047,6 +1029,9 @@ public class MessageListV2Presenter {
         if (messageLoadSubscription != null) {
             messageLoadSubscription.unsubscribe();
         }
+        if (markerRequestQueue != null) {
+            markerRequestQueue.onCompleted();
+        }
     }
 
     @Background
@@ -1176,15 +1161,10 @@ public class MessageListV2Presenter {
         if (adapterModel.getCount() <= 0) {
             // roomId 설정 후...
             onInitMessages(true);
-        } else {
-            if (room.getRoomId() > 0) {
-                addNewMessageQueue(true);
-            }
         }
 
     }
 
-    @Background
     public void addNewMessageFromLocal() {
         if (view == null || adapterModel == null) {
             return;
@@ -1205,14 +1185,17 @@ public class MessageListV2Presenter {
             long lastLinkId = messages.get(messages.size() - 1).id;
             messageListModel.upsertMyMarker(room.getRoomId(), lastLinkId);
 
-            try {
-                messageListModel.updateLastLinkId(messages.get(messages.size() - 1).id);
-            } catch (RetrofitException e) {
-            }
+            addMarkerQueue();
         }
 
         if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
             messageListModel.updateMarkerInfo(room.getTeamId(), room.getRoomId());
+        }
+    }
+
+    private void addMarkerQueue() {
+        if (!markerRequestQueue.hasCompleted()) {
+            markerRequestQueue.onNext(new Object());
         }
     }
 
@@ -1224,6 +1207,13 @@ public class MessageListV2Presenter {
         if (position >= 0) {
             adapterModel.remove(position);
             view.refreshMessages();
+        }
+    }
+
+    public void addNewMessageOfLocalQueue() {
+        if (isInitialized) {
+            NewMessageFromLocalContainer container = new NewMessageFromLocalContainer(currentMessageState);
+            addQueue(container);
         }
     }
 
