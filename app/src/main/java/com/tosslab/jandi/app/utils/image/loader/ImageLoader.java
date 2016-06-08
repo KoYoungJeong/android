@@ -16,6 +16,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.ViewPropertyAnimation;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.image.target.DynamicImageViewTarget;
 
 /**
@@ -193,6 +194,20 @@ public class ImageLoader {
         } else {
             return context;
         }
+    }
+
+    public static void loadFromResources(ImageView imageView, int resId) {
+        Context context = imageView.getContext();
+        if (context == null) {
+            return;
+        }
+
+        if (context instanceof Activity
+                && ((Activity) context).isFinishing()) {
+            return;
+        }
+
+        Glide.with(context).load(resId).into(imageView);
     }
 
 }

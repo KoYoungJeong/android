@@ -181,7 +181,7 @@ public class FileUploadStateViewModel {
                 int paddingPx = (int) (4 * context.getResources().getDisplayMetrics().density);
                 ivPhoto.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
                 ivPhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                ivPhoto.setImageResource(resId);
+                ImageLoader.loadFromResources(ivPhoto, resId);
             }
 
             switch (item.getUploadState()) {

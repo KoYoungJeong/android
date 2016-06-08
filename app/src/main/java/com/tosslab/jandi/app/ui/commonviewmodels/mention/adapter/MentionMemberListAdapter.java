@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.viewholder.MentionMemberListViewHolder;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import java.util.List;
 
@@ -75,18 +76,18 @@ public class MentionMemberListAdapter extends ArrayAdapter<SearchedItemVO> {
         ivIcon.setLayoutParams(layoutParams);
 
         if (item.getName().equals("all") && item.getType().equals("room")) {
-            ivIcon.setImageResource(R.drawable.thum_all_member);
+            ImageLoader.loadFromResources(ivIcon, R.drawable.thum_all_member);
             holder.getTvName().setText(R.string.jandi_all_of_topic_members);
         } else if (isBot) {
             ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            ivIcon.setImageResource(R.drawable.bot_32x40);
+            ImageLoader.loadFromResources(ivIcon, R.drawable.bot_32x40);
             holder.getTvName().setText(item.getName());
         } else {
             if (!item.isInactive()) {
                 ImageUtil.loadProfileImage(ivIcon,
                         item.getSmallProfileImageUrl(), R.drawable.profile_img);
             } else {
-                ivIcon.setImageResource(R.drawable.profile_img_dummyaccount_43);
+                ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_43);
             }
             holder.getTvName().setText(item.getName());
         }

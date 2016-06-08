@@ -41,14 +41,6 @@ public class DynamicImageViewTarget extends GlideDrawableImageViewTarget {
     }
 
     @Override
-    public void onLoadCleared(Drawable placeholder) {
-        if (placeHolderScaleType != null) {
-            view.setScaleType(placeHolderScaleType);
-        }
-        super.onLoadCleared(placeholder);
-    }
-
-    @Override
     public void onLoadFailed(Exception e, Drawable errorDrawable) {
         if (errorScaleType != null) {
             view.setScaleType(errorScaleType);
