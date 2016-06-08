@@ -43,6 +43,7 @@ import com.tosslab.jandi.app.utils.ViewSlider;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.spannable.OwnerSpannable;
@@ -285,10 +286,12 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
         tvEmail.setText(userEmail);
 
         String userLargeProfileUrl = me.getUserLargeProfileUrl();
-        if (!TextUtils.isEmpty(userEmail)) {
+        if (!TextUtils.isEmpty(userLargeProfileUrl)) {
             ImageUtil.loadProfileImage(ivProfile, userLargeProfileUrl, R.drawable.profile_img);
+        } else {
+            ivProfile.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img);
         }
-
         btnSetting.setOnClickListener(v -> {
             ModifyProfileActivity_.intent(this).start();
 

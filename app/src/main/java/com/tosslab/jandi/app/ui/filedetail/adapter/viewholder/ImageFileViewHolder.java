@@ -74,7 +74,7 @@ public class ImageFileViewHolder extends FileViewHolder {
                     : R.drawable.jandi_down_placeholder_dropbox;
 
             ivFileThumb.setScaleType(ImageView.ScaleType.FIT_XY);
-            ivFileThumb.setImageResource(resourceId);
+            ImageLoader.loadFromResources(ivFileThumb, resourceId);
 
             if (hasImageUrl) {
                 ivFileThumb.setOnClickListener(view -> {

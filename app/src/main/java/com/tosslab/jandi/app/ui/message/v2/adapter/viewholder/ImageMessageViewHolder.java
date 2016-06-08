@@ -155,7 +155,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         if (TextUtils.equals(fileMessage.status, "archived")) {
             tvFileName.setText(R.string.jandi_deleted_file);
             setImageViewSizeToDefault();
-            ivFileImage.setImageResource(R.drawable.file_icon_deleted);
+            ImageLoader.loadFromResources(ivFileImage, R.drawable.file_icon_deleted);
             return;
         }
 
@@ -164,7 +164,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         if (!ImageUtil.hasImageUrl(fileContent)) {
             setImageViewSizeToDefault();
             ivFileImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            ivFileImage.setImageResource(R.drawable.file_icon_img);
+            ImageLoader.loadFromResources(ivFileImage, R.drawable.file_icon_img);
             return;
         }
 
@@ -175,7 +175,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             String icon = fileContent.icon;
             int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, icon);
             ivFileImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            ivFileImage.setImageResource(mimeTypeIconImage);
+            ImageLoader.loadFromResources(ivFileImage, mimeTypeIconImage);
         } else {
             String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
             tvFileSize.setText(fileSize);
@@ -204,7 +204,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
                 vgFileImageWrapper.setBackgroundColor(bigSizeImageBackgroundColor);
 
                 ivFileImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                ivFileImage.setImageResource(R.drawable.preview_no_img);
+                ImageLoader.loadFromResources(ivFileImage, R.drawable.preview_no_img);
                 return;
             }
 

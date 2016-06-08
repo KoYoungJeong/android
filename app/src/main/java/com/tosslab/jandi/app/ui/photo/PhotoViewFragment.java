@@ -246,7 +246,7 @@ public class PhotoViewFragment extends Fragment {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void showError() {
-        photoView.setImageResource(R.drawable.file_noimage);
+        ImageLoader.loadFromResources(photoView, R.drawable.file_noimage);
     }
 
     @Override

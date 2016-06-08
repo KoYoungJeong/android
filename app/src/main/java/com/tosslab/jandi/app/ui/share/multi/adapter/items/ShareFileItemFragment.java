@@ -67,7 +67,7 @@ public class ShareFileItemFragment extends Fragment {
             ivImageThumb.setVisibility(View.GONE);
             tvFileType.setText(FileExtensionsUtil.getFileTypeText(filePath));
             int resId = FileExtensionsUtil.getFileTypeBigImageResource(filePath);
-            ivFileType.setImageResource(resId);
+            ImageLoader.loadFromResources(ivFileType, resId);
         }
 
     }
