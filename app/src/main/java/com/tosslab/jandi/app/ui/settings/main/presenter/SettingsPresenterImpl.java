@@ -7,13 +7,8 @@ import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
@@ -62,27 +57,11 @@ public class SettingsPresenterImpl implements SettingsPresenter {
             new LoginApi(RetrofitBuilder.getInstance())
                     .deleteToken(TokenUtil.getRefreshToken(), deviceId);
 
-            ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
-            MixpanelAccountAnalyticsClient
-                    .getInstance(context, accountInfo.getId())
-                    .trackAccountSigningOut()
-                    .flush()
-                    .clear();
-
-            EntityManager entityManager = EntityManager.getInstance();
-
-            MixpanelMemberAnalyticsClient
-                    .getInstance(context, entityManager.getDistictId())
-                    .trackSignOut()
-                    .flush()
-                    .clear();
-
             SignOutUtil.removeSignData();
             BadgeUtils.clearBadge(context);
             JandiSocketService.stopService(context);
 
             view.showSuccessToast(context.getString(R.string.jandi_message_logout));
-
 
         } catch (Exception e) {
             LogUtil.e(Log.getStackTraceString(e));

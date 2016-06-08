@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -178,8 +177,6 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
                 moveIntroActivity();
             }
 
-            String distictId = EntityManager.getInstance().getDistictId();
-            MixpanelMemberAnalyticsClient.getInstance(PushInterfaceActivity.this, distictId).trackMemberSingingIn();
         } else {
             moveIntroActivity();
         }

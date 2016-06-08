@@ -7,7 +7,6 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.main.SignUpApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqAccountVerification;
 import com.tosslab.jandi.app.network.models.ResAccountActivate;
@@ -84,21 +83,12 @@ public class SignUpVerifyModel {
     }
 
     public void trackSignUpSuccessAndFlush(ResAccountInfo accountInfo) {
-        MixpanelAccountAnalyticsClient
-                .getInstance(JandiApplication.getContext(), accountInfo.getId())
-                .pageViewAccountCreateSuccess();
-
-        MixpanelAccountAnalyticsClient mixpanelAccountAnalyticsClient =
-                MixpanelAccountAnalyticsClient.getInstance(JandiApplication.getContext(), accountInfo.getId());
-        mixpanelAccountAnalyticsClient.trackAccountSingingIn();
-
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(Event.SignUp)
                 .accountId(accountInfo.getId())
                 .property(PropertyKey.ResponseSuccess, true)
                 .build());
         AnalyticsUtil.flushSprinkler();
-
     }
 
     public void trackSignUpFailAndFlush(int errorCode) {

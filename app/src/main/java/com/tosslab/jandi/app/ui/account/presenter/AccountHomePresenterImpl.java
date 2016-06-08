@@ -5,7 +5,6 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -167,8 +166,6 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             accountHomeModel.acceptOrDeclineInvite(
                     selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.ACCEPT.getType());
             teamDomainInfoModel.updateTeamInfo(selectedTeam.getTeamId());
-            MixpanelMemberAnalyticsClient.getInstance(JandiApplication.getContext(), null)
-                    .pageViewMemberCreateSuccess();
 
             view.removePendingTeamView(selectedTeam);
             view.dismissProgressWheel();

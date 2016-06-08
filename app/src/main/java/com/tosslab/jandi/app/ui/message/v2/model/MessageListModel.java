@@ -37,7 +37,6 @@ import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.client.sticker.StickerApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -305,40 +304,6 @@ public class MessageListModel {
         } else if (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) {
             entityClientManager.modifyPrivateGroupName(entityId, inputName);
         }
-    }
-
-    public void trackChangingEntityName(int entityType) {
-
-        try {
-            String distictId = EntityManager.getInstance().getDistictId();
-
-            MixpanelMemberAnalyticsClient
-                    .getInstance(activity, distictId)
-                    .trackChangingEntityName(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
-        } catch (JSONException e) {
-        }
-    }
-
-    public void trackDeletingEntity(int entityType) {
-        String distictId = EntityManager.getInstance().getDistictId();
-        try {
-            MixpanelMemberAnalyticsClient
-                    .getInstance(activity, distictId)
-                    .trackDeletingEntity(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
-        } catch (JSONException e) {
-        }
-    }
-
-    public List<ResMessages.Link> getDummyMessages(long roomId) {
-        List<SendMessage> sendMessage = SendMessageRepository.getRepository().getSendMessageOfRoom(roomId);
-        long id = EntityManager.getInstance().getMe().getId();
-        List<ResMessages.Link> links = new ArrayList<>();
-        for (SendMessage link : sendMessage) {
-
-            DummyMessageLink dummyMessageLink = getDummyMessageLink(id, link);
-            links.add(dummyMessageLink);
-        }
-        return links;
     }
 
     private DummyMessageLink getDummyMessageLink(long id, SendMessage link) {

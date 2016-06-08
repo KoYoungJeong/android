@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.sign.signin.presenter;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.sign.signin.model.SignInModel;
@@ -131,10 +130,6 @@ public class SignInPresenterImpl implements SignInPresenter {
                     ResAccessToken accessToken = TokenUtil.getTokenObject();
                     model.subscribePush(accessToken.getDeviceId());
                     JandiPreference.setFirstLogin(JandiApplication.getContext());
-
-                    MixpanelAccountAnalyticsClient
-                            .getInstance(JandiApplication.getContext(), accountInfo.getId())
-                            .trackAccountSingingIn();
 
                     model.trackSignInSuccess();
                 }).observeOn(AndroidSchedulers.mainThread())
