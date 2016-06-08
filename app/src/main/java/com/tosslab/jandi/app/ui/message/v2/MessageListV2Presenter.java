@@ -404,6 +404,7 @@ public class MessageListV2Presenter {
 
             } else {
                 List<ResMessages.Link> records = resOldMessage.records;
+                messageListModel.sortByTime(records);
 
                 long firstLinkIdInMessage = records.get(0).id;
                 currentMessageState.setIsFirstLoadOldMessage(false);
