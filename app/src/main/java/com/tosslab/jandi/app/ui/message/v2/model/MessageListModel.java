@@ -656,7 +656,8 @@ public class MessageListModel {
     }
 
     public boolean isInactiveUser(long entityId) {
-        return TeamInfoLoader.getInstance().getUser(entityId).isInactive();
+        return TeamInfoLoader.getInstance().isUser(entityId)
+                && TeamInfoLoader.getInstance().getUser(entityId).isInactive();
     }
 
     public void deleteAllDummyMessageAtDatabase(long roomId) {

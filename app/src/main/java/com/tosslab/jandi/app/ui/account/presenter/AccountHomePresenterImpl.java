@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
@@ -84,6 +85,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             accountHomeModel.updateSelectTeam(teamId);
             InitialInfo initialInfo = accountHomeModel.getEntityInfo(teamId);
             accountHomeModel.updateEntityInfo(initialInfo);
+            TeamInfoLoader.getInstance().refresh();
             JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
             view.dismissProgressWheel();
 

@@ -69,4 +69,16 @@ public class InitialInfoRepository extends LockExecutorTemplate {
             return false;
         });
     }
+
+    public boolean removeInitialInfo(long teamId) {
+        return execute(() -> {
+            try {
+                Dao<InitialInfo, Long> dao = getHelper().getDao(InitialInfo.class);
+                return dao.deleteById(teamId) > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+    }
 }

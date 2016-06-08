@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.local.orm.repositories.info;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
 import java.sql.SQLException;
@@ -291,6 +292,62 @@ public class TopicRepository extends LockExecutorTemplate {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            return false;
+        });
+
+    }
+
+    public boolean addTopic(Topic topic) {
+        return execute(() -> {
+
+            try {
+                Dao<Topic, ?> dao = getHelper().getDao(Topic.class);
+                InitialInfo initialInfo = new InitialInfo();
+                initialInfo.setTeamId(topic.getTeamId());
+                topic.setInitialInfo(initialInfo);
+                return dao.create(topic) > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        });
+    }
+
+    public boolean updateTopic(Topic topic) {
+        return execute(() -> {
+
+            try {
+                Dao<Topic, Long> dao = getDao(Topic.class);
+                InitialInfo initialInfo = new InitialInfo();
+                initialInfo.setTeamId(topic.getTeamId());
+                topic.setInitialInfo(initialInfo);
+                return dao.update(topic) > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        });
+    }
+
+    public boolean updateAnnounceOpened(long topicId, boolean opened) {
+        return execute(() -> {
+
+            try {
+                Dao<Topic, Object> topicDao = getDao(Topic.class);
+                Topic topic = topicDao.queryForId(topicId);
+                Topic.Announcement announcement = topic.getAnnouncement();
+                if (announcement == null) {
+                    return false;
+                }
+                announcement.setIsOpened(opened);
+                Dao<Topic.Announcement, Object> dao = getDao(Topic.Announcement.class);
+                return dao.update(announcement) > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
             return false;
         });
 

@@ -5,46 +5,19 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
+import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
-/**
- * Created by tonyjs on 16. 4. 4..
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(2)
-public class SocketTeamDeletedEvent extends EventHistoryInfo {
-
+public class SocketTeamJoinEvent extends EventHistoryInfo {
     private String event;
     private int version;
     private long ts;
     private long teamId;
     private Data data;
-
-    public long getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(long teamId) {
-        this.teamId = teamId;
-    }
-
-    public Data getData() {
-        return data;
-    }
-
-    public void setData(Data data) {
-        this.data = data;
-    }
-
-    public long getTs() {
-        return ts;
-    }
-
-    public void setTs(long ts) {
-        this.ts = ts;
-    }
 
     public String getEvent() {
         return event;
@@ -62,18 +35,51 @@ public class SocketTeamDeletedEvent extends EventHistoryInfo {
         this.version = version;
     }
 
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
+    public long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
+    }
+
+    public Data getData() {
+        return data;
+    }
+
+    public void setData(Data data) {
+        this.data = data;
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
+        private Human member;
         private long teamId;
+
+        public Human getMember() {
+            return member;
+        }
+
+        public void setMember(Human member) {
+            this.member = member;
+        }
 
         public long getTeamId() {
             return teamId;
         }
 
-        public void setTeamId(long id) {
-            this.teamId = id;
+        public void setTeamId(long teamId) {
+            this.teamId = teamId;
         }
-
     }
+
 }

@@ -72,6 +72,7 @@ public class TeamInfoLoader {
         chatRooms = new HashMap<>();
         topicRooms = new HashMap<>();
 
+        topicFolders = new ArrayList<>();
         members = new ArrayList<>();
         users = new HashMap<>();
         bots = new HashMap<>();
@@ -99,7 +100,9 @@ public class TeamInfoLoader {
 
     public void refresh() {
         long teamId = AccountRepository.getRepository().getSelectedTeamId();
-        refresh(teamId);
+        if (teamId > 0) {
+            refresh(teamId);
+        }
     }
 
     public void refresh(long teamId) {

@@ -5,29 +5,38 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
 /**
- * Created by tonyjs on 16. 4. 4..
+ * Created by Steve SeongUg Jung on 15. 4. 9..
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(2)
-public class SocketTeamDeletedEvent extends EventHistoryInfo {
-
-    private String event;
+public class SocketTopicCreatedEvent extends EventHistoryInfo {
     private int version;
-    private long ts;
-    private long teamId;
+    private String event;
+    private int teamId;
     private Data data;
+    private long ts;
 
-    public long getTeamId() {
-        return teamId;
+    public long getTs() {
+        return ts;
     }
 
-    public void setTeamId(long teamId) {
-        this.teamId = teamId;
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
+
+    public String getEvent() {
+        return event;
+    }
+
+    public void setEvent(String event) {
+        this.event = event;
     }
 
     public Data getData() {
@@ -38,20 +47,12 @@ public class SocketTeamDeletedEvent extends EventHistoryInfo {
         this.data = data;
     }
 
-    public long getTs() {
-        return ts;
+    public int getTeamId() {
+        return teamId;
     }
 
-    public void setTs(long ts) {
-        this.ts = ts;
-    }
-
-    public String getEvent() {
-        return event;
-    }
-
-    public void setEvent(String event) {
-        this.event = event;
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
     }
 
     public int getVersion() {
@@ -65,15 +66,14 @@ public class SocketTeamDeletedEvent extends EventHistoryInfo {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
-        private long teamId;
+        private Topic topic;
 
-        public long getTeamId() {
-            return teamId;
+        public Topic getTopic() {
+            return topic;
         }
 
-        public void setTeamId(long id) {
-            this.teamId = id;
+        public void setTopic(Topic topic) {
+            this.topic = topic;
         }
-
     }
 }

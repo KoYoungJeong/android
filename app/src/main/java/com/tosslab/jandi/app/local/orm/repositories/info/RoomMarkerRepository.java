@@ -25,7 +25,7 @@ public class RoomMarkerRepository extends LockExecutorTemplate {
             try {
                 Dao<Marker, Long> dao = getHelper().getDao(Marker.class);
                 UpdateBuilder<Marker, Long> markerUpdateBuilder = dao.updateBuilder();
-                markerUpdateBuilder.updateColumnValue("lastLinkId", lastLinkId);
+                markerUpdateBuilder.updateColumnValue("readLinkId", lastLinkId);
                 Where<Marker, Long> whereQuery = markerUpdateBuilder.where();
                 whereQuery.or(whereQuery.eq("chat_id", roomId), whereQuery.eq("topic_id", roomId))
                         .and()

@@ -35,11 +35,15 @@ public class ChatRepository extends LockExecutorTemplate {
         });
     }
 
-    public void deleteChat(long roomId) {
-        execute(() -> {
+    public boolean updateChatStatusToArchived(long roomId) {
+        return execute(() -> {
             try {
                 Dao<Chat, Long> dao = getHelper().getDao(Chat.class);
-                return dao.deleteById(roomId) > 0;
+                UpdateBuilder<Chat, Long> chatUpdateBuilder = dao.updateBuilder();
+                chatUpdateBuilder.updateColumnValue("status", "archived")
+                        .where()
+                        .eq("id", roomId);
+                return chatUpdateBuilder.update() > 0;
             } catch (SQLException e) {
                 e.printStackTrace();
             }

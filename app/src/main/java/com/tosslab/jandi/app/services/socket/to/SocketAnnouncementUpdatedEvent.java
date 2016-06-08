@@ -8,35 +8,18 @@ import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
 /**
- * Created by tonyjs on 16. 4. 4..
+ * Created by tonyjs on 15. 6. 24..
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(2)
-public class SocketTeamDeletedEvent extends EventHistoryInfo {
-
+public class SocketAnnouncementUpdatedEvent extends EventHistoryInfo {
     private String event;
     private int version;
+    private Data data;
     private long ts;
     private long teamId;
-    private Data data;
-
-    public long getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(long teamId) {
-        this.teamId = teamId;
-    }
-
-    public Data getData() {
-        return data;
-    }
-
-    public void setData(Data data) {
-        this.data = data;
-    }
 
     public long getTs() {
         return ts;
@@ -62,18 +45,51 @@ public class SocketTeamDeletedEvent extends EventHistoryInfo {
         this.version = version;
     }
 
+    public Data getData() {
+        return data;
+    }
+
+    public void setData(Data data) {
+        this.data = data;
+    }
+
+    public long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
+        private boolean isOpened;
         private long teamId;
+        private long topicId;
+
+        public boolean isOpened() {
+            return isOpened;
+        }
+
+        public void setOpened(boolean opened) {
+            isOpened = opened;
+        }
 
         public long getTeamId() {
             return teamId;
         }
 
-        public void setTeamId(long id) {
-            this.teamId = id;
+        public void setTeamId(long teamId) {
+            this.teamId = teamId;
         }
 
+        public long getTopicId() {
+            return topicId;
+        }
+
+        public void setTopicId(long topicId) {
+            this.topicId = topicId;
+        }
     }
 }

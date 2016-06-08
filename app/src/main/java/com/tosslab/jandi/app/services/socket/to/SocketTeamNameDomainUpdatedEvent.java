@@ -5,31 +5,26 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
-import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
-/**
- * Created by Steve SeongUg Jung on 15. 4. 14..
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
-@Version(2)
-public class SocketRoomMarkerEvent extends EventHistoryInfo {
-    private int version;
+@Version(1)
+public class SocketTeamNameDomainUpdatedEvent extends EventHistoryInfo {
     private String event;
-    private long teamId;
-    private Data data;
+    private int version;
     private long ts;
+    private long teamId;
+    private Team team;
 
-    public long getTs() {
-        return ts;
+    public String getEvent() {
+        return event;
     }
 
-    public void setTs(long ts) {
-        this.ts = ts;
+    public void setEvent(String event) {
+        this.event = event;
     }
-
 
     public int getVersion() {
         return version;
@@ -39,12 +34,12 @@ public class SocketRoomMarkerEvent extends EventHistoryInfo {
         this.version = version;
     }
 
-    public String getEvent() {
-        return event;
+    public long getTs() {
+        return ts;
     }
 
-    public void setEvent(String event) {
-        this.event = event;
+    public void setTs(long ts) {
+        this.ts = ts;
     }
 
     public long getTeamId() {
@@ -55,34 +50,45 @@ public class SocketRoomMarkerEvent extends EventHistoryInfo {
         this.teamId = teamId;
     }
 
-    public Data getData() {
-        return data;
+    public Team getTeam() {
+        return team;
     }
 
-    public void setData(Data data) {
-        this.data = data;
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    public static class Data {
-        private long roomId;
-        private Marker marker;
+    public static class Team {
+        private long id;
+        private String domain;
+        private String name;
 
-        public long getRoomId() {
-            return roomId;
+
+        public String getDomain() {
+            return domain;
         }
 
-        public void setRoomId(long roomId) {
-            this.roomId = roomId;
+        public void setDomain(String domain) {
+            this.domain = domain;
         }
 
-        public Marker getMarker() {
-            return marker;
+        public String getName() {
+            return name;
         }
 
-        public void setMarker(Marker marker) {
-            this.marker = marker;
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
         }
     }
+
 }

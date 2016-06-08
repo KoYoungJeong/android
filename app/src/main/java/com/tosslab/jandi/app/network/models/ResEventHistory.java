@@ -1,9 +1,7 @@
 package com.tosslab.jandi.app.network.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.tosslab.jandi.app.network.jackson.deserialize.message.SocketHistoryDeserializer;
 
 import java.util.List;
 
@@ -11,16 +9,40 @@ import java.util.List;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResEventHistory {
 
-    public int size;
-    public boolean hasMore;
-    public long lastTs;
-    public List<EventHistoryInfo> records;
+    private int size;
+    private boolean hasMore;
+    private long lastTs;
+    private List<EventHistoryInfo> records;
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    @JsonDeserialize(using = SocketHistoryDeserializer.class)
-    public static class EventHistoryInfo {
-        public long _id;
+    public int getSize() {
+        return size;
     }
 
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public boolean isHasMore() {
+        return hasMore;
+    }
+
+    public void setHasMore(boolean hasMore) {
+        this.hasMore = hasMore;
+    }
+
+    public long getLastTs() {
+        return lastTs;
+    }
+
+    public void setLastTs(long lastTs) {
+        this.lastTs = lastTs;
+    }
+
+    public List<EventHistoryInfo> getRecords() {
+        return records;
+    }
+
+    public void setRecords(List<EventHistoryInfo> records) {
+        this.records = records;
+    }
 }

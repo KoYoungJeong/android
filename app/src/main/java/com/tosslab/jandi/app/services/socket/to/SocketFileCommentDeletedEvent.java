@@ -15,7 +15,7 @@ import java.util.List;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(1)
-public class SocketFileCommentDeleteEvent extends SocketFileEvent {
+public class SocketFileCommentDeletedEvent extends SocketFileEvent {
     private EventCommentInfo comment;
     private List<Room> rooms;
 

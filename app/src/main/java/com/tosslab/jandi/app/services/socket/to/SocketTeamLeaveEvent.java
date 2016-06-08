@@ -1,32 +1,37 @@
 package com.tosslab.jandi.app.services.socket.to;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
-
-import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@Version(1)
-public class SocketTeamLeaveEvent {
+@JsonDeserialize(using = JsonDeserializer.None.class)
+@Version(2)
+public class SocketTeamLeaveEvent extends EventHistoryInfo {
     private String event;
     private int version;
-    @JsonProperty("ts")
-    private Date time;
-    private Team team;
-    private Member member;
+    private long ts;
+    private long teamId;
+    private Data data;
 
-    @Override
-    public String toString() {
-        return "SocketTeamLeaveEvent{" +
-                "event='" + event + '\'' +
-                ", version=" + version +
-                ", time=" + time +
-                ", team=" + team +
-                ", member=" + member +
-                '}';
+    public long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
+    }
+
+    public Data getData() {
+        return data;
+    }
+
+    public void setData(Data data) {
+        this.data = data;
     }
 
     public String getEvent() {
@@ -45,82 +50,35 @@ public class SocketTeamLeaveEvent {
         this.version = version;
     }
 
-    public Date getTime() {
-        return time;
+    public long getTs() {
+        return ts;
     }
 
-    public void setTime(Date time) {
-        this.time = time;
-    }
-
-    public Team getTeam() {
-        return team;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
-    }
-
-    public Member getMember() {
-        return member;
-    }
-
-    public void setMember(Member member) {
-        this.member = member;
+    public void setTs(long ts) {
+        this.ts = ts;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    public static class Team {
-        private int id;
-        private String name;
-        private String domain;
+    public static class Data {
+        private long memberId;
+        private long teamId;
 
-        public int getId() {
-            return id;
+        public long getMemberId() {
+            return memberId;
         }
 
-        public void setId(int id) {
-            this.id = id;
+        public void setMemberId(long memberId) {
+            this.memberId = memberId;
         }
 
-        public String getName() {
-            return name;
+        public long getTeamId() {
+            return teamId;
         }
 
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getDomain() {
-            return domain;
-        }
-
-        public void setDomain(String domain) {
-            this.domain = domain;
+        public void setTeamId(long teamId) {
+            this.teamId = teamId;
         }
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    public static class Member {
-        private int id;
-        private String name;
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
 }

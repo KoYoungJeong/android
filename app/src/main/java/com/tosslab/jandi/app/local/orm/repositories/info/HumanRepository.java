@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
 import com.tosslab.jandi.app.network.models.start.Human;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 
 import java.sql.SQLException;
 
@@ -172,6 +173,35 @@ public class HumanRepository extends LockExecutorTemplate {
                 e.printStackTrace();
             }
 
+
+            return false;
+        });
+    }
+
+    public boolean addHuman(long teamId, Human member) {
+        return execute(() -> {
+            try {
+                Dao<Human, ?> dao = getHelper().getDao(Human.class);
+                InitialInfo initialInfo = new InitialInfo();
+                initialInfo.setTeamId(teamId);
+                member.setInitialInfo(initialInfo);
+                return dao.create(member) > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+    }
+
+    public boolean removeHuman(long memberId) {
+        return execute(() -> {
+
+            try {
+                Dao<Human, Long> dao = getDao(Human.class);
+                return dao.deleteById(memberId) > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
             return false;
         });

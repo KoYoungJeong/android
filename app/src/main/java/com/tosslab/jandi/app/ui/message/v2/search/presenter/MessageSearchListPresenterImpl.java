@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
-import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -251,15 +250,13 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
     @Background
     @Override
-    public void onUpdateAnnouncement(boolean isForeground, boolean isRoomInit, SocketAnnouncementEvent.Data data) {
+    public void onUpdateAnnouncement(boolean isForeground, boolean isRoomInit, boolean opened) {
         if (!isForeground) {
             announcementModel.setActionFromUser(false);
             return;
         }
-        if (data != null) {
-            if (!announcementModel.isActionFromUser()) {
-                view.openAnnouncement(data.isOpened());
-            }
+        if (!announcementModel.isActionFromUser()) {
+            view.openAnnouncement(opened);
         }
         announcementModel.setActionFromUser(false);
     }

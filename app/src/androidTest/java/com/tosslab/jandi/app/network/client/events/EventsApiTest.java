@@ -42,11 +42,11 @@ public class EventsApiTest {
         int size = 10;
         ResEventHistory message = eventsApi.getEventHistory(calendar.getTimeInMillis(), myId, "message", size);
         assertThat(message).isNotNull();
-        assertThat(message.size).isGreaterThanOrEqualTo(0);
-        assertThat(message.records.size()).isGreaterThanOrEqualTo(0);
+        assertThat(message.getSize()).isGreaterThanOrEqualTo(0);
+        assertThat(message.getRecords().size()).isGreaterThanOrEqualTo(0);
 
-        assertThat(message.size).isLessThanOrEqualTo(size);
-        assertThat(message.records.size()).isLessThanOrEqualTo(size);
+        assertThat(message.getSize()).isLessThanOrEqualTo(size);
+        assertThat(message.getRecords().size()).isLessThanOrEqualTo(size);
     }
 
     @Test
@@ -56,8 +56,8 @@ public class EventsApiTest {
         calendar.add(Calendar.DAY_OF_YEAR, -3);
         ResEventHistory message = eventsApi.getEventHistory(calendar.getTimeInMillis(), myId, "message");
         assertThat(message).isNotNull();
-        assertThat(message.size).isGreaterThanOrEqualTo(0);
-        assertThat(message.records.size()).isGreaterThanOrEqualTo(0);
+        assertThat(message.getSize()).isGreaterThanOrEqualTo(0);
+        assertThat(message.getRecords().size()).isGreaterThanOrEqualTo(0);
 
     }
 }

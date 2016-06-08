@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tosslab.jandi.app.network.models.ResEventHistory;
-import com.tosslab.jandi.app.services.socket.to.SocketFileCommentDeleteEvent;
+import com.tosslab.jandi.app.network.models.EventHistoryInfo;
+import com.tosslab.jandi.app.services.socket.to.SocketFileCommentDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
@@ -21,10 +21,10 @@ import java.util.Map;
 
 import rx.Observable;
 
-public class SocketHistoryDeserializer extends JsonDeserializer<ResEventHistory.EventHistoryInfo> {
+public class SocketHistoryDeserializer extends JsonDeserializer<EventHistoryInfo> {
 
     @Override
-    public ResEventHistory.EventHistoryInfo deserialize(JsonParser jp, DeserializationContext ctxt)
+    public EventHistoryInfo deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException {
 
         ObjectMapper mapper = (ObjectMapper) jp.getCodec();
@@ -63,7 +63,7 @@ public class SocketHistoryDeserializer extends JsonDeserializer<ResEventHistory.
     }
 
 
-    public ResEventHistory.EventHistoryInfo createEventInfo(ObjectMapper mapper, JsonNode root, EventType eventType) throws IOException {
+    public EventHistoryInfo createEventInfo(ObjectMapper mapper, JsonNode root, EventType eventType) throws IOException {
         LogUtil.e("eventType", eventType.getRawType());
         switch (eventType) {
             case FileUnshared:
@@ -71,14 +71,14 @@ public class SocketHistoryDeserializer extends JsonDeserializer<ResEventHistory.
             case MessageCreated:
                 return mapper.treeToValue(root, SocketMessageCreatedEvent.class);
             case CommentDeleted:
-                return mapper.treeToValue(root, SocketFileCommentDeleteEvent.class);
+                return mapper.treeToValue(root, SocketFileCommentDeletedEvent.class);
             case FileDeleted:
                 return mapper.treeToValue(root, SocketFileEvent.class);
             case MessageDeleted:
                 return mapper.treeToValue(root, SocketMessageEvent.class);
             case Unknown:
             default:
-                return new ResEventHistory.EventHistoryInfo();
+                return new EventHistoryInfo();
         }
     }
 

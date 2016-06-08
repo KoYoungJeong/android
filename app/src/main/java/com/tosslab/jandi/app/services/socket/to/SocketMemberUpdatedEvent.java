@@ -5,28 +5,41 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
+import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
-/**
- * Created by tonyjs on 16. 4. 4..
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(2)
-public class SocketTeamDeletedEvent extends EventHistoryInfo {
-
-    private String event;
+public class SocketMemberUpdatedEvent extends EventHistoryInfo {
     private int version;
-    private long ts;
-    private long teamId;
+    private String event;
+    private int teamId;
     private Data data;
+    private long ts;
 
-    public long getTeamId() {
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public String getEvent() {
+        return event;
+    }
+
+    public void setEvent(String event) {
+        this.event = event;
+    }
+
+    public int getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(long teamId) {
+    public void setTeamId(int teamId) {
         this.teamId = teamId;
     }
 
@@ -46,34 +59,17 @@ public class SocketTeamDeletedEvent extends EventHistoryInfo {
         this.ts = ts;
     }
 
-    public String getEvent() {
-        return event;
-    }
-
-    public void setEvent(String event) {
-        this.event = event;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
-        private long teamId;
+        private Human member;
 
-        public long getTeamId() {
-            return teamId;
+        public Human getMember() {
+            return member;
         }
 
-        public void setTeamId(long id) {
-            this.teamId = id;
+        public void setMember(Human member) {
+            this.member = member;
         }
-
     }
 }

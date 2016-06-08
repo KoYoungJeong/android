@@ -254,4 +254,53 @@ public class AccountRepository extends LockExecutorTemplate {
             return 0;
         });
     }
+
+    public boolean removeTeamInfo(long teamId) {
+        return execute(() -> {
+            try {
+                Dao<ResAccountInfo.UserTeam, Long> dao = getDao(ResAccountInfo.UserTeam.class);
+                return dao.deleteById(teamId) > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+    }
+
+    public boolean updateTeamName(long teamId, String name) {
+        return execute(() -> {
+
+            try {
+                Dao<ResAccountInfo.UserTeam, Long> dao = getDao(ResAccountInfo.UserTeam.class);
+                UpdateBuilder<ResAccountInfo.UserTeam, Long> updateBuilder = dao.updateBuilder();
+                updateBuilder.updateColumnValue("name", name)
+                        .where()
+                        .eq("teamId", teamId);
+                return updateBuilder.update() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        });
+    }
+
+    public boolean updateTeamDomain(long teamId, String domain) {
+        return execute(() -> {
+
+            try {
+                Dao<ResAccountInfo.UserTeam, Long> dao = getDao(ResAccountInfo.UserTeam.class);
+                UpdateBuilder<ResAccountInfo.UserTeam, Long> updateBuilder = dao.updateBuilder();
+                updateBuilder.updateColumnValue("teamDomain", domain)
+                        .where()
+                        .eq("teamId", teamId);
+                return updateBuilder.update() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        });
+
+    }
 }

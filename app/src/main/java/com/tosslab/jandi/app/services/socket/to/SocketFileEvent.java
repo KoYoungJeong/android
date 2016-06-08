@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.tosslab.jandi.app.network.models.ResEventHistory;
+import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
 /**
@@ -14,7 +14,7 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(1)
-public class SocketFileEvent extends ResEventHistory.EventHistoryInfo {
+public class SocketFileEvent extends EventHistoryInfo {
     private int teamId;
     private long ts;
     private int version;
@@ -59,17 +59,6 @@ public class SocketFileEvent extends ResEventHistory.EventHistoryInfo {
 
     public void setVersion(int version) {
         this.version = version;
-    }
-
-    @Override
-    public String toString() {
-        return "SocketFileEvent{" +
-                "teamId=" + teamId +
-                ", ts=" + ts +
-                ", version=" + version +
-                ", file=" + file +
-                ", event='" + event + '\'' +
-                '}';
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

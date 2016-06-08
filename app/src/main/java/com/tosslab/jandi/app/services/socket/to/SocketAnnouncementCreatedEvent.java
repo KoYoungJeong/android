@@ -1,8 +1,10 @@
 package com.tosslab.jandi.app.services.socket.to;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
@@ -11,8 +13,9 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(2)
-public class SocketAnnouncementCreatedEvent {
+public class SocketAnnouncementCreatedEvent extends EventHistoryInfo {
     private String event;
     private int version;
     private Data data;
@@ -65,7 +68,7 @@ public class SocketAnnouncementCreatedEvent {
 
     @Override
     public String toString() {
-        return "SocketAnnouncementEvent{" +
+        return "SocketAnnouncementDeletedEvent{" +
                 "event='" + event + '\'' +
                 ", version=" + version +
                 ", data=" + data +
@@ -100,8 +103,6 @@ public class SocketAnnouncementCreatedEvent {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
         private int topicId;
-        @JsonProperty("status")
-        private boolean opened = false;
         private Topic.Announcement announcement;
 
         public int getTopicId() {
@@ -110,22 +111,6 @@ public class SocketAnnouncementCreatedEvent {
 
         public void setTopicId(int topicId) {
             this.topicId = topicId;
-        }
-
-        public boolean isOpened() {
-            return opened;
-        }
-
-        public void setOpened(boolean status) {
-            this.opened = status;
-        }
-
-        @Override
-        public String toString() {
-            return "Data{" +
-                    "opened=" + opened +
-                    ", topicId=" + topicId +
-                    '}';
         }
 
         public Topic.Announcement getAnnouncement() {

@@ -7,43 +7,22 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
-/**
- * Created by tonyjs on 16. 4. 4..
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
-@Version(2)
-public class SocketTeamDeletedEvent extends EventHistoryInfo {
-
-    private String event;
+@Version(1)
+public class SocketChatCloseEvent extends EventHistoryInfo {
     private int version;
+    private String event;
+    private Data chat;
     private long ts;
-    private long teamId;
-    private Data data;
 
-    public long getTeamId() {
-        return teamId;
+    public int getVersion() {
+        return version;
     }
 
-    public void setTeamId(long teamId) {
-        this.teamId = teamId;
-    }
-
-    public Data getData() {
-        return data;
-    }
-
-    public void setData(Data data) {
-        this.data = data;
-    }
-
-    public long getTs() {
-        return ts;
-    }
-
-    public void setTs(long ts) {
-        this.ts = ts;
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     public String getEvent() {
@@ -54,26 +33,42 @@ public class SocketTeamDeletedEvent extends EventHistoryInfo {
         this.event = event;
     }
 
-    public int getVersion() {
-        return version;
+    public Data getChat() {
+        return chat;
     }
 
-    public void setVersion(int version) {
-        this.version = version;
+    public void setChat(Data chat) {
+        this.chat = chat;
+    }
+
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
-        private long teamId;
+        private long id;
+        private long companionId;
 
-        public long getTeamId() {
-            return teamId;
+        public long getId() {
+            return id;
         }
 
-        public void setTeamId(long id) {
-            this.teamId = id;
+        public void setId(long id) {
+            this.id = id;
         }
 
+        public long getCompanionId() {
+            return companionId;
+        }
+
+        public void setCompanionId(long companionId) {
+            this.companionId = companionId;
+        }
     }
 }

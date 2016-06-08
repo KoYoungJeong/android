@@ -1,8 +1,10 @@
 package com.tosslab.jandi.app.services.socket.to;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
 /**
@@ -10,8 +12,9 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(1)
-public class SocketAnnouncementEvent {
+public class SocketAnnouncementDeletedEvent extends EventHistoryInfo {
     private String event;
     private int version;
     private Data data;
@@ -33,18 +36,6 @@ public class SocketAnnouncementEvent {
         this.event = event;
     }
 
-    public Type getEventType() {
-        Type temp = Type.STATUS_UPDATED;
-        Type[] types = Type.values();
-        for (Type type : types) {
-            if (type.getName().equals(event)) {
-                temp = type;
-                break;
-            }
-        }
-        return temp;
-    }
-
     public int getVersion() {
         return version;
     }
@@ -63,58 +54,33 @@ public class SocketAnnouncementEvent {
 
     @Override
     public String toString() {
-        return "SocketAnnouncementEvent{" +
+        return "SocketAnnouncementDeletedEvent{" +
                 "event='" + event + '\'' +
                 ", version=" + version +
                 ", data=" + data +
                 '}';
     }
 
-    public enum Type {
-        CREATED("announcement_created"),
-        STATUS_UPDATED("announcement_status_updated"),
-        DELETED("announcement_deleted");
-
-        String name;
-
-        Type(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
-
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
-        private int topicId;
-        @JsonProperty("status")
-        private boolean opened = false;
+        private long topicId;
+        private long teamId;
 
-        public int getTopicId() {
+        public long getTopicId() {
             return topicId;
         }
 
-        public void setTopicId(int topicId) {
+        public void setTopicId(long topicId) {
             this.topicId = topicId;
         }
 
-        public boolean isOpened() {
-            return opened;
+        public long getTeamId() {
+            return teamId;
         }
 
-        public void setOpened(boolean status) {
-            this.opened = status;
-        }
-
-        @Override
-        public String toString() {
-            return "Data{" +
-                    "opened=" + opened +
-                    ", topicId=" + topicId +
-                    '}';
+        public void setTeamId(long teamId) {
+            this.teamId = teamId;
         }
     }
 }

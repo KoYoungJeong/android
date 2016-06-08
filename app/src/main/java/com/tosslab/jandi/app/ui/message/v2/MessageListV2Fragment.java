@@ -63,6 +63,7 @@ import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
+import com.tosslab.jandi.app.events.messages.AnnouncementUpdatedEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.DummyDeleteEvent;
 import com.tosslab.jandi.app.events.messages.DummyRetryEvent;
@@ -87,6 +88,7 @@ import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
@@ -94,7 +96,7 @@ import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketServiceStopEvent;
@@ -1414,10 +1416,11 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             return;
         }
 
-        if (event.getRoom().getId() == room.getRoomId()) {
-            SocketRoomMarkerEvent.Marker marker = event.getMarker();
+        SocketRoomMarkerEvent.Data data = event.getData();
+        if (data.getRoomId() == room.getRoomId()) {
+            Marker marker = data.getMarker();
             messageListPresenter.onRoomMarkerChange(
-                    room.getTeamId(), room.getRoomId(), marker.getMemberId(), marker.getLastLinkId());
+                    room.getTeamId(), room.getRoomId(), marker.getMemberId(), marker.getReadLinkId());
         }
     }
 
@@ -1446,7 +1449,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     }
 
     public void onEventMainThread(TopicDeleteEvent event) {
-        if (entityId == event.getId()) {
+        if (room.getRoomId() == event.getId()) {
             finish();
         }
     }
@@ -1477,26 +1480,15 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         refreshMessages();
     }
 
-    public void onEvent(SocketAnnouncementEvent event) {
-        SocketAnnouncementEvent.Type eventType = event.getEventType();
-        switch (eventType) {
-            case DELETED:
-                AnalyticsUtil.sendEvent(
-                        AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Accouncement_Delete);
-                announcementViewModel.setAnnouncement(null);
-                break;
-            case STATUS_UPDATED:
-                if (!isForeground) {
-                    messageListPresenter.setAnnouncementActionFrom(false);
-                    return;
-                }
-                SocketAnnouncementEvent.Data data = event.getData();
-                if (data != null) {
-                    messageListPresenter.onChangeAnnouncementOpenStatusAction(data.isOpened());
-                }
-                messageListPresenter.setAnnouncementActionFrom(false);
-                break;
-        }
+    public void onEvent(SocketAnnouncementDeletedEvent event) {
+        AnalyticsUtil.sendEvent(
+                AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Accouncement_Delete);
+        announcementViewModel.setAnnouncement(null);
+    }
+
+    public void onEvent(AnnouncementUpdatedEvent event) {
+        messageListPresenter.onChangeAnnouncementOpenStatusAction(event.isOpened());
+        messageListPresenter.setAnnouncementActionFrom(false);
     }
 
     public void onEvent(SocketAnnouncementCreatedEvent event) {

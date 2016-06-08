@@ -1,19 +1,24 @@
 package com.tosslab.jandi.app.services.socket.to;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
+
 /**
  * Created by Steve SeongUg Jung on 15. 4. 9..
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(1)
-public class SocketMemberEvent {
+public class SocketMemberStarredEvent extends EventHistoryInfo {
     private int version;
     private String type;
     private int memberId;
-    private MemberInfo member;
+    private Member member;
 
     private long ts;
 
@@ -28,7 +33,7 @@ public class SocketMemberEvent {
 
     @Override
     public String toString() {
-        return "SocketMemberEvent{" +
+        return "SocketMemberStarredEvent{" +
                 "version=" + version +
                 ", type='" + type + '\'' +
                 ", memberId=" + memberId +
@@ -52,11 +57,11 @@ public class SocketMemberEvent {
         this.memberId = memberId;
     }
 
-    public MemberInfo getMember() {
+    public Member getMember() {
         return member;
     }
 
-    public void setMember(MemberInfo member) {
+    public void setMember(Member member) {
         this.member = member;
     }
 
@@ -70,7 +75,7 @@ public class SocketMemberEvent {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    public static class MemberInfo {
+    public static class Member {
         private int id;
         private String type;
 

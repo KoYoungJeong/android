@@ -313,7 +313,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
             if (!isUser) {
                 TopicRepository.getInstance().deleteTopic(entityId);
             } else {
-                ChatRepository.getInstance().deleteChat(roomId);
+                ChatRepository.getInstance().updateChatStatusToArchived(roomId);
             }
             TeamInfoLoader.getInstance().refresh();
 

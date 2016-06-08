@@ -2,19 +2,17 @@ package com.tosslab.jandi.app.services.socket.to;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
-/**
- * Created by Steve SeongUg Jung on 15. 4. 9..
- */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@Version(1)
-public class SocketTopicEvent {
+@Version(2)
+public class SocketTopicLeftEvent extends EventHistoryInfo {
     private int version;
     private String event;
     private int teamId;
-    private TopicInfo topic;
-
+    private Data data;
     private long ts;
 
     public long getTs() {
@@ -26,30 +24,12 @@ public class SocketTopicEvent {
     }
 
 
-    @Override
-    public String toString() {
-        return "SocketTopicEvent{" +
-                "version=" + version +
-                ", event='" + event + '\'' +
-                ", teamId=" + teamId +
-                ", topic=" + topic +
-                '}';
-    }
-
     public String getEvent() {
         return event;
     }
 
     public void setEvent(String event) {
         this.event = event;
-    }
-
-    public TopicInfo getTopic() {
-        return topic;
-    }
-
-    public void setTopic(TopicInfo topic) {
-        this.topic = topic;
     }
 
     public int getTeamId() {
@@ -68,27 +48,34 @@ public class SocketTopicEvent {
         this.version = version;
     }
 
+    public Data getData() {
+        return data;
+    }
+
+    public void setData(Data data) {
+        this.data = data;
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    public static class TopicInfo {
-        private int id;
-        private String type;
+    public static class Data {
+        private long memberId;
+        private long topicId;
 
-        public int getId() {
-            return id;
+        public long getMemberId() {
+            return memberId;
         }
 
-        public void setId(int id) {
-            this.id = id;
+        public void setMemberId(long memberId) {
+            this.memberId = memberId;
         }
 
-        public String getType() {
-            return type;
+        public long getTopicId() {
+            return topicId;
         }
 
-        public void setType(String type) {
-            this.type = type;
+        public void setTopicId(long topicId) {
+            this.topicId = topicId;
         }
-
     }
 }

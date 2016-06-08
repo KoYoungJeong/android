@@ -41,6 +41,7 @@ import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
+import com.tosslab.jandi.app.events.messages.AnnouncementUpdatedEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
@@ -55,7 +56,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
@@ -663,7 +664,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
             return;
         }
 
-        if (event.getRoom().getId() == roomId) {
+        if (event.getData().getRoomId() == roomId) {
             justRefresh();
         }
     }
@@ -997,17 +998,14 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     }
 
 
-    public void onEvent(SocketAnnouncementEvent event) {
-        SocketAnnouncementEvent.Type eventType = event.getEventType();
-        switch (eventType) {
-            case DELETED:
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Accouncement_Delete);
-                announcementViewModel.setAnnouncement(null);
-                break;
-            case STATUS_UPDATED:
-                messageSearchListPresenter.onUpdateAnnouncement(isForeground, isRoomInit, event.getData());
-                break;
-        }
+    public void onEvent(SocketAnnouncementDeletedEvent event) {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.Accouncement_Delete);
+        announcementViewModel.setAnnouncement(null);
+    }
+
+
+    public void onEvent(AnnouncementUpdatedEvent event) {
+        messageSearchListPresenter.onUpdateAnnouncement(isFavorite, isRoomInit, event.isOpened());
     }
 
     public void onEvent(SocketAnnouncementCreatedEvent event) {

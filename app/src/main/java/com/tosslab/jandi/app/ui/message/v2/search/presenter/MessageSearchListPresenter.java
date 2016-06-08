@@ -6,7 +6,6 @@ import android.view.MenuItem;
 
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.start.Topic;
-import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 public interface MessageSearchListPresenter {
@@ -31,7 +30,7 @@ public interface MessageSearchListPresenter {
 
     void onCreatedAnnouncement(boolean isRoomInit);
 
-    void onUpdateAnnouncement(boolean isForeground, boolean isRoomInit, SocketAnnouncementEvent.Data data);
+    void onUpdateAnnouncement(boolean isForeground, boolean isRoomInit, boolean opened);
 
     void checkAnnouncementExistsAndCreate(long messageId);
 
