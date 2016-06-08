@@ -60,6 +60,7 @@ import com.tosslab.jandi.app.ui.maintab.teams.presenter.TeamsPresenter;
 import com.tosslab.jandi.app.ui.maintab.teams.view.TeamsView;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.profile.insert.SetProfileActivity_;
+import com.tosslab.jandi.app.ui.sign.SignHomeActivity;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;

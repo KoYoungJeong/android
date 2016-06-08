@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemLongClickListener;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
@@ -146,13 +147,13 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (!item.isInactive()) {
                 ImageUtil.loadProfileImage(ivIcon, Uri.parse(item.getPhoto()), R.drawable.profile_img);
             } else {
-                ivIcon.setImageResource(R.drawable.profile_img_dummyaccount_43);
+                ivIcon.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_43);
             }
-            ivIcon.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
         } else {
-            ivIcon.setImageResource(R.drawable.bot_80x100);
             ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            ImageLoader.loadFromResources(ivIcon, R.drawable.bot_80x100);
         }
 
         if (onRecyclerItemClickListener != null) {

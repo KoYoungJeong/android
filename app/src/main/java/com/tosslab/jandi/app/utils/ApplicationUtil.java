@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.util.DisplayMetrics;
 
 import com.tosslab.jandi.app.BuildConfig;
@@ -68,7 +69,13 @@ public class ApplicationUtil {
     public static String getAppVersionName() {
         return BuildConfig.VERSION_NAME;
     }
+
     public static int getAppVersionCode() {
         return BuildConfig.VERSION_CODE;
+    }
+
+    public static boolean isActivityDestroyed(Activity activity) {
+        return activity.isFinishing()
+                || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && activity.isDestroyed());
     }
 }

@@ -119,7 +119,7 @@ public class LinkPreviewViewModel {
         int color = resources.getColor(R.color.jandi_messages_big_size_image_view_bg);
         ivThumb.setBackgroundColor(color);
         ivThumb.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        ivThumb.setImageResource(R.drawable.preview_no_img);
+        ImageLoader.loadFromResources(ivThumb, R.drawable.preview_no_img);
     }
 
     private void initInnerView(ViewGroup vgLinkPreview) {

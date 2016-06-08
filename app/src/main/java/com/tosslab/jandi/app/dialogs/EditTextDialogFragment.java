@@ -324,10 +324,10 @@ public class EditTextDialogFragment extends DialogFragment {
 
         if (confirm.isEnabled()) {
             confirm.setTextColor(JandiApplication.getContext()
-                    .getResources().getColor(R.color.dialog_button_text_color));
+                    .getResources().getColor(R.color.button_text_color));
         } else {
             confirm.setTextColor(JandiApplication.getContext()
-                    .getResources().getColor(R.color.dialog_button_text_color_dim));
+                    .getResources().getColor(R.color.button_text_color_dim));
         }
 
     }

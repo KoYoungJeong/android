@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.intro.presenter;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -48,7 +49,9 @@ public class IntroActivityPresenter {
                 }
 
             } else {
-                view.moveToIntroTutorialActivity();
+                // 디자인 요청사항 처음에 딜레이가 있어달라는..
+                model.sleep(initTime, MAX_DELAY_MS);
+                view.moveToSignHomeActivity();
             }
 
             return;
@@ -99,11 +102,12 @@ public class IntroActivityPresenter {
                     }
                 } else {
                     model.sleep(initTime, MAX_DELAY_MS);
-                    view.moveToIntroTutorialActivity();
+                    view.moveToSignHomeActivity();
                 }
             }
 
         } catch (RetrofitException e) {
+            LogUtil.e(Log.getStackTraceString(e));
             model.sleep(initTime, MAX_DELAY_MS);
 
             int errorCode = e.getStatusCode();
@@ -116,6 +120,7 @@ public class IntroActivityPresenter {
                 view.showCheckNetworkDialog();
             }
         } catch (Exception e) {
+            LogUtil.e(Log.getStackTraceString(e));
             model.trackSignInFailAndFlush(-1);
             view.showCheckNetworkDialog();
         }
@@ -183,7 +188,7 @@ public class IntroActivityPresenter {
     }
 
     public interface View {
-        void moveToIntroTutorialActivity();
+        void moveToSignHomeActivity();
 
         void moveToMainActivity();
 

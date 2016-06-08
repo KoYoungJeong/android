@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -56,8 +57,7 @@ public class MemberViewHolder extends BaseViewHolder<User> {
         if (user.isBot()) {
             ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(54f);
             ivProfile.setLayoutParams(ivProfileLayoutParams);
-
-            ivProfile.setImageResource(R.drawable.bot_43x54);
+            ImageLoader.loadFromResources(ivProfile, R.drawable.bot_43x54);
         } else {
             ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(43f);
             ivProfile.setLayoutParams(ivProfileLayoutParams);
@@ -65,7 +65,7 @@ public class MemberViewHolder extends BaseViewHolder<User> {
                 ImageUtil.loadProfileImage(
                         ivProfile, user.getPhotoUrl(), R.drawable.profile_img);
             } else {
-                ivProfile.setImageResource(R.drawable.profile_img_dummyaccount_43);
+                ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_43);
             }
         }
     }

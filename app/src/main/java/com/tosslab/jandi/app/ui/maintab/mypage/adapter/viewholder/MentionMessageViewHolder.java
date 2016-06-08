@@ -142,7 +142,7 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
         if (isJandiBot) {
 
             ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            ivProfile.setImageResource(R.drawable.bot_80x100);
+            ImageLoader.loadFromResources(ivProfile, R.drawable.bot_80x100);
 
         } else {
             ImageLoader.newInstance()

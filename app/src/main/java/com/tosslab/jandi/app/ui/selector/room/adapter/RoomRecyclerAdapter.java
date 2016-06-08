@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
 import java.util.ArrayList;
@@ -110,12 +111,11 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
             if (from == FROM_ROOM_SELECTOR) {
                 ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                ivIcon.setImageResource(R.drawable.icon_search_all_rooms);
-
+                ImageLoader.loadFromResources(ivIcon, R.drawable.icon_search_all_rooms);
                 roomholder.tvName.setText(R.string.jandi_file_category_everywhere);
             } else {
                 ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                ivIcon.setImageResource(R.drawable.icon_search_all_members);
+                ImageLoader.loadFromResources(ivIcon, R.drawable.icon_search_all_members);
 
                 roomholder.tvName.setText(R.string.jandi_file_category_everyone);
             }
@@ -135,7 +135,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             SpannableStringBuilder name = new SpannableStringBuilder();
             if (jandiBot) {
                 ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                ivIcon.setImageResource(R.drawable.bot_32x40);
+                ImageLoader.loadFromResources(ivIcon, R.drawable.bot_32x40);
                 name.append(item.getName());
             } else {
 
@@ -143,7 +143,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     ImageUtil.loadProfileImage(ivIcon, fileUrl, R.drawable.profile_img_comment);
                     name.append(item.getName());
                 } else {
-                    ivIcon.setImageResource(R.drawable.profile_img_dummyaccount_32);
+                    ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_32);
                     name.append(item.getEmail());
                 }
 
@@ -160,7 +160,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
 
             ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            ivIcon.setImageResource(resId);
+            ImageLoader.loadFromResources(ivIcon, resId);
 
             roomholder.tvName.setText(item.getName());
         } else {
@@ -170,7 +170,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
 
             ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            ivIcon.setImageResource(resId);
+            ImageLoader.loadFromResources(ivIcon, resId);
 
             roomholder.tvName.setText(item.getName());
         }

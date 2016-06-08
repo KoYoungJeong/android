@@ -12,7 +12,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.share.views.domain.ExpandRoomData;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,8 +73,6 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         ExpandRoomData item = getItem(position);
 
-        LogUtil.e("item", item.toString());
-
         if (getItemViewType(position) == TYPE_FOLDER) {
             hasFolder = true;
             FolderViewHolder folderViewHolder = (FolderViewHolder) holder;
@@ -108,8 +106,8 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 resId = R.drawable.topiclist_icon_topic;
             }
 
-            roomholder.ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            roomholder.ivIcon.setImageResource(resId);
+            ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            ImageLoader.loadFromResources(ivIcon, resId);
 
             roomholder.tvName.setText(item.getName());
         } else {
@@ -118,8 +116,8 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 resId = R.drawable.topiclist_icon_topic_private;
             }
 
-            roomholder.ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            roomholder.ivIcon.setImageResource(resId);
+            ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            ImageLoader.loadFromResources(ivIcon, resId);
 
             roomholder.tvName.setText(item.getName());
         }

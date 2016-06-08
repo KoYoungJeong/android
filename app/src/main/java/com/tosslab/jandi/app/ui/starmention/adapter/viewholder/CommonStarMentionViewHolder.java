@@ -76,7 +76,7 @@ public class CommonStarMentionViewHolder extends RecyclerView.ViewHolder {
             }
         } else {
             ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            ivProfile.setImageResource(R.drawable.bot_80x100);
+            ImageLoader.loadFromResources(ivProfile, R.drawable.bot_80x100);
         }
 
         tvWriter.setText(starMentionVO.getWriterName());

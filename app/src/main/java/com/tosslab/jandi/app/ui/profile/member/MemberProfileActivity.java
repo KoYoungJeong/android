@@ -472,7 +472,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                     getButton(R.drawable.icon_profile_mail,
                             getString(R.string.jandi_resend_invitation),
                             v -> {
-
+                                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UserProfile, AnalyticsValue.Action.ResendInvitation);
                                 requestReInvite();
                             }));
 
@@ -528,6 +528,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 .setMessage(R.string.jandi_r_u_sure_cancel_invitation)
                 .setNegativeButton(R.string.jandi_cancel, null)
                 .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UserProfile, AnalyticsValue.Action.CancelInvitation);
                     requestRejectUser();
                 })
                 .create()

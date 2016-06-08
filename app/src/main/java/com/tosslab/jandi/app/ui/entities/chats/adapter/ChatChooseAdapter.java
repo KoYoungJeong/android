@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.ui.entities.chats.domain.DisableDummyItem;
 import com.tosslab.jandi.app.ui.entities.chats.domain.EmptyChatChooseItem;
 import com.tosslab.jandi.app.ui.members.adapter.searchable.viewholder.EmptySearchedMemberViewHolder;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
 import java.util.ArrayList;
@@ -199,33 +200,32 @@ public class ChatChooseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 vDisableCover.setVisibility(View.VISIBLE);
             }
 
-            ImageView imageViewIcon = ivIcon;
-            imageViewIcon.setOnClickListener(v ->
+            ivIcon.setOnClickListener(v ->
                     EventBus.getDefault().post(
                             new ShowProfileEvent(item.getEntityId(),
                                     ShowProfileEvent.From.Image)));
 
             boolean user = !item.isBot();
 
-            ViewGroup.LayoutParams layoutParams = imageViewIcon.getLayoutParams();
+            ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
             if (user) {
                 layoutParams.height = layoutParams.width;
             } else {
                 layoutParams.height = layoutParams.width * 5 / 4;
             }
 
-            imageViewIcon.setLayoutParams(layoutParams);
+            ivIcon.setLayoutParams(layoutParams);
 
             if (user) {
                 if (!item.isInactive()) {
-                    ImageUtil.loadProfileImage(imageViewIcon, item.getPhotoUrl(), R.drawable.profile_img);
+                    ImageUtil.loadProfileImage(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
                 } else {
-                    imageViewIcon.setImageResource(R.drawable.profile_img_dummyaccount_43);
+                    ivIcon.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_43);
                 }
-                imageViewIcon.setScaleType(ImageView.ScaleType.FIT_CENTER);
             } else {
-                imageViewIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                imageViewIcon.setImageResource(R.drawable.bot_43x54);
+                ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                ImageLoader.loadFromResources(ivIcon, R.drawable.bot_43x54);
             }
         }
     }

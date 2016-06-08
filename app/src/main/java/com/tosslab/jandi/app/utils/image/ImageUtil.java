@@ -214,7 +214,7 @@ public class ImageUtil {
             }
 
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            imageView.setImageResource(mimeTypeIconImage);
+            ImageLoader.loadFromResources(imageView, mimeTypeIconImage);
             return;
         }
 
@@ -225,11 +225,11 @@ public class ImageUtil {
             }
 
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            imageView.setImageResource(mimeTypeIconImage);
+            ImageLoader.loadFromResources(imageView, mimeTypeIconImage);
         } else {
             if (TextUtils.isEmpty(thumbnailUrl)) {
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                imageView.setImageResource(R.drawable.comment_no_img);
+                ImageLoader.loadFromResources(imageView, R.drawable.comment_no_img);
                 return;
             }
 
@@ -259,7 +259,7 @@ public class ImageUtil {
         if (!TextUtils.equals(fileType, "image") || !hasImageUrl) {
             imageView.setBackgroundColor(Color.TRANSPARENT);
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            imageView.setImageResource(mimeTypeIconImage);
+            ImageLoader.loadFromResources(imageView, mimeTypeIconImage);
             return;
         }
 
@@ -267,11 +267,11 @@ public class ImageUtil {
         if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
             imageView.setBackgroundColor(Color.TRANSPARENT);
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            imageView.setImageResource(mimeTypeIconImage);
+            ImageLoader.loadFromResources(imageView, mimeTypeIconImage);
         } else {
             if (TextUtils.isEmpty(thumbnailUrl)) {
                 imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                imageView.setImageResource(R.drawable.comment_no_img);
+                ImageLoader.loadFromResources(imageView, R.drawable.comment_no_img);
                 return;
             }
 

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.utils.analytics;
 public class AnalyticsValue {
     public enum Screen {
         PushNotification,
+        StartPage,
         SignIn,
         SignUp,
         CodeVerification,
@@ -41,7 +42,10 @@ public class AnalyticsValue {
 
     public enum Action {
         ForgotPW,
+        SignIn,
         SignUp,
+        Submit,
+        TermofService,
         AcceptAll,
         AgreeTermsofService,
         AgreePrivacyPolicy,
@@ -139,6 +143,8 @@ public class AnalyticsValue {
         ViewPhoto,
         TurnOnStar,
         TurnOffStar,
+        ResendInvitation,
+        CancelInvitation,
         FileSubMenu,
         FileSubMenu_Download,
         FileSubMenu_Share,

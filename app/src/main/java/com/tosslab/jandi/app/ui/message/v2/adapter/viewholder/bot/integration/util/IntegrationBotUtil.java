@@ -5,11 +5,8 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -57,56 +54,56 @@ public class IntegrationBotUtil {
     }
 
     private static void updateSubInfo(Collection<ResMessages.ConnectInfo> connectInfo, ViewGroup vgConnectInfo) {
-        int viewChildGroupCount = vgConnectInfo.getChildCount() / 2;
+        int UNIT_VIEW = 3;
+        int viewChildGroupCount = vgConnectInfo.getChildCount() / UNIT_VIEW;
 
         TextView tvTitle;
         TextView tvDescription;
+        TextView tvImage;
         int viewChildIdx;
         ResMessages.ConnectInfo info;
         Iterator<ResMessages.ConnectInfo> iterator = connectInfo.iterator();
 
         SpannableStringBuilder title = new SpannableStringBuilder();
         SpannableStringBuilder description = new SpannableStringBuilder();
+        SpannableStringBuilder image = new SpannableStringBuilder();
 
         int titleVisible = View.GONE;
         int descriptionVisible = View.GONE;
-
-        DisplayMetrics displayMetrics = vgConnectInfo.getResources().getDisplayMetrics();
-        final int defaultMargin = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                4f,
-                displayMetrics);
+        int imageVisible = View.GONE;
 
         for (int idx = 0; idx < viewChildGroupCount; ++idx) {
-            viewChildIdx = idx * 2;
+            viewChildIdx = idx * UNIT_VIEW;
 
             tvTitle = (TextView) vgConnectInfo.getChildAt(viewChildIdx);
             tvDescription = (TextView) vgConnectInfo.getChildAt(viewChildIdx + 1);
+            tvImage = (TextView) vgConnectInfo.getChildAt(viewChildIdx + 2);
 
             title.clear();
             description.clear();
+            image.clear();
 
             if (iterator.hasNext()) {
 
                 info = iterator.next();
                 if (!TextUtils.isEmpty(info.title)) {
                     titleVisible = View.VISIBLE;
-                    SpannableStringBuilder spannableStringBuilder =
-                            SpannableLookUp.text(info.title)
+                    title.append(info.title);
+                            SpannableLookUp.text(title)
                                     .hyperLink(false)
                                     .lookUp(vgConnectInfo.getContext());
-                    title.append(spannableStringBuilder);
                     LinkifyUtil.addLinks(tvTitle.getContext(), title);
                 } else {
                     titleVisible = View.GONE;
                 }
 
+                tvTitle.setText(title);
+
                 if (!TextUtils.isEmpty(info.description)) {
-                    SpannableStringBuilder spannableStringBuilder =
-                            SpannableLookUp.text(info.description)
+                    description.append(info.description);
+                            SpannableLookUp.text(description)
                                     .hyperLink(false)
                                     .lookUp(vgConnectInfo.getContext());
-                    description.append(spannableStringBuilder);
                     LinkifyUtil.addLinks(tvDescription.getContext(), description);
 
                     descriptionVisible = View.VISIBLE;
@@ -114,29 +111,33 @@ public class IntegrationBotUtil {
                     descriptionVisible = View.GONE;
                 }
 
-                tvTitle.setText(title);
                 tvDescription.setText(description);
 
-                if (titleVisible == View.GONE && descriptionVisible == View.VISIBLE) {
-                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) tvDescription.getLayoutParams();
-                    if (idx == 0) {
-                        layoutParams.topMargin = 0;
-                    } else {
-                        layoutParams.topMargin = defaultMargin;
-                    }
-
-                    tvDescription.setLayoutParams(layoutParams);
+                if (!TextUtils.isEmpty(info.imageUrl)) {
+                    image.append(info.imageUrl);
+                    SpannableLookUp.text(image)
+                            .hyperLink(false)
+                            .lookUp(vgConnectInfo.getContext());
+                    LinkifyUtil.addLinks(tvDescription.getContext(), image);
+                    imageVisible = View.VISIBLE;
+                } else {
+                    imageVisible = View.GONE;
                 }
+
+                tvImage.setText(image);
 
                 LinkifyUtil.setOnLinkClick(tvTitle);
                 LinkifyUtil.setOnLinkClick(tvDescription);
+                LinkifyUtil.setOnLinkClick(tvImage);
             } else {
                 titleVisible = View.GONE;
                 descriptionVisible = View.GONE;
+                imageVisible = View.GONE;
             }
 
             tvTitle.setVisibility(titleVisible);
             tvDescription.setVisibility(descriptionVisible);
+            tvImage.setVisibility(imageVisible);
 
         }
     }

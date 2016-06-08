@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.database.DatabaseConsts;
@@ -26,6 +27,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -81,12 +83,13 @@ public class IntroActivityModel {
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
         Collection<ResAccountInfo.UserTeam> teamList = resAccountInfo.getMemberships();
-
         Observable.from(teamList)
                 .map(ResAccountInfo.UserTeam::getUnread)
                 .reduce((prev, current) -> prev + current)
                 .subscribe(total -> {
                     BadgeUtils.setBadge(JandiApplication.getContext(), total);
+                }, e -> {
+                    LogUtil.e(Log.getStackTraceString(e));
                 });
 
     }

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import java.util.List;
 
@@ -80,7 +81,7 @@ public class EntitySimpleListAdapter extends BaseAdapter {
             ImageUtil.loadProfileImage(ivIcon,
                     entity.getPhotoUrl(), R.drawable.profile_img_comment);
         } else {
-            ivIcon.setImageResource(entity.getIconImageResId());
+            ImageLoader.loadFromResources(ivIcon, entity.getIconImageResId());
         }
 
         return convertView;

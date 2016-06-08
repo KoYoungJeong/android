@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -249,7 +250,7 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
                 if (!item.isInactive()) {
                     ImageUtil.loadProfileImage(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
                 } else {
-                    ivIcon.setImageResource(R.drawable.profile_img_dummyaccount_43);
+                    ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_43);
                 }
             } else {
                 ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
@@ -258,7 +259,7 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
                         TypedValue.applyDimension(
                                 TypedValue.COMPLEX_UNIT_DIP, 54f, displayMetrics));
                 ivIcon.setLayoutParams(layoutParams);
-                ivIcon.setImageResource(R.drawable.bot_43x54);
+                ImageLoader.loadFromResources(ivIcon, R.drawable.bot_43x54);
             }
 
             itemView.setOnClickListener(v ->
