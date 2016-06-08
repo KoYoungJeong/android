@@ -267,13 +267,6 @@ public class JandiSocketServiceModel {
                 long messageId = socketMessageEvent.getMessageId();
                 MessageRepository.getRepository().deleteMessage(messageId);
             }
-            if (TextUtils.equals(messageType, "topic_leave")
-                    || TextUtils.equals(messageType, "topic_join")
-                    || TextUtils.equals(messageType, "topic_invite")) {
-                refreshEntity(true, content, socketMessageEvent, false);
-            } else {
-                postEvent(socketMessageEvent);
-            }
 
             messagePublishSubject.onNext(socketMessageEvent);
             JandiPreference.setSocketConnectedLastTime(socketMessageEvent.getTs());

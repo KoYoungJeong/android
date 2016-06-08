@@ -12,7 +12,7 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 public class SocketTopicEvent {
     private int version;
     private String event;
-    private int teamId;
+    private long teamId;
     private TopicInfo topic;
 
     private long ts;
@@ -52,11 +52,11 @@ public class SocketTopicEvent {
         this.topic = topic;
     }
 
-    public int getTeamId() {
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 
@@ -71,14 +71,14 @@ public class SocketTopicEvent {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class TopicInfo {
-        private int id;
+        private long id;
         private String type;
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(long id) {
             this.id = id;
         }
 
