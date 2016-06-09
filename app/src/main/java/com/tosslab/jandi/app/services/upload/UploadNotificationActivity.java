@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel_;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -87,9 +90,23 @@ public class UploadNotificationActivity extends BaseAppCompatActivity {
                 .fromPush(true)
                 .start();
 
+        int entityType;
+
+        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
+        if (entity.isPublicTopic()) {
+            entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
+        } else {
+            if (entity.isPrivateGroup()) {
+                entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
+            } else {
+                entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
+            }
+        }
+
         MessageListV2Activity_.intent(UploadNotificationActivity.this)
                 .teamId(teamId)
                 .entityId(entityId)
+                .entityType(entityType)
                 .isFromPush(false)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
                 .start();
