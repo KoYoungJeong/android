@@ -163,7 +163,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 149
-        versionName '2.1.2'
+        versionName '2.1.3'
 
         // for Ui Testing
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
