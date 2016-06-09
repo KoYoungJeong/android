@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.baidu.android.pushservice.PushSettings;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.MentionToMeEvent;
@@ -314,6 +315,7 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
                 .expectKnockedIn(3000)
                 .onKnocked(() -> {
                     LogUtil.LOG = true;
+                    PushSettings.enableDebugMode(JandiApplication.getContext(), LogUtil.LOG);
                 });
         tvName.setOnClickListener(v -> knockListener.knock());
     }

@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 
+import com.baidu.android.pushservice.PushSettings;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -115,6 +116,11 @@ public class JandiApplication extends MultiDexApplication {
 
         migrationParsePush();
 
+        logBaidu();
+    }
+
+    private void logBaidu() {
+        PushSettings.enableDebugMode(this, LogUtil.LOG);
     }
 
     private void migrationParsePush() {
