@@ -152,9 +152,9 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
             previousFocusView = etName;
         }
         if (etLayoutName.isErrorEnabled()) {
-            setMarginTop(etLayoutName, 0);
-        } else {
             setMarginTop(etLayoutName, 8);
+        } else {
+            setMarginTop(etLayoutName, 16);
         }
         isFirstFocus = false;
     }
@@ -180,16 +180,20 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
     @OnFocusChange(R.id.et_password)
     void onPasswordFocused(boolean focused) {
         if (focused) {
+            int marginTopForNormal = 8;
             if (previousFocusView == etEmail) {
                 signUpPresenter.checkEmailValidation(etEmail.getText().toString());
             } else if (previousFocusView == etName) {
+                if (!etLayoutEmail.isErrorEnabled()) {
+                    marginTopForNormal = 16;
+                }
                 signUpPresenter.checkNameValidation(etName.getText().toString());
             }
             removeErrorPassword();
             if (etLayoutPassword.isErrorEnabled()) {
                 setMarginTop(etLayoutPassword, 0);
             } else {
-                setMarginTop(etLayoutPassword, 8);
+                setMarginTop(etLayoutPassword, marginTopForNormal);
             }
 
             previousFocusView = etPassword;
@@ -266,7 +270,7 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
         float endX = UiUtils.getPixelFromDp(5);
 
         ValueAnimator bounceAnim = ValueAnimator.ofFloat(startX, endX);
-        bounceAnim.setDuration(100);
+        bounceAnim.setDuration(50);
         bounceAnim.setRepeatCount(3);
         bounceAnim.setRepeatMode(ValueAnimator.REVERSE);
         bounceAnim.addUpdateListener(animation ->
