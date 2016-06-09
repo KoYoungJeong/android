@@ -81,7 +81,11 @@ public class MainChatListModel {
     }
 
     public List<DirectMessageRoom> getSavedChatList() {
-        return TeamInfoLoader.getInstance().getDirectMessageRooms();
+        return Observable.from(TeamInfoLoader.getInstance().getDirectMessageRooms())
+                .filter(DirectMessageRoom::isJoined)
+                .toList()
+                .toBlocking()
+                .firstOrDefault(new ArrayList<>());
     }
 
     public long getRoomId(long userId) {

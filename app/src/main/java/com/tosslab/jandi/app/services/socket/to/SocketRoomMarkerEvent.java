@@ -5,8 +5,9 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
-import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
+
+import java.util.List;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 14..
@@ -14,12 +15,13 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
-@Version(2)
-public class SocketRoomMarkerEvent extends EventHistoryInfo {
+@Version(1)
+public class SocketRoomMarkerEvent extends EventHistoryInfo{
     private int version;
     private String event;
     private long teamId;
-    private Data data;
+    private MarkerRoom room;
+    private Marker marker;
     private long ts;
 
     public long getTs() {
@@ -30,6 +32,17 @@ public class SocketRoomMarkerEvent extends EventHistoryInfo {
         this.ts = ts;
     }
 
+
+    @Override
+    public String toString() {
+        return "SocketRoomMarkerEvent{" +
+                "version=" + version +
+                ", event='" + event + '\'' +
+                ", teamId=" + teamId +
+                ", room=" + room +
+                ", marker=" + marker +
+                '}';
+    }
 
     public int getVersion() {
         return version;
@@ -47,6 +60,22 @@ public class SocketRoomMarkerEvent extends EventHistoryInfo {
         this.event = event;
     }
 
+    public MarkerRoom getRoom() {
+        return room;
+    }
+
+    public void setRoom(MarkerRoom room) {
+        this.room = room;
+    }
+
+    public Marker getMarker() {
+        return marker;
+    }
+
+    public void setMarker(Marker marker) {
+        this.marker = marker;
+    }
+
     public long getTeamId() {
         return teamId;
     }
@@ -55,34 +84,60 @@ public class SocketRoomMarkerEvent extends EventHistoryInfo {
         this.teamId = teamId;
     }
 
-    public Data getData() {
-        return data;
-    }
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    public static class MarkerRoom {
+        private long id;
+        private String type;
+        private List<Long> members;
 
-    public void setData(Data data) {
-        this.data = data;
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public List<Long> getMembers() {
+            return members;
+        }
+
+        public void setMembers(List<Long> members) {
+            this.members = members;
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    public static class Data {
-        private long roomId;
-        private Marker marker;
+    public static class Marker {
 
-        public long getRoomId() {
-            return roomId;
+        private long memberId;
+        private long lastLinkId;
+
+        public long getMemberId() {
+            return memberId;
         }
 
-        public void setRoomId(long roomId) {
-            this.roomId = roomId;
+        public void setMemberId(long memberId) {
+            this.memberId = memberId;
         }
 
-        public Marker getMarker() {
-            return marker;
+        public long getLastLinkId() {
+            return lastLinkId;
         }
 
-        public void setMarker(Marker marker) {
-            this.marker = marker;
+        public void setLastLinkId(long lastLinkId) {
+            this.lastLinkId = lastLinkId;
         }
     }
 }
+

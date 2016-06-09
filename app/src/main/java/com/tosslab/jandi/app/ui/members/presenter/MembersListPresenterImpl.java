@@ -345,12 +345,6 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     }
 
-    public void onEvent(RetrieveTopicListEvent event) {
-        if (!entityRefreshSubscriber.isUnsubscribed()) {
-            entityRefreshPublishSubject.onNext(1);
-        }
-    }
-
     public void setView(View view) {
         this.view = view;
     }

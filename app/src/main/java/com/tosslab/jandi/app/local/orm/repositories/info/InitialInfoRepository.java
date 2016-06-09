@@ -12,18 +12,8 @@ public class InitialInfoRepository extends LockExecutorTemplate {
     synchronized public static InitialInfoRepository getInstance() {
         if (instance == null) {
             instance = new InitialInfoRepository();
-            instance.initCache();
         }
         return instance;
-    }
-
-    private void initCache() {
-        try {
-            getHelper().getDao(InitialInfo.class)
-                    .setObjectCache(true);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     public boolean upsertInitialInfo(InitialInfo initialInfo) {

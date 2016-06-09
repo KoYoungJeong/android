@@ -37,6 +37,7 @@ public class JoinableTopicListModel {
     public List<Topic> getSearchedTopics(final String query) {
         List<Topic> topics = new ArrayList<>();
         Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                .filter(room -> !room.isJoined())
                 .map(topicRoom -> {
                     long creatorId = topicRoom.getCreatorId();
                     return new Topic.Builder()

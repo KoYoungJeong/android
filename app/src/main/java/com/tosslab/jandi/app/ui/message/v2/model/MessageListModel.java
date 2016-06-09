@@ -377,7 +377,7 @@ public class MessageListModel {
 
     public void upsertMyMarker(long roomId, long lastLinkId) {
         long myId = TeamInfoLoader.getInstance().getMyId();
-        RoomMarkerRepository.getInstance().updateRoomMarker(roomId, myId, lastLinkId);
+        RoomMarkerRepository.getInstance().upsertRoomMarker(roomId, myId, lastLinkId);
     }
 
     public long sendStickerMessage(long teamId, long entityId, StickerInfo stickerInfo, long localId) {

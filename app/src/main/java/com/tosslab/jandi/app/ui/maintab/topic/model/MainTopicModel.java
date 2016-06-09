@@ -56,9 +56,8 @@ public class MainTopicModel {
     }
 
     // Join된 Topic에 관한 정보를 가져오기
-    public LinkedHashMap<Long, Topic> getJoinEntities() {
+    private LinkedHashMap<Long, Topic> getJoinEntities(List<TopicRoom> topicRooms) {
 
-        List<TopicRoom> topicRooms = TeamInfoLoader.getInstance().getTopicList();
         LinkedHashMap<Long, Topic> topicHashMap = new LinkedHashMap<>();
 
         Observable.from(topicRooms)
@@ -110,7 +109,7 @@ public class MainTopicModel {
         List<Pair<TopicFolderData,
                 List<TopicItemData>>> datas = new LinkedList<>();
 
-        LinkedHashMap<Long, Topic> joinTopics = getJoinEntities();
+        LinkedHashMap<Long, Topic> joinTopics = getJoinEntities(topicRooms);
 
         long folderIndex = 0;
 

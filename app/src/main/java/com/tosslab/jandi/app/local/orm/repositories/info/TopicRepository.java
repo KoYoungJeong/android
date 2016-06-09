@@ -281,7 +281,11 @@ public class TopicRepository extends LockExecutorTemplate {
                 Dao<Topic, Long> topicDao = getHelper().getDao(Topic.class);
 
                 Topic topic = topicDao.queryForId(topicId);
-                long messageId = topic.getAnnouncement().getMessageId();
+                Topic.Announcement announcement = topic.getAnnouncement();
+                if (announcement == null) {
+                    return true;
+                }
+                long messageId = announcement.getMessageId();
                 dao.deleteById(messageId);
                 UpdateBuilder<Topic, Long> topicLongUpdateBuilder = topicDao.updateBuilder();
                 topicLongUpdateBuilder.updateColumnValue("announcement_id", 0)
@@ -319,10 +323,14 @@ public class TopicRepository extends LockExecutorTemplate {
 
             try {
                 Dao<Topic, Long> dao = getDao(Topic.class);
-                InitialInfo initialInfo = new InitialInfo();
-                initialInfo.setTeamId(topic.getTeamId());
-                topic.setInitialInfo(initialInfo);
-                return dao.update(topic) > 0;
+                Topic savedTopic = dao.queryForId(topic.getId());
+
+                savedTopic.setName(topic.getName());
+                savedTopic.setAutoJoin(topic.isAutoJoin());
+                savedTopic.setDescription(topic.getDescription());
+                savedTopic.setCreatorId(topic.getCreatorId());
+
+                return dao.update(savedTopic) > 0;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -351,5 +359,33 @@ public class TopicRepository extends LockExecutorTemplate {
             return false;
         });
 
+    }
+
+    public boolean hasTopic(long topicId) {
+        return execute(() -> {
+            try {
+                Dao<Topic, Object> dao = getDao(Topic.class);
+                return dao.queryBuilder()
+                        .where()
+                        .eq("id", topicId)
+                        .countOf() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+    }
+
+    public Topic getTopic(long roomId) {
+        return execute(() -> {
+            try {
+                Dao<Topic, Long> dao = getDao(Topic.class);
+                return dao.queryForId(roomId);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        });
     }
 }

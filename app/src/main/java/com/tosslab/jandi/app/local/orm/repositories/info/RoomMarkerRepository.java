@@ -4,7 +4,9 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
+import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Marker;
+import com.tosslab.jandi.app.network.models.start.Topic;
 
 import java.sql.SQLException;
 
@@ -19,18 +21,34 @@ public class RoomMarkerRepository extends LockExecutorTemplate {
         return instance;
     }
 
-    public boolean updateRoomMarker(long roomId, long memberId, long lastLinkId) {
+    public boolean upsertRoomMarker(long roomId, long memberId, long lastLinkId) {
         return execute(() -> {
 
             try {
                 Dao<Marker, Long> dao = getHelper().getDao(Marker.class);
+
                 UpdateBuilder<Marker, Long> markerUpdateBuilder = dao.updateBuilder();
                 markerUpdateBuilder.updateColumnValue("readLinkId", lastLinkId);
                 Where<Marker, Long> whereQuery = markerUpdateBuilder.where();
                 whereQuery.or(whereQuery.eq("chat_id", roomId), whereQuery.eq("topic_id", roomId))
                         .and()
                         .eq("memberId", memberId);
-                markerUpdateBuilder.update();
+                if (markerUpdateBuilder.update() <= 0) {
+                    Marker newMarker = new Marker();
+                    if (TopicRepository.getInstance().hasTopic(roomId)) {
+                        Topic topic = TopicRepository.getInstance().getTopic(roomId);
+                        newMarker.setTopic(topic);
+
+                    } else {
+                        Chat chat = ChatRepository.getInstance().getChat(roomId);
+                        newMarker.setChat(chat);
+                    }
+                    newMarker.setMemberId(memberId);
+                    newMarker.setReadLinkId(lastLinkId);
+                    return dao.create(newMarker) > 0;
+                } else {
+                    return true;
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }

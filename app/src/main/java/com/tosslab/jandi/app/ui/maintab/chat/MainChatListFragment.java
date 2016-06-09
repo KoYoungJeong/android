@@ -11,9 +11,9 @@ import android.view.View;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
+import com.tosslab.jandi.app.events.entities.ChatListRefreshEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
-import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
@@ -224,12 +224,6 @@ public class MainChatListFragment extends Fragment
         }
     }
 
-    public void onEvent(RetrieveTopicListEvent event) {
-        if (foreground) {
-            mainChatListPresenter.onReloadChatList();
-        }
-    }
-
     public void onEvent(SocketMessageEvent event) {
 
         if (!foreground) {
@@ -249,6 +243,10 @@ public class MainChatListFragment extends Fragment
                 mainChatListPresenter.onReloadChatList();
             }
         }
+    }
+
+    public void onEvent(ChatListRefreshEvent event) {
+        mainChatListPresenter.onReloadChatList();
     }
 
     public void onEvent(MessagePushEvent event) {

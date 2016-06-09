@@ -229,10 +229,7 @@ public class MessageListV2Presenter {
 
         announcementModel.deleteAnnouncement(room.getTeamId(), room.getRoomId());
 
-        boolean isSocketConnected = JandiSocketManager.getInstance().isConnectingOrConnected();
-        if (!isSocketConnected) {
-            initAnnouncement();
-        }
+        initAnnouncement();
     }
 
     private long getRoomId() {

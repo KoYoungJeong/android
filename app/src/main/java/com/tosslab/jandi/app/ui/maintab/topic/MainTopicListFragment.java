@@ -26,10 +26,10 @@ import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
+import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.libraries.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.folder.ExpandableTopicAdapter;
@@ -308,16 +308,13 @@ public class MainTopicListFragment extends Fragment
     @Override
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showList(TopicFolderListDataProvider topicFolderListDataProvider) {
-        if (expandableTopicAdapter == null) {
-            expandableTopicAdapter = new ExpandableTopicAdapter(topicFolderListDataProvider);
-            wrappedAdapter = expandableItemManager.createWrappedAdapter(expandableTopicAdapter);
-            // ListView를 Set함
-            expandableItemManager.attachRecyclerView(lvMainTopic);
-        } else {
-            expandableTopicAdapter.setProvider(topicFolderListDataProvider);
-        }
 
+        expandableTopicAdapter = new ExpandableTopicAdapter(topicFolderListDataProvider);
 
+        wrappedAdapter = expandableItemManager.createWrappedAdapter(expandableTopicAdapter);
+
+        // ListView를 Set함
+        expandableItemManager.attachRecyclerView(lvMainTopic);
         // 어떤 폴더에도 속하지 않는 토픽들을 expand된 상태에서 보여주기 위하여
         expandableItemManager.expandGroup(expandableTopicAdapter.getGroupCount() - 1);
 
@@ -518,11 +515,12 @@ public class MainTopicListFragment extends Fragment
         mainTopicListPresenter.refreshList();
     }
 
-    public void onEvent(SocketTopicFolderEvent event) {
+    public void onEvent(SocketTopicPushEvent event) {
         mainTopicListPresenter.refreshList();
+        mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
-    public void onEvent(SocketTopicPushEvent event) {
+    public void onEvent(TopicInfoUpdateEvent event) {
         mainTopicListPresenter.refreshList();
         mainTopicListPresenter.onRefreshUpdatedTopicList();
     }

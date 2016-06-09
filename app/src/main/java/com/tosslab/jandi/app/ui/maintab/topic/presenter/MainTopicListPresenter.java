@@ -65,7 +65,9 @@ public class MainTopicListPresenter {
     }
 
     public void refreshList() {
-        onLoadList();
+        topicFolders = mainTopicModel.getTopicFolders();
+        topicFolderItems = mainTopicModel.getJoinedTopics();
+        view.refreshList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
     }
 
     public void onUpdatedTopicClick(Topic item) {

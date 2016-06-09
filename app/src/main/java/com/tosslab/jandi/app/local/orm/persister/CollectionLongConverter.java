@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.local.orm.persister;
 
+import android.text.TextUtils;
+
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.field.types.BaseDataType;
@@ -48,6 +50,9 @@ public class CollectionLongConverter extends BaseDataType {
             List<Long> retValues = new ArrayList<>();
             String[] split = ((String) sqlArg).split(",");
             for (String s : split) {
+                if (TextUtils.isEmpty(s)) {
+                    continue;
+                }
                 try {
                     retValues.add(Long.parseLong(s));
                 } catch (NumberFormatException e) {

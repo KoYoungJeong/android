@@ -99,10 +99,12 @@ public class TeamInfoLoader {
     }
 
     public void refresh() {
-        long teamId = AccountRepository.getRepository().getSelectedTeamId();
-        if (teamId > 0) {
-            refresh(teamId);
-        }
+        execute(() -> {
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
+            if (teamId > 0) {
+                refresh(teamId);
+            }
+        });
     }
 
     public void refresh(long teamId) {

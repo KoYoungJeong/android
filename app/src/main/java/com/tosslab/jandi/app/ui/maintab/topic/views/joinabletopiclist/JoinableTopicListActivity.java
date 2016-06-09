@@ -44,9 +44,6 @@ import butterknife.ButterKnife;
 import butterknife.OnTextChanged;
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by tee on 15. 8. 30..
- */
 public class JoinableTopicListActivity extends BaseAppCompatActivity
         implements JoinableTopicListView {
 

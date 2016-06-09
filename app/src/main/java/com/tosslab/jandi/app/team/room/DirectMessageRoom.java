@@ -83,7 +83,7 @@ public class DirectMessageRoom implements Room {
 
     public String getLastMessageStatus() {
         Chat.LastMessage lastMessage = chat.getLastMessage();
-        return lastMessage != null ? lastMessage.getStatus() : "archived";
+        return lastMessage != null ? lastMessage.getStatus() : "";
     }
 
     public String getLastMessage() {

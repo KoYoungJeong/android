@@ -88,7 +88,6 @@ import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
@@ -1416,11 +1415,10 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             return;
         }
 
-        SocketRoomMarkerEvent.Data data = event.getData();
-        if (data.getRoomId() == room.getRoomId()) {
-            Marker marker = data.getMarker();
+        if (event.getRoom().getId() == room.getRoomId()) {
+            SocketRoomMarkerEvent.Marker marker = event.getMarker();
             messageListPresenter.onRoomMarkerChange(
-                    room.getTeamId(), room.getRoomId(), marker.getMemberId(), marker.getReadLinkId());
+                    room.getTeamId(), room.getRoomId(), marker.getMemberId(), marker.getLastLinkId());
         }
     }
 

@@ -664,7 +664,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
             return;
         }
 
-        if (event.getData().getRoomId() == roomId) {
+        if (event.getRoom().getId() == roomId) {
             justRefresh();
         }
     }

@@ -16,7 +16,8 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
-import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
+import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
+import com.tosslab.jandi.app.events.team.TeamJoinEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.dialog.UsageInformationDialogFragment_;
@@ -178,11 +179,15 @@ public class TeamFragment extends Fragment implements TeamView, ListScroller {
         pbTeam.setVisibility(View.GONE);
     }
 
-    public void onEvent(RetrieveTopicListEvent event) {
+    public void onEvent(TeamLeaveEvent event) {
         presenter.reInitializeTeam();
     }
 
-    public void onEvent(TeamLeaveEvent event) {
+    public void onEvent(TeamInfoChangeEvent event) {
+        presenter.reInitializeTeam();
+    }
+
+    public void onEvent(TeamJoinEvent event) {
         presenter.reInitializeTeam();
     }
 

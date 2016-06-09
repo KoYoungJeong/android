@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
+import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
@@ -109,6 +110,13 @@ public class ChatDetailFragment extends Fragment {
 
         activity.setResult(Activity.RESULT_OK, data);
         activity.finish();
+    }
+
+    public void onEvent(MemberStarredEvent event) {
+        if (event.getId() == entityId) {
+            boolean isStarred = TeamInfoLoader.getInstance().isChatStarred(entityId);
+            setStarred(isStarred);
+        }
     }
 
     @Background

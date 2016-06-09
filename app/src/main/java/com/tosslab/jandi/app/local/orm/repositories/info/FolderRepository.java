@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import rx.Observable;
+
 public class FolderRepository extends LockExecutorTemplate {
     private static FolderRepository instance;
 
@@ -71,19 +73,35 @@ public class FolderRepository extends LockExecutorTemplate {
         });
     }
 
-    public void updateFolder(Folder folder) {
-
-    }
-
-    public boolean updateFolderSeq(long folderId, int seq) {
+    public boolean updateFolderSeq(long teamId, long folderId, int seq) {
         return execute(() -> {
             try {
-                Dao<Folder, ?> dao = getHelper().getDao(Folder.class);
+                Dao<Folder, Long> dao = getHelper().getDao(Folder.class);
+                Folder folder = dao.queryForId(folderId);
+                if (folder.getSeq() == seq) {
+                    return true;
+                }
+
                 UpdateBuilder<Folder, ?> folderUpdateBuilder = dao.updateBuilder();
                 folderUpdateBuilder.updateColumnValue("seq", seq)
                         .where()
                         .eq("id", folderId);
-                return folderUpdateBuilder.update() > 0;
+                folderUpdateBuilder.update();
+
+                List<Folder> folders = dao.queryBuilder()
+                        .where()
+                        .eq("initialInfo_id", teamId)
+                        .and()
+                        .ge("seq", seq)
+                        .and()
+                        .ne("id", folderId)
+                        .query();
+                for (Folder folder1 : folders) {
+                    folder1.setSeq(folder1.getSeq() + 1);
+                    dao.update(folder1);
+                }
+
+                return true;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -133,11 +151,11 @@ public class FolderRepository extends LockExecutorTemplate {
                 Dao<Folder, Long> dao = getHelper().getDao(Folder.class);
                 Folder folder = dao.queryForId(folderId);
                 Collection<Long> rooms = folder.getRooms();
-                if (!rooms.contains(roomId)) {
+                if (rooms.contains(roomId)) {
                     rooms.remove(roomId);
                     return dao.update(folder) > 0;
                 } else {
-                    return false;
+                    return true;
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -182,6 +200,41 @@ public class FolderRepository extends LockExecutorTemplate {
 
             return false;
 
+        });
+    }
+
+    public boolean removeTopicOfTeam(long teamId, Collection<Long> roomIds) {
+        return execute(() -> {
+            try {
+                Dao<Folder, Object> dao = getDao(Folder.class);
+                List<Folder> folders = dao.queryForEq("initialInfo_id", teamId);
+
+                List<Folder> newFolders = Observable.from(folders)
+                        .filter(folder -> {
+                            for (Long roomId : roomIds) {
+
+                                if (folder.getRooms().contains(roomId)) {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        })
+                        .doOnNext(folder -> {
+                            for (Long roomId : roomIds) {
+                                folder.getRooms().remove(roomId);
+                            }
+                        })
+                        .toList()
+                        .toBlocking()
+                        .firstOrDefault(new ArrayList<>());
+                for (Folder newFolder : newFolders) {
+                    dao.update(newFolder);
+                }
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
         });
     }
 }

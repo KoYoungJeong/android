@@ -56,11 +56,11 @@ public class TeamsPresenterImpl implements TeamsPresenter {
 
         final List<Team> teamList = new ArrayList<>();
         model.getRefreshAccountInfoObservable()
+                .subscribeOn(Schedulers.io())
                 .concatMap(o -> model.getTeamsObservable(teamList))
                 .concatMap(model::getPendingTeamsObservable)
                 .concatMap(model::getSortedTeamListObservable)
                 .concatMap(model::getCheckSelectedTeamObservable)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(myTeams -> {
                     long selectedTeamId = myTeams.first;

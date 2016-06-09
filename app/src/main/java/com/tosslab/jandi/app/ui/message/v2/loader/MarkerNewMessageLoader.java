@@ -53,7 +53,7 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
 
                     if (myMarker.getReadLinkId() < lastLinkId) {
                         messageListModel.updateLastLinkId(messageState.getLastUpdateLinkId());
-                        RoomMarkerRepository.getInstance().updateRoomMarker(roomId, myId, messageState.getLastUpdateLinkId());
+                        RoomMarkerRepository.getInstance().upsertRoomMarker(roomId, myId, messageState.getLastUpdateLinkId());
                     }
 
                 } else {

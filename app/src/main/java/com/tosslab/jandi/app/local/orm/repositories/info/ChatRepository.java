@@ -35,15 +35,40 @@ public class ChatRepository extends LockExecutorTemplate {
         });
     }
 
-    public boolean updateChatStatusToArchived(long roomId) {
+    public boolean updateChatOpened(long roomId, boolean isOpened) {
         return execute(() -> {
             try {
                 Dao<Chat, Long> dao = getHelper().getDao(Chat.class);
                 UpdateBuilder<Chat, Long> chatUpdateBuilder = dao.updateBuilder();
-                chatUpdateBuilder.updateColumnValue("status", "archived")
+                chatUpdateBuilder.updateColumnValue("isOpened", isOpened)
                         .where()
                         .eq("id", roomId);
                 return chatUpdateBuilder.update() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+    }
+
+    public Chat getChat(long roomId) {
+        return execute(() -> {
+
+            try {
+                Dao<Chat, Long> dao = getDao(Chat.class);
+                return dao.queryForId(roomId);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return null;
+        });
+    }
+
+    public boolean addChat(Chat chat) {
+        return execute(() -> {
+            try {
+                Dao<Chat, Object> dao = getDao(Chat.class);
+                return dao.create(chat) > 0;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
