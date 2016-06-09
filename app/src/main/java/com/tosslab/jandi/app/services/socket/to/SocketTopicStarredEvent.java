@@ -26,7 +26,6 @@ public class SocketTopicStarredEvent extends EventHistoryInfo {
         this.ts = ts;
     }
 
-
     public String getEvent() {
         return event;
     }
@@ -39,7 +38,7 @@ public class SocketTopicStarredEvent extends EventHistoryInfo {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 

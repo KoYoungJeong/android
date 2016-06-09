@@ -285,10 +285,10 @@ public class FileListFragment extends Fragment
         } catch (RetrofitException e) {
             e.printStackTrace();
             LogUtil.e("fail to get searched files.", e);
-            fileListPresenter.showErrorToast(JandiApplication.getContext().getString(R.string.err_file_search));
+            searchFailed(R.string.err_file_search);
         } catch (Exception e) {
             e.printStackTrace();
-            fileListPresenter.showErrorToast(JandiApplication.getContext().getString(R.string.err_file_search));
+            searchFailed(R.string.err_file_search);
         } finally {
             fileListPresenter.dismissMoreProgressBar();
         }

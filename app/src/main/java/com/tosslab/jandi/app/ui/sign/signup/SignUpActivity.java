@@ -152,9 +152,9 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
             previousFocusView = etName;
         }
         if (etLayoutName.isErrorEnabled()) {
-            setMarginTopEmailLayout(0);
+            setMarginTop(etLayoutName, 8);
         } else {
-            setMarginTopEmailLayout(8);
+            setMarginTop(etLayoutName, 16);
         }
         isFirstFocus = false;
     }
@@ -170,9 +170,9 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
             removeErrorEmail();
         }
         if (etLayoutEmail.isErrorEnabled()) {
-            setMarginTopPasswordLayout(0);
+            setMarginTop(etLayoutEmail, 0);
         } else {
-            setMarginTopPasswordLayout(8);
+            setMarginTop(etLayoutEmail, 8);
         }
         previousFocusView = etEmail;
     }
@@ -180,12 +180,22 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
     @OnFocusChange(R.id.et_password)
     void onPasswordFocused(boolean focused) {
         if (focused) {
+            int marginTopForNormal = 8;
             if (previousFocusView == etEmail) {
                 signUpPresenter.checkEmailValidation(etEmail.getText().toString());
             } else if (previousFocusView == etName) {
+                if (!etLayoutEmail.isErrorEnabled()) {
+                    marginTopForNormal = 16;
+                }
                 signUpPresenter.checkNameValidation(etName.getText().toString());
             }
             removeErrorPassword();
+            if (etLayoutPassword.isErrorEnabled()) {
+                setMarginTop(etLayoutPassword, 0);
+            } else {
+                setMarginTop(etLayoutPassword, marginTopForNormal);
+            }
+
             previousFocusView = etPassword;
             scrollView.scrollTo(0, scrollView.getBottom());
         }
@@ -260,7 +270,7 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
         float endX = UiUtils.getPixelFromDp(5);
 
         ValueAnimator bounceAnim = ValueAnimator.ofFloat(startX, endX);
-        bounceAnim.setDuration(100);
+        bounceAnim.setDuration(50);
         bounceAnim.setRepeatCount(3);
         bounceAnim.setRepeatMode(ValueAnimator.REVERSE);
         bounceAnim.addUpdateListener(animation ->
@@ -292,20 +302,12 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
         etLayoutPassword.setErrorEnabled(false);
     }
 
-    private void setMarginTopEmailLayout(float marginDip) {
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) etLayoutEmail.getLayoutParams();
+    private void setMarginTop(View view, float marginDip) {
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
         int marginTop = (int) UiUtils.getPixelFromDp(marginDip);
         int marginSide = (int) UiUtils.getPixelFromDp(16f);
         params.setMargins(marginSide, marginTop, marginSide, 0);
-        etLayoutEmail.setLayoutParams(params);
-    }
-
-    private void setMarginTopPasswordLayout(float marginDip) {
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) etLayoutPassword.getLayoutParams();
-        int marginTop = (int) UiUtils.getPixelFromDp(marginDip);
-        int marginSide = (int) UiUtils.getPixelFromDp(16f);
-        params.setMargins(marginSide, marginTop, marginSide, 0);
-        etLayoutPassword.setLayoutParams(params);
+        view.setLayoutParams(params);
     }
 
     @Override

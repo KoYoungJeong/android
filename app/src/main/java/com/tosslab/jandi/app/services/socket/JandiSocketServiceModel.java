@@ -297,12 +297,7 @@ public class JandiSocketServiceModel {
             if (TextUtils.equals(messageType, "message_delete")) {
                 long messageId = socketMessageEvent.getMessageId();
                 MessageRepository.getRepository().deleteMessage(messageId);
-            } /*else if (TextUtils.equals(messageType, "topic_leave")
-                    || TextUtils.equals(messageType, "topic_join")
-                    || TextUtils.equals(messageType, "topic_invite")) {
-            } else {
-                postEvent(socketMessageEvent);
-            }*/
+            }
 
             messagePublishSubject.onNext(socketMessageEvent);
         } catch (Exception e) {
