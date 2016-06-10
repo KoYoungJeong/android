@@ -205,9 +205,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         // Bind the tabs to the ViewPager
         initMainTabStrip();
 
-        // Track for first load(MainTopicListFragment).
-        trackScreenView(0);
-
         showCoachMarkIfNeed();
 
         offlineLayer = new OfflineLayer(vgOffline);
@@ -218,7 +215,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         // onResume -> AfterViews 로 이동
         // (소켓에서 필요한 갱신을 다 처리한다고 간주)
         getEntities(true);
-
 
         initializeTeamsView();
 
@@ -252,14 +248,16 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
             vpMainTab.setCurrentItem(JandiPreference.getLastSelectedTab());
         }
 
-        if (vpMainTab.getCurrentItem() != 0) {
+        int currentItem = vpMainTab.getCurrentItem();
+        if (currentItem != 0) {
             setFABMenuVisibility(false);
         }
+        trackScreenView(currentItem);
 
         mainTapStrip.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                LogUtil.d("onPageSelected at " + position);
+                LogUtil.i("MainTabActivity", "onPageSelected at " + position);
                 trackScreenView(position);
                 switch (position) {
                     case 0:
@@ -779,6 +777,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     private void trackScreenView(int position) {
+        LogUtil.d("MainTabActivity", "trackScreenView at " + position);
         int screenView = ScreenViewProperty.TOPIC_PANEL;
         AnalyticsValue.Screen screen = AnalyticsValue.Screen.TopicsTab;
         switch (position) {
@@ -795,19 +794,25 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                 screen = AnalyticsValue.Screen.FilesTab;
                 break;
             case 3:
-                screenView = ScreenViewProperty.SETTING_PANEL;
-                screen = AnalyticsValue.Screen.MoreTab;
+//                screenView = ScreenViewProperty.SETTING_PANEL;
+                screen = AnalyticsValue.Screen.TeamTab;
+                break;
+            case 4:
+//                screenView = ScreenViewProperty.SETTING_PANEL;
+                screen = AnalyticsValue.Screen.MypageTab;
                 break;
         }
 
         AnalyticsUtil.sendScreenName(screen);
 
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.ScreenView)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ScreenView, screenView)
-                .build());
+        if (position < 3) {
+            AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                    .event(Event.ScreenView)
+                    .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                    .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                    .property(PropertyKey.ScreenView, screenView)
+                    .build());
+        }
     }
 
     @Override
