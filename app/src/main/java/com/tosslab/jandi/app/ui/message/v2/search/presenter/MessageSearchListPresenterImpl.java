@@ -395,7 +395,6 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
         try {
             messageListModel.modifyTopicName(entityType, entityId, topicName);
             view.modifyEntitySucceed(topicName);
-            messageListModel.trackChangingEntityName(entityType);
             EntityManager.getInstance().getEntityById(entityId).getEntity().name = topicName;
         } catch (RetrofitException e) {
             if (e.getStatusCode() == JandiConstants.NetworkError.DUPLICATED_NAME) {

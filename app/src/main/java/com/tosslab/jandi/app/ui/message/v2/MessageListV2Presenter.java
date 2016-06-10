@@ -820,8 +820,6 @@ public class MessageListV2Presenter {
 
             view.modifyTitle(name);
 
-            messageListModel.trackChangingEntityName(entityType);
-
             EntityManager.getInstance().getEntityById(entityId).getEntity().name = name;
 
         } catch (RetrofitException e) {
@@ -1002,7 +1000,6 @@ public class MessageListV2Presenter {
         view.showProgressWheel();
         try {
             messageListModel.deleteTopic(room.getEntityId(), room.getEntityType());
-            messageListModel.trackDeletingEntity(room.getEntityType());
             view.dismissProgressWheel();
             view.finish();
         } catch (RetrofitException e) {

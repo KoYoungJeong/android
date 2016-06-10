@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.team.info.presenter;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.validation.ResValidation;
@@ -61,8 +60,6 @@ public class TeamDomainInfoPresenterImpl implements TeamDomainInfoPresenter {
             ResTeamDetailInfo newTeam = teamDomainInfoModel.createNewTeam(teamName, teamDomain);
 
             long teamId = newTeam.getInviteTeam().getTeamId();
-            MixpanelMemberAnalyticsClient.getInstance(JandiApplication.getContext(), null)
-                    .pageViewTeamCreateSuccess();
 
             teamDomainInfoModel.updateTeamInfo(teamId);
 

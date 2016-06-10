@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
@@ -90,10 +89,6 @@ public class JoinableTopicListModel {
 
                 refreshEntity();
 
-                EntityManager entityManager = EntityManager.getInstance();
-                MixpanelMemberAnalyticsClient
-                        .getInstance(JandiApplication.getContext(), entityManager.getDistictId())
-                        .trackJoinChannel();
                 subscriber.onNext(topic);
             } catch (RetrofitException error) {
                 subscriber.onError(error);

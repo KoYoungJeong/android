@@ -55,7 +55,6 @@ import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
-import com.tosslab.jandi.app.ui.MixpanelAnalytics;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -182,7 +181,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         showDialogIfNotLastestVersion();
 
         entityManager = EntityManager.getInstance();
-        new MixpanelAnalytics().trackSigningIn(entityManager);
 
         // Progress Wheel 설정
         progressWheel = new ProgressWheel(this);

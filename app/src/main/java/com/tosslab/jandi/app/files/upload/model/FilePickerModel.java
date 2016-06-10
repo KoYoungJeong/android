@@ -16,10 +16,8 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
-import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.profile.defaultimage.ProfileImageSelectorActivity_;
@@ -35,7 +33,6 @@ import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
-import org.json.JSONException;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -208,30 +205,8 @@ public class FilePickerModel {
 
     }
 
-    public void trackUploadingFile(Context context, long entityId, JsonObject result) {
-
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-
-        int entityType;
-        if (entity.isPublicTopic()) {
-            entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
-        } else {
-            if (entity.isPrivateGroup()) {
-                entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
-            } else {
-                entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
-            }
-        }
-
-        try {
-            MixpanelMemberAnalyticsClient
-                    .getInstance(context, EntityManager.getInstance().getDistictId())
-                    .trackUploadingFile(entityType, result);
-        } catch (JSONException e) {
-        }
-
+    public void trackUploadingFile(long entityId, JsonObject result) {
         int fileId = result.get("messageId").getAsInt();
-
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(Event.FileUpload)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))

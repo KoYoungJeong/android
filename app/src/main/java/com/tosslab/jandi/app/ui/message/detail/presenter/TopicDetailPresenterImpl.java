@@ -172,7 +172,6 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         try {
             int entityType = topicDetailModel.getEntityType(entityId);
             topicDetailModel.deleteTopic(entityId, entityType);
-            topicDetailModel.trackDeletingEntity(context, entityType);
             topicDetailModel.trackTopicDeleteSuccess(entityId);
             view.dismissProgressWheel();
             view.leaveTopic();

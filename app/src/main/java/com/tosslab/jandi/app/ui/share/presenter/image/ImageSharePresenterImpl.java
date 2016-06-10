@@ -154,7 +154,6 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
 
                 view.finishOnUiThread();
 
-                shareModel.trackUploadingFile(entityType, result);
             } else {
                 view.showFailToast(JandiApplication.getContext()
                         .getString(R.string.err_file_upload_failed));

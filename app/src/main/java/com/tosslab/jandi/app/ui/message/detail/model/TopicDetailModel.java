@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -99,16 +98,6 @@ public class TopicDetailModel {
         }
     }
 
-    public void trackDeletingEntity(Context context, int entityType) {
-        String distictId = EntityManager.getInstance().getDistictId();
-        try {
-            MixpanelMemberAnalyticsClient
-                    .getInstance(context, distictId)
-                    .trackDeletingEntity(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
-        } catch (JSONException e) {
-        }
-    }
-
     public void trackTopicDeleteSuccess(long entityId) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(Event.TopicDelete)
@@ -148,16 +137,6 @@ public class TopicDetailModel {
     }
 
     public void trackChangingEntityName(Context context, long entityId, int entityType) {
-
-        try {
-            String distictId = EntityManager.getInstance().getDistictId();
-
-            MixpanelMemberAnalyticsClient
-                    .getInstance(context, distictId)
-                    .trackChangingEntityName(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
-        } catch (JSONException e) {
-        }
-
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(Event.TopicNameChange)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))

@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.chat.ChatApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -93,8 +92,6 @@ public class LeaveViewModel {
                 long memberId = EntityManager.getInstance().getMe().getId();
                 chatApi.get().deleteChat(memberId, entityId);
             }
-            trackLeavingEntity(entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity
-                    .isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE);
 
             trackTopicLeaveSuccess(entityId);
 
@@ -109,17 +106,6 @@ public class LeaveViewModel {
             trackTopicLeaveFail(-1);
             e.printStackTrace();
             leaveEntityFailed(context.getString(R.string.err_entity_leave));
-        }
-    }
-
-    private void trackLeavingEntity(int entityType) {
-        String distictId = EntityManager.getInstance().getDistictId();
-        try {
-            MixpanelMemberAnalyticsClient
-                    .getInstance(context, distictId)
-                    .trackLeavingEntity(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
-        } catch (JSONException e) {
-            LogUtil.e("CANNOT MEET", e);
         }
     }
 

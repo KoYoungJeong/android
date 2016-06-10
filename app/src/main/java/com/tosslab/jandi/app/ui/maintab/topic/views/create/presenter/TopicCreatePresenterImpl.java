@@ -6,7 +6,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.maintab.topic.views.create.model.TopicCreateModel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -43,18 +42,6 @@ public class TopicCreatePresenterImpl implements TopicCreatePresenter {
         view.showProgressWheel();
         try {
             ResCommon topic = topicCreateModel.createTopic(topicTitle, isPublic, topicDescriptionText, isAutojoin);
-
-            try {
-                EntityManager mEntityManager = EntityManager.getInstance();
-                if (mEntityManager != null) {
-                    MixpanelMemberAnalyticsClient
-                            .getInstance(JandiApplication.getContext(), mEntityManager.getDistictId())
-                            .trackCreatingEntity(true);
-                }
-            } catch (JSONException e) {
-                LogUtil.e("CAN NOT MEET", e);
-            }
-
             topicCreateModel.refreshEntity();
 
             view.dismissProgressWheel();

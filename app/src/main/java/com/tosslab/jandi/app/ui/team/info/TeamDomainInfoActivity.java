@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.team.info.presenter.TeamDomainInfoPresenter;
 import com.tosslab.jandi.app.ui.team.info.presenter.TeamDomainInfoPresenterImpl;
@@ -70,16 +69,12 @@ public class TeamDomainInfoActivity extends BaseAppCompatActivity implements Tea
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_CREATE)
                 .build());
-
-        MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
-                .pageViewTeamCreate();
     }
 
     @OptionsItem(android.R.id.home)
     void goHomeUpMenu() {
         finish();
     }
-
 
     @OptionsItem(R.id.action_confirm)
     void confirmTeamDomain() {
@@ -107,7 +102,6 @@ public class TeamDomainInfoActivity extends BaseAppCompatActivity implements Tea
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
     }
-
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override

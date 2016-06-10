@@ -5,21 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
-import android.util.Log;
-
 import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.future.ResponseFuture;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.DownloadInfo;
 import com.tosslab.jandi.app.local.orm.repositories.DownloadRepository;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.services.download.domain.DownloadFileInfo;
 import com.tosslab.jandi.app.services.download.model.DownloadModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
@@ -195,17 +190,6 @@ public class DownloadController {
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.FileId, fileId)
                 .build());
-
-        try {
-            EntityManager entityManager = EntityManager.getInstance();
-
-            MixpanelMemberAnalyticsClient mixpanelMemberAnalyticsClient =
-                    MixpanelMemberAnalyticsClient.getInstance(context, entityManager.getDistictId());
-            mixpanelMemberAnalyticsClient.trackDownloadFile(fileType, fileExt, fileSize);
-
-        } catch (Exception e) {
-            LogUtil.e(TAG, "Mixpanel exception has occurred. - " + Log.getStackTraceString(e));
-        }
     }
 
     private Intent getFileViewerIntent(File file, String fileType) {
