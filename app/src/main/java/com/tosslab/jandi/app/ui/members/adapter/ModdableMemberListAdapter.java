@@ -168,13 +168,16 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
 
             tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
 
-//            ivFavorite.setVisibility(item.isStarred() ? View.VISIBLE : View.GONE);
             ivFavorite.setVisibility(View.GONE);
 
             vDisableLineThrough.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
             vDisableCover.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
 
-            ImageUtil.loadProfileImage(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
+            if (!item.isInactive()) {
+                ImageUtil.loadProfileImage(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
+            } else {
+                ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_43);
+            }
 
             cbChoose.setChecked(item.isChooseItem());
             itemView.setOnClickListener(v -> {
