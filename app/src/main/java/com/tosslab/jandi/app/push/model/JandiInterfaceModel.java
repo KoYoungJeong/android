@@ -22,7 +22,6 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
-import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -123,7 +122,6 @@ public class JandiInterfaceModel {
         try {
             InitialInfo initializeInfo = startApi.get().getInitializeInfo(AccountRepository.getRepository().getSelectedTeamId());
             InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
-            JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
             return true;
         } catch (RetrofitException e) {
             e.printStackTrace();

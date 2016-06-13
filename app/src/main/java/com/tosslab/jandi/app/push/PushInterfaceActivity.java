@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
-import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
@@ -82,6 +81,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
         checkTeamAndMoveToNextActivity();
     }
 
+    @Deprecated
     @Background(serial = "push_interface_activity_background")
     public void checkNewVersion() {
         try {
