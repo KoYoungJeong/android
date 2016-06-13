@@ -20,7 +20,6 @@ import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
@@ -120,17 +119,6 @@ public class ShareModel {
         JsonObject userFile = responseFuture.get();
 
         return userFile;
-    }
-
-    public void trackUploadingFile(int entityType, JsonObject result) {
-
-        try {
-            String distictId = TeamInfoLoader.getInstance().getMyId() +
-                    "-" +
-                    TeamInfoLoader.getInstance().getTeamId();
-            MixpanelMemberAnalyticsClient.getInstance(JandiApplication.getContext(), distictId).trackUploadingFile(entityType, result);
-        } catch (JSONException e) {
-        }
     }
 
     public String getFilePath(String uriString) {

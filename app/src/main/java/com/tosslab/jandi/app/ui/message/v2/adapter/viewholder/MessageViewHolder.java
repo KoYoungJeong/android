@@ -38,7 +38,8 @@ public class MessageViewHolder extends BaseMessageViewHolder {
     private LinkPreviewViewModel linkPreviewViewModel;
     private View vProfileCover;
 
-    private MessageViewHolder() {}
+    private MessageViewHolder() {
+    }
 
     @Override
     public void initView(View rootView) {
@@ -56,7 +57,7 @@ public class MessageViewHolder extends BaseMessageViewHolder {
             tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
             vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
         } else {
-            if(hasTopMargin) {
+            if (hasTopMargin) {
                 topMargin = (int) UiUtils.getPixelFromDp(12f);
             } else {
                 topMargin = (int) UiUtils.getPixelFromDp(6f);
@@ -155,11 +156,17 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         }
     }
 
-    private void setBadge(long teamId, long roomId, ResMessages.Link link) {
+    private void setBadge(long teamId, long roomId, final ResMessages.Link link) {
+        tvMessageBadge.setTag(link);
         UnreadCountUtil.getUnreadCount(teamId, roomId,
                 link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(unreadCount -> {
+                    ResMessages.Link linkFromTag = getLinkFromTag(tvMessageBadge);
+                    if (linkFromTag != null && linkFromTag.id != link.id) {
+                        return;
+                    }
+
                     if (unreadCount > 0) {
                         tvMessageBadge.setText(String.valueOf(unreadCount));
                         tvMessageBadge.setVisibility(View.VISIBLE);
@@ -167,8 +174,15 @@ public class MessageViewHolder extends BaseMessageViewHolder {
                         tvMessageBadge.setVisibility(View.GONE);
                     }
                 });
+    }
 
+    private ResMessages.Link getLinkFromTag(View view) {
+        if (view == null || view.getTag() == null
+                || !view.getTag().getClass().isAssignableFrom(ResMessages.Link.class)) {
+            return null;
+        }
 
+        return ((ResMessages.Link) view.getTag());
     }
 
     @Override

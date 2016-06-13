@@ -147,4 +147,29 @@ public class MentionMessage {
     public Date getCreatedAt() {
         return createdAt;
     }
+
+    @Override
+    public String toString() {
+        return "MentionMessage{" +
+                "teamId=" + teamId +
+                ", roomId=" + roomId +
+                ", roomName='" + roomName + '\'' +
+                ", roomType='" + roomType + '\'' +
+                ", linkId=" + linkId +
+                ", messageId=" + messageId +
+                ", writerId=" + writerId +
+                ", writerName='" + writerName + '\'' +
+                ", writerProfileUrl='" + writerProfileUrl + '\'' +
+                ", contentType='" + contentType + '\'' +
+                ", contentBody='" + contentBody + '\'' +
+                ", contentTitle='" + contentTitle + '\'' +
+                ", contentExtensions='" + contentExtensions + '\'' +
+                ", mentions=" + mentions +
+                ", feedbackId=" + feedbackId +
+                ", feedbackTitle='" + feedbackTitle + '\'' +
+                ", commentCount=" + commentCount +
+                ", messageCreatedAt=" + messageCreatedAt +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 }

@@ -91,7 +91,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         if (item.id == lastMarker) {
             if (markerAnimState == MainMessageListAdapter.AnimState.Idle) {
                 final View view = viewHolder.itemView;
-                Integer colorFrom = context.getResources().getColor(R.color.jandi_transparent_white_1f);
+                Integer colorFrom = context.getResources().getColor(R.color.jandi_chat_list_default_background_1f);
                 Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_1f);
                 final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
                 colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));

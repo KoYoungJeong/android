@@ -34,7 +34,6 @@ import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.client.sticker.StickerApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -295,18 +294,6 @@ public class MessageListModel {
             entityClientManager.deleteChannel(entityId);
         } else {
             entityClientManager.deletePrivateGroup(entityId);
-        }
-    }
-
-    public void trackDeletingEntity(int entityType) {
-        String distictId = TeamInfoLoader.getInstance().getMyId() +
-                "-" +
-                TeamInfoLoader.getInstance().getTeamId();
-        try {
-            MixpanelMemberAnalyticsClient
-                    .getInstance(activity, distictId)
-                    .trackDeletingEntity(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
-        } catch (JSONException e) {
         }
     }
 

@@ -147,7 +147,7 @@ public class MainFileUploadControllerImpl implements FileUploadController {
 
                 LogUtil.e("Upload Success : " + result);
                 showSuccessToast(context, context.getString(R.string.jandi_file_upload_succeed));
-                filePickerModel.trackUploadingFile(context, entityId, result);
+                filePickerModel.trackUploadingFile(entityId, result);
             } else {
                 LogUtil.e("Upload Fail : Result : " + result);
                 showFailToast(context, context.getString(R.string.err_file_upload_failed));

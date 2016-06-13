@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -188,10 +187,6 @@ public class AccountHomeModel {
     }
 
     public void trackChangeAccountNameSuccess(Context context, String accountId) {
-        MixpanelAccountAnalyticsClient
-                .getInstance(context, accountId)
-                .trackSetAccount();
-
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(Event.ChangeAccountName)
                 .accountId(accountId)

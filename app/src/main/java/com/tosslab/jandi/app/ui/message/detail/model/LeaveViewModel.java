@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.chat.ChatApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -97,7 +96,6 @@ public class LeaveViewModel {
                 chatApi.get().deleteChat(memberId, entityId);
                 type = JandiConstants.TYPE_DIRECT_MESSAGE;
             }
-            trackLeavingEntity(type);
 
             trackTopicLeaveSuccess(entityId);
 
@@ -112,18 +110,6 @@ public class LeaveViewModel {
             trackTopicLeaveFail(-1);
             e.printStackTrace();
             leaveEntityFailed(context.getString(R.string.err_entity_leave));
-        }
-    }
-
-    private void trackLeavingEntity(int entityType) {
-        String distictId = TeamInfoLoader.getInstance().getMyId()
-                + "-" + TeamInfoLoader.getInstance().getTeamId();
-        try {
-            MixpanelMemberAnalyticsClient
-                    .getInstance(context, distictId)
-                    .trackLeavingEntity(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
-        } catch (JSONException e) {
-            LogUtil.e("CANNOT MEET", e);
         }
     }
 

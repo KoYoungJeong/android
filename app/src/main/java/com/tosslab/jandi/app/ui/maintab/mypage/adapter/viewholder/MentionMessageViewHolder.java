@@ -71,7 +71,13 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
     }
 
     private void bindContent(MentionMessage mentionMessage) {
-        tvTopicName.setText(mentionMessage.getRoomName());
+        if ("comment".equals(mentionMessage.getContentType())) {
+            tvTopicName.setText(mentionMessage.getFeedbackTitle());
+        } else if ("file".equals(mentionMessage.getContentType())) {
+            tvTopicName.setText(mentionMessage.getContentTitle());
+        } else {
+            tvTopicName.setText(mentionMessage.getRoomName());
+        }
 
         SpannableStringBuilder ssb = new SpannableStringBuilder(mentionMessage.getContentBody());
 

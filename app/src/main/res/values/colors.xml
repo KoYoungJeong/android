@@ -289,6 +289,7 @@
     <color name="jandi_profile_text">#333333</color>
 
     <color name="jandi_chat_list_default_background">#ffe1e6eb</color>
+    <color name="jandi_chat_list_default_background_1f">#1fe1e6eb</color>
 
     <color name="jandi_press_gray">#fff0f0f0</color>
 

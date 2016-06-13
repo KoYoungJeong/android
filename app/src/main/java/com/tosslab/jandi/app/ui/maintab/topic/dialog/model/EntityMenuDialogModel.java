@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.network.client.chat.ChatApi;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
@@ -65,16 +64,6 @@ public class EntityMenuDialogModel {
 
     public ResCommon requestDeleteChat(long memberId, long entityId) throws RetrofitException {
         return chatApi.get().deleteChat(memberId, entityId);
-    }
-
-    public void leaveEntity(boolean publicTopic) {
-        String distictId = TeamInfoLoader.getInstance().getMyId() + "-" + TeamInfoLoader.getInstance().getTeamId();
-        try {
-            MixpanelMemberAnalyticsClient
-                    .getInstance(JandiApplication.getContext(), distictId)
-                    .trackLeavingEntity(publicTopic);
-        } catch (JSONException e) {
-        }
     }
 
     public boolean isDefaultTopic(long entityId) {

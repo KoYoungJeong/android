@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.manager.token.TokenRequestManager;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
+import com.tosslab.jandi.app.services.SignOutService;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.io.IOException;
@@ -94,6 +95,7 @@ public class PoolableRequestApiExecutor {
                     }
                 } else {
                     // unauthorized exception
+                    SignOutService.start();
                     throw RetrofitException.create(response.code(), e);
                 }
             } else {

@@ -6,7 +6,6 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
@@ -67,10 +66,6 @@ public class JoinableTopicListModel {
                 joinPublicTopic(topic.getEntityId());
                 TopicRepository.getInstance().updateTopicJoin(topic.getEntityId(), true);
                 TeamInfoLoader.getInstance().refresh();
-                String distictId = TeamInfoLoader.getInstance().getMyId() + "-" + TeamInfoLoader.getInstance().getTeamId();
-                MixpanelMemberAnalyticsClient
-                        .getInstance(JandiApplication.getContext(), distictId)
-                        .trackJoinChannel();
                 subscriber.onNext(topic);
             } catch (RetrofitException error) {
                 subscriber.onError(error);

@@ -49,7 +49,6 @@ import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.MixpanelAnalytics;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -172,8 +171,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     void initView() {
         showDialogIfNotLastestVersion();
 
-        new MixpanelAnalytics().trackSigningIn();
-
         // Progress Wheel 설정
         progressWheel = new ProgressWheel(this);
 
@@ -194,9 +191,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
         // Bind the tabs to the ViewPager
         initMainTabStrip();
-
-        // Track for first load(MainTopicListFragment).
-        trackScreenView(0);
 
         showCoachMarkIfNeed();
 
@@ -237,14 +231,16 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
             vpMainTab.setCurrentItem(JandiPreference.getLastSelectedTab());
         }
 
-        if (vpMainTab.getCurrentItem() != 0) {
+        int currentItem = vpMainTab.getCurrentItem();
+        if (currentItem != 0) {
             setFABMenuVisibility(false);
         }
+        trackScreenView(currentItem);
 
         mainTapStrip.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                LogUtil.d("onPageSelected at " + position);
+                LogUtil.i("MainTabActivity", "onPageSelected at " + position);
                 trackScreenView(position);
                 switch (position) {
                     case 0:
@@ -680,6 +676,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     private void trackScreenView(int position) {
+        LogUtil.d("MainTabActivity", "trackScreenView at " + position);
         int screenView = ScreenViewProperty.TOPIC_PANEL;
         AnalyticsValue.Screen screen = AnalyticsValue.Screen.TopicsTab;
         switch (position) {
@@ -696,19 +693,25 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                 screen = AnalyticsValue.Screen.FilesTab;
                 break;
             case 3:
-                screenView = ScreenViewProperty.SETTING_PANEL;
-                screen = AnalyticsValue.Screen.MoreTab;
+//                screenView = ScreenViewProperty.SETTING_PANEL;
+                screen = AnalyticsValue.Screen.TeamTab;
+                break;
+            case 4:
+//                screenView = ScreenViewProperty.SETTING_PANEL;
+                screen = AnalyticsValue.Screen.MypageTab;
                 break;
         }
 
         AnalyticsUtil.sendScreenName(screen);
 
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.ScreenView)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ScreenView, screenView)
-                .build());
+        if (position < 3) {
+            AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                    .event(Event.ScreenView)
+                    .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                    .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                    .property(PropertyKey.ScreenView, screenView)
+                    .build());
+        }
     }
 
     @Override

@@ -39,9 +39,12 @@ public class SignOutService extends IntentService {
 
         final Context context = getApplicationContext();
         JandiSocketService.stopService(context);
-        Intent intentForSignIn = new Intent(this, SignInActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intentForSignIn);
+        Intent intentForSignIn = new Intent(JandiApplication.getContext(), SignInActivity.class);
+        intentForSignIn.addFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        JandiApplication.getContext().startActivity(intentForSignIn);
 
         new Handler(Looper.getMainLooper())
                 .post(() -> ColoredToast.show(context.getString(R.string.err_expired_session)));

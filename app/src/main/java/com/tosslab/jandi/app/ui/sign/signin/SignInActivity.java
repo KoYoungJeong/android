@@ -232,7 +232,7 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
         float endX = UiUtils.getPixelFromDp(5);
 
         ValueAnimator bounceAnim = ValueAnimator.ofFloat(startX, endX);
-        bounceAnim.setDuration(100);
+        bounceAnim.setDuration(50);
         bounceAnim.setRepeatCount(3);
         bounceAnim.setRepeatMode(ValueAnimator.REVERSE);
         bounceAnim.addUpdateListener(animation ->

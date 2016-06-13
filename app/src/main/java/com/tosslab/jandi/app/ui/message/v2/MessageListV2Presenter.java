@@ -315,6 +315,10 @@ public class MessageListV2Presenter {
 
     }
 
+    void updateMarkerInfo(long teamId, long roomId) {
+        messageListModel.updateMarkerInfo(teamId, roomId);
+    }
+
     private void addQueue(MessageContainer messageContainer) {
         if (!messageLoadSubscription.isUnsubscribed()) {
             messageRequestQueue.onNext(messageContainer);
@@ -965,7 +969,6 @@ public class MessageListV2Presenter {
         view.showProgressWheel();
         try {
             messageListModel.deleteTopic(room.getEntityId(), room.getEntityType());
-            messageListModel.trackDeletingEntity(room.getEntityType());
             view.dismissProgressWheel();
             view.finish();
         } catch (RetrofitException e) {

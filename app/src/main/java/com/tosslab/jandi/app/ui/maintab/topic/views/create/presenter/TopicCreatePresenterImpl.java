@@ -5,7 +5,6 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.topic.views.create.model.TopicCreateModel;
@@ -42,18 +41,6 @@ public class TopicCreatePresenterImpl implements TopicCreatePresenter {
         view.showProgressWheel();
         try {
             ResCommon topic = topicCreateModel.createTopic(topicTitle, isPublic, topicDescriptionText, isAutojoin);
-
-            try {
-                String distictId = TeamInfoLoader.getInstance().getMyId() + "-"
-                        + TeamInfoLoader.getInstance().getTeamId();
-                MixpanelMemberAnalyticsClient
-                        .getInstance(JandiApplication.getContext(), distictId)
-                        .trackCreatingEntity(true);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            // TODO 응답값 매핑해서 DB 로 넣기
 
             view.dismissProgressWheel();
 
