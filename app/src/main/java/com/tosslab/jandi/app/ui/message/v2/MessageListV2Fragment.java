@@ -50,6 +50,7 @@ import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
 import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
+import com.tosslab.jandi.app.events.entities.InvitationSuccessEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
@@ -1679,6 +1680,12 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                     messageListPresenter.removeOfMessageId(event.getCommentId());
                 });
 
+    }
+
+    public void onEvent(InvitationSuccessEvent event) {
+        if (room != null) {
+            messageListPresenter.updateMarkerInfo(room.getTeamId(), room.getRoomId());
+        }
     }
 
     public void onEvent(TeamLeaveEvent event) {
