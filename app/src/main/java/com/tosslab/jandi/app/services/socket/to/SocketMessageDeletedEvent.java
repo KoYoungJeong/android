@@ -7,16 +7,27 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
+/**
+ * Created by Steve SeongUg Jung on 15. 4. 9..
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(1)
-public class SocketTopicKickedoutEvent implements EventHistoryInfo  {
-    private String event;
+public class SocketMessageDeletedEvent implements EventHistoryInfo {
     private int version;
+    private String event;
+    private long teamId;
+    private long ts;
     private Data data;
 
-    private long ts;
+    public long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
+    }
 
     @Override
     public long getTs() {
@@ -26,7 +37,6 @@ public class SocketTopicKickedoutEvent implements EventHistoryInfo  {
     public void setTs(long ts) {
         this.ts = ts;
     }
-
 
     @Override
     public String getEvent() {
@@ -54,43 +64,33 @@ public class SocketTopicKickedoutEvent implements EventHistoryInfo  {
         this.data = data;
     }
 
-    @Override
-    public String toString() {
-        return "SocketTopicKickedoutEvent{" +
-                "event='" + event + '\'' +
-                ", version='" + version + '\'' +
-                ", data=" + data +
-                '}';
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
-        private int roomId;
-        private int teamId;
+        private long linkId;
+        private long messageId;
+        private long roomId;
 
-        public int getRoomId() {
+        public long getLinkId() {
+            return linkId;
+        }
+
+        public void setLinkId(long linkId) {
+            this.linkId = linkId;
+        }
+
+        public long getMessageId() {
+            return messageId;
+        }
+
+        public void setMessageId(long messageId) {
+            this.messageId = messageId;
+        }
+
+        public long getRoomId() {
             return roomId;
         }
 
-        public void setRoomId(int roomId) {
+        public void setRoomId(long roomId) {
             this.roomId = roomId;
-        }
-
-        public int getTeamId() {
-            return teamId;
-        }
-
-        public void setTeamId(int teamId) {
-            this.teamId = teamId;
-        }
-
-        @Override
-        public String toString() {
-            return "Data{" +
-                    "roomId=" + roomId +
-                    ", teamId=" + teamId +
-                    '}';
         }
     }
 }

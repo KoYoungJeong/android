@@ -53,7 +53,7 @@ public class BaiduRegistrationReceiver extends PushMessageReceiver {
     @Override
     public void onMessage(Context context, String message,
                           String customContentString) {
-        LogUtil.d(TAG, "onMessage");
+        LogUtil.d(TAG, "onMessageDeleted");
 
     }
 

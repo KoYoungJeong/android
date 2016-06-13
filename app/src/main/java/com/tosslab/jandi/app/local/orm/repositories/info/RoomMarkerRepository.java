@@ -35,7 +35,7 @@ public class RoomMarkerRepository extends LockExecutorTemplate {
                         .eq("memberId", memberId);
                 if (markerUpdateBuilder.update() <= 0) {
                     Marker newMarker = new Marker();
-                    if (TopicRepository.getInstance().hasTopic(roomId)) {
+                    if (TopicRepository.getInstance().isTopic(roomId)) {
                         Topic topic = TopicRepository.getInstance().getTopic(roomId);
                         newMarker.setTopic(topic);
 

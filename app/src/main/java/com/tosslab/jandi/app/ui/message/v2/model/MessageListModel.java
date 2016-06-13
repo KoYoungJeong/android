@@ -568,7 +568,7 @@ public class MessageListModel {
                     // 삭제된 파일/코멘트/메세지만 처리
                     if (TextUtils.equals(link.status, "archived")) {
                         if (!(link.message instanceof ResMessages.FileMessage)) {
-                            MessageRepository.getRepository().deleteMessage(link.messageId);
+                            MessageRepository.getRepository().deleteMessageOfMessageId(link.messageId);
                         } else {
                             MessageRepository.getRepository()
                                     .upsertFileMessage((ResMessages.FileMessage) link.message);

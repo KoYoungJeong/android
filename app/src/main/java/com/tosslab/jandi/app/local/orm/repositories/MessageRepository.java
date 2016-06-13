@@ -62,7 +62,7 @@ public class MessageRepository extends LockExecutorTemplate {
         });
     }
 
-    public int deleteMessage(long messageId) {
+    public int deleteMessageOfMessageId(long messageId) {
         return execute(() -> {
             if (messageId <= 0) {
                 // 이벤트는 삭제하지 않기 위함

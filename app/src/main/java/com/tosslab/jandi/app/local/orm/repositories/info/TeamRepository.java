@@ -60,4 +60,17 @@ public class TeamRepository extends LockExecutorTemplate {
             return false;
         });
     }
+
+    public boolean updateTeam(Team team) {
+        return execute(() -> {
+            try {
+                Dao<Team, Object> dao = getDao(Team.class);
+                dao.createOrUpdate(team);
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+    }
 }

@@ -1,5 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 ext {
+    rxAndroidVersion = "1.2.0"
+    rxJavaVersion = "1.1.5"
     supportLibVersion = "23.4.0"
     playServiceVersion = "8.3.0"
     dexmakerVersion = "1.4"

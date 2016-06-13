@@ -11,13 +11,14 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(1)
-public class SocketTeamNameDomainUpdatedEvent extends EventHistoryInfo {
+public class SocketTeamDomainUpdatedEvent implements EventHistoryInfo  {
     private String event;
     private int version;
     private long ts;
     private long teamId;
     private Team team;
 
+    @Override
     public String getEvent() {
         return event;
     }
@@ -26,6 +27,7 @@ public class SocketTeamNameDomainUpdatedEvent extends EventHistoryInfo {
         this.event = event;
     }
 
+    @Override
     public int getVersion() {
         return version;
     }
@@ -34,6 +36,7 @@ public class SocketTeamNameDomainUpdatedEvent extends EventHistoryInfo {
         this.version = version;
     }
 
+    @Override
     public long getTs() {
         return ts;
     }

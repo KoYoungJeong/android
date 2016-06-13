@@ -361,7 +361,7 @@ public class TopicRepository extends LockExecutorTemplate {
 
     }
 
-    public boolean hasTopic(long topicId) {
+    public boolean isTopic(long topicId) {
         return execute(() -> {
             try {
                 Dao<Topic, Object> dao = getDao(Topic.class);
@@ -386,6 +386,25 @@ public class TopicRepository extends LockExecutorTemplate {
             }
 
             return null;
+        });
+    }
+
+    public boolean updateReadId(long roomId, long linkId) {
+        return execute(() -> {
+
+            try {
+                Dao<Topic, Long> dao = getDao(Topic.class);
+                UpdateBuilder<Topic, Long> updateBuilder = dao.updateBuilder();
+                updateBuilder.updateColumnValue("readLinkId", linkId)
+                        .where()
+                        .eq("id", roomId);
+                return updateBuilder.update() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+            return false;
         });
     }
 }

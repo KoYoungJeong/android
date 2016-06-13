@@ -1,22 +1,28 @@
 package com.tosslab.jandi.app.services.socket.to;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
+
 /**
  * Created by tonyjs on 15. 9. 15..
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(1)
-public class SocketLinkPreviewThumbnailEvent {
+public class SocketLinkPreviewThumbnailEvent implements EventHistoryInfo  {
     private String event;
     private int version;
     private Data data;
 
     private long ts;
 
+    @Override
     public long getTs() {
         return ts;
     }
@@ -26,6 +32,7 @@ public class SocketLinkPreviewThumbnailEvent {
     }
 
 
+    @Override
     public String getEvent() {
         return event;
     }
@@ -34,6 +41,7 @@ public class SocketLinkPreviewThumbnailEvent {
         this.event = event;
     }
 
+    @Override
     public int getVersion() {
         return version;
     }

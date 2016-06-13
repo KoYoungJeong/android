@@ -7,15 +7,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
-/**
- * Created by tee on 15. 8. 26..
- */
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(1)
-public class SocketTopicFolderEvent extends EventHistoryInfo {
+public class SocketTopicFolderDeletedEvent implements EventHistoryInfo  {
 
     private String event;
     private int version;

@@ -16,7 +16,7 @@ import java.util.List;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(1)
-public class SocketRoomMarkerEvent extends EventHistoryInfo{
+public class SocketRoomMarkerEvent implements EventHistoryInfo {
     private int version;
     private String event;
     private long teamId;
@@ -24,6 +24,7 @@ public class SocketRoomMarkerEvent extends EventHistoryInfo{
     private Marker marker;
     private long ts;
 
+    @Override
     public long getTs() {
         return ts;
     }
@@ -32,18 +33,7 @@ public class SocketRoomMarkerEvent extends EventHistoryInfo{
         this.ts = ts;
     }
 
-
     @Override
-    public String toString() {
-        return "SocketRoomMarkerEvent{" +
-                "version=" + version +
-                ", event='" + event + '\'' +
-                ", teamId=" + teamId +
-                ", room=" + room +
-                ", marker=" + marker +
-                '}';
-    }
-
     public int getVersion() {
         return version;
     }
@@ -52,6 +42,7 @@ public class SocketRoomMarkerEvent extends EventHistoryInfo{
         this.version = version;
     }
 
+    @Override
     public String getEvent() {
         return event;
     }

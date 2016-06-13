@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
@@ -137,30 +136,6 @@ public class MainTopicListPresenter {
                 .subscribe(topicItemData -> value[0] += topicItemData.getUnreadCount());
 
         return value[0];
-    }
-
-    public void onNewMessageForFolder(SocketMessageEvent event, List<TopicItemData> joinedTopics) {
-
-        if (mainTopicModel.isMe(event.getWriter())) {
-            return;
-        }
-
-        mainTopicModel.updateMessageCount(event, joinedTopics);
-        view.updateGroupBadgeCount();
-        view.notifyDatasetChangedForFolder();
-
-        int unreadCount = getUnreadCount(Observable.from(joinedTopics));
-        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
-    }
-
-    public void onNewMessageForUpdated(SocketMessageEvent event, List<Topic> items) {
-        if (mainTopicModel.isMe(event.getWriter())) {
-            return;
-        }
-
-        mainTopicModel.updateMessageCountForUpdated(event, items);
-        onRefreshUpdatedTopicList();
-
     }
 
     public void onFolderExpand(TopicFolderData topicFolderData) {

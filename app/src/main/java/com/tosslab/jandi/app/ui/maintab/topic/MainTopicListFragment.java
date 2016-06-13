@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +28,9 @@ import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.libraries.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
-import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.folder.ExpandableTopicAdapter;
@@ -525,17 +526,28 @@ public class MainTopicListFragment extends Fragment
         mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
-    public void onEvent(SocketMessageEvent event) {
-        if (TextUtils.equals(event.getMessageType(), "chat")) {
-            return;
-        }
-        // 내부적으로 메세지만 갱신시키도록 변경
+    public void onEvent(SocketMessageDeletedEvent event) {
         if (isCurrentFolder()) {
-            mainTopicListPresenter.onNewMessageForFolder(event, getJoinedTopics());
+            mainTopicListPresenter.refreshList();
         } else {
-            mainTopicListPresenter.onNewMessageForUpdated(event, updatedTopicAdapter.getItems());
+            mainTopicListPresenter.onRefreshUpdatedTopicList();
         }
+    }
 
+    public void onEvent(SocketRoomMarkerEvent event) {
+        if (isCurrentFolder()) {
+            mainTopicListPresenter.refreshList();
+        } else {
+            mainTopicListPresenter.onRefreshUpdatedTopicList();
+        }
+    }
+
+    public void onEvent(SocketMessageCreatedEvent event) {
+        if (isCurrentFolder()) {
+            mainTopicListPresenter.refreshList();
+        } else {
+            mainTopicListPresenter.onRefreshUpdatedTopicList();
+        }
     }
 
     public void onEvent(MainSelectTopicEvent event) {

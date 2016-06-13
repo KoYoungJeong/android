@@ -21,7 +21,7 @@ import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldStarMentionedEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.adapter.StarMentionListAdapter;
@@ -207,12 +207,10 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
         starMentionListAdapter.notifyDataSetChanged();
     }
 
-    public void onEventMainThread(SocketMessageEvent event) {
-        if (TextUtils.equals(event.getMessageType(), "message_delete")) {
-            long messageId = event.getMessageId();
-            starMentionListAdapter.deleteMessage(messageId);
-            starMentionListAdapter.notifyDataSetChanged();
-        }
+    public void onEventMainThread(SocketMessageDeletedEvent event) {
+        long messageId = event.getData().getMessageId();
+        starMentionListAdapter.deleteMessage(messageId);
+        starMentionListAdapter.notifyDataSetChanged();
     }
 
     public void onEventMainThread(FileCommentRefreshEvent event) {

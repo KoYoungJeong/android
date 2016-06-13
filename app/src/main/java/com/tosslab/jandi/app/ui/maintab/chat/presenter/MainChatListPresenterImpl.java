@@ -15,7 +15,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import rx.android.schedulers.AndroidSchedulers;
@@ -39,7 +38,6 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
         publishSubject = PublishSubject.create();
 
         publishSubject
-                .throttleWithTimeout(1000, TimeUnit.MILLISECONDS)
                 .onBackpressureBuffer()
                 .map(integer -> {
 

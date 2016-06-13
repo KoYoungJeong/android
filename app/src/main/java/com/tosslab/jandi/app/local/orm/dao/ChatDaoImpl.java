@@ -18,16 +18,16 @@ public class ChatDaoImpl extends BaseDaoImpl<Chat, Long> {
 
     @Override
     public int create(Chat data) throws SQLException {
-        int id = super.create(data);
         createLastMessage(data.getLastMessage());
+        int id = super.create(data);
         upsertMarker(data.getId(), data.getMarkers());
         return id;
     }
 
     @Override
     public int update(Chat data) throws SQLException {
-        int row = super.update(data);
         createLastMessage(data.getLastMessage());
+        int row = super.update(data);
         upsertMarker(data.getId(), data.getMarkers());
         return row;
     }

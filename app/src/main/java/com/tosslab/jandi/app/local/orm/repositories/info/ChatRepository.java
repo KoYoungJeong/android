@@ -75,4 +75,100 @@ public class ChatRepository extends LockExecutorTemplate {
             return false;
         });
     }
+
+    public boolean updateLastMessage(long roomId, long linkId, String text, String status) {
+        return execute(() -> {
+
+            try {
+                Dao<Chat, Long> dao = getDao(Chat.class);
+                Dao<Chat.LastMessage, Object> lastMessageDao = getDao(Chat.LastMessage.class);
+                Chat.LastMessage lastMessage = new Chat.LastMessage();
+                lastMessage.setId(linkId);
+                lastMessage.setText(text);
+                lastMessage.setStatus(status);
+
+                UpdateBuilder<Chat, Long> chatUpdateBuilder = dao.updateBuilder();
+                chatUpdateBuilder.updateColumnValue("lastMessage_id", linkId)
+                        .where()
+                        .eq("id", roomId);
+                chatUpdateBuilder.update();
+
+                if (dao.queryForId(linkId) != null) {
+                    return lastMessageDao.update(lastMessage) > 0;
+                } else {
+                    return lastMessageDao.create(lastMessage) > 0;
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        });
+    }
+
+    public boolean isChat(long roomId) {
+        return execute(() -> {
+            try {
+                Dao<Chat, Long> dao = getDao(Chat.class);
+                return dao.queryBuilder()
+                        .where()
+                        .eq("id", roomId)
+                        .countOf() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        });
+    }
+
+    public boolean updateUnreadCount(long roomId, int unreadCount) {
+        return execute(() -> {
+            try {
+                Dao<Chat, Long> dao = getDao(Chat.class);
+                UpdateBuilder<Chat, Long> updateBuilder = dao.updateBuilder();
+                updateBuilder.updateColumnValue("unreadCount", unreadCount)
+                        .where()
+                        .eq("id", roomId);
+                return updateBuilder.update() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        });
+    }
+
+    public boolean updateLastLinkId(long roomId, long linkId) {
+        return execute(() -> {
+            try {
+                Dao<Chat, Object> dao = getDao(Chat.class);
+                UpdateBuilder<Chat, Object> updateBuilder = dao.updateBuilder();
+                updateBuilder.updateColumnValue("lastLinkId", linkId)
+                        .where()
+                        .eq("id", roomId);
+                return updateBuilder.update() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+    }
+
+    public boolean updateReadLinkId(long roomId, long readId) {
+        return execute(() -> {
+            try {
+                Dao<Chat, Long> dao = getDao(Chat.class);
+                UpdateBuilder<Chat, Long> updateBuilder = dao.updateBuilder();
+                updateBuilder.updateColumnValue("readLinkId", readId)
+                        .where()
+                        .eq("id", roomId);
+                return updateBuilder.update() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+    }
 }

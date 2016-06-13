@@ -111,7 +111,7 @@ public class MessageRepositoryTest {
         }
         MessageRepository.getRepository().upsertMessages(messages);
 
-        MessageRepository.getRepository().deleteMessage(messages.get(3).messageId);
+        MessageRepository.getRepository().deleteMessageOfMessageId(messages.get(3).messageId);
 
         List<ResMessages.Link> savedMessage = MessageRepository.getRepository().getMessages(ROOM_ID);
         assertThat(messages.size() - 1, is(equalTo(savedMessage.size())));

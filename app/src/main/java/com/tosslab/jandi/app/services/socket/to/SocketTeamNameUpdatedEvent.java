@@ -11,22 +11,12 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(1)
-public class SocketTopicKickedoutEvent implements EventHistoryInfo  {
+public class SocketTeamNameUpdatedEvent implements EventHistoryInfo  {
     private String event;
     private int version;
-    private Data data;
-
     private long ts;
-
-    @Override
-    public long getTs() {
-        return ts;
-    }
-
-    public void setTs(long ts) {
-        this.ts = ts;
-    }
-
+    private long teamId;
+    private Team team;
 
     @Override
     public String getEvent() {
@@ -46,51 +36,62 @@ public class SocketTopicKickedoutEvent implements EventHistoryInfo  {
         this.version = version;
     }
 
-    public Data getData() {
-        return data;
-    }
-
-    public void setData(Data data) {
-        this.data = data;
-    }
-
     @Override
-    public String toString() {
-        return "SocketTopicKickedoutEvent{" +
-                "event='" + event + '\'' +
-                ", version='" + version + '\'' +
-                ", data=" + data +
-                '}';
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
+    public long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    public static class Data {
-        private int roomId;
-        private int teamId;
+    public static class Team {
+        private long id;
+        private String domain;
+        private String name;
 
-        public int getRoomId() {
-            return roomId;
+
+        public String getDomain() {
+            return domain;
         }
 
-        public void setRoomId(int roomId) {
-            this.roomId = roomId;
+        public void setDomain(String domain) {
+            this.domain = domain;
         }
 
-        public int getTeamId() {
-            return teamId;
+        public String getName() {
+            return name;
         }
 
-        public void setTeamId(int teamId) {
-            this.teamId = teamId;
+        public void setName(String name) {
+            this.name = name;
         }
 
-        @Override
-        public String toString() {
-            return "Data{" +
-                    "roomId=" + roomId +
-                    ", teamId=" + teamId +
-                    '}';
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
         }
     }
+
 }

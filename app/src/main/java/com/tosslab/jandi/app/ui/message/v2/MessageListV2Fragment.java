@@ -96,7 +96,7 @@ import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketServiceStopEvent;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
@@ -1332,16 +1332,9 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
-    public void onEvent(SocketMessageEvent event) {
+    public void onEvent(SocketMessageDeletedEvent event) {
 
-        if (event.getRoom().getId() != room.getRoomId()) {
-            return;
-        }
-        String messageType = event.getMessageType();
-
-        if (TextUtils.equals(messageType, "message_delete")) {
-            messageListPresenter.removeOfMessageId(event.getMessageId());
-        }
+        messageListPresenter.removeOfMessageId(event.getData().getMessageId());
     }
 
     public void onEvent(RefreshNewMessageEvent event) {

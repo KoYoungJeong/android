@@ -1,13 +1,11 @@
 package com.tosslab.jandi.app.ui.maintab.topic.model;
 
 import android.support.v4.util.Pair;
-import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.teams.folder.FolderApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
-import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
@@ -217,84 +215,6 @@ public class MainTopicModel {
         TopicRepository.getInstance().updateUnreadCount(entityId, 0);
         TeamInfoLoader.getInstance().refresh();
     }
-
-    public boolean isMe(long writer) {
-        return TeamInfoLoader.getInstance().getMyId() == writer;
-    }
-
-    public void updateMessageCount(SocketMessageEvent event, List<TopicItemData> joinedTopics) {
-        Observable.from(joinedTopics)
-                .filter(topicItemData -> {
-                    if (!TextUtils.equals(event.getMessageType(), "file_comment")) {
-                        if (TextUtils.equals(event.getMessageType(), "topic_join")
-                                || TextUtils.equals(event.getMessageType(), "topic_invite")
-                                || TextUtils.equals(event.getMessageType(), "topic_leave")
-                                || TextUtils.equals(event.getMessageType(), "message_delete")
-                                || TextUtils.equals(event.getMessageType(), "file_unshare")) {
-                            return false;
-                        } else {
-                            return topicItemData.getEntityId() == event.getRoom().getId();
-                        }
-                    } else {
-                        if (TextUtils.equals(event.getMessageType(), "link_preview_create")) {
-                            // 단순 메세지 업데이트인 경우
-                            return false;
-                        }
-                        for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
-                            if (topicItemData.getEntityId() == messageRoom.getId()) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                })
-                .doOnNext(topicItemData -> topicItemData.setUnreadCount(topicItemData.getUnreadCount() + 1))
-                .doOnNext(topicItemData -> {
-                    int unreadCount = TeamInfoLoader.getInstance().getTopic(topicItemData.getEntityId()).getUnreadCount();
-                    TopicRepository.getInstance().updateUnreadCount(topicItemData.getEntityId(), ++unreadCount);
-                    TeamInfoLoader.getInstance().refresh();
-                })
-                .subscribe();
-    }
-
-    public void updateMessageCountForUpdated(SocketMessageEvent event, List<Topic> items) {
-        Observable.from(items)
-                .filter(topic -> {
-                    if (!TextUtils.equals(event.getMessageType(), "file_comment")) {
-                        if (TextUtils.equals(event.getMessageType(), "topic_join")
-                                || TextUtils.equals(event.getMessageType(), "topic_invite")
-                                || TextUtils.equals(event.getMessageType(), "topic_leave")
-                                || TextUtils.equals(event.getMessageType(), "message_delete")
-                                || TextUtils.equals(event.getMessageType(), "file_unshare")) {
-                            return false;
-                        } else {
-                            return topic.getEntityId() == event.getRoom().getId();
-                        }
-                    } else {
-                        if (TextUtils.equals(event.getMessageType(), "link_preview_create")) {
-                            // 단순 메세지 업데이트인 경우
-                            return false;
-                        }
-
-                        for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
-                            if (topic.getEntityId() == messageRoom.getId()) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                })
-                .doOnNext(topic -> topic.setUnreadCount(topic.getUnreadCount() + 1))
-                .filter(topic -> event.getLinkId() > 0)
-                .doOnNext(topic -> {
-                    TopicRepository.getInstance().updateLastLinkId(topic.getEntityId(), event.getLinkId());
-                    TeamInfoLoader.getInstance().refresh();
-                })
-                .subscribe(topic -> {
-                }, t -> {
-                });
-    }
-
 
     public Observable<List<Topic>> getUpdatedTopicList() {
 

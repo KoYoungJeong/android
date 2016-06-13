@@ -74,8 +74,8 @@ public class MainChatListModel {
 
                     return chatItem;
                 })
-                .collect(() -> chatItems, List::add)
-                .subscribe();
+                .toSortedList((lhs, rhs) -> ((int) (rhs.getLastLinkId() - lhs.getLastLinkId())))
+                .subscribe(chatItems::addAll);
 
         return chatItems;
     }

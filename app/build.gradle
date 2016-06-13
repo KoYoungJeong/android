@@ -119,7 +119,8 @@ dependencies {
 //    compile 'com.parse.bolts:bolts-android:1.2.1'
     compile 'com.parse:parse-android:1.10.0'
     // RxJava
-    compile 'io.reactivex:rxandroid:1.0.+'
+    compile "io.reactivex:rxandroid:${rootProject.ext.rxAndroidVersion}"
+    compile "io.reactivex:rxjava:${rootProject.ext.rxJavaVersion}"
 
     // facebook SDK
     compile 'com.facebook.android:facebook-android-sdk:4.5.+'

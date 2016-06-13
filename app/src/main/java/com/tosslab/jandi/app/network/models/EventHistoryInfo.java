@@ -8,6 +8,11 @@ import com.tosslab.jandi.app.network.jackson.deserialize.message.SocketHistoryDe
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = SocketHistoryDeserializer.class)
-public class EventHistoryInfo {
-    public long _id;
+public interface EventHistoryInfo {
+
+    long getTs();
+
+    String getEvent();
+
+    int getVersion();
 }

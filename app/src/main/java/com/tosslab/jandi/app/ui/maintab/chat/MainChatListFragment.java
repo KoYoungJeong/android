@@ -18,7 +18,9 @@ import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.push.to.PushRoomType;
-import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
 import com.tosslab.jandi.app.ui.maintab.chat.adapter.MainChatListAdapter;
 import com.tosslab.jandi.app.ui.maintab.chat.presenter.MainChatListPresenter;
@@ -224,25 +226,16 @@ public class MainChatListFragment extends Fragment
         }
     }
 
-    public void onEvent(SocketMessageEvent event) {
+    public void onEvent(SocketMessageDeletedEvent event) {
+        mainChatListPresenter.onReloadChatList();
+    }
 
-        if (!foreground) {
-            return;
-        }
+    public void onEvent(SocketRoomMarkerEvent event) {
+        mainChatListPresenter.onReloadChatList();
+    }
 
-        if (TextUtils.equals(event.getMessageType(), "file_comment")) {
-            for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
-                if (TextUtils.equals(messageRoom.getType(), "chat")) {
-                    mainChatListPresenter.onReloadChatList();
-                    return;
-                }
-            }
-        } else {
-
-            if (TextUtils.equals(event.getRoom().getType(), "chat")) {
-                mainChatListPresenter.onReloadChatList();
-            }
-        }
+    public void onEvent(SocketMessageCreatedEvent event) {
+        mainChatListPresenter.onReloadChatList();
     }
 
     public void onEvent(ChatListRefreshEvent event) {

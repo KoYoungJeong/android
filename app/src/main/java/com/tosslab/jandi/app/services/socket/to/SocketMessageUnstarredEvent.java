@@ -1,20 +1,26 @@
 package com.tosslab.jandi.app.services.socket.to;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
+/**
+ * Created by Steve SeongUg Jung on 15. 8. 5..
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(1)
-public class SocketTopicKickedoutEvent implements EventHistoryInfo  {
+public class SocketMessageUnstarredEvent implements EventHistoryInfo  {
+
     private String event;
     private int version;
-    private Data data;
+    @JsonProperty("data")
+    private StarredInfo starredInfo;
 
     private long ts;
 
@@ -26,6 +32,7 @@ public class SocketTopicKickedoutEvent implements EventHistoryInfo  {
     public void setTs(long ts) {
         this.ts = ts;
     }
+
 
 
     @Override
@@ -46,35 +53,35 @@ public class SocketTopicKickedoutEvent implements EventHistoryInfo  {
         this.version = version;
     }
 
-    public Data getData() {
-        return data;
+    public StarredInfo getStarredInfo() {
+        return starredInfo;
     }
 
-    public void setData(Data data) {
-        this.data = data;
-    }
-
-    @Override
-    public String toString() {
-        return "SocketTopicKickedoutEvent{" +
-                "event='" + event + '\'' +
-                ", version='" + version + '\'' +
-                ", data=" + data +
-                '}';
+    public void setStarredInfo(StarredInfo starredInfo) {
+        this.starredInfo = starredInfo;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    public static class Data {
-        private int roomId;
+    public static class StarredInfo {
+        private int memberId;
+        private int messageId;
         private int teamId;
 
-        public int getRoomId() {
-            return roomId;
+        public int getMemberId() {
+            return memberId;
         }
 
-        public void setRoomId(int roomId) {
-            this.roomId = roomId;
+        public void setMemberId(int memberId) {
+            this.memberId = memberId;
+        }
+
+        public int getMessageId() {
+            return messageId;
+        }
+
+        public void setMessageId(int messageId) {
+            this.messageId = messageId;
         }
 
         public int getTeamId() {
@@ -83,14 +90,6 @@ public class SocketTopicKickedoutEvent implements EventHistoryInfo  {
 
         public void setTeamId(int teamId) {
             this.teamId = teamId;
-        }
-
-        @Override
-        public String toString() {
-            return "Data{" +
-                    "roomId=" + roomId +
-                    ", teamId=" + teamId +
-                    '}';
         }
     }
 }

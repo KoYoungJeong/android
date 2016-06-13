@@ -13,13 +13,14 @@ import java.util.List;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(2)
-public class SocketTopicInvitedEvent extends EventHistoryInfo {
+public class SocketTopicInvitedEvent implements EventHistoryInfo  {
     private int version;
     private String event;
     private int teamId;
     private Data data;
     private long ts;
 
+    @Override
     public int getVersion() {
         return version;
     }
@@ -28,6 +29,7 @@ public class SocketTopicInvitedEvent extends EventHistoryInfo {
         this.version = version;
     }
 
+    @Override
     public String getEvent() {
         return event;
     }
@@ -52,6 +54,7 @@ public class SocketTopicInvitedEvent extends EventHistoryInfo {
         this.data = data;
     }
 
+    @Override
     public long getTs() {
         return ts;
     }

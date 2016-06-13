@@ -5,28 +5,19 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
+import com.tosslab.jandi.app.network.models.start.Team;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
-@Version(1)
-public class SocketTopicKickedoutEvent implements EventHistoryInfo  {
+@Version(2)
+public class SocketTeamUpdatedEvent implements EventHistoryInfo {
     private String event;
     private int version;
-    private Data data;
-
     private long ts;
-
-    @Override
-    public long getTs() {
-        return ts;
-    }
-
-    public void setTs(long ts) {
-        this.ts = ts;
-    }
-
+    private long teamId;
+    private Data data;
 
     @Override
     public String getEvent() {
@@ -46,6 +37,27 @@ public class SocketTopicKickedoutEvent implements EventHistoryInfo  {
         this.version = version;
     }
 
+    @Override
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
+    public long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
+    }
+
+    public void setTeam(Data data) {
+        this.data = data;
+    }
+
     public Data getData() {
         return data;
     }
@@ -54,43 +66,18 @@ public class SocketTopicKickedoutEvent implements EventHistoryInfo  {
         this.data = data;
     }
 
-    @Override
-    public String toString() {
-        return "SocketTopicKickedoutEvent{" +
-                "event='" + event + '\'' +
-                ", version='" + version + '\'' +
-                ", data=" + data +
-                '}';
-    }
-
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
-        private int roomId;
-        private int teamId;
+        private Team team;
 
-        public int getRoomId() {
-            return roomId;
+        public Team getTeam() {
+            return team;
         }
 
-        public void setRoomId(int roomId) {
-            this.roomId = roomId;
-        }
-
-        public int getTeamId() {
-            return teamId;
-        }
-
-        public void setTeamId(int teamId) {
-            this.teamId = teamId;
-        }
-
-        @Override
-        public String toString() {
-            return "Data{" +
-                    "roomId=" + roomId +
-                    ", teamId=" + teamId +
-                    '}';
+        public void setTeam(Team team) {
+            this.team = team;
         }
     }
+
 }

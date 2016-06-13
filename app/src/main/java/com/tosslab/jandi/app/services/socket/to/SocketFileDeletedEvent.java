@@ -1,32 +1,31 @@
 package com.tosslab.jandi.app.services.socket.to;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
-import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
+/**
+ * Created by Steve SeongUg Jung on 15. 4. 7..
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@JsonDeserialize(using = JsonDeserializer.None.class)
-@Version(2)
-public class SocketMemberUpdatedEvent implements EventHistoryInfo  {
-    private int version;
-    private String event;
+@Version(1)
+public class SocketFileDeletedEvent implements EventHistoryInfo  {
     private int teamId;
-    private Data data;
     private long ts;
+    private int version;
+    private EventFileInfo file;
+    private String event;
 
-    @Override
-    public int getVersion() {
-        return version;
+    public EventFileInfo getFile() {
+        return file;
     }
 
-    public void setVersion(int version) {
-        this.version = version;
+    public void setFile(EventFileInfo file) {
+        this.file = file;
     }
+
 
     @Override
     public String getEvent() {
@@ -45,14 +44,6 @@ public class SocketMemberUpdatedEvent implements EventHistoryInfo  {
         this.teamId = teamId;
     }
 
-    public Data getData() {
-        return data;
-    }
-
-    public void setData(Data data) {
-        this.data = data;
-    }
-
     @Override
     public long getTs() {
         return ts;
@@ -62,17 +53,36 @@ public class SocketMemberUpdatedEvent implements EventHistoryInfo  {
         this.ts = ts;
     }
 
+    @Override
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    public static class Data {
-        private Human member;
+    public static class EventFileInfo {
+        private int commentCount;
+        private long id;
 
-        public Human getMember() {
-            return member;
+        public int getCommentCount() {
+            return commentCount;
         }
 
-        public void setMember(Human member) {
-            this.member = member;
+        public void setCommentCount(int commentCount) {
+            this.commentCount = commentCount;
         }
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
     }
 }
