@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
@@ -17,6 +18,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.ViewPropertyAnimation;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.image.target.DynamicImageViewTarget;
 
 /**
@@ -45,6 +47,20 @@ public class ImageLoader {
 
     public static ImageLoader newInstance() {
         return new ImageLoader();
+    }
+
+    public static void loadFromResources(ImageView imageView, int resId) {
+        Context context = imageView.getContext();
+        if (context == null) {
+            return;
+        }
+
+        if (context instanceof Activity
+                && ((Activity) context).isFinishing()) {
+            return;
+        }
+
+        Glide.with(context).load(resId).into(imageView);
     }
 
     public ImageLoader backgroundColor(int color) {
@@ -186,7 +202,7 @@ public class ImageLoader {
 
         if (context instanceof Activity) {
             Activity activity = (Activity) context;
-            if (activity.isFinishing()) {
+            if (isActivityDestroyed(activity) || activity.isFinishing()) {
                 return null;
             }
 
@@ -196,18 +212,8 @@ public class ImageLoader {
         }
     }
 
-    public static void loadFromResources(ImageView imageView, int resId) {
-        Context context = imageView.getContext();
-        if (context == null) {
-            return;
-        }
-
-        if (context instanceof Activity
-                && ((Activity) context).isFinishing()) {
-            return;
-        }
-
-        Glide.with(context).load(resId).into(imageView);
+    private boolean isActivityDestroyed(Activity activity) {
+        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && activity.isDestroyed());
     }
 
 }
