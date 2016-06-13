@@ -63,9 +63,7 @@ public class NormalFileViewHolder extends FileViewHolder {
                 if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
                     getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(fileUrl)));
                 } else {
-                    EventBus.getDefault().post(
-                            new FileDownloadStartEvent(
-                                    fileUrl, content.title, content.type, content.fileUrl));
+                    EventBus.getDefault().post(new FileDownloadStartEvent());
                 }
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewFile);
