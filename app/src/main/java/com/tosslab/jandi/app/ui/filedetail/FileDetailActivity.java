@@ -124,6 +124,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     public static final int REQ_STORAGE_PERMISSION = 101;
     public static final int REQ_STORAGE_PERMISSION_EXPORT = 102;
+    public static final int REQ_STORAGE_PERMISSION_OPEN = 1033;
 
     private static final StickerInfo NULL_STICKER = new StickerInfo();
 
@@ -538,6 +539,18 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
+    public void showDialog(Dialog dialog) {
+        if (isFinishing()) {
+            return;
+        }
+
+        if (dialog != null && !dialog.isShowing()) {
+            dialog.show();
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
     public void dismissDialog(Dialog dialog) {
         if (isFinishing()) {
             return;
@@ -912,7 +925,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             fileDetailPresenter.cancelCurrentDownloading();
         });
         progressDialog.setMessage("Downloading " + fileMessage.content.title);
-        progressDialog.show();
 
         fileDetailPresenter.onOpenFile(fileMessage, progressDialog);
     }
@@ -949,6 +961,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::download)
                 .addRequestCode(REQ_STORAGE_PERMISSION_EXPORT)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::export)
+                .addRequestCode(REQ_STORAGE_PERMISSION_OPEN)
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        () -> onEvent(new FileDownloadStartEvent()))
                 .neverAskAgain(() -> {
                     PermissionRetryDialog.showExternalPermissionDialog(FileDetailActivity.this);
                 })
@@ -1075,7 +1090,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         progressDialog.setMax(100);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
 
         fileDetailPresenter.onExportFile(fileMessage, progressDialog);
     }
