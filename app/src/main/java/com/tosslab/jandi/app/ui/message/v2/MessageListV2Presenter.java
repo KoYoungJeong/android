@@ -315,10 +315,6 @@ public class MessageListV2Presenter {
 
     }
 
-    void updateMarkerInfo(long teamId, long roomId) {
-        messageListModel.updateMarkerInfo(teamId, roomId);
-    }
-
     private void addQueue(MessageContainer messageContainer) {
         if (!messageLoadSubscription.isUnsubscribed()) {
             messageRequestQueue.onNext(messageContainer);

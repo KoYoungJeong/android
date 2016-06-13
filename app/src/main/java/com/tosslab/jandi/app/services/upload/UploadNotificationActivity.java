@@ -7,10 +7,9 @@ import android.os.Bundle;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel_;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
@@ -92,15 +91,17 @@ public class UploadNotificationActivity extends BaseAppCompatActivity {
 
         int entityType;
 
-        FormattedEntity entity = EntityManager.getInstance().getEntityById(entityId);
-        if (entity.isPublicTopic()) {
-            entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
-        } else {
-            if (entity.isPrivateGroup()) {
-                entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
+
+        if (TeamInfoLoader.getInstance().isTopic(entityId)) {
+            if (TeamInfoLoader.getInstance().isPublicTopic(entityId)) {
+
+                entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
             } else {
-                entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
+                entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
+
             }
+        } else {
+            entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
         }
 
         MessageListV2Activity_.intent(UploadNotificationActivity.this)
