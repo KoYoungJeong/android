@@ -263,21 +263,35 @@ public class FileDetailPresenter {
             return;
         }
         view.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                () -> downloadFileAndManage(FileManageType.EXPORT, fileMessage, progressDialog),
-                () -> view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION_EXPORT, Manifest.permission.WRITE_EXTERNAL_STORAGE));
+                () -> {
+                    view.showDialog(progressDialog);
+                    downloadFileAndManage(FileManageType.EXPORT, fileMessage, progressDialog);
+                },
+                () -> {
+                    view.dismissDialog(progressDialog);
+                    view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION_EXPORT,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                });
     }
 
     public void onOpenFile(final ResMessages.FileMessage fileMessage,
                            final ProgressDialog progressDialog) {
         view.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                () -> downloadFileAndManage(FileManageType.OPEN, fileMessage, progressDialog),
-                () -> view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE));
+                () -> {
+                    view.showDialog(progressDialog);
+                    downloadFileAndManage(FileManageType.OPEN, fileMessage, progressDialog);
+                },
+                () -> {
+                    view.dismissDialog(progressDialog);
+                    view.requestPermission(FileDetailActivity.REQ_STORAGE_PERMISSION_OPEN,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                });
     }
 
     void downloadFileAndManage(final FileManageType type,
                                ResMessages.FileMessage fileMessage, ProgressDialog progressDialog) {
         if (fileMessage == null || fileMessage.content == null) {
+            view.dismissDialog(progressDialog);
             return;
         }
 
@@ -526,7 +540,7 @@ public class FileDetailPresenter {
         }
     }
 
-    enum FileManageType {
+    public enum FileManageType {
         EXPORT, OPEN
     }
 
@@ -534,6 +548,8 @@ public class FileDetailPresenter {
         void showProgress();
 
         void dismissProgress();
+
+        void showDialog(Dialog dialog);
 
         void dismissDialog(Dialog dialog);
 
@@ -614,6 +630,7 @@ public class FileDetailPresenter {
         void showCommentDeleteErrorToast();
 
         void addComment(int adapterPosition, ResMessages.OriginalMessage comment);
+
     }
 
 }
