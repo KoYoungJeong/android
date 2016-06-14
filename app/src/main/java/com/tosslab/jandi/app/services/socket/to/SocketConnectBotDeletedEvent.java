@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
-import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
-
-import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -70,98 +67,8 @@ public class SocketConnectBotDeletedEvent implements EventHistoryInfo {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
-        private Bot bot;
-        private Connect connect;
-
-
-        public Bot getBot() {
-            return bot;
-        }
-
-        public void setBot(Bot bot) {
-            this.bot = bot;
-        }
-
-        public Connect getConnect() {
-            return connect;
-        }
-
-        public void setConnect(Connect connect) {
-            this.connect = connect;
-        }
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    public static class Connect {
-        private long id;
-        private String type;
-        private long authenticationId;
-        private long webhookTokenId;
-        private long teamId;
-        private long memberId;
-        private long roomId;
         private long botId;
-        private String status;
-        private String lang;
-        private Date createdAt;
-        private Date updatedAt;
-
-        public long getId() {
-            return id;
-        }
-
-        public void setId(long id) {
-            this.id = id;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public long getAuthenticationId() {
-            return authenticationId;
-        }
-
-        public void setAuthenticationId(long authenticationId) {
-            this.authenticationId = authenticationId;
-        }
-
-        public long getWebhookTokenId() {
-            return webhookTokenId;
-        }
-
-        public void setWebhookTokenId(long webhookTokenId) {
-            this.webhookTokenId = webhookTokenId;
-        }
-
-        public long getTeamId() {
-            return teamId;
-        }
-
-        public void setTeamId(long teamId) {
-            this.teamId = teamId;
-        }
-
-        public long getMemberId() {
-            return memberId;
-        }
-
-        public void setMemberId(long memberId) {
-            this.memberId = memberId;
-        }
-
-        public long getRoomId() {
-            return roomId;
-        }
-
-        public void setRoomId(long roomId) {
-            this.roomId = roomId;
-        }
+        private long connectId;
 
         public long getBotId() {
             return botId;
@@ -171,36 +78,13 @@ public class SocketConnectBotDeletedEvent implements EventHistoryInfo {
             this.botId = botId;
         }
 
-        public String getStatus() {
-            return status;
+        public long getConnectId() {
+            return connectId;
         }
 
-        public void setStatus(String status) {
-            this.status = status;
-        }
-
-        public String getLang() {
-            return lang;
-        }
-
-        public void setLang(String lang) {
-            this.lang = lang;
-        }
-
-        public Date getCreatedAt() {
-            return createdAt;
-        }
-
-        public void setCreatedAt(Date createdAt) {
-            this.createdAt = createdAt;
-        }
-
-        public Date getUpdatedAt() {
-            return updatedAt;
-        }
-
-        public void setUpdatedAt(Date updatedAt) {
-            this.updatedAt = updatedAt;
+        public void setConnectId(long connectId) {
+            this.connectId = connectId;
         }
     }
+
 }

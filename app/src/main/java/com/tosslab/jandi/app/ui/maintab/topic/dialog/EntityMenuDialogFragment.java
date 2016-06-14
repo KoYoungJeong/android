@@ -302,7 +302,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
     @Background
     void leaveEntity(long entityId, boolean publicTopic, boolean isUser) {
         try {
-            entityMenuDialogModel.requestLeaveEntity(entityId, publicTopic);
 
             if (!isUser) {
                 entityMenuDialogModel.requestLeaveEntity(entityId, publicTopic);

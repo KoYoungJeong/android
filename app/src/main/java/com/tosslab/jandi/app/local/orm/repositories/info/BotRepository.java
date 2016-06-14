@@ -47,11 +47,13 @@ public class BotRepository extends LockExecutorTemplate {
 
     }
 
-    public boolean removeBot(long botId) {
+    public boolean updateBotStatus(long botId, String status) {
         return execute(() -> {
             try {
                 Dao<Bot, Long> dao = getHelper().getDao(Bot.class);
-                return dao.deleteById(botId) > 0;
+                Bot bot = dao.queryForId(botId);
+                bot.setStatus(status);
+                return dao.update(bot) > 0;
 
             } catch (SQLException e) {
                 e.printStackTrace();

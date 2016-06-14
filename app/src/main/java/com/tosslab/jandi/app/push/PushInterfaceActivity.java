@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.util.Pair;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.events.EventsApi;
@@ -35,10 +34,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
-
-import de.greenrobot.event.EventBus;
-import rx.Observable;
-import rx.schedulers.Schedulers;
 
 
 /**
@@ -173,19 +168,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
             Pair<Boolean, Long> entityInfo = jandiInterfaceModel.getEntityInfo(entityId, roomType);
 
             if (entityInfo.second > 0) {
-                if (!entityInfo.first) {
-                    Observable.just(jandiInterfaceModel.getEntityInfo())
-                            .subscribeOn(Schedulers.io())
-                            .filter(success -> success)
-                            .subscribe(entityRefreshed -> {
-                                EventBus eventBus = EventBus.getDefault();
-                                if (eventBus.hasSubscriberForEvent(EntitiesUpdatedEvent.class)) {
-                                    eventBus.post(new EntitiesUpdatedEvent());
-                                }
-                            });
 
-                }
-                // 메세지 갱신
                 new JandiSocketServiceModel(PushInterfaceActivity.this,
                         () -> new AccountApi(RetrofitBuilder.getInstance()),
                         () -> new MessageApi(RetrofitBuilder.getInstance()),

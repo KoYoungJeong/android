@@ -58,7 +58,7 @@ import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Topic;
-import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
+import com.tosslab.jandi.app.network.socket.domain.SocketStart;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
@@ -209,28 +209,9 @@ public class JandiSocketServiceModel {
 
     }
 
-    public ConnectTeam getConnectTeam() {
-        ResAccountInfo.UserTeam selectedTeamInfo =
-                AccountRepository.getRepository().getSelectedTeamInfo();
-
-        if (selectedTeamInfo == null) {
-            return null;
-        }
-
-        long myId = TeamInfoLoader.getInstance().getMyId();
-
-        if (myId <= 0) {
-            return null;
-        }
-
-        String memberName = TeamInfoLoader.getInstance().getMemberName(myId);
-
+    public SocketStart getStartInfo() {
         String token = TokenUtil.getAccessToken();
-        return new ConnectTeam(token,
-                UserAgentUtil.getDefaultUserAgent(),
-                selectedTeamInfo.getTeamId(),
-                selectedTeamInfo.getName(),
-                selectedTeamInfo.getMemberId(), memberName);
+        return new SocketStart(token, UserAgentUtil.getDefaultUserAgent());
     }
 
     public void onTeamNameUpdated(Object object) {
@@ -534,43 +515,23 @@ public class JandiSocketServiceModel {
 
     public void onLinkPreviewCreated(final Object object) {
         try {
-            SocketLinkPreviewMessageEvent socketLinkPreviewMessageEvent =
+            SocketLinkPreviewMessageEvent event =
                     getObject(object, SocketLinkPreviewMessageEvent.class);
 
-            long teamId = socketLinkPreviewMessageEvent.getTeamId();
-            if (AccountRepository.getRepository().getSelectedTeamId() != teamId) {
-                return;
+            SocketLinkPreviewMessageEvent.Data data = event.getData();
+            ResMessages.TextMessage textMessage = MessageRepository.getRepository().getTextMessage(data.getMessageId());
+            if (textMessage != null) {
+                textMessage.linkPreview = data.getLinkPreview();
+                MessageRepository.getRepository().upsertTextMessage(textMessage);
             }
 
-            long messageId = socketLinkPreviewMessageEvent.getMessage().getId();
-            JandiPreference.setSocketConnectedLastTime(socketLinkPreviewMessageEvent.getTs());
+            JandiPreference.setSocketConnectedLastTime(event.getTs());
 
-            if (updateLinkPreview(teamId, messageId)) {
-                postEvent(new LinkPreviewUpdateEvent(messageId));
-            }
+            postEvent(new LinkPreviewUpdateEvent(data.getMessageId()));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    private boolean updateLinkPreview(long teamId, long messageId) {
-        try {
-            ResMessages.OriginalMessage message = messageApi.get().getMessage(teamId, messageId);
-            if (message instanceof ResMessages.TextMessage) {
-                ResMessages.TextMessage textMessage = (ResMessages.TextMessage) message;
-                ResMessages.LinkPreview linkPreview = textMessage.linkPreview;
-                if (linkPreview != null) {
-                    MessageRepository.getRepository().upsertTextMessage(textMessage);
-                    return true;
-                }
-            }
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
 
     public void onLinkPreviewImage(final Object object) {
         try {
@@ -579,10 +540,6 @@ public class JandiSocketServiceModel {
 
             SocketLinkPreviewThumbnailEvent.Data data = socketLinkPreviewMessageEvent.getData();
             ResMessages.LinkPreview linkPreview = data.getLinkPreview();
-
-            if (AccountRepository.getRepository().getSelectedTeamId() != data.getTeamId()) {
-                return;
-            }
 
             long messageId = data.getMessageId();
 
@@ -995,6 +952,7 @@ public class JandiSocketServiceModel {
                     text = "";
                 }
                 ChatRepository.getInstance().updateLastMessage(linkMessage.roomId, linkMessage.id, text, "created");
+                ChatRepository.getInstance().updateChatOpened(linkMessage.roomId, true);
 
                 if (isMyMessage) {
                     ChatRepository.getInstance().updateUnreadCount(linkMessage.roomId, 0);
@@ -1102,7 +1060,7 @@ public class JandiSocketServiceModel {
             SocketConnectBotCreatedEvent event = getObject(object, SocketConnectBotCreatedEvent.class);
             BotRepository.getInstance().addBot(event.getData().getBot());
             TeamInfoLoader.getInstance().refresh();
-            postEvent(new RefreshConnectBotEvent(event.getData().getBot()));
+            postEvent(new RefreshConnectBotEvent());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1111,10 +1069,10 @@ public class JandiSocketServiceModel {
     public void onConnectBotDeleted(Object object) {
         try {
             SocketConnectBotDeletedEvent event = getObject(object, SocketConnectBotDeletedEvent.class);
-            BotRepository.getInstance().removeBot(event.getData().getBot().getId());
+            BotRepository.getInstance().updateBotStatus(event.getData().getBotId(), "deleted");
             TeamInfoLoader.getInstance().refresh();
 
-            postEvent(new RefreshConnectBotEvent(event.getData().getBot()));
+            postEvent(new RefreshConnectBotEvent());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1126,7 +1084,7 @@ public class JandiSocketServiceModel {
             BotRepository.getInstance().updateBot(event.getData().getBot());
             TeamInfoLoader.getInstance().refresh();
 
-            postEvent(new RefreshConnectBotEvent(event.getData().getBot()));
+            postEvent(new RefreshConnectBotEvent());
         } catch (Exception e) {
             e.printStackTrace();
         }

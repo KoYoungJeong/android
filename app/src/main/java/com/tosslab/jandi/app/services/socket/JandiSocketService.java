@@ -12,7 +12,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
-import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
+import com.tosslab.jandi.app.network.socket.domain.SocketStart;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
 import com.tosslab.jandi.app.services.SignOutService;
 import com.tosslab.jandi.app.services.socket.dagger.DaggerSocketServiceComponent;
@@ -189,23 +189,20 @@ public class JandiSocketService extends Service {
         eventHashMap.put("chat_created", chatCreatedListener);
         // TODO 추가 테스트 필요 : chat_opened
 
-        // TODO 추가 테스트 필요 : v2 없음
         EventListener connectCreatedListener = objects -> jandiSocketServiceModel.onConnectBotCreated(objects[0]);
         eventHashMap.put("connect_created", connectCreatedListener);
-        // TODO 추가 테스트 필요 : v2 없음
         EventListener connectDeletedListener = objects -> jandiSocketServiceModel.onConnectBotDeleted(objects[0]);
         eventHashMap.put("connect_deleted", connectDeletedListener);
-        // TODO 추가 테스트 필요 : v2 없음
         EventListener connectUpdatedListener = objects -> jandiSocketServiceModel.onConnectBotUpdated(objects[0]);
         eventHashMap.put("connect_updated", connectUpdatedListener);
 
-        // TODO 추가 테스트 필요 : v2 없음
         EventListener topicLeftListener = objects -> jandiSocketServiceModel.onTopicLeft(objects[0]);
         eventHashMap.put("topic_left", topicLeftListener);
         EventListener topicDeletedListener = objects -> jandiSocketServiceModel.onTopicDeleted(objects[0]);
         eventHashMap.put("topic_deleted", topicDeletedListener);
         EventListener teamCreatedJoinListener = objects -> jandiSocketServiceModel.onTopicCreated(objects[0]);
         eventHashMap.put("topic_created", teamCreatedJoinListener);
+        // TODO "추가 테스트 필요 : Private Topic 초대시"
         EventListener topicInviteListener = objects -> jandiSocketServiceModel.onTopicInvitedListener(objects[0]);
         eventHashMap.put("topic_invited", topicInviteListener);
         EventListener topicJoinListener = objects -> jandiSocketServiceModel.onTopicJoined(objects[0]);
@@ -246,28 +243,6 @@ public class JandiSocketService extends Service {
                 jandiSocketServiceModel.onFileCommentDeleted(objects[0]);
         eventHashMap.put("file_comment_deleted", fileCommentDeletedListener);
 
-        eventHashMap.put("check_connect_team", objects -> {
-            LogUtil.d(TAG, "check_connect_team");
-            JandiPreference.setSocketReconnectDelay(0l);
-            ConnectTeam connectTeam = jandiSocketServiceModel.getConnectTeam();
-            if (connectTeam != null) {
-                jandiSocketManager.sendByJson("connect_team", connectTeam);
-            } else {
-                // 만료된 것으로 보고 소켓 서비스 강제 종료
-                setStopForcibly(true);
-                stopSelf();
-            }
-        });
-        eventHashMap.put("connect_team", objects -> {
-            LogUtil.d(TAG, "connect_team");
-            jandiSocketServiceModel.updateEventHistory();
-        });
-        eventHashMap.put("error_connect_team", objects -> {
-            LogUtil.e(TAG, "Get Error - error_connect_team");
-            sendBroadcastForRestart();
-        });
-
-
         EventListener messageRefreshListener = objects ->
                 jandiSocketServiceModel.onMessageDeleted(objects[0]);
         eventHashMap.put("message_deleted", messageRefreshListener);
@@ -295,7 +270,6 @@ public class JandiSocketService extends Service {
         EventListener announceCreatedListener = objects -> jandiSocketServiceModel.onAnnouncementCreated(objects[0]);
         eventHashMap.put("announcement_created", announceCreatedListener);
 
-        // TODO 추가 테스트 필요 : v2 없음
         EventListener linkPreviewMessageUpdateListener =
                 objects -> jandiSocketServiceModel.onLinkPreviewCreated(objects[0]);
         eventHashMap.put("link_preview_created", linkPreviewMessageUpdateListener);
@@ -324,6 +298,29 @@ public class JandiSocketService extends Service {
                 objects -> jandiSocketServiceModel.onFolderItemDeleted(objects[0]);
         eventHashMap.put("folder_item_deleted", folderItemDeletedListener);
 
+
+        eventHashMap.put("ready_to_start", objects -> {
+            JandiPreference.setSocketReconnectDelay(0l);
+            SocketStart socketStart = jandiSocketServiceModel.getStartInfo();
+            if (socketStart != null) {
+                jandiSocketManager.sendByJson("start", socketStart);
+            } else {
+                // 만료된 것으로 보고 소켓 서비스 강제 종료
+                setStopForcibly(true);
+                stopSelf();
+            }
+        });
+        eventHashMap.put("start", objects -> {
+            jandiSocketManager.sendByJson("jandi_ping", "");
+            jandiSocketServiceModel.updateEventHistory();
+        });
+
+        eventHashMap.put("jandi_ping", objects -> {});
+
+        eventHashMap.put("error_start", objects -> {
+            LogUtil.e(TAG, "Get Error - error_connect_team");
+            sendBroadcastForRestart();
+        });
 
     }
 
