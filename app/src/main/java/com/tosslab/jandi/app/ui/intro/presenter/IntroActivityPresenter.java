@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
@@ -35,6 +36,11 @@ public class IntroActivityPresenter {
     public void checkNewVersion(Context context, boolean startForInvite) {
 
         long initTime = System.currentTimeMillis();
+
+        if (!JandiPreference.getPrefVersion214()) {
+            MessageRepository.getRepository().deleteAllLink();
+            JandiPreference.setPrefVersion214();
+        }
 
         if (!model.isNetworkConnected()) {
             // 네트워크 연결 상태 아니면 로그인 여부만 확인하고 넘어감

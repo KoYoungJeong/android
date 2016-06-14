@@ -6,6 +6,7 @@ import android.support.v4.util.Pair;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
@@ -21,6 +22,7 @@ import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -80,6 +82,12 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
 
     @AfterInject
     void initObject() {
+
+        if (!JandiPreference.getPrefVersion214()) {
+            MessageRepository.getRepository().deleteAllLink();
+            JandiPreference.setPrefVersion214();
+        }
+
         if (jandiInterfaceModel.hasNotRegisteredAtNewPushService()) {
             PushUtil.registPush();
         }
