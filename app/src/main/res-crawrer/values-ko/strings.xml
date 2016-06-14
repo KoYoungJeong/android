@@ -73,6 +73,7 @@
 	<string name="jandi_action_share">"공유"</string>
 	<string name="jandi_action_starred">"즐겨찾기"</string>
 	<string name="jandi_action_start">"가입하기"</string>
+	<string name="jandi_action_start_block">"<u>가입하기</u>"</string>
 	<string name="jandi_action_unshare">"공유 해제"</string>
 	<string name="jandi_action_update">"업데이트"</string>
 	<string name="jandi_add">"추가"</string>
@@ -80,6 +81,7 @@
 	<string name="jandi_add_to_contacts">"연락처 추가하기"</string>
 	<string name="jandi_alert_already_topic_owenr">"이미 이 토픽의 관리자입니다."</string>
 	<string name="jandi_all_of_topic_members">"@all (모든 토픽 멤버)"</string>
+	<string name="jandi_already_has_account">"이미 잔디 계정이 있으신가요?"</string>
 	<string name="jandi_already_in_team">"이 이메일 주소는 이미 %s의 멤버입니다."</string>
 	<string name="jandi_already_linked_email">"이미 계정과 연동되어있는 이메일입니다"</string>
 	<string name="jandi_announcement_create">"공지로 등록"</string>
@@ -190,6 +192,9 @@
 	<string name="jandi_entity_create_entity_name">"사용자 성함"</string>
 	<string name="jandi_entity_joined_topic">"참여한 토픽"</string>
 	<string name="jandi_entity_unjoined_topic">"참여하지 않은 토픽"</string>
+	<string name="jandi_err_input_email">"이메일 주소를 입력해주세요."</string>
+	<string name="jandi_err_input_password">"비밀번호를 입력해주세요."</string>
+	<string name="jandi_err_invalid_email">"이메일 주소가 정확하지 않습니다."</string>
 	<string name="jandi_err_unexpected">"알 수 없는 문제가 생겼습니다."</string>
 	<string name="jandi_error_web_token">"로그인 중 에러가 발생했습니다. 다시 시도해 주세요."</string>
 	<string name="jandi_exceeded_max_text_length">"5000자 까지 입력할 수 있습니다."</string>
@@ -242,6 +247,8 @@
 	<string name="jandi_folder_removed">"폴더가 삭제되었습니다."</string>
 	<string name="jandi_folder_rename">"이름 변경"</string>
 	<string name="jandi_folder_renamed">"폴더명이 변경되었습니다."</string>
+	<string name="jandi_forget_password">"비밀번호를 잊어버리셨나요?"</string>
+	<string name="jandi_forget_password_block">"<u>비밀번호를 잊어버리셨나요?</u>"</string>
 	<string name="jandi_forgot_password">"<u>비밀번호 찾기</u>"</string>
 	<string name="jandi_go_to_latest">"최신 메시지로 가기"</string>
 	<string name="jandi_go_to_setting">"설정으로 이동"</string>
@@ -259,6 +266,7 @@
 	<string name="jandi_input_password">"선택한 팀 계정의 비밀번호를 입력하세요"</string>
 	<string name="jandi_input_search_keyword">"검색어를 입력해주세요."</string>
 	<string name="jandi_input_topic_name">"토픽 이름을 입력해주세요."</string>
+	<string name="jandi_input_user_name">"사용자 이름을 입력하세요"</string>
 	<string name="jandi_invitation">"팀으로 초대"</string>
 	<string name="jandi_invitation_help">"또 다른 팀원을 초대할 수 있습니다."</string>
 	<string name="jandi_invitation_succeed">"팀원으로 초대했습니다."</string>
@@ -307,7 +315,8 @@
 메시지 입력창에서 "@"을 입력하여 멘션을 주고받을 수 있습니다."</string>
 	<string name="jandi_mention_push_message">"%s 님의 멘션"</string>
 	<string name="jandi_mentions_are_empty">"다른 멤버에게 받은 멘션이 없습니다. 
-메시지 입력창에서 "@"을 입력하여 멘션을 주고받을 수 있습니다."</string>
+메시지 입력 시 "@"를 입력하여 
+멘션을 주고 받을 수 있습니다."</string>
 	<string name="jandi_message_ask_about_delete_comment">"이 댓글을 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
 	<string name="jandi_message_ask_about_deleting">"이 메시지를 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
 	<string name="jandi_message_create_entity">"%1$s을 생성하였습니다"</string>
@@ -335,6 +344,7 @@
 	<string name="jandi_msg_network_offline_warn">"현재 네트워크에 접속되지 않은 것으로 보입니다."</string>
 	<string name="jandi_my_files">"<b>내 파일</b>"</string>
 	<string name="jandi_mypage">"마이 페이지"</string>
+	<string name="jandi_name">"이름"</string>
 	<string name="jandi_name_in_jandi">"잔디 계정 이름"</string>
 	<string name="jandi_need_to_assign_topic_owner">"회원님은 이 토픽의 관리자입니다.
 토픽 상세정보 > 토픽 관리자 변경하기 에서
@@ -349,6 +359,7 @@
 	<string name="jandi_no_recent_stickers">"최근 사용한 스티커가 없습니다."</string>
 	<string name="jandi_no_topic_to_join">"참여 가능한 토픽이 없습니다"</string>
 	<string name="jandi_normally_topic_messages">"일반 토픽 메시지"</string>
+	<string name="jandi_not_in_topic">"이미 이 토픽에서 나갔거나 퇴장되었습니다."</string>
 	<string name="jandi_notification_off">"알림 끄기"</string>
 	<string name="jandi_notification_on">"알림 켜기"</string>
 	<string name="jandi_notification_sounds">"알림 소리"</string>
@@ -368,6 +379,7 @@
 	<string name="jandi_play_store">"구글 플레이 스토어"</string>
 	<string name="jandi_please_retry">"다시 시도해주세요."</string>
 	<string name="jandi_plz_input_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
+	<string name="jandi_pp">"개인정보 취급방침"</string>
 	<string name="jandi_preview_message_contents">"메시지 내용 미리보기"</string>
 	<string name="jandi_privacy_policy">"개인정보 취급방침"</string>
 	<string name="jandi_privacy_protection">"개인 정보 보호"</string>
@@ -420,6 +432,7 @@
 	<string name="jandi_select_gallery">"사진 선택"</string>
 	<string name="jandi_select_maximum_10">"최대 10장까지 선택할 수 있습니다."</string>
 	<string name="jandi_select_team">"팀을 선택하세요"</string>
+	<string name="jandi_send">"전송"</string>
 	<string name="jandi_send_invitation">"멤버 초대하기"</string>
 	<string name="jandi_send_to_email">"메일 보내기"</string>
 	<string name="jandi_sent_password_reset_mail">"패스워드 초기화 이메일이 발송되었습니다"</string>
@@ -447,6 +460,7 @@
 	<string name="jandi_share_to_jandi">"JANDI에 공유하기"</string>
 	<string name="jandi_shared">"공유된"</string>
 	<string name="jandi_shared_in_room">"공유된 곳"</string>
+	<string name="jandi_sign_in_block">"<u>로그인</u>"</string>
 	<string name="jandi_sign_in_ids_explain">"등록된 이메일 주소들을 로그인 ID로 사용하실 수 있습니다. 이 이메일 주소들은 각각 연동된 팀의 프로필에도 사용됩니다."</string>
 	<string name="jandi_sign_out_message">"정말 로그아웃 하시겠습니까?"</string>
 	<string name="jandi_signup_agree_all">"잔디 회원가입 약관에 모두 동의합니다."</string>
@@ -504,6 +518,7 @@
 	<string name="jandi_tab_private_group">"비공개 토픽"</string>
 	<string name="jandi_tab_to_view_original">"이곳을 탭하면 원본으로 볼 수 있습니다."</string>
 	<string name="jandi_tab_topic">"토픽"</string>
+	<string name="jandi_tab_tos_and_pp">"다음을 탭하면 %1$s과 %2$s에 \n동의하는 것으로 간주합니다."</string>
 	<string name="jandi_team">"팀"</string>
 	<string name="jandi_team_creation_succeed">"메일 전송 성공. 메일함을 확인하여 잔디 팀을 생성하세요."</string>
 	<string name="jandi_team_info">"팀 정보"</string>
@@ -542,6 +557,7 @@
 	<string name="jandi_topic_title">"이름"</string>
 	<string name="jandi_topic_title_hint">"이름"</string>
 	<string name="jandi_topic_was_removed">"이미 나갔거나 삭제된 토픽이므로 원본을 확인할 수 없습니다."</string>
+	<string name="jandi_tos">"이용약관"</string>
 	<string name="jandi_tos_and_pp">"이용 약관 및 개인정보 취급방침"</string>
 	<string name="jandi_try_again">"다시 시도하기"</string>
 	<string name="jandi_tutorial_file">"파일 업로드, 공유, 검색을 메신저에서 한 번에"</string>

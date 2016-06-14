@@ -732,13 +732,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     public void onEventMainThread(MessageOfOtherTeamEvent event) {
-        int messageCount = getOtherTeamMessageCount();
-        if (messageCount > 0) {
-            mainTabPagerAdapter.showMoreNewBadge();
-            teamsPresenter.reInitializeTeams();
-        } else {
-            mainTabPagerAdapter.hideMoreNewBadge();
-        }
+        teamsPresenter.reInitializeTeams();
     }
 
     public void updateMoreBadge() {

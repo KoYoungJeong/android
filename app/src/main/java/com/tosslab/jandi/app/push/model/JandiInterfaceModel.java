@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
@@ -120,6 +121,7 @@ public class JandiInterfaceModel {
         if ((selectedTeamInfo == null || selectedTeamInfo.getTeamId() != teamId)) {
 
             AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
+            MessageRepository.getRepository().deleteAllLink();
 
             return getEntityInfo();
 
@@ -179,7 +181,7 @@ public class JandiInterfaceModel {
                     roomType = PushRoomType.CHAT.getName();
                 }
             } else {
-                return roomId;
+                return -1;
             }
         }
 
@@ -190,7 +192,11 @@ public class JandiInterfaceModel {
                 return roomId;
             } else {
                 getEntityInfo();
-                return roomId;
+                if (hasEntity(roomId)) {
+                    return roomId;
+                } else {
+                    return -1;
+                }
             }
         } else {
             EntityManager entityManager = EntityManager.getInstance();
