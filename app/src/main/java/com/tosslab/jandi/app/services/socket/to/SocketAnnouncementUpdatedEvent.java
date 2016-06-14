@@ -56,6 +56,7 @@ public class SocketAnnouncementUpdatedEvent implements EventHistoryInfo {
         this.data = data;
     }
 
+    @Override
     public long getTeamId() {
         return teamId;
     }

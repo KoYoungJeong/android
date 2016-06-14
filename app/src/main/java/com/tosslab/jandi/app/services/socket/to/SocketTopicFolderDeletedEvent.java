@@ -11,7 +11,7 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(1)
-public class SocketTopicFolderDeletedEvent implements EventHistoryInfo  {
+public class SocketTopicFolderDeletedEvent implements EventHistoryInfo {
 
     private String event;
     private int version;
@@ -62,6 +62,7 @@ public class SocketTopicFolderDeletedEvent implements EventHistoryInfo  {
                 '}';
     }
 
+    @Override
     public long getTeamId() {
         return teamId;
     }

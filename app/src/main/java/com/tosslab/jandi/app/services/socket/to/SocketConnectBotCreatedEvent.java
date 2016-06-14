@@ -19,6 +19,7 @@ public class SocketConnectBotCreatedEvent implements EventHistoryInfo {
     private String event;
     private int version;
     private long ts;
+    private long teamId;
 
     private Data data;
 
@@ -38,6 +39,15 @@ public class SocketConnectBotCreatedEvent implements EventHistoryInfo {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    @Override
+    public long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
     }
 
     @Override

@@ -15,4 +15,6 @@ public interface EventHistoryInfo {
     String getEvent();
 
     int getVersion();
+
+    long getTeamId();
 }

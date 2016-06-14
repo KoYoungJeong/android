@@ -21,7 +21,7 @@ public class SocketFileUnsharedEvent implements EventHistoryInfo {
     public long writer;
     public Room_ room;
 
-    private int teamId;
+    private long teamId;
     private long ts;
     private int version;
     private EventFileInfo file;
@@ -62,11 +62,12 @@ public class SocketFileUnsharedEvent implements EventHistoryInfo {
         this.event = event;
     }
 
-    public int getTeamId() {
+    @Override
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 
@@ -79,6 +80,8 @@ public class SocketFileUnsharedEvent implements EventHistoryInfo {
         this.version = version;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Room_ {
         public long id;
         public String type;

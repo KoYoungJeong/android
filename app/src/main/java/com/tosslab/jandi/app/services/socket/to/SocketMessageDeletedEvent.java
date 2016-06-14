@@ -21,6 +21,7 @@ public class SocketMessageDeletedEvent implements EventHistoryInfo {
     private long ts;
     private Data data;
 
+    @Override
     public long getTeamId() {
         return teamId;
     }

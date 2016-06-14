@@ -15,7 +15,7 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 public class SocketTopicUpdatedEvent implements EventHistoryInfo {
     private int version;
     private String event;
-    private int teamId;
+    private long teamId;
     private Data data;
     private long ts;
 
@@ -38,11 +38,12 @@ public class SocketTopicUpdatedEvent implements EventHistoryInfo {
         this.event = event;
     }
 
-    public int getTeamId() {
+    @Override
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 

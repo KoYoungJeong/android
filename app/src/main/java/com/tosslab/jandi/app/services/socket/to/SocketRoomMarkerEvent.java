@@ -67,6 +67,7 @@ public class SocketRoomMarkerEvent implements EventHistoryInfo {
         this.marker = marker;
     }
 
+    @Override
     public long getTeamId() {
         return teamId;
     }

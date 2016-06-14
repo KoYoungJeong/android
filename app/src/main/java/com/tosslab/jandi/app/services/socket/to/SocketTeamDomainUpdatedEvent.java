@@ -45,6 +45,7 @@ public class SocketTeamDomainUpdatedEvent implements EventHistoryInfo  {
         this.ts = ts;
     }
 
+    @Override
     public long getTeamId() {
         return teamId;
     }

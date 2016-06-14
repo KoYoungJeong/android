@@ -16,12 +16,14 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 @Version(1)
 public class SocketMemberStarredEvent implements EventHistoryInfo {
     private int version;
-    private String type;
     private String event;
+    private long teamId;
+    private long ts;
+
+    private String type;
     private int memberId;
     private Member member;
 
-    private long ts;
 
     @Override
     public long getTs() {
@@ -63,6 +65,15 @@ public class SocketMemberStarredEvent implements EventHistoryInfo {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    @Override
+    public long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
     }
 
     @Override

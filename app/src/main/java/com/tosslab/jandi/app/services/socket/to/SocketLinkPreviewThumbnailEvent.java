@@ -15,12 +15,12 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(1)
-public class SocketLinkPreviewThumbnailEvent implements EventHistoryInfo  {
+public class SocketLinkPreviewThumbnailEvent implements EventHistoryInfo {
     private String event;
     private int version;
-    private Data data;
-
+    private long teamId;
     private long ts;
+    private Data data;
 
     @Override
     public long getTs() {
@@ -48,6 +48,15 @@ public class SocketLinkPreviewThumbnailEvent implements EventHistoryInfo  {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    @Override
+    public long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
     }
 
     public Data getData() {

@@ -15,7 +15,7 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(1)
 public class SocketFileCreatedEvent implements EventHistoryInfo {
-    private int teamId;
+    private long teamId;
     private long ts;
     private int version;
     private EventFileInfo file;
@@ -38,11 +38,12 @@ public class SocketFileCreatedEvent implements EventHistoryInfo {
         this.event = event;
     }
 
-    public int getTeamId() {
+    @Override
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 

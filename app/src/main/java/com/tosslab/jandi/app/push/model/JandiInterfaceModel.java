@@ -137,7 +137,7 @@ public class JandiInterfaceModel {
      *
      * @return (갱신 여부, 요청한 entityId)
      */
-    public Pair<Boolean, Long> getEntityInfo(long teamId, long roomId, String roomType) {
+    public Pair<Boolean, Long> getEntityInfo(long roomId, String roomType) {
 
         boolean entityRefreshed = false;
         long entityId = -1L;

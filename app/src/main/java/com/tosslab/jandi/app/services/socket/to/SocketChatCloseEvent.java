@@ -11,11 +11,12 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(1)
-public class SocketChatCloseEvent implements EventHistoryInfo  {
+public class SocketChatCloseEvent implements EventHistoryInfo {
     private int version;
     private String event;
-    private Data chat;
     private long ts;
+    private long teamId;
+    private Data chat;
 
     @Override
     public int getVersion() {
@@ -24,6 +25,15 @@ public class SocketChatCloseEvent implements EventHistoryInfo  {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    @Override
+    public long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
     }
 
     @Override

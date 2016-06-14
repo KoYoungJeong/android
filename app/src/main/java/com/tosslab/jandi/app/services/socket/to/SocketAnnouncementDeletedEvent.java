@@ -17,8 +17,9 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 public class SocketAnnouncementDeletedEvent implements EventHistoryInfo {
     private String event;
     private int version;
-    private Data data;
+    private long teamId;
     private long ts;
+    private Data data;
 
     @Override
     public long getTs() {
@@ -46,6 +47,15 @@ public class SocketAnnouncementDeletedEvent implements EventHistoryInfo {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    @Override
+    public long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
     }
 
     public Data getData() {

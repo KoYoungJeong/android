@@ -537,7 +537,7 @@ public class JandiSocketServiceModel {
             SocketLinkPreviewMessageEvent socketLinkPreviewMessageEvent =
                     getObject(object, SocketLinkPreviewMessageEvent.class);
 
-            int teamId = socketLinkPreviewMessageEvent.getTeamId();
+            long teamId = socketLinkPreviewMessageEvent.getTeamId();
             if (AccountRepository.getRepository().getSelectedTeamId() != teamId) {
                 return;
             }
@@ -553,7 +553,7 @@ public class JandiSocketServiceModel {
         }
     }
 
-    private boolean updateLinkPreview(int teamId, long messageId) {
+    private boolean updateLinkPreview(long teamId, long messageId) {
         try {
             ResMessages.OriginalMessage message = messageApi.get().getMessage(teamId, messageId);
             if (message instanceof ResMessages.TextMessage) {
@@ -1037,7 +1037,18 @@ public class JandiSocketServiceModel {
             t = (T) object;
         }
         throwExceptionIfInvaildVersion(t);
+        throwExceptionIfInvaildTeamId(t);
         return t;
+    }
+
+    private <T> void throwExceptionIfInvaildTeamId(T t) throws Exception {
+        if (t instanceof EventHistoryInfo) {
+            long teamId = ((EventHistoryInfo) t).getTeamId();
+            if (teamId != 0
+                    && teamId != AccountRepository.getRepository().getSelectedTeamId()) {
+                throw new Exception("Ignore Team : " + t.getClass().getName());
+            }
+        }
     }
 
     void throwExceptionIfInvaildVersion(Object object) throws Exception {
@@ -1135,7 +1146,6 @@ public class JandiSocketServiceModel {
         }
     }
 
-    // 확장성 생각하여 추후 모듈로 빼내야 함.
     public void updateEventHistory() {
 
         long socketConnectedLastTime = JandiPreference.getSocketConnectedLastTime();

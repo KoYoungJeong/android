@@ -16,10 +16,10 @@ import java.util.List;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(1)
-public class SocketFileCommentDeletedEvent implements EventHistoryInfo  {
+public class SocketFileCommentDeletedEvent implements EventHistoryInfo {
     private EventCommentInfo comment;
     private List<Room> rooms;
-    private int teamId;
+    private long teamId;
     private long ts;
     private int version;
     private EventFileInfo file;
@@ -58,11 +58,12 @@ public class SocketFileCommentDeletedEvent implements EventHistoryInfo  {
         this.event = event;
     }
 
-    public int getTeamId() {
+    @Override
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 

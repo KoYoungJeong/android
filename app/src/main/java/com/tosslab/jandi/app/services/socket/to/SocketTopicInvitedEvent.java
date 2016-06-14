@@ -13,10 +13,10 @@ import java.util.List;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(2)
-public class SocketTopicInvitedEvent implements EventHistoryInfo  {
+public class SocketTopicInvitedEvent implements EventHistoryInfo {
     private int version;
     private String event;
-    private int teamId;
+    private long teamId;
     private Data data;
     private long ts;
 
@@ -38,11 +38,12 @@ public class SocketTopicInvitedEvent implements EventHistoryInfo  {
         this.event = event;
     }
 
-    public int getTeamId() {
+    @Override
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 

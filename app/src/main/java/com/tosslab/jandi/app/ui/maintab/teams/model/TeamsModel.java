@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
@@ -115,6 +116,7 @@ public class TeamsModel {
                 InitialInfo initializeInfo = startApi.get().getInitializeInfo(teamId);
                 InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
                 JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
+                MessageRepository.getRepository().deleteAllLink();
                 TeamInfoLoader.getInstance().refresh();
                 subscriber.onNext(new Object());
             } catch (Exception error) {

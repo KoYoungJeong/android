@@ -36,6 +36,7 @@ public class SocketTopicStarredEvent implements EventHistoryInfo {
         this.event = event;
     }
 
+    @Override
     public long getTeamId() {
         return teamId;
     }

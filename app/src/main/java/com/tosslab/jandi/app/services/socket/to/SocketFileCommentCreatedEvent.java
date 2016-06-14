@@ -13,10 +13,10 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @Version(1)
-public class SocketFileCommentCreatedEvent implements EventHistoryInfo  {
+public class SocketFileCommentCreatedEvent implements EventHistoryInfo {
     private long writer;
     private EventCommentInfo comment;
-    private int teamId;
+    private long teamId;
     private long ts;
     private int version;
     private EventFileInfo file;
@@ -63,11 +63,12 @@ public class SocketFileCommentCreatedEvent implements EventHistoryInfo  {
         this.event = event;
     }
 
-    public int getTeamId() {
+    @Override
+    public long getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(int teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
 
