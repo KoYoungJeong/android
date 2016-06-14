@@ -356,6 +356,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_no_recent_stickers">"No Recent Stickers"</string>
 	<string name="jandi_no_topic_to_join">"No topics to join"</string>
 	<string name="jandi_normally_topic_messages">"Topic messages"</string>
+	<string name="jandi_not_in_topic">"You already leave or removed from this topic."</string>
 	<string name="jandi_notification_off">"Turn off Notifications"</string>
 	<string name="jandi_notification_on">"Turn on notifications"</string>
 	<string name="jandi_notification_sounds">"Notification sounds"</string>

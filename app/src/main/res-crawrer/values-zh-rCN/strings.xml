@@ -355,6 +355,7 @@
 	<string name="jandi_no_recent_stickers">"无最近使用的贴图"</string>
 	<string name="jandi_no_topic_to_join">"没有可加入的议题"</string>
 	<string name="jandi_normally_topic_messages">"议题信息"</string>
+	<string name="jandi_not_in_topic">"你已离开此议题"</string>
 	<string name="jandi_notification_off">"关闭推送通知"</string>
 	<string name="jandi_notification_on">"开启推送通知"</string>
 	<string name="jandi_notification_sounds">"通知音效"</string>

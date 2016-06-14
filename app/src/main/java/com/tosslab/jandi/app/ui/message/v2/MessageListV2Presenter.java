@@ -482,9 +482,17 @@ public class MessageListV2Presenter {
 
             resOldMessage = addOldMessage;
         } catch (RetrofitException retrofitError) {
+            checkInvalidTopic(retrofitError.getResponseCode());
             retrofitError.printStackTrace();
         }
         return resOldMessage;
+    }
+
+    private void checkInvalidTopic(int responseCode) {
+        if (responseCode == 40300) {
+            view.showInvalidEntityToast();
+            view.finish();
+        }
     }
 
     @Nullable
@@ -498,6 +506,7 @@ public class MessageListV2Presenter {
             try {
                 resOldMessage = messageListModel.getOldMessage(linkId, offset);
             } catch (RetrofitException retrofitError) {
+                checkInvalidTopic(retrofitError.getResponseCode());
                 retrofitError.printStackTrace();
             }
         } else {
@@ -747,6 +756,7 @@ public class MessageListV2Presenter {
                     }
 
                 } catch (RetrofitException retrofitError) {
+                    checkInvalidTopic(retrofitError.getResponseCode());
                     retrofitError.printStackTrace();
                     adapterModel.setMoreFromNew(true);
                     adapterModel.setNewLoadingComplete();

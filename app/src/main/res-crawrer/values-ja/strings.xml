@@ -357,6 +357,7 @@
 	<string name="jandi_no_recent_stickers">"最近利用したスタンプがありません"</string>
 	<string name="jandi_no_topic_to_join">"参加できるトピックがありません"</string>
 	<string name="jandi_normally_topic_messages">"トピックメッセージ"</string>
+	<string name="jandi_not_in_topic">"既にこのトピックから退出したか退出されました。"</string>
 	<string name="jandi_notification_off">"通知をオフにする"</string>
 	<string name="jandi_notification_on">"通知をオンにする"</string>
 	<string name="jandi_notification_sounds">"通知サウンド"</string>

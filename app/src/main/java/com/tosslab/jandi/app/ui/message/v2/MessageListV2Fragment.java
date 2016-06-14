@@ -888,7 +888,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @Override
     public void showInvalidEntityToast() {
         String message = JandiApplication.getContext()
-                .getResources().getString(R.string.err_messages_invaild_entity);
+                .getResources().getString(R.string.jandi_not_in_topic);
         showToast(message, true /* isError */);
     }
 
