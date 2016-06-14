@@ -54,6 +54,7 @@ public class JandiPreference {
 
     private static final String PREF_SOCKET_RECONNECT_DELAY = "socket_reconnect_delay";
     private static final String PREF_LAST_SELECTED_TAB = "last_selected_tab";
+    private static final String PREF_VERSION_2_1_4 = "version_2_1_4";
 
     public static boolean isOldParseFileCacheDeleted(Context context) {
         SharedPreferences pref = getSharedPreferences();
@@ -384,6 +385,18 @@ public class JandiPreference {
                 .edit()
                 .putInt(PREF_LAST_SELECTED_TAB, position)
                 .apply();
+    }
+
+    public static void setPrefVersion214() {
+        getSharedPreferences()
+                .edit()
+                .putBoolean(PREF_VERSION_2_1_4, true)
+                .apply();
+    }
+
+    public static boolean getPrefVersion214() {
+        return getSharedPreferences()
+                .getBoolean(PREF_VERSION_2_1_4, false);
     }
 
 }
