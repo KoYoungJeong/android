@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.main.LeftSideApi;
@@ -113,6 +114,7 @@ public class TeamsModel {
                 updateSelectedTeam(teamId);
 
                 updateEntityInfo(teamId);
+                MessageRepository.getRepository().deleteAllLink();
 
                 subscriber.onNext(new Object());
             } catch (Exception error) {

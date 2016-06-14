@@ -89,6 +89,7 @@ import java.util.concurrent.TimeUnit;
 import dagger.Lazy;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -845,72 +846,62 @@ public class JandiSocketServiceModel {
     public void updateEventHistory() {
 
         long socketConnectedLastTime = JandiPreference.getSocketConnectedLastTime();
-        getEventHistory(socketConnectedLastTime, "file_unshared")
-                .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketFileUnsharedEvent)
-                .map(eventHistoryInfo -> (SocketFileUnsharedEvent) eventHistoryInfo)
+        getEventHistory(socketConnectedLastTime)
                 .subscribe(eventHistoryInfo -> {
-                    long fileId = eventHistoryInfo.getFile().getId();
-                    long roomId = eventHistoryInfo.room.id;
-                    MessageRepository.getRepository().deleteSharedRoom(fileId, roomId);
-                    JandiPreference.setSocketConnectedLastTime(eventHistoryInfo.getTs());
+                    if (eventHistoryInfo instanceof SocketFileUnsharedEvent) {
+                        SocketFileUnsharedEvent event = (SocketFileUnsharedEvent) eventHistoryInfo;
+                        long fileId = event.getFile().getId();
+                        long roomId = event.room.id;
+                        MessageRepository.getRepository().deleteSharedRoom(fileId, roomId);
+                        JandiPreference.setSocketConnectedLastTime(event.getTs());
+                    } else if (eventHistoryInfo instanceof SocketMessageCreatedEvent) {
+                        SocketMessageCreatedEvent event = (SocketMessageCreatedEvent) eventHistoryInfo;
+                        insertNewMessage(event);
+                        JandiPreference.setSocketConnectedLastTime(event.getTs());
+                    } else if (eventHistoryInfo instanceof SocketFileCommentDeleteEvent) {
+                        SocketFileCommentDeleteEvent event = (SocketFileCommentDeleteEvent) eventHistoryInfo;
+                        updateCommentDeleted(event);
+                        JandiPreference.setSocketConnectedLastTime(event.getTs());
+                    } else if (eventHistoryInfo instanceof SocketFileEvent) {
+                        SocketFileEvent event = (SocketFileEvent) eventHistoryInfo;
+                        updateFileDeleted(event);
+                        JandiPreference.setSocketConnectedLastTime(event.getTs());
+                    } else if (eventHistoryInfo instanceof SocketMessageEvent) {
+                        SocketMessageEvent event = (SocketMessageEvent) eventHistoryInfo;
+                        if (TextUtils.equals(event.getMessageType(), "message_delete")) {
+                            long messageId = event.getMessageId();
+                            MessageRepository.getRepository().deleteMessage(messageId);
+                            postEvent(event);
+                            JandiPreference.setSocketConnectedLastTime(event.getTs());
+                        }
+                    }
                 }, Throwable::printStackTrace);
-
-        getEventHistory(socketConnectedLastTime, "message_created")
-                .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketMessageCreatedEvent)
-                .map(eventHistoryInfo -> (SocketMessageCreatedEvent) eventHistoryInfo)
-                .subscribe((event1) -> {
-                    insertNewMessage(event1);
-                    JandiPreference.setSocketConnectedLastTime(event1.getTs());
-                }, Throwable::printStackTrace);
-
-        getEventHistory(socketConnectedLastTime, "file_comment_deleted")
-                .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketFileCommentDeleteEvent)
-                .map(eventHistoryInfo -> (SocketFileCommentDeleteEvent) eventHistoryInfo)
-                .subscribe((socketCommentEvent) -> {
-                    updateCommentDeleted(socketCommentEvent);
-                    JandiPreference.setSocketConnectedLastTime(socketCommentEvent.getTs());
-                }, Throwable::printStackTrace);
-
-        getEventHistory(socketConnectedLastTime, "file_deleted")
-                .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketFileEvent)
-                .map(eventHistoryInfo -> (SocketFileEvent) eventHistoryInfo)
-                .subscribe((socketFileEvent) -> {
-                    updateFileDeleted(socketFileEvent);
-                    JandiPreference.setSocketConnectedLastTime(socketFileEvent.getTs());
-
-                }, Throwable::printStackTrace);
-
-        getEventHistory(socketConnectedLastTime, "message")
-                .filter(eventHistoryInfo -> eventHistoryInfo instanceof SocketMessageEvent)
-                .map(eventHistoryInfo -> (SocketMessageEvent) eventHistoryInfo)
-                .filter(event -> TextUtils.equals(event.getMessageType(), "message_delete"))
-                .subscribe(event -> {
-                    long messageId = event.getMessageId();
-                    MessageRepository.getRepository().deleteMessage(messageId);
-                    postEvent(event);
-                    JandiPreference.setSocketConnectedLastTime(event.getTs());
-
-                }, Throwable::printStackTrace);
-
     }
 
     @NonNull
-    private Observable<ResEventHistory.EventHistoryInfo> getEventHistory(long socketConnectedLastTime, String eventType) {
-        return Observable.just(socketConnectedLastTime)
-                .observeOn(Schedulers.io())
-                .filter(ts -> ts == -1 || ts > 0)
-                .map(ts -> {
+    private Observable<ResEventHistory.EventHistoryInfo> getEventHistory(long socketConnectedLastTime) {
+        return Observable.create(new Observable.OnSubscribe<ResEventHistory>() {
+            @Override
+            public void call(Subscriber<? super ResEventHistory> subscriber) {
+                long lastTime = socketConnectedLastTime;
+                boolean hasMore;
+                do {
                     try {
                         EntityManager entityManager = EntityManager.getInstance();
                         long userId = entityManager.getMe().getId();
-                        return eventsApi.get().getEventHistory(ts, userId, eventType);
+                        ResEventHistory eventHistory = eventsApi.get().getEventHistory(lastTime, userId);
+                        lastTime = eventHistory.lastTs;
+                        hasMore = eventHistory.hasMore;
+                        subscriber.onNext(eventHistory);
                     } catch (RetrofitException e) {
                         e.printStackTrace();
-                        ResEventHistory resEventHistory = new ResEventHistory();
-                        resEventHistory.records = new ArrayList<>(0);
-                        return resEventHistory;
+                        hasMore = false;
                     }
-                })
+                } while (hasMore);
+                subscriber.onCompleted();
+            }
+        })
+                .observeOn(Schedulers.io())
                 .flatMap(resEventHistory -> Observable.from(resEventHistory.records))
                 .filter(this::validVersion);
     }
