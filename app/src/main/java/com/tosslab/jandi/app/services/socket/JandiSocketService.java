@@ -220,7 +220,6 @@ public class JandiSocketService extends Service {
         eventHashMap.put("member_starred", memberStarredListener);
         EventListener memberUnstarredListener = objects -> jandiSocketServiceModel.onMemberUnstarred(objects[0]);
         eventHashMap.put("member_unstarred", memberUnstarredListener);
-        // TODO 추가 테스트 필요 : v2 없음
         EventListener memberUpdatedListener = objects -> jandiSocketServiceModel.onMemberUpdated(objects[0]);
         eventHashMap.put("member_updated", memberUpdatedListener);
 

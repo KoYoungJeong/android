@@ -6,20 +6,23 @@ import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.files.upload.ProfileFileUploadControllerImpl;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
+import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import java.io.File;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 @EBean
@@ -34,85 +37,56 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
     private View view;
 
     @Override
-    @Background
     public void onRequestProfile() {
-        view.showProgressWheel();
-        try {
-            User me;
-            if (!NetworkCheckUtil.isConnected()) {
-                me = modifyProfileModel.getSavedProfile();
-            } else {
-                me = modifyProfileModel.getProfile();
+        Observable.create(new Observable.OnSubscribe<User>() {
+            @Override
+            public void call(Subscriber<? super User> subscriber) {
+                User savedProfile = modifyProfileModel.getSavedProfile();
+                subscriber.onNext(savedProfile);
+                subscriber.onCompleted();
             }
-            view.dismissProgressWheel();
-            view.displayProfile(me);
-        } catch (Exception e) {
-            LogUtil.e("get profile failed", e);
-            view.dismissProgressWheel();
-            view.showFailProfile();
-        }
+        })
+                .subscribeOn(Schedulers.computation())
+                .doOnSubscribe(() -> view.showProgressWheel())
+                .doOnUnsubscribe(() -> view.dismissProgressWheel())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(user -> {
+                    view.displayProfile(user);
+                }, Throwable::printStackTrace);
     }
 
-    @Background
     @Override
-    public void onUpdateProfileExtraInfo(ReqUpdateProfile reqUpdateProfile) {
-        view.showProgressWheel();
-        try {
-            modifyProfileModel.updateProfile(reqUpdateProfile);
-            HumanRepository.getInstance().updateProfile(TeamInfoLoader.getInstance().getMyId(),
-                    reqUpdateProfile.department,
-                    reqUpdateProfile.phoneNumber,
-                    reqUpdateProfile.position,
-                    reqUpdateProfile.statusMessage);
+    public void onUpdateProfile(ReqUpdateProfile reqUpdateProfile) {
 
-            TeamInfoLoader.getInstance().refresh();
-            view.updateProfileSucceed();
-            view.displayProfile(null);
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-            LogUtil.e("get profile failed", e);
-            view.updateProfileFailed();
-        } finally {
-            view.dismissProgressWheel();
-        }
-    }
+        Observable.create(new Observable.OnSubscribe<Human>() {
+            @Override
+            public void call(Subscriber<? super Human> subscriber) {
 
-    @Background
-    @Override
-    public void updateProfileName(String name) {
-        view.showProgressWheel();
-        try {
-            modifyProfileModel.updateProfileName(new ReqProfileName(name));
-            HumanRepository.getInstance().updateName(TeamInfoLoader.getInstance().getMyId(), name);
-            TeamInfoLoader.getInstance().refresh();
-            view.updateProfileSucceed();
-            view.successUpdateNameColor();
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-            view.updateProfileFailed();
-        } finally {
-            view.dismissProgressWheel();
-        }
-    }
-
-    @Background
-    @Override
-    public void onUploadEmail(String email) {
-
-        if (!NetworkCheckUtil.isConnected()) {
-            view.showCheckNetworkDialog();
-            return;
-        }
-
-        try {
-            modifyProfileModel.updateProfileEmail(email);
-            HumanRepository.getInstance().updateEmail(TeamInfoLoader.getInstance().getMyId(), email);
-            TeamInfoLoader.getInstance().refresh();
-            view.updateProfileSucceed();
-            view.successUpdateEmailColor();
-        } catch (RetrofitException e) {
-            view.updateProfileFailed();
-        }
+                try {
+                    Human human = modifyProfileModel.updateProfile(reqUpdateProfile);
+                    subscriber.onNext(human);
+                } catch (RetrofitException e) {
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+                subscriber.onCompleted();
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe(() -> view.showProgressWheel())
+                .doOnUnsubscribe(() -> view.dismissProgressWheel())
+                .doOnNext(human1 -> {
+                    HumanRepository.getInstance().updateHuman(human1);
+                    TeamInfoLoader.getInstance().refresh();
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(human2 -> {
+                    view.updateProfileSucceed();
+                    view.displayProfile(new User(human2));
+                }, throwable -> {
+                    LogUtil.e("get profile failed", throwable);
+                    view.updateProfileFailed();
+                });
     }
 
     @Override

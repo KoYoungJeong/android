@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.ChatListRefreshEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
+import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
@@ -266,6 +267,10 @@ public class MainChatListFragment extends Fragment
 
     public void onEvent(MemberStarredEvent event) {
         mainChatListPresenter.onEntityStarredUpdate(event.getId());
+    }
+
+    public void onEvent(ProfileChangeEvent event) {
+        mainChatListPresenter.onReloadChatList();
     }
 
     @OptionsItem(R.id.action_main_search)

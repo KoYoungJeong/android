@@ -5,10 +5,9 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 
@@ -31,15 +30,12 @@ public class ModifyProfileModel {
     EntityClientManager entityClientManager;
 
     public User getProfile() throws RetrofitException {
-        return entityClientManager.getUserProfile(TeamInfoLoader.getInstance().getMyId());
+        Human human = entityClientManager.getUserProfile(TeamInfoLoader.getInstance().getMyId());
+        return new User(human);
     }
 
-    public ResCommon updateProfile(ReqUpdateProfile reqUpdateProfile) throws RetrofitException {
+    public Human updateProfile(ReqUpdateProfile reqUpdateProfile) throws RetrofitException {
         return entityClientManager.updateUserProfile(TeamInfoLoader.getInstance().getMyId(), reqUpdateProfile);
-    }
-
-    public ResCommon updateProfileName(ReqProfileName reqProfileName) throws RetrofitException {
-        return entityClientManager.updateMemberName(TeamInfoLoader.getInstance().getMyId(), reqProfileName);
     }
 
     public String[] getAccountEmails() {
@@ -72,7 +68,9 @@ public class ModifyProfileModel {
     }
 
     public void updateProfileEmail(String email) throws RetrofitException {
-        entityClientManager.updateMemberEmail(TeamInfoLoader.getInstance().getMyId(), email);
+        ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
+        reqUpdateProfile.email = email;
+        entityClientManager.updateUserProfile(TeamInfoLoader.getInstance().getMyId(), reqUpdateProfile);
     }
 
     public boolean isMyId(long id) {

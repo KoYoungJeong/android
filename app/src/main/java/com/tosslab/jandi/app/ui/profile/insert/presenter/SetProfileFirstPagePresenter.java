@@ -6,7 +6,7 @@ import android.support.v4.app.Fragment;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.files.upload.ProfileFileUploadControllerImpl;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ReqProfileName;
+import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
@@ -60,8 +60,10 @@ public class SetProfileFirstPagePresenter {
     public void updateProfileName(String name) {
         view.showProgressWheel();
         try {
+            ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
+            reqUpdateProfile.name = name;
+            model.updateProfile(reqUpdateProfile);
             view.displayProfileName(name);
-            model.updateProfileName(new ReqProfileName(name));
         } catch (RetrofitException e) {
             e.printStackTrace();
             view.updateProfileFailed();

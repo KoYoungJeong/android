@@ -11,12 +11,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
 
 import setup.BaseInitUtil;
+
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by tee on 16. 1. 8..
@@ -35,11 +39,12 @@ public class ProfileImageSelectorPresenterTest {
     public static void tearDownClass() throws Exception {
         BaseInitUtil.releaseDatabase();
     }
+
     @Before
     public void setUp() throws Exception {
         profileImageSelectorPresenter = ProfileImageSelectorPresenter_
                 .getInstance_(JandiApplication.getContext());
-        mockView = Mockito.mock(ProfileImageSelectorPresenter.View.class);
+        mockView = mock(ProfileImageSelectorPresenter.View.class);
         profileImageSelectorPresenter.setView(mockView);
 
     }
@@ -48,7 +53,7 @@ public class ProfileImageSelectorPresenterTest {
     public void testInitList() {
         //given
         final boolean[] finish = {false};
-        Mockito.doAnswer(invocationOnMock -> {
+        doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
         }).when(mockView).showInitialImage();
@@ -58,9 +63,9 @@ public class ProfileImageSelectorPresenterTest {
         Awaitility.await().until(() -> finish[0]);
 
         //then
-        Mockito.verify(mockView).showColorList(Mockito.anyList());
-        Mockito.verify(mockView).showCharacterList(Mockito.anyList());
-        Mockito.verify(mockView).showInitialImage();
+        verify(mockView).showColorList(anyList());
+        verify(mockView).showCharacterList(anyList());
+        verify(mockView).showInitialImage();
     }
 
     @Test
@@ -76,7 +81,7 @@ public class ProfileImageSelectorPresenterTest {
         String Url = "http://files.jandi.io/files-resource/characters/character_02.png";
 
         final boolean[] finish = {false};
-        Mockito.doAnswer(invocationOnMock -> {
+        doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
         }).when(mockView).finishProgress();

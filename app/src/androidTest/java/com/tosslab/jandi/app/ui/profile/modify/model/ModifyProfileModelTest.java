@@ -6,10 +6,9 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 
@@ -75,7 +74,7 @@ public class ModifyProfileModelTest {
             reqUpdateProfile.department = "department : " + new Date().toString();
 
             // When
-            ResCommon resCommon = modifyProfileModel.updateProfile(reqUpdateProfile);
+            Human resCommon = modifyProfileModel.updateProfile(reqUpdateProfile);
 
             //Then
             assertThat(user.getDivision(), is(not(equalTo(reqUpdateProfile.department))));
@@ -89,7 +88,7 @@ public class ModifyProfileModelTest {
             reqUpdateProfile.phoneNumber = "010-1234-5678";
 
             // When
-            ResCommon resCommon = modifyProfileModel.updateProfile(reqUpdateProfile);
+            Human resCommon = modifyProfileModel.updateProfile(reqUpdateProfile);
 
             //Then
             assertThat(user.getPhoneNumber(), is(not(equalTo(reqUpdateProfile.phoneNumber))));
@@ -104,7 +103,7 @@ public class ModifyProfileModelTest {
             reqUpdateProfile.position = "position  : " + new Date().toString();
 
             // When
-            ResCommon resCommon = modifyProfileModel.updateProfile(reqUpdateProfile);
+            Human resCommon = modifyProfileModel.updateProfile(reqUpdateProfile);
 
             //Then
             assertThat(user.getPosition(), is(not(equalTo(reqUpdateProfile.position))));
@@ -119,7 +118,7 @@ public class ModifyProfileModelTest {
             reqUpdateProfile.statusMessage = "statusMessage  : " + new Date().toString();
 
             // When
-            ResCommon resCommon = modifyProfileModel.updateProfile(reqUpdateProfile);
+            Human resCommon = modifyProfileModel.updateProfile(reqUpdateProfile);
 
             //Then
             assertThat(user.getStatusMessage(), is(not(equalTo(reqUpdateProfile.statusMessage))));
@@ -141,13 +140,16 @@ public class ModifyProfileModelTest {
     @Test
     public void testUpdateProfileName() throws Exception {
         String newName = new Date().toString().replaceAll(" ", "");
-        modifyProfileModel.updateProfileName(new ReqProfileName(newName));
+        ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
+        reqUpdateProfile.name = newName;
+        modifyProfileModel.updateProfile(reqUpdateProfile);
 
         User newProfile = modifyProfileModel.getProfile();
         assertThat(newProfile.getName(), is(equalTo(newName)));
         assertThat(newProfile.getName(), is(not(equalTo(user.getName()))));
 
-        modifyProfileModel.updateProfileName(new ReqProfileName(user.getName()));
+        reqUpdateProfile.name = user.getName();
+        modifyProfileModel.updateProfile(reqUpdateProfile);
     }
 
     @Test

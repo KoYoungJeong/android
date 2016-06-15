@@ -275,8 +275,12 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     public void onEvent(MemberEmailChangeEvent event) {
         if (NetworkCheckUtil.isConnected()) {
-            updateEmailTextColor(event.getEmail());
-            modifyProfilePresenter.onUploadEmail(event.getEmail());
+            String email = event.getEmail();
+            updateEmailTextColor(email);
+
+            ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
+            reqUpdateProfile.email = email;
+            modifyProfilePresenter.onUpdateProfile(reqUpdateProfile);
         }
     }
 
@@ -300,26 +304,25 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         }
 
         updateProfileTextColor(event.actionType, event.inputMessage);
-        if (event.actionType == EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME) {
-            modifyProfilePresenter.updateProfileName(event.inputMessage);
-        } else {
-            ReqUpdateProfile reqUpdateProfile = getUpdateProfile();
-            switch (event.actionType) {
-                case EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS:
-                    reqUpdateProfile.statusMessage = event.inputMessage;
-                    break;
-                case EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE:
-                    reqUpdateProfile.phoneNumber = event.inputMessage;
-                    break;
-                case EditTextDialogFragment.ACTION_MODIFY_PROFILE_DIVISION:
-                    reqUpdateProfile.department = event.inputMessage;
-                    break;
-                case EditTextDialogFragment.ACTION_MODIFY_PROFILE_POSITION:
-                    reqUpdateProfile.position = event.inputMessage;
-                    break;
-            }
-            modifyProfilePresenter.onUpdateProfileExtraInfo(reqUpdateProfile);
+        ReqUpdateProfile reqUpdateProfile = getUpdateProfile();
+        switch (event.actionType) {
+            case EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS:
+                reqUpdateProfile.statusMessage = event.inputMessage;
+                break;
+            case EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE:
+                reqUpdateProfile.phoneNumber = event.inputMessage;
+                break;
+            case EditTextDialogFragment.ACTION_MODIFY_PROFILE_DIVISION:
+                reqUpdateProfile.department = event.inputMessage;
+                break;
+            case EditTextDialogFragment.ACTION_MODIFY_PROFILE_POSITION:
+                reqUpdateProfile.position = event.inputMessage;
+                break;
+            case EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME:
+                reqUpdateProfile.name = event.inputMessage;
+                break;
         }
+        modifyProfilePresenter.onUpdateProfile(reqUpdateProfile);
     }
 
     public void onEvent(ErrorDialogFragmentEvent event) {

@@ -126,9 +126,15 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
             LogUtil.e("ImagePath", imageUri.getPath());
             profileImageSelectorPresenter.makeCustomProfileImageFile(imageUri,
                     selectedCharacterUrl, selectedColor);
-            setResult(RESULT_OK);
-            finish();
+
         }
+    }
+
+    @Override
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void finishWithOK() {
+        setResult(RESULT_OK);
+        finish();
     }
 
     @Click(R.id.vg_option_color)

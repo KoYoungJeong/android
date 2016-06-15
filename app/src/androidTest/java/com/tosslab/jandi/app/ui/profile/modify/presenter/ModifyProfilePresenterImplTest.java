@@ -62,7 +62,7 @@ public class ModifyProfilePresenterImplTest {
             return invocationOnMock;
         }).when(mockView).dismissProgressWheel();
 
-        presenter.onUpdateProfileExtraInfo(null);
+        presenter.onUpdateProfile(null);
 
         Awaitility.await().until(() -> finish[0]);
 

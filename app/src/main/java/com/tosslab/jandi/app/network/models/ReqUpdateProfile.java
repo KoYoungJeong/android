@@ -1,16 +1,14 @@
 package com.tosslab.jandi.app.network.models;
 
-/**
- * Created by justinygchoi on 2014. 8. 28..
- */
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReqUpdateProfile {
-    public String statusMessage;
-    public String phoneNumber;
     public String department;
+    public String email;
+    public String name;
+    public String phoneNumber;
+    public String statusMessage;
     public String position;
-
-    public ReqUpdateProfile() {
-
-    }
 
 }

@@ -43,7 +43,9 @@ public class ProfileImageSelectorPresenter {
         view.showInitialImage();
     }
 
-    public File makeCustomProfileImageFile(Uri fileUri, String imageUrl, int color) {
+    @Background
+    public void makeCustomProfileImageFile(Uri fileUri, String imageUrl, int color) {
+        view.showProgress();
         File profileImageFile = new File(fileUri.getPath());
         Bitmap profileImageBitmap = null;
 
@@ -52,11 +54,8 @@ public class ProfileImageSelectorPresenter {
                 .asBitmap();
 
         try {
-            view.showProgress();
             profileImageBitmap = bitmapFuture.get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -75,19 +74,18 @@ public class ProfileImageSelectorPresenter {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                try {
-                    fileOutpuStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
+                if (fileOutpuStream != null) {
+                    try {
+                        fileOutpuStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 view.finishProgress();
             }
-            return profileImageFile;
-        } else {
-            return null;
         }
+
+        view.finishWithOK();
     }
 
     public void removeFile(String filePath) {
@@ -101,6 +99,8 @@ public class ProfileImageSelectorPresenter {
         void showColorList(List<Integer> colorRGBs);
 
         void showInitialImage();
+
+        void finishWithOK();
 
         void showProgress();
 

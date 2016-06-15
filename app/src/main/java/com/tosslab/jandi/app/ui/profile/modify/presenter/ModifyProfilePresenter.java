@@ -17,11 +17,7 @@ public interface ModifyProfilePresenter {
 
     void onRequestProfile();
 
-    void onUpdateProfileExtraInfo(ReqUpdateProfile reqUpdateProfile);
-
-    void updateProfileName(String name);
-
-    void onUploadEmail(String email);
+    void onUpdateProfile(ReqUpdateProfile reqUpdateProfile);
 
     void onStartUpload(Activity activity, String filePath);
 

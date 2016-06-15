@@ -22,8 +22,8 @@ public class HumanDaoImpl extends BaseDaoImpl<Human, Long> {
 
     @Override
     public int update(Human data) throws SQLException {
-        int row = super.update(data);
         createProfile(data.getProfile());
+        int row = super.update(data);
         return row;
     }
 

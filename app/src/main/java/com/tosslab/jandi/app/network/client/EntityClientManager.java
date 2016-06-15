@@ -10,14 +10,12 @@ import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.client.settings.StarredEntityApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ReqModifyTopicAutoJoin;
 import com.tosslab.jandi.app.network.models.ReqModifyTopicDescription;
 import com.tosslab.jandi.app.network.models.ReqModifyTopicName;
-import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqTeam;
@@ -27,7 +25,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.network.models.start.Human;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -143,20 +141,12 @@ public class EntityClientManager {
         return starredEntityApi.get().disableFavorite(selectedTeamId, entityId);
     }
 
-    public User getUserProfile(final long entityId) throws RetrofitException {
+    public Human getUserProfile(final long entityId) throws RetrofitException {
         return profileApi.get().getMemberProfile(selectedTeamId, entityId);
     }
 
-    public ResCommon updateUserProfile(final long entityId, final ReqUpdateProfile reqUpdateProfile) throws RetrofitException {
-        return profileApi.get().updateMemberProfile(entityId, reqUpdateProfile);
-    }
-
-    public ResCommon updateMemberName(final long entityId, final ReqProfileName profileName) throws RetrofitException {
-        return profileApi.get().updateMemberName(entityId, profileName);
-    }
-
-    public ResCommon updateMemberEmail(long entityId, String email) throws RetrofitException {
-        return profileApi.get().updateMemberEmail(entityId, new ReqAccountEmail(email));
+    public Human updateUserProfile(final long entityId, final ReqUpdateProfile reqUpdateProfile) throws RetrofitException {
+        return profileApi.get().updateMemberProfile(selectedTeamId, entityId, reqUpdateProfile);
     }
 
     public ResFileDetail getFileDetail(final long messageId) throws RetrofitException {
