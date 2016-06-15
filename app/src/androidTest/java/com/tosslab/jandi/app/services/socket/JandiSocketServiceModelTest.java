@@ -6,7 +6,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
-import com.tosslab.jandi.app.network.client.messages.MessageApi;
+import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
@@ -26,9 +26,9 @@ public class JandiSocketServiceModelTest {
     public void setUp() throws Exception {
         jandiSocketServiceModel = new JandiSocketServiceModel(JandiApplication.getContext(),
                 () -> new AccountApi(RetrofitBuilder.getInstance()),
-                () -> new MessageApi(RetrofitBuilder.getInstance()),
                 () -> new LoginApi(RetrofitBuilder.getInstance()),
-                () -> new EventsApi(RetrofitBuilder.getInstance()));
+                () -> new EventsApi(RetrofitBuilder.getInstance()),
+                () -> new RoomsApi(RetrofitBuilder.getInstance()));
     }
 
 

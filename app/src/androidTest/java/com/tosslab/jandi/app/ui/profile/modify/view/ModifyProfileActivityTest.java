@@ -34,7 +34,7 @@ import static org.junit.Assert.fail;
 public class ModifyProfileActivityTest {
 
     @Rule
-    public ActivityTestRule<ModifyProfileActivity_> rule = new ActivityTestRule<>(ModifyProfileActivity_.class, false, false);
+    public ActivityTestRule<ModifyProfileActivity> rule = new ActivityTestRule<>(ModifyProfileActivity.class, false, false);
     private ModifyProfileActivity activity;
 
     @BeforeClass

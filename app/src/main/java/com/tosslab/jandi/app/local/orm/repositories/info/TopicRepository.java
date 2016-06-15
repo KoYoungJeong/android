@@ -152,6 +152,9 @@ public class TopicRepository extends LockExecutorTemplate {
                 Dao<Topic, Long> dao = getHelper().getDao(Topic.class);
 
                 Topic topic = dao.queryForId(topicId);
+                if (topic == null) {
+                    return false;
+                }
                 ArrayList<Long> newUserIds = Observable.from(topic.getMembers())
                         .filter(it -> it != memberId)
                         .collect((Func0<ArrayList<Long>>) ArrayList::new, ArrayList::add)
@@ -159,7 +162,7 @@ public class TopicRepository extends LockExecutorTemplate {
                         .firstOrDefault(new ArrayList<>());
                 topic.setMembers(newUserIds);
 
-                dao.update(topic);
+                return dao.update(topic) > 0;
 
             } catch (SQLException e) {
                 e.printStackTrace();

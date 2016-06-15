@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
-import com.tosslab.jandi.app.network.client.messages.MessageApi;
+import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResConfig;
@@ -171,9 +171,9 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
 
                 new JandiSocketServiceModel(PushInterfaceActivity.this,
                         () -> new AccountApi(RetrofitBuilder.getInstance()),
-                        () -> new MessageApi(RetrofitBuilder.getInstance()),
                         () -> new LoginApi(RetrofitBuilder.getInstance()),
-                        () -> new EventsApi(RetrofitBuilder.getInstance()))
+                        () -> new EventsApi(RetrofitBuilder.getInstance()),
+                        () -> new RoomsApi(RetrofitBuilder.getInstance()))
                         .updateEventHistory();
                 moveMessageListActivity(roomId, entityInfo.second);
             } else {

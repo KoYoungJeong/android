@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
+import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.services.socket.JandiSocketServiceModel;
 
@@ -24,8 +25,9 @@ public class SocketServiceModule {
                                                            Lazy<AccountApi> accountApi,
                                                            Lazy<MessageApi> messageApi,
                                                            Lazy<LoginApi> loginApi,
-                                                           Lazy<EventsApi> eventsApi) {
-        return new JandiSocketServiceModel(context, accountApi, messageApi, loginApi, eventsApi);
+                                                           Lazy<EventsApi> eventsApi,
+                                                           Lazy<RoomsApi> roomsApi) {
+        return new JandiSocketServiceModel(context, accountApi, loginApi, eventsApi, roomsApi);
     }
 
     @Provides

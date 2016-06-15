@@ -168,6 +168,8 @@ public class JandiSocketService extends Service {
 
     private void initEventMapper() {
 
+        // TODO "Chat Starred -> Member Starred 로 변경됨"
+
         EventListener teamJoinListener = objects -> jandiSocketServiceModel.onTeamJoin(objects[0]);
         eventHashMap.put("team_joined", teamJoinListener);
         EventListener memberLeftListener = objects -> jandiSocketServiceModel.onTeamLeft(objects[0]);
@@ -187,7 +189,6 @@ public class JandiSocketService extends Service {
 
         EventListener chatCreatedListener = objects -> jandiSocketServiceModel.onChatCreated(objects[0]);
         eventHashMap.put("chat_created", chatCreatedListener);
-        // TODO 추가 테스트 필요 : chat_opened
 
         EventListener connectCreatedListener = objects -> jandiSocketServiceModel.onConnectBotCreated(objects[0]);
         eventHashMap.put("connect_created", connectCreatedListener);
@@ -202,7 +203,6 @@ public class JandiSocketService extends Service {
         eventHashMap.put("topic_deleted", topicDeletedListener);
         EventListener teamCreatedJoinListener = objects -> jandiSocketServiceModel.onTopicCreated(objects[0]);
         eventHashMap.put("topic_created", teamCreatedJoinListener);
-        // TODO "추가 테스트 필요 : Private Topic 초대시"
         EventListener topicInviteListener = objects -> jandiSocketServiceModel.onTopicInvitedListener(objects[0]);
         eventHashMap.put("topic_invited", topicInviteListener);
         EventListener topicJoinListener = objects -> jandiSocketServiceModel.onTopicJoined(objects[0]);
