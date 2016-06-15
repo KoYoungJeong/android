@@ -1154,7 +1154,6 @@ public class JandiSocketServiceModel {
                 subscriber.onCompleted();
             }
         })
-                .subscribeOn(Schedulers.io())
                 .flatMap(resEventHistory -> Observable.from(resEventHistory.getRecords()))
                 .filter(this::validVersion);
     }

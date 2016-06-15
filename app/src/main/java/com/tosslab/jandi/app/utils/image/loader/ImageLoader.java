@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.DrawableRequestBuilder;
@@ -17,7 +18,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.ViewPropertyAnimation;
+import com.crashlytics.android.Crashlytics;
 import com.tosslab.jandi.app.utils.image.target.DynamicImageViewTarget;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
  * Created by tonyjs on 15. 12. 21..
@@ -142,7 +145,17 @@ public class ImageLoader {
             imageView.setBackgroundColor(backgroundColor);
         }
 
-        DrawableRequestBuilder<Uri> request = getRequest(context).fitCenter();
+        DrawableRequestBuilder<Uri> request = null;
+        try {
+            request = getRequest(context);
+        } catch (Exception e) {
+            LogUtil.e(Log.getStackTraceString(e));
+            String log = String.format("ImageLoader.getRequest Exception : %s", Log.getStackTraceString(e));
+            Crashlytics.getInstance().core.log(log);
+            return;
+        }
+
+        request.fitCenter();
 
         request.diskCacheStrategy(DiskCacheStrategy.ALL);
 
@@ -180,7 +193,7 @@ public class ImageLoader {
                         .build(imageView));
     }
 
-    private DrawableTypeRequest<Uri> getRequest(Context context) {
+    private DrawableTypeRequest<Uri> getRequest(Context context) throws Exception {
         if (blockNetworking) {
             return Glide.with(context)
                     // cache 되어 있는지 확인하기 위해 네트워킹 작업이 실행되면 exception 발생시킨다.
