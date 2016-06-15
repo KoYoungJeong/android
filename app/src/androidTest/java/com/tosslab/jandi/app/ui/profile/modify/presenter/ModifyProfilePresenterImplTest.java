@@ -4,6 +4,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 
@@ -21,6 +22,7 @@ public class ModifyProfilePresenterImplTest {
 
     private ModifyProfilePresenter presenter;
     private ModifyProfilePresenter.View mockView;
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
@@ -30,11 +32,11 @@ public class ModifyProfilePresenterImplTest {
     public static void tearDownClass() throws Exception {
         BaseInitUtil.releaseDatabase();
     }
+
     @Before
     public void setUp() throws Exception {
         presenter = ModifyProfilePresenterImpl_.getInstance_(JandiApplication.getContext());
         mockView = Mockito.mock(ModifyProfilePresenter.View.class);
-        presenter.setView(mockView);
     }
 
     @Test
@@ -81,16 +83,18 @@ public class ModifyProfilePresenterImplTest {
             return invocationOnMock;
         }).when(mockView).dismissProgressWheel();
 
-        presenter.updateProfileName("hello");
+        ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
+        reqUpdateProfile.name = "hello";
+        presenter.onUpdateProfile(reqUpdateProfile);
 
         Awaitility.await().until(() -> finish[0]);
 
         Mockito.verify(mockView).showProgressWheel();
         Mockito.verify(mockView).updateProfileSucceed();
-        Mockito.verify(mockView).successUpdateNameColor();
         Mockito.verify(mockView).dismissProgressWheel();
 
-        presenter.updateProfileName(originName);
+        reqUpdateProfile.name = originName;
+        presenter.onUpdateProfile(reqUpdateProfile);
     }
 
     @Test
@@ -104,7 +108,9 @@ public class ModifyProfilePresenterImplTest {
             }).when(mockView).updateProfileFailed();
 
 
-            presenter.onUploadEmail("hello@hello.com");
+            ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
+            reqUpdateProfile.email = "hello@hello.com";
+            presenter.onUpdateProfile(reqUpdateProfile);
 
             Awaitility.await().until(() -> finish[0]);
 
@@ -119,12 +125,13 @@ public class ModifyProfilePresenterImplTest {
             }).when(mockView).updateProfileSucceed();
 
             String userEmail = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId()).getEmail();
-            presenter.onUploadEmail(userEmail);
+            ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
+            reqUpdateProfile.email = userEmail;
+            presenter.onUpdateProfile(reqUpdateProfile);
 
             Awaitility.await().until(() -> finish[0]);
 
             Mockito.verify(mockView).updateProfileSucceed();
-            Mockito.verify(mockView).successUpdateEmailColor();
         }
 
     }

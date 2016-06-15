@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -27,13 +28,17 @@ import java.io.File;
 @EBean
 public class SetProfileFirstPagePresenter {
 
-    @Bean
     ModifyProfileModel model;
 
     @Bean(ProfileFileUploadControllerImpl.class)
     ProfileFileUploadControllerImpl fileUploadController;
 
     private View view;
+
+    @AfterInject
+    void initObject() {
+        model = new ModifyProfileModel();
+    }
 
     @Background
     public void requestProfile() {

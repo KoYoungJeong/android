@@ -1,34 +1,43 @@
 package com.tosslab.jandi.app.ui.term;
 
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.webkit.WebView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.Locale;
 
-/**
- * Created by Steve SeongUg Jung on 14. 12. 30..
- */
-@EActivity(R.layout.activity_term)
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class TermActivity extends BaseAppCompatActivity {
 
-    @ViewById(R.id.web_term)
-    WebView webView;
-    @Extra
-    String termMode;
+    public static final String EXTRA_TERM_MODE = "term_mode";
 
-    @AfterViews
+    @Bind(R.id.web_term)
+    WebView webView;
+
+    private String termMode;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_term);
+        ButterKnife.bind(this);
+        Intent intent = getIntent();
+        termMode = intent.getStringExtra(EXTRA_TERM_MODE);
+
+        initView();
+    }
+
     void initView() {
         Mode mode = Mode.valueOf(termMode);
 
@@ -60,12 +69,15 @@ public class TermActivity extends BaseAppCompatActivity {
                 actionBar.setTitle(getString(R.string.jandi_term_of_service));
                 break;
         }
-
     }
 
-    @OptionsItem(android.R.id.home)
-    void onGoHome() {
-        finish();
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private String getUrl(Mode mode, String langCode) {

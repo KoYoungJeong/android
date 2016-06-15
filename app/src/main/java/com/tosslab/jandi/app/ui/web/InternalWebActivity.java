@@ -103,9 +103,8 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
 
     @Override
     public void LaunchPageNotFoundActivity() {
-        PageNotFoundActivity_.intent(InternalWebActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                .startForResult(REQ_PAGE_ERROR);
+        startActivityForResult(new Intent(InternalWebActivity.this, PageNotFoundActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION), REQ_PAGE_ERROR);
         overridePendingTransition(0, 0);
     }
 

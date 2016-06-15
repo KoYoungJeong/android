@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.ui.profile.modify.view;
 
 import android.app.Fragment;
-import android.app.ProgressDialog;
-import android.graphics.Color;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -122,12 +120,6 @@ public class ModifyProfileActivityTest {
     }
 
     @Test
-    public void testShowFailProfile() throws Throwable {
-        rule.runOnUiThread(() -> activity.showFailProfile());
-        assertThat(activity.isFinishing(), is(true));
-    }
-
-    @Test
     public void testShowProgressWheel() throws Throwable {
         rule.runOnUiThread(() -> activity.showProgressWheel());
         assertThat(activity.progressWheel.isShowing(), is(true));
@@ -170,40 +162,6 @@ public class ModifyProfileActivityTest {
     }
 
     @Test
-    public void testShowPhotoUploadProgressDialog() throws Throwable {
-        rule.runOnUiThread(() -> {
-            ProgressDialog progressDialog = new ProgressDialog(activity);
-            activity.showPhotoUploadProgressDialog(progressDialog);
-        });
-
-        onView(withText(R.string.jandi_file_uploading))
-                .inRoot(isDialog())
-                .check(matches(isDisplayed()));
-        pressBack();
-    }
-
-    @Test
-    public void testDismissProgressDialog() throws Throwable {
-        final ProgressDialog[] progressDialog = new ProgressDialog[1];
-        rule.runOnUiThread(() -> {
-            progressDialog[0] = new ProgressDialog(activity);
-            progressDialog[0].show();
-            activity.dismissProgressDialog(progressDialog[0]);
-        });
-
-        assertThat(progressDialog[0].isShowing(), is(false));
-    }
-
-    @Test
-    public void testSuccessUpdateNameColor() throws Throwable {
-        rule.runOnUiThread(() -> activity.tvProfileRealName.setTextColor(Color.BLUE));
-        rule.runOnUiThread(() -> activity.successUpdateNameColor());
-
-        int currentTextColor = activity.tvProfileRealName.getTextColors().getDefaultColor();
-        assertThat(currentTextColor, is(equalTo(activity.getResources().getColor(R.color.jandi_text))));
-    }
-
-    @Test
     public void testShowEmailChooseDialog() throws Throwable {
         String email1 = "hello1@hello.com";
         String email2 = "hello2@hello.com";
@@ -221,14 +179,6 @@ public class ModifyProfileActivityTest {
         rule.runOnUiThread(() -> activity.updateEmailTextColor(email));
 
         assertThat(activity.tvProfileUserEmail.getText(), is(equalTo(email)));
-    }
-
-    @Test
-    public void testSuccessUpdateEmailColor() throws Throwable {
-        rule.runOnUiThread(() -> activity.tvProfileUserEmail.setTextColor(Color.BLUE));
-        rule.runOnUiThread(() -> activity.successUpdateEmailColor());
-
-        assertThat(activity.tvProfileUserEmail.getTextColors().getDefaultColor(), is(equalTo(activity.getResources().getColor(R.color.jandi_text))));
     }
 
     @Test

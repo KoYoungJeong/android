@@ -20,7 +20,6 @@ import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.settings.privacy.SettingPrivacyActivity_;
 import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
 import com.tosslab.jandi.app.ui.term.TermActivity;
-import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
@@ -94,20 +93,16 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
 
     @Click(R.id.vg_settings_main_term_of_service)
     void onTermServiceClick() {
-        TermActivity_
-                .intent(getActivity())
-                .termMode(TermActivity.Mode.Agreement.name())
-                .start();
+        startActivity(new Intent(getActivity(), TermActivity.class)
+                .putExtra(TermActivity.EXTRA_TERM_MODE, TermActivity.Mode.Agreement.name()));
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.TermsOfService);
     }
 
     @Click(R.id.vg_settings_main_privacy_policy)
     void onPrivacyClick() {
-        TermActivity_
-                .intent(getActivity())
-                .termMode(TermActivity.Mode.Privacy.name())
-                .start();
+        startActivity(new Intent(getActivity(), TermActivity.class)
+                .putExtra(TermActivity.EXTRA_TERM_MODE, TermActivity.Mode.Privacy.name()));
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.PrivacyPolicy);
     }
 

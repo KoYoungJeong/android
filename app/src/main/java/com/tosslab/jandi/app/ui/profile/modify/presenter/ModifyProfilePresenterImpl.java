@@ -14,10 +14,9 @@ import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-
 import java.io.File;
+
+import javax.inject.Inject;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -25,16 +24,21 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 
-@EBean
 public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
 
-    @Bean(ProfileFileUploadControllerImpl.class)
+
     ProfileFileUploadControllerImpl filePickerViewModel;
 
-    @Bean
     ModifyProfileModel modifyProfileModel;
 
     private View view;
+
+    @Inject
+    public ModifyProfilePresenterImpl(ProfileFileUploadControllerImpl filePickerViewModel, ModifyProfileModel modifyProfileModel, View view) {
+        this.filePickerViewModel = filePickerViewModel;
+        this.modifyProfileModel = modifyProfileModel;
+        this.view = view;
+    }
 
     @Override
     public void onRequestProfile() {
@@ -97,14 +101,13 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
     @Override
     public void onProfileChange(User user) {
         if (user != null && modifyProfileModel.isMyId(user.getId())) {
-            view.displayProfile(user);
-            view.closeDialogFragment();
+            Observable.just(new Object())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(o -> {
+                        view.displayProfile(user);
+                        view.closeDialogFragment();
+                    });
         }
-    }
-
-    @Override
-    public void setView(View view) {
-        this.view = view;
     }
 
     @Override

@@ -121,9 +121,7 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     @Click(R.id.btn_ok)
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void onClickOkButton() {
-        LogUtil.e("click ok button");
         if (selectedCharacterUrl != null && selectedColor != -1) {
-            LogUtil.e("ImagePath", imageUri.getPath());
             profileImageSelectorPresenter.makeCustomProfileImageFile(imageUri,
                     selectedCharacterUrl, selectedColor);
 
@@ -188,11 +186,13 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
         super.onBackPressed();
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showProgress() {
         progressWheelUtil.showProgressWheel(this);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void finishProgress() {
         progressWheelUtil.dismissProgressWheel(this);

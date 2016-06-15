@@ -81,10 +81,10 @@ public class ProfileImageSelectorPresenter {
                         e.printStackTrace();
                     }
                 }
-                view.finishProgress();
             }
         }
 
+        view.finishProgress();
         view.finishWithOK();
     }
 

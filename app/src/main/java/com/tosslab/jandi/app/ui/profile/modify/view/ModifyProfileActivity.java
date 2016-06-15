@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.profile.modify.view;
 import android.Manifest;
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -34,8 +33,9 @@ import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.profile.modify.dagger.DaggerModifyProfileComponent;
+import com.tosslab.jandi.app.ui.profile.modify.dagger.ModifyProfileModule;
 import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenter;
-import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenterImpl;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -49,20 +49,15 @@ import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OnActivityResult;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
 import java.io.File;
 
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
-@EActivity(R.layout.activity_profile)
 public class ModifyProfileActivity extends BaseAppCompatActivity implements ModifyProfilePresenter.View {
 
     public static final String EXTRA_NEW_PHOTO_FILE = "new_photo_file";
@@ -72,23 +67,24 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     public static final int REQUEST_CHARACTER = 0x11;
     public static final int REQUEST_CROP = 11;
 
-    @Bean(ModifyProfilePresenterImpl.class)
+    @Inject
     ModifyProfilePresenter modifyProfilePresenter;
 
-    @ViewById(R.id.profile_photo)
+    @Bind(R.id.profile_photo)
     ImageView ivProfilePhoto;
-    @ViewById(R.id.profile_user_realname)
+    @Bind(R.id.profile_user_realname)
     TextView tvProfileRealName;
-    @ViewById(R.id.profile_user_status_message)
+    @Bind(R.id.profile_user_status_message)
     TextView tvProfileStatusMessage;
-    @ViewById(R.id.profile_user_email)
+    @Bind(R.id.profile_user_email)
     TextView tvProfileUserEmail;
-    @ViewById(R.id.profile_user_phone_number)
+    @Bind(R.id.profile_user_phone_number)
     TextView tvProfileUserPhone;
-    @ViewById(R.id.profile_user_division)
+    @Bind(R.id.profile_user_division)
     TextView tvProfileUserDivision;
-    @ViewById(R.id.profile_user_position)
+    @Bind(R.id.profile_user_position)
     TextView tvProfileUserPosition;
+
     ProgressWheel progressWheel;
 
     AlertDialog profileChoosedialog = null;
@@ -98,17 +94,21 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_profile);
         if (savedInstanceState != null) {
             photoFile = (File) savedInstanceState.getSerializable(EXTRA_NEW_PHOTO_FILE);
         }
+
+        ButterKnife.bind(this);
+
+        DaggerModifyProfileComponent.builder()
+                .modifyProfileModule(new ModifyProfileModule(this))
+                .build()
+                .inject(this);
+
+        initViews();
     }
 
-    @AfterInject
-    void initObject() {
-        modifyProfilePresenter.setView(this);
-    }
-
-    @AfterViews
     void initViews() {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(Event.ScreenView)
@@ -175,7 +175,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
      * 프로필 수정
      * **********************************************************
      */
-    @Click(R.id.profile_user_status_message)
+    @OnClick(R.id.profile_user_status_message)
     void editStatusMessage(View view) {
         // 닉네임
         if (NetworkCheckUtil.isConnected()) {
@@ -188,7 +188,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         }
     }
 
-    @Click(R.id.profile_user_phone_number)
+    @OnClick(R.id.profile_user_phone_number)
     void editPhoneNumber(View view) {
         // 핸드폰 번호
         if (NetworkCheckUtil.isConnected()) {
@@ -200,7 +200,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         }
     }
 
-    @Click(R.id.profile_user_realname)
+    @OnClick(R.id.profile_user_realname)
     void editName(View view) {
         if (NetworkCheckUtil.isConnected()) {
             launchEditDialog(
@@ -211,7 +211,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         }
     }
 
-    @Click(R.id.profile_user_division)
+    @OnClick(R.id.profile_user_division)
     void editDivision(View view) {
         // 부서
         if (NetworkCheckUtil.isConnected()) {
@@ -223,7 +223,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         }
     }
 
-    @Click(R.id.profile_user_position)
+    @OnClick(R.id.profile_user_position)
     void editPosition(View view) {
         // 직책
         if (NetworkCheckUtil.isConnected()) {
@@ -235,7 +235,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         }
     }
 
-    @Click(R.id.profile_user_email)
+    @OnClick(R.id.profile_user_email)
     void editEmail(View view) {
         if (NetworkCheckUtil.isConnected()) {
             modifyProfilePresenter.onEditEmailClick(getEmail());
@@ -243,7 +243,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         }
     }
 
-    @Click(R.id.profile_photo)
+    @OnClick(R.id.profile_photo)
     void getPicture() {
         // 프로필 사진
         Permissions.getChecker()
@@ -288,7 +288,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         modifyProfilePresenter.onProfileChange(new User(event.getMember()));
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void closeDialogFragment() {
         android.app.Fragment dialogFragment = getFragmentManager().findFragmentByTag("dialog");
@@ -329,7 +328,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         ColoredToast.showError(getString(event.errorMessageResId));
     }
 
-    @OnActivityResult(REQUEST_CROP)
     public void onImageCropResult(int resultCode, Intent imageData) {
         if (resultCode != RESULT_OK) {
             return;
@@ -348,7 +346,21 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         }
     }
 
-    @OnActivityResult(FileUploadController.TYPE_UPLOAD_TAKE_PHOTO)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case FileUploadController.TYPE_UPLOAD_TAKE_PHOTO:
+                onCameraActivityResult(resultCode, data);
+                break;
+            case REQUEST_CHARACTER:
+                onCharacterActivityResult(resultCode);
+                break;
+            case REQUEST_CROP:
+                onImageCropResult(resultCode, data);
+                break;
+        }
+    }
+
     void onCameraActivityResult(int resultCode, Intent intent) {
         if (resultCode != Activity.RESULT_OK) {
             return;
@@ -366,7 +378,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         }
     }
 
-    @OnActivityResult(REQUEST_CHARACTER)
     void onCharacterActivityResult(int resultCode) {
         if (resultCode != Activity.RESULT_OK) {
             return;
@@ -385,15 +396,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     }
 
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void showFailProfile() {
-
-        ColoredToast.showError(JandiApplication.getContext().getString(R.string.err_profile_get_info));
-        finish();
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showProgressWheel() {
         dismissProgressWheel();
         if (progressWheel == null) {
@@ -403,7 +406,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     }
 
     @Override
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void displayProfile(User user) {
         // 프로필 사진
 
@@ -448,7 +450,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
     public void dismissProgressWheel() {
 
         if (progressWheel != null && progressWheel.isShowing()) {
@@ -478,15 +480,8 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void setTextAndChangeColor(TextView textView, String textToBeChanged) {
         textView.setText(textToBeChanged);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void updateLocalProfileImage(File tempPhotoFile) {
-        ImageUtil.loadProfileImage(ivProfilePhoto,
-                Uri.fromFile(tempPhotoFile), R.drawable.profile_img);
     }
 
     public void launchEditDialog(int dialogActionType, TextView textView) {
@@ -497,58 +492,18 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         newFragment.show(getFragmentManager(), "dialog");
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void showToastNoUpdateProfile() {
-        ColoredToast.showWarning(JandiApplication.getContext()
-                .getString(R.string.err_profile_unmodified));
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void showPhotoUploadProgressDialog(ProgressDialog progressDialog) {
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMessage(JandiApplication.getContext().getString(R.string.jandi_file_uploading));
-        progressDialog.show();
-
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void dismissProgressDialog(ProgressDialog progressDialog) {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void successPhotoUpload() {
-        ColoredToast.show(JandiApplication.getContext()
-                .getString(R.string.jandi_profile_photo_upload_succeed));
-
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void failPhotoUpload() {
-        ColoredToast.showError(JandiApplication.getContext()
-                .getString(R.string.err_profile_photo_upload));
-
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
     public void updateProfileSucceed() {
         ColoredToast.show(JandiApplication.getContext()
                 .getString(R.string.jandi_profile_update_succeed));
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
     public void updateProfileFailed() {
         ColoredToast.showError(JandiApplication.getContext()
                 .getString(R.string.err_profile_update));
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void successUpdateNameColor() {
-        tvProfileRealName.setTextColor(JandiApplication.getContext().getResources().getColor(R.color.jandi_text));
-
-    }
 
     @Override
     public void showEmailChooseDialog(String[] emails, String currentEmail) {
@@ -582,17 +537,11 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         return tvProfileUserEmail.getText().toString();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void updateEmailTextColor(String email) {
         setTextAndChangeColor(tvProfileUserEmail, email);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void successUpdateEmailColor() {
-        tvProfileUserEmail.setTextColor(JandiApplication.getContext().getResources().getColor(R.color.jandi_text));
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
     public void showCheckNetworkDialog() {
         AlertUtil.showCheckNetworkDialog(ModifyProfileActivity.this, null);
     }
@@ -624,7 +573,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showProfileChooseDialog() {
         if (profileChoosedialog == null) {
             initProfileChooseDialog();

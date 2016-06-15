@@ -9,8 +9,6 @@ import java.io.File;
 
 public interface ModifyProfilePresenter {
 
-    void setView(View view);
-
     void onEditEmailClick(String email);
 
     void onRequestCropImage(Activity activity);
@@ -35,8 +33,6 @@ public interface ModifyProfilePresenter {
 
         void displayProfile(User me);
 
-        void showFailProfile();
-
         void dismissProgressWheel();
 
         void showEmailChooseDialog(String[] accountEmails, String email);
@@ -45,11 +41,7 @@ public interface ModifyProfilePresenter {
 
         void updateProfileSucceed();
 
-        void successUpdateEmailColor();
-
         void updateProfileFailed();
-
-        void successUpdateNameColor();
 
         void closeDialogFragment();
     }

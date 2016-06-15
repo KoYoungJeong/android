@@ -1,42 +1,52 @@
 package com.tosslab.jandi.app.ui.web;
 
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OptionsItem;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-/**
- * Created by tee on 16. 1. 12..
- */
-
-@EActivity(R.layout.activity_web_not_found_page)
 public class PageNotFoundActivity extends BaseAppCompatActivity {
 
     public static final int RES_FINISH = 0x00;
     public static final int RES_RETRY = 0x01;
     public static final int RES_BACK = 0X02;
 
-    @AfterViews
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_web_not_found_page);
+        ButterKnife.bind(this);
+        initViews();
+    }
+
     void initViews() {
         setUpActionbar();
     }
 
-    @Click(R.id.bt_retry)
+    @OnClick(R.id.bt_retry)
     public void retryButtonClicked() {
         setResult(RES_RETRY);
         finish();
         overridePendingTransition(0, 0);
     }
 
-    @OptionsItem(android.R.id.home)
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onHomeOptionSelect();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     void onHomeOptionSelect() {
         setResult(RES_FINISH);
         finish();

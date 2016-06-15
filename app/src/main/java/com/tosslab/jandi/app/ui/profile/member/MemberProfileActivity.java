@@ -49,7 +49,6 @@ import com.tosslab.jandi.app.ui.profile.member.model.JandiBotProfileLoader;
 import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileLoader;
 import com.tosslab.jandi.app.ui.profile.member.model.ProfileLoader;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
-import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -739,9 +738,9 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     private void startModifyProfileActivity() {
-        ModifyProfileActivity_.intent(MemberProfileActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .startForResult(ModifyProfileActivity.REQUEST_CODE);
+        Intent intent = new Intent(MemberProfileActivity.this, ModifyProfileActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivityForResult(intent, ModifyProfileActivity.REQUEST_CODE);
     }
 
     private void startStarMentionListActivity() {

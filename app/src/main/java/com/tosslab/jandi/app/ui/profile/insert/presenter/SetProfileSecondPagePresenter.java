@@ -7,8 +7,8 @@ import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 /**
@@ -18,10 +18,14 @@ import org.androidannotations.annotations.EBean;
 @EBean
 public class SetProfileSecondPagePresenter {
 
-    @Bean
     ModifyProfileModel modifyProfileModel;
 
     private View view;
+
+    @AfterInject
+    void initObject() {
+        modifyProfileModel = new ModifyProfileModel();
+    }
 
     public void setView(View view) {
         this.view = view;

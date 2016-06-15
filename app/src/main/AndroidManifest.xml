@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.tosslab.jandi.app">
+<manifest package="com.tosslab.jandi.app"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:name=".JandiApplication"
@@ -138,7 +138,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.profile.modify.view.ModifyProfileActivity_"
+            android:name=".ui.profile.modify.view.ModifyProfileActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_profile_actionb"
             android:screenOrientation="portrait" />
@@ -169,7 +169,7 @@
             android:theme="@style/JandiTheme.ActionBarOverlay" />
 
         <activity
-            android:name=".ui.term.TermActivity_"
+            android:name=".ui.term.TermActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
 
@@ -499,7 +499,8 @@
         <activity
             android:name=".ui.passcode.PassCodeActivity_"
             android:screenOrientation="fullUser" />
-        <activity android:name=".ui.web.PageNotFoundActivity_" />
+
+        <activity android:name=".ui.web.PageNotFoundActivity" />
 
         <activity
             android:name=".ui.profile.defaultimage.ProfileImageSelectorActivity_"

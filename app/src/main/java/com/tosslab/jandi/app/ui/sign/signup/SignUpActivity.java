@@ -30,7 +30,6 @@ import com.tosslab.jandi.app.ui.sign.signup.dagger.SignUpModule;
 import com.tosslab.jandi.app.ui.sign.signup.presenter.SignUpPresenter;
 import com.tosslab.jandi.app.ui.sign.signup.verify.SignUpVerifyActivity_;
 import com.tosslab.jandi.app.ui.term.TermActivity;
-import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.UiUtils;
@@ -399,15 +398,13 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
     }
 
     void clickAgreeTosLink() {
-        TermActivity_.intent(this)
-                .termMode(TermActivity.Mode.Agreement.name())
-                .start();
+        startActivity(new Intent(this, TermActivity.class)
+                .putExtra(TermActivity.EXTRA_TERM_MODE, TermActivity.Mode.Agreement.name()));
     }
 
     void clickAgreePPLink() {
-        TermActivity_.intent(this)
-                .termMode(TermActivity.Mode.Privacy.name())
-                .start();
+        startActivity(new Intent(this, TermActivity.class)
+                .putExtra(TermActivity.EXTRA_TERM_MODE, TermActivity.Mode.Privacy.name()));
     }
 
     private class TextInputWatcher extends SimpleTextWatcher {

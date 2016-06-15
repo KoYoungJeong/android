@@ -34,7 +34,7 @@ import com.tosslab.jandi.app.ui.maintab.mypage.presenter.MyPagePresenter;
 import com.tosslab.jandi.app.ui.maintab.mypage.view.MyPageView;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
-import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity_;
+import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.settings.main.SettingsActivity_;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
@@ -294,7 +294,7 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
             ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img);
         }
         btnSetting.setOnClickListener(v -> {
-            ModifyProfileActivity_.intent(this).start();
+            startActivity(new Intent(getActivity(), ModifyProfileActivity.class));
 
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.EditProfile);
         });
