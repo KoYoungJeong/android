@@ -3,8 +3,6 @@ package com.tosslab.jandi.app.ui.sign;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewCompat;
-import android.view.View;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -18,9 +16,6 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/**
- * Created by tonyjs on 16. 6. 3..
- */
 public class SignHomeActivity extends BaseAppCompatActivity {
 
     @Override
@@ -45,7 +40,7 @@ public class SignHomeActivity extends BaseAppCompatActivity {
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.StartPage, AnalyticsValue.Action.SignUp);
     }
 
-    @OnClick(R.id.btn_sign_in)
+    @OnClick(R.id.vg_sign_in)
     public void onClickSignIn() {
         if (!NetworkCheckUtil.isConnected()) {
             ColoredToast.showError(R.string.jandi_msg_network_offline_warn);
