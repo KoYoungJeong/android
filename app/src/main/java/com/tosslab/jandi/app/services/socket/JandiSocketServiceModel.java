@@ -480,33 +480,34 @@ public class JandiSocketServiceModel {
     public void onRoomMarkerUpdated(Object object) {
         try {
             SocketRoomMarkerEvent event =
-                    getObject(object, SocketRoomMarkerEvent.class);
+                    getObject(object, SocketRoomMarkerEvent.class, true, false);
 
+            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()) {
 
-            SocketRoomMarkerEvent.MarkerRoom room = event.getRoom();
-            SocketRoomMarkerEvent.Marker marker = event.getMarker();
+                SocketRoomMarkerEvent.MarkerRoom room = event.getRoom();
+                SocketRoomMarkerEvent.Marker marker = event.getMarker();
 
-            long roomId = room.getId();
-            long memberId = marker.getMemberId();
-            long lastLinkId = marker.getLastLinkId();
-            RoomMarkerRepository.getInstance().upsertRoomMarker(roomId, memberId, lastLinkId);
+                long roomId = room.getId();
+                long memberId = marker.getMemberId();
+                long lastLinkId = marker.getLastLinkId();
+                RoomMarkerRepository.getInstance().upsertRoomMarker(roomId, memberId, lastLinkId);
 
-            if (SelfRepository.getInstance().isMe(memberId)) {
-                if (TopicRepository.getInstance().isTopic(roomId)) {
-                    TopicRepository.getInstance().updateReadId(roomId, lastLinkId);
-                    TopicRepository.getInstance().updateUnreadCount(roomId, 0);
-                } else if (ChatRepository.getInstance().isChat(roomId)) {
-                    ChatRepository.getInstance().updateReadLinkId(roomId, lastLinkId);
-                    ChatRepository.getInstance().updateUnreadCount(roomId, 0);
+                if (SelfRepository.getInstance().isMe(memberId)) {
+                    if (TopicRepository.getInstance().isTopic(roomId)) {
+                        TopicRepository.getInstance().updateReadId(roomId, lastLinkId);
+                        TopicRepository.getInstance().updateUnreadCount(roomId, 0);
+                    } else if (ChatRepository.getInstance().isChat(roomId)) {
+                        ChatRepository.getInstance().updateReadLinkId(roomId, lastLinkId);
+                        ChatRepository.getInstance().updateUnreadCount(roomId, 0);
+                    }
                 }
+
+                JandiPreference.setSocketConnectedLastTime(event.getTs());
+
+                TeamInfoLoader.getInstance().refresh();
+                postEvent(event);
             }
 
-            JandiPreference.setSocketConnectedLastTime(event.getTs());
-
-            TeamInfoLoader.getInstance().refresh();
-
-
-            postEvent(event);
             markerPublishSubject.onNext(event);
         } catch (Exception e) {
             e.printStackTrace();
@@ -898,6 +899,7 @@ public class JandiSocketServiceModel {
 
             TopicRepository.getInstance().updateTopicJoin(data.getRoomId(), false);
             TopicRepository.getInstance().removeMember(data.getRoomId(), TeamInfoLoader.getInstance().getMyId());
+            RoomMarkerRepository.getInstance().deleteMarker(data.getRoomId(), TeamInfoLoader.getInstance().getMyId());
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             TeamInfoLoader.getInstance().refresh();
@@ -923,9 +925,9 @@ public class JandiSocketServiceModel {
                 return;
             }
 
-            boolean isChat = TopicRepository.getInstance().isTopic(linkMessage.roomId);
+            boolean isTopic = TopicRepository.getInstance().isTopic(linkMessage.roomId);
             boolean isMyMessage = SelfRepository.getInstance().isMe(linkMessage.message.writerId);
-            if (isChat) {
+            if (isTopic) {
                 Topic topic = TopicRepository.getInstance().getTopic(linkMessage.roomId);
                 TopicRepository.getInstance().updateLastLinkId(linkMessage.roomId, linkMessage.id);
                 if (isMyMessage) {
@@ -990,14 +992,23 @@ public class JandiSocketServiceModel {
     }
 
     private <T> T getObject(Object object, Class<T> clazz) throws Exception {
+        return getObject(object, clazz, true, true);
+    }
+
+    private <T> T getObject(Object object, Class<T> clazz, boolean checkVersion, boolean checkTeamId) throws Exception {
         T t;
         if (object.getClass() != clazz) {
             t = objectMapper.readValue(object.toString(), clazz);
         } else {
             t = (T) object;
         }
-        throwExceptionIfInvaildVersion(t);
-        throwExceptionIfInvaildTeamId(t);
+        if (checkVersion) {
+            throwExceptionIfInvaildVersion(t);
+        }
+
+        if (checkTeamId) {
+            throwExceptionIfInvaildTeamId(t);
+        }
         return t;
     }
 
@@ -1151,7 +1162,19 @@ public class JandiSocketServiceModel {
     public void onTopicCreated(Object object) {
         try {
             SocketTopicCreatedEvent event = getObject(object, SocketTopicCreatedEvent.class);
-            TopicRepository.getInstance().addTopic(event.getData().getTopic());
+            Topic topic = event.getData().getTopic();
+
+            ArrayList<Marker> markers = new ArrayList<>();
+            for (Long memberId : topic.getMembers()) {
+                Marker marker = new Marker();
+                marker.setTopic(topic);
+                marker.setMemberId(memberId);
+                marker.setReadLinkId(-1);
+                markers.add(marker);
+            }
+
+            topic.setMarkers(markers);
+            TopicRepository.getInstance().addTopic(topic);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             TeamInfoLoader.getInstance().refresh();
 
@@ -1166,7 +1189,7 @@ public class JandiSocketServiceModel {
             SocketTopicJoinedEvent event = getObject(object, SocketTopicJoinedEvent.class);
             SocketTopicJoinedEvent.Data data = event.getData();
             TopicRepository.getInstance().addMember(data.getTopicId(), Arrays.asList(data.getMemberId()));
-
+            RoomMarkerRepository.getInstance().upsertRoomMarker(data.getTopicId(), data.getMemberId(), -1);
             if (SelfRepository.getInstance().isMe(data.getMemberId())) {
                 TopicRepository.getInstance().updateTopicJoin(data.getTopicId(), true);
             }
@@ -1186,10 +1209,16 @@ public class JandiSocketServiceModel {
             SocketTopicInvitedEvent event = getObject(object, SocketTopicInvitedEvent.class);
             SocketTopicInvitedEvent.Data data = event.getData();
             boolean hasTopic = TopicRepository.getInstance().isTopic(data.getTopicId());
+            List<Long> invitees = data.getInvitees();
             if (hasTopic) {
-                TopicRepository.getInstance().addMember(data.getTopicId(), data.getInvitees());
+                TopicRepository.getInstance().addMember(data.getTopicId(), invitees);
             }
-            if (data.getInvitees().contains(TeamInfoLoader.getInstance().getMyId())) {
+
+            for (Long memberId : invitees) {
+                RoomMarkerRepository.getInstance().upsertRoomMarker(data.getTopicId(), memberId, -1);
+            }
+
+            if (invitees.contains(TeamInfoLoader.getInstance().getMyId())) {
                 if (hasTopic) {
                     TopicRepository.getInstance().updateTopicJoin(data.getTopicId(), true);
                 } else {

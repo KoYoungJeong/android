@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
@@ -39,9 +40,11 @@ public class RoomMarkerRepository extends LockExecutorTemplate {
                         Topic topic = TopicRepository.getInstance().getTopic(roomId);
                         newMarker.setTopic(topic);
 
-                    } else {
+                    } else if (ChatRepository.getInstance().isChat(roomId)) {
                         Chat chat = ChatRepository.getInstance().getChat(roomId);
                         newMarker.setChat(chat);
+                    } else {
+                        return false;
                     }
                     newMarker.setMemberId(memberId);
                     newMarker.setReadLinkId(lastLinkId);
@@ -96,5 +99,23 @@ public class RoomMarkerRepository extends LockExecutorTemplate {
             return 0L;
         });
 
+    }
+
+    public boolean deleteMarker(int roomId, long memberId) {
+        return execute(() -> {
+            try {
+                Dao<Marker, Object> dao = getDao(Marker.class);
+                DeleteBuilder<Marker, Object> deleteBuilder = dao.deleteBuilder();
+                Where<Marker, Object> where = deleteBuilder.where();
+                where.or(where.eq("chat_id", roomId), where.eq("topic_id", roomId))
+                        .and()
+                        .eq("memberId", memberId);
+                return deleteBuilder.delete() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        });
     }
 }
