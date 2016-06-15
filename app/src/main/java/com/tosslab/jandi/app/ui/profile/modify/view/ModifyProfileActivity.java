@@ -304,7 +304,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         }
 
         updateProfileTextColor(event.actionType, event.inputMessage);
-        ReqUpdateProfile reqUpdateProfile = getUpdateProfile();
+        ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
         switch (event.actionType) {
             case EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS:
                 reqUpdateProfile.statusMessage = event.inputMessage;
@@ -454,15 +454,6 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
         }
-    }
-
-    public ReqUpdateProfile getUpdateProfile() {
-        ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
-        reqUpdateProfile.statusMessage = tvProfileStatusMessage.getText().toString();
-        reqUpdateProfile.phoneNumber = tvProfileUserPhone.getText().toString();
-        reqUpdateProfile.department = tvProfileUserDivision.getText().toString();
-        reqUpdateProfile.position = tvProfileUserPosition.getText().toString();
-        return reqUpdateProfile;
     }
 
     private void updateProfileTextColor(int actionType, String inputMessage) {

@@ -8,7 +8,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
-import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 
@@ -151,16 +150,6 @@ public class ModifyProfileActivityTest {
     public void testDismissProgressWheel() throws Throwable {
         rule.runOnUiThread(() -> activity.dismissProgressWheel());
         assertThat(activity.progressWheel.isShowing(), is(false));
-    }
-
-    @Test
-    public void testGetUpdateProfile() throws Exception {
-        ReqUpdateProfile updateProfile = activity.getUpdateProfile();
-        assertThat(updateProfile.position, is(equalTo(activity.tvProfileUserPosition.getText())));
-        assertThat(updateProfile.statusMessage, is(equalTo(activity.tvProfileStatusMessage.getText())));
-        assertThat(updateProfile.department, is(equalTo(activity.tvProfileUserDivision.getText())));
-        assertThat(updateProfile.phoneNumber, is(equalTo(activity.tvProfileUserPhone.getText())));
-
     }
 
     @Test
