@@ -37,9 +37,9 @@ public class IntroActivityPresenter {
 
         long initTime = System.currentTimeMillis();
 
-        if (!JandiPreference.getPrefVersion214()) {
+        if (!JandiPreference.isPutVersionCodeStamp()) {
             MessageRepository.getRepository().deleteAllLink();
-            JandiPreference.setPrefVersion214();
+            JandiPreference.putVersionCodeStamp();
         }
 
         if (!model.isNetworkConnected()) {
