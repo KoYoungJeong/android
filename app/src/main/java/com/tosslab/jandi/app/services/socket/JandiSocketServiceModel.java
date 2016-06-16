@@ -268,6 +268,7 @@ public class JandiSocketServiceModel {
                 long messageId = socketMessageEvent.getMessageId();
                 MessageRepository.getRepository().deleteMessage(messageId);
             }
+            postEvent(socketMessageEvent);
 
             messagePublishSubject.onNext(socketMessageEvent);
             JandiPreference.setSocketConnectedLastTime(socketMessageEvent.getTs());

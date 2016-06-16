@@ -43,8 +43,6 @@ public class JandiPreference {
     private static final String PREF_PASSCODE = "passcode";
     private static final String PREF_USE_FINGERPRRINT = "fingerprint";
     // PARSE
-    private static final String PREF_OLD_PARSE_CHANNEL_DELETED = "old_parse_channel_deleted";
-    private static final String PREF_OLD_PARSE_FILE_CACHE_DELETED = "old_parse_file_cache_deleted";
     private static final String PREF_VERSION_POPUP_LAST_TIME = "version_popup_last_time";
     private static final String PREF_PUSH_PREVIEW_INFO = "setting_push_preview";
     private static final String PREF_SOCKET_CONNECTED_LAST_TIME = "socket_connected_last_time";
@@ -54,27 +52,8 @@ public class JandiPreference {
 
     private static final String PREF_SOCKET_RECONNECT_DELAY = "socket_reconnect_delay";
     private static final String PREF_LAST_SELECTED_TAB = "last_selected_tab";
-    private static final String PREF_VERSION_2_1_4 = "version_2_1_4";
+    private static final String PREF_VERSION_CODE_STAMP = "version_code_stamp";
 
-    public static boolean isOldParseFileCacheDeleted(Context context) {
-        SharedPreferences pref = getSharedPreferences();
-        return pref.getBoolean(PREF_OLD_PARSE_FILE_CACHE_DELETED, false);
-    }
-
-    public static void setOldParseFileCacheDeleted(Context context, boolean delete) {
-        SharedPreferences pref = getSharedPreferences();
-        pref.edit().putBoolean(PREF_OLD_PARSE_FILE_CACHE_DELETED, delete).commit();
-    }
-
-    public static boolean isOldParseChannelDeleted(Context context) {
-        SharedPreferences pref = getSharedPreferences();
-        return pref.getBoolean(PREF_OLD_PARSE_CHANNEL_DELETED, false);
-    }
-
-    public static void setOldParseChannelDeleted(Context context, boolean delete) {
-        SharedPreferences pref = getSharedPreferences();
-        pref.edit().putBoolean(PREF_OLD_PARSE_CHANNEL_DELETED, delete).commit();
-    }
 
     public static boolean isAleadyShowCoachMarkTopic(Context context) {
         if (!getSharedPreferences().getBoolean(PREF_COACH_MARK_TOPIC, false)) {
@@ -387,16 +366,17 @@ public class JandiPreference {
                 .apply();
     }
 
-    public static void setPrefVersion214() {
-        getSharedPreferences()
-                .edit()
-                .putBoolean(PREF_VERSION_2_1_4, true)
-                .apply();
+    public static boolean isPutVersionCodeStamp() {
+        // 버전 154 이하 사용자의 링크를 초기화 하기 위함
+        return getSharedPreferences()
+                .getInt(PREF_VERSION_CODE_STAMP, 155) >= com.tosslab.jandi.app.BuildConfig.VERSION_CODE;
     }
 
-    public static boolean getPrefVersion214() {
-        return getSharedPreferences()
-                .getBoolean(PREF_VERSION_2_1_4, false);
+    public static void putVersionCodeStamp() {
+        getSharedPreferences()
+                .edit()
+                .putInt(PREF_VERSION_CODE_STAMP, com.tosslab.jandi.app.BuildConfig.VERSION_CODE)
+                .apply();
     }
 
 }

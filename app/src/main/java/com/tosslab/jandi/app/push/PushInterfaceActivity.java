@@ -79,9 +79,9 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
     @AfterInject
     void initObject() {
 
-        if (!JandiPreference.getPrefVersion214()) {
+        if (!JandiPreference.isPutVersionCodeStamp()) {
             MessageRepository.getRepository().deleteAllLink();
-            JandiPreference.setPrefVersion214();
+            JandiPreference.putVersionCodeStamp();
         }
 
         if (jandiInterfaceModel.hasNotRegisteredAtNewPushService()) {
