@@ -17,7 +17,6 @@ import com.tosslab.jandi.app.services.socket.to.SocketConnectBotCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketConnectBotDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketConnectBotUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentDeletedEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketFileCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
@@ -133,7 +132,6 @@ public class SocketHistoryDeserializer extends JsonDeserializer<EventHistoryInfo
         TeamDomainUpdated("team_domain_updated", SocketTeamDomainUpdatedEvent.class),
         FileDeleted("file_deleted", SocketFileDeletedEvent.class),
         FileUnshared("file_unshared", SocketFileUnsharedEvent.class),
-        FileCreated("file_created", SocketFileCreatedEvent.class),
         CommentDeleted("file_comment_deleted", SocketFileCommentDeletedEvent.class),
         MessageDeleted("message_deleted", SocketMessageDeletedEvent.class),
         MessageCreated("message_created", SocketMessageCreatedEvent.class),

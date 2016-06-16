@@ -135,7 +135,7 @@ public class MembersModelTest {
         //When
         membersModel.kickUser(teamId, topicId, BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_EMAIL));
 
-        BaseInitUtil.refreshLeftSideMenu();
+        BaseInitUtil.refreshTeamInfo();
         Collection<Long> membersAfter = TeamInfoLoader.getInstance().getTopic(topicId).getMembers();
 
         BaseInitUtil.deleteDummyTopic();
@@ -159,7 +159,7 @@ public class MembersModelTest {
         long memberId = BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST3_EMAIL);
         membersModel.assignToTopicOwner(teamId, topicId, memberId);
 
-        BaseInitUtil.refreshLeftSideMenu();
+        BaseInitUtil.refreshTeamInfo();
 
         // Then
         long target = BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_EMAIL);

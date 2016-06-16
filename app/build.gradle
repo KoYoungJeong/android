@@ -135,6 +135,7 @@ dependencies {
     androidTestCompile "com.squareup.assertj:assertj-android-support-v4:${rootProject.ext.assertJAndroidVersion}@aar"
     androidTestCompile "com.squareup.assertj:assertj-android-appcompat-v7:${rootProject.ext.assertJAndroidVersion}@aar"
     androidTestCompile "com.squareup.assertj:assertj-android-recyclerview-v7:${rootProject.ext.assertJAndroidVersion}@aar"
+    androidTestCompile "com.google.dagger:dagger-compiler:${rootProject.ext.dagger2Version}"
 
     compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
         transitive = true;
@@ -232,7 +233,9 @@ android {
             'asm-license.txt',
             'META-INF/NOTICE.txt',
             'META-INF/notice.txt',
-            'META-INF/ASL2.0'
+            'META-INF/ASL2.0',
+            'META-INF/maven/com.google.guava/guava/pom.properties',
+            'META-INF/maven/com.google.guava/guava/pom.xml'
     ]
 
     signingConfigs {

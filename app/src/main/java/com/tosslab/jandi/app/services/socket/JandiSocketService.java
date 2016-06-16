@@ -226,9 +226,6 @@ public class JandiSocketService extends Service {
         EventListener fileDeletedListener = objects -> jandiSocketServiceModel.onFileDeleted(objects[0]);
         eventHashMap.put("file_deleted", fileDeletedListener);
 
-        EventListener fileCreatedListener = objects -> jandiSocketServiceModel.onFileCreated(objects[0]);
-        eventHashMap.put("file_created", fileCreatedListener);
-
         EventListener fileUnsharedListener = objects -> jandiSocketServiceModel.onFileUnshared(objects[0]);
         eventHashMap.put("file_unshared", fileUnsharedListener);
 

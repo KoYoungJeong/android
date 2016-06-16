@@ -3,10 +3,10 @@ package com.tosslab.jandi.app.ui.profile.modify.presenter;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.ui.profile.modify.dagger.ModifyProfileModule;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -15,12 +15,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
+import javax.inject.Inject;
+
 import setup.BaseInitUtil;
 
 @RunWith(AndroidJUnit4.class)
 public class ModifyProfilePresenterImplTest {
 
-    private ModifyProfilePresenter presenter;
+    @Inject
+    ModifyProfilePresenter presenter;
     private ModifyProfilePresenter.View mockView;
 
     @BeforeClass
@@ -35,8 +38,12 @@ public class ModifyProfilePresenterImplTest {
 
     @Before
     public void setUp() throws Exception {
-        presenter = ModifyProfilePresenterImpl_.getInstance_(JandiApplication.getContext());
         mockView = Mockito.mock(ModifyProfilePresenter.View.class);
+        DaggerModifyProfileTestComponent.builder()
+                .modifyProfileModule(new ModifyProfileModule(mockView))
+                .build()
+                .inject(this);
+
     }
 
     @Test

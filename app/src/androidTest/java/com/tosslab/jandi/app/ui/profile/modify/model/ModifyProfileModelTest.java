@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.profile.modify.model;
 import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
@@ -49,7 +48,7 @@ public class ModifyProfileModelTest {
 
     @Before
     public void setUp() throws Exception {
-        modifyProfileModel = ModifyProfileModel_.getInstance_(JandiApplication.getContext());
+        modifyProfileModel = new ModifyProfileModel();
         user = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
     }
 

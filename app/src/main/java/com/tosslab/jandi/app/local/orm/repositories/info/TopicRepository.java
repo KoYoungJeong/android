@@ -135,7 +135,7 @@ public class TopicRepository extends LockExecutorTemplate {
                         .firstOrDefault(new ArrayList<>());
                 topic.setMembers(newUserIds);
 
-                dao.update(topic);
+                return dao.update(topic) > 0;
 
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -257,7 +257,7 @@ public class TopicRepository extends LockExecutorTemplate {
 
     }
 
-    public boolean createAnnounce(int topicId, Topic.Announcement announcement) {
+    public boolean createAnnounce(long topicId, Topic.Announcement announcement) {
         return execute(() -> {
             try {
                 Dao<Topic.Announcement, ?> dao = getHelper().getDao(Topic.Announcement.class);

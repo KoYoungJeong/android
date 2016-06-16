@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -134,7 +135,7 @@ public class BaseInitUtil {
             AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
             AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
-            refreshLeftSideMenu();
+            refreshTeamInfo();
 
         } catch (RetrofitException e) {
             e.printStackTrace();
@@ -165,7 +166,7 @@ public class BaseInitUtil {
                 e.printStackTrace();
             }
         }
-        refreshLeftSideMenu();
+        refreshTeamInfo();
     }
 
     public static void inviteDummyMembers() {
@@ -179,7 +180,7 @@ public class BaseInitUtil {
             members.add(tester3Id);
             ReqInviteTopicUsers reqInviteTopicUsers = new ReqInviteTopicUsers(members, teamId);
             new ChannelApi(RetrofitBuilder.getInstance()).invitePublicTopic(tempTopicId, reqInviteTopicUsers);
-            refreshLeftSideMenu();
+            refreshTeamInfo();
         } catch (RetrofitException e) {
             e.printStackTrace();
         }
@@ -195,17 +196,18 @@ public class BaseInitUtil {
                 new ChannelApi(RetrofitBuilder.getInstance()).deleteTopic(tempTopicId, new ReqDeleteTopic(teamId));
                 topicState = STATE_TEMP_TOPIC_NOT_CREATED;
             }
-            refreshLeftSideMenu();
+            refreshTeamInfo();
         } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();
         }
     }
 
-    public static void refreshLeftSideMenu() {
+    public static void refreshTeamInfo() {
         try {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
             InitialInfo initialInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(teamId);
             InitialInfoRepository.getInstance().upsertInitialInfo(initialInfo);
+            TeamInfoLoader.getInstance().refresh();
         } catch (RetrofitException e) {
             e.printStackTrace();
         }

@@ -18,7 +18,6 @@ import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
-import com.tosslab.jandi.app.events.files.CreateFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
@@ -71,7 +70,6 @@ import com.tosslab.jandi.app.services.socket.to.SocketConnectBotDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketConnectBotUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentDeletedEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketFileCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileShareEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
@@ -131,7 +129,6 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 public class JandiSocketServiceModel {
@@ -186,7 +183,6 @@ public class JandiSocketServiceModel {
         eventHistoryActorMapper.put(SocketTeamNameUpdatedEvent.class, this::onTeamNameUpdated);
         eventHistoryActorMapper.put(SocketTeamDomainUpdatedEvent.class, this::onTeamDomainUpdated);
         eventHistoryActorMapper.put(SocketFileDeletedEvent.class, this::onFileDeleted);
-        eventHistoryActorMapper.put(SocketFileCreatedEvent.class, this::onFileCreated);
         eventHistoryActorMapper.put(SocketFileUnsharedEvent.class, this::onFileUnshared);
         eventHistoryActorMapper.put(SocketFileCommentDeletedEvent.class, this::onFileCommentDeleted);
         eventHistoryActorMapper.put(SocketMessageDeletedEvent.class, this::onMessageDeleted);
@@ -252,12 +248,6 @@ public class JandiSocketServiceModel {
         postEvent(new DeleteFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
     }
 
-    /**
-     * message_created 로 병합됨
-     *
-     * @param object
-     */
-    @Deprecated
     public void onFileCommentCreated(Object object) {
         try {
             SocketFileCommentCreatedEvent socketFileEvent =
@@ -458,12 +448,6 @@ public class JandiSocketServiceModel {
         }
     }
 
-    /**
-     * message_created 로 병합됨
-     *
-     * @param object
-     */
-    @Deprecated
     public void onFileShared(Object object) {
         try {
             SocketFileShareEvent event =
@@ -565,7 +549,7 @@ public class JandiSocketServiceModel {
                     getObject(object, SocketAnnouncementCreatedEvent.class);
 
             SocketAnnouncementCreatedEvent.Data data = event.getData();
-            int topicId = data.getTopicId();
+            long topicId = data.getTopicId();
             TopicRepository.getInstance().createAnnounce(topicId, data.getAnnouncement());
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             TeamInfoLoader.getInstance().refresh();
@@ -672,17 +656,6 @@ public class JandiSocketServiceModel {
         String jandiRefreshToken = TokenUtil.getRefreshToken();
         ReqAccessToken refreshReqToken = ReqAccessToken.createRefreshReqToken(jandiRefreshToken);
         return loginApi.get().getAccessToken(refreshReqToken);
-    }
-
-    public void onFileCreated(Object object) {
-        try {
-            SocketFileCreatedEvent event =
-                    getObject(object, SocketFileCreatedEvent.class);
-            JandiPreference.setSocketConnectedLastTime(event.getTs());
-            postEvent(new CreateFileEvent(event.getTeamId(), event.getFile().getId()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void onMessageUnstarred(Object object) {

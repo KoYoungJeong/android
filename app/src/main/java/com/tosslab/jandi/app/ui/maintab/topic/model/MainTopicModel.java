@@ -134,6 +134,7 @@ public class MainTopicModel {
                 .subscribe(topicFolder -> {
 
                     Observable.from(topicFolder.getRooms())
+                            .filter(topicRoom -> joinTopics.containsKey(topicRoom.getId()))
                             .subscribe(topicRoom -> {
 
                                 Topic topic = joinTopics.remove(topicRoom.getId());

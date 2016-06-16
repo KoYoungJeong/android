@@ -106,14 +106,14 @@ public class SocketAnnouncementCreatedEvent implements EventHistoryInfo {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
-        private int topicId;
+        private long topicId;
         private Topic.Announcement announcement;
 
-        public int getTopicId() {
+        public long getTopicId() {
             return topicId;
         }
 
-        public void setTopicId(int topicId) {
+        public void setTopicId(long topicId) {
             this.topicId = topicId;
         }
 

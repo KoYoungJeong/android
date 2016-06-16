@@ -171,4 +171,16 @@ public class ChatRepository extends LockExecutorTemplate {
             return false;
         });
     }
+
+    public boolean deleteChat(long chatId) {
+        return execute(() -> {
+            try {
+                Dao<Chat, Object> dao = getDao(Chat.class);
+                return dao.deleteById(chatId) > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+    }
 }
