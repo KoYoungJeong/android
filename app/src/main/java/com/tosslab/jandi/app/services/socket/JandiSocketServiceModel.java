@@ -865,8 +865,10 @@ public class JandiSocketServiceModel {
                         JandiPreference.setSocketConnectedLastTime(event.getTs());
                     } else if (eventHistoryInfo instanceof SocketFileEvent) {
                         SocketFileEvent event = (SocketFileEvent) eventHistoryInfo;
-                        updateFileDeleted(event);
-                        JandiPreference.setSocketConnectedLastTime(event.getTs());
+                        if (TextUtils.equals(event.getEvent(), "file_deleted")) {
+                            updateFileDeleted(event);
+                            JandiPreference.setSocketConnectedLastTime(event.getTs());
+                        }
                     } else if (eventHistoryInfo instanceof SocketMessageEvent) {
                         SocketMessageEvent event = (SocketMessageEvent) eventHistoryInfo;
                         if (TextUtils.equals(event.getMessageType(), "message_delete")) {

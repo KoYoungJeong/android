@@ -1176,7 +1176,8 @@ public class MessageListV2Presenter {
 
     }
 
-    public void addNewMessageFromLocal() {
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void addNewMessageFromLocal() {
         if (view == null || adapterModel == null) {
             return;
         }
@@ -1192,16 +1193,20 @@ public class MessageListV2Presenter {
         List<ResMessages.Link> messages = MessageRepository.getRepository().getMessages(room.getRoomId(), minId, Integer.MAX_VALUE);
         messageListModel.presetTextContent(messages);
         addMessages(messages, currentMessageState.isFirstLoadNewMessage(), new ArrayList<>());
-        if (messages.size() > 0) {
-            long lastLinkId = messages.get(messages.size() - 1).id;
-            messageListModel.upsertMyMarker(room.getRoomId(), lastLinkId);
 
-            addMarkerQueue();
-        }
+        Observable.just(new Object())
+                .observeOn(Schedulers.io())
+                .subscribe(o -> {
+                    if (messages.size() > 0) {
+                        long lastLinkId = messages.get(messages.size() - 1).id;
+                        messageListModel.upsertMyMarker(room.getRoomId(), lastLinkId);
 
-        if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
-            messageListModel.updateMarkerInfo(room.getTeamId(), room.getRoomId());
-        }
+                        addMarkerQueue();
+                    }
+                    if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
+                        messageListModel.updateMarkerInfo(room.getTeamId(), room.getRoomId());
+                    }
+                });
     }
 
     private void addMarkerQueue() {
