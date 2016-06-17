@@ -51,12 +51,12 @@ public class ChatRepository extends LockExecutorTemplate {
         });
     }
 
-    public Chat getChat(long roomId) {
+    public Chat getChat(long chatId) {
         return execute(() -> {
 
             try {
                 Dao<Chat, Long> dao = getDao(Chat.class);
-                return dao.queryForId(roomId);
+                return dao.queryForId(chatId);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -93,7 +93,7 @@ public class ChatRepository extends LockExecutorTemplate {
                         .eq("id", roomId);
                 chatUpdateBuilder.update();
 
-                if (dao.queryForId(linkId) != null) {
+                if (lastMessageDao.queryForId(linkId) != null) {
                     return lastMessageDao.update(lastMessage) > 0;
                 } else {
                     return lastMessageDao.create(lastMessage) > 0;
@@ -123,14 +123,14 @@ public class ChatRepository extends LockExecutorTemplate {
         });
     }
 
-    public boolean updateUnreadCount(long roomId, int unreadCount) {
+    public boolean updateUnreadCount(long chatId, int unreadCount) {
         return execute(() -> {
             try {
                 Dao<Chat, Long> dao = getDao(Chat.class);
                 UpdateBuilder<Chat, Long> updateBuilder = dao.updateBuilder();
                 updateBuilder.updateColumnValue("unreadCount", unreadCount)
                         .where()
-                        .eq("id", roomId);
+                        .eq("id", chatId);
                 return updateBuilder.update() > 0;
             } catch (SQLException e) {
                 e.printStackTrace();

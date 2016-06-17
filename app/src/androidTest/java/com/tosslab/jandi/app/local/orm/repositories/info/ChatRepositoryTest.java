@@ -108,21 +108,38 @@ public class ChatRepositoryTest {
 
     @Test
     public void testIsChat() throws Exception {
+        assertThat(ChatRepository.getInstance().isChat(-1l)).isFalse();
+        assertThat(ChatRepository.getInstance().isChat(getChat().getId())).isTrue();
 
     }
 
     @Test
     public void testUpdateUnreadCount() throws Exception {
+        Chat chat = getChat();
+        ChatRepository.getInstance().updateUnreadCount(chat.getId(), chat.getUnreadCount() + 1);
 
+        int unreadCount = ChatRepository.getInstance().getChat(chat.getId()).getUnreadCount();
+
+        assertThat(unreadCount).isEqualTo(chat.getUnreadCount() + 1);
     }
 
     @Test
     public void testUpdateLastLinkId() throws Exception {
+        Chat chat = getChat();
+        ChatRepository.getInstance().updateLastLinkId(chat.getId(), chat.getLastLinkId() + 1);
+
+        long lastLinkId = ChatRepository.getInstance().getChat(chat.getId()).getLastLinkId();
+
+        assertThat(lastLinkId).isEqualTo(chat.getLastLinkId() + 1);
 
     }
 
     @Test
     public void testUpdateReadLinkId() throws Exception {
+        Chat chat = getChat();
+        ChatRepository.getInstance().updateReadLinkId(chat.getId(), chat.getReadLinkId() + 1);
 
+        long readLinkId = ChatRepository.getInstance().getChat(chat.getId()).getReadLinkId();
+        assertThat(readLinkId).isEqualTo(chat.getReadLinkId() + 1);
     }
 }
