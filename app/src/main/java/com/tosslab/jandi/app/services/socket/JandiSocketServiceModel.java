@@ -421,11 +421,8 @@ public class JandiSocketServiceModel {
             SocketMemberStarredEvent event = getObject(object, SocketMemberStarredEvent.class);
             SocketMemberStarredEvent.Member member = event.getMember();
             JandiPreference.setSocketConnectedLastTime(event.getTs());
-            long chatId = TeamInfoLoader.getInstance().getChatId(member.getId());
-            if (chatId > 0) {
-                ChatRepository.getInstance().updateStarred(chatId, true);
-                TeamInfoLoader.getInstance().refresh();
-            }
+            HumanRepository.getInstance().updateStarred(member.getId(), true);
+            TeamInfoLoader.getInstance().refresh();
             postEvent(new MemberStarredEvent(member.getId()));
         } catch (Exception e) {
             e.printStackTrace();
@@ -1282,11 +1279,8 @@ public class JandiSocketServiceModel {
             SocketMemberUnstarredEvent event = getObject(object, SocketMemberUnstarredEvent.class);
             SocketMemberUnstarredEvent.Member member = event.getMember();
             JandiPreference.setSocketConnectedLastTime(event.getTs());
-            long chatId = TeamInfoLoader.getInstance().getChatId(member.getId());
-            if (chatId > 0) {
-                ChatRepository.getInstance().updateStarred(chatId, false);
-                TeamInfoLoader.getInstance().refresh();
-            }
+            HumanRepository.getInstance().updateStarred(member.getId(), false);
+            TeamInfoLoader.getInstance().refresh();
             postEvent(new MemberStarredEvent(member.getId()));
         } catch (Exception e) {
             e.printStackTrace();

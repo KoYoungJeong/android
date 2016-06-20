@@ -110,7 +110,7 @@ public class ChatChooseModel {
                     chatChooseItem.entityId(user.getId())
                             .statusMessage(user.getStatusMessage())
                             .name(user.getName())
-                            .starred(TeamInfoLoader.getInstance().isChatStarred(user.getId()))
+                            .starred(TeamInfoLoader.getInstance().isStarredUser(user.getId()))
                             .enabled(user.isEnabled())
                             .inactive(user.isInactive())
                             .email(user.getEmail())
@@ -174,7 +174,7 @@ public class ChatChooseModel {
                     chatChooseItem.entityId(user.getId())
                             .statusMessage(user.getStatusMessage())
                             .name(user.getName())
-                            .starred(TeamInfoLoader.getInstance().isChatStarred(user.getId()))
+                            .starred(TeamInfoLoader.getInstance().isStarredUser(user.getId()))
                             .enabled(true)
                             .inactive(user.isInactive())
                             .email(user.getEmail())
@@ -207,7 +207,7 @@ public class ChatChooseModel {
                 .name(bot.getName())
                 .owner(false)
                 .photoUrl(bot.getPhotoUrl())
-                .starred(TeamInfoLoader.getInstance().isChatStarred(bot.getId()));
+                .starred(TeamInfoLoader.getInstance().isStarredUser(bot.getId()));
     }
 
     private boolean hasJandiBot() {

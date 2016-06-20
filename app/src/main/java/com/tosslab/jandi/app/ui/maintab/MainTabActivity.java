@@ -340,9 +340,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     private boolean needInvitePopup() {
-        long teamId = AccountRepository.getRepository().getSelectedTeamId();
-        int memberCount = HumanRepository.getInstance().getMemberCount(teamId);
-        return JandiPreference.isInvitePopup(MainTabActivity.this) && memberCount > 0;
+        int memberCount = TeamInfoLoader.getInstance().getUserList().size();
+        return JandiPreference.isInvitePopup(MainTabActivity.this) && memberCount <= 1;
     }
 
     private void setupActionBar(String teamName) {

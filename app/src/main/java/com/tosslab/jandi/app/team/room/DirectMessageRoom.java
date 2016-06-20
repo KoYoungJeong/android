@@ -46,9 +46,8 @@ public class DirectMessageRoom implements Room {
         return chat.getUnreadCount();
     }
 
-    @Override
-    public boolean isStarred() {
-        return chat.isStarred();
+    public long getCompanionId() {
+        return chat.getCompanionId();
     }
 
     @Override

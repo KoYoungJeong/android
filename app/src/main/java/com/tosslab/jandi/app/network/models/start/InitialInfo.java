@@ -8,9 +8,11 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.tosslab.jandi.app.local.orm.dao.InitializeInfoDaoImpl;
+import com.tosslab.jandi.app.local.orm.persister.CollectionLongConverter;
 import com.tosslab.jandi.app.network.jackson.deserialize.start.InitializeInfoConverter;
 
 import java.util.Collection;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -36,6 +38,8 @@ public class InitialInfo {
     private Collection<Bot> bots;
     @DatabaseField
     private long ts;
+    @DatabaseField(persisterClass = CollectionLongConverter.class)
+    private List<Long> starredMessageIds;
 
     public Team getTeam() {
         return team;
@@ -107,6 +111,14 @@ public class InitialInfo {
 
     public void setTeamId(long teamId) {
         this.teamId = teamId;
+    }
+
+    public List<Long> getStarredMessageIds() {
+        return starredMessageIds;
+    }
+
+    public void setStarredMessageIds(List<Long> starredMessageIds) {
+        this.starredMessageIds = starredMessageIds;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

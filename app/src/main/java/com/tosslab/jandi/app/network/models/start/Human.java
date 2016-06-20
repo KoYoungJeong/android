@@ -29,6 +29,8 @@ public class Human {
     private Profile profile;
     @DatabaseField
     private String status;
+    @DatabaseField
+    private boolean isStarred;
     @JsonIgnore
     @DatabaseField(foreign = true)
     private InitialInfo initialInfo;
@@ -112,6 +114,14 @@ public class Human {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public boolean isStarred() {
+        return isStarred;
+    }
+
+    public void setIsStarred(boolean starred) {
+        isStarred = starred;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

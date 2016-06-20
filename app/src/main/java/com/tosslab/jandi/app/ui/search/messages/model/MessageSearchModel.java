@@ -64,7 +64,7 @@ public class MessageSearchModel {
 
     public boolean isStarredEntity(long entityId) {
         return TeamInfoLoader.getInstance().isStarred(entityId)
-                || TeamInfoLoader.getInstance().isChatStarred(entityId);
+                || TeamInfoLoader.getInstance().isStarredUser(entityId);
     }
 
     public List<SearchResult> convertSearchResult(List<ResMessageSearch.SearchRecord> searchRecordList, String query) {

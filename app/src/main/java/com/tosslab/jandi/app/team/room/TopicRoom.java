@@ -44,7 +44,6 @@ public class TopicRoom implements Room {
         return topic.getUnreadCount();
     }
 
-    @Override
     public boolean isStarred() {
         return topic.isStarred();
     }

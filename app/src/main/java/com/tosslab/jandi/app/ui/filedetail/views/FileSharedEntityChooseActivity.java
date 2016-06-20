@@ -116,7 +116,7 @@ public class FileSharedEntityChooseActivity extends BaseAppCompatActivity {
                     if (TeamInfoLoader.getInstance().isMember(entityId)) {
                         Member member = TeamInfoLoader.getInstance().getMember(entityId);
                         simpleEntity.setPhotoUrl(member.getPhotoUrl());
-                        simpleEntity.setStarred(TeamInfoLoader.getInstance().isChatStarred(entityId));
+                        simpleEntity.setStarred(TeamInfoLoader.getInstance().isStarredUser(entityId));
                         simpleEntity.setUser(true);
                     } else {
                         simpleEntity.setStarred(TeamInfoLoader.getInstance().isStarred(entityId));

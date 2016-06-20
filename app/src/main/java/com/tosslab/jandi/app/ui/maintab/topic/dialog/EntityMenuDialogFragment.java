@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -201,7 +202,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
             }
             boolean isUser = roomId != entityId;
             if (isUser) {
-                ChatRepository.getInstance().updateStarred(roomId, !starred);
+                HumanRepository.getInstance().updateStarred(entityId, !starred);
             } else {
                 TopicRepository.getInstance().updateStarred(roomId, !starred);
             }

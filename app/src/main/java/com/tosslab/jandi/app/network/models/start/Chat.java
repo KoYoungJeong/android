@@ -33,7 +33,7 @@ public class Chat {
     @ForeignCollectionField(foreignFieldName = "chat")
     private Collection<Marker> markers;
     @DatabaseField
-    private boolean isStarred;
+    private long companionId;
     @DatabaseField
     private boolean isOpened;
     @DatabaseField
@@ -99,14 +99,6 @@ public class Chat {
         this.markers = markers;
     }
 
-    public boolean isStarred() {
-        return isStarred;
-    }
-
-    public void setIsStarred(boolean starred) {
-        isStarred = starred;
-    }
-
     public boolean isOpened() {
         return isOpened;
     }
@@ -145,6 +137,14 @@ public class Chat {
 
     public void setInitialInfo(InitialInfo initialInfo) {
         this.initialInfo = initialInfo;
+    }
+
+    public long getCompanionId() {
+        return companionId;
+    }
+
+    public void setCompanionId(long companionId) {
+        this.companionId = companionId;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

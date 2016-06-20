@@ -57,6 +57,11 @@ public class WebhookBot implements Member {
         return true;
     }
 
+    @Override
+    public boolean isStarred() {
+        return false;
+    }
+
     public boolean isJandiBot() {
         return TextUtils.equals(bot.getType(), "jandi_bot");
     }

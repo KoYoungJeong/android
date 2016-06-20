@@ -776,7 +776,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             isStarred = teamInfoLoader.isStarred(entityId);
         } else if (teamInfoLoader.isUser(entityId)) {
             entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
-            isStarred = teamInfoLoader.isChatStarred(entityId);
+            isStarred = teamInfoLoader.isStarredUser(entityId);
             isUser = true;
             if (teamInfoLoader.isJandiBot(entityId)) {
                 isBot = true;

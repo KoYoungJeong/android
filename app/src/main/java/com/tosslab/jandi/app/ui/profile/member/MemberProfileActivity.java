@@ -28,7 +28,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
@@ -440,8 +440,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 entityClientManager.disableFavorite(memberId);
             }
 
-            long chatId = TeamInfoLoader.getInstance().getChatId(memberId);
-            ChatRepository.getInstance().updateStarred(chatId, star);
+            HumanRepository.getInstance().updateStarred(memberId, star);
             TeamInfoLoader.getInstance().refresh();
 
         } catch (RetrofitException e) {

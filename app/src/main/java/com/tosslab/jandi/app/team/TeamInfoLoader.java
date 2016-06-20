@@ -280,12 +280,14 @@ public class TeamInfoLoader {
         return execute(() -> topicRooms.get(topicId).isAnnouncementOpened());
     }
 
-    public boolean isChatStarred(long userId) {
-        return execute(() -> getChatObservable().takeFirst(chat -> chat.getMembers().contains(userId))
-                .map(Chat::isStarred)
-                .defaultIfEmpty(false)
-                .toBlocking()
-                .first());
+    public boolean isStarredUser(long userId) {
+        return execute(() -> {
+            if (users.containsKey(userId)) {
+                return users.get(userId).isStarred();
+            } else {
+                return false;
+            }
+        });
     }
 
     public long getChatId(long userId) {
@@ -339,7 +341,7 @@ public class TeamInfoLoader {
             if (topicRooms.containsKey(roomId)) {
                 return topicRooms.get(roomId).isStarred();
             } else if (chatRooms.containsKey(roomId)) {
-                return chatRooms.get(roomId).isStarred();
+                return isStarredUser(chatRooms.get(roomId).getCompanionId());
             }
 
             return false;
