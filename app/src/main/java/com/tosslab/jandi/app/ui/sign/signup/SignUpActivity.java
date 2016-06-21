@@ -108,7 +108,7 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
         etPassword.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (btnSignUp.isEnabled()) {
-                    signUpPresenter.trySignUp(etName.getText().toString(),
+                    signUpPresenter.trySignUp(etName.getText().toString().trim(),
                             etEmail.getText().toString(), etPassword.getText().toString());
                 }
                 return true;
@@ -203,7 +203,7 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
     @OnClick(R.id.btn_sign_up)
     void onClickSignUpButton() {
         signUpPresenter.trySignUp(
-                etName.getText().toString(),
+                etName.getText().toString().trim(),
                 etEmail.getText().toString(),
                 etPassword.getText().toString());
     }
