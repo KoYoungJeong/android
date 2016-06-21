@@ -468,6 +468,10 @@ public class TeamInfoLoader {
         return execute(() -> topicRooms.containsKey(id));
     }
 
+    public boolean isChat(long id) {
+        return execute(() -> chatRooms.containsKey(id));
+    }
+
     public WebhookBot getBot(long botId) {
         return execute(() -> {
             if (bots.containsKey(botId)) {

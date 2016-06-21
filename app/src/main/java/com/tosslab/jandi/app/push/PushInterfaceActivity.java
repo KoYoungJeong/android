@@ -6,15 +6,9 @@ import android.support.v4.util.Pair;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
-import com.tosslab.jandi.app.network.client.account.AccountApi;
-import com.tosslab.jandi.app.network.client.events.EventsApi;
-import com.tosslab.jandi.app.network.client.main.LoginApi;
-import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
-import com.tosslab.jandi.app.services.socket.JandiSocketServiceModel;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
@@ -169,12 +163,6 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
 
             if (entityInfo.second > 0) {
 
-                new JandiSocketServiceModel(PushInterfaceActivity.this,
-                        () -> new AccountApi(RetrofitBuilder.getInstance()),
-                        () -> new LoginApi(RetrofitBuilder.getInstance()),
-                        () -> new EventsApi(RetrofitBuilder.getInstance()),
-                        () -> new RoomsApi(RetrofitBuilder.getInstance()))
-                        .updateEventHistory();
                 moveMessageListActivity(roomId, entityInfo.second);
             } else {
                 // entity 정보가 없으면 인트로로 이동하도록 지정
