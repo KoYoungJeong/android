@@ -27,6 +27,9 @@ public class UnreadCountUtil {
                 .subscribeOn(Schedulers.io())
                 .map(roomMarkerCount -> {
                     Marker myMarker = RoomMarkerRepository.getInstance().getMarker(roomId, myId);
+                    if (myMarker == null) {
+                        return roomMarkerCount - 1;
+                    }
                     long myLastLinkId = myMarker.getReadLinkId();
                     if ((fromEntityId == myId
                             && (0 <= myLastLinkId && myLastLinkId < linkId))) {

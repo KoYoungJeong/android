@@ -101,7 +101,7 @@ public class RoomMarkerRepository extends LockExecutorTemplate {
 
     }
 
-    public boolean deleteMarker(int roomId, long memberId) {
+    public boolean deleteMarker(long roomId, long memberId) {
         return execute(() -> {
             try {
                 Dao<Marker, Object> dao = getDao(Marker.class);
@@ -117,5 +117,22 @@ public class RoomMarkerRepository extends LockExecutorTemplate {
 
             return false;
         });
+    }
+
+    public boolean deleteMarkers(long roomId) {
+        return execute(() -> {
+            try {
+                Dao<Marker, Object> dao = getDao(Marker.class);
+                DeleteBuilder<Marker, Object> deleteBuilder = dao.deleteBuilder();
+                Where<Marker, Object> where = deleteBuilder.where();
+                where.or(where.eq("chat_id", roomId), where.eq("topic_id", roomId));
+                return deleteBuilder.delete() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        });
+
     }
 }

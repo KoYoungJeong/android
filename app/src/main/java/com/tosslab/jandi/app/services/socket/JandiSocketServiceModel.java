@@ -224,7 +224,7 @@ public class JandiSocketServiceModel {
 
             postEvent(new TeamInfoChangeEvent());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
 
 
@@ -238,7 +238,7 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             updateFileDeleted(event);
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -260,7 +260,7 @@ public class JandiSocketServiceModel {
                             TextUtils.equals(socketFileEvent.getEvent(), "file_comment_created")));
             JandiPreference.setSocketConnectedLastTime(socketFileEvent.getTs());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -272,7 +272,7 @@ public class JandiSocketServiceModel {
 
             JandiPreference.setSocketConnectedLastTime(event.getTs());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -322,7 +322,7 @@ public class JandiSocketServiceModel {
             postEvent(event);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -336,7 +336,7 @@ public class JandiSocketServiceModel {
             postEvent(new TopicInfoUpdateEvent(event.getData().getTopic().getId()));
             postEvent(new RetrieveTopicListEvent());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -350,7 +350,7 @@ public class JandiSocketServiceModel {
 
             postEvent(new ChatListRefreshEvent());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -398,7 +398,7 @@ public class JandiSocketServiceModel {
 
             postEvent(new ChatListRefreshEvent());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -410,12 +410,13 @@ public class JandiSocketServiceModel {
                 TopicRepository.getInstance().updateTopicJoin(data.getTopicId(), false);
             }
             TopicRepository.getInstance().removeMember(data.getTopicId(), data.getMemberId());
+            RoomMarkerRepository.getInstance().deleteMarker(data.getTopicId(), data.getMemberId());
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             TeamInfoLoader.getInstance().refresh();
             postEvent(new TopicDeleteEvent(event.getTeamId(), data.getTopicId()));
             postEvent(new RetrieveTopicListEvent());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -428,7 +429,7 @@ public class JandiSocketServiceModel {
             TeamInfoLoader.getInstance().refresh();
             postEvent(new MemberStarredEvent(member.getId()));
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -444,7 +445,7 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             postEvent(new UnshareFileEvent(roomId, fileId));
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -456,7 +457,7 @@ public class JandiSocketServiceModel {
             long fileId = event.getFile().getId();
             postEvent(new ShareFileEvent(teamId, fileId));
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -494,7 +495,7 @@ public class JandiSocketServiceModel {
 
             markerPublishSubject.onNext(event);
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -514,7 +515,7 @@ public class JandiSocketServiceModel {
 
             postEvent(new LinkPreviewUpdateEvent(data.getMessageId()));
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -536,7 +537,7 @@ public class JandiSocketServiceModel {
             postEvent(new LinkPreviewUpdateEvent(messageId));
             JandiPreference.setSocketConnectedLastTime(socketLinkPreviewMessageEvent.getTs());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
 
     }
@@ -555,7 +556,7 @@ public class JandiSocketServiceModel {
             TeamInfoLoader.getInstance().refresh();
             postEvent(event);
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
 
     }
@@ -572,7 +573,7 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             postEvent(event);
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -591,10 +592,8 @@ public class JandiSocketServiceModel {
 
             postEvent(socketTopicPushEvent);
             JandiPreference.setSocketConnectedLastTime(socketTopicPushEvent.getTs());
-        } catch (RetrofitException e) {
-            e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -640,7 +639,7 @@ public class JandiSocketServiceModel {
                         }
 
                     } catch (RetrofitException e) {
-                        e.printStackTrace();
+                        LogUtil.d(TAG, e.getMessage());
                     }
 
                 }, throwable -> LogUtil.d(throwable.getMessage()));
@@ -670,7 +669,7 @@ public class JandiSocketServiceModel {
             postEvent(new SocketMessageStarEvent(event.getStarredInfo().getMessageId(), false));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -687,7 +686,7 @@ public class JandiSocketServiceModel {
             postEvent(new SocketMessageStarEvent(socketFileEvent.getStarredInfo().getMessageId(), true));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -705,7 +704,7 @@ public class JandiSocketServiceModel {
             postEvent(new TopicFolderRefreshEvent());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -726,7 +725,7 @@ public class JandiSocketServiceModel {
             postEvent(new TopicFolderRefreshEvent());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -745,7 +744,7 @@ public class JandiSocketServiceModel {
             postEvent(new TopicFolderRefreshEvent());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -761,7 +760,7 @@ public class JandiSocketServiceModel {
             postEvent(new TopicFolderRefreshEvent());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
 
         }
     }
@@ -779,7 +778,7 @@ public class JandiSocketServiceModel {
             postEvent(new TopicFolderRefreshEvent());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
 
     }
@@ -823,7 +822,7 @@ public class JandiSocketServiceModel {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -860,7 +859,7 @@ public class JandiSocketServiceModel {
                 postEvent(new TeamDeletedEvent(teamId));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -881,7 +880,7 @@ public class JandiSocketServiceModel {
             postEvent(new RetrieveTopicListEvent());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -945,7 +944,7 @@ public class JandiSocketServiceModel {
             postEvent(event);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -1048,7 +1047,7 @@ public class JandiSocketServiceModel {
             TeamInfoLoader.getInstance().refresh();
             postEvent(new RefreshConnectBotEvent());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -1060,7 +1059,7 @@ public class JandiSocketServiceModel {
 
             postEvent(new RefreshConnectBotEvent());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -1072,7 +1071,7 @@ public class JandiSocketServiceModel {
 
             postEvent(new RefreshConnectBotEvent());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -1086,7 +1085,7 @@ public class JandiSocketServiceModel {
             postEvent(new RetrieveTopicListEvent());
             postEvent(new TeamJoinEvent());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -1119,7 +1118,7 @@ public class JandiSocketServiceModel {
                         ts = eventHistory.getLastTs();
                         subscriber.onNext(eventHistory);
                     } catch (RetrofitException e) {
-                        e.printStackTrace();
+                        LogUtil.d(TAG, e.getMessage());
                         hasMore = false;
                     }
 
@@ -1152,7 +1151,7 @@ public class JandiSocketServiceModel {
 
             postEvent(new RetrieveTopicListEvent());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -1172,7 +1171,7 @@ public class JandiSocketServiceModel {
             postEvent(new RetrieveTopicListEvent());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -1217,7 +1216,7 @@ public class JandiSocketServiceModel {
 
             postEvent(new RetrieveTopicListEvent());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -1231,7 +1230,7 @@ public class JandiSocketServiceModel {
 
             postEvent(new ProfileChangeEvent(data.getMember()));
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -1240,11 +1239,12 @@ public class JandiSocketServiceModel {
             SocketTopicDeletedEvent event = getObject(object, SocketTopicDeletedEvent.class);
             long topicId = event.getData().getTopicId();
             TopicRepository.getInstance().deleteTopic(topicId);
+            RoomMarkerRepository.getInstance().deleteMarkers(topicId);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             TeamInfoLoader.getInstance().refresh();
             postEvent(new TopicDeleteEvent(event.getTeamId(), topicId));
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -1258,7 +1258,7 @@ public class JandiSocketServiceModel {
             TeamInfoLoader.getInstance().refresh();
             postEvent(new TopicInfoUpdateEvent(id));
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
@@ -1272,7 +1272,7 @@ public class JandiSocketServiceModel {
             TeamInfoLoader.getInstance().refresh();
             postEvent(new TopicInfoUpdateEvent(id));
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
 
     }
@@ -1286,7 +1286,7 @@ public class JandiSocketServiceModel {
             TeamInfoLoader.getInstance().refresh();
             postEvent(new MemberStarredEvent(member.getId()));
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
 
     }
@@ -1305,7 +1305,7 @@ public class JandiSocketServiceModel {
 
             postEvent(new TeamInfoChangeEvent());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
 
     }
@@ -1322,7 +1322,7 @@ public class JandiSocketServiceModel {
             postEvent(new AnnouncementUpdatedEvent(data.getTopicId(), opened));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
 
     }
@@ -1334,7 +1334,7 @@ public class JandiSocketServiceModel {
             TeamInfoLoader.getInstance().refresh();
             postEvent(new TeamInfoChangeEvent());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.d(TAG, e.getMessage());
         }
     }
 
