@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.ui.carousel.presenter;
 
-import android.support.test.espresso.intent.Intents;
-import android.support.test.espresso.intent.matcher.IntentMatchers;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -10,29 +8,17 @@ import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
-import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.services.download.DownloadService;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
-import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
-import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel_;
 
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
-import java.util.List;
-import java.util.concurrent.Callable;
 
 import setup.BaseInitUtil;
 
 import static com.jayway.awaitility.Awaitility.await;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.anyList;
@@ -123,50 +109,50 @@ public class CarouselViewerPresenterImplTest {
         verify(mockView).addFileInfos(eq(0), anyList());
     }
 
-    @Ignore
-    @Test
-    public void testOnAfterImageFiles() throws Exception {
-        final boolean[] finish = {false};
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                finish[0] = true;
-                return invocationOnMock;
-            }
-        }).when(mockView).addFileInfos(any());
+//    @Ignore
+//    @Test
+//    public void testOnAfterImageFiles() throws Exception {
+//        final boolean[] finish = {false};
+//        doAnswer(new Answer() {
+//            @Override
+//            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+//                finish[0] = true;
+//                return invocationOnMock;
+//            }
+//        }).when(mockView).addFileInfos(any());
+//
+//        presenter.onAfterImageFiles(lastImageMessageId, 1);
+//
+//        await().until(new Callable<Boolean>() {
+//            @Override
+//            public Boolean call() throws Exception {
+//                return finish[0];
+//            }
+//        });
+//
+//        verify(mockView).addFileInfos(any());
+//    }
 
-        presenter.onAfterImageFiles(lastImageMessageId, 1);
-
-        await().until(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                return finish[0];
-            }
-        });
-
-        verify(mockView).addFileInfos(any());
-    }
-
-    @Ignore
-    @Test
-    public void testOnFileDownload() throws Exception {
-
-        Intents.init();
-        CarouselViewerModel model = CarouselViewerModel_.getInstance_(JandiApplication.getContext());
-        List<ResMessages.FileMessage> fileMessages = model.searchInitFileList(teamId, roomId, lastImageMessageId);
-        List<CarouselFileInfo> imageFileConvert = model.getImageFileConvert(roomId, fileMessages);
-        CarouselFileInfo fileInfo = imageFileConvert.get(0);
-        presenter.onFileDownload(fileInfo);
-
-        Intents.intending(IntentMatchers.hasComponent(DownloadService.class.getName()));
-        Intents.intending(IntentMatchers.hasExtra("file_id", fileInfo.getFileLinkId()));
-        Intents.intending(IntentMatchers.hasExtra("url", fileInfo.getFileLinkUrl()));
-        Intents.intending(IntentMatchers.hasExtra("file_name", fileInfo.getFileName()));
-        Intents.intending(IntentMatchers.hasExtra("ext", fileInfo.getExt()));
-        Intents.intending(IntentMatchers.hasExtra("file_type", fileInfo.getFileType()));
-
-        Intents.release();
-    }
+//    @Ignore
+//    @Test
+//    public void testOnFileDownload() throws Exception {
+//
+//        Intents.init();
+//        CarouselViewerModel model = CarouselViewerModel_.getInstance_(JandiApplication.getContext());
+//        List<ResMessages.FileMessage> fileMessages = model.searchInitFileList(teamId, roomId, lastImageMessageId);
+//        List<CarouselFileInfo> imageFileConvert = model.getImageFileConvert(roomId, fileMessages);
+//        CarouselFileInfo fileInfo = imageFileConvert.get(0);
+//        presenter.onFileDownload(fileInfo);
+//
+//        Intents.intending(IntentMatchers.hasComponent(DownloadService.class.getName()));
+//        Intents.intending(IntentMatchers.hasExtra("file_id", fileInfo.getFileLinkId()));
+//        Intents.intending(IntentMatchers.hasExtra("url", fileInfo.getFileLinkUrl()));
+//        Intents.intending(IntentMatchers.hasExtra("file_name", fileInfo.getFileName()));
+//        Intents.intending(IntentMatchers.hasExtra("ext", fileInfo.getExt()));
+//        Intents.intending(IntentMatchers.hasExtra("file_type", fileInfo.getFileType()));
+//
+//        Intents.release();
+//    }
 
     @Test
     public void testOnFileDatail() throws Exception {

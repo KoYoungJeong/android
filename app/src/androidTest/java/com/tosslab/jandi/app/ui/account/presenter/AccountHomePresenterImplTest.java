@@ -14,7 +14,6 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -220,25 +219,25 @@ public class AccountHomePresenterImplTest {
         new AccountProfileApi(RetrofitBuilder.getInstance()).changeName(new ReqProfileName(originName));
     }
 
-    @Ignore
-    @Test
-    public void testOnTeamCreateAcceptResult() throws Exception {
-
-        final boolean[] finish = {false};
-        doAnswer(invocationOnMock -> {
-            finish[0] = true;
-            return invocationOnMock;
-        }).when(viewMock).dismissProgressWheel();
-
-        // When
-        accountHomePresenter.onTeamCreateAcceptResult();
-
-        // Then
-        Awaitility.await().until(() -> finish[0]);
-        verify(viewMock, times(1)).dismissProgressWheel();
-        verify(viewMock, times(1)).moveSelectedTeam(eq(true));
-
-    }
+//    @Ignore
+//    @Test
+//    public void testOnTeamCreateAcceptResult() throws Exception {
+//
+//        final boolean[] finish = {false};
+//        doAnswer(invocationOnMock -> {
+//            finish[0] = true;
+//            return invocationOnMock;
+//        }).when(viewMock).dismissProgressWheel();
+//
+//        // When
+//        accountHomePresenter.onTeamCreateAcceptResult();
+//
+//        // Then
+//        Awaitility.await().until(() -> finish[0]);
+//        verify(viewMock, times(1)).dismissProgressWheel();
+//        verify(viewMock, times(1)).moveSelectedTeam(eq(true));
+//
+//    }
 
     @Test
     public void testOnAccountEmailEditClick() throws Exception {

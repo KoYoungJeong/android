@@ -33,7 +33,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -54,6 +53,7 @@ public class MultiSharePresenterImplTest {
     public static void tearDownClass() throws Exception {
         BaseInitUtil.releaseDatabase();
     }
+
     @Before
     public void setUp() throws Exception {
 
@@ -112,7 +112,7 @@ public class MultiSharePresenterImplTest {
         verify(mockView).setFileTitle(anyString());
         verify(mockView).updateFiles(eq(2));
         verify(mockDataModel).clear();
-        verify(mockDataModel, times(limit)).add(any());
+        verify(mockDataModel).addAll(any());
     }
 
     @Test

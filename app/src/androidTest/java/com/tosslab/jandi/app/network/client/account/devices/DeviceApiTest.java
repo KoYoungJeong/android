@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -64,6 +65,7 @@ public class DeviceApiTest {
         assertThat(resDeviceSubscribe.isSubscribe()).isTrue();
     }
 
+    @Ignore
     @Test
     public void testDeleteDevice() throws Exception {
         accessToken = new LoginApi(RetrofitBuilder.getInstance()).getAccessToken(
