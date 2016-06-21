@@ -146,8 +146,8 @@ public class MyPagePresenterImpl implements MyPagePresenter {
 
     private void onClickTextTypeMessage(MentionMessage mention) {
 
-        if (TeamInfoLoader.getInstance().isTopic(mention.getRoomId())
-                || TeamInfoLoader.getInstance().isUser(mention.getRoomId())) {
+        if (!TeamInfoLoader.getInstance().isTopic(mention.getRoomId())
+                && !TeamInfoLoader.getInstance().isChat(mention.getRoomId())) {
             view.showUnknownEntityToast();
             return;
         }

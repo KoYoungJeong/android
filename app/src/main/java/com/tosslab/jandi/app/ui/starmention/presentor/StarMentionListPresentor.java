@@ -66,7 +66,7 @@ public class StarMentionListPresentor {
             boolean isJoinedTopic = false;
 
             if (TeamInfoLoader.getInstance().isTopic(starMentionVO.getRoomId())
-                    || TeamInfoLoader.getInstance().isUser(starMentionVO.getRoomId())) {
+                    || TeamInfoLoader.getInstance().isChat(starMentionVO.getRoomId())) {
 
                 if (TeamInfoLoader.getInstance().isTopic(starMentionVO.getRoomId())) {
                     Collection<Long> members = TeamInfoLoader.getInstance()
