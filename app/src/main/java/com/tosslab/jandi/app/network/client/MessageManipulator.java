@@ -61,8 +61,8 @@ public class MessageManipulator {
     }
 
     public void initEntity(int entityType, long entityId) {
-        this.entityId = entityId;
         this.entityType = entityType;
+        this.entityId = entityId;
     }
 
     public ResMessages getMessages(final long firstItemId, int count) throws RetrofitException {

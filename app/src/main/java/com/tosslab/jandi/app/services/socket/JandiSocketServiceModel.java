@@ -387,6 +387,9 @@ public class JandiSocketServiceModel {
 
             chat.setIsOpened(true);
             chat.setReadLinkId(-1);
+            chat.setCompanionId(Observable.from(chat.getMembers())
+                    .takeFirst(memberId -> memberId != TeamInfoLoader.getInstance().getMyId())
+                    .toBlocking().firstOrDefault(-1L));
 
             ChatRepository.getInstance().addChat(chat);
 

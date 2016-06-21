@@ -168,8 +168,6 @@ public class JandiSocketService extends Service {
 
     private void initEventMapper() {
 
-        // TODO "Chat Starred -> Member Starred 로 변경됨"
-
         EventListener teamJoinListener = objects -> jandiSocketServiceModel.onTeamJoin(objects[0]);
         eventHashMap.put("team_joined", teamJoinListener);
         EventListener memberLeftListener = objects -> jandiSocketServiceModel.onTeamLeft(objects[0]);
