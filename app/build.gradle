@@ -135,7 +135,7 @@ dependencies {
     androidTestCompile "com.squareup.assertj:assertj-android-support-v4:${rootProject.ext.assertJAndroidVersion}@aar"
     androidTestCompile "com.squareup.assertj:assertj-android-appcompat-v7:${rootProject.ext.assertJAndroidVersion}@aar"
     androidTestCompile "com.squareup.assertj:assertj-android-recyclerview-v7:${rootProject.ext.assertJAndroidVersion}@aar"
-    androidTestCompile "com.google.dagger:dagger-compiler:${rootProject.ext.dagger2Version}"
+    androidTestApt "com.google.dagger:dagger-compiler:${rootProject.ext.dagger2Version}"
 
     compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
         transitive = true;
