@@ -244,6 +244,7 @@ public class MessageListV2Presenter {
 
     private Observable<NewMessageContainer> composeNewMessage(Observable<MessageContainer> observable) {
         return observable.cast(NewMessageContainer.class)
+                .observeOn(Schedulers.io())
                 .doOnNext(this::loadNewMessage);
     }
 
