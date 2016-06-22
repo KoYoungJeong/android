@@ -162,6 +162,7 @@ public class TeamInfoLoader {
         members.clear();
         users.clear();
         bots.clear();
+        jandiBot = null;
 
         getUserObservable()
                 .map(User::new)
@@ -180,6 +181,9 @@ public class TeamInfoLoader {
                     bots.put(bot.getId(), bot);
                 });
 
+        if (jandiBot == null) {
+            jandiBot = new User(new Human());
+        }
     }
 
     private void setUpTopicFolders() {
@@ -433,11 +437,11 @@ public class TeamInfoLoader {
     }
 
     public boolean isJandiBot(long memberId) {
-        return execute(() -> jandiBot.getId() == memberId);
+        return execute(() -> jandiBot != null && jandiBot.getId() == memberId);
     }
 
     public boolean hasJandiBot() {
-        return execute(() -> jandiBot != null);
+        return execute(() -> jandiBot != null && jandiBot.getId() > 0);
     }
 
     public Room getRoom(long roomId) {
