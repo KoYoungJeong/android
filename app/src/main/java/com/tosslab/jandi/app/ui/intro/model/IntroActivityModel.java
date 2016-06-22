@@ -15,7 +15,6 @@ import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.main.ConfigApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
@@ -33,9 +32,6 @@ import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.EBean;
-
 import java.util.Collection;
 
 import javax.inject.Inject;
@@ -43,25 +39,17 @@ import javax.inject.Inject;
 import dagger.Lazy;
 import rx.Observable;
 
-/**
- * Created by Steve SeongUg Jung on 14. 12. 3..
- */
-
-@EBean
 public class IntroActivityModel {
 
-    @Inject
     Lazy<AccountApi> accountApi;
-    @Inject
     Lazy<StartApi> startApi;
-    @Inject
     Lazy<ConfigApi> configApi;
 
-    @AfterInject
-    void initObject() {
-        DaggerApiClientComponent
-                .create()
-                .inject(this);
+    @Inject
+    public IntroActivityModel(Lazy<AccountApi> accountApi, Lazy<StartApi> startApi, Lazy<ConfigApi> configApi) {
+        this.accountApi = accountApi;
+        this.startApi = startApi;
+        this.configApi = configApi;
     }
 
     public boolean isNetworkConnected() {

@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.share.multi;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,7 +21,7 @@ import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
 import com.tosslab.jandi.app.services.upload.UploadNotificationActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
-import com.tosslab.jandi.app.ui.intro.IntroActivity_;
+import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.share.MainShareActivity;
 import com.tosslab.jandi.app.ui.share.multi.adapter.ShareAdapterDataView;
 import com.tosslab.jandi.app.ui.share.multi.adapter.ShareFragmentPageAdapter;
@@ -216,9 +215,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @Override
     public void moveIntro() {
-        IntroActivity_.intent(getActivity())
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                .start();
+        IntroActivity.startActivity(getActivity(), false);
 
         getActivity().finish();
 

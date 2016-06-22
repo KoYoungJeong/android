@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
-import com.tosslab.jandi.app.ui.intro.IntroActivity_;
+import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.account.SettingAccountActivity;
 import com.tosslab.jandi.app.ui.settings.main.presenter.SettingsPresenter;
@@ -223,9 +223,7 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveLoginActivity() {
-        IntroActivity_.intent(SettingsFragment.this)
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                .start();
+        IntroActivity.startActivity(getActivity(), false);
     }
 
     @Override
