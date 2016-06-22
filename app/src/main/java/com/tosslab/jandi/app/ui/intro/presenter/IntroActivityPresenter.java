@@ -45,15 +45,7 @@ public class IntroActivityPresenter {
         if (!model.isNetworkConnected()) {
             // 네트워크 연결 상태 아니면 로그인 여부만 확인하고 넘어감
             if (!model.isNeedLogin()) {
-
-                if (model.hasMigration()) {
-                    moveNextActivity(context, initTime, startForInvite);
-                } else {
-                    // 오프라인모드 첫 접근 하는 유저인 경우
-                    // 네트워크 체크 처리
-                    view.showCheckNetworkDialog();
-                }
-
+                moveNextActivity(context, initTime, startForInvite);
             } else {
                 // 디자인 요청사항 처음에 딜레이가 있어달라는..
                 model.sleep(initTime, MAX_DELAY_MS);
@@ -82,34 +74,7 @@ public class IntroActivityPresenter {
                 // 메세지 캐시를 삭제함. 딱 1회에 한해서만 동작함
                 clearLinkRepositoryIfFirstTime();
 
-                if (!model.isNeedLogin()) {
-                    if (model.hasMigration()) {
-                        try {
-                            refreshAccountInfo();
-                            moveNextActivity(context, initTime, startForInvite);
-                        } catch (RetrofitException retrofitError) {
-                            retrofitError.printStackTrace();
-                            if (retrofitError.getStatusCode() < 500
-                                    || retrofitError.getStatusCode() != JandiConstants.NetworkError.UNAUTHORIZED) {
-                                moveNextActivity(context, initTime, startForInvite);
-                            }
-                        }
-                    } else {
-                        try {
-                            migrationAccountInfos(context, initTime, startForInvite);
-                            moveNextActivity(context, initTime, startForInvite);
-                        } catch (RetrofitException retrofitError) {
-                            retrofitError.printStackTrace();
-                            if (retrofitError.getStatusCode() < 500
-                                    || retrofitError.getStatusCode() != JandiConstants.NetworkError.UNAUTHORIZED) {
-                                moveNextActivity(context, initTime, startForInvite);
-                            }
-                        }
-                    }
-                } else {
-                    model.sleep(initTime, MAX_DELAY_MS);
-                    view.moveToSignHomeActivity();
-                }
+                moveNextActivityWithRefresh(context, startForInvite, initTime);
             }
 
         } catch (RetrofitException e) {
@@ -123,14 +88,32 @@ public class IntroActivityPresenter {
                     && e.getStatusCode() == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
                 view.showMaintenanceDialog();
             } else {
-                view.showCheckNetworkDialog();
+                moveNextActivityWithRefresh(context, startForInvite, initTime);
             }
         } catch (Exception e) {
             LogUtil.e(Log.getStackTraceString(e));
             model.trackSignInFailAndFlush(-1);
-            view.showCheckNetworkDialog();
+            moveNextActivityWithRefresh(context, startForInvite, initTime);
         }
 
+    }
+
+    private void moveNextActivityWithRefresh(Context context, boolean startForInvite, long initTime) {
+        if (!model.isNeedLogin()) {
+            try {
+                refreshAccountInfo();
+                moveNextActivity(context, initTime, startForInvite);
+            } catch (RetrofitException retrofitError) {
+                retrofitError.printStackTrace();
+                if (retrofitError.getStatusCode() < 500
+                        || retrofitError.getStatusCode() != JandiConstants.NetworkError.UNAUTHORIZED) {
+                    moveNextActivity(context, initTime, startForInvite);
+                }
+            }
+        } else {
+            model.sleep(initTime, MAX_DELAY_MS);
+            view.moveToSignHomeActivity();
+        }
     }
 
     private void clearLinkRepositoryIfFirstTime() {
@@ -199,8 +182,6 @@ public class IntroActivityPresenter {
         void moveToMainActivity();
 
         void moveTeamSelectActivity();
-
-        void showCheckNetworkDialog();
 
         void showMaintenanceDialog();
 

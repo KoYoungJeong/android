@@ -26,7 +26,6 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
-import com.tosslab.jandi.app.events.ServiceMaintenanceEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
@@ -660,12 +659,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         }
         teamsPresenter.reInitializeTeams();
 
-    }
-
-    public void onEventMainThread(ServiceMaintenanceEvent event) {
-        AlertUtil.showConfirmDialog(MainTabActivity.this,
-                R.string.jandi_service_maintenance, (dialog, which) -> finish(),
-                false);
     }
 
     private void trackScreenView(int position) {

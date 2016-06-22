@@ -116,13 +116,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void showCheckNetworkDialog() {
-        AlertUtil.showConfirmDialog(IntroActivity.this,
-                R.string.jandi_msg_network_offline_warn, (dialog, which) -> finish(), false);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
     public void showWarningToast(String message) {
         ColoredToast.showWarning(message);
     }

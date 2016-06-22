@@ -116,23 +116,6 @@ public class IntroActivityPresenterTest {
             verify(mockView, timeout(3000)).moveToSignHomeActivity();
         }
 
-        /** 네트워킹이 되지 않는 경우, 로그인은 한 경우 **/
-        {
-            // Given
-            IntroActivityPresenter.View mockView2 = mock(IntroActivityPresenter.View.class);
-            IntroActivityPresenter presenter2 = IntroActivityPresenter_.getInstance_(context);
-            presenter2.setView(mockView2);
-
-            when(mockModel.isNeedLogin()).thenReturn(false);
-            presenter2.model = mockModel;
-
-            // When
-            presenter2.checkNewVersion(context, false);
-
-            // Then
-            verify(mockView2, timeout(3000)).showCheckNetworkDialog();
-        }
-
         /** 네트워킹이 되지 않는 경우, 로그인은 한 경우, 계정정보가 있는 경우 **/
         {
             // Given
