@@ -123,6 +123,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import dagger.Lazy;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
@@ -144,6 +146,7 @@ public class JandiSocketServiceModel {
     private Subscription markerSubscribe;
     private Map<Class<? extends EventHistoryInfo>, Command> eventHistoryActorMapper;
 
+    @Inject
     public JandiSocketServiceModel(Context context,
                                    Lazy<AccountApi> accountApi,
                                    Lazy<LoginApi> loginApi,

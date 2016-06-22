@@ -32,9 +32,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by tonyjs on 16. 3. 23..
- */
 public class SettingAccountActivity extends BaseAppCompatActivity implements SettingAccountView {
 
     public static final int REQUEST_EMAIL_CHOOSE = 323;

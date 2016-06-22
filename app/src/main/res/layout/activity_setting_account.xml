@@ -9,7 +9,7 @@
         android:id="@+id/layout_search_bar"
         style="@style/Jandi.Default.ActionBar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"/>
+        android:layout_height="?attr/actionBarSize" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -26,7 +26,7 @@
 
                 <TextView
                     style="@style/JandiSettings.Header.Text"
-                    android:text="@string/jandi_name_in_jandi"/>
+                    android:text="@string/jandi_name_in_jandi" />
 
                 <com.tosslab.jandi.app.views.settings.SettingsBodyView
                     android:id="@+id/vg_setting_account_name"
@@ -36,18 +36,18 @@
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginRight="16dp"
-                        android:background="@drawable/account_icon_edit"/>
+                        android:background="@drawable/account_icon_edit" />
 
                 </com.tosslab.jandi.app.views.settings.SettingsBodyView>
             </LinearLayout>
 
-            <View style="@style/JandiSettings.Divider"/>
+            <View style="@style/JandiSettings.Divider" />
 
             <LinearLayout style="@style/JandiSettings.Group">
 
                 <TextView
                     style="@style/JandiSettings.Header.Text"
-                    android:text="@string/jandi_user_default_email"/>
+                    android:text="@string/jandi_user_default_email" />
 
                 <com.tosslab.jandi.app.views.settings.SettingsBodyView
                     android:id="@+id/vg_settin_account_email"
@@ -57,11 +57,11 @@
                         android:layout_width="6dp"
                         android:layout_height="9dp"
                         android:layout_marginRight="16dp"
-                        android:background="@drawable/more_icon_arrow_right"/>
+                        android:background="@drawable/more_icon_arrow_right" />
                 </com.tosslab.jandi.app.views.settings.SettingsBodyView>
             </LinearLayout>
 
-            <View style="@style/JandiSettings.Divider"/>
+            <View style="@style/JandiSettings.Divider" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -69,9 +69,9 @@
                 android:layout_marginTop="12dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:text="@string/jandi_set_passcode_detail"
+                android:text="@string/jandi_setting_account_email_info"
                 android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
-                android:textSize="@dimen/jandi_text_size_small"/>
+                android:textSize="@dimen/jandi_text_size_small" />
 
         </LinearLayout>
     </ScrollView>
