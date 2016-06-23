@@ -44,7 +44,7 @@ public class EventsApi extends ApiTemplate<EventsApi.Api> {
         Call<ResEventHistory> getEventHistory(@Query("ts") long ts, @Query("memberId") long memberId,
                                               @Query("eventType") String eventType);
 
-        @GET("events?size=10000")
+        @GET("events?size=100")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResEventHistory> getEventHistory(@Query("ts") long ts, @Query("memberId") long memberId);
 

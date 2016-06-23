@@ -26,12 +26,6 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-/**
- * Created by justinygchoi on 14. 11. 6..
- * 크게 3가지 체크가 이루어진다.
- * 1. 업데이트 해야할 최신 버전이 마켓에 업데이트되어 있으면 업데이트 안내가 뜬다.
- * 2. 자동 로그인 여부를 체크하여 이동한다.
- */
 public class IntroActivity extends BaseAppCompatActivity implements IntroActivityPresenter.View {
 
     private static final String EXTRA_START_FOR_INVITE = "startForInvite";
@@ -45,7 +39,9 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
     public static void startActivity(Context context, boolean startForInvite) {
         Intent intent = new Intent(context, IntroActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(EXTRA_START_FOR_INVITE, startForInvite);
         context.startActivity(intent);
     }
@@ -81,14 +77,12 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
         JandiPreference.setLastExecutedTime(System.currentTimeMillis());
     }
 
-    //    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveTeamSelectActivity() {
         Intent intent = AccountHomeActivity_.intent(IntroActivity.this).get();
         startActivityWithAnimationAndFinish(intent);
     }
 
-    //    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveToMainActivity() {
         Intent intent = MainTabActivity_.intent(IntroActivity.this)
@@ -98,7 +92,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
         startActivityWithAnimationAndFinish(intent);
     }
 
-    //    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveToSignHomeActivity() {
         Intent intent = new Intent(IntroActivity.this, SignHomeActivity.class);
@@ -136,7 +129,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
         overridePendingTransition(0, 0);
     }
 
-    //    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showMaintenanceDialog() {
         AlertUtil.showConfirmDialog(IntroActivity.this,
@@ -144,7 +136,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                 false);
     }
 
-    //    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showUpdateDialog() {
         AlertUtil.showConfirmDialog(IntroActivity.this, R.string.jandi_update_title,
@@ -163,7 +154,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                 false);
     }
 
-    //    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void finishOnUiThread() {
         finish();

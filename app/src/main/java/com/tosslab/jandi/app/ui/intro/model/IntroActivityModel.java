@@ -1,14 +1,9 @@
 package com.tosslab.jandi.app.ui.intro.model;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.local.database.DatabaseConsts;
-import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
@@ -82,29 +77,6 @@ public class IntroActivityModel {
 
     }
 
-    public void sleep(long initTime, long maxDelayMs) {
-        long currentTimeMillis = System.currentTimeMillis();
-        long currentTimeGap = currentTimeMillis - initTime;
-        long sleepTime = maxDelayMs - currentTimeGap;
-        try {
-            if (sleepTime > 0) {
-                // delay for splash
-                Thread.sleep(sleepTime);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public boolean hasOldToken(Context context) {
-        String myToken = JandiPreference.getMyToken(context);
-        return !TextUtils.isEmpty(myToken);
-    }
-
-    public void removeOldToken(Context context) {
-        JandiPreference.clearMyToken(context);
-    }
-
     public boolean refreshEntityInfo() {
         ResAccountInfo.UserTeam selectedTeamInfo =
                 AccountRepository.getRepository().getSelectedTeamInfo();
@@ -134,24 +106,6 @@ public class IntroActivityModel {
     public boolean hasMigration() {
         ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
         return accountInfo != null && !TextUtils.isEmpty(accountInfo.getId());
-    }
-
-    public long setSelectedTeamId(int teamId) {
-        return AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
-    }
-
-    public int getSelectedTeamInfoByOldData(Context context) {
-        SQLiteDatabase database = JandiDatabaseOpenHelper.getInstance(context).getReadableDatabase();
-        String[] columns = {DatabaseConsts.AccountTeam.teamId.name()};
-        String selection = DatabaseConsts.AccountTeam.selected.name() + " = 1";
-        Cursor cursor = database.query(DatabaseConsts.Table.account_team.name(), columns, selection, null, null, null, null);
-
-        if (cursor == null || cursor.getCount() <= 0) {
-            return 0;
-        }
-
-        cursor.moveToFirst();
-        return cursor.getInt(0);
     }
 
     public void trackAutoSignInSuccessAndFlush(boolean hasTeamSelected) {

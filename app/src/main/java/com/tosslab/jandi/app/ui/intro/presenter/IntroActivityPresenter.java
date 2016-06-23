@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
@@ -23,6 +24,7 @@ import rx.schedulers.Schedulers;
 public class IntroActivityPresenter {
 
     private static final long MAX_DELAY_MS = 500l;
+    private static final int DAYS_30 = 30;
 
     IntroActivityModel model;
     View view;
@@ -87,6 +89,7 @@ public class IntroActivityPresenter {
                     Observable<Throwable> errorShare = Observable.just(t)
                             .share();
 
+                    // 네트워크 에러인 경우
                     errorShare.ofType(RetrofitException.class)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(e -> {
@@ -99,10 +102,11 @@ public class IntroActivityPresenter {
                                 }
                             });
 
+                    // 알수 없는 에러인 경우
                     errorShare.filter(e -> !(e instanceof RetrofitException))
                             .subscribe(it -> {
                                 model.trackSignInFailAndFlush(-1);
-                                moveNextActivity(startForInvite);
+                                moveNextActivityWithRefresh(startForInvite);
                             });
 
                 });
@@ -114,29 +118,25 @@ public class IntroActivityPresenter {
         Observable<Boolean> loginObservable = Observable.just(!model.isNeedLogin())
                 .share();
 
+        // 로그인이 완료된 경우
         loginObservable.filter(it -> it)
-                .observeOn(Schedulers.io())
-                .concatMap(it -> {
-                    try {
-                        refreshAccountInfo();
-                        return Observable.just(true);
-                    } catch (RetrofitException e) {
-                        return Observable.error(e);
-                    }
-                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
                     moveNextActivity(startForInvite);
-                }, t -> {
-                    if (t instanceof RetrofitException) {
-                        RetrofitException e = (RetrofitException) t;
-                        if (e.getStatusCode() < 500
-                                || e.getStatusCode() != JandiConstants.NetworkError.UNAUTHORIZED) {
-                            moveNextActivity(startForInvite);
-                        }
+                });
+
+        // 로그인이 완료된 경우 서버에서 별도로 account 정보 받아오기
+        loginObservable.filter(it -> it)
+                .observeOn(Schedulers.io())
+                .subscribe(it -> {
+                    try {
+                        model.refreshAccountInfo();
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
                     }
                 });
 
+        // 로그인이 안 된 경우
         loginObservable.filter(it -> !it)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
@@ -157,22 +157,32 @@ public class IntroActivityPresenter {
         }
     }
 
-    void refreshAccountInfo() throws RetrofitException {
-        model.refreshAccountInfo();
-    }
-
     void moveNextActivity(final boolean startForInvite) {
 
         Observable<Boolean> hasTeamObservable = Observable.just(model.hasSelectedTeam() && !startForInvite)
                 .share();
 
+        // 팀 정보가 있는 경우
         hasTeamObservable.filter(it -> it)
                 .observeOn(Schedulers.io())
                 .doOnNext(it -> PushUtil.registPush())
                 .doOnNext(it -> {
-                    if (!model.hasLeftSideMenu() && NetworkCheckUtil.isConnected()) {
-                        // LeftSideMenu 가 없는 경우 대비
-                        model.refreshEntityInfo();
+                })
+                .doOnNext(it -> {
+                    if (NetworkCheckUtil.isConnected()) {
+
+                        long diffTime = System.currentTimeMillis() - JandiPreference.getSocketConnectedLastTime();
+
+                        // 30 일간 갱신 기록이 없으면 start api를 부르기 위한 사전 작업을 함
+                        if ((diffTime / (1000 * 60 * 60 * 24)) >= DAYS_30) {
+                            InitialInfoRepository.getInstance().clear();
+                            model.clearLinkRepository();
+                        }
+
+                        if (!model.hasLeftSideMenu()) {
+                            // LeftSideMenu 가 없는 경우 대비
+                            model.refreshEntityInfo();
+                        }
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -181,6 +191,7 @@ public class IntroActivityPresenter {
                     view.moveToMainActivity();
                 }, t -> {});
 
+        // 팀 정보가 없거나 초대에 의해 시작한 경우
         hasTeamObservable.filter(it -> !it)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
