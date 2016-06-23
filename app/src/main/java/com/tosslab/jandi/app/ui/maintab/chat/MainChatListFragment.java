@@ -228,18 +228,30 @@ public class MainChatListFragment extends Fragment
     }
 
     public void onEvent(SocketMessageDeletedEvent event) {
+        if (!foreground) {
+            return;
+        }
         mainChatListPresenter.onReloadChatList();
     }
 
     public void onEvent(SocketRoomMarkerEvent event) {
+        if (!foreground) {
+            return;
+        }
         mainChatListPresenter.onReloadChatList();
     }
 
     public void onEvent(SocketMessageCreatedEvent event) {
+        if (!foreground) {
+            return;
+        }
         mainChatListPresenter.onReloadChatList();
     }
 
     public void onEvent(ChatListRefreshEvent event) {
+        if (!foreground) {
+            return;
+        }
         mainChatListPresenter.onReloadChatList();
     }
 
@@ -270,6 +282,9 @@ public class MainChatListFragment extends Fragment
     }
 
     public void onEvent(ProfileChangeEvent event) {
+        if (!foreground) {
+            return;
+        }
         mainChatListPresenter.onReloadChatList();
     }
 

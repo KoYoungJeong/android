@@ -294,11 +294,13 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     @Override
     public int indexOfDummyMessageId(long messageId) {
         int count = getItemCount();
-        for (int idx = count; idx > 0; idx--) {
+        for (int idx = count - 1; idx >= 0; idx--) {
             ResMessages.Link item = getItem(idx);
-            if (item instanceof DummyMessageLink
-                    && item.messageId == messageId)
-                return idx;
+            if (item instanceof DummyMessageLink) {
+                if (item.messageId == messageId) { return idx; }
+            } else {
+                return -1;
+            }
         }
         return -1;
     }

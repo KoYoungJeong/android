@@ -42,7 +42,7 @@ public class MessageRepositoryModel {
                 }
             } else {
                 try {
-                    oldMessages = messageManipulator.getBeforeMarkerMessage(startLinkId).records;
+                    oldMessages = messageManipulator.getBeforeMarkerMessage(startLinkId, MAX_COUNT).records;
                 } catch (RetrofitException e) {
                     e.printStackTrace();
                 }

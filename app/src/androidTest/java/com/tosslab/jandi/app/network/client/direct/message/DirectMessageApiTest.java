@@ -87,7 +87,7 @@ public class DirectMessageApiTest {
 
     @Test
     public void testGetDirectMarkerMessages() throws Exception {
-        ResMessages resMessages = api.getDirectMarkerMessages(teamId, entityId, linkId);
+        ResMessages resMessages = api.getDirectMarkerMessages(teamId, entityId, linkId, maxCount);
         assertThat(resMessages).isNotNull();
         assertThat(resMessages.records.size()).isGreaterThanOrEqualTo(0);
     }
