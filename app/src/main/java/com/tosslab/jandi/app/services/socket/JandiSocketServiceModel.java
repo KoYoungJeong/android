@@ -58,7 +58,7 @@ import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.domain.SocketStart;
-import com.tosslab.jandi.app.services.socket.annotations.Version;
+import com.tosslab.jandi.app.services.socket.model.SocketEventVersionModel;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
@@ -115,7 +115,6 @@ import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -143,6 +142,7 @@ public class JandiSocketServiceModel {
     private final Lazy<LoginApi> loginApi;
     private final Lazy<EventsApi> eventsApi;
     private final Lazy<RoomsApi> roomsApi;
+    private SocketEventVersionModel versionModel;
     private PublishSubject<SocketRoomMarkerEvent> markerPublishSubject;
     private Subscription markerSubscribe;
     private Map<Class<? extends EventHistoryInfo>, Command> eventHistoryActorMapper;
@@ -158,6 +158,7 @@ public class JandiSocketServiceModel {
         this.loginApi = loginApi;
         this.eventsApi = eventsApi;
         this.roomsApi = roomsApi;
+        this.versionModel = versionModel;
         this.objectMapper = JacksonMapper.getInstance().getObjectMapper();
         initEventActor();
     }
@@ -240,16 +241,11 @@ public class JandiSocketServiceModel {
                     getObject(object, SocketFileDeletedEvent.class);
 
             JandiPreference.setSocketConnectedLastTime(event.getTs());
-            updateFileDeleted(event);
+            MessageRepository.getRepository().updateStatus(event.getFile().getId(), "archived");
+            postEvent(new DeleteFileEvent(event.getTeamId(), event.getFile().getId()));
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
         }
-    }
-
-    private void updateFileDeleted(SocketFileDeletedEvent socketFileEvent) {
-        MessageRepository.getRepository().updateStatus(socketFileEvent.getFile().getId(), "archived");
-
-        postEvent(new DeleteFileEvent(socketFileEvent.getTeamId(), socketFileEvent.getFile().getId()));
     }
 
     public void onFileCommentCreated(Object object) {
@@ -270,36 +266,36 @@ public class JandiSocketServiceModel {
 
     public void onFileCommentDeleted(Object object) {
         try {
-            SocketFileCommentDeletedEvent event =
+            SocketFileCommentDeletedEvent socketEvent =
                     getObject(object, SocketFileCommentDeletedEvent.class);
-            JandiPreference.setSocketConnectedLastTime(event.getTs());
-            updateCommentDeleted(event);
+            JandiPreference.setSocketConnectedLastTime(socketEvent.getTs());
+
+
+            long messageId = socketEvent.getComment().getId();
+            MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
+
+            List<SocketFileCommentDeletedEvent.Room> rooms = socketEvent.getRooms();
+
+            FileCommentRefreshEvent event = new FileCommentRefreshEvent(socketEvent.getEvent(),
+                    socketEvent.getTeamId(),
+                    socketEvent.getFile().getId(),
+                    socketEvent.getComment().getId(),
+                    false /* isAdded */);
+
+            if (rooms != null && !rooms.isEmpty()) {
+                List<Long> sharedRooms = new ArrayList<>();
+                Observable.from(rooms)
+                        .collect(() -> sharedRooms, (list, room) -> list.add(room.getId()))
+                        .subscribe();
+                event.setSharedRooms(sharedRooms);
+            }
+
+            postEvent(event);
+
 
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
         }
-    }
-
-    private void updateCommentDeleted(SocketFileCommentDeletedEvent socketCommentEvent) {
-        FileCommentRefreshEvent event = new FileCommentRefreshEvent(socketCommentEvent.getEvent(),
-                socketCommentEvent.getTeamId(),
-                socketCommentEvent.getFile().getId(),
-                socketCommentEvent.getComment().getId(),
-                false /* isAdded */);
-
-        long messageId = socketCommentEvent.getComment().getId();
-        MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
-
-        List<SocketFileCommentDeletedEvent.Room> rooms = socketCommentEvent.getRooms();
-        if (rooms != null && !rooms.isEmpty()) {
-            List<Long> sharedRooms = new ArrayList<>();
-            Observable.from(rooms)
-                    .collect(() -> sharedRooms, (list, room) -> list.add(room.getId()))
-                    .subscribe();
-            event.setSharedRooms(sharedRooms);
-        }
-
-        postEvent(event);
     }
 
     public void onMessageDeleted(Object object) {
@@ -999,48 +995,8 @@ public class JandiSocketServiceModel {
     }
 
     void throwExceptionIfInvaildVersion(Object object) throws Exception {
-        if (!validVersion(object)) {
+        if (!SocketEventVersionModel.validVersion(object)) {
             throw new Exception("Invalid Version : " + object.getClass().getName());
-        }
-    }
-
-    boolean validVersion(Object object) {
-        Version annotation = object.getClass().getAnnotation(Version.class);
-        if (annotation == null) {
-            return false;
-        } else {
-            try {
-                Field version = null;
-
-                Class<?> clazz = object.getClass();
-                while (version == null && clazz != null && clazz != Object.class) {
-
-                    try {
-                        version = clazz.getDeclaredField("version");
-                    } catch (NoSuchFieldException e) {
-                        clazz = clazz.getSuperclass();
-                    }
-
-                }
-
-
-                if (version == null) {
-                    return false;
-                }
-                version.setAccessible(true);
-
-                int versionValue = version.getInt(object);
-                version.setAccessible(false);
-
-                if (annotation.value() == versionValue) {
-                    return true;
-                }
-
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-
-            return false;
         }
     }
 
@@ -1147,7 +1103,7 @@ public class JandiSocketServiceModel {
             }
         })
                 .flatMap(resEventHistory -> Observable.from(resEventHistory.getRecords()))
-                .filter(this::validVersion);
+                .filter(SocketEventVersionModel::validVersion);
     }
 
     public void onTopicCreated(Object object) {
