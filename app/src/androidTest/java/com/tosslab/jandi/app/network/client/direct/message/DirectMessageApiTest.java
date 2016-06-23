@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.ui.message.v2.model.MessageRepositoryModel;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -87,7 +88,7 @@ public class DirectMessageApiTest {
 
     @Test
     public void testGetDirectMarkerMessages() throws Exception {
-        ResMessages resMessages = api.getDirectMarkerMessages(teamId, entityId, linkId, maxCount);
+        ResMessages resMessages = api.getDirectMarkerMessages(teamId, entityId, linkId, MessageRepositoryModel.MAX_COUNT);
         assertThat(resMessages).isNotNull();
         assertThat(resMessages.records.size()).isGreaterThanOrEqualTo(0);
     }
