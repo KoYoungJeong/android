@@ -5,17 +5,16 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
-
-import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(using = JsonDeserializer.None.class)
 @Version(2)
 public class SocketTopicInvitedEvent implements EventHistoryInfo {
-    private int version;
     private String event;
+    private int version;
     private long teamId;
     private Data data;
     private long ts;
@@ -68,8 +67,7 @@ public class SocketTopicInvitedEvent implements EventHistoryInfo {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
         private long inviterId;
-        private long topicId;
-        private List<Long> invitees;
+        private Topic topic;
 
         public long getInviterId() {
             return inviterId;
@@ -79,20 +77,12 @@ public class SocketTopicInvitedEvent implements EventHistoryInfo {
             this.inviterId = inviterId;
         }
 
-        public long getTopicId() {
-            return topicId;
+        public Topic getTopic() {
+            return topic;
         }
 
-        public void setTopicId(long topicId) {
-            this.topicId = topicId;
-        }
-
-        public List<Long> getInvitees() {
-            return invitees;
-        }
-
-        public void setInvitees(List<Long> invitees) {
-            this.invitees = invitees;
+        public void setTopic(Topic topic) {
+            this.topic = topic;
         }
     }
 }

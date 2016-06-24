@@ -333,7 +333,7 @@ public class MessageListV2Presenter {
                     long myId = TeamInfoLoader.getInstance().getMyId();
                     Marker myMarker = RoomMarkerRepository.getInstance().getMarker(room.getRoomId(), myId);
 
-                    if (myMarker.getReadLinkId() < lastLink.id) {
+                    if (myMarker == null || myMarker.getReadLinkId() < lastLink.id) {
                         addMarkerQueue();
                         messageListModel.upsertMyMarker(room.getRoomId(), lastLink.id);
                     }

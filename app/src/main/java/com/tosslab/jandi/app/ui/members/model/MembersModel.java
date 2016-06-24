@@ -66,29 +66,24 @@ public class MembersModel {
 
         TopicRoom topic = TeamInfoLoader.getInstance().getTopic(entityId);
         Collection<Long> members = topic.getMembers();
-        List<User> formattedUsers = TeamInfoLoader.getInstance().getUserList();
 
         List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
         Observable.from(members)
-                .map(memberEntityId -> Observable.from(formattedUsers)
-                        .filter(entity -> entity.getId() == memberEntityId)
-                        .map(user -> {
-
-                            ChatChooseItem chatChooseItem = new ChatChooseItem();
-                            return chatChooseItem.entityId(user.getId())
-                                    .statusMessage(user.getStatusMessage())
-                                    .photoUrl(user.getPhotoUrl())
-                                    .starred(TeamInfoLoader.getInstance().isStarredUser(entityId))
-                                    .enabled(user.isEnabled())
-                                    .inactive(user.isInactive())
-                                    .email(user.getEmail())
-                                    .owner(topic.getCreatorId() == user.getId())
-                                    .name(user.getName());
-
-                        })
-                        .toBlocking()
-                        .firstOrDefault(new ChatChooseItem().entityId(-1)))
-                .filter(chatChooseItem -> chatChooseItem.getEntityId() != -1)
+                .filter(memberId -> TeamInfoLoader.getInstance().isUser(memberId))
+                .filter(memberId -> !TeamInfoLoader.getInstance().isJandiBot(memberId))
+                .map(memberId -> TeamInfoLoader.getInstance().getUser(memberId))
+                .map(user -> {
+                    ChatChooseItem chatChooseItem = new ChatChooseItem();
+                    return chatChooseItem.entityId(user.getId())
+                            .statusMessage(user.getStatusMessage())
+                            .photoUrl(user.getPhotoUrl())
+                            .starred(TeamInfoLoader.getInstance().isStarredUser(entityId))
+                            .enabled(user.isEnabled())
+                            .inactive(user.isInactive())
+                            .email(user.getEmail())
+                            .owner(topic.getCreatorId() == user.getId())
+                            .name(user.getName());
+                })
                 .subscribe(chatChooseItems::add, Throwable::printStackTrace);
 
         return chatChooseItems;
@@ -100,6 +95,7 @@ public class MembersModel {
 
         List<ChatChooseItem> chatChooseItems = new ArrayList<>();
         Observable.from(formattedUsers)
+                .filter(user -> !TeamInfoLoader.getInstance().isJandiBot(user.getId()))
                 .map(user -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
                     return chatChooseItem.entityId(user.getId())
@@ -135,6 +131,7 @@ public class MembersModel {
         List<User> userList = TeamInfoLoader.getInstance().getUserList();
         return Observable.from(userList)
                 .filter(User::isEnabled)
+                .filter(user -> !TeamInfoLoader.getInstance().isJandiBot(user.getId()))
                 .filter(user -> !topicMembers.contains(user.getId()))
                 .map(user -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();

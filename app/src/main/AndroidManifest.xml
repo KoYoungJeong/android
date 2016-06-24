@@ -116,7 +116,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.settings.main.SettingsActivity_"
+            android:name=".ui.settings.main.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_settings"
             android:screenOrientation="portrait" />

@@ -65,10 +65,12 @@ public class StarMentionListPresentor {
         if (contentType == StarMentionVO.Type.Text.getValue()) {
             boolean isJoinedTopic = false;
 
+            boolean isTopic = false;
             if (TeamInfoLoader.getInstance().isTopic(starMentionVO.getRoomId())
-                    || TeamInfoLoader.getInstance().isChat(starMentionVO.getRoomId())) {
+                    || TeamInfoLoader.getInstance().isUser(starMentionVO.getRoomId())) {
 
                 if (TeamInfoLoader.getInstance().isTopic(starMentionVO.getRoomId())) {
+                    isTopic = true;
                     Collection<Long> members = TeamInfoLoader.getInstance()
                             .getTopic(starMentionVO.getRoomId())
                             .getMembers();
@@ -78,6 +80,7 @@ public class StarMentionListPresentor {
                         }
                     }
                 } else {
+                    isTopic = false;
                     isJoinedTopic = true;
                 }
             }
@@ -87,8 +90,7 @@ public class StarMentionListPresentor {
                         .teamId(starMentionVO.getTeamId())
                         .entityId(starMentionVO.getRoomId())
                         .entityType(starMentionVO.getRoomType())
-                        .roomId(starMentionVO.getRoomType() != JandiConstants.TYPE_DIRECT_MESSAGE ?
-                                starMentionVO.getRoomId() : -1)
+                        .roomId(isTopic ? starMentionVO.getRoomId() : TeamInfoLoader.getInstance().getChatId(starMentionVO.getRoomId()))
                         .isFromSearch(true)
                         .lastReadLinkId(starMentionVO.getLinkId())
                         .start();

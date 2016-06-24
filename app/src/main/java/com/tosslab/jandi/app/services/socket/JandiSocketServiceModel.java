@@ -1155,38 +1155,35 @@ public class JandiSocketServiceModel {
         try {
             SocketTopicInvitedEvent event = getObject(object, SocketTopicInvitedEvent.class);
             SocketTopicInvitedEvent.Data data = event.getData();
-            boolean hasTopic = TopicRepository.getInstance().isTopic(data.getTopicId());
-            List<Long> invitees = data.getInvitees();
-            if (hasTopic) {
-                TopicRepository.getInstance().addMember(data.getTopicId(), invitees);
-            }
+            Topic topic = data.getTopic();
+            long topicId = topic.getId();
+            long myId = TeamInfoLoader.getInstance().getMyId();
 
-            for (Long memberId : invitees) {
-                RoomMarkerRepository.getInstance().upsertRoomMarker(data.getTopicId(), memberId, -1);
-            }
+            RoomMarkerRepository.getInstance().upsertRoomMarker(topicId, myId, -1);
 
-            if (invitees.contains(TeamInfoLoader.getInstance().getMyId())) {
-                if (hasTopic) {
-                    TopicRepository.getInstance().updateTopicJoin(data.getTopicId(), true);
-                } else {
-                    // private topic 은 서버에 별도로 찔러야 함
-                    Topic topic = roomsApi.get().getTopic(event.getTeamId(), data.getTopicId());
-                    topic.setIsJoined(true);
-                    topic.setSubscribe(true);
-                    Collection<Marker> markers = topic.getMarkers();
-                    long lastLinkId = -1;
-                    long readLinkId = -1;
-                    for (Marker marker : markers) {
-                        lastLinkId = Math.max(lastLinkId, marker.getReadLinkId());
-                        if (SelfRepository.getInstance().isMe(marker.getMemberId())) {
-                            readLinkId = marker.getReadLinkId();
-                        }
-                    }
-                    topic.setLastLinkId(lastLinkId);
-                    topic.setReadLinkId(readLinkId);
-                    TopicRepository.getInstance().addTopic(topic);
+            TopicRepository.getInstance().deleteTopic(topicId);
+
+            if (topic.getMarkers() == null) {
+                ArrayList<Marker> markers = new ArrayList<>();
+                topic.setMarkers(markers);
+                for (Long memberId : topic.getMembers()) {
+                    Marker marker = new Marker();
+                    marker.setTopic(topic);
+                    marker.setMemberId(memberId);
+                    marker.setReadLinkId(-1);
+
+                    markers.add(marker);
                 }
             }
+
+
+            topic.setSubscribe(true);
+            topic.setIsJoined(true);
+            topic.setReadLinkId(-1);
+            topic.setLastLinkId(-1);
+
+            TopicRepository.getInstance().addTopic(topic);
+
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             TeamInfoLoader.getInstance().refresh();
 
@@ -1219,6 +1216,7 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             TeamInfoLoader.getInstance().refresh();
             postEvent(new TopicDeleteEvent(event.getTeamId(), topicId));
+            postEvent(new RetrieveTopicListEvent());
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
         }

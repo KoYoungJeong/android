@@ -2,9 +2,12 @@ package com.tosslab.jandi.app.ui.settings.main.view;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,8 +17,9 @@ import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.account.SettingAccountActivity;
+import com.tosslab.jandi.app.ui.settings.main.dagger.DaggerSettingsComponent;
+import com.tosslab.jandi.app.ui.settings.main.dagger.SettingsModule;
 import com.tosslab.jandi.app.ui.settings.main.presenter.SettingsPresenter;
-import com.tosslab.jandi.app.ui.settings.main.presenter.SettingsPresenterImpl;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.settings.privacy.SettingPrivacyActivity_;
 import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
@@ -27,46 +31,53 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.settings.SettingsBodyView;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.Arrays;
 
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
-@EFragment(R.layout.fragment_settings)
 public class SettingsFragment extends Fragment implements SettingsPresenter.View {
 
-    @ViewById(R.id.vg_settings_main_orientation_wrapper)
+    @Bind(R.id.vg_settings_main_orientation_wrapper)
     ViewGroup vgOrientation;
 
-    @ViewById(R.id.vg_settings_main_orientation)
+    @Bind(R.id.vg_settings_main_orientation)
     SettingsBodyView sbvOrientation;
 
-    @ViewById(R.id.vg_settings_main_version)
+    @Bind(R.id.vg_settings_main_version)
     SettingsBodyView sbvVersion;
 
-    @Bean(SettingsPresenterImpl.class)
+    @Inject
     SettingsPresenter settingsPresenter;
 
     private ProgressWheel progressWheel;
 
-    @AfterInject
-    void initObjects() {
-        settingsPresenter.setView(this);
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_settings, container, false);
     }
 
-    @AfterViews
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        ButterKnife.bind(this, view);
+        DaggerSettingsComponent.builder()
+                .settingsModule(new SettingsModule(this))
+                .build()
+                .inject(this);
+        initViews();
+    }
+
     void initViews() {
         progressWheel = new ProgressWheel(getActivity());
         settingsPresenter.onInitViews();
@@ -84,14 +95,14 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
         super.onPause();
     }
 
-    @Click(R.id.vg_settings_main_notification)
+    @OnClick(R.id.vg_settings_main_notification)
     void onNotificationClick() {
         SettingPushActivity_
                 .intent(getActivity())
                 .start();
     }
 
-    @Click(R.id.vg_settings_main_term_of_service)
+    @OnClick(R.id.vg_settings_main_term_of_service)
     void onTermServiceClick() {
         startActivity(new Intent(getActivity(), TermActivity.class)
                 .putExtra(TermActivity.EXTRA_TERM_MODE, TermActivity.Mode.Agreement.name()));
@@ -99,25 +110,25 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.TermsOfService);
     }
 
-    @Click(R.id.vg_settings_main_privacy_policy)
+    @OnClick(R.id.vg_settings_main_privacy_policy)
     void onPrivacyClick() {
         startActivity(new Intent(getActivity(), TermActivity.class)
                 .putExtra(TermActivity.EXTRA_TERM_MODE, TermActivity.Mode.Privacy.name()));
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.PrivacyPolicy);
     }
 
-    @Click(R.id.vg_settings_main_passcode)
+    @OnClick(R.id.vg_settings_main_passcode)
     void onPasscodeClick() {
         SettingPrivacyActivity_.intent(getActivity())
                 .start();
     }
 
-    @Click(R.id.vg_settings_main_orientation)
+    @OnClick(R.id.vg_settings_main_orientation)
     void onOrientationClick() {
         showOrientationDialog();
     }
 
-    @Click(R.id.vg_settings_main_account_name)
+    @OnClick(R.id.vg_settings_main_account_name)
     void onAccountClick() {
         Intent intent = new Intent(getActivity(), SettingAccountActivity.class);
         startActivity(intent);
@@ -125,14 +136,14 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.Account);
     }
 
-    @Click(R.id.vg_settings_main_sign_out)
+    @OnClick(R.id.vg_settings_main_sign_out)
     void onSignOutClick() {
         settingsPresenter.onSignOut();
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.SignOut);
     }
 
-    @Click(R.id.vg_settings_main_help)
+    @OnClick(R.id.vg_settings_main_help)
     void onHelpClick() {
         settingsPresenter.onLaunchHelpPage();
 
@@ -181,13 +192,11 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
         AlertUtil.showCheckNetworkDialog(getActivity(), null);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showSuccessToast(String message) {
         ColoredToast.show(message);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showProgressDialog() {
         dismissProgressDialog();
@@ -197,7 +206,6 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissProgressDialog() {
         if (progressWheel != null && progressWheel.isShowing()) {
@@ -220,7 +228,6 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
         sbvOrientation.setSummary(SettingsModel.getOrientationSummary(value));
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveLoginActivity() {
         IntroActivity.startActivity(getActivity(), false);
@@ -242,13 +249,8 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
     }
 
     public void onEvent(SignOutEvent event) {
-
-        if (NetworkCheckUtil.isConnected()) {
-            trackSignOut();
-            settingsPresenter.startSignOut();
-        } else {
-            showCheckNetworkDialog();
-        }
+        trackSignOut();
+        settingsPresenter.startSignOut();
     }
 
     private void trackSignOut() {
