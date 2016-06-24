@@ -105,6 +105,26 @@ public class MyPageAdapter extends RecyclerView.Adapter<BaseViewHolder<MentionMe
         mentionMessageList.remove(index);
     }
 
+    public int indexOfLink(long linkId) {
+        int size = getItemCount();
+        MentionMessage item;
+        for (int idx = 0; idx < size; idx++) {
+            item = getItem(idx);
+            if (item != null && item.getLinkId() == linkId) {
+                return idx;
+            }
+        }
+        return -1;
+    }
+
+    public void addAll(int position, List<MentionMessage> mentionMessages) {
+        mentionMessageList.addAll(position, mentionMessages);
+    }
+
+    public void add(int position, MentionMessage mentionMessages) {
+        mentionMessageList.add(position, mentionMessages);
+    }
+
     public interface OnMentionClickListener {
         void onMentionClick(MentionMessage mention);
     }

@@ -73,11 +73,11 @@ public class SocketMessageUnstarredEvent implements EventHistoryInfo {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class StarredInfo {
-        private int memberId;
-        private int messageId;
-        private int teamId;
+        private long memberId;
+        private long messageId;
+        private long teamId;
 
-        public int getMemberId() {
+        public long getMemberId() {
             return memberId;
         }
 
@@ -85,7 +85,7 @@ public class SocketMessageUnstarredEvent implements EventHistoryInfo {
             this.memberId = memberId;
         }
 
-        public int getMessageId() {
+        public long getMessageId() {
             return messageId;
         }
 
@@ -93,7 +93,7 @@ public class SocketMessageUnstarredEvent implements EventHistoryInfo {
             this.messageId = messageId;
         }
 
-        public int getTeamId() {
+        public long getTeamId() {
             return teamId;
         }
 

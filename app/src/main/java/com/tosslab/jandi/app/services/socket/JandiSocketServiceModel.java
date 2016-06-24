@@ -24,7 +24,7 @@ import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.messages.AnnouncementUpdatedEvent;
 import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
-import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
+import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamJoinEvent;
@@ -666,7 +666,7 @@ public class JandiSocketServiceModel {
                     .getMessageId(), false);
 
             JandiPreference.setSocketConnectedLastTime(event.getTs());
-            postEvent(new SocketMessageStarEvent(event.getStarredInfo().getMessageId(), false));
+            postEvent(new MessageStarEvent(event.getStarredInfo().getMessageId(), false));
 
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
@@ -683,7 +683,7 @@ public class JandiSocketServiceModel {
                     .getMessageId(), true);
 
             JandiPreference.setSocketConnectedLastTime(socketFileEvent.getTs());
-            postEvent(new SocketMessageStarEvent(socketFileEvent.getStarredInfo().getMessageId(), true));
+            postEvent(new MessageStarEvent(socketFileEvent.getStarredInfo().getMessageId(), true));
 
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());

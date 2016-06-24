@@ -3,11 +3,11 @@ package com.tosslab.jandi.app.events.messages;
 /**
  * Created by Steve SeongUg Jung on 15. 8. 5..
  */
-public class SocketMessageStarEvent {
-    private final int messageId;
+public class MessageStarEvent {
+    private final long messageId;
     private final boolean isStarred;
 
-    public SocketMessageStarEvent(int messageId, boolean isStarred) {
+    public MessageStarEvent(long messageId, boolean isStarred) {
 
         this.messageId = messageId;
         this.isStarred = isStarred;
@@ -17,7 +17,7 @@ public class SocketMessageStarEvent {
         return isStarred;
     }
 
-    public int getMessageId() {
+    public long getMessageId() {
         return messageId;
     }
 }
