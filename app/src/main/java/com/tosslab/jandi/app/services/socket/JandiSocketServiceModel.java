@@ -214,6 +214,8 @@ public class JandiSocketServiceModel {
         eventHistoryActorMapper.put(SocketTopicFolderItemCreatedEvent.class, this::onFolderItemCreated);
         eventHistoryActorMapper.put(SocketTopicFolderItemDeletedEvent.class, this::onFolderItemDeleted);
         eventHistoryActorMapper.put(SocketTeamUpdatedEvent.class, this::onTeamUpdated);
+        eventHistoryActorMapper.put(SocketPollDeletedEvent.class, this::onPollDeleted);
+        eventHistoryActorMapper.put(SocketPollFinishedEvent.class, this::onPollFinished);
 
     }
 
@@ -460,6 +462,7 @@ public class JandiSocketServiceModel {
         try {
             SocketFileShareEvent event =
                     getObject(object, SocketFileShareEvent.class);
+            JandiPreference.setSocketConnectedLastTime(event.getTs());
             long teamId = event.getTeamId();
             long fileId = event.getFile().getId();
             postEvent(new ShareFileEvent(teamId, fileId));
@@ -1329,6 +1332,8 @@ public class JandiSocketServiceModel {
             upsertPollIfExists(event.getTeamId(), poll);
 
             TeamInfoLoader.getInstance().refresh();
+
+            JandiPreference.setSocketConnectedLastTime(event.getTs());
             if (data != null && data.getPoll() != null && data.getPoll().getId() > 0) {
                 postEvent(new SocketPollEvent(data.getPoll()));
             }
@@ -1345,6 +1350,7 @@ public class JandiSocketServiceModel {
             upsertPollIfExists(event.getTeamId(), poll);
 
             TeamInfoLoader.getInstance().refresh();
+            JandiPreference.setSocketConnectedLastTime(event.getTs());
             if (data != null && data.getPoll() != null && data.getPoll().getId() > 0) {
                 postEvent(new SocketPollEvent(data.getPoll()));
             }
@@ -1364,6 +1370,7 @@ public class JandiSocketServiceModel {
         try {
             SocketPollCommentCreatedEvent event = getObject(object, SocketPollCommentCreatedEvent.class);
             TeamInfoLoader.getInstance().refresh();
+            JandiPreference.setSocketConnectedLastTime(event.getTs());
             if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()) {
                 LogUtil.d("tony", event.toString());
                 postEvent(event);
@@ -1378,6 +1385,7 @@ public class JandiSocketServiceModel {
         try {
             SocketPollCommentDeletedEvent event = getObject(object, SocketPollCommentDeletedEvent.class);
             TeamInfoLoader.getInstance().refresh();
+            JandiPreference.setSocketConnectedLastTime(event.getTs());
             if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()) {
                 LogUtil.d("tony", event.toString());
                 postEvent(event);
