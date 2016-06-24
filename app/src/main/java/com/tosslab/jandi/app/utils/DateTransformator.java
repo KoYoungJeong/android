@@ -117,8 +117,19 @@ public class DateTransformator {
         if (futureDay > nowDay) {
             leftDays = futureDay - nowDay;
         } else if (nowDay > futureDay) {
-            leftHours = 0;
-            leftDays = 0;
+            int nowMonth = now.get(Calendar.MONTH);
+            int futureMonth = future.get(Calendar.MONTH);
+
+            if (futureMonth > nowMonth) {
+                Calendar calendar = Calendar.getInstance();
+                int maximumDays = calendar.getMaximum(Calendar.DAY_OF_MONTH);
+                leftHours = 0;
+                leftDays = (futureDay + maximumDays) - nowDay;
+            } else {
+                leftHours = 0;
+                leftDays = 0;
+            }
+
         } else {
             leftDays = 0;
         }
@@ -127,7 +138,7 @@ public class DateTransformator {
         StringBuilder sb = new StringBuilder();
         if (leftDays > 0) {
             String days = resources.getString(R.string.jandi_date_days);
-            sb.append(leftDays + days + " ");
+            sb.append(leftDays + days + " " + resources.getString(R.string.jandi_date_remaining));
 
             String left = sb.toString();
             LogUtil.d("tony4", "left = " + left);

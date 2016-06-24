@@ -299,7 +299,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     }
 
     public void onEvent(SelectedMemberInfoForMentionEvent event) {
-        if (!isFinishing()) {
+        if (isFinishing()) {
             return;
         }
         SearchedItemVO searchedItemVO = new SearchedItemVO();
@@ -310,7 +310,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     }
 
     public void onEvent(MessageStarredEvent event) {
-        if (!isFinishing()) {
+        if (isFinishing()) {
             return;
         }
 
@@ -329,7 +329,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     }
 
     public void onEvent(RequestDeleteMessageEvent event) {
-        if (!isFinishing()) {
+        if (isFinishing()) {
             return;
         }
 
@@ -439,7 +439,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     }
 
     public void onEvent(MentionableMembersRefreshEvent event) {
-        if (!isFinishing() || mentionControlViewModel == null) {
+        if (isFinishing() || mentionControlViewModel == null) {
             return;
         }
 
