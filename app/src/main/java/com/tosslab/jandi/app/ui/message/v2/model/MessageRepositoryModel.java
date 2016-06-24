@@ -42,7 +42,7 @@ public class MessageRepositoryModel {
                 }
             } else {
                 try {
-                    oldMessages = messageManipulator.getBeforeMarkerMessage(startLinkId).records;
+                    oldMessages = messageManipulator.getBeforeMarkerMessage(startLinkId, MAX_COUNT).records;
                 } catch (RetrofitException e) {
                     e.printStackTrace();
                 }
@@ -67,7 +67,17 @@ public class MessageRepositoryModel {
 
         } else if (oldMessages.size() < MAX_COUNT) {
             try {
-                ResMessages messages = messageManipulator.getMessages(oldMessages.get(0).id, MAX_COUNT - oldMessages.size());
+
+                ResMessages.Link first = Observable.from(oldMessages)
+                        .reduce((link, link2) -> {
+                            if (link.id < link2.id) {
+                                return link;
+                            } else {
+                                return link2;
+                            }
+                        }).toBlocking().first();
+
+                ResMessages messages = messageManipulator.getMessages(first.id, MAX_COUNT - oldMessages.size());
                 Observable.from(messages.records)
                         .subscribe(link -> {
                             link.roomId = roomId;

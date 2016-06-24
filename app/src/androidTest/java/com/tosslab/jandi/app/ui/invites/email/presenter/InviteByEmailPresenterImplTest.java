@@ -10,6 +10,8 @@ import com.tosslab.jandi.app.ui.invites.email.view.InviteByEmailView;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.UUID;
+
 import static com.jayway.awaitility.Awaitility.await;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
@@ -75,7 +77,9 @@ public class InviteByEmailPresenterImplTest {
         when(spy.isInvitedEmail(anyString())).thenReturn(false);
 
         // When
-        inviteByEmailPresenter.onInviteListAddClick("pkjun09@naver.com");
+        String random = UUID.randomUUID().toString();
+        random = random.substring(random.length() - 5, random.length() - 1);
+        inviteByEmailPresenter.onInviteListAddClick("pkjun09+" + random + "@naver.com");
 
         // Then
         verify(invitedEmailDataModel).add(anyObject());

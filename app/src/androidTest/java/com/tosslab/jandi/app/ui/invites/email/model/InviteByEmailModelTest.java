@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.invites.email.model;
 
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
@@ -69,7 +71,7 @@ public class InviteByEmailModelTest {
 
         // Given
         User user = Observable.from(TeamInfoLoader.getInstance().getUserList())
-                .filter(entity -> entity.getEmail().equals(BaseInitUtil.TEST2_EMAIL))
+                .filter(entity -> TextUtils.equals(entity.getEmail(), BaseInitUtil.TEST2_EMAIL))
                 .toBlocking()
                 .first();
 

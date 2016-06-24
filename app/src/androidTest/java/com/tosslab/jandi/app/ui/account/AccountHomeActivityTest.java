@@ -10,13 +10,12 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
-import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
+import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +29,7 @@ import setup.BaseInitUtil;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.intent.Intents.intending;
 import static android.support.test.espresso.matcher.RootMatchers.isDialog;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -85,13 +85,13 @@ public class AccountHomeActivityTest {
         pressBack();
     }
 
-    @Ignore
-    @Test
-    public void testOnEmailEditClick() throws Throwable {
-
-        rule.runOnUiThread(() -> activity.onEmailEditClick());
-        Intents.intending(IntentMatchers.hasComponent(EmailChooseActivity_.class.getName()));
-    }
+//    @Ignore
+//    @Test
+//    public void testOnEmailEditClick() throws Throwable {
+//
+//        rule.runOnUiThread(() -> activity.onEmailEditClick());
+//        intending(IntentMatchers.hasComponent(EmailChooseActivity_.class.getName()));
+//    }
 
     @Test
     public void testSetTeamInfo() throws Throwable {
@@ -115,8 +115,7 @@ public class AccountHomeActivityTest {
     public void testLoadTeamCreateActivity() throws Throwable {
         rule.runOnUiThread(() -> activity.loadTeamCreateActivity());
 
-        onView(withText(R.string.team_info))
-                .check(matches(isDisplayed()));
+        Intents.intending(IntentMatchers.hasComponent(TeamDomainInfoActivity_.class.getName()));
 
     }
 
@@ -160,20 +159,20 @@ public class AccountHomeActivityTest {
     public void testMoveSelectedTeam() throws Throwable {
         rule.runOnUiThread(() -> activity.moveSelectedTeam(false));
         assertThat(activity.isFinishing(), is(true));
-        Intents.intending(IntentMatchers.hasComponent(MainTabActivity_.class.getName()));
+        intending(IntentMatchers.hasComponent(MainTabActivity_.class.getName()));
     }
 
-    @Ignore
-    @Test
-    public void testMoveEmailEditClick() throws Throwable {
-        Intents.init();
-
-        rule.runOnUiThread(() -> activity.moveEmailEditClick());
-        Intents.intending(IntentMatchers.hasComponent(EmailChooseActivity_.class.getName()));
-
-        Intents.release();
-
-    }
+//    @Ignore
+//    @Test
+//    public void testMoveEmailEditClick() throws Throwable {
+//        Intents.init();
+//
+//        rule.runOnUiThread(() -> activity.moveEmailEditClick());
+//        intending(IntentMatchers.hasComponent(EmailChooseActivity_.class.getName()));
+//
+//        Intents.release();
+//
+//    }
 
     @Test
     public void testSetUserEmailText() throws Throwable {

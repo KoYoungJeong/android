@@ -136,6 +136,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
             StarMentionVO starMentionVO = adapter.getItemsByPosition(position);
             starMentionListPresentor.executeClickEvent(starMentionVO,
                     StarMentionListFragment.this);
+
             if (!TextUtils.equals(listType, StarMentionListActivity.TYPE_MENTION_LIST)) {
                 if (starMentionVO.getContentType() == StarMentionVO.Type.Text.getValue()) {
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.ChooseMsg);

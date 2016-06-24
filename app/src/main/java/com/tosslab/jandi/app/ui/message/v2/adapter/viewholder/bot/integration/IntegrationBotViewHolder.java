@@ -134,13 +134,22 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
         Context context = tvMessage.getContext();
 
-        SpannableStringBuilder messageStringBuilder = SpannableLookUp.text(textMessage.content.body)
-                .hyperLink(false)
-                .markdown(false)
-                .webLink(false)
-                .emailLink(false)
-                .telLink(false)
-                .lookUp(context);
+        SpannableStringBuilder messageStringBuilder;
+        if (textMessage.content.contentBuilder == null) {
+
+            messageStringBuilder = SpannableLookUp.text(textMessage.content.body)
+                    .hyperLink(false)
+                    .markdown(false)
+                    .webLink(false)
+                    .emailLink(false)
+                    .telLink(false)
+                    .lookUp(context);
+
+        } else {
+            messageStringBuilder = textMessage.content.contentBuilder;
+        }
+
+        tvMessage.setText(messageStringBuilder);
 
         LinkifyUtil.setOnLinkClick(tvMessage);
 
@@ -164,8 +173,6 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
             tvMessageTime.setVisibility(View.GONE);
         }
 
-
-        tvMessage.setText(messageStringBuilder);
 
         Collection<ResMessages.ConnectInfo> connectInfo = textMessage.content.connectInfo;
         if (isEmptyConnectInfos(connectInfo)) {

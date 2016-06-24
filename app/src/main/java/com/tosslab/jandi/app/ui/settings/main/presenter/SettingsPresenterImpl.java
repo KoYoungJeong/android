@@ -1,77 +1,83 @@
 package com.tosslab.jandi.app.ui.settings.main.presenter;
 
-import android.content.Context;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
-import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EBean;
 
 import java.util.UUID;
 
-@EBean
+import javax.inject.Inject;
+
+import dagger.Lazy;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 public class SettingsPresenterImpl implements SettingsPresenter {
     private View view;
+    private Lazy<LoginApi> loginApi;
 
-    @Override
-    public void setView(View view) {
+    @Inject
+    public SettingsPresenterImpl(View view, Lazy<LoginApi> loginApi) {
         this.view = view;
+        this.loginApi = loginApi;
     }
 
     @Override
     public void onSignOut() {
-        if (NetworkCheckUtil.isConnected()) {
-            view.showSignOutDialog();
-        } else {
-            view.showCheckNetworkDialog();
-        }
+        view.showSignOutDialog();
     }
 
-    @Background
     @Override
     public void startSignOut() {
-        view.showProgressDialog();
-        try {
-
-            Context context = JandiApplication.getContext();
+        Observable.defer(() -> {
             String deviceId = TokenUtil.getTokenObject().getDeviceId();
             // deviceId 가 없는 경우에 대한 방어코드, deviceId 가 비어 있는 경우 400 error 가 떨어짐.
             // UUID RFC4122 규격 맞춘 아무 값이나 필요
             if (TextUtils.isEmpty(deviceId)) {
                 deviceId = UUID.randomUUID().toString();
             }
-            new LoginApi(RetrofitBuilder.getInstance())
-                    .deleteToken(TokenUtil.getRefreshToken(), deviceId);
 
-            SignOutUtil.removeSignData();
-            BadgeUtils.clearBadge(context);
-            JandiSocketService.stopService(context);
-
-            view.showSuccessToast(context.getString(R.string.jandi_message_logout));
-
-        } catch (Exception e) {
-            LogUtil.e(Log.getStackTraceString(e));
-        } finally {
-            view.dismissProgressDialog();
-        }
-        view.moveLoginActivity();
-
+            return Observable.just(deviceId);
+        })
+                .doOnSubscribe(() -> view.showProgressDialog())
+                .observeOn(Schedulers.io())
+                .concatMap(deviceId -> {
+                    try {
+                        ResCommon resCommon = loginApi.get().deleteToken(TokenUtil.getRefreshToken(), deviceId);
+                        return Observable.just(resCommon);
+                    } catch (RetrofitException e) {
+                        LogUtil.d(e.getCause().getMessage());
+                        return Observable.error(e);
+                    }
+                })
+                .onErrorReturn(throwable -> new ResCommon())
+                .doOnNext(resCommon1 -> {
+                    SignOutUtil.removeSignData();
+                    BadgeUtils.clearBadge(JandiApplication.getContext());
+                    JandiSocketService.stopService(JandiApplication.getContext());
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(res -> {
+                    String toastMessage = JandiApplication.getContext().getString(R.string.jandi_message_logout);
+                    view.showSuccessToast(toastMessage);
+                    view.dismissProgressDialog();
+                    view.moveLoginActivity();
+                }, t -> {
+                    view.dismissProgressDialog();
+                });
     }
 
     @Override

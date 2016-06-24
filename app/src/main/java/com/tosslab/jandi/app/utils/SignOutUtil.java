@@ -24,4 +24,5 @@ public class SignOutUtil {
                 .clearAllData();
         TokenUtil.clearTokenInfo();
     }
+
 }

@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.commonviewmodels.mention;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.suitebuilder.annotation.LargeTest;
 import android.text.Editable;
 import android.text.Spanned;
 import android.widget.AutoCompleteTextView;
@@ -36,7 +35,6 @@ import static org.hamcrest.core.IsNull.notNullValue;
  * Created by jsuch2362 on 2015. 11. 5..
  */
 @RunWith(AndroidJUnit4.class)
-@LargeTest
 public class MentionControlViewModelTest {
 
     @Rule

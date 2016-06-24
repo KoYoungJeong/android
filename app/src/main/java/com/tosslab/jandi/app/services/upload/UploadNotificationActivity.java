@@ -11,7 +11,7 @@ import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel_;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.intro.IntroActivity_;
+import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 
@@ -117,9 +117,7 @@ public class UploadNotificationActivity extends BaseAppCompatActivity {
     }
 
     private void moveToIntro() {
-        IntroActivity_.intent(UploadNotificationActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                .start();
+        IntroActivity.startActivity(UploadNotificationActivity.this, false);
         finish();
     }
 

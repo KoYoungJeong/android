@@ -245,7 +245,7 @@ public class MessageListV2Presenter {
 
     private Observable<NewMessageContainer> composeNewMessage(Observable<MessageContainer> observable) {
         return observable.cast(NewMessageContainer.class)
-                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
                 .doOnNext(this::loadNewMessage);
     }
 
@@ -334,7 +334,7 @@ public class MessageListV2Presenter {
                     long myId = TeamInfoLoader.getInstance().getMyId();
                     Marker myMarker = RoomMarkerRepository.getInstance().getMarker(room.getRoomId(), myId);
 
-                    if (myMarker.getReadLinkId() < lastLink.id) {
+                    if (myMarker == null || myMarker.getReadLinkId() < lastLink.id) {
                         addMarkerQueue();
                         messageListModel.upsertMyMarker(room.getRoomId(), lastLink.id);
                     }
@@ -750,8 +750,7 @@ public class MessageListV2Presenter {
                 subscriber.onNext(afterMarkerMessage);
                 subscriber.onCompleted();
             }
-        })
-                .collect(() -> messages, (resUpdateMessages, o) -> messages.addAll(o.records))
+        }).collect(() -> messages, (resUpdateMessages, o) -> messages.addAll(o.records))
                 .subscribe(resUpdateMessages -> {
                 }, Throwable::printStackTrace);
         return messages;

@@ -103,6 +103,7 @@ public class ChatChooseModel {
 
         Observable.from(users)
                 .filter(user -> user.getId() != myId)
+                .filter(user -> !TeamInfoLoader.getInstance().isJandiBot(user.getId()))
                 .filter(user -> !TextUtils.isEmpty(user.getName()) && user.getName().toLowerCase().contains(name.toLowerCase()))
                 .map(user -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
@@ -167,6 +168,7 @@ public class ChatChooseModel {
         long myId = TeamInfoLoader.getInstance().getMyId();
         Observable.from(users)
                 .filter(user -> user.getId() != myId)
+                .filter(user -> !TeamInfoLoader.getInstance().isJandiBot(user.getId()))
                 .filter(User::isEnabled)
                 .map(user -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();

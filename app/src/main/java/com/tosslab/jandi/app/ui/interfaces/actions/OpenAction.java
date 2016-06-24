@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.interfaces.actions;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 
@@ -11,7 +10,7 @@ import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.ui.intro.IntroActivity_;
+import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -134,10 +133,7 @@ public class OpenAction implements Action {
     @UiThread
     void startIntroActivity() {
         dismissProgress();
-        IntroActivity_.intent(activity)
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                .startForInvite(true)
-                .start();
+        IntroActivity.startActivity(activity, true);
         activity.finish();
     }
 }

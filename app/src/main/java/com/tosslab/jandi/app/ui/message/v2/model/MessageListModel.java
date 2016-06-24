@@ -68,7 +68,6 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.json.JSONException;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -358,7 +357,7 @@ public class MessageListModel {
 
     public ResMessages getBeforeMarkerMessage(long linkId) throws RetrofitException {
 
-        return messageManipulator.getBeforeMarkerMessage(linkId);
+        return messageManipulator.getBeforeMarkerMessage(linkId, MessageManipulator.MAX_OF_MESSAGES);
     }
 
     public ResMessages getAfterMarkerMessage(long linkId, int count) throws RetrofitException {

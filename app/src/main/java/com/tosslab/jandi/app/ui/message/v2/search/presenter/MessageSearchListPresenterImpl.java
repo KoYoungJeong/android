@@ -221,9 +221,11 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     }
 
     private void getAnnouncement() {
-        Topic.Announcement announcement = TeamInfoLoader.getInstance().getTopic(roomId).getAnnouncement();
         view.dismissProgressWheel();
-        view.setAnnouncement(announcement);
+        if (TeamInfoLoader.getInstance().isTopic(roomId)) {
+            Topic.Announcement announcement = TeamInfoLoader.getInstance().getTopic(roomId).getAnnouncement();
+            view.setAnnouncement(announcement);
+        }
 
     }
 

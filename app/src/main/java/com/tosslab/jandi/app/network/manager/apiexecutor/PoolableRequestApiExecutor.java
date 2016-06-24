@@ -62,7 +62,7 @@ public class PoolableRequestApiExecutor {
             if (response != null) {
                 throw RetrofitException.create(response.code(), e);
             } else {
-                throw RetrofitException.create(503, e);
+                throw RetrofitException.create(500, e);
             }
         }
 
@@ -74,13 +74,13 @@ public class PoolableRequestApiExecutor {
                 return execute(apiExecutor);
             } else {
                 retryCnt = 0;
-                throw RetrofitException.create(503, e);
+                throw RetrofitException.create(500, e);
             }
         } else if (response == null) {
             if (e instanceof RetrofitException) {
                 throw (RetrofitException) e;
             } else {
-                throw RetrofitException.create(503, e);
+                throw RetrofitException.create(500, e);
             }
         } else {
             int status = response.code();

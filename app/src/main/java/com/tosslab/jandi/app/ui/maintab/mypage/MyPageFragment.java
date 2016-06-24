@@ -35,7 +35,7 @@ import com.tosslab.jandi.app.ui.maintab.mypage.view.MyPageView;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
-import com.tosslab.jandi.app.ui.settings.main.SettingsActivity_;
+import com.tosslab.jandi.app.ui.settings.main.SettingsActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -207,8 +207,7 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.action_mypage_setting) {
-            SettingsActivity_.intent(this)
-                    .start();
+            SettingsActivity.startActivity(getActivity());
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.Setting);
             return true;
         }

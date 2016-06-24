@@ -2,10 +2,10 @@ package com.tosslab.jandi.app.ui.interfaces.actions;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 
-import com.tosslab.jandi.app.ui.intro.IntroActivity_;
+import com.tosslab.jandi.app.ui.intro.IntroActivity;
+
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 28..
@@ -24,10 +24,7 @@ class UnknownAction implements Action {
 
     @Override
     public void execute(Uri uri) {
-        IntroActivity_
-                .intent(context)
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                .start();
+        IntroActivity.startActivity(context, false);
         ((Activity) context).finish();
 
     }

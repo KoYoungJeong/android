@@ -7,7 +7,6 @@ import android.text.Spanned;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 public class WriterTextVisitor implements TextVisitor {
@@ -23,15 +22,10 @@ public class WriterTextVisitor implements TextVisitor {
     @Override
     public void visit(SpannableStringBuilder builder, ResMessageSearch.Record record) {
 
-        if (TeamInfoLoader.getInstance().isUser(record.getMemberId())) {
-            return;
-        }
-        User user = TeamInfoLoader.getInstance().getUser(record.getMemberId());
-
         int textSize = (int) context.getResources().getDimension(R.dimen.jandi_message_search_item_large_txt_size);
         NameSpannable nameSpannable = new NameSpannable(textSize, textColor);
 
-        String name = user.getName();
+        String name = TeamInfoLoader.getInstance().getMemberName(record.getMemberId());
         int start = builder.length();
         builder.append(name);
 
