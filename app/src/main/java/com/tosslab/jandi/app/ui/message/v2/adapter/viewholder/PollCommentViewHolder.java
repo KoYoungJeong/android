@@ -1,10 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Typeface;
-import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -16,52 +12,43 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.team.member.User;
-import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UiUtils;
-import com.tosslab.jandi.app.utils.file.FileUtil;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
-import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import rx.android.schedulers.AndroidSchedulers;
 
-public class CommentViewHolder extends BaseCommentViewHolder {
+public class PollCommentViewHolder extends BaseCommentViewHolder {
 
-    private ImageView ivMessageCommonFile;
-    private TextView tvFileUploaderName;
-    private TextView tvCommonFileSize;
+    private ViewGroup vgPoll;
+    private ImageView vPollIcon;
+    private TextView tvSubject;
+    private TextView tvCreator;
+    private TextView tvDueDate;
+    private TextView tvPollDeleted;
+
     private ImageView ivProfileNestedCommentUserProfile;
     private TextView tvProfileNestedCommentUserName;
     private ImageView ivProfileNestedNameLineThrough;
     private TextView tvProfileNestedCommentContent;
-    private TextView tvMessageCommonFileName;
-    private ViewGroup vgMessageCommonFile;
+    private View vProfileCover;
+    private ViewGroup vgProfileNestedComment;
+
     private Context context;
 
     private boolean hasNestedProfile = false;
     private boolean hasOnlyBadge = false;
     private boolean hasFlatTop = false;
-    private View tvFileInfoDivider;
-    private View vProfileCover;
-    private View vFileIconBorder;
-    private ViewGroup vgProfileNestedComment;
 
-
-    private CommentViewHolder() {
+    private PollCommentViewHolder() {
     }
 
     @Override
@@ -76,19 +63,22 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     @Override
     public void initView(View rootView) {
         super.initView(rootView);
+        if (hasContentInfo()) {
+            stubContentInfo.setLayoutResource(R.layout.layout_comment_poll_info);
+        }
+        super.setOptionView();
 
         vgProfileNestedComment =
                 (ViewGroup) rootView.findViewById(R.id.vg_profile_nested_comment);
 
-        if (hasFileInfoView()) {
-            // 파일 정보
-            vgMessageCommonFile = (ViewGroup) rootView.findViewById(R.id.vg_message_common_file);
-            ivMessageCommonFile = (ImageView) rootView.findViewById(R.id.iv_message_common_file);
-            tvMessageCommonFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
-            vFileIconBorder = rootView.findViewById(R.id.v_message_common_file_border);
-            tvFileUploaderName = (TextView) rootView.findViewById(R.id.tv_uploader_name);
-            tvFileInfoDivider = rootView.findViewById(R.id.tv_file_info_divider);
-            tvCommonFileSize = (TextView) rootView.findViewById(R.id.tv_common_file_size);
+        if (hasContentInfo()) {
+            // Poll 정보
+            vgPoll = (ViewGroup) rootView.findViewById(R.id.vg_message_poll);
+            vPollIcon = (ImageView) rootView.findViewById(R.id.v_message_poll_icon);
+            tvSubject = (TextView) rootView.findViewById(R.id.tv_message_poll_subject);
+            tvCreator = (TextView) rootView.findViewById(R.id.tv_message_poll_creator);
+            tvDueDate = (TextView) rootView.findViewById(R.id.tv_message_poll_due_date);
+            tvPollDeleted = (TextView) rootView.findViewById(R.id.tv_message_poll_deleted);
         }
 
         // 프로필이 있는 커멘트
@@ -116,10 +106,10 @@ public class CommentViewHolder extends BaseCommentViewHolder {
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
         super.bindData(link, teamId, roomId, entityId);
 
-        boolean hasFileInfoView = hasFileInfoView();
-        if (hasFileInfoView) {
-            settingFileInfo(link, roomId);
-            setFileInfoBackground(link);
+        boolean hasContentInfo = hasContentInfo();
+        if (hasContentInfo) {
+            bindPoll(link);
+            setPollInfoBackground(link);
         }
 
         if (hasNestedProfile) {
@@ -132,20 +122,19 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
         if (hasCommentBubbleTail()) {
             // 파일 정보가 없고 내가 쓴 코멘트 인 경우만 comment_bubble_tail_mine resource 사
-            vCommentBubbleTail.setBackgroundResource(hasFileInfoView
+            vCommentBubbleTail.setBackgroundResource(hasContentInfo
                     ? R.drawable.bg_comment_bubble_tail :
                     isFromMe(link) ? R.drawable.comment_bubble_tail_mine : R.drawable.bg_comment_bubble_tail);
         }
 
     }
 
-    private void setFileInfoBackground(ResMessages.Link link) {
+    private void setPollInfoBackground(ResMessages.Link link) {
         boolean isMe = isFromMe(link);
         if (isMe) {
-            vgMessageCommonFile.setBackgroundResource(R.drawable.bg_message_item_selector_mine);
+            vgPoll.setBackgroundResource(R.drawable.bg_message_item_selector_mine);
         } else {
-            vgMessageCommonFile.setBackgroundResource(R.drawable.bg_message_item_selector);
-
+            vgPoll.setBackgroundResource(R.drawable.bg_message_item_selector);
         }
     }
 
@@ -261,131 +250,11 @@ public class CommentViewHolder extends BaseCommentViewHolder {
         }
     }
 
-    private void settingFileInfo(ResMessages.Link link, long roomId) {
-        final Resources resources = tvMessageCommonFileName.getResources();
+    private void bindPoll(ResMessages.Link link) {
+        LogUtil.i("tony.PollComment.bind", link.toString());
 
-
-        Room room = TeamInfoLoader.getInstance().getRoom(roomId);
-
-        boolean isPublicTopic = room.isPublicTopic();
-
-        User feedbackEntityById =
-                TeamInfoLoader.getInstance().getUser(link.feedback.writerId);
-
-        tvFileUploaderName.setTypeface(Typeface.DEFAULT_BOLD);
-        tvFileUploaderName.setText(feedbackEntityById.getName());
-        tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text));
-
-        ResMessages.FileContent fileContent = link.feedback.content;
-
-        String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
-
-        tvCommonFileSize.setText(fileSize);
-
-        if (link.feedback instanceof ResMessages.FileMessage) {
-
-            ResMessages.FileMessage feedbackFileMessage = link.feedback;
-
-            boolean isSharedFile = false;
-
-            Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities = feedbackFileMessage.shareEntities;
-
-            // ArrayList로 나오는 경우 아직 DB에 기록되지 않은 경우 - object가 자동갱신되지 않는 문제 해결
-            if (shareEntities instanceof ArrayList) {
-                ResMessages.FileMessage file = MessageRepository.getRepository().getFileMessage(feedbackFileMessage.id);
-                if (file != null && file.shareEntities != null) {
-                    shareEntities = file.shareEntities;
-                }
-            }
-
-            if (shareEntities != null) {
-                for (ResMessages.OriginalMessage.IntegerWrapper e : shareEntities) {
-                    if (e.getShareEntity() == roomId) {
-                        isSharedFile = true;
-                    }
-                }
-            }
-
-            boolean needFileUploader = true;
-            boolean needFileUploaderDivider = true;
-            boolean needFileSize = true;
-            if (TextUtils.equals(link.feedback.status, "archived")) {
-                tvMessageCommonFileName.setText(R.string.jandi_deleted_file);
-                tvMessageCommonFileName.setTextColor(resources.getColor(R.color.jandi_text_light));
-                needFileUploader = false;
-                needFileUploaderDivider = false;
-                needFileSize = false;
-
-                ivMessageCommonFile.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                ivMessageCommonFile.setImageResource(R.drawable.file_icon_deleted);
-
-                vFileIconBorder.setVisibility(View.GONE);
-                ivMessageCommonFile.setOnClickListener(null);
-            } else {
-                final ResMessages.FileContent content = feedbackFileMessage.content;
-
-                if (!isSharedFile) {
-                    needFileUploaderDivider = false;
-                    needFileSize = false;
-
-                    tvMessageCommonFileName.setText(content.title);
-                    tvFileUploaderName.setText(R.string.jandi_unshared_file);
-                    tvMessageCommonFileName.setTextColor(resources.getColor(R.color.jandi_text_light));
-                    tvFileUploaderName.setTypeface(Typeface.DEFAULT);
-                    tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text_light));
-
-                    ivMessageCommonFile.setClickable(false);
-
-                    boolean image = fileContent.icon.startsWith("image");
-                    if (!image && !isPublicTopic) {
-                        ivMessageCommonFile.setImageResource(R.drawable.file_icon_unshared);
-                        vFileIconBorder.setVisibility(View.GONE);
-                    } else {
-                        String serverUrl = content.serverUrl;
-                        String fileType = content.icon;
-                        String fileUrl = content.fileUrl;
-                        String thumbnailUrl =
-                                ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
-                        ImageUtil.setResourceIconOrLoadImageForComment(
-                                ivMessageCommonFile, vFileIconBorder,
-                                fileUrl, thumbnailUrl,
-                                serverUrl, fileType);
-                    }
-
-                } else {
-                    tvMessageCommonFileName.setText(content.title);
-                    tvMessageCommonFileName.setTextColor(resources.getColor(R.color.dark_gray));
-                    tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text));
-
-                    String serverUrl = content.serverUrl;
-                    String fileType = content.icon;
-                    String fileUrl = content.fileUrl;
-                    String thumbnailUrl =
-                            ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
-                    ImageUtil.setResourceIconOrLoadImageForComment(
-                            ivMessageCommonFile, vFileIconBorder,
-                            fileUrl, thumbnailUrl,
-                            serverUrl, fileType);
-
-                    MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
-                    if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
-                        ivMessageCommonFile.setOnClickListener(v -> {
-                            String imageUrl =
-                                    ImageUtil.getThumbnailUrlOrOriginal(
-                                            content, ImageUtil.Thumbnails.ORIGINAL);
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(imageUrl));
-                            context.startActivity(intent);
-                        });
-                    } else {
-                        ivMessageCommonFile.setOnClickListener(null);
-                    }
-                }
-            }
-
-            tvFileUploaderName.setVisibility(needFileUploader ? View.VISIBLE : View.GONE);
-            tvCommonFileSize.setVisibility(needFileSize ? View.VISIBLE : View.GONE);
-            tvFileInfoDivider.setVisibility(needFileUploaderDivider ? View.VISIBLE : View.GONE);
-        }
+        PollViewHolder.bindPoll(link,
+                vPollIcon, tvSubject, tvCreator, tvDueDate, tvPollDeleted);
     }
 
     private void setHasNestedProfile(boolean hasNestedProfile) {
@@ -404,8 +273,8 @@ public class CommentViewHolder extends BaseCommentViewHolder {
             itemClickListener.onClick(v);
         };
 
-        if (vgMessageCommonFile != null) {
-            vgMessageCommonFile.setOnClickListener(onClickListenerWrapper);
+        if (vgPoll != null) {
+            vgPoll.setOnClickListener(onClickListenerWrapper);
         }
 
         if (vgReadMore != null) {
@@ -439,11 +308,11 @@ public class CommentViewHolder extends BaseCommentViewHolder {
 
     public static class Builder extends BaseViewHolderBuilder {
 
-        public CommentViewHolder build() {
-            CommentViewHolder viewHolder = new CommentViewHolder();
+        public PollCommentViewHolder build() {
+            PollCommentViewHolder viewHolder = new PollCommentViewHolder();
             viewHolder.setHasBottomMargin(hasBottomMargin);
             viewHolder.setHasSemiDivider(hasSemiDivider);
-            viewHolder.setHasFileInfoView(hasFileInfoView);
+            viewHolder.setHasContentInfo(hasFileInfoView);
             viewHolder.setHasCommentBubbleTail(hasCommentBubbleTail);
             viewHolder.setHasNestedProfile(hasNestedProfile);
             viewHolder.setHasViewAllComment(hasViewAllComment);

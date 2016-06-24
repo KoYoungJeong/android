@@ -109,6 +109,7 @@
 	<string name="jandi_auto_join_explain">"邀請所有新成員至此議題"</string>
 	<string name="jandi_auto_join_title">"自動邀請"</string>
 	<string name="jandi_auto_join_title_wild">"自動邀請*"</string>
+	<string name="jandi_back">"返回"</string>
 	<string name="jandi_baidu_app_store">"百度手機助手"</string>
 	<string name="jandi_bot_role">"身為JANDI最強使者，肩負傳遞JANDI Connect和平台訊息通知的任務，絕對使命必達！"</string>
 	<string name="jandi_bot_status">"你好，我是Mr.J！"</string>
@@ -172,6 +173,10 @@
 	<string name="jandi_create_team_message">"請提供您的電子郵件地址以免費地建立新的JANDI團隊!"</string>
 	<string name="jandi_create_topic">"建立議題"</string>
 	<string name="jandi_created_this_topic">"%s建立了這議題"</string>
+	<string name="jandi_date_days">"日"</string>
+	<string name="jandi_date_hours">"時"</string>
+	<string name="jandi_date_minutes">"分"</string>
+	<string name="jandi_date_remaining">"剩餘時間"</string>
 	<string name="jandi_decide_choose">"選擇照片"</string>
 	<string name="jandi_delete_succeed">"%s已被刪除"</string>
 	<string name="jandi_deleted_file">"已刪除檔案"</string>
@@ -394,13 +399,13 @@
 	<string name="jandi_profile_extra_introduce">"請填寫其他資訊 \n 讓成員更了解你"</string>
 	<string name="jandi_profile_main_introduce">"請設定在 \n %s團隊 \n 顯示的姓名和大頭照"</string>
 	<string name="jandi_profile_optional">"非必要"</string>
-	<string name="jandi_profile_phone_number">"手機號碼"</string>
-	<string name="jandi_profile_phone_number_hint">"電話號碼"</string>
+	<string name="jandi_profile_phone_number">"電話"</string>
+	<string name="jandi_profile_phone_number_hint">"電話"</string>
 	<string name="jandi_profile_photo_upload_succeed">"簡介照片已更新"</string>
 	<string name="jandi_profile_picture">"簡介照片"</string>
-	<string name="jandi_profile_position">"職位"</string>
+	<string name="jandi_profile_position">"職稱"</string>
 	<string name="jandi_profile_position_hint">"職稱"</string>
-	<string name="jandi_profile_status_message">"狀態"</string>
+	<string name="jandi_profile_status_message">"今天的感覺"</string>
 	<string name="jandi_profile_update">"更新"</string>
 	<string name="jandi_profile_update_succeed">"簡介已更新"</string>
 	<string name="jandi_profile_welcome">"你好！"</string>

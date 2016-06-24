@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.tosslab.jandi.app.views.viewgroup.ProgressRelativeLayout
+    android:id="@+id/progress_bar"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:minHeight="48dp"
+    android:paddingBottom="13dp"
+    android:paddingTop="13dp">
+
+    <View
+        android:id="@+id/v_poll_detail_item_selected"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/poll_select"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/tv_poll_detail_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp"
+        android:layout_toLeftOf="@+id/space_poll_detail_item"
+        android:layout_toRightOf="@id/v_poll_detail_item_selected"
+        android:textColor="@color/jandi_text"
+        android:textSize="16sp"/>
+
+    <android.support.v4.widget.Space
+        android:id="@+id/space_poll_detail_item"
+        android:layout_width="25dp"
+        android:layout_height="wrap_content"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_toLeftOf="@+id/tv_poll_detail_item_participants"/>
+
+    <TextView
+        android:id="@+id/tv_poll_detail_item_participants"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:gravity="right"
+        android:paddingRight="16dp"
+        android:text="5명"
+        android:textColor="@color/jandi_text_medium"
+        android:textStyle="bold"
+        android:visibility="invisible"/>
+
+</com.tosslab.jandi.app.views.viewgroup.ProgressRelativeLayout>

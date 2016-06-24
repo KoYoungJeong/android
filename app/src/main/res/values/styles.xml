@@ -609,4 +609,11 @@
         <item name="colorControlNormal">#1e000000</item>
     </style>
 
+    <style name="CreatePollEditText">
+        <item name="android:textColorHint">@color/jandi_line_gray</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:background">@drawable/bg_poll_create_edittext</item>
+    </style>
+
 </resources>

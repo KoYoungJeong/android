@@ -32,6 +32,7 @@ import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.client.sticker.StickerApi;
+import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqNull;
@@ -104,6 +105,8 @@ public class MessageListModel {
     Lazy<StickerApi> stickerApi;
     @Inject
     Lazy<MessageApi> messageApi;
+    @Inject
+    Lazy<PollApi> pollApi;
 
     @AfterInject
     void initObject() {
@@ -727,5 +730,13 @@ public class MessageListModel {
             textMessage.content.contentBuilder = messageStringBuilder;
         }
 
+    }
+
+    public void upsertMessage(ResMessages.Link link) {
+        MessageRepository.getRepository().upsertMessage(link);
+    }
+
+    public void deletePollMessage(long teamId, long pollId) throws RetrofitException {
+        pollApi.get().deletePoll(teamId, pollId);
     }
 }

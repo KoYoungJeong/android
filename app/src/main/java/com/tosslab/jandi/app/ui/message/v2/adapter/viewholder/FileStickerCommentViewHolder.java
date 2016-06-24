@@ -30,7 +30,7 @@ import java.util.Collection;
 
 import rx.android.schedulers.AndroidSchedulers;
 
-public class StickerCommentViewHolder extends BaseCommentViewHolder {
+public class FileStickerCommentViewHolder extends BaseCommentViewHolder {
 
     private ViewGroup vgMessageCommonFile;
     private ImageView ivMessageCommonFile;
@@ -54,7 +54,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
     private View vFileIconBorder;
     private ViewGroup vgProfileNestedCommentSticker;
 
-    private StickerCommentViewHolder() {
+    private FileStickerCommentViewHolder() {
     }
 
     @Override
@@ -69,13 +69,14 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
     @Override
     public void initView(View rootView) {
         super.initView(rootView);
+        super.setOptionView();
 
         vgProfileNestedCommentSticker =
                 (ViewGroup) rootView.findViewById(R.id.vg_profile_nested_comment_sticker);
 
 
         // 파일 정보
-        if (hasFileInfoView()) {
+        if (hasContentInfo()) {
             vgMessageCommonFile = (ViewGroup) rootView.findViewById(R.id.vg_message_common_file);
             ivMessageCommonFile = (ImageView) rootView.findViewById(R.id.iv_message_common_file);
             tvMessageCommonFileName = (TextView) rootView.findViewById(R.id.tv_message_common_file_name);
@@ -113,7 +114,7 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
         super.bindData(link, teamId, roomId, entityId);
 
-        boolean hasFileInfoView = hasFileInfoView();
+        boolean hasFileInfoView = hasContentInfo();
         if (hasFileInfoView) {
             settingFileInfo(link, roomId);
             setFileInfoBackground(link);
@@ -223,15 +224,11 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
 
         tvFileUploaderName.setText(feedbackEntityById.getName());
 
-        ResMessages.FileContent fileContent = link.feedback.content;
-
-        String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
-
-        tvCommonFileSize.setText(fileSize);
-
         if (link.feedback instanceof ResMessages.FileMessage) {
-
-            ResMessages.FileMessage feedbackFileMessage = link.feedback;
+            ResMessages.FileMessage feedbackFileMessage = ((ResMessages.FileMessage) link.feedback);
+            ResMessages.FileContent fileContent = feedbackFileMessage.content;
+            String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
+            tvCommonFileSize.setText(fileSize);
 
             boolean isSharedFile = false;
 
@@ -367,11 +364,11 @@ public class StickerCommentViewHolder extends BaseCommentViewHolder {
 
     public static class Builder extends BaseViewHolderBuilder {
 
-        public StickerCommentViewHolder build() {
-            StickerCommentViewHolder viewHolder = new StickerCommentViewHolder();
+        public FileStickerCommentViewHolder build() {
+            FileStickerCommentViewHolder viewHolder = new FileStickerCommentViewHolder();
             viewHolder.setHasBottomMargin(hasBottomMargin);
             viewHolder.setHasSemiDivider(hasSemiDivider);
-            viewHolder.setHasFileInfoView(hasFileInfoView);
+            viewHolder.setHasContentInfo(hasFileInfoView);
             viewHolder.setHasCommentBubbleTail(hasCommentBubbleTail);
             viewHolder.setHasNestedProfile(hasNestedProfile);
             viewHolder.setHasViewAllComment(hasViewAllComment);

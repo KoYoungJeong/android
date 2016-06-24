@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.messages.AnnouncementUpdatedEvent;
 import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
+import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
@@ -31,6 +32,7 @@ import com.tosslab.jandi.app.events.team.TeamJoinEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.BotRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
@@ -52,6 +54,7 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
@@ -82,6 +85,10 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageUnstarredEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketPollCommentCreatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketPollCommentDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketPollDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketPollFinishedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDomainUpdatedEvent;
@@ -957,6 +964,7 @@ public class JandiSocketServiceModel {
 
             long roomId = event.getData().getLinkMessage().toEntity[0];
             ResMessages.Link linkMessage = event.getData().getLinkMessage();
+            LogUtil.d("tony", linkMessage.toString());
             linkMessage.roomId = roomId;
             MessageRepository.getRepository().upsertMessage(linkMessage);
             postEvent(new MessageCreatedEvent(event.getTeamId(), roomId, linkMessage.id));
@@ -1335,6 +1343,73 @@ public class JandiSocketServiceModel {
             postEvent(new TeamInfoChangeEvent());
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
+        }
+    }
+
+    public void onPollFinished(Object object) {
+        try {
+            SocketPollFinishedEvent event = getObject(object, SocketPollFinishedEvent.class);
+            SocketPollFinishedEvent.Data data = event.getData();
+            Poll poll = data != null ? data.getPoll() : null;
+            upsertPollIfExists(event.getTeamId(), poll);
+
+            TeamInfoLoader.getInstance().refresh();
+            if (data != null && data.getPoll() != null && data.getPoll().getId() > 0) {
+                postEvent(new SocketPollEvent(data.getPoll()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onPollDeleted(Object object) {
+        try {
+            SocketPollDeletedEvent event = getObject(object, SocketPollDeletedEvent.class);
+            SocketPollDeletedEvent.Data data = event.getData();
+            Poll poll = data != null ? data.getPoll() : null;
+            upsertPollIfExists(event.getTeamId(), poll);
+
+            TeamInfoLoader.getInstance().refresh();
+            if (data != null && data.getPoll() != null && data.getPoll().getId() > 0) {
+                postEvent(new SocketPollEvent(data.getPoll()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void upsertPollIfExists(long teamId, Poll poll) {
+        if (teamId == AccountRepository.getRepository().getSelectedTeamId()
+                && poll != null && poll.getId() > 0) {
+            PollRepository.getInstance().upsertPoll(poll);
+        }
+    }
+
+    public void onPollCommentCreated(Object object) {
+        try {
+            SocketPollCommentCreatedEvent event = getObject(object, SocketPollCommentCreatedEvent.class);
+            TeamInfoLoader.getInstance().refresh();
+            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()) {
+                LogUtil.d("tony", event.toString());
+                postEvent(event);
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onPollCommentDeleted(Object object) {
+        try {
+            SocketPollCommentDeletedEvent event = getObject(object, SocketPollCommentDeletedEvent.class);
+            TeamInfoLoader.getInstance().refresh();
+            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()) {
+                LogUtil.d("tony", event.toString());
+                postEvent(event);
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

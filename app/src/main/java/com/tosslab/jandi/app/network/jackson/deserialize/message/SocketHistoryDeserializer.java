@@ -28,6 +28,9 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageUnstarredEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketPollCommentCreatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketPollDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketPollFinishedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDomainUpdatedEvent;
@@ -149,6 +152,8 @@ public class SocketHistoryDeserializer extends JsonDeserializer<EventHistoryInfo
         FolderDeleted("folder_deleted", SocketTopicFolderDeletedEvent.class),
         FolderItemCreated("folder_item_created", SocketTopicFolderItemCreatedEvent.class),
         FolderItemDeleted("folder_item_deleted", SocketTopicFolderItemDeletedEvent.class),
+        PollFinished("poll_finished", SocketPollFinishedEvent.class),
+        PollDeleted("poll_deleted", SocketPollDeletedEvent.class),
         Unknown("", UnknownEventHistoryInfo.class);
 
         private final String rawType;

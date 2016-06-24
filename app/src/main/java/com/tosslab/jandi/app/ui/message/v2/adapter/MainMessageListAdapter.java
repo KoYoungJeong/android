@@ -334,8 +334,10 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         int count = getItemCount();
         for (int idx = 0; idx < count; idx++) {
             int itemViewType = getItemViewType(idx);
-            if (TypeUtil.hasTypeElement(itemViewType, TypeUtil.TYPE_VIEW_MESSAGE_COMMENT)
-                    || TypeUtil.hasTypeElement(itemViewType, TypeUtil.TYPE_VIEW_STICKER_COMMENT)) {
+            if (TypeUtil.hasTypeElement(itemViewType, TypeUtil.TYPE_VIEW_MESSAGE_COMMENT_FOR_FILE)
+                    || TypeUtil.hasTypeElement(itemViewType, TypeUtil.TYPE_VIEW_STICKER_COMMENT_FOR_FILE)
+                    || TypeUtil.hasTypeElement(itemViewType, TypeUtil.TYPE_VIEW_MESSAGE_COMMENT_FOR_POLL)
+                    || TypeUtil.hasTypeElement(itemViewType, TypeUtil.TYPE_VIEW_STICKER_COMMENT_FOR_POLL)) {
                 ResMessages.Link item = getItem(idx);
                 if (item.message.feedbackId == messageId) {
                     indexList.add(idx);

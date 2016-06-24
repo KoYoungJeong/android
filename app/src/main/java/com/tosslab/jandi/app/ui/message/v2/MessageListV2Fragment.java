@@ -45,6 +45,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
+import com.tosslab.jandi.app.events.RequestCreatePollEvent;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
@@ -69,9 +70,11 @@ import com.tosslab.jandi.app.events.messages.DummyDeleteEvent;
 import com.tosslab.jandi.app.events.messages.DummyRetryEvent;
 import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
+import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
+import com.tosslab.jandi.app.events.messages.RequestUpsertLinkEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
@@ -130,6 +133,8 @@ import com.tosslab.jandi.app.ui.message.v2.viewmodel.DateAnimator;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.MessageRecyclerViewManager;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
+import com.tosslab.jandi.app.ui.poll.create.PollCreateActivity;
+import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -495,6 +500,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
         initAnnouncement();
 
+        initUploadMenuViewModel();
+
         initSoftInputAreaController();
 
         initActionListeners();
@@ -510,6 +517,11 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 vgSoftInputDetector, vgSoftInputArea, btnAction1, btnAction2,
                 etMessage);
         softInputAreaController.init();
+    }
+
+    private void initUploadMenuViewModel() {
+        uploadMenuViewModel.setRoomType(isInDirectMessage()
+                ? UploadMenuViewModel.RoomType.DM : UploadMenuViewModel.RoomType.TOPIC);
     }
 
     private void initEmptyLayout() {
@@ -1009,35 +1021,40 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             return;
         }
 
-        FileDetailActivity_.IntentBuilder_ intentBuilder = FileDetailActivity_.intent(this);
-        intentBuilder.roomId(room.getRoomId());
-        intentBuilder.selectMessageId(link.messageId);
+        if (link.message instanceof ResMessages.CommentMessage
+                || link.message instanceof ResMessages.CommentStickerMessage) {
 
-        AnalyticsValue.Action action = null;
+            if (ResMessages.FeedbackType.POLL.value().equals(link.feedbackType)) {
+                PollDetailActivity.start(getActivity(), link.poll.getId());
+                getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+            } else {
+                sendAnalyticsEvent(AnalyticsValue.Action.FileView_ByComment);
 
-        if (link.message instanceof ResMessages.FileMessage) {
-            intentBuilder.fileId(link.messageId);
-            ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
-            action = fileMessage.content.type.startsWith("image")
-                    ? AnalyticsValue.Action.FileView_ByPhoto
-                    : AnalyticsValue.Action.FileView_ByFile;
-        } else if (link.message instanceof ResMessages.CommentMessage) {
-            intentBuilder.fileId(link.message.feedbackId);
-            action = AnalyticsValue.Action.FileView_ByComment;
-        } else if (link.message instanceof ResMessages.CommentStickerMessage) {
-            intentBuilder.fileId(link.message.feedbackId);
-            action = AnalyticsValue.Action.FileView_ByComment;
+                FileDetailActivity_.intent(this)
+                        .roomId(room.getRoomId())
+                        .selectMessageId(link.messageId)
+                        .fileId(link.message.feedbackId)
+                        .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+                getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+            }
         } else {
-            intentBuilder = null;
-        }
+            if (link.message instanceof ResMessages.PollMessage) {
+                PollDetailActivity.start(getActivity(), link.pollId);
+                getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+            } else if (link.message instanceof ResMessages.FileMessage) {
+                ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
+                sendAnalyticsEvent(fileMessage.content.type.startsWith("image")
+                        ? AnalyticsValue.Action.FileView_ByPhoto
+                        : AnalyticsValue.Action.FileView_ByFile);
 
-        if (action != null) {
-            sendAnalyticsEvent(action);
-        }
+                FileDetailActivity_.intent(this)
+                        .roomId(room.getRoomId())
+                        .selectMessageId(link.messageId)
+                        .fileId(link.messageId)
+                        .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+                getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
 
-        if (intentBuilder != null) {
-            intentBuilder.startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
-            getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+            }
         }
     }
 
@@ -1384,6 +1401,19 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 ? View.VISIBLE : View.GONE);
     }
 
+    public void onEvent(SocketPollEvent event) {
+        if (!isForeground || messageListPresenter == null) {
+            return;
+        }
+
+        if (event.getPoll() != null
+                && event.getPoll().getTeamId() == room.getTeamId()
+                && event.getPoll().getTopicId() == room.getRoomId()) {
+
+            messageListPresenter.addNewMessageOfLocalQueue();
+        }
+    }
+
     public void onEvent(LinkPreviewUpdateEvent event) {
         long messageId = event.getMessageId();
 
@@ -1721,12 +1751,21 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         requestFileUploadEventType = -1;
     }
 
+    public void onEvent(RequestCreatePollEvent event) {
+        PollCreateActivity.start(getActivity(), room.getRoomId());
+    }
+
+    public void onEvent(RequestUpsertLinkEvent event) {
+        messageListPresenter.upsertLink(event.getLink());
+    }
+
     public void onEvent(NetworkConnectEvent event) {
         if (event.isConnected()) {
             messageListPresenter.onNetworkConnect();
 
             dismissOfflineLayer();
         } else {
+
             showOfflineLayer();
 
             if (isForeground) {

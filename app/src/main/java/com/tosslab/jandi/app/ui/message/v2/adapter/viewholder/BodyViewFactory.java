@@ -31,28 +31,48 @@ public class BodyViewFactory {
         BaseViewHolderBuilder builder;
 
         // Setting View TYPE
-        if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_NORMAL_MESSAGE)) {
+        if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_POLL)) {
+            builder = new PollViewHolder.Builder();
+
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_NORMAL_MESSAGE)) {
             builder = new MessageViewHolder.Builder();
+
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_STICKER_MESSAGE)) {
             builder = new StickerMessageViewHolder.Builder();
+
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_IMAGE_MESSAGE)) {
             builder = new ImageMessageViewHolder.Builder();
+
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_FILE_MESSAGE)) {
             builder = new FileMessageViewHolder.Builder();
-        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_STICKER_COMMENT)) {
-            builder = new StickerCommentViewHolder.Builder();
-        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_MESSAGE_COMMENT)) {
-            builder = new CommentViewHolder.Builder();
+
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_STICKER_COMMENT_FOR_FILE)) {
+            builder = new FileStickerCommentViewHolder.Builder();
+
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_MESSAGE_COMMENT_FOR_FILE)) {
+            builder = new FileCommentViewHolder.Builder();
+
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_STICKER_COMMENT_FOR_POLL)) {
+            builder = new PollStickerCommentViewHolder.Builder();
+
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_MESSAGE_COMMENT_FOR_POLL)) {
+            builder = new PollCommentViewHolder.Builder();
+
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_DUMMY_NORMAL_MESSAGE)) {
             builder = new DummyMessageViewHolder.Builder();
+
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_DUMMY_STICKER)) {
             builder = new DummyMessageViewHolder.Builder();
+
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_EVENT_MESSAGE)) {
             builder = new EventMessageViewHolder.Builder();
+
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_JANDI_BOT_MESSAGE)) {
             builder = new JandiBotViewHolder.Builder();
+
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_INTEGRATION_BOT_MESSAGE)) {
             builder = new IntegrationBotViewHolder.Builder();
+
         } else {
             builder = new EmptyViewHolder.Builder();
         }
@@ -70,7 +90,7 @@ public class BodyViewFactory {
             builder.setHasBottomMargin(true);
         }
 
-        if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO)) {
+        if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_OPTION_HAS_COMMENT_CONTENT_INFO)) {
             builder.setHasFileInfoView(true);
         }
 
@@ -107,20 +127,52 @@ public class BodyViewFactory {
                                      ResMessages.Link currentLink,
                                      ResMessages.Link nextLink) {
         int type = TypeUtil.TYPE_EMPTY;
-        if (isEventMessage(currentLink)) {
+        if (isPollMessage(currentLink)) {
+
+            type = getPollMessageType(currentLink, nextLink);
+
+        } else if (isEventMessage(currentLink)) {
+
             type = getEventMessageType(currentLink, nextLink);
+
         } else if (isTextMessage(currentLink)) {
+
             type = getNormalMessageType(previousLink, currentLink, nextLink);
+
         } else if (isStickerMessage(currentLink)) {
+
             type = getStickerMessageType(previousLink, currentLink, nextLink);
+
         } else if (isFileMessage(currentLink)) {
+
             type = getFileMessageType(currentLink, nextLink);
+
         } else if (isCommentMessage(currentLink)) {
+
             type = getCommentMessageType(previousLink, currentLink, nextLink);
+
         } else if (isCommentStickerMessage(currentLink)) {
+
             type = getCommentMessageType(previousLink, currentLink, nextLink);
+
         }
         return type;
+    }
+
+    private static boolean isPollMessage(ResMessages.Link currentLink) {
+        return currentLink.pollId > 0
+                && currentLink.poll != null
+                && currentLink.poll.getId() > 0;
+    }
+
+    private static int getPollMessageType(ResMessages.Link currentLink, ResMessages.Link nextLink) {
+        int type = TypeUtil.TYPE_VIEW_POLL;
+
+        if (hasNextLinkComment(currentLink, nextLink)) {
+            return type;
+        }
+
+        return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
     }
 
     private static int getEventMessageType(ResMessages.Link currentLink,
@@ -248,20 +300,34 @@ public class BodyViewFactory {
         int type;
 
         if (isCommentStickerMessage(currentLink)) {
-            type = TypeUtil.TYPE_VIEW_STICKER_COMMENT;
+            if (ResMessages.FeedbackType.POLL.value().equals(currentLink.feedbackType)) {
+
+                type = TypeUtil.TYPE_VIEW_STICKER_COMMENT_FOR_POLL;
+
+            } else {
+                type = TypeUtil.TYPE_VIEW_STICKER_COMMENT_FOR_FILE;
+
+            }
         } else {
-            type = TypeUtil.TYPE_VIEW_MESSAGE_COMMENT;
+            if (ResMessages.FeedbackType.POLL.value().equals(currentLink.feedbackType)) {
+
+                type = TypeUtil.TYPE_VIEW_MESSAGE_COMMENT_FOR_POLL;
+
+            } else {
+                type = TypeUtil.TYPE_VIEW_MESSAGE_COMMENT_FOR_FILE;
+
+            }
         }
 
-        if (isPreviousLinkFeedbackOrFile(previousLink, currentLink.feedbackId)) {
+        if (isFeedbackTargetToPreviousLink(previousLink, currentLink.feedbackId)) {
             // 1. previous Link가 같은 파일의 커맨트 이거나 파일일 때
-            if (isFileMessage(previousLink)) {
+            if (isCommentableMessage(previousLink)) {
                 // 2. previous Link가 파일 메세지 일때 파일 정보 없이 Tail/Profile 이 나와야됨
                 type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
                 type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
                 if (!isSameDay(previousLink, currentLink)) {
                     // 3. 이전 링크가 날짜가 다르면 파일 정보 추가
-                    type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
+                    type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_CONTENT_INFO);
                     type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
                     type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_FLAT_TOP);
                     type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
@@ -273,7 +339,7 @@ public class BodyViewFactory {
                     // 3. 이전 comment 작성자가 같은 사람 일때
                     if (!isSameDay(previousLink, currentLink)) {
                         // 4. 날짜가 다르다면 파일 정보를 추가해야 됨
-                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
+                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_CONTENT_INFO);
                         type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
                         type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
                         type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
@@ -284,7 +350,7 @@ public class BodyViewFactory {
 
                     if (!isSameDay(previousLink, currentLink)) {
                         // 4. 날짜가 다르다면 파일 정보를 추가해야 됨
-                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO);
+                        type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_CONTENT_INFO);
                         type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
                         type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
                         type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE);
@@ -293,7 +359,7 @@ public class BodyViewFactory {
             }
         } else {
             // 1. previous Link가 같은 파일의 커맨트 이거나 파일이 아닐 때
-            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_FILE_INFO
+            type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_CONTENT_INFO
             );
             type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
             type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_VIEW_ALL);
@@ -346,15 +412,15 @@ public class BodyViewFactory {
                 && isSameDay(currentLink, nextLink);
     }
 
-    private static boolean isPreviousLinkFeedbackOrFile(ResMessages.Link previousLink,
-                                                        long messageFeedbackId) {
-        boolean isFeedbackOrFile = false;
+    private static boolean isFeedbackTargetToPreviousLink(ResMessages.Link previousLink,
+                                                          long messageFeedbackId) {
+        boolean isFeedbackTargetToPreviousLink = false;
         if (previousLink != null) {
-            isFeedbackOrFile =
+            isFeedbackTargetToPreviousLink =
                     (messageFeedbackId == previousLink.messageId) ||
                             (messageFeedbackId == previousLink.feedbackId);
         }
-        return isFeedbackOrFile;
+        return isFeedbackTargetToPreviousLink;
     }
 
     private static int getFileMessageType(ResMessages.Link currentLink, ResMessages.Link nextLink) {
@@ -446,7 +512,15 @@ public class BodyViewFactory {
         }
 
         return link.message instanceof ResMessages.FileMessage;
+    }
 
+    private static boolean isCommentableMessage(ResMessages.Link link) {
+
+        if (link == null) {
+            return false;
+        }
+
+        return link.message instanceof ResMessages.Commentable;
     }
 
     private static boolean isStickerMessage(ResMessages.Link link) {

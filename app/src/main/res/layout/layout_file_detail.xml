@@ -17,7 +17,7 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/jandi_file_detail_uploder_profile_margin_right"
+            android:layout_marginRight="@dimen/jandi_detail_page_profile_margin_right"
             android:src="@drawable/profile_img"/>
 
         <TextView
@@ -41,7 +41,7 @@
             android:layout_below="@id/tv_file_detail_user_name"
             android:layout_toRightOf="@id/iv_file_detail_user_profile"
             android:text="01/14/2016, 08:59 pm"
-            android:textColor="@color/jandi_file_detail_date"
+            android:textColor="@color/jand_detail_page_date"
             android:textSize="12dp"/>
 
         <View
@@ -65,7 +65,7 @@
             android:layout_below="@id/tv_file_detail_user_name"
             android:layout_toRightOf="@id/v_file_detail_file_info_divider"
             android:text="1.14 MB, gif"
-            android:textColor="@color/jandi_file_detail_date"
+            android:textColor="@color/jand_detail_page_date"
             android:textSize="12dp"/>
 
         <View

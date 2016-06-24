@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="11dp"
+        android:paddingTop="10dp">
+
+        <ImageView
+            android:id="@+id/iv_poll_detail_user_profile"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/jandi_detail_page_profile_margin_right"
+            android:src="@drawable/profile_img"/>
+
+        <TextView
+            android:id="@+id/tv_poll_detail_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/btn_poll_detail_star"
+            android:layout_toRightOf="@+id/iv_poll_detail_user_profile"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="Diane"
+            android:textColor="@color/jandi_text"
+            android:textSize="14dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_poll_detail_create_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_poll_detail_user_name"
+            android:layout_toRightOf="@id/iv_poll_detail_user_profile"
+            android:text="01/14/2016, 08:59 pm"
+            android:textColor="@color/jand_detail_page_date"
+            android:textSize="12dp"/>
+
+        <View
+            android:id="@+id/v_poll_detail_user_name_disable_indicator"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tv_poll_detail_user_name"
+            android:layout_alignLeft="@+id/tv_poll_detail_user_name"
+            android:layout_alignTop="@+id/tv_poll_detail_user_name"
+            android:background="@drawable/line_gray"
+            android:visibility="gone"/>
+
+        <View
+            android:id="@+id/v_poll_detail_user_profile_disable_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/iv_poll_detail_user_profile"
+            android:layout_alignLeft="@+id/iv_poll_detail_user_profile"
+            android:layout_alignRight="@+id/iv_poll_detail_user_profile"
+            android:layout_alignTop="@+id/iv_poll_detail_user_profile"
+            android:layout_toLeftOf="@+id/btn_poll_detail_star"
+            android:background="@color/nav_drawer_text"
+            android:visibility="gone"/>
+
+        <View
+            android:id="@+id/btn_poll_detail_star"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="11dp"
+            android:background="@drawable/jandi_selector_starred"
+            android:clickable="true"/>
+    </RelativeLayout>
+
+    <View
+        android:background="@color/jandi_file_search_item_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+</LinearLayout>

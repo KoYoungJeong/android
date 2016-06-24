@@ -292,6 +292,19 @@ public class JandiSocketService extends Service {
                 objects -> jandiSocketServiceModel.onFolderItemDeleted(objects[0]);
         eventHashMap.put("folder_item_deleted", folderItemDeletedListener);
 
+        EventListener pollFinishedListener =
+                objects -> jandiSocketServiceModel.onPollFinished(objects[0]);
+        eventHashMap.put("poll_finished", pollFinishedListener);
+        EventListener pollDeletedListener =
+                objects -> jandiSocketServiceModel.onPollDeleted(objects[0]);
+        eventHashMap.put("poll_deleted", pollDeletedListener);
+        EventListener pollCommentCreatedListener =
+                objects -> jandiSocketServiceModel.onPollCommentCreated(objects[0]);
+        eventHashMap.put("poll_comment_created", pollCommentCreatedListener);
+        EventListener pollCommentDeletedListener =
+                objects -> jandiSocketServiceModel.onPollCommentDeleted
+                        (objects[0]);
+        eventHashMap.put("poll_comment_deleted", pollCommentDeletedListener);
 
         eventHashMap.put("ready_to_start", objects -> {
             JandiPreference.setSocketReconnectDelay(0l);

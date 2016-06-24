@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2;
 
 import android.text.TextUtils;
 import android.util.Pair;
+import android.util.Log;
 
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
@@ -244,6 +245,7 @@ public class MessageListV2Presenter {
 
     private Observable<NewMessageContainer> composeNewMessage(Observable<MessageContainer> observable) {
         return observable.cast(NewMessageContainer.class)
+                .subscribeOn(Schedulers.io())
                 .doOnNext(this::loadNewMessage);
     }
 
@@ -748,7 +750,8 @@ public class MessageListV2Presenter {
                 subscriber.onNext(afterMarkerMessage);
                 subscriber.onCompleted();
             }
-        }).collect(() -> messages, (resUpdateMessages, o) -> messages.addAll(o.records))
+        })
+                .collect(() -> messages, (resUpdateMessages, o) -> messages.addAll(o.records))
                 .subscribe(resUpdateMessages -> {
                 }, Throwable::printStackTrace);
         return messages;
@@ -883,6 +886,31 @@ public class MessageListV2Presenter {
             }
 
             view.showStickerMessageMenuDialog(stickerMessage);
+        } else if (message instanceof ResMessages.PollMessage) {
+        }
+    }
+
+    @Background
+    public void onDeletePollMessageAction(long messageId, long pollId) {
+        view.showProgressWheel();
+
+        try {
+            messageListModel.deletePollMessage(room.getTeamId(), pollId);
+
+            MessageRepository.getRepository().deleteLinkByMessageId(messageId);
+            view.dismissProgressWheel();
+
+            int position = adapterModel.indexByMessageId(messageId);
+            if (position >= 0) {
+                adapterModel.remove(position);
+                view.refreshMessages();
+            }
+        } catch (RetrofitException e) {
+            LogUtil.e(Log.getStackTraceString(e));
+            view.dismissProgressWheel();
+        } catch (Exception e) {
+            LogUtil.e(Log.getStackTraceString(e));
+            view.dismissProgressWheel();
         }
     }
 
@@ -1116,6 +1144,14 @@ public class MessageListV2Presenter {
             NewMessageFromLocalContainer container = new NewMessageFromLocalContainer(currentMessageState);
             addQueue(container);
         }
+    }
+
+    public void upsertLink(ResMessages.Link link) {
+        if (link == null) {
+            return;
+        }
+
+        messageListModel.upsertMessage(link);
     }
 
     public interface View {
