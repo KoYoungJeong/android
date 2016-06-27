@@ -27,7 +27,7 @@ import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenterImpl;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
-import com.tosslab.jandi.app.ui.profile.insert.SetProfileActivity_;
+import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -278,9 +278,9 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
                 .start();
 
         if (firstJoin) { // 초대 수락 또는 팀 생성 후
-            SetProfileActivity_.intent(AccountHomeActivity.this)
-                    .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                    .start();
+            Intent intent = new Intent(this, InsertProfileActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
         }
 
         finish();

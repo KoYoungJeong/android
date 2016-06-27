@@ -26,7 +26,7 @@ public interface TeamsPresenter {
 
     void onTeamInviteIgnoreAction(Team team);
 
-    void onTeamCreated(boolean shouldOpenModifyProfileActivity);
+    void onTeamCreated();
 
     void clearTeamInitializeQueue();
 }

@@ -105,6 +105,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/vg_bottom_for_insert_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -112,7 +113,8 @@
             android:layout_marginTop="32dp"
             android:gravity="bottom"
             android:orientation="vertical"
-            android:paddingBottom="38dp">
+            android:paddingBottom="38dp"
+            android:visibility="gone">
 
             <ImageView
                 android:id='@+id/iv_profile_check'
@@ -132,6 +134,66 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/vg_bottom_for_create_team_previous"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/vg_insert_profile_extras"
+            android:layout_marginLeft="9dp"
+            android:layout_marginTop="32dp"
+            android:gravity="bottom"
+            android:orientation="vertical"
+            android:paddingBottom="38dp">
+
+            <ImageView
+                android:id="@+id/iv_team_create_previous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/btn_profile_previous" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="12dp"
+                android:text="@string/jandi_back"
+                android:textColor="@color/jandi_text_light"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/vg_bottom_for_create_team_next"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/vg_insert_profile_extras"
+            android:layout_marginRight="9dp"
+            android:layout_marginTop="32dp"
+            android:gravity="bottom"
+            android:orientation="vertical"
+            android:paddingBottom="38dp">
+
+            <ImageView
+                android:id="@+id/iv_team_create_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/btn_profile_next" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="12dp"
+                android:text="@string/jandi_next"
+                android:textColor="@color/jandi_text_light"
+                android:textSize="13sp" />
+
+        </LinearLayout>
 
     </RelativeLayout>
 </ScrollView>

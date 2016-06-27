@@ -58,8 +58,8 @@ import com.tosslab.jandi.app.ui.maintab.teams.module.TeamsModule;
 import com.tosslab.jandi.app.ui.maintab.teams.presenter.TeamsPresenter;
 import com.tosslab.jandi.app.ui.maintab.teams.view.TeamsView;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
-import com.tosslab.jandi.app.ui.profile.insert.SetProfileActivity_;
-import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
+import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
+import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -200,7 +200,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
         initializeTeamsView();
-
     }
 
     private void initMainTabViewPager() {
@@ -375,11 +374,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         recyclerView.setLayoutManager(layoutManager);
         teamsAdapter = new TeamsAdapter();
         teamsAdapter.setOnRequestTeamCreateListener(() -> {
-            TeamDomainInfoActivity_.intent(MainTabActivity.this)
-                    .startForResult(REQUEST_TEAM_CREATE);
-
+            Intent intent = new Intent(this, CreateTeamActivity.class);
+            startActivityForResult(intent, REQUEST_TEAM_CREATE);
             teamsPopupWindow.dismiss();
-
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.CreateNewTeam);
         });
         teamsAdapter.setOnTeamClickListener(team -> {
@@ -475,7 +472,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     @Override
-    public void moveToSelectTeam(boolean shouldOpenModifyProfileActivity) {
+    public void moveToSelectTeam() {
         JandiSocketService.stopService(this);
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
@@ -483,18 +480,14 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
 
-        if (shouldOpenModifyProfileActivity) { // 초대 수락 또는 팀 생성 후
-            moveSetProfileActivity();
-        }
-
         finish();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void moveSetProfileActivity() {
-        SetProfileActivity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .start();
+        Intent intent = new Intent(this, InsertProfileActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
     }
 
     public void onEvent(TeamInviteIgnoreEvent event) {
@@ -596,7 +589,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @OnActivityResult(REQUEST_TEAM_CREATE)
     void onTeamCreateResult(int resultCode) {
         if (resultCode == RESULT_OK) {
-            teamsPresenter.onTeamCreated(true);
+            teamsPresenter.onTeamCreated();
         }
     }
 
@@ -687,11 +680,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                 screen = AnalyticsValue.Screen.FilesTab;
                 break;
             case 3:
-//                screenView = ScreenViewProperty.SETTING_PANEL;
                 screen = AnalyticsValue.Screen.TeamTab;
                 break;
             case 4:
-//                screenView = ScreenViewProperty.SETTING_PANEL;
                 screen = AnalyticsValue.Screen.MypageTab;
                 break;
         }

@@ -109,6 +109,7 @@
 	<string name="jandi_auto_join_explain">"새로 팀에 참여하는 모든 멤버를 이 토픽에 초대합니다."</string>
 	<string name="jandi_auto_join_title">"자동 초대"</string>
 	<string name="jandi_auto_join_title_wild">"자동 초대*"</string>
+	<string name="jandi_back">"뒤로"</string>
 	<string name="jandi_baidu_app_store">"바이두 앱 스토어"</string>
 	<string name="jandi_bot_role">"저는 잔디 사용에 꼭 필요한 메시지나,\n잔디 Connect 메시지를 전달합니다."</string>
 	<string name="jandi_bot_status">"안녕하세요? Mr.J입니다. "</string>
@@ -391,7 +392,7 @@
 	<string name="jandi_profile_background_color">"색상"</string>
 	<string name="jandi_profile_basic_info">"기본 정보"</string>
 	<string name="jandi_profile_division">"부서"</string>
-	<string name="jandi_profile_division_hint">"부서명"</string>
+	<string name="jandi_profile_division_hint">"부서"</string>
 	<string name="jandi_profile_edit">"편집"</string>
 	<string name="jandi_profile_email">"이메일"</string>
 	<string name="jandi_profile_extra_introduce">"다른 멤버들이 볼 수 있도록\n 추가 정보를 설정해주세요"</string>
@@ -403,7 +404,7 @@
 	<string name="jandi_profile_picture">"프로필 사진"</string>
 	<string name="jandi_profile_position">"직책"</string>
 	<string name="jandi_profile_position_hint">"직책"</string>
-	<string name="jandi_profile_status_message">"상태"</string>
+	<string name="jandi_profile_status_message">"상태 메시지"</string>
 	<string name="jandi_profile_update">"완료"</string>
 	<string name="jandi_profile_update_succeed">"프로필이 수정되었습니다"</string>
 	<string name="jandi_profile_welcome">"반갑습니다!"</string>

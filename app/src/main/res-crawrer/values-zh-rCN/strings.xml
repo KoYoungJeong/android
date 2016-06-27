@@ -109,6 +109,7 @@
 	<string name="jandi_auto_join_explain">"邀请所有新成员至此议题"</string>
 	<string name="jandi_auto_join_title">"自动邀请"</string>
 	<string name="jandi_auto_join_title_wild">"自动邀请*"</string>
+	<string name="jandi_back">"返回"</string>
 	<string name="jandi_baidu_app_store">"百度手机助手"</string>
 	<string name="jandi_bot_role">"身为JANDI最强使者，肩负传递JANDI Connect和平台信息通知的任务，绝对使命必达！"</string>
 	<string name="jandi_bot_status">"你好，我是Mr.J！"</string>
@@ -393,13 +394,13 @@
 	<string name="jandi_profile_extra_introduce">"请填写其他信息 \n 让成员更了解你"</string>
 	<string name="jandi_profile_main_introduce">"请设定在 \n %s团队 \n 显示的姓名和头像"</string>
 	<string name="jandi_profile_optional">"非必要"</string>
-	<string name="jandi_profile_phone_number">"手机号码"</string>
-	<string name="jandi_profile_phone_number_hint">"电话号码"</string>
+	<string name="jandi_profile_phone_number">"电话 "</string>
+	<string name="jandi_profile_phone_number_hint">"电话 "</string>
 	<string name="jandi_profile_photo_upload_succeed">"简介照片已更新"</string>
 	<string name="jandi_profile_picture">"简介照片"</string>
-	<string name="jandi_profile_position">"职位"</string>
+	<string name="jandi_profile_position">"职称"</string>
 	<string name="jandi_profile_position_hint">"职称"</string>
-	<string name="jandi_profile_status_message">"状态"</string>
+	<string name="jandi_profile_status_message">"今天的感觉"</string>
 	<string name="jandi_profile_update">"更新"</string>
 	<string name="jandi_profile_update_succeed">"简介已更新"</string>
 	<string name="jandi_profile_welcome">"你好！"</string>

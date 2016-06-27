@@ -109,6 +109,7 @@
 	<string name="jandi_auto_join_explain">"新しいメンバー全員をこのトピックに招待する"</string>
 	<string name="jandi_auto_join_title">"自動招待"</string>
 	<string name="jandi_auto_join_title_wild">"自動招待*"</string>
+	<string name="jandi_back">"戻る"</string>
 	<string name="jandi_baidu_app_store">"百度アプリストア"</string>
 	<string name="jandi_bot_role">"僕はJANDIの利用中必ず必要なメッセージや、JANDIコネクトのメッセージをお送りします。"</string>
 	<string name="jandi_bot_status">"こんにちは、ミスターJと言います。"</string>
@@ -395,13 +396,13 @@
 	<string name="jandi_profile_extra_introduce">"他のメンバー達が分かるように \n 追加情報を設定してください。"</string>
 	<string name="jandi_profile_main_introduce">"%sで使用する \n お名前とプロフィール写真を \n 設定してください。"</string>
 	<string name="jandi_profile_optional">"(任意)"</string>
-	<string name="jandi_profile_phone_number">"携帯番号"</string>
+	<string name="jandi_profile_phone_number">"電話番号"</string>
 	<string name="jandi_profile_phone_number_hint">"電話番号"</string>
 	<string name="jandi_profile_photo_upload_succeed">"プロフィール画像は正常に更新されました"</string>
 	<string name="jandi_profile_picture">"プロフィール画像"</string>
 	<string name="jandi_profile_position">"役職"</string>
 	<string name="jandi_profile_position_hint">"役職"</string>
-	<string name="jandi_profile_status_message">"今日の気分"</string>
+	<string name="jandi_profile_status_message">"ステータスメッセージ"</string>
 	<string name="jandi_profile_update">"変更する"</string>
 	<string name="jandi_profile_update_succeed">"プロフィールは正常に更新されました"</string>
 	<string name="jandi_profile_welcome">"はじめまして！"</string>

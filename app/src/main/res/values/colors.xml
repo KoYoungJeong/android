@@ -297,4 +297,6 @@
 
     <color name="jandi_red">#f15544</color>
 
+    <color name="jandi_error_red">#ff5b49</color>
+
 </resources>

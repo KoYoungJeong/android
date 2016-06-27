@@ -56,7 +56,6 @@ public class TeamDomainInfoActivity extends BaseAppCompatActivity implements Tea
 
     @AfterViews
     void initView() {
-
         setUpActionBar();
 
         teamDomainInfoPresenter.setView(this);
@@ -132,7 +131,6 @@ public class TeamDomainInfoActivity extends BaseAppCompatActivity implements Tea
         if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
         }
-
     }
 
 

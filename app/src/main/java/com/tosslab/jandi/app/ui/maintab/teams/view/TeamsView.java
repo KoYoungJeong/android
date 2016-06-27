@@ -23,7 +23,7 @@ public interface TeamsView {
 
     void dismissProgressWheel();
 
-    void moveToSelectTeam(boolean shouldOpenModifyProfileActivity);
+    void moveToSelectTeam();
 
     void removePendingTeam(Team team);
 
