@@ -143,7 +143,7 @@ public class AccountHomePresenterImplTest {
                 return invocationOnMock;
             }).when(viewMock).dismissProgressWheel();
 
-            accountHomePresenter.onJoinedTeamSelect(-1, false);
+            accountHomePresenter.onJoinedTeamSelect(-1);
 
             Awaitility.await().until(() -> finish[0]);
 
@@ -163,12 +163,12 @@ public class AccountHomePresenterImplTest {
         }).when(viewMock).dismissProgressWheel();
 
         long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-        accountHomePresenter.onJoinedTeamSelect(selectedTeamId, false);
+        accountHomePresenter.onJoinedTeamSelect(selectedTeamId);
 
         Awaitility.await().until(() -> finish[0]);
 
         verify(viewMock, times(1)).dismissProgressWheel();
-        verify(viewMock, times(1)).moveSelectedTeam(eq(false));
+        verify(viewMock, times(1)).moveSelectedTeam();
 
     }
 

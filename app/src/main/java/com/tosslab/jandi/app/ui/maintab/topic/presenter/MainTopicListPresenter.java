@@ -9,6 +9,8 @@ import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.ResCreateFolder;
+import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
@@ -155,8 +157,16 @@ public class MainTopicListPresenter {
     @Background
     public void createNewFolder(String title) {
         try {
-            topicFolderChooseModel.createFolder(title);
-            view.notifyDatasetChangedForFolder();
+            ResCreateFolder folder = topicFolderChooseModel.createFolder(title);
+            Folder folder1 = new Folder();
+            folder1.setRooms(new ArrayList<>());
+            folder1.setOpened(false);
+            folder1.setName(folder.getName());
+            folder1.setId(folder.getId());
+            folder1.setSeq(folder.getSeq());
+            FolderRepository.getInstance().addFolder(TeamInfoLoader.getInstance().getTeamId(), folder1);
+            TeamInfoLoader.getInstance().refresh();
+            refreshList();
         } catch (RetrofitException e) {
             if (e.getResponseCode() == 40008) {
                 view.showAlreadyHasFolderToast();

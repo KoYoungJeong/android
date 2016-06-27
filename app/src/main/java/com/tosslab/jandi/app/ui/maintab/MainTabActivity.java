@@ -48,6 +48,7 @@ import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -199,6 +200,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
         initializeTeamsView();
+
+
+        User me = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
+        if (!me.isProfileUpdated()) {
+            moveSetProfileActivity();
+        }
 
     }
 
@@ -473,17 +480,13 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     @Override
-    public void moveToSelectTeam(boolean shouldOpenModifyProfileActivity) {
+    public void moveToSelectTeam() {
         JandiSocketService.stopService(this);
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
         MainTabActivity_.intent(this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
-
-        if (shouldOpenModifyProfileActivity) { // 초대 수락 또는 팀 생성 후
-            moveSetProfileActivity();
-        }
 
         finish();
     }

@@ -47,7 +47,8 @@ public class FolderRepository extends LockExecutorTemplate {
                 info.setTeamId(teamId);
                 folder.setInitialInfo(info);
 
-                return dao.create(folder) > 0;
+                dao.createIfNotExists(folder);
+                return true;
             } catch (SQLException e) {
                 e.printStackTrace();
                 return false;

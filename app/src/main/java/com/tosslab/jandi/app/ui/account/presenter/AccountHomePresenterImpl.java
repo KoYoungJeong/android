@@ -75,10 +75,9 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         }
     }
 
-    //TODO 진입 시점에 네트워크 체킹 ?
     @Background
     @Override
-    public void onJoinedTeamSelect(long teamId, boolean firstJoin) {
+    public void onJoinedTeamSelect(long teamId) {
         view.showProgressWheel();
         try {
             accountHomeModel.updateSelectTeam(teamId);
@@ -90,7 +89,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
             // Track Team List Sign In (with flush)
             accountHomeModel.trackLaunchTeamSuccess(teamId);
-            view.moveSelectedTeam(firstJoin);
+            view.moveSelectedTeam();
         } catch (RetrofitException e) {
             int errorCode = e.getResponseCode();
             accountHomeModel.trackLaunchTeamFail(errorCode);
@@ -145,7 +144,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     @Override
     public void onTeamCreateAcceptResult() {
         ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo();
-        onJoinedTeamSelect(selectedTeamInfo.getTeamId(), true);
+        onJoinedTeamSelect(selectedTeamInfo.getTeamId());
     }
 
     @Override

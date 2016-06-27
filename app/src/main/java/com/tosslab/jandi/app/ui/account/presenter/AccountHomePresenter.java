@@ -16,7 +16,7 @@ public interface AccountHomePresenter {
 
     void onInitialize(boolean shouldRefreshAccountInfo);
 
-    void onJoinedTeamSelect(long teamId, boolean firstJoin);
+    void onJoinedTeamSelect(long teamId);
 
     void onCreateTeamSelect();
 
@@ -54,7 +54,7 @@ public interface AccountHomePresenter {
 
         void showProgressWheel();
 
-        void moveSelectedTeam(boolean firstJoin);
+        void moveSelectedTeam();
 
         void moveEmailEditClick();
 

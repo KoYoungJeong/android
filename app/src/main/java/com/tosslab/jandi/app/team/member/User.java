@@ -76,4 +76,8 @@ public class User implements Member {
     public boolean isStarred() {
         return human.isStarred();
     }
+
+    public boolean isProfileUpdated() {
+        return human.getProfile().isUpdated();
+    }
 }

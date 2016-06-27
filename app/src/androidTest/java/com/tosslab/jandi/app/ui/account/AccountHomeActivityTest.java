@@ -157,7 +157,7 @@ public class AccountHomeActivityTest {
 
     @Test
     public void testMoveSelectedTeam() throws Throwable {
-        rule.runOnUiThread(() -> activity.moveSelectedTeam(false));
+        rule.runOnUiThread(() -> activity.moveSelectedTeam());
         assertThat(activity.isFinishing(), is(true));
         intending(IntentMatchers.hasComponent(MainTabActivity_.class.getName()));
     }

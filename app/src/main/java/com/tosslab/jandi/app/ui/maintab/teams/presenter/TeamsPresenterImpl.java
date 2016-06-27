@@ -112,7 +112,7 @@ public class TeamsPresenterImpl implements TeamsPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     view.dismissProgressWheel();
-                    view.moveToSelectTeam(false);
+                    view.moveToSelectTeam();
                 }, error -> {
                     view.dismissProgressWheel();
                 });
@@ -177,7 +177,7 @@ public class TeamsPresenterImpl implements TeamsPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     view.dismissProgressWheel();
-                    view.moveToSelectTeam(shouldOpenModifyProfileActivity);
+                    view.moveToSelectTeam();
                 }, error -> {
                     view.dismissProgressWheel();
                 });

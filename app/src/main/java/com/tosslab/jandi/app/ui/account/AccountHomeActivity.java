@@ -27,7 +27,6 @@ import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenterImpl;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
-import com.tosslab.jandi.app.ui.profile.insert.SetProfileActivity_;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -179,7 +178,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
 
                     accountTeamRowView.setOnClickListener(v -> {
                         Team clickedTeam = (Team) v.getTag();
-                        accountHomePresenter.onJoinedTeamSelect(clickedTeam.getTeamId(), false);
+                        accountHomePresenter.onJoinedTeamSelect(clickedTeam.getTeamId());
                         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.ChooseTeam);
                     });
                     view = accountTeamRowView;
@@ -269,19 +268,13 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void moveSelectedTeam(boolean firstJoin) {
+    public void moveSelectedTeam() {
         JandiSocketService.stopService(AccountHomeActivity.this);
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
         MainTabActivity_.intent(AccountHomeActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
-
-        if (firstJoin) { // 초대 수락 또는 팀 생성 후
-            SetProfileActivity_.intent(AccountHomeActivity.this)
-                    .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                    .start();
-        }
 
         finish();
     }
