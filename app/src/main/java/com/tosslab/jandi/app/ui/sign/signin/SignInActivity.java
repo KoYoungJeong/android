@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.profile.ForgotPasswordEvent;
-import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
+import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.sign.signin.dagger.DaggerSignInComponent;
 import com.tosslab.jandi.app.ui.sign.signin.dagger.SignInModule;
@@ -299,12 +299,7 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
 
     @Override
     public void moveToTeamSelectionActivity(String myEmailId) {
-        AccountHomeActivity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK
-                        | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        | Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .shouldRefreshAccountInfo(false)
-                .start();
+        AccountHomeActivity.startActivity(SignInActivity.this, false);
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
         finish();
     }

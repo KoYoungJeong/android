@@ -10,7 +10,7 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
+import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.dagger.DaggerIntroComponent;
 import com.tosslab.jandi.app.ui.intro.dagger.IntroModule;
@@ -79,7 +79,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
     @Override
     public void moveTeamSelectActivity() {
-        Intent intent = AccountHomeActivity_.intent(IntroActivity.this).get();
+        Intent intent = AccountHomeActivity.getActivity(IntroActivity.this, false);
         startActivityWithAnimationAndFinish(intent);
     }
 

@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.ui.account.dagger.AccountHomeModule;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -17,6 +17,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.inject.Inject;
+
+import dagger.Component;
 import setup.BaseInitUtil;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -38,8 +41,10 @@ import static org.mockito.Mockito.verify;
 @RunWith(AndroidJUnit4.class)
 public class AccountHomePresenterImplTest {
 
-    private AccountHomePresenterImpl accountHomePresenter;
-    private AccountHomePresenter.View viewMock;
+    @Inject
+    AccountHomePresenter accountHomePresenter;
+    @Inject
+    AccountHomePresenter.View viewMock;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -53,10 +58,11 @@ public class AccountHomePresenterImplTest {
 
     @Before
     public void setUp() throws Exception {
-        accountHomePresenter = AccountHomePresenterImpl_.getInstance_(JandiApplication.getContext());
-        viewMock = mock(AccountHomePresenter.View.class);
-        accountHomePresenter.setView(viewMock);
-
+        AccountHomePresenter.View viewMock = mock(AccountHomePresenter.View.class);
+        DaggerAccountHomePresenterImplTest_AccountHomePresenterImplTestComponent.builder()
+                .accountHomeModule(new AccountHomeModule(viewMock))
+                .build()
+                .inject(this);
     }
 
     @Test
@@ -124,11 +130,6 @@ public class AccountHomePresenterImplTest {
         verify(viewMock).setAccountName(anyString());
         verify(viewMock).setUserEmailText(anyString());
         verify(viewMock).setTeamInfo(any(), anyObject());
-    }
-
-    @Test
-    public void testSetView() throws Exception {
-        assertThat(accountHomePresenter.view, is(equalTo(viewMock)));
     }
 
     @Test
@@ -219,6 +220,12 @@ public class AccountHomePresenterImplTest {
         new AccountProfileApi(RetrofitBuilder.getInstance()).changeName(new ReqProfileName(originName));
     }
 
+    @Test
+    public void testOnAccountEmailEditClick() throws Exception {
+        accountHomePresenter.onAccountEmailEditClick();
+        verify(viewMock, times(1)).moveEmailEditClick();
+    }
+
 //    @Ignore
 //    @Test
 //    public void testOnTeamCreateAcceptResult() throws Exception {
@@ -240,12 +247,6 @@ public class AccountHomePresenterImplTest {
 //    }
 
     @Test
-    public void testOnAccountEmailEditClick() throws Exception {
-        accountHomePresenter.onAccountEmailEditClick();
-        verify(viewMock, times(1)).moveEmailEditClick();
-    }
-
-    @Test
     public void testOnEmailChooseResult() throws Exception {
         accountHomePresenter.onEmailChooseResult();
 
@@ -260,20 +261,9 @@ public class AccountHomePresenterImplTest {
         verify(viewMock, times(1)).showHelloDialog();
     }
 
-    @Test
-    public void testGetTeamInfo() throws Exception {
-
-        final boolean[] finish = {false};
-        doAnswer(invocationOnMock -> {
-            finish[0] = true;
-            return invocationOnMock;
-        }).when(viewMock).setTeamInfo(any(), any());
-
-        accountHomePresenter.initTeamInfo();
-
-        Awaitility.await().until(() -> finish[0]);
-
-        verify(viewMock, times(1)).setTeamInfo(any(), any(ResAccountInfo.UserTeam.class));
-
+    @Component(modules = AccountHomeModule.class)
+    public interface AccountHomePresenterImplTestComponent {
+        void inject(AccountHomePresenterImplTest test);
     }
+
 }

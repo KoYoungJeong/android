@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.network.dagger;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
-import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
 import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenterImpl;
 import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
@@ -43,8 +42,6 @@ public interface ApiClientComponent {
     void inject(OpenAction openAction);
 
     void inject(TeamDomainInfoModel teamDomainInfoModel);
-
-    void inject(AccountHomeModel accountHomeModel);
 
     void inject(ShareModel shareModel);
 

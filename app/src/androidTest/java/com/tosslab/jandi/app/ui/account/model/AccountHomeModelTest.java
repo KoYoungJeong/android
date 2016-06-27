@@ -3,12 +3,12 @@ package com.tosslab.jandi.app.ui.account.model;
 import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -25,6 +25,9 @@ import org.junit.runner.RunWith;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.Component;
 import rx.Observable;
 import setup.BaseInitUtil;
 
@@ -42,7 +45,8 @@ import static org.hamcrest.Matchers.notNullValue;
 @RunWith(AndroidJUnit4.class)
 public class AccountHomeModelTest {
 
-    private AccountHomeModel accountHomeModel;
+    @Inject
+    AccountHomeModel accountHomeModel;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -56,9 +60,10 @@ public class AccountHomeModelTest {
 
     @Before
     public void setUp() throws Exception {
-        accountHomeModel = AccountHomeModel_.getInstance_(JandiApplication.getContext());
+        DaggerAccountHomeModelTest_AccountHomeModelTestComponent.builder()
+                .build()
+                .inject(this);
     }
-
 
     @Test
     public void testGetTeamInfos() throws Exception {
@@ -216,5 +221,10 @@ public class AccountHomeModelTest {
     @Test
     public void testCheckAccount() throws Exception {
         assertThat(accountHomeModel.checkAccount(), is(true));
+    }
+
+    @Component(modules = ApiClientModule.class)
+    public interface AccountHomeModelTestComponent {
+        void inject(AccountHomeModelTest test);
     }
 }

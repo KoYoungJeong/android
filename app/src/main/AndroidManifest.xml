@@ -75,7 +75,7 @@
             android:theme="@style/JandiTheme.PushIntro" />
 
         <activity
-            android:name=".ui.account.AccountHomeActivity_"
+            android:name=".ui.account.AccountHomeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_select_team"
             android:screenOrientation="portrait"

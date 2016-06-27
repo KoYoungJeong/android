@@ -3,11 +3,14 @@ package com.tosslab.jandi.app.ui.maintab.topic.views.create.model;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
+import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
@@ -86,7 +89,9 @@ public class TopicCreateModelTest {
             String topicName = "haha" + new Date().toString();
             String topicDescription = "haha2" + new Date().toString();
             Topic topic = topicCreateModel.createTopic(topicName, false, topicDescription, false);
-            Thread.sleep(200);
+            InitialInfo initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
+            InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+            TeamInfoLoader.getInstance().refresh();
 
             // Then
             TopicRoom entity = TeamInfoLoader.getInstance().getTopic(topic.getId());

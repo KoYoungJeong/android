@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.services.socket;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -105,7 +104,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicUnstarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicUpdatedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
+import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -311,8 +310,7 @@ public class JandiSocketServiceModel {
             long messageId = data.getMessageId();
             MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
 
-            boolean isChat = ChatRepository.getInstance().isChat(roomId);
-            if (isChat) {
+            if (ChatRepository.getInstance().isChat(roomId)) {
                 Chat chat = ChatRepository.getInstance().getChat(roomId);
                 if (chat.getReadLinkId() <= linkId) {
                     ChatRepository.getInstance().updateUnreadCount(roomId, chat.getUnreadCount() - 1);
@@ -320,11 +318,13 @@ public class JandiSocketServiceModel {
                 if (data.getLinkId() >= chat.getLastMessage().getId()) {
                     ChatRepository.getInstance().updateLastMessage(roomId, linkId, "", "archived");
                 }
-            } else {
+            } else if (TopicRepository.getInstance().isTopic(roomId)) {
                 Topic topic = TopicRepository.getInstance().getTopic(roomId);
                 if (topic.getReadLinkId() <= linkId) {
                     TopicRepository.getInstance().updateUnreadCount(roomId, topic.getUnreadCount() - 1);
                 }
+            } else {
+                return;
             }
             TeamInfoLoader.getInstance().refresh();
 
@@ -810,9 +810,7 @@ public class JandiSocketServiceModel {
                                     .getString(R.string.jandi_your_access_disabled, team.getName());
                             ColoredToast.showError(teamName);
                             AccountRepository.getRepository().removeSelectedTeamInfo();
-                            AccountHomeActivity_.intent(JandiApplication.getContext())
-                                    .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    .start();
+                            AccountHomeActivity.startActivity(JandiApplication.getContext(), true);
 
                             InitialInfoRepository.getInstance().removeInitialInfo(data.getTeamId());
                             JandiPreference.setSocketConnectedLastTime(-1);
@@ -852,9 +850,7 @@ public class JandiSocketServiceModel {
                             ColoredToast.showError(deletedTeam);
 
                             AccountRepository.getRepository().removeSelectedTeamInfo();
-                            AccountHomeActivity_.intent(JandiApplication.getContext())
-                                    .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    .start();
+                            AccountHomeActivity.startActivity(JandiApplication.getContext(), true);
 
                             InitialInfoRepository.getInstance().removeInitialInfo(teamId);
                             JandiPreference.setSocketConnectedLastTime(-1);

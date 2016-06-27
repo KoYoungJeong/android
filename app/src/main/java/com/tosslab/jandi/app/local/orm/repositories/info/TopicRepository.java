@@ -284,6 +284,11 @@ public class TopicRepository extends LockExecutorTemplate {
                 Dao<Topic, Long> topicDao = getHelper().getDao(Topic.class);
 
                 Topic topic = topicDao.queryForId(topicId);
+
+                if (topic == null) {
+                    return true;
+                }
+
                 Topic.Announcement announcement = topic.getAnnouncement();
                 if (announcement == null) {
                     return true;
