@@ -307,14 +307,23 @@ public class JandiSocketServiceModel {
 
             SocketMessageDeletedEvent.Data data = event.getData();
             long roomId = data.getRoomId();
+            long linkId = data.getLinkId();
             long messageId = data.getMessageId();
             MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
 
             boolean isChat = ChatRepository.getInstance().isChat(roomId);
             if (isChat) {
                 Chat chat = ChatRepository.getInstance().getChat(roomId);
+                if (chat.getReadLinkId() <= linkId) {
+                    ChatRepository.getInstance().updateUnreadCount(roomId, chat.getUnreadCount() - 1);
+                }
                 if (data.getLinkId() >= chat.getLastMessage().getId()) {
-                    ChatRepository.getInstance().updateLastMessage(roomId, data.getLinkId(), "", "archived");
+                    ChatRepository.getInstance().updateLastMessage(roomId, linkId, "", "archived");
+                }
+            } else {
+                Topic topic = TopicRepository.getInstance().getTopic(roomId);
+                if (topic.getReadLinkId() <= linkId) {
+                    TopicRepository.getInstance().updateUnreadCount(roomId, topic.getUnreadCount() - 1);
                 }
             }
             TeamInfoLoader.getInstance().refresh();
@@ -1111,7 +1120,7 @@ public class JandiSocketServiceModel {
             SocketTopicCreatedEvent event = getObject(object, SocketTopicCreatedEvent.class);
             Topic topic = event.getData().getTopic();
 
-            ArrayList<Marker> markers = new ArrayList<>();
+            List<Marker> markers = new ArrayList<>();
             for (Long memberId : topic.getMembers()) {
                 Marker marker = new Marker();
                 marker.setTopic(topic);
@@ -1119,7 +1128,10 @@ public class JandiSocketServiceModel {
                 marker.setReadLinkId(-1);
                 markers.add(marker);
             }
-
+            if (topic.getCreatorId() == TeamInfoLoader.getInstance().getMyId()) {
+                topic.setSubscribe(true);
+                topic.setIsJoined(true);
+            }
             topic.setMarkers(markers);
             TopicRepository.getInstance().addTopic(topic);
             JandiPreference.setSocketConnectedLastTime(event.getTs());

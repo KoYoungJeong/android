@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.network.models.ReqModifyTopicAutoJoin;
 import com.tosslab.jandi.app.network.models.ReqModifyTopicDescription;
 import com.tosslab.jandi.app.network.models.ReqModifyTopicName;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.start.Topic;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -27,7 +28,7 @@ public class ChannelApi extends ApiTemplate<ChannelApi.Api> {
     }
 
     // 채널 생성
-    public ResCommon createChannel(long teamId, ReqCreateTopic channel) throws RetrofitException {
+    public Topic createChannel(long teamId, ReqCreateTopic channel) throws RetrofitException {
         return call(() -> getApi().createChannel(teamId, channel));
     }
 
@@ -75,7 +76,7 @@ public class ChannelApi extends ApiTemplate<ChannelApi.Api> {
         // 채널 생성
         @POST("channel")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-        Call<ResCommon> createChannel(@Query("teamId") long teamId, @Body ReqCreateTopic channel);
+        Call<Topic> createChannel(@Query("teamId") long teamId, @Body ReqCreateTopic channel);
 
         @PUT("channels/{channelId}")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)

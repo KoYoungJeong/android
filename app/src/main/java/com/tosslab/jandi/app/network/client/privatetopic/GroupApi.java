@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.network.models.ReqModifyTopicDescription;
 import com.tosslab.jandi.app.network.models.ReqModifyTopicName;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.start.Topic;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -25,7 +26,7 @@ public class GroupApi extends ApiTemplate<GroupApi.Api> {
         super(Api.class, retrofitBuilder);
     }
 
-    public ResCommon createPrivateGroup(long teamId, ReqCreateTopic group) throws RetrofitException {
+    public Topic createPrivateGroup(long teamId, ReqCreateTopic group) throws RetrofitException {
         return call(() -> getApi().createPrivateGroup(teamId, group));
     }
 
@@ -62,7 +63,7 @@ public class GroupApi extends ApiTemplate<GroupApi.Api> {
         // Private Group 생성
         @POST("privateGroup")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-        Call<ResCommon> createPrivateGroup(@Query("teamId") long teamId, @Body ReqCreateTopic group);
+        Call<Topic> createPrivateGroup(@Query("teamId") long teamId, @Body ReqCreateTopic group);
 
         // Private Group 수정
         @PUT("privateGroups/{groupId}")

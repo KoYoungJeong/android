@@ -312,7 +312,8 @@ public class TopicRepository extends LockExecutorTemplate {
                 InitialInfo initialInfo = new InitialInfo();
                 initialInfo.setTeamId(topic.getTeamId());
                 topic.setInitialInfo(initialInfo);
-                return dao.create(topic) > 0;
+                dao.createIfNotExists(topic);
+                return true;
             } catch (SQLException e) {
                 e.printStackTrace();
             }

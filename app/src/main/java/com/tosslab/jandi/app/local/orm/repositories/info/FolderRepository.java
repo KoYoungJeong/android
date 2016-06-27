@@ -30,7 +30,11 @@ public class FolderRepository extends LockExecutorTemplate {
         return execute(() -> {
             try {
                 Dao<Folder, ?> dao = getHelper().getDao(Folder.class);
-                return dao.queryForEq("initialInfo_id", teamId);
+                return dao.queryBuilder()
+                        .orderBy("seq", true)
+                        .where()
+                        .eq("initialInfo_id", teamId)
+                        .query();
             } catch (SQLException e) {
                 e.printStackTrace();
             }

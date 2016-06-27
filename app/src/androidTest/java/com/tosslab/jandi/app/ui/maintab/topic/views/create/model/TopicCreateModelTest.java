@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
-import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 
@@ -57,22 +57,22 @@ public class TopicCreateModelTest {
             // When
             String topicName = "haha_" + new Date().toString();
             String topicDescription = "haha2";
-            ResCommon topic = topicCreateModel.createTopic(topicName, true, topicDescription, true);
+            Topic topic = topicCreateModel.createTopic(topicName, true, topicDescription, true);
 
             // Then
             assertThat(topic, is(notNullValue()));
-            assertThat(topic.id, is(greaterThanOrEqualTo(0L)));
+            assertThat(topic.getId(), is(greaterThanOrEqualTo(0L)));
 
             // Restore
             new ChannelApi(RetrofitBuilder.getInstance())
-                    .deleteTopic(topic.id, new ReqDeleteTopic(TeamInfoLoader.getInstance().getTeamId()));
+                    .deleteTopic(topic.getId(), new ReqDeleteTopic(TeamInfoLoader.getInstance().getTeamId()));
         }
 
         {
             // When
             String topicName = "haha";
             String topicDescription = "haha2";
-            ResCommon topic = null;
+            Topic topic = null;
             try {
                 topic = topicCreateModel.createTopic(topicName, false, topicDescription, true);
                 fail("절대로 성공하면 안됨");
@@ -85,11 +85,11 @@ public class TopicCreateModelTest {
             // When
             String topicName = "haha" + new Date().toString();
             String topicDescription = "haha2" + new Date().toString();
-            ResCommon topic = topicCreateModel.createTopic(topicName, false, topicDescription, false);
+            Topic topic = topicCreateModel.createTopic(topicName, false, topicDescription, false);
             Thread.sleep(200);
 
             // Then
-            TopicRoom entity = TeamInfoLoader.getInstance().getTopic(topic.id);
+            TopicRoom entity = TeamInfoLoader.getInstance().getTopic(topic.getId());
             assertThat(entity, is(notNullValue()));
             assertThat(entity.getName(), is(equalTo(topicName)));
             assertThat(entity.getDescription(), is(equalTo(topicDescription)));
@@ -97,7 +97,7 @@ public class TopicCreateModelTest {
 
             // Restore
             new GroupApi(RetrofitBuilder.getInstance())
-                    .deleteGroup(TeamInfoLoader.getInstance().getTeamId(), topic.id);
+                    .deleteGroup(TeamInfoLoader.getInstance().getTeamId(), topic.getId());
         }
 
     }
