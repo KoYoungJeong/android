@@ -102,6 +102,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     @Override
     public void onJoinedTeamSelect(long teamId) {
 
+        view.showProgressWheel();
         Observable.defer(() -> {
             accountHomeModel.updateSelectTeam(teamId);
             try {
@@ -111,7 +112,6 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
                 return Observable.error(e);
             }
         })
-                .doOnSubscribe(() -> view.showProgressWheel())
                 .doOnNext(initialInfo -> {
                     accountHomeModel.updateEntityInfo(initialInfo);
                     TeamInfoLoader.getInstance().refresh();
@@ -146,7 +146,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @Override
     public void onChangeName(String newName) {
-
+        view.showProgressWheel();
         Observable.defer(() -> {
             try {
                 ResAccountInfo resAccountInfo = accountHomeModel.updateAccountName(newName);
@@ -155,7 +155,6 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
                 return Observable.error(e);
             }
         })
-                .doOnSubscribe(() -> view.showProgressWheel())
                 .doOnNext(resAccountInfo -> {
                     accountHomeModel.trackChangeAccountNameSuccess(JandiApplication.getContext(), resAccountInfo.getId());
                     AccountRepository.getRepository().updateAccountName(resAccountInfo.getName());
@@ -209,6 +208,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     @Override
     public void onRequestJoin(Team selectedTeam) {
 
+        view.showProgressWheel();
         Observable.defer(() -> {
             try {
                 accountHomeModel.acceptOrDeclineInvite(
@@ -218,7 +218,6 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
                 return Observable.error(e);
             }
         })
-                .doOnSubscribe(() -> view.showProgressWheel())
                 .doOnNext(team -> {
                     try {
                         accountHomeModel.updateTeamInfo(selectedTeam.getTeamId());
@@ -276,6 +275,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     @Override
     public void onRequestIgnore(Team selectedTeam, boolean showErrorToast) {
 
+        view.showProgressWheel();
         Observable.defer(() -> {
             try {
                 accountHomeModel.acceptOrDeclineInvite(
@@ -285,7 +285,6 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
                 return Observable.error(e);
             }
         })
-                .doOnSubscribe(() -> view.showProgressWheel())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(team -> {
