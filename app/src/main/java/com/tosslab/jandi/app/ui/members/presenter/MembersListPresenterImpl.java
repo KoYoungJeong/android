@@ -10,6 +10,8 @@ import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.InvitationSuccessEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
+import com.tosslab.jandi.app.events.team.TeamJoinEvent;
+import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -45,6 +47,8 @@ import java.util.concurrent.TimeUnit;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 /**
@@ -77,10 +81,12 @@ public class MembersListPresenterImpl implements MembersListPresenter {
         objectPublishSubject = PublishSubject.create();
         subscribe = objectPublishSubject
                 .throttleWithTimeout(300, TimeUnit.MILLISECONDS)
+                .observeOn(Schedulers.io())
                 .map(s -> {
                     List<ChatChooseItem> members = getChatChooseItems();
                     return getFilteredChatChooseItems(s, members);
                 })
+                .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(topicMembers -> {
                     view.dismissProgressWheel();
                     view.showListMembers(topicMembers);
@@ -202,6 +208,14 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                 .start();
 
         AnalyticsUtil.sendEvent(getScreen(), AnalyticsUtil.getProfileAction(event.userId, event.from));
+    }
+
+    public void onEvent(TeamJoinEvent event) {
+        objectPublishSubject.onNext(view.getSearchText());
+    }
+
+    public void onEvent(TeamLeaveEvent event) {
+        objectPublishSubject.onNext(view.getSearchText());
     }
 
     @Background

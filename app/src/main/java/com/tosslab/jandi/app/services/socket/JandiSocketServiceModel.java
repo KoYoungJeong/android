@@ -594,7 +594,7 @@ public class JandiSocketServiceModel {
                     getObject(object, SocketTopicPushEvent.class);
 
             SocketTopicPushEvent.Data data = socketTopicPushEvent.getData();
-            int roomId = data.getRoomId();
+            long roomId = data.getRoomId();
             boolean subscribe = data.isSubscribe();
             JandiPreference.setSocketConnectedLastTime(socketTopicPushEvent.getTs());
             TopicRepository.getInstance().updatePushSubscribe(roomId, subscribe);

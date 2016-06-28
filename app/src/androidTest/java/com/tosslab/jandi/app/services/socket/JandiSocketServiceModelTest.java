@@ -45,6 +45,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamNameUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicLeftEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicUpdatedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -73,6 +74,7 @@ public class JandiSocketServiceModelTest {
     private static long teamId;
     @Inject
     JandiSocketServiceModel model;
+    private boolean[] accept;
 
     @BeforeClass
     public static void beforeClass() {
@@ -86,7 +88,7 @@ public class JandiSocketServiceModelTest {
                 .socketServiceModule(new SocketServiceModule(JandiApplication.getContext()))
                 .build()
                 .inject(JandiSocketServiceModelTest.this);
-
+        accept[0] = false;
     }
 
     @Test
@@ -100,7 +102,6 @@ public class JandiSocketServiceModelTest {
     @Test
     public void testOnTeamNameUpdated() throws Exception {
 
-        final boolean[] accept = new boolean[1];
         register((TeamInfoChangeEvent o) -> accept[0] = true);
 
         SocketTeamNameUpdatedEvent event = createEvent(SocketTeamNameUpdatedEvent.class);
@@ -135,7 +136,6 @@ public class JandiSocketServiceModelTest {
 
     @Test
     public void testOnFileCommentCreated() throws Exception {
-        final boolean[] accept = {false};
         register((FileCommentRefreshEvent event) -> accept[0] = true);
         SocketFileCommentCreatedEvent event = createEvent(SocketFileCommentCreatedEvent.class);
         event.setFile(new SocketFileCommentCreatedEvent.EventFileInfo());
@@ -149,7 +149,6 @@ public class JandiSocketServiceModelTest {
     @Test
     public void testOnFileCommentDeleted() throws Exception {
 
-        final boolean[] accept = {false};
         register((FileCommentRefreshEvent event) -> accept[0] = true);
 
         SocketFileCommentDeletedEvent event = createEvent(SocketFileCommentDeletedEvent.class);
@@ -165,7 +164,6 @@ public class JandiSocketServiceModelTest {
     @Test
     public void testOnMessageDeleted() throws Exception {
 
-        final boolean[] accept = new boolean[1];
         final SocketMessageDeletedEvent[] acceptEvent = new SocketMessageDeletedEvent[1];
         register((SocketMessageDeletedEvent event) -> {
             accept[0] = true;
@@ -186,7 +184,6 @@ public class JandiSocketServiceModelTest {
     @Test
     public void testOnTopicUpdated() throws Exception {
 
-        final boolean[] accept = new boolean[1];
         final long[] acceptId = new long[1];
         register((TopicInfoUpdateEvent event) -> {
             accept[0] = true;
@@ -207,7 +204,6 @@ public class JandiSocketServiceModelTest {
 
     @Test
     public void testOnChatClosed() throws Exception {
-        final boolean[] accept = new boolean[1];
         register((ChatListRefreshEvent event) -> {
             accept[0] = true;
         });
@@ -225,7 +221,6 @@ public class JandiSocketServiceModelTest {
 
     @Test
     public void testOnChatCreated() throws Exception {
-        final boolean[] accept = {false};
         register((ChatListRefreshEvent event) -> {
             accept[0] = true;
         });
@@ -268,7 +263,6 @@ public class JandiSocketServiceModelTest {
 
     @Test
     public void testOnTopicLeft() throws Exception {
-        final boolean[] accept = new boolean[1];
         final long[] leftTopicId = new long[1];
         final long[] leftTeamId = new long[1];
         register((TopicDeleteEvent event) -> {
@@ -291,7 +285,6 @@ public class JandiSocketServiceModelTest {
 
     @Test
     public void testOnMemberStarred() throws Exception {
-        final boolean[] accept = new boolean[1];
         register((MemberStarredEvent event) -> {
             accept[0] = true;
         });
@@ -308,7 +301,6 @@ public class JandiSocketServiceModelTest {
 
     @Test
     public void testOnFileUnshared() throws Exception {
-        final boolean[] accept = new boolean[1];
         register((UnshareFileEvent event) -> {
             accept[0] = true;
         });
@@ -327,7 +319,6 @@ public class JandiSocketServiceModelTest {
 
     @Test
     public void testOnFileShared() throws Exception {
-        final boolean[] accept = new boolean[1];
         register((ShareFileEvent event) -> {
             accept[0] = true;
         });
@@ -340,7 +331,6 @@ public class JandiSocketServiceModelTest {
 
     @Test
     public void testOnRoomMarkerUpdated() throws Exception {
-        final boolean[] accept = new boolean[1];
         register((SocketRoomMarkerEvent event) -> {
             accept[0] = true;
         });
@@ -354,7 +344,6 @@ public class JandiSocketServiceModelTest {
 
     @Test
     public void testOnLinkPreviewCreated() throws Exception {
-        final boolean[] accept = new boolean[1];
         register((LinkPreviewUpdateEvent event) -> {
             accept[0] = true;
         });
@@ -390,7 +379,6 @@ public class JandiSocketServiceModelTest {
     @Ignore
     @Test
     public void testOnLinkPreviewImage() throws Exception {
-        final boolean[] accept = new boolean[1];
         register((LinkPreviewUpdateEvent event) -> {
             accept[0] = true;
         });
@@ -408,7 +396,6 @@ public class JandiSocketServiceModelTest {
     @Test
     public void testOnAnnouncementCreated() throws Exception {
 
-        final boolean[] accept = new boolean[1];
         register((SocketAnnouncementCreatedEvent event) -> {
             accept[0] = true;
         });
@@ -426,7 +413,6 @@ public class JandiSocketServiceModelTest {
     @Test
     public void testOnAnnouncementDeleted() throws Exception {
 
-        final boolean[] accept = new boolean[1];
         register((SocketAnnouncementDeletedEvent event) -> {
             accept[0] = true;
         });
@@ -441,6 +427,24 @@ public class JandiSocketServiceModelTest {
     @Test
     public void testOnRoomSubscriptionUpdated() throws Exception {
 
+
+        register((SocketTopicPushEvent e) -> {
+            accept[0] = true;
+        });
+
+        SocketTopicPushEvent event = createEvent(SocketTopicPushEvent.class);
+        SocketTopicPushEvent.Data data = new SocketTopicPushEvent.Data();
+        data.setRoomId(TeamInfoLoader.getInstance().getDefaultTopicId());
+        data.setSubscribe(false);
+        event.setData(data);
+        model.onRoomSubscriptionUpdated(event);
+
+        assertThat(accept[0]).isTrue();
+
+        assertThat(TeamInfoLoader.getInstance()
+                .getTopic(TeamInfoLoader.getInstance().getDefaultTopicId())
+                .isPushSubscribe())
+                .isFalse();
     }
 
     @Test
@@ -586,7 +590,6 @@ public class JandiSocketServiceModelTest {
     @Test
     public void testOnAnnouncementStatusUpdated() throws Exception {
 
-        final boolean[] accept = new boolean[1];
         final Pair<Long, Boolean>[] pair = new Pair[1];
         register((AnnouncementUpdatedEvent event) -> {
             accept[0] = true;
@@ -611,7 +614,6 @@ public class JandiSocketServiceModelTest {
     @Test
     public void testOnTeamUpdated() throws Exception {
 
-        final boolean[] accept = new boolean[1];
         register((TeamInfoChangeEvent event) -> {
             accept[0] = true;
         });
