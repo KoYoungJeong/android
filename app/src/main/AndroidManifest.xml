@@ -392,7 +392,7 @@
         </activity>
 
         <activity
-            android:name=".push.PushInterfaceActivity_"
+            android:name=".push.PushInterfaceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/JandiTheme.PushIntro" />

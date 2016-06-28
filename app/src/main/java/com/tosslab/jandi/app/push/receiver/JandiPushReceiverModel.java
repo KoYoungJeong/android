@@ -20,7 +20,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.domain.PushHistory;
 import com.tosslab.jandi.app.local.orm.repositories.PushHistoryRepository;
-import com.tosslab.jandi.app.push.PushInterfaceActivity_;
+import com.tosslab.jandi.app.push.PushInterfaceActivity;
 import com.tosslab.jandi.app.push.to.BaseMessagePushInfo;
 import com.tosslab.jandi.app.push.to.CommentPushInfo;
 import com.tosslab.jandi.app.push.to.FilePushInfo;
@@ -46,20 +46,7 @@ public class JandiPushReceiverModel {
 
     public PendingIntent generatePendingIntent(Context context, long chatId, int chatType, long teamId, String roomType) {
 
-        PushInterfaceActivity_.IntentBuilder_ intentBuilder = PushInterfaceActivity_.intent(context);
-        intentBuilder.flags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_CLEAR_TOP
-                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-        if (chatType >= 0 && chatId >= 0) {
-            intentBuilder.entityId(chatId)
-                    .entityType(chatType)
-                    .isFromPush(true)
-                    .teamId(teamId)
-                    .roomType(roomType);
-        }
-
-        Intent intent = intentBuilder.get();
+        Intent intent = PushInterfaceActivity.getIntent(context, chatId, chatType, true, teamId, roomType);
 
         // 노티피케이션은 해제 됐지만 PendingIntent 가 살아있는 경우가 있어 cancel 을 호출해줌.
         PendingIntent.getActivity(context,
@@ -85,7 +72,7 @@ public class JandiPushReceiverModel {
     public String getPlainMarkdownContent(Context context, BaseMessagePushInfo messagePushInfo) {
 
         String originMessage = "";
-        if(isStickerMessage(messagePushInfo)) {
+        if (isStickerMessage(messagePushInfo)) {
             originMessage = "(Sticker)";
         } else if (messagePushInfo instanceof MessagePushInfo) {
             originMessage = ((MessagePushInfo) messagePushInfo).getMessageContent().getBody();
