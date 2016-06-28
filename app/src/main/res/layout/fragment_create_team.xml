@@ -27,7 +27,7 @@
             android:layout_marginTop="19dp"
             android:gravity="center_horizontal"
             android:lineSpacingExtra="1dp"
-            android:text="새로운 팀 생성을 위한\n 기본 정보를 입력해 주세요."
+            android:text="@string/jandi_team_create_input_info"
             android:textColor="@color/dark_gray"
             android:textSize="14dp" />
 
@@ -83,7 +83,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:gravity="center_horizontal"
-            android:text="최대 20자까지 사용 가능합니다"
             android:textColor="@color/jandi_error_red"
             android:textSize="11dp"
             android:visibility="invisible" />
@@ -102,7 +101,7 @@
             android:layout_marginTop="12dp"
             android:gravity="center_horizontal"
             android:lineSpacingExtra="3dp"
-            android:text="팀 도메인은 웹에서 잔디를 접속할 때\n 사용하는 바로가기 주소입니다."
+            android:text="@string/jandi_team_create_domain_info"
             android:textColor="@color/jandi_border_gray" />
 
 
@@ -149,7 +148,6 @@
             android:layout_marginTop="5dp"
             android:gravity="center_horizontal"
             android:maxLines="2"
-            android:text="알파벳 3자 이상 입력해주세요."
             android:textColor="@color/jandi_error_red"
             android:textSize="11dp"
             android:visibility="gone" />

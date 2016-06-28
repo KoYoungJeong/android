@@ -117,7 +117,7 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
         tvTeamNameLength.setBackgroundDrawable(
                 getResources().getDrawable(R.drawable.profile_text_input2_bg_error_right));
         tvTeamNameInsertError.setVisibility(View.VISIBLE);
-        tvTeamNameInsertError.setText("최대 20자까지 사용 가능합니다");
+        tvTeamNameInsertError.setText(getString(R.string.jandi_team_create_name_length_invalid));
     }
 
     public void hideTeamNameError() {
@@ -135,7 +135,7 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
         tvDomainTail.setBackgroundDrawable(
                 getResources().getDrawable(R.drawable.profile_text_input2_bg_error_right));
         tvTeamDomainInsertError.setVisibility(View.VISIBLE);
-        tvTeamDomainInsertError.setText("알파벳,숫자 또는 (-)만 입력 가능합니다");
+        tvTeamDomainInsertError.setText(getString(R.string.jandi_team_create_domain_invalid));
         isShownTeamDomainError = true;
     }
 
@@ -146,7 +146,7 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
         tvDomainTail.setBackgroundDrawable(
                 getResources().getDrawable(R.drawable.profile_text_input2_bg_error_right));
         tvTeamDomainInsertError.setVisibility(View.VISIBLE);
-        tvTeamDomainInsertError.setText("알파벳 3자 이상 입력해 주세요");
+        tvTeamDomainInsertError.setText(getString(R.string.jandi_team_create_domain_length_invalid));
         isShownTeamDomainError = true;
     }
 

@@ -173,6 +173,10 @@
 	<string name="jandi_create_team_message">"メールアドレスを入力してください。チームの作成方法をお送りします"</string>
 	<string name="jandi_create_topic">"トピック作成"</string>
 	<string name="jandi_created_this_topic">"%sさんがこのトピックを作成しました"</string>
+	<string name="jandi_date_days">"日"</string>
+	<string name="jandi_date_hours">"時"</string>
+	<string name="jandi_date_minutes">"分"</string>
+	<string name="jandi_date_remaining">"残り"</string>
 	<string name="jandi_decide_choose">"写真を選択"</string>
 	<string name="jandi_delete_succeed">"%sが削除されました"</string>
 	<string name="jandi_deleted_file">"削除されたファイル"</string>
@@ -518,6 +522,11 @@
 	<string name="jandi_tab_topic">"トピックス"</string>
 	<string name="jandi_tab_tos_and_pp">"「次へ」をクリックすることによって、弊社のサービス%1$sと%2$sに同意いただいたことになります。"</string>
 	<string name="jandi_team">"チーム"</string>
+	<string name="jandi_team_create_domain_info">"チームドメインURLを指定してショー\nトカットアドレスに使うことができます。"</string>
+	<string name="jandi_team_create_domain_invalid">"英数字または(-)のみ入力してください。"</string>
+	<string name="jandi_team_create_domain_length_invalid">"3文字以上入力してください。"</string>
+	<string name="jandi_team_create_input_info">"新しいチーム作成のために\n情報を入力してください。"</string>
+	<string name="jandi_team_create_name_length_invalid">"最大20文字まで入力できます。"</string>
 	<string name="jandi_team_creation_succeed">"チームの作成に成功しました。メールを確認してください"</string>
 	<string name="jandi_team_info">"チーム"</string>
 	<string name="jandi_team_join_fail">"チーム参加の際にエラーが発生しました。もう一度お試しください"</string>

@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:gravity="center_horizontal"
-        android:text="지금 바로 멤버들을 초대하세요!"
+        android:text="@string/jandi_member_invite_popup_1"
         android:textColor="@color/dark_gray"
         android:textSize="14dp" />
 

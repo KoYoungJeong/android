@@ -173,6 +173,10 @@
 	<string name="jandi_create_team_message">"請提供您的電子郵件地址以免費地建立新的JANDI團隊!"</string>
 	<string name="jandi_create_topic">"建立議題"</string>
 	<string name="jandi_created_this_topic">"%s建立了這議題"</string>
+	<string name="jandi_date_days">"日"</string>
+	<string name="jandi_date_hours">"時"</string>
+	<string name="jandi_date_minutes">"分"</string>
+	<string name="jandi_date_remaining">"剩餘時間"</string>
 	<string name="jandi_decide_choose">"選擇照片"</string>
 	<string name="jandi_delete_succeed">"%s已被刪除"</string>
 	<string name="jandi_deleted_file">"已刪除檔案"</string>
@@ -517,6 +521,11 @@
 	<string name="jandi_tab_topic">"議題"</string>
 	<string name="jandi_tab_tos_and_pp">"點擊「下一步」即表示您同意%1$s和%2$s。"</string>
 	<string name="jandi_team">"團隊"</string>
+	<string name="jandi_team_create_domain_info">"想要給您的JANDI\n團隊設定什麼網址？"</string>
+	<string name="jandi_team_create_domain_invalid">"僅限英文字母、數字和連字符(-)"</string>
+	<string name="jandi_team_create_domain_length_invalid">"至少使用3個字元"</string>
+	<string name="jandi_team_create_input_info">"想要怎麼稱呼您的\nJANDI團隊？"</string>
+	<string name="jandi_team_create_name_length_invalid">"團隊名稱最多為20個字元"</string>
 	<string name="jandi_team_creation_succeed">"團隊建立成功！請查看您的電子郵件。"</string>
 	<string name="jandi_team_info">"團隊"</string>
 	<string name="jandi_team_join_fail">"處理過程中發生錯誤。請再試一次。"</string>

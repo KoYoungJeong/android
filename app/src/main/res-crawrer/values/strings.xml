@@ -173,6 +173,10 @@
 	<string name="jandi_create_team_message">"Provide your email address below to create a JANDI team for free!"</string>
 	<string name="jandi_create_topic">"Create a topic"</string>
 	<string name="jandi_created_this_topic">"%s created this topic"</string>
+	<string name="jandi_date_days">"D"</string>
+	<string name="jandi_date_hours">"H"</string>
+	<string name="jandi_date_minutes">"M"</string>
+	<string name="jandi_date_remaining">"remaining"</string>
 	<string name="jandi_decide_choose">"Select"</string>
 	<string name="jandi_delete_succeed">"%s has been deleted"</string>
 	<string name="jandi_deleted_file">"Deleted File"</string>
@@ -517,6 +521,11 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_tab_topic">"Topics"</string>
 	<string name="jandi_tab_tos_and_pp">"By tapping Next, I agree to the \n%1$s and %2$s."</string>
 	<string name="jandi_team">"Team"</string>
+	<string name="jandi_team_create_domain_info">"What web address do you want \nfor your JANDI team?"</string>
+	<string name="jandi_team_create_domain_invalid">"Letters, numbers, and hyphens only."</string>
+	<string name="jandi_team_create_domain_length_invalid">"Use at least 3 characters."</string>
+	<string name="jandi_team_create_input_info">"What do you want to call\n your JANDI team?"</string>
+	<string name="jandi_team_create_name_length_invalid">"Team name can be at most 20 characters."</string>
 	<string name="jandi_team_creation_succeed">"Success! Please check your email."</string>
 	<string name="jandi_team_info">"Team"</string>
 	<string name="jandi_team_join_fail">"There was an issue processing your invitation and joining the team. Please try again."</string>
