@@ -1147,6 +1147,8 @@ public class JandiSocketServiceModel {
             RoomMarkerRepository.getInstance().upsertRoomMarker(data.getTopicId(), data.getMemberId(), -1);
             if (SelfRepository.getInstance().isMe(data.getMemberId())) {
                 TopicRepository.getInstance().updateTopicJoin(data.getTopicId(), true);
+                TopicRepository.getInstance().updatePushSubscribe(data.getTopicId(), true);
+                TopicRepository.getInstance().updateReadId(data.getTopicId(), -1);
             }
 
             JandiPreference.setSocketConnectedLastTime(event.getTs());
