@@ -21,8 +21,8 @@ import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.SignOutUtil;
@@ -158,9 +158,8 @@ public class BaseInitUtil {
                 topic.teamId = teamId;
                 topic.name = "테스트 토픽 : " + new Date();
                 topic.description = "테스트 토픽 입니다.";
-                ResCommon resCommon = null;
-                resCommon = new ChannelApi(RetrofitBuilder.getInstance()).createChannel(teamId, topic);
-                tempTopicId = resCommon.id;
+                Topic resCommon = new ChannelApi(RetrofitBuilder.getInstance()).createChannel(teamId, topic);
+                tempTopicId = resCommon.getId();
                 topicState = STATE_TEMP_TOPIC_CREATED;
             } catch (RetrofitException e) {
                 e.printStackTrace();

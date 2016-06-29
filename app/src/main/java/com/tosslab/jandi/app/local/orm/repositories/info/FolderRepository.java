@@ -30,7 +30,11 @@ public class FolderRepository extends LockExecutorTemplate {
         return execute(() -> {
             try {
                 Dao<Folder, ?> dao = getHelper().getDao(Folder.class);
-                return dao.queryForEq("initialInfo_id", teamId);
+                return dao.queryBuilder()
+                        .orderBy("seq", true)
+                        .where()
+                        .eq("initialInfo_id", teamId)
+                        .query();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -47,7 +51,8 @@ public class FolderRepository extends LockExecutorTemplate {
                 info.setTeamId(teamId);
                 folder.setInitialInfo(info);
 
-                return dao.create(folder) > 0;
+                dao.createIfNotExists(folder);
+                return true;
             } catch (SQLException e) {
                 e.printStackTrace();
                 return false;
@@ -131,6 +136,10 @@ public class FolderRepository extends LockExecutorTemplate {
                 Dao<Folder, Long> dao = getHelper().getDao(Folder.class);
                 Folder folder = dao.queryForId(folderId);
                 Collection<Long> rooms = folder.getRooms();
+                if (rooms == null) {
+                    rooms = new ArrayList<Long>();
+                    folder.setRooms(rooms);
+                }
                 if (!rooms.contains(roomId)) {
                     rooms.add(roomId);
                     return dao.update(folder) > 0;
@@ -151,7 +160,7 @@ public class FolderRepository extends LockExecutorTemplate {
                 Dao<Folder, Long> dao = getHelper().getDao(Folder.class);
                 Folder folder = dao.queryForId(folderId);
                 Collection<Long> rooms = folder.getRooms();
-                if (rooms.contains(roomId)) {
+                if (rooms != null && rooms.contains(roomId)) {
                     rooms.remove(roomId);
                     return dao.update(folder) > 0;
                 } else {
@@ -213,7 +222,7 @@ public class FolderRepository extends LockExecutorTemplate {
                         .filter(folder -> {
                             for (Long roomId : roomIds) {
 
-                                if (folder.getRooms().contains(roomId)) {
+                                if (folder.getRooms() != null && folder.getRooms().contains(roomId)) {
                                     return true;
                                 }
                             }

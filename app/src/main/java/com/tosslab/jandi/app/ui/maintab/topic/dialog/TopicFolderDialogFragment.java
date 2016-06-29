@@ -14,7 +14,10 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
+import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.TopicFolderSettingModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -26,6 +29,8 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
+
+import de.greenrobot.event.EventBus;
 
 
 /**
@@ -139,6 +144,9 @@ public class TopicFolderDialogFragment extends DialogFragment {
     public void deleteTopicFolder(long folderId) {
         try {
             topicFolderDialogModel.deleteTopicFolder(folderId);
+            FolderRepository.getInstance().deleteFolder(folderId);
+            TeamInfoLoader.getInstance().refresh();
+            EventBus.getDefault().post(new TopicFolderRefreshEvent());
             showDeleteFolderToast();
             dismiss();
         } catch (RetrofitException retrofitError) {
@@ -150,6 +158,9 @@ public class TopicFolderDialogFragment extends DialogFragment {
     public void renameFolder(long folderId, String name, int seq) {
         try {
             topicFolderDialogModel.renameFolder(folderId, name, seq);
+            FolderRepository.getInstance().updateFolderName(folderId, name);
+            TeamInfoLoader.getInstance().refresh();
+            EventBus.getDefault().post(new TopicFolderRefreshEvent());
             showRenameFolderToast();
         } catch (RetrofitException e) {
             e.printStackTrace();

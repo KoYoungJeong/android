@@ -455,6 +455,10 @@ public class TeamInfoLoader {
         });
     }
 
+    public boolean isRoom(long roomId) {
+        return execute(() -> topicRooms.containsKey(roomId) || chatRooms.containsKey(roomId));
+    }
+
     public long getDefaultTopicId() {
         return getTopicObservable()
                 .takeFirst(Topic::isDefault)

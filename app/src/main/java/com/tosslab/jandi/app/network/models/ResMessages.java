@@ -348,16 +348,6 @@ public class ResMessages {
         public CommentMessage() {
             contentType = "comment";
         }
-
-        @Override
-        public String toString() {
-            return "CommentMessage{" +
-                    "shareEntities=" + shareEntities +
-                    ", mentions=" + mentions +
-                    ", content=" + content +
-                    ", pollId=" + pollId +
-                    '}';
-        }
     }
 
     @DatabaseTable(tableName = "message_file", daoClass = FileMessageDaoImpl.class)

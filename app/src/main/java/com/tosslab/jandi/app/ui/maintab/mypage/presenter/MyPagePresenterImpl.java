@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
@@ -12,6 +14,7 @@ import com.tosslab.jandi.app.ui.maintab.mypage.model.MyPageModel;
 import com.tosslab.jandi.app.ui.maintab.mypage.view.MyPageView;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -206,5 +209,65 @@ public class MyPagePresenterImpl implements MyPagePresenter {
 
             mentionInitializeQueueSubscription.unsubscribe();
         }
+    }
+
+    @Override
+    public void addMentionedMessage(ResMessages.Link link) {
+        Observable.just(link)
+                .observeOn(Schedulers.io())
+                .filter(link1 -> {
+                    if (link1.message instanceof ResMessages.TextMessage) {
+                        Collection<MentionObject> mentions = ((ResMessages.TextMessage) link1.message).mentions;
+                        return mentions != null && !mentions.isEmpty();
+                    } else if (link1.message instanceof ResMessages.CommentMessage) {
+                        Collection<MentionObject> mentions = ((ResMessages.CommentMessage) link1.message).mentions;
+                        return mentions != null && !mentions.isEmpty();
+                    } else {
+                        return false;
+                    }
+                })
+                .filter(link1 -> {
+                    Collection<MentionObject> mentions;
+                    if (link1.message instanceof ResMessages.TextMessage) {
+                        mentions = ((ResMessages.TextMessage) link1.message).mentions;
+                    } else {
+                        mentions = ((ResMessages.CommentMessage) link1.message).mentions;
+                    }
+                    return Observable.from(mentions)
+                            .takeFirst(mentionObject -> mentionObject.getId() == TeamInfoLoader.getInstance().getMyId())
+                            .map(it -> true)
+                            .toBlocking().firstOrDefault(false);
+                })
+                //내 메션인 있으면 멘션 메세지 받아오기
+                .map(link1 -> {
+                    long roomId = link1.roomId;
+                    String roomType;
+                    String roomName;
+                    String userName;
+                    String photoUrl;
+                    if (TeamInfoLoader.getInstance().isTopic(roomId)) {
+                        if (TeamInfoLoader.getInstance().isPublicTopic(roomId)) {
+                            roomType = "channel";
+                        } else {
+                            roomType = "privateGroup";
+                        }
+                        roomName = TeamInfoLoader.getInstance().getName(roomId);
+                        userName = TeamInfoLoader.getInstance().getName(link1.message.writerId);
+                        photoUrl = TeamInfoLoader.getInstance().getUser(link1.message.writerId).getPhotoUrl();
+                    } else {
+                        roomType = "user";
+                        roomName = TeamInfoLoader.getInstance().getName(link1.message.writerId);
+                        userName = TeamInfoLoader.getInstance().getName(link1.message.writerId);
+                        photoUrl = TeamInfoLoader.getInstance().getUser(link1.message.writerId).getPhotoUrl();
+                    }
+                    return MentionMessage.createForMentions(link1, roomType, roomName, userName, photoUrl);
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(mentionMessage -> {
+                    // 새로운 멘션 메세지 추가
+                    view.addNewMention(mentionMessage);
+                    view.notifyDataSetChanged();
+                }, t -> {LogUtil.d(TAG, t.getMessage());});
+
     }
 }

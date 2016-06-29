@@ -254,6 +254,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
                 .subscribe();
         List<Member> users = Observable.from(TeamInfoLoader.getInstance().getUserList())
                 .filter(User::isEnabled)
+                .filter(user -> !TeamInfoLoader.getInstance().isJandiBot(user.getId()))
                 .collect((Func0<ArrayList<Member>>) ArrayList::new, ArrayList::add)
                 .toBlocking().first();
         if (TeamInfoLoader.getInstance().hasJandiBot()) {

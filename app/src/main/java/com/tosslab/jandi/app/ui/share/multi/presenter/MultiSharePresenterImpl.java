@@ -5,9 +5,7 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -72,21 +70,10 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     public void onSelectTeam(long teamId) {
         shareTarget.setTeamId(teamId);
         Observable
-                .create((Subscriber<? super TeamInfoLoader> subscriber) -> {
-                    if (!shareModel.hasLeftSideMenu(shareTarget.getTeamId())) {
-                        try {
-                            InitialInfo initialInfo = shareModel.getInitialInfo(teamId);
-                            shareModel.updateInitialInfo(initialInfo);
-                            shareModel.refreshPollList(teamId);
-                        } catch (RetrofitException e) {
-                            subscriber.onError(e);
-                        }
-                    }
-
+                .defer(() -> {
                     teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
-                    subscriber.onNext(teamInfoLoader);
-                    subscriber.onCompleted();
-
+                    shareModel.refreshPollList(teamId);
+                    return Observable.just(teamInfoLoader);
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

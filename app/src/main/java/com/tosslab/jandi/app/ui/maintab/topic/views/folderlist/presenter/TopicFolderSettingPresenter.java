@@ -4,8 +4,10 @@ import android.support.v7.widget.RecyclerView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.ResCreateFolder;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter.TopicFolderMainAdapter;
@@ -18,7 +20,11 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 
 /**
@@ -41,7 +47,7 @@ public class TopicFolderSettingPresenter {
     }
 
     @Background
-    public void onRefreshFolders(long folderId) {
+    public void onRefreshFolders() {
         boolean hasFolder = false;
         List<Folder> folders = FolderRepository.getInstance().getFolders(TeamInfoLoader.getInstance().getTeamId());
 
@@ -56,8 +62,16 @@ public class TopicFolderSettingPresenter {
     @Background
     public void onCreateFolers(String title, long folderId) {
         try {
-            topicFolderChooseModel.createFolder(title);
-            onRefreshFolders(folderId);
+            ResCreateFolder folder = topicFolderChooseModel.createFolder(title);
+            Folder folder1 = new Folder();
+            folder1.setRooms(new ArrayList<>());
+            folder1.setOpened(false);
+            folder1.setName(folder.getName());
+            folder1.setId(folder.getId());
+            folder1.setSeq(folder.getSeq());
+            FolderRepository.getInstance().addFolder(TeamInfoLoader.getInstance().getTeamId(), folder1);
+            TeamInfoLoader.getInstance().refresh();
+            EventBus.getDefault().post(new TopicFolderRefreshEvent());
         } catch (RetrofitException e) {
             view.showAlreadyHasFolderToast();
             e.printStackTrace();
@@ -68,6 +82,9 @@ public class TopicFolderSettingPresenter {
     public void onDeleteItemFromFolder(long folderId, long topicId, String name) {
         try {
             topicFolderChooseModel.deleteItemFromFolder(folderId, topicId);
+            FolderRepository.getInstance().removeTopic(folderId, topicId);
+            TeamInfoLoader.getInstance().refresh();
+            EventBus.getDefault().post(new TopicFolderRefreshEvent());
             view.showRemoveFromFolderToast(name);
             view.finishAcitivty();
         } catch (RetrofitException retrofitError) {
@@ -80,6 +97,11 @@ public class TopicFolderSettingPresenter {
     public void onAddTopicIntoFolder(long folderId, long topicId, String name) {
         try {
             topicFolderChooseModel.addTopicIntoFolder(folderId, topicId);
+            long teamId = TeamInfoLoader.getInstance().getTeamId();
+            FolderRepository.getInstance().removeTopicOfTeam(teamId, Arrays.asList(topicId));
+            FolderRepository.getInstance().addTopic(folderId, topicId);
+            TeamInfoLoader.getInstance().refresh();
+            EventBus.getDefault().post(new TopicFolderRefreshEvent());
             view.showMoveToFolderToast(name);
             view.finishAcitivty();
         } catch (RetrofitException retrofitError) {
@@ -124,7 +146,9 @@ public class TopicFolderSettingPresenter {
     public void modifyNameFolder(long folderId, String name, int seq) {
         try {
             topicFolderSettingModel.renameFolder(folderId, name, seq);
-            onRefreshFolders(folderId);
+            FolderRepository.getInstance().updateFolderName(folderId, name);
+            TeamInfoLoader.getInstance().refresh();
+            EventBus.getDefault().post(new TopicFolderRefreshEvent());
             view.showFolderRenamedToast();
         } catch (RetrofitException e) {
             e.printStackTrace();
@@ -139,7 +163,9 @@ public class TopicFolderSettingPresenter {
     public void modifySeqFolder(long folderId, int seq) {
         try {
             topicFolderSettingModel.modifySeqFolder(folderId, seq);
-            onRefreshFolders(folderId);
+            FolderRepository.getInstance().updateFolderSeq(TeamInfoLoader.getInstance().getTeamId(), folderId, seq);
+            TeamInfoLoader.getInstance().refresh();
+            EventBus.getDefault().post(new TopicFolderRefreshEvent());
         } catch (RetrofitException e) {
             e.printStackTrace();
         }
@@ -149,7 +175,10 @@ public class TopicFolderSettingPresenter {
     public void removeFolder(long folderId) {
         try {
             topicFolderSettingModel.deleteTopicFolder(folderId);
-            onRefreshFolders(folderId);
+            FolderRepository.getInstance().deleteFolder(folderId);
+            TeamInfoLoader.getInstance().refresh();
+            EventBus.getDefault().post(new TopicFolderRefreshEvent());
+            onRefreshFolders();
             view.showDeleteFolderToast();
         } catch (Exception e) {
             e.printStackTrace();

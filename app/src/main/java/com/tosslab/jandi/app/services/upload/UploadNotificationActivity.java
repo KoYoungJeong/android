@@ -4,19 +4,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
-import com.tosslab.jandi.app.push.model.JandiInterfaceModel_;
+import com.tosslab.jandi.app.services.upload.dagger.DaggerUploadNotificationComponent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 
+import javax.inject.Inject;
+
 import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -24,6 +24,9 @@ public class UploadNotificationActivity extends BaseAppCompatActivity {
 
     public static String EXTRA_TEAM_ID = "teamId";
     public static String EXTRA_ENTITY_ID = "entityId";
+
+    @Inject
+    JandiInterfaceModel jandiInterfaceModel;
 
     private long teamId;
     private long entityId;
@@ -61,17 +64,13 @@ public class UploadNotificationActivity extends BaseAppCompatActivity {
             return;
         }
 
-        JandiInterfaceModel jandiInterfaceModel = JandiInterfaceModel_.getInstance_(JandiApplication.getContext());
+        DaggerUploadNotificationComponent.create().inject(this);
 
         teamId = intent.getLongExtra(EXTRA_TEAM_ID, -1);
         entityId = intent.getLongExtra(EXTRA_ENTITY_ID, -1);
 
         Observable
-                .create((Subscriber<? super Boolean> subscriber) -> {
-                    boolean success = jandiInterfaceModel.setupSelectedTeam(teamId);
-                    subscriber.onNext(success);
-                    subscriber.onCompleted();
-                })
+                .defer(() -> Observable.just(jandiInterfaceModel.setupSelectedTeam(teamId)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(success -> {

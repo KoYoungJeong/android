@@ -103,7 +103,7 @@ public class TeamsModel {
                     AccountRepository.getRepository().getSelectedTeamInfo();
             Observable.from(teams)
                     .filter(team -> selectedTeamInfo.getTeamId() == team.getTeamId())
-                    .subscribe(team -> team.setSelected(true));
+                    .subscribe(team -> team.setSelected(true), t -> {});
             subscriber.onNext(Pair.create(selectedTeamInfo.getTeamId(), teams));
             subscriber.onCompleted();
         });

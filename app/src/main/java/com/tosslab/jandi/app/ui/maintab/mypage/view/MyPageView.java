@@ -42,4 +42,6 @@ public interface MyPageView {
     void hideEmptyMentionView();
 
     void setPollBadgeCount(int pollCount);
+
+    void addNewMention(MentionMessage mentionMessages);
 }

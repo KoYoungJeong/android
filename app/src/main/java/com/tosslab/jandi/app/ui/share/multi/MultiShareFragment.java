@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.share.multi;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -29,7 +30,7 @@ import com.tosslab.jandi.app.ui.share.multi.dagger.DaggerMultiShareComponent;
 import com.tosslab.jandi.app.ui.share.multi.dagger.MultiShareModule;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenter;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
-import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
+import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -172,9 +173,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @OnClick(R.id.vg_multi_share_team)
     void onTeamNameClick() {
-        ShareSelectTeamActivity_
-                .intent(this)
-                .startForResult(REQ_SELECT_TEAM);
+        startActivity(new Intent(getActivity(), ShareSelectTeamActivity.class));
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TeamSelect);
     }

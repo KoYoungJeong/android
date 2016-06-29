@@ -1125,7 +1125,7 @@ public class MessageListV2Presenter {
         view.refreshMessages();
     }
 
-    public void updateStarredOfMessage(int messageId, boolean starred) {
+    public void updateStarredOfMessage(long messageId, boolean starred) {
         int index = adapterModel.indexByMessageId(messageId);
         adapterModel.modifyStarredStateByPosition(index, starred);
         view.refreshMessages();

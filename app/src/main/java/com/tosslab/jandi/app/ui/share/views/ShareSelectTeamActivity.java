@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.ui.share.views;
 
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,39 +13,54 @@ import android.view.MenuItem;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.share.views.adapter.ShareTeamsAdapter;
+import com.tosslab.jandi.app.ui.share.views.dagger.DaggerShareSelectRoomComponent;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
-
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import dagger.Lazy;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
-@EActivity(R.layout.activity_select_team)
 public class ShareSelectTeamActivity extends BaseAppCompatActivity implements ShareTeamsAdapter.OnItemClickListener {
 
-    @ViewById(R.id.lv_select_team)
+    @Bind(R.id.lv_select_team)
     RecyclerView lvSelectTeam;
 
 
+    @Inject
+    Lazy<StartApi> startApi;
     ShareTeamsAdapter adapter;
 
-    @AfterInject
-    void initObject() {
+    ProgressWheel progressWheel;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_select_team);
+        ButterKnife.bind(this);
+        DaggerShareSelectRoomComponent.create().inject(this);
+
         adapter = new ShareTeamsAdapter();
+        initViews();
+
     }
 
-    @AfterViews
+
     void initViews() {
         setupActionbar();
         lvSelectTeam.setLayoutManager(new LinearLayoutManager(this));
@@ -63,23 +80,29 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
         actionBar.setTitle(R.string.jandi_share_to_jandi);
     }
 
-    @Background
     void initTeams() {
-        List<Team> teams = Observable.from(AccountRepository.getRepository().getAccountTeams())
+        Observable.from(AccountRepository.getRepository().getAccountTeams())
                 .filter(userTeam -> !TextUtils.equals(userTeam.getStatus(), "pending"))
                 .map(Team::createTeam)
                 .collect(() -> new ArrayList<Team>(), ArrayList::add)
-                .toBlocking().firstOrDefault(new ArrayList<>());
-        ResAccountInfo.UserTeam selectedTeam = AccountRepository.getRepository().getSelectedTeamInfo();
-        for (Team team : teams) {
-            if (selectedTeam != null && selectedTeam.getTeamId() == team.getTeamId()) {
-                team.setSelected(true);
-            }
-        }
-        showTeamList(teams);
+                .doOnNext(teams -> {
+                    ResAccountInfo.UserTeam selectedTeam = AccountRepository.getRepository().getSelectedTeamInfo();
+                    if (selectedTeam == null) {
+                        return;
+                    } else {
+                        Observable.from(teams)
+                                .filter(team -> team.getTeamId() == selectedTeam.getTeamId())
+                                .subscribe(team -> {
+                                    team.setSelected(true);
+                                });
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::showTeamList);
+
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void showTeamList(List<Team> teams) {
         adapter.setItems(teams);
         adapter.notifyDataSetChanged();
@@ -97,11 +120,38 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
 
     @Override
     public void onItemClick(long teamId, String teamName) {
-        ShareSelectTeamEvent event = new ShareSelectTeamEvent();
-        event.setTeamId(teamId);
-        event.setTeamName(teamName);
-        EventBus.getDefault().post(event);
-        finish();
+
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+
+        progressWheel = new ProgressWheel(ShareSelectTeamActivity.this);
+        progressWheel.show();
+
+        Observable.defer(() -> {
+            try {
+                return Observable.just(startApi.get().getInitializeInfo(teamId));
+            } catch (RetrofitException e) {
+                return Observable.empty();
+            }
+        })
+                .doOnNext(initialInfo -> {
+                    InitialInfoRepository.getInstance().upsertInitialInfo(initialInfo);
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
+                    if (progressWheel != null && progressWheel.isShowing()) {
+                        progressWheel.dismiss();
+                    }
+                    ShareSelectTeamEvent event = new ShareSelectTeamEvent();
+                    event.setTeamId(teamId);
+                    event.setTeamName(teamName);
+                    EventBus.getDefault().post(event);
+                    finish();
+                });
+
+
     }
 
 }

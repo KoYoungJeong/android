@@ -76,6 +76,7 @@ public class MyPageModel {
         Observable.from(records)
                 .filter(mention -> mention.getMessage() != null)
                 .filter(mention -> TeamInfoLoader.getInstance().isUser(mention.getMessage().writerId))
+                .filter(mention -> TeamInfoLoader.getInstance().isRoom(mention.getRoom().id))
                 .map(mentionMessage -> {
                     User user = TeamInfoLoader.getInstance()
                             .getUser(mentionMessage.getMessage().writerId);
