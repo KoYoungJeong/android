@@ -61,22 +61,22 @@ public class FileListPresenter {
     Context context;
 
     // 카테코리 탭
-    @ViewById(R.id.txt_file_list_where)
+    @ViewById(R.id.tv_file_list_where)
     TextView textViewFileListWhere;
 
-    @ViewById(R.id.txt_file_list_whom)
+    @ViewById(R.id.tv_file_list_whom)
     TextView textViewFileListWhom;
 
-    @ViewById(R.id.txt_file_list_type)
+    @ViewById(R.id.tv_file_list_type)
     TextView textViewFileListType;
 
-    @ViewById(R.id.layout_file_list_empty)
+    @ViewById(R.id.vg_file_list_empty)
     View uploadEmptyView;
 
-    @ViewById(R.id.layout_file_list_search_empty)
+    @ViewById(R.id.vg_file_list_search_empty)
     View searchEmptyView;
 
-    @ViewById(R.id.layout_file_list_loading)
+    @ViewById(R.id.vg_file_list_loading)
     View initLoadingView;
 
     @ViewById(R.id.progress_file_list)

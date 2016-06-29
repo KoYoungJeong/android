@@ -105,7 +105,7 @@ public class FileListFragment extends Fragment
     @FragmentArg
     String mCurrentEntityCategorizingAccodingBy = null;
 
-    @Bean
+    //    @Bean
     FileListModel fileListModel;
 
     @Bean
@@ -692,9 +692,9 @@ public class FileListFragment extends Fragment
         int paddingTop = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48 + 64.5f, getResources().getDisplayMetrics());
         lvSearchFiles.setPadding(lvSearchFiles.getPaddingLeft(), paddingTop, lvSearchFiles.getPaddingRight(), lvSearchFiles.getPaddingBottom());
 
-        View uploadEmptyView = getActivity().findViewById(R.id.layout_file_list_empty);
-        View searchEmptyView = getActivity().findViewById(R.id.layout_file_list_search_empty);
-        View loadingView = getActivity().findViewById(R.id.layout_file_list_loading);
+        View uploadEmptyView = getActivity().findViewById(R.id.vg_file_list_empty);
+        View searchEmptyView = getActivity().findViewById(R.id.vg_file_list_search_empty);
+        View loadingView = getActivity().findViewById(R.id.vg_file_list_loading);
 
         RelativeLayout.LayoutParams uploadLayoutParams = (RelativeLayout.LayoutParams) uploadEmptyView.getLayoutParams();
         uploadLayoutParams.topMargin = paddingTop;
