@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.models;
 
-import com.google.gson.internal.bind.util.ISO8601Utils;
+import com.fasterxml.jackson.databind.util.ISO8601Utils;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
 import java.util.ArrayList;

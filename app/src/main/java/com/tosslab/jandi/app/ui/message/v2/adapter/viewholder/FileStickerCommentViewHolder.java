@@ -121,7 +121,8 @@ public class FileStickerCommentViewHolder extends BaseCommentViewHolder {
         }
 
         if (hasNestedProfile) {
-            ProfileUtil.setProfile(link.fromEntity, ivProfileNestedUserProfileForSticker, vProfileCover,
+            ProfileUtil.setProfileForCommment(
+                    link.fromEntity, ivProfileNestedUserProfileForSticker, vProfileCover,
                     tvProfileNestedUserNameForSticker, ivProfileNestedLineThroughForSticker);
         }
 

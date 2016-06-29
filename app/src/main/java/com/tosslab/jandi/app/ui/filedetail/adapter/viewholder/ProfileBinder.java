@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import de.greenrobot.event.EventBus;
 
@@ -23,14 +24,14 @@ import de.greenrobot.event.EventBus;
 public class ProfileBinder {
     private TextView tvUserName;
     private View vUserNameDisableIndicator;
-    private ImageView ivUserProfile;
+    private ImageView ivProfile;
     private View vUserProfileDisableIndicator;
 
     private ProfileBinder(TextView tvUserName, View vUserNameDisableIndicator,
                           ImageView ivUserProfile, View vUserProfileDisableIndicator) {
         this.tvUserName = tvUserName;
         this.vUserNameDisableIndicator = vUserNameDisableIndicator;
-        this.ivUserProfile = ivUserProfile;
+        this.ivProfile = ivUserProfile;
         this.vUserProfileDisableIndicator = vUserProfileDisableIndicator;
     }
 
@@ -42,8 +43,21 @@ public class ProfileBinder {
     }
 
     public void bind(User writer) {
-        String profileUrl = writer.getPhotoUrl();
-        ImageUtil.loadProfileImage(ivUserProfile, profileUrl, R.drawable.profile_img);
+        ViewGroup.LayoutParams ivProfileLayoutParams = ivProfile.getLayoutParams();
+        if (writer.isBot()) {
+            ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(33f);
+            ivProfile.setLayoutParams(ivProfileLayoutParams);
+            ImageLoader.loadFromResources(ivProfile, R.drawable.bot_43x54);
+        } else {
+            ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(26f);
+            ivProfile.setLayoutParams(ivProfileLayoutParams);
+            if (writer.isEnabled()) {
+                ImageUtil.loadProfileImage(
+                        ivProfile, writer.getPhotoUrl(), R.drawable.profile_img);
+            } else {
+                ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_43);
+            }
+        }
 
         String writerName = writer.getName();
         tvUserName.setText(writerName);
@@ -69,7 +83,7 @@ public class ProfileBinder {
                 ? resources.getColor(R.color.deactivate_text_color)
                 : resources.getColor(R.color.black));
 
-        ivUserProfile.setOnClickListener(
+        ivProfile.setOnClickListener(
                 v -> onProfileClick(writer.getId(), ShowProfileEvent.From.Image));
         tvUserName.setOnClickListener(
                 v -> onProfileClick(writer.getId(), ShowProfileEvent.From.Name));

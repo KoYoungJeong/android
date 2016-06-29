@@ -32,12 +32,14 @@ import com.tosslab.jandi.app.network.jackson.deserialize.message.LinkShareEntity
 import com.tosslab.jandi.app.network.jackson.deserialize.message.PrivateTopicCreateInfoDeserializer;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.PublicTopicCreateInfoDeserializer;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.dynamicl10n.FormatParam;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by justinygchoi on 2014. 6. 18..
@@ -185,6 +187,7 @@ public class ResMessages {
             @JsonSubTypes.Type(value = StickerMessage.class, name = "sticker"),
             @JsonSubTypes.Type(value = CommentStickerMessage.class, name = "comment_sticker"),
             @JsonSubTypes.Type(value = CommentMessage.class, name = "comment")})
+    @JsonDeserialize()
     public static class OriginalMessage {
         @DatabaseField(id = true)
         public long id;

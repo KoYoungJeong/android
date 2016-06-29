@@ -124,7 +124,7 @@ public class FileCommentViewHolder extends BaseCommentViewHolder {
         }
 
         if (hasNestedProfile) {
-            ProfileUtil.setProfile(link.fromEntity, ivProfileNestedCommentUserProfile, vProfileCover,
+            ProfileUtil.setProfileForCommment(link.fromEntity, ivProfileNestedCommentUserProfile, vProfileCover,
                     tvProfileNestedCommentUserName, ivProfileNestedNameLineThrough);
         }
 

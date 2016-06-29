@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.poll.list.presenter;
 import android.util.Log;
 import android.util.Pair;
 
-import com.google.gson.internal.bind.util.ISO8601Utils;
+import com.fasterxml.jackson.databind.util.ISO8601Utils;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.poll.Poll;
