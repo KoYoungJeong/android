@@ -464,7 +464,7 @@
         </activity>
 
         <activity
-            android:name=".ui.share.views.ShareSelectTeamActivity_"
+            android:name=".ui.share.views.ShareSelectTeamActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_share_to_jandi"
             android:screenOrientation="portrait">

@@ -4,7 +4,6 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.sign.signin.model.SignInModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -70,22 +69,20 @@ public class SignInPresenterImpl implements SignInPresenter {
 
         view.showProgressDialog();
 
-        Observable.<ResAccessToken>create(subscriber -> {
+        Observable.defer(() -> {
             try {
-                ResAccessToken accessToken = model.login(email, password);
-                subscriber.onNext(accessToken);
+                return Observable.just(model.login(email, password));
             } catch (RetrofitException e) {
-                subscriber.onError(e);
+                return Observable.error(e);
             }
-            subscriber.onCompleted();
-        }).subscribeOn(Schedulers.io())
+        })
+                .subscribeOn(Schedulers.io())
                 .doOnNext(accessToken -> {
                     model.saveTokenInfo(accessToken);
                     PushUtil.registPush();
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(accessToken -> {
-                    view.dismissProgressDialog();
                     getAccountInfo(email);
                 }, t -> {
                     view.dismissProgressDialog();
@@ -116,15 +113,14 @@ public class SignInPresenterImpl implements SignInPresenter {
     }
 
     private void getAccountInfo(String email) {
-        Observable.<ResAccountInfo>create(subscriber -> {
+        Observable.defer(() -> {
             try {
-                ResAccountInfo accountInfo = model.getAccountInfo();
-                subscriber.onNext(accountInfo);
+                return Observable.just(model.getAccountInfo());
             } catch (RetrofitException e) {
-                subscriber.onError(e);
+                return Observable.error(e);
             }
-            subscriber.onCompleted();
-        }).subscribeOn(Schedulers.io())
+        })
+                .subscribeOn(Schedulers.io())
                 .doOnNext(accountInfo -> {
                     model.saveAccountInfo(accountInfo);
                     ResAccessToken accessToken = TokenUtil.getTokenObject();

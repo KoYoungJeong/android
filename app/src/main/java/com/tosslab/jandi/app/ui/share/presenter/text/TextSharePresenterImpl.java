@@ -7,7 +7,6 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -43,17 +42,6 @@ public class TextSharePresenterImpl implements TextSharePresenter {
     @Background
     public void initEntityData(long teamId) {
         this.teamId = teamId;
-
-        if (!shareModel.hasLeftSideMenu(teamId)) {
-            try {
-                InitialInfo initialInfo = shareModel.getInitialInfo(teamId);
-                shareModel.updateInitialInfo(initialInfo);
-            } catch (Exception e) {
-                e.printStackTrace();
-                view.moveIntro();
-                return;
-            }
-        }
 
         teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
 

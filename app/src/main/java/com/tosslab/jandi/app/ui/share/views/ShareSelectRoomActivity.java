@@ -187,6 +187,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
                     if (expandRoomDatas1.size() > 0) {
                         expandRoomDatas1.get(0).setIsFirstAmongNoFolderItem(true);
                     }
+                    expandRoomDatas.addAll(expandRoomDatas1);
                 });
 
         return expandRoomDatas;
@@ -236,12 +237,12 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
         progressWheel.show();
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     void hideProgress() {
         if (progressWheel == null || !progressWheel.isShowing()) {
             return;
         }
-        progressWheel.hide();
+        progressWheel.dismiss();
     }
 
     @UiThread
@@ -279,6 +280,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
 
     @Override
     public void onItemClick(long roomId, String roomName, int roomType) {
+        hideProgress();
         ShareSelectRoomEvent event = new ShareSelectRoomEvent();
         event.setRoomId(roomId);
         event.setRoomName(roomName);
