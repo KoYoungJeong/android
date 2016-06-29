@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
-import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -32,9 +31,6 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @Bean
     AccountHomeModel accountHomeModel;
-
-    @Bean
-    TeamDomainInfoModel teamDomainInfoModel;
 
     View view;
 
@@ -169,7 +165,8 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         try {
             accountHomeModel.acceptOrDeclineInvite(
                     selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.ACCEPT.getType());
-            teamDomainInfoModel.updateTeamInfo(selectedTeam.getTeamId());
+
+            accountHomeModel.updateTeamInfo(selectedTeam.getTeamId());
 
             view.removePendingTeamView(selectedTeam);
             view.dismissProgressWheel();

@@ -160,6 +160,13 @@ public class AccountHomeModel {
         return null;
     }
 
+    public void updateTeamInfo(long teamId) throws RetrofitException {
+        ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+        AccountUtil.removeDuplicatedTeams(resAccountInfo);
+        AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
+    }
+
     public String getAccountName() {
         return AccountRepository.getRepository().getAccountInfo().getName();
     }

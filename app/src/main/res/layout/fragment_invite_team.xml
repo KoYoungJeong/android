@@ -19,18 +19,18 @@
         android:layout_marginTop="17dp"
         android:gravity="center_horizontal"
         android:lineSpacingExtra="1dp"
-        android:text="메세지 검색이 가능한 업무용 메신저 잔디는 \n팀원 모두와 함께 사용해야 그 진가가 발휘됩니다.\n지금 바로 멤버들을 초대하세요."
+        android:text="@string/jandi_explain_invite"
         android:textColor="@color/jandi_border_gray"
         android:textSize="12dp" />
 
     <TextView
         android:id="@+id/tv_invite_button"
-        android:clickable="true"
         android:layout_width="wrap_content"
         android:layout_height="36dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="33dp"
         android:background="@drawable/jandi_selector_btn_team_invite"
+        android:clickable="true"
         android:gravity="center"
         android:paddingLeft="11dp"
         android:paddingRight="11dp"

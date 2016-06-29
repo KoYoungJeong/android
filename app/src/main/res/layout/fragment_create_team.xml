@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:gravity="center_horizontal"
-            android:text="팀 이름"
+            android:text="@string/jandi_team_name"
             android:textSize="14dp" />
 
         <RelativeLayout
@@ -68,7 +68,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/profile_text_input_bg"
                 android:gravity="center"
-                android:hint="팀 이름을 입력해 주세요"
+                android:hint="@string/jandi_insert_team_name"
                 android:maxLength="21"
                 android:maxLines="1"
                 android:paddingLeft="15dp"
@@ -92,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:gravity="center_horizontal"
-            android:text="팀 도메인"
+            android:text="@string/jandi_team_domain"
             android:textSize="14dp" />
 
         <TextView
@@ -133,7 +133,7 @@
                 android:layout_toLeftOf="@id/tv_domain_tail"
                 android:background="@drawable/profile_text_input2_bg_left"
                 android:gravity="center"
-                android:hint="팀 도메인을 입력해 주세요"
+                android:hint="@string/jandi_insert_team_domain"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
                 android:textColor="@color/dark_gray"

@@ -28,7 +28,7 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
 import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
-import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
+import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
@@ -226,8 +226,8 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
 
     @Override
     public void loadTeamCreateActivity() {
-        TeamDomainInfoActivity_.intent(AccountHomeActivity.this)
-                .startForResult(REQ_TEAM_CREATE);
+        Intent intent = new Intent(this, CreateTeamActivity.class);
+        startActivityForResult(intent, REQ_TEAM_CREATE);
     }
 
     @Override

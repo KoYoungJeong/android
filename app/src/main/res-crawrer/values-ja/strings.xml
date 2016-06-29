@@ -205,6 +205,9 @@
 	<string name="jandi_exceeded_max_text_length">"５０００文字まで入力できます"</string>
 	<string name="jandi_expired_invitation_link">"この招待リンクの有効期限が切れています。新しいリンクをリクエストしてください"</string>
 	<string name="jandi_explain_global_push_off">"アプリの通知がオフに設定されています。「もっと見る > 設定」で通知をオンにしてください。"</string>
+	<string name="jandi_explain_invite">"メッセージ検索ができるビジネスメッセンジャーJANDIは
+チーム全員んで使う時その真価がわかります。
+今すぐチームメンバーを招待してみましょう。"</string>
 	<string name="jandi_explain_topic_description">"トピックの説明（選択）"</string>
 	<string name="jandi_export">"エクスポート"</string>
 	<string name="jandi_export_to_app">"他のアプリにエクスポート"</string>
@@ -272,6 +275,8 @@
 	<string name="jandi_input_search_keyword">"キーワードで検索"</string>
 	<string name="jandi_input_topic_name">"トピック名を入力してください"</string>
 	<string name="jandi_input_user_name">"検索するメンバーの名前を入力"</string>
+	<string name="jandi_insert_team_domain">"チームドメインを入力してください。"</string>
+	<string name="jandi_insert_team_name">"チーム名を入力してください。"</string>
 	<string name="jandi_invitation">"招待"</string>
 	<string name="jandi_invitation_help">"あなたのチームメンバーをJANDIに招待しましょう！"</string>
 	<string name="jandi_invitation_succeed">"招待しました"</string>
@@ -528,10 +533,12 @@
 	<string name="jandi_team_create_input_info">"新しいチーム作成のために\n情報を入力してください。"</string>
 	<string name="jandi_team_create_name_length_invalid">"最大20文字まで入力できます。"</string>
 	<string name="jandi_team_creation_succeed">"チームの作成に成功しました。メールを確認してください"</string>
+	<string name="jandi_team_domain">"チームドメイン"</string>
 	<string name="jandi_team_info">"チーム"</string>
 	<string name="jandi_team_join_fail">"チーム参加の際にエラーが発生しました。もう一度お試しください"</string>
 	<string name="jandi_team_member">"チームメンバー"</string>
 	<string name="jandi_team_member_count_with_format">"メンバー(%d)"</string>
+	<string name="jandi_team_name">"チーム名"</string>
 	<string name="jandi_team_owner">"チームの管理者"</string>
 	<string name="jandi_team_owner_with_format">"チームの管理者:%s"</string>
 	<string name="jandi_team_select_accept">"接受"</string>

@@ -60,7 +60,6 @@ import com.tosslab.jandi.app.ui.maintab.teams.view.TeamsView;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
 import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
-import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
@@ -118,8 +117,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     FloatingActionMenu floatingActionMenu;
     @Bean
     EntityClientManager entityClientManager;
-    @Bean
-    TeamDomainInfoModel teamDomainInfoModel;
     @SystemService
     ClipboardManager clipboardManager;
     @Bean

@@ -205,6 +205,9 @@
 	<string name="jandi_exceeded_max_text_length">"可填入最多5000字"</string>
 	<string name="jandi_expired_invitation_link">"此邀請連結已過期，請聯絡你的邀請人重新寄發新連結。"</string>
 	<string name="jandi_explain_global_push_off">"JANDI推播通知已被停用。欲重新接收推播，點擊「更多」後進入「設定」開啟推播。"</string>
+	<string name="jandi_explain_invite">"JANDI 是企業通訊與協作平台，
+越多成員使用越能改善您的工作品質。
+現在，開始邀請您的成員一起使用吧！"</string>
 	<string name="jandi_explain_topic_description">"說明 (選項)"</string>
 	<string name="jandi_export">"匯出"</string>
 	<string name="jandi_export_to_app">"匯出檔案至..."</string>
@@ -273,6 +276,8 @@
 	<string name="jandi_input_search_keyword">"按照關鍵字搜尋您的訊息"</string>
 	<string name="jandi_input_topic_name">"請輸入議題群組名稱"</string>
 	<string name="jandi_input_user_name">"輸入您的名字"</string>
+	<string name="jandi_insert_team_domain">"請輸入團隊網域"</string>
+	<string name="jandi_insert_team_name">"請輸入團隊名稱"</string>
 	<string name="jandi_invitation">"邀請"</string>
 	<string name="jandi_invitation_help">"邀請其他團隊成員加入JANDI"</string>
 	<string name="jandi_invitation_succeed">"邀請成功"</string>
@@ -527,10 +532,12 @@
 	<string name="jandi_team_create_input_info">"想要怎麼稱呼您的\nJANDI團隊？"</string>
 	<string name="jandi_team_create_name_length_invalid">"團隊名稱最多為20個字元"</string>
 	<string name="jandi_team_creation_succeed">"團隊建立成功！請查看您的電子郵件。"</string>
+	<string name="jandi_team_domain">"團隊網域"</string>
 	<string name="jandi_team_info">"團隊"</string>
 	<string name="jandi_team_join_fail">"處理過程中發生錯誤。請再試一次。"</string>
 	<string name="jandi_team_member">"團隊成員"</string>
 	<string name="jandi_team_member_count_with_format">"成員(%d)"</string>
+	<string name="jandi_team_name">"團隊名稱"</string>
 	<string name="jandi_team_owner">"團隊管理員"</string>
 	<string name="jandi_team_owner_with_format">"團隊管理員:%s"</string>
 	<string name="jandi_team_select_accept">"接受"</string>

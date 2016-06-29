@@ -205,6 +205,10 @@
 	<string name="jandi_exceeded_max_text_length">"5000자 까지 입력할 수 있습니다."</string>
 	<string name="jandi_expired_invitation_link">"이 초대 링크는 만료되었습니다. 새로운 링크를 요청하세요."</string>
 	<string name="jandi_explain_global_push_off">"앱의 알림 설정이 꺼져 있습니다. 더보기 > 설정에서 알림을 켜야 알림을 받을 수 있습니다."</string>
+	<string name="jandi_explain_invite">"메세지 검색이 가능한 업무용 메신저 잔디는 
+팀원 모두와 함께 사용해야 그 진가가 발휘됩니다.
+지금 바로 멤버들을 초대하세요.
+"</string>
 	<string name="jandi_explain_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 	<string name="jandi_export">"내보내기"</string>
 	<string name="jandi_export_to_app">"다음 앱으로 파일 내보내기"</string>
@@ -272,6 +276,8 @@
 	<string name="jandi_input_search_keyword">"검색어를 입력해주세요."</string>
 	<string name="jandi_input_topic_name">"토픽 이름을 입력해주세요."</string>
 	<string name="jandi_input_user_name">"사용자 이름을 입력하세요"</string>
+	<string name="jandi_insert_team_domain">"팀 도메인을 입력해 주세요"</string>
+	<string name="jandi_insert_team_name">"팀 이름을 입력해 주세요"</string>
 	<string name="jandi_invitation">"팀으로 초대"</string>
 	<string name="jandi_invitation_help">"또 다른 팀원을 초대할 수 있습니다."</string>
 	<string name="jandi_invitation_succeed">"팀원으로 초대했습니다."</string>
@@ -305,7 +311,7 @@
 	<string name="jandi_left_topic">"%s님이 나갔습니다"</string>
 	<string name="jandi_logout">"로그아웃"</string>
 	<string name="jandi_member_invite_popup_1">"지금 바로 멤버들을 초대하세요!"</string>
-	<string name="jandi_member_invite_popup_2">"기"</string>
+	<string name="jandi_member_invite_popup_2">"업무용 메신저 잔디는 팀원 모두와 함께 사용해야 그 진가가 발휘됩니다."</string>
 	<string name="jandi_member_profile_call">"전화하기"</string>
 	<string name="jandi_member_profile_dm">"1:1 메시지"</string>
 	<string name="jandi_member_profile_edit">"프로필 편집"</string>
@@ -531,10 +537,12 @@
 	<string name="jandi_team_create_input_info">"새로운 팀생성을 위한\n기본 정보를 입력해주세요."</string>
 	<string name="jandi_team_create_name_length_invalid">"최대 20자까지 사용 가능합니다."</string>
 	<string name="jandi_team_creation_succeed">"메일 전송 성공. 메일함을 확인하여 잔디 팀을 생성하세요."</string>
+	<string name="jandi_team_domain">"팀 도메인"</string>
 	<string name="jandi_team_info">"팀 정보"</string>
 	<string name="jandi_team_join_fail">"팀 가입에 실패하였습니다."</string>
 	<string name="jandi_team_member">"팀 멤버"</string>
 	<string name="jandi_team_member_count_with_format">"팀원(%d)"</string>
+	<string name="jandi_team_name">"팀 이름"</string>
 	<string name="jandi_team_owner">"팀 관리자"</string>
 	<string name="jandi_team_owner_with_format">"팀 관리자:%s"</string>
 	<string name="jandi_team_select_accept">"수락"</string>

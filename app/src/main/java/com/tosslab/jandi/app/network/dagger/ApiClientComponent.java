@@ -25,7 +25,6 @@ import com.tosslab.jandi.app.ui.search.messages.model.MessageSearchManager;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
 import com.tosslab.jandi.app.ui.sign.signup.verify.model.SignUpVerifyModel;
 import com.tosslab.jandi.app.ui.starmention.model.StarMentionListModel;
-import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 
 import dagger.Component;
 
@@ -44,8 +43,6 @@ public interface ApiClientComponent {
     void inject(AccountHomePresenterImpl accountHomePresenter);
 
     void inject(OpenAction openAction);
-
-    void inject(TeamDomainInfoModel teamDomainInfoModel);
 
     void inject(AccountHomeModel accountHomeModel);
 

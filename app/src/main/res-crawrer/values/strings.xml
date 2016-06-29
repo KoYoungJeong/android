@@ -205,6 +205,9 @@
 	<string name="jandi_exceeded_max_text_length">"You can enter up to 5,000 characters"</string>
 	<string name="jandi_expired_invitation_link">"This invitation has expired. Please request a new invitation from the team member who invited you."</string>
 	<string name="jandi_explain_global_push_off">"JANDI app push notification is disabled. Turn on notification in More > Settings to receive notification."</string>
+	<string name="jandi_explain_invite">"JANDI is an enterprise messaging and collaboration platform
+that works best when the whole team is using it together.
+Let's starting inviting your members now."</string>
 	<string name="jandi_explain_topic_description">"Description (optional)"</string>
 	<string name="jandi_export">"Export"</string>
 	<string name="jandi_export_to_app">"Export file using..."</string>
@@ -272,6 +275,8 @@
 	<string name="jandi_input_search_keyword">"Search by keyword(s)"</string>
 	<string name="jandi_input_topic_name">"Enter the topic name"</string>
 	<string name="jandi_input_user_name">"Enter your name"</string>
+	<string name="jandi_insert_team_domain">"Choose the address you will use to sign in to JANDI."</string>
+	<string name="jandi_insert_team_name">"Name your team after the group that will be using JANDI together."</string>
 	<string name="jandi_invitation">"Invite"</string>
 	<string name="jandi_invitation_help">"Invite other team members to JANDI!"</string>
 	<string name="jandi_invitation_succeed">"Invitation has been sent"</string>
@@ -527,10 +532,12 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_team_create_input_info">"What do you want to call\n your JANDI team?"</string>
 	<string name="jandi_team_create_name_length_invalid">"Team name can be at most 20 characters."</string>
 	<string name="jandi_team_creation_succeed">"Success! Please check your email."</string>
+	<string name="jandi_team_domain">"Team Domain"</string>
 	<string name="jandi_team_info">"Team"</string>
 	<string name="jandi_team_join_fail">"There was an issue processing your invitation and joining the team. Please try again."</string>
 	<string name="jandi_team_member">"Team Members"</string>
 	<string name="jandi_team_member_count_with_format">"Members(%d)"</string>
+	<string name="jandi_team_name">"Team Name"</string>
 	<string name="jandi_team_owner">"Team admin"</string>
 	<string name="jandi_team_owner_with_format">"Team admin:%s"</string>
 	<string name="jandi_team_select_accept">"Accept"</string>
