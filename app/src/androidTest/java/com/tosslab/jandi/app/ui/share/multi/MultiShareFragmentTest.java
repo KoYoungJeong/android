@@ -16,7 +16,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
-import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
+import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -101,7 +101,7 @@ public class MultiShareFragmentTest {
     public void testOnTeamNameClick() throws Throwable {
         rule.runOnUiThread(fragment::onTeamNameClick);
 
-        Intents.intending(IntentMatchers.hasComponent(ShareSelectTeamActivity_.class.getName()));
+        Intents.intending(IntentMatchers.hasComponent(ShareSelectTeamActivity.class.getName()));
 
     }
 

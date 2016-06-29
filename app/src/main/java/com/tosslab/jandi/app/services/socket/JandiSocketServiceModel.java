@@ -177,7 +177,7 @@ public class JandiSocketServiceModel {
         eventHistoryActorMapper.put(SocketTopicLeftEvent.class, this::onTeamLeft);
         eventHistoryActorMapper.put(SocketTopicDeletedEvent.class, this::onTopicDeleted);
         eventHistoryActorMapper.put(SocketTopicCreatedEvent.class, this::onTopicCreated);
-        eventHistoryActorMapper.put(SocketTopicInvitedEvent.class, this::onTopicInvitedListener);
+        eventHistoryActorMapper.put(SocketTopicInvitedEvent.class, this::onTopicInvited);
         eventHistoryActorMapper.put(SocketTopicJoinedEvent.class, this::onTopicJoined);
         eventHistoryActorMapper.put(SocketTopicUpdatedEvent.class, this::onTopicJoined);
         eventHistoryActorMapper.put(SocketTopicStarredEvent.class, this::onTopicStarred);
@@ -594,7 +594,7 @@ public class JandiSocketServiceModel {
                     getObject(object, SocketTopicPushEvent.class);
 
             SocketTopicPushEvent.Data data = socketTopicPushEvent.getData();
-            int roomId = data.getRoomId();
+            long roomId = data.getRoomId();
             boolean subscribe = data.isSubscribe();
             JandiPreference.setSocketConnectedLastTime(socketTopicPushEvent.getTs());
             TopicRepository.getInstance().updatePushSubscribe(roomId, subscribe);
@@ -835,7 +835,7 @@ public class JandiSocketServiceModel {
 
     public void onTeamDeleted(Object object) {
         try {
-            SocketTeamDeletedEvent event = getObject(object, SocketTeamDeletedEvent.class);
+            SocketTeamDeletedEvent event = getObject(object, SocketTeamDeletedEvent.class, true, false);
 
             long teamId = event.getData().getTeamId();
 
@@ -968,11 +968,11 @@ public class JandiSocketServiceModel {
         }
     }
 
-    private <T> T getObject(Object object, Class<T> clazz) throws Exception {
+    private <T extends EventHistoryInfo> T getObject(Object object, Class<T> clazz) throws Exception {
         return getObject(object, clazz, true, true);
     }
 
-    private <T> T getObject(Object object, Class<T> clazz, boolean checkVersion, boolean checkTeamId) throws Exception {
+    private <T extends EventHistoryInfo> T getObject(Object object, Class<T> clazz, boolean checkVersion, boolean checkTeamId) throws Exception {
         T t;
         if (object.getClass() != clazz) {
             t = objectMapper.readValue(object.toString(), clazz);
@@ -999,7 +999,7 @@ public class JandiSocketServiceModel {
         }
     }
 
-    void throwExceptionIfInvaildVersion(Object object) throws Exception {
+    <T extends EventHistoryInfo> void throwExceptionIfInvaildVersion(T object) throws Exception {
         if (!SocketEventVersionModel.validVersion(object)) {
             throw new Exception("Invalid Version : " + object.getClass().getName());
         }
@@ -1161,7 +1161,7 @@ public class JandiSocketServiceModel {
         }
     }
 
-    public void onTopicInvitedListener(Object object) {
+    public void onTopicInvited(Object object) {
         try {
             SocketTopicInvitedEvent event = getObject(object, SocketTopicInvitedEvent.class);
             SocketTopicInvitedEvent.Data data = event.getData();

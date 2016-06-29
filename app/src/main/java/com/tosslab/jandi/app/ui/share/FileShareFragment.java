@@ -32,7 +32,7 @@ import com.tosslab.jandi.app.ui.share.model.ScrollViewHelper;
 import com.tosslab.jandi.app.ui.share.presenter.image.ImageSharePresenter;
 import com.tosslab.jandi.app.ui.share.presenter.image.ImageSharePresenterImpl;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
-import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
+import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -305,9 +305,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     @Click(R.id.vg_team)
     void clickSelectTeam() {
         LogUtil.e("team");
-        ShareSelectTeamActivity_
-                .intent(this)
-                .start();
+        startActivity(new Intent(getActivity(), ShareSelectTeamActivity.class));
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TeamSelect);
     }

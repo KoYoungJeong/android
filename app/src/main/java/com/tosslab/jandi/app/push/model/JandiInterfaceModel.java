@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.push.model;
 
-import android.app.ActivityManager;
 import android.support.v4.util.Pair;
 import android.text.TextUtils;
 
@@ -9,24 +8,16 @@ import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
-import com.tosslab.jandi.app.network.client.main.ConfigApi;
-import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.ApplicationUtil;
-
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.SystemService;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import java.util.List;
 
@@ -36,38 +27,16 @@ import dagger.Lazy;
 import rx.Observable;
 
 
-/**
- * Created by Steve SeongUg Jung on 15. 1. 26..
- */
-@EBean
 public class JandiInterfaceModel {
 
-    @SystemService
-    ActivityManager activityManager;
-
-    @Inject
-    Lazy<ConfigApi> configApi;
-    @Inject
     Lazy<AccountApi> accountApi;
-    @Inject
-    Lazy<RoomsApi> roomsApi;
-
-    @Inject
     Lazy<StartApi> startApi;
 
-    @AfterInject
-    void initObject() {
-        DaggerApiClientComponent
-                .create()
-                .inject(this);
-    }
-
-    public int getInstalledAppVersion() {
-        return ApplicationUtil.getAppVersionCode();
-    }
-
-    public ResConfig getConfigInfo() throws RetrofitException {
-        return configApi.get().getConfig();
+    @Inject
+    public JandiInterfaceModel(Lazy<AccountApi> accountApi,
+                               Lazy<StartApi> startApi) {
+        this.accountApi = accountApi;
+        this.startApi = startApi;
     }
 
     public void refreshAccountInfo() throws RetrofitException {
@@ -109,11 +78,7 @@ public class JandiInterfaceModel {
             AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
             MessageRepository.getRepository().deleteAllLink();
 
-            if (InitialInfoRepository.getInstance().getInitialInfo(teamId) != null) {
-                return true;
-            } else {
-                return getEntityInfo();
-            }
+            return getEntityInfo();
 
         } else {
             return true;
@@ -124,6 +89,8 @@ public class JandiInterfaceModel {
         try {
             InitialInfo initializeInfo = startApi.get().getInitializeInfo(AccountRepository.getRepository().getSelectedTeamId());
             InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+            TeamInfoLoader.getInstance().refresh();
+            JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
             return true;
         } catch (RetrofitException e) {
             e.printStackTrace();

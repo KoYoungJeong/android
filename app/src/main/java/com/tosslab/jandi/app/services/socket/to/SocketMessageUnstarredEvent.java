@@ -81,7 +81,7 @@ public class SocketMessageUnstarredEvent implements EventHistoryInfo {
             return memberId;
         }
 
-        public void setMemberId(int memberId) {
+        public void setMemberId(long memberId) {
             this.memberId = memberId;
         }
 
@@ -89,7 +89,7 @@ public class SocketMessageUnstarredEvent implements EventHistoryInfo {
             return messageId;
         }
 
-        public void setMessageId(int messageId) {
+        public void setMessageId(long messageId) {
             this.messageId = messageId;
         }
 
@@ -97,7 +97,7 @@ public class SocketMessageUnstarredEvent implements EventHistoryInfo {
             return teamId;
         }
 
-        public void setTeamId(int teamId) {
+        public void setTeamId(long teamId) {
             this.teamId = teamId;
         }
     }
