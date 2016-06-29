@@ -18,4 +18,11 @@ public class ResDeletePoll {
     public void setLinkMessage(ResMessages.Link linkMessage) {
         this.linkMessage = linkMessage;
     }
+
+    @Override
+    public String toString() {
+        return "ResDeletePoll{" +
+                "linkMessage=" + linkMessage +
+                '}';
+    }
 }

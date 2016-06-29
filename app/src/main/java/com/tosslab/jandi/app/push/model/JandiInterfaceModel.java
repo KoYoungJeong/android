@@ -6,17 +6,21 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.main.ConfigApi;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
+import com.tosslab.jandi.app.network.models.ResPollList;
+import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -28,6 +32,7 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.SystemService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -54,6 +59,8 @@ public class JandiInterfaceModel {
 
     @Inject
     Lazy<StartApi> startApi;
+    @Inject
+    Lazy<PollApi> pollApi;
 
     @AfterInject
     void initObject() {
@@ -122,8 +129,10 @@ public class JandiInterfaceModel {
 
     public boolean getEntityInfo() {
         try {
-            InitialInfo initializeInfo = startApi.get().getInitializeInfo(AccountRepository.getRepository().getSelectedTeamId());
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            InitialInfo initializeInfo = startApi.get().getInitializeInfo(selectedTeamId);
             InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+            refreshPollList(selectedTeamId);
             return true;
         } catch (RetrofitException e) {
             e.printStackTrace();
@@ -220,4 +229,25 @@ public class JandiInterfaceModel {
         return pushTokenList.isEmpty();
     }
 
+    public void refreshPollList(long teamId) {
+        try {
+            PollRepository.getInstance().clearAll();
+
+            ResPollList resPollList = pollApi.get().getPollList(teamId, 50);
+            List<Poll> onGoing = resPollList.getOnGoing();
+            if (onGoing == null) {
+                onGoing = new ArrayList<>();
+            }
+            List<Poll> finished = resPollList.getFinished();
+            if (finished == null) {
+                finished = new ArrayList<>();
+            }
+            Observable.merge(Observable.from(onGoing), Observable.from(finished))
+                    .toList()
+                    .subscribe(polls -> PollRepository.getInstance().upsertPollList(polls),
+                            Throwable::printStackTrace);
+        } catch (RetrofitException retrofitError) {
+            retrofitError.printStackTrace();
+        }
+    }
 }

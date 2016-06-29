@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.network.manager.apiexecutor;
 
 import android.support.v4.util.Pools;
+import android.util.Log;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.exception.ExceptionData;
@@ -9,6 +10,7 @@ import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.manager.token.TokenRequestManager;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.services.SignOutService;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.io.IOException;
@@ -56,7 +58,7 @@ public class PoolableRequestApiExecutor {
     }
 
     private <RESULT> RESULT handleException(Executor<Response<RESULT>> apiExecutor, Response response, Exception e) throws RetrofitException {
-
+        LogUtil.e("PoolableRequestApiExecutor", Log.getStackTraceString(e));
         // 현재(2015/6) 시나리오엔 존재하지 않지만 Client측의 Network Connection에러를 UI단에 던지기 위한 코드 추가
         if (!isActiveNetwork()) {
             if (response != null) {

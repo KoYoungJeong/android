@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
@@ -69,14 +70,14 @@ public class SocketPollFinishedEvent implements EventHistoryInfo {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
-        private Poll poll;
+        private ResMessages.Link linkMessage;
 
-        public Poll getPoll() {
-            return poll;
+        public ResMessages.Link getLinkMessage() {
+            return linkMessage;
         }
 
-        public void setPoll(Poll poll) {
-            this.poll = poll;
+        public void setLinkMessage(ResMessages.Link linkMessage) {
+            this.linkMessage = linkMessage;
         }
     }
 }

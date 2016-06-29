@@ -144,7 +144,8 @@ public class ResMessageSearch {
         private String status;
         @JsonProperty("file")
         private FileInfo fileInfo;
-
+        @JsonProperty("poll")
+        private PollInfo pollInfo;
 
         public String getType() {
             return type;
@@ -208,6 +209,14 @@ public class ResMessageSearch {
 
         public void setFileInfo(FileInfo fileInfo) {
             this.fileInfo = fileInfo;
+        }
+
+        public PollInfo getPollInfo() {
+            return pollInfo;
+        }
+
+        public void setPollInfo(PollInfo pollInfo) {
+            this.pollInfo = pollInfo;
         }
     }
 
@@ -273,6 +282,38 @@ public class ResMessageSearch {
 
         public void setName(String name) {
             this.name = name;
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    public static class PollInfo {
+        private long creatorId;
+        private long pollId;
+        private String summary;
+
+        public long getCreatorId() {
+            return creatorId;
+        }
+
+        public void setCreatorId(long creatorId) {
+            this.creatorId = creatorId;
+        }
+
+        public long getPollId() {
+            return pollId;
+        }
+
+        public void setPollId(long pollId) {
+            this.pollId = pollId;
+        }
+
+        public String getSummary() {
+            return summary;
+        }
+
+        public void setSummary(String summary) {
+            this.summary = summary;
         }
     }
 }

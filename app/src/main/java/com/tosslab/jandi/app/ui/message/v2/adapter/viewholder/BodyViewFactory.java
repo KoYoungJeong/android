@@ -160,9 +160,11 @@ public class BodyViewFactory {
     }
 
     private static boolean isPollMessage(ResMessages.Link currentLink) {
-        return currentLink.pollId > 0
-                && currentLink.poll != null
-                && currentLink.poll.getId() > 0;
+        if (currentLink == null) {
+            return false;
+        }
+
+        return currentLink.message instanceof ResMessages.PollMessage;
     }
 
     private static int getPollMessageType(ResMessages.Link currentLink, ResMessages.Link nextLink) {
@@ -320,7 +322,7 @@ public class BodyViewFactory {
         }
 
         if (isFeedbackTargetToPreviousLink(previousLink, currentLink.feedbackId)) {
-            // 1. previous Link가 같은 파일의 커맨트 이거나 파일일 때
+            // 1. previous Link가 같은 파일의 커맨트 이거나 파일 혹은 투표일 때
             if (isCommentableMessage(previousLink)) {
                 // 2. previous Link가 파일 메세지 일때 파일 정보 없이 Tail/Profile 이 나와야됨
                 type = TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL);
@@ -417,8 +419,8 @@ public class BodyViewFactory {
         boolean isFeedbackTargetToPreviousLink = false;
         if (previousLink != null) {
             isFeedbackTargetToPreviousLink =
-                    (messageFeedbackId == previousLink.messageId) ||
-                            (messageFeedbackId == previousLink.feedbackId);
+                    (messageFeedbackId == previousLink.messageId)
+                            || (messageFeedbackId == previousLink.feedbackId);
         }
         return isFeedbackTargetToPreviousLink;
     }

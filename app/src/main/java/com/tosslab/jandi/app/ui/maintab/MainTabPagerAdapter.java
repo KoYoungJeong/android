@@ -117,6 +117,8 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
             return tabView.findViewById(R.id.tab_badge_topic_new);
         } else if (position == TAB_CHAT) {
             return tabView.findViewById(R.id.tab_badge_chat_new);
+        } else if (position == TAB_MYPAGE) {
+            return tabView.findViewById(R.id.tab_badge_mypage_new);
         }
         return null;
     }
@@ -131,5 +133,10 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
 
     public void hideMoreNewBadge() {
         hideBadge(TAB_MYPAGE);
+    }
+
+    public void updateMyPageBadge(int badgeCount) {
+        TextView tvMyPage = (TextView) getBadgeView(TAB_MYPAGE);
+        updateBadgeText(badgeCount, tvMyPage, TAB_MYPAGE);
     }
 }

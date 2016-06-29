@@ -24,7 +24,6 @@ public class ProfileViewHolder extends BaseViewHolder<Poll> {
     private View vUserNameDisableIndicator;
     private View vUserProfileDisableIndicator;
     private TextView tvCreatedDate;
-    private View btnStar;
 
     private ProfileViewHolder(View itemView) {
         super(itemView);
@@ -36,8 +35,6 @@ public class ProfileViewHolder extends BaseViewHolder<Poll> {
                 itemView.findViewById(R.id.v_poll_detail_user_name_disable_indicator);
         vUserProfileDisableIndicator =
                 itemView.findViewById(R.id.v_poll_detail_user_profile_disable_indicator);
-
-        btnStar = itemView.findViewById(R.id.btn_poll_detail_star);
     }
 
     public static ProfileViewHolder newInstance(ViewGroup parent) {

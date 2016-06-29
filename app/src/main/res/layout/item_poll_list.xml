@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="89dp"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/v_poll_list_icon"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:src="@drawable/poll_normal"/>
+
+    <RelativeLayout
+        android:id="@+id/vg_poll_list_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="21dp"
+        android:layout_marginRight="16dp"
+        android:layout_toRightOf="@id/v_poll_list_icon">
+
+        <TextView
+            android:id="@+id/tv_poll_list_subject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="File Name"
+            android:textColor="@color/jandi_file_search_item_name_text"
+            android:textSize="@dimen/jandi_file_search_item_name_text"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_poll_list_duedate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tv_poll_list_subject"
+            android:layout_below="@id/tv_poll_list_subject"
+            android:layout_marginTop="5dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:text="3d"
+            android:textColor="@color/jandi_file_search_item_type_text"
+            android:textSize="@dimen/jandi_file_search_item_type_text"/>
+
+        <TextView
+            android:id="@+id/tv_poll_list_status_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:layout_alignBaseline="@id/tv_poll_list_duedate"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/tv_poll_list_duedate"
+            android:background="@drawable/admin_bg"
+            android:gravity="center"
+            android:text="투표 완료"
+            android:textSize="11sp"
+            android:visibility="visible"/>
+
+        <com.tosslab.jandi.app.views.FixedLinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="18dp"
+            android:layout_alignLeft="@id/tv_poll_list_subject"
+            android:layout_below="@id/tv_poll_list_duedate"
+            android:layout_marginTop="5dp"
+            android:gravity="center_vertical">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_poll_list_creator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="Justin"
+                    android:textColor="@color/jandi_file_search_item_owner_text"
+                    android:textSize="@dimen/jandi_file_search_item_owner_text"/>
+
+                <ImageView
+                    android:id="@+id/v_poll_list_creator_line_through"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/tv_poll_list_creator"
+                    android:layout_alignLeft="@+id/tv_poll_list_creator"
+                    android:layout_alignRight="@+id/tv_poll_list_creator"
+                    android:layout_alignTop="@+id/tv_poll_list_creator"
+                    android:src="@drawable/line_gray"/>
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_poll_list_create_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/tv_poll_list_creator"
+                android:layout_marginLeft="@dimen/jandi_file_search_item_text_margin"
+                android:layout_toRightOf="@id/tv_poll_list_creator"
+                android:text="Date"
+                android:textColor="@color/jandi_file_search_item_type_text"
+                android:textSize="@dimen/jandi_file_search_item_date_text"/>
+        </com.tosslab.jandi.app.views.FixedLinearLayout>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/jandi_team_member_divider"/>
+
+</RelativeLayout>

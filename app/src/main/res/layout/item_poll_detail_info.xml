@@ -60,7 +60,7 @@
             android:id="@+id/v_poll_detail_info_participants_arrow"
             android:layout_width="7dp"
             android:layout_height="12dp"
-            android:background="@drawable/icon_poll_detail_info_participants_arrow"/>
+            android:background="@drawable/poll_member_click"/>
 
     </LinearLayout>
 

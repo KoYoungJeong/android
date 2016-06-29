@@ -77,6 +77,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                         try {
                             InitialInfo initialInfo = shareModel.getInitialInfo(teamId);
                             shareModel.updateInitialInfo(initialInfo);
+                            shareModel.refreshPollList(teamId);
                         } catch (RetrofitException e) {
                             subscriber.onError(e);
                         }

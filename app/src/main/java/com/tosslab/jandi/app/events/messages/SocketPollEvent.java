@@ -7,9 +7,11 @@ import com.tosslab.jandi.app.network.models.poll.Poll;
  */
 public class SocketPollEvent {
     private Poll poll;
+    private Type type;
 
-    public SocketPollEvent(Poll poll) {
+    public SocketPollEvent(Poll poll, Type type) {
         this.poll = poll;
+        this.type = type;
     }
 
     public Poll getPoll() {
@@ -18,5 +20,17 @@ public class SocketPollEvent {
 
     public void setPoll(Poll poll) {
         this.poll = poll;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public enum Type {
+        CREATED, FINISHED, DELETED
     }
 }

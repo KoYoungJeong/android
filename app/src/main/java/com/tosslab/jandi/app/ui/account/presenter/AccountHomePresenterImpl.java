@@ -85,6 +85,9 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             InitialInfo initialInfo = accountHomeModel.getEntityInfo(teamId);
             accountHomeModel.updateEntityInfo(initialInfo);
             TeamInfoLoader.getInstance().refresh();
+
+            accountHomeModel.refreshPollList(teamId);
+
             JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
             view.dismissProgressWheel();
 

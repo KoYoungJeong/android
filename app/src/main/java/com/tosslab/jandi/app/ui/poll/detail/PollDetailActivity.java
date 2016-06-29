@@ -15,6 +15,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.BaseInputConnection;
@@ -25,7 +27,8 @@ import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
-import com.tosslab.jandi.app.events.PollDataChangedEvent;
+import com.tosslab.jandi.app.events.poll.PollDataChangedEvent;
+import com.tosslab.jandi.app.events.poll.RequestShowPollParticipantsEvent;
 import com.tosslab.jandi.app.events.RequestVotePollEvent;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
 import com.tosslab.jandi.app.events.entities.MoveSharedEntityEvent;
@@ -59,6 +62,7 @@ import com.tosslab.jandi.app.ui.poll.detail.adapter.view.PollDetailDataView;
 import com.tosslab.jandi.app.ui.poll.detail.component.DaggerPollDetailComponent;
 import com.tosslab.jandi.app.ui.poll.detail.module.PollDetailModule;
 import com.tosslab.jandi.app.ui.poll.detail.presenter.PollDetailPresenter;
+import com.tosslab.jandi.app.ui.poll.participants.PollParticipantsActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -90,11 +94,11 @@ import rx.android.schedulers.AndroidSchedulers;
 public class PollDetailActivity extends BaseAppCompatActivity implements PollDetailPresenter.View {
 
     public static final String KEY_POLL_ID = "pollId";
+
     private static final StickerInfo NULL_STICKER = new StickerInfo();
 
     @Inject
     PollDetailPresenter pollDetailPresenter;
-
     @Inject
     PollDetailDataView pollDetailDataView;
 
@@ -125,15 +129,13 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     private StickerViewModel stickerViewModel;
     private ClipboardManager clipboardManager;
     private InputMethodManager inputMethodManager;
-
     private SoftInputAreaController softInputAreaController;
     private MentionControlViewModel mentionControlViewModel;
 
     private long pollId;
-
     private StickerInfo stickerInfo = NULL_STICKER;
-
     private boolean shouldRetrievePollDetail = false;
+    private boolean shouldPrepareOptionsMenu;
 
     public static void start(Activity activity, long pollId) {
         Intent intent = new Intent(activity, PollDetailActivity.class);
@@ -256,13 +258,15 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     }
 
     public void onEventMainThread(PollDataChangedEvent event) {
-        runOnUiThread(() -> {
-            pollDetailDataView.notifyDataSetChanged();
-        });
+        pollDetailDataView.notifyDataSetChanged();
+    }
+
+    public void onEventMainThread(RequestShowPollParticipantsEvent event) {
+        pollDetailPresenter.onRequestShowPollParticipantsAction(event);
     }
 
     public void onEvent(RequestVotePollEvent event) {
-        pollDetailPresenter.vote(event.getPollId(), event.getSeqs());
+        pollDetailPresenter.onVote(event.getPollId(), event.getSeqs());
     }
 
     public void onEvent(SocketPollCommentCreatedEvent event) {
@@ -658,7 +662,57 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
 
     @Override
     public void initPollDetails(Poll poll) {
+        if (poll == null) {
+            return;
+        }
+
+        if ("deleted".equals(poll.getStatus())) {
+            shouldPrepareOptionsMenu = false;
+            vgInputWrapper.setVisibility(View.GONE);
+            return;
+        }
+
         initMentionControlViewModel(poll.getId(), Arrays.asList(poll.getTopicId()));
+
+        initOptionsMenu(poll);
+    }
+
+    private void initOptionsMenu(Poll poll) {
+        long creatorId = poll.getCreatorId();
+        long myId = TeamInfoLoader.getInstance().getMyId();
+
+        shouldPrepareOptionsMenu = creatorId == myId
+                || TeamInfoLoader.getInstance().getUser(myId).isTeamOwner();
+
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+
+        if (shouldPrepareOptionsMenu) {
+            getMenuInflater().inflate(R.menu.poll_detail, menu);
+            return true;
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_poll_detail_finish) {
+            pollDetailPresenter.onPollFinishAction(pollId);
+            return true;
+        } else if (item.getItemId() == R.id.action_poll_detail_delete) {
+            pollDetailPresenter.onPollDeleteAction(pollId);
+            return true;
+        } else if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -722,4 +776,25 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     public void showCommentDeleteErrorToast() {
         ColoredToast.showError(R.string.err_entity_delete);
     }
+
+    @Override
+    public void showEmptyParticipantsToast() {
+        ColoredToast.showError("참여자 없다.");
+    }
+
+    @Override
+    public void showPollIsAnonymousToast() {
+        ColoredToast.showError("익명 투표다.");
+    }
+
+    @Override
+    public void showParticipants(long pollId, Poll.Item item) {
+        PollParticipantsActivity.start(this, pollId, item);
+    }
+
+    @Override
+    public void showAllParticipants(long pollId) {
+        PollParticipantsActivity.startForAllParticipants(this, pollId);
+    }
+
 }

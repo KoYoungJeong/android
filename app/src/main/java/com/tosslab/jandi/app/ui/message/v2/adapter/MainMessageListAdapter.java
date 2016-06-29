@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
@@ -337,9 +338,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         for (int idx = 0; idx < count; idx++) {
             int itemViewType = getItemViewType(idx);
             if (TypeUtil.hasTypeElement(itemViewType, TypeUtil.TYPE_VIEW_MESSAGE_COMMENT_FOR_FILE)
-                    || TypeUtil.hasTypeElement(itemViewType, TypeUtil.TYPE_VIEW_STICKER_COMMENT_FOR_FILE)
-                    || TypeUtil.hasTypeElement(itemViewType, TypeUtil.TYPE_VIEW_MESSAGE_COMMENT_FOR_POLL)
-                    || TypeUtil.hasTypeElement(itemViewType, TypeUtil.TYPE_VIEW_STICKER_COMMENT_FOR_POLL)) {
+                    || TypeUtil.hasTypeElement(itemViewType, TypeUtil.TYPE_VIEW_STICKER_COMMENT_FOR_FILE)) {
                 ResMessages.Link item = getItem(idx);
                 if (item.message.feedbackId == messageId) {
                     indexList.add(idx);
@@ -347,6 +346,21 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
             }
         }
 
+
+        return indexList;
+    }
+
+    @Override
+    public List<Integer> getIndexListByPollId(long pollId) {
+        List<Integer> indexList = new ArrayList<Integer>();
+
+        int count = getItemCount();
+        for (int idx = 0; idx < count; idx++) {
+            Poll poll = getItem(idx).poll;
+            if (poll != null && poll.getId() == pollId) {
+                indexList.add(idx);
+            }
+        }
 
         return indexList;
     }

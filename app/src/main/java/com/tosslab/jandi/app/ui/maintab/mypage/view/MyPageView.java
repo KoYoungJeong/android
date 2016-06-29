@@ -40,4 +40,6 @@ public interface MyPageView {
     void clearLoadMoreOffset();
 
     void hideEmptyMentionView();
+
+    void setPollBadgeCount(int pollCount);
 }

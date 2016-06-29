@@ -4,11 +4,13 @@ import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by tonyjs on 16. 6. 15..
@@ -42,17 +44,20 @@ public class PollDaoImpl extends BaseDaoImpl<Poll, Integer> {
         Collection<Poll.Item> items = poll.getItems();
         if (items != null && !items.isEmpty()) {
             for (Poll.Item item : items) {
+                item.setPoll(poll);
                 pollItemDao.create(item);
             }
         }
 
-        Collection<Poll.Item> electedItems = poll.getElectedItems();
-        if (electedItems != null && !electedItems.isEmpty()) {
-            for (Poll.Item item : electedItems) {
-                item.setElected(true);
-                pollItemDao.createOrUpdate(item);
-            }
-        }
-
+//        Collection<Poll.Item> electedItems = poll.getElectedItems();
+//        if (electedItems != null && !electedItems.isEmpty()) {
+//            for (Poll.Item item : electedItems) {
+//                item.setElected(true);
+//                item.setPoll(poll);
+//                pollItemDao.createOrUpdate(item);
+//            }
+//        }
     }
+
 }
+

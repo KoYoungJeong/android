@@ -97,6 +97,16 @@ public class MyPagePresenterImpl implements MyPagePresenter {
     }
 
     @Override
+    public void onInitializePollBadge() {
+        model.getEnablePollListObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(polls -> {
+                    view.setPollBadgeCount(polls.size());
+                }, Throwable::printStackTrace);
+    }
+
+    @Override
     public void onRetrieveMyInfo() {
         view.setMe(model.getMe());
     }

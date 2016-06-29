@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
@@ -127,17 +128,18 @@ public class MessageListV2Presenter {
                             return messageObservable
                                     .compose(this::composeSend);
                         case UpdateLinkPreview:
-
                             return messageObservable
                                     .compose(this::composeLinkPreview);
                     }
 
                     return messageObservable;
                 })
-                .subscribe(messageContainer -> {}, throwable -> {
+                .subscribe(messageContainer -> {
+                }, throwable -> {
                     LogUtil.e("Message Publish Fail!!");
                     throwable.printStackTrace();
-                }, () -> {});
+                }, () -> {
+                });
 
         markerRequestQueue = PublishSubject.create();
         markerRequestQueue.onBackpressureBuffer()
@@ -1107,6 +1109,22 @@ public class MessageListV2Presenter {
 
     }
 
+    public void changePollData(Poll poll) {
+        List<Integer> indexes = adapterModel.getIndexListByPollId(poll.getId());
+        LogUtil.d("tony6", indexes.toString());
+        if (indexes.size() <= 0) {
+            return;
+        }
+
+        for (int index : indexes) {
+            ResMessages.Link item = adapterModel.getItem(index);
+            item.poll = poll;
+            adapterModel.updateCachedType(index);
+        }
+
+        view.refreshMessages();
+    }
+
     public void updateStarredOfMessage(int messageId, boolean starred) {
         int index = adapterModel.indexByMessageId(messageId);
         adapterModel.modifyStarredStateByPosition(index, starred);
@@ -1143,14 +1161,6 @@ public class MessageListV2Presenter {
             NewMessageFromLocalContainer container = new NewMessageFromLocalContainer(currentMessageState);
             addQueue(container);
         }
-    }
-
-    public void upsertLink(ResMessages.Link link) {
-        if (link == null) {
-            return;
-        }
-
-        messageListModel.upsertMessage(link);
     }
 
     public interface View {

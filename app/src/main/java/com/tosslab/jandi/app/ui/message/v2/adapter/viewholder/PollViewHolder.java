@@ -5,17 +5,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.messages.RequestUpsertLinkEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
-import com.tosslab.jandi.app.utils.DateTransformator;
-
-import java.util.Date;
-
-import de.greenrobot.event.EventBus;
+import com.tosslab.jandi.app.ui.poll.util.PollBinder;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
  * Created by tonyjs on 16. 6. 15..
@@ -36,45 +31,6 @@ public class PollViewHolder extends BaseMessageViewHolder {
     private TextView tvPollDeleted;
 
     private View vMargin;
-
-    public static void bindPoll(ResMessages.Link link,
-                                ImageView vPollIcon,
-                                TextView tvSubject, TextView tvCreator,
-                                TextView tvDueDate, TextView tvPollDeleted) {
-        Poll poll = link.poll;
-        if (poll == null) {
-            return;
-        }
-
-        tvSubject.setText(poll.getSubject());
-        tvCreator.setText(TeamInfoLoader.getInstance().getMemberName(poll.getCreatorId()));
-
-        String status = poll.getStatus();
-
-        if ("created".equals(status)) {
-            Date now = new Date();
-            int compare = now.compareTo(poll.getDueDate());
-            if (compare >= 0) {
-                vPollIcon.setImageResource(R.drawable.poll_closed);
-                tvDueDate.setText("종료됨");
-                poll.setStatus("finished");
-                EventBus.getDefault().post(RequestUpsertLinkEvent.create(link));
-            } else {
-                String dueDate = "~" + DateTransformator.getTimeString(poll.getDueDate());
-                tvDueDate.setText(dueDate);
-                vPollIcon.setImageResource(R.drawable.poll_normal);
-            }
-        } else {
-            vPollIcon.setImageResource(R.drawable.poll_closed);
-            tvDueDate.setText("종료됨");
-        }
-
-        boolean deleted = "deleted".equals(status);
-        tvSubject.setVisibility(deleted ? View.GONE : View.VISIBLE);
-        tvCreator.setVisibility(deleted ? View.GONE : View.VISIBLE);
-        tvDueDate.setVisibility(deleted ? View.GONE : View.VISIBLE);
-        tvPollDeleted.setVisibility(deleted ? View.VISIBLE : View.GONE);
-    }
 
     @Override
     public void initView(View rootView) {
@@ -106,7 +62,20 @@ public class PollViewHolder extends BaseMessageViewHolder {
             ProfileUtil.setProfile(link.fromEntity, ivProfile, vProfileCover, tvName, vDisableLineThrough);
         }
 
-        bindPoll(link, vPollIcon, tvSubject, tvCreator, tvDueDate, tvPollDeleted);
+        LogUtil.e("tony6 ", link.poll.getSubject() + " status = " + link.poll.getStatus());
+        PollBinder.bindPoll(link.poll, false,
+                vPollIcon, tvSubject, tvCreator, tvDueDate, tvPollDeleted);
+
+        setMessageBackground(link);
+    }
+
+    private void setMessageBackground(ResMessages.Link link) {
+        long writerId = link.fromEntity;
+        if (TeamInfoLoader.getInstance().getMyId() == writerId) {
+            vgPoll.setBackgroundResource(R.drawable.bg_message_item_selector_mine);
+        } else {
+            vgPoll.setBackgroundResource(R.drawable.bg_message_item_selector);
+        }
     }
 
     @Override

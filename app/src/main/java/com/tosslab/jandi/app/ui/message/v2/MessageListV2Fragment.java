@@ -45,7 +45,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
-import com.tosslab.jandi.app.events.RequestCreatePollEvent;
+import com.tosslab.jandi.app.events.poll.RequestCreatePollEvent;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
@@ -74,7 +74,6 @@ import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
-import com.tosslab.jandi.app.events.messages.RequestUpsertLinkEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
@@ -1402,7 +1401,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     }
 
     public void onEvent(SocketPollEvent event) {
-        if (!isForeground || messageListPresenter == null) {
+        if (room == null || messageListPresenter == null) {
             return;
         }
 
@@ -1410,7 +1409,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 && event.getPoll().getTeamId() == room.getTeamId()
                 && event.getPoll().getTopicId() == room.getRoomId()) {
 
-            messageListPresenter.addNewMessageOfLocalQueue();
+            messageListPresenter.changePollData(event.getPoll());
         }
     }
 
@@ -1753,10 +1752,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     public void onEvent(RequestCreatePollEvent event) {
         PollCreateActivity.start(getActivity(), room.getRoomId());
-    }
-
-    public void onEvent(RequestUpsertLinkEvent event) {
-        messageListPresenter.upsertLink(event.getLink());
     }
 
     public void onEvent(NetworkConnectEvent event) {

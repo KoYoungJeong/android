@@ -2,16 +2,21 @@ package com.tosslab.jandi.app.ui.poll.create;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SwitchCompat;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.CalendarDialogFragment;
 import com.tosslab.jandi.app.dialogs.TimePickerDialogFragment;
@@ -20,7 +25,13 @@ import com.tosslab.jandi.app.ui.poll.create.component.DaggerPollCreateComponent;
 import com.tosslab.jandi.app.ui.poll.create.module.PollCreateModule;
 import com.tosslab.jandi.app.ui.poll.create.presenter.PollCreatePresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -37,20 +48,27 @@ public class PollCreateActivity extends BaseAppCompatActivity
         TimePickerDialogFragment.OnHourSelectedListener,
         PollCreatePresenter.View {
 
+    private static final String KEY_TOPIC_ID = "topicId";
+
     @Inject
     PollCreatePresenter pollCreatePresenter;
 
+    @Bind(R.id.toolbar_create_poll)
+    Toolbar toolbar;
     @Bind(R.id.vg_create_poll_item_wrapper)
     ViewGroup vgPollItems;
-
     @Bind(R.id.switch_create_poll_anonymous)
     SwitchCompat switchAnonymous;
     @Bind(R.id.switch_create_poll_multiplechoice)
     SwitchCompat switchMultipleChoice;
+    @Bind(R.id.tv_create_poll_date)
+    TextView tvCreatePollDate;
+    @Bind(R.id.tv_create_poll_time)
+    TextView tvCreatePollTime;
 
     public static void start(Activity activity, long topicId) {
         Intent intent = new Intent(activity, PollCreateActivity.class);
-        intent.putExtra("topicId", topicId);
+        intent.putExtra(KEY_TOPIC_ID, topicId);
         activity.startActivity(intent);
     }
 
@@ -59,23 +77,36 @@ public class PollCreateActivity extends BaseAppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_poll);
 
-        DaggerPollCreateComponent.builder()
-                .pollCreateModule(new PollCreateModule(this))
-                .build()
-                .inject(this);
+        injectComponent();
 
         ButterKnife.bind(this);
 
+        setupActionBar();
+
         addPollItem();
 
-        long topicId = getIntent().getLongExtra("topicId", 0);
+        initPollCreate();
+
+        onDateSelected(CalendarDay.today());
+
+        onHourSelected(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1);
+    }
+
+    private void initPollCreate() {
+        long topicId = getIntent().getLongExtra(KEY_TOPIC_ID, 0);
         if (topicId <= 0) {
             showUnExpectedErrorToast();
             finish();
             return;
         }
-
         pollCreatePresenter.initializePollCreateBuilder(topicId);
+    }
+
+    private void injectComponent() {
+        DaggerPollCreateComponent.builder()
+                .pollCreateModule(new PollCreateModule(this))
+                .build()
+                .inject(this);
     }
 
     @OnClick(R.id.btn_create_poll_item_add)
@@ -144,12 +175,44 @@ public class PollCreateActivity extends BaseAppCompatActivity
 
     @Override
     public void onDateSelected(CalendarDay calendarDay) {
-        pollCreatePresenter.onPollDueDateSelected(calendarDay.getCalendar());
+        Calendar calendar = calendarDay.getCalendar();
+        setDate(calendar);
+        pollCreatePresenter.onPollDueDateSelected(calendar);
+    }
+
+    private void setDate(Calendar calendar) {
+        Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
+        DateFormat dateFormat = null;
+        switch (locale.getLanguage()) {
+            case "ko":
+                dateFormat = new SimpleDateFormat("yyyy년 MM월 dd일(E)");
+                break;
+            case "zh":
+                dateFormat = new SimpleDateFormat("yyyy年 MM月 dd日 E");
+                break;
+            case "ja":
+                dateFormat = new SimpleDateFormat("yyyy年 MM月 dd日(E)");
+                break;
+            default:
+                dateFormat = new SimpleDateFormat("E MMM dd, yyyy");
+                break;
+        }
+        tvCreatePollDate.setText(dateFormat.format(calendar.getTime()));
     }
 
     @Override
     public void onHourSelected(int hour) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        setTime(calendar);
         pollCreatePresenter.onPollDueDateHourSelected(hour);
+    }
+
+    private void setTime(Calendar calendar) {
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        tvCreatePollTime.setText(DateTransformator.getTimeStringForSimple(calendar.getTime()));
     }
 
     @OnClick(R.id.btn_create_poll_anonymous)
@@ -199,5 +262,16 @@ public class PollCreateActivity extends BaseAppCompatActivity
     @Override
     public void showChooseRightDueDateToast() {
         ColoredToast.showError("시간 다시 골라라.");
+    }
+
+    private void setupActionBar() {
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setIcon(
+                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+        actionBar.setTitle("새 투표 생성");
     }
 }

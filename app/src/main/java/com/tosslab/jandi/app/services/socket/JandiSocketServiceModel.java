@@ -87,6 +87,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageUnstarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollCommentCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollCommentDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketPollCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollFinishedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
@@ -214,6 +215,7 @@ public class JandiSocketServiceModel {
         eventHistoryActorMapper.put(SocketTopicFolderItemCreatedEvent.class, this::onFolderItemCreated);
         eventHistoryActorMapper.put(SocketTopicFolderItemDeletedEvent.class, this::onFolderItemDeleted);
         eventHistoryActorMapper.put(SocketTeamUpdatedEvent.class, this::onTeamUpdated);
+        eventHistoryActorMapper.put(SocketPollCreatedEvent.class, this::onPollCreated);
         eventHistoryActorMapper.put(SocketPollDeletedEvent.class, this::onPollDeleted);
         eventHistoryActorMapper.put(SocketPollFinishedEvent.class, this::onPollFinished);
 
@@ -1324,18 +1326,51 @@ public class JandiSocketServiceModel {
         }
     }
 
+    public void onPollCreated(Object object) {
+        try {
+            SocketPollCreatedEvent event = getObject(object, SocketPollCreatedEvent.class);
+            SocketPollCreatedEvent.Data data = event.getData();
+
+            Poll poll = data != null ? data.getPoll() : null;
+
+            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()
+                    && poll != null && poll.getId() > 0) {
+                upsertPoll(poll);
+                poll = getPollFromDatabase(poll.getId());
+            }
+
+            TeamInfoLoader.getInstance().refresh();
+            JandiPreference.setSocketConnectedLastTime(event.getTs());
+
+            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()
+                    && poll != null && poll.getId() > 0) {
+                postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.CREATED));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void onPollFinished(Object object) {
         try {
             SocketPollFinishedEvent event = getObject(object, SocketPollFinishedEvent.class);
             SocketPollFinishedEvent.Data data = event.getData();
-            Poll poll = data != null ? data.getPoll() : null;
-            upsertPollIfExists(event.getTeamId(), poll);
+
+            ResMessages.Link link = data.getLinkMessage();
+            Poll poll = link != null ? link.poll : null;
+
+            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()
+                    && poll != null && poll.getId() > 0) {
+                upsertPoll(poll);
+                poll = getPollFromDatabase(poll.getId());
+            }
 
             TeamInfoLoader.getInstance().refresh();
-
             JandiPreference.setSocketConnectedLastTime(event.getTs());
-            if (data != null && data.getPoll() != null && data.getPoll().getId() > 0) {
-                postEvent(new SocketPollEvent(data.getPoll()));
+
+            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()
+                    && poll != null && poll.getId() > 0) {
+                postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.FINISHED));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1346,23 +1381,25 @@ public class JandiSocketServiceModel {
         try {
             SocketPollDeletedEvent event = getObject(object, SocketPollDeletedEvent.class);
             SocketPollDeletedEvent.Data data = event.getData();
-            Poll poll = data != null ? data.getPoll() : null;
-            upsertPollIfExists(event.getTeamId(), poll);
+
+            ResMessages.Link link = data.getLinkMessage();
+            Poll poll = link != null ? link.poll : null;
+
+            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()
+                    && poll != null && poll.getId() > 0) {
+                upsertPoll(poll);
+                poll = getPollFromDatabase(poll.getId());
+            }
 
             TeamInfoLoader.getInstance().refresh();
             JandiPreference.setSocketConnectedLastTime(event.getTs());
-            if (data != null && data.getPoll() != null && data.getPoll().getId() > 0) {
-                postEvent(new SocketPollEvent(data.getPoll()));
+
+            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()
+                    && poll != null && poll.getId() > 0) {
+                postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.DELETED));
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private void upsertPollIfExists(long teamId, Poll poll) {
-        if (teamId == AccountRepository.getRepository().getSelectedTeamId()
-                && poll != null && poll.getId() > 0) {
-            PollRepository.getInstance().upsertPoll(poll);
         }
     }
 
@@ -1372,9 +1409,7 @@ public class JandiSocketServiceModel {
             TeamInfoLoader.getInstance().refresh();
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()) {
-                LogUtil.d("tony", event.toString());
                 postEvent(event);
-                return;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1387,13 +1422,19 @@ public class JandiSocketServiceModel {
             TeamInfoLoader.getInstance().refresh();
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()) {
-                LogUtil.d("tony", event.toString());
                 postEvent(event);
-                return;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void upsertPoll(Poll poll) {
+        PollRepository.getInstance().upsertPoll(poll);
+    }
+
+    private Poll getPollFromDatabase(long pollId) {
+        return PollRepository.getInstance().getPollById(pollId);
     }
 
     interface Command {

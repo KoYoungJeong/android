@@ -48,6 +48,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
             try {
                 InitialInfo initialInfo = shareModel.getInitialInfo(teamId);
                 shareModel.updateInitialInfo(initialInfo);
+                shareModel.refreshPollList(teamId);
             } catch (Exception e) {
                 e.printStackTrace();
                 view.moveIntro();

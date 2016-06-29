@@ -15,6 +15,8 @@ public interface MyPagePresenter {
 
     void onInitializeMyPage(boolean isRefreshAction);
 
+    void onInitializePollBadge();
+
     void onRetrieveMyInfo();
 
     void loadMoreMentions(long offset);

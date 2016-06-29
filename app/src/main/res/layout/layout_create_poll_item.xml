@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="48dp">
+    android:layout_height="wrap_content">
 
     <EditText
         android:id="@+id/et_create_poll_item_title"
-        style="@style/CreatePollEditText"
+        android:theme="@style/CreatePollEditText"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:layout_gravity="center_vertical"
         android:hint="질문을 입력하셈"
+        android:maxLength="100"
         android:paddingRight="31dp"/>
 
     <ImageView

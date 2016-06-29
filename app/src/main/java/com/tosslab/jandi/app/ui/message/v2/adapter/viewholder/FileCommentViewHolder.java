@@ -153,14 +153,14 @@ public class FileCommentViewHolder extends BaseCommentViewHolder {
     private boolean isFromMe(ResMessages.Link link) {
         boolean isMe = false;
         if (link.feedback != null) {
-            isMe = TeamInfoLoader.getInstance().getMyId() == link.feedback.writerId;
+            isMe = TeamInfoLoader.getInstance().getMyId() == link.message.writerId;
         }
         return isMe;
     }
 
     private void setBackground(ResMessages.Link link) {
 
-        boolean isMe = TeamInfoLoader.getInstance().getMyId() == link.feedback.writerId;
+        boolean isMe = TeamInfoLoader.getInstance().getMyId() == link.message.writerId;
 
         int resId;
 

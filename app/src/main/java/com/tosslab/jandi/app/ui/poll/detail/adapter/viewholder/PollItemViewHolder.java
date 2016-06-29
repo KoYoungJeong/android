@@ -8,7 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.PollDataChangedEvent;
+import com.tosslab.jandi.app.events.poll.PollDataChangedEvent;
+import com.tosslab.jandi.app.events.poll.RequestShowPollParticipantsEvent;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.utils.UiUtils;
@@ -127,7 +128,7 @@ public class PollItemViewHolder extends BaseViewHolder<Pair<Poll, Poll.Item>> {
 
         poll.setVotedItemSeqs(votedItemSeqs);
 
-        EventBus.getDefault().post(new PollDataChangedEvent());
+        EventBus.getDefault().post(PollDataChangedEvent.create(poll));
     }
 
     private void bindUnSelectablePoll(final Poll poll, final Poll.Item item) {
@@ -135,7 +136,8 @@ public class PollItemViewHolder extends BaseViewHolder<Pair<Poll, Poll.Item>> {
         tvParticipants.setVisibility(View.VISIBLE);
 
         progressBar.setSelected(false);
-        progressBar.setOnClickListener(null);
+        progressBar.setOnClickListener(v ->
+                EventBus.getDefault().post(RequestShowPollParticipantsEvent.option(poll, item)));
 
         progressBar.setProgress(item.getVotedCount());
         progressBar.setMax(poll.getVotedCount());
@@ -143,7 +145,9 @@ public class PollItemViewHolder extends BaseViewHolder<Pair<Poll, Poll.Item>> {
         boolean amIVoted = "voted".equals(poll.getVoteStatus());
 
         Resources resources = itemView.getResources();
-        progressBar.setProgressBackgroundColor(resources.getColor(R.color.jandi_horizontal_progress_background));
+        int progressBackgroundColor =
+                resources.getColor(R.color.jandi_horizontal_progress_background);
+        progressBar.setProgressBackgroundColor(progressBackgroundColor);
 
         int progressColor = amIVoted ? resources.getColor(R.color.jandi_horizontal_progress_voted)
                 : resources.getColor(R.color.jandi_horizontal_progress_selected);

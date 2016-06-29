@@ -1,21 +1,19 @@
 package com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder;
 
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.poll.RequestShowPollParticipantsEvent;
 import com.tosslab.jandi.app.network.models.poll.Poll;
-import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
-import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.ProfileBinder;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
 import java.util.Date;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by tonyjs on 16. 6. 22..
@@ -28,6 +26,7 @@ public class PollInfoViewHolder extends BaseViewHolder<Poll> {
     private TextView tvOptions;
 
     private View btnParticipants;
+    private View vParticipantsMetaphor;
 
     private PollInfoViewHolder(View itemView) {
         super(itemView);
@@ -36,6 +35,7 @@ public class PollInfoViewHolder extends BaseViewHolder<Poll> {
         tvParticipants = (TextView) itemView.findViewById(R.id.tv_poll_detail_info_participants_count);
         tvOptions = (TextView) itemView.findViewById(R.id.tv_poll_detail_info_options);
         btnParticipants = itemView.findViewById(R.id.btn_poll_detail_info_participants);
+        vParticipantsMetaphor = itemView.findViewById(R.id.v_poll_detail_info_participants_arrow);
     }
 
     public static PollInfoViewHolder newInstance(ViewGroup parent) {
@@ -51,22 +51,26 @@ public class PollInfoViewHolder extends BaseViewHolder<Poll> {
         tvParticipants.setText(poll.getVotedCount() + "명 참여");
 
         if (hasDueDate(poll)) {
+            tvDueDate.setSelected(false);
+            String leftDays = DateTransformator.getRemainingDays(poll.getDueDate());
+            tvDueDate.setText(leftDays);
+
+            boolean canShowParticipants = !poll.isAnonymous() && "voted".equals(poll.getVoteStatus());
+            btnParticipants.setSelected(canShowParticipants);
+            vParticipantsMetaphor.setVisibility(canShowParticipants? View.VISIBLE : View.GONE);
+            if (canShowParticipants) {
+                btnParticipants.setOnClickListener(v ->
+                        EventBus.getDefault().post(RequestShowPollParticipantsEvent.all(poll)));
+            } else {
+                btnParticipants.setOnClickListener(null);
+            }
+        } else {
             tvDueDate.setSelected(true);
             btnParticipants.setSelected(true);
-            btnParticipants.setOnClickListener(v -> {
-
-            });
-
-            String leftDays = DateTransformator.getLeftDays(poll.getDueDate());
-            tvDueDate.setText(leftDays);
-        } else {
-            tvDueDate.setSelected(false);
-            btnParticipants.setSelected(false);
-            btnParticipants.setOnClickListener(v -> {
-
-            });
-
-            tvDueDate.setText(DateTransformator.getTimeString(poll.getDueDate()) + " 종료됨");
+            vParticipantsMetaphor.setVisibility(View.VISIBLE);
+            btnParticipants.setOnClickListener(v ->
+                    EventBus.getDefault().post(RequestShowPollParticipantsEvent.all(poll)));
+            tvDueDate.setText(DateTransformator.getTimeString(poll.getFinishedAt()) + " 종료됨");
         }
 
         if (!poll.isAnonymous() && !poll.isMultipleChoice()) {

@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.network.models.ReqCreatePoll;
 import com.tosslab.jandi.app.network.models.ResCreatePoll;
 import com.tosslab.jandi.app.network.models.ResPollDetail;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.ui.poll.detail.dto.PollDetail;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -58,15 +59,16 @@ public class PollDetailModelTest {
         ResCreatePoll poll = model.pollApi.get().createPoll(teamId, reqCreatePoll);
         System.out.println(poll.toString());
 
-        Observable<ResPollDetail> pollDetailObservable = model.getPollDetailObservable(poll.getPoll().getId());
+        Observable<PollDetail> pollDetailObservable =
+                model.getPollDetailObservable(poll.getPoll().getId(), new PollDetail());
 
-        TestSubscriber<ResPollDetail> testSubscriber = new TestSubscriber<>();
+        TestSubscriber<PollDetail> testSubscriber = new TestSubscriber<>();
         pollDetailObservable.subscribe(testSubscriber);
 
         testSubscriber.assertNoErrors();
         testSubscriber.assertCompleted();
 
-        ResPollDetail pollDetail = testSubscriber.getOnNextEvents().get(0);
+        PollDetail pollDetail = testSubscriber.getOnNextEvents().get(0);
         System.out.println(pollDetail.toString());
         assertEquals(poll.getPoll().getId(), pollDetail.getPoll().getId());
         testSubscriber.assertCompleted();

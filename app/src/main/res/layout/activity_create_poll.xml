@@ -25,13 +25,15 @@
 
             <EditText
                 android:id="@+id/et_create_poll_subject"
-                style="@style/CreatePollEditText"
+                android:theme="@style/CreatePollEditText"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="8dp"
-                android:hint="질문을 입력하셈"/>
+                android:hint="질문을 입력하셈"
+                android:maxLength="200"
+                android:minHeight="48dp"/>
 
             <LinearLayout
                 android:id="@+id/vg_create_poll_item_wrapper"
@@ -81,13 +83,14 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="8dp"
+                android:weightSum="100"
                 android:orientation="horizontal">
 
                 <LinearLayout
                     android:id="@+id/btn_create_poll_duedate"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="70"
                     android:background="@drawable/bg_poll_create_edittext"
                     android:orientation="horizontal">
 
@@ -108,7 +111,8 @@
 
                 <LinearLayout
                     android:id="@+id/btn_create_poll_duedate_time"
-                    android:layout_width="wrap_content"
+                    android:layout_weight="30"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="16dp"
                     android:background="@drawable/bg_poll_create_edittext"

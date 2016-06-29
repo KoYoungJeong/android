@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.local.orm.repositories;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 
@@ -50,4 +51,60 @@ public class PollRepository extends LockExecutorTemplate {
         });
     }
 
+    public boolean upsertPollList(List<Poll> polls) {
+        return execute(() -> {
+            try {
+
+                Dao<Poll, ?> dao = getHelper().getDao(Poll.class);
+
+                // 내부에서 트랜잭션 commit 컨트롤을 함
+                dao.callBatchTasks(() -> {
+                    for (Poll poll : polls) {
+                        dao.createOrUpdate(poll);
+                    }
+                    return null;
+                });
+
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return false;
+
+        });
+    }
+
+    public int clearAll() {
+        return execute(() -> {
+            try {
+                Dao<Poll, ?> dao = getHelper().getDao(Poll.class);
+                DeleteBuilder<Poll, ?> deleteBuilder = dao.deleteBuilder();
+                return deleteBuilder.delete();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return 0;
+
+        });
+    }
+
+    public Poll getPollById(long pollId) {
+        return execute(() -> {
+            try {
+                Dao<Poll, ?> dao = getHelper().getDao(Poll.class);
+                return dao.queryBuilder()
+                        .where()
+                        .eq("id", pollId)
+                        .queryForFirst();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            Poll poll = new Poll();
+            poll.setId(-1);
+            return poll;
+        });
+    }
 }

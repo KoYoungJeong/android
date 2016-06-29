@@ -5,18 +5,22 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
+import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -34,6 +38,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dagger.Lazy;
+import rx.Observable;
 
 
 /**
@@ -51,6 +56,9 @@ public class AccountHomeModel {
 
     @Inject
     Lazy<StartApi> startApi;
+
+    @Inject
+    Lazy<PollApi> pollApi;
 
     @AfterInject
     void initObject() {
@@ -203,4 +211,25 @@ public class AccountHomeModel {
                 .build());
     }
 
+    public void refreshPollList(long teamId) {
+        try {
+            PollRepository.getInstance().clearAll();
+
+            ResPollList resPollList = pollApi.get().getPollList(teamId, 50);
+            List<Poll> onGoing = resPollList.getOnGoing();
+            if (onGoing == null) {
+                onGoing = new ArrayList<>();
+            }
+            List<Poll> finished = resPollList.getFinished();
+            if (finished == null) {
+                finished = new ArrayList<>();
+            }
+            Observable.merge(Observable.from(onGoing), Observable.from(finished))
+                    .toList()
+                    .subscribe(polls -> PollRepository.getInstance().upsertPollList(polls),
+                            Throwable::printStackTrace);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

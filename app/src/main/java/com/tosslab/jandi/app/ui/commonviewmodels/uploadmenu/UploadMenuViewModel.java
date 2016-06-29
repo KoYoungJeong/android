@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.RequestCreatePollEvent;
+import com.tosslab.jandi.app.events.poll.RequestCreatePollEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 

@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
+import com.tosslab.jandi.app.ui.poll.util.PollBinder;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -141,14 +142,15 @@ public class PollCommentViewHolder extends BaseCommentViewHolder {
     private boolean isFromMe(ResMessages.Link link) {
         boolean isMe = false;
         if (link.feedback != null) {
-            isMe = TeamInfoLoader.getInstance().getMyId() == link.feedback.writerId;
+            LogUtil.e("tony14", "my = " + TeamInfoLoader.getInstance().getMyId() + " writerId = " + link.message.writerId);
+            isMe = TeamInfoLoader.getInstance().getMyId() == link.message.writerId;
         }
         return isMe;
     }
 
     private void setBackground(ResMessages.Link link) {
 
-        boolean isMe = TeamInfoLoader.getInstance().getMyId() == link.feedback.writerId;
+        boolean isMe = isFromMe(link);
 
         int resId;
 
@@ -253,7 +255,7 @@ public class PollCommentViewHolder extends BaseCommentViewHolder {
     private void bindPoll(ResMessages.Link link) {
         LogUtil.i("tony.PollComment.bind", link.toString());
 
-        PollViewHolder.bindPoll(link,
+        PollBinder.bindPoll(link.poll, false,
                 vPollIcon, tvSubject, tvCreator, tvDueDate, tvPollDeleted);
     }
 

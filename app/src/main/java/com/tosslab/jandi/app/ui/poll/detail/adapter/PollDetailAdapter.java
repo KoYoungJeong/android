@@ -14,12 +14,12 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
-import com.tosslab.jandi.app.ui.filedetail.adapter.FileDetailAdapter;
 import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.comment.CommentViewHolder;
 import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.comment.StickerViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.model.PollDetailDataModel;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.view.PollDetailDataView;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.DividerViewHolder;
+import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollDeletedInfoViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollDetailRow;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollInfoViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollItemViewHolder;
@@ -27,9 +27,9 @@ import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollSharedInViewH
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollVoteViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.ProfileViewHolder;
 import com.tosslab.jandi.app.utils.UiUtils;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -56,18 +56,28 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
         switch (viewType) {
             case VIEW_TYPE_PROFILE:
                 return ProfileViewHolder.newInstance(parent);
+
             case VIEW_TYPE_POLL_INFO:
                 return PollInfoViewHolder.newInstance(parent);
+
+            case VIEW_TYPE_POLL_DELETED:
+                return PollDeletedInfoViewHolder.newInstance(parent);
+
             case VIEW_TYPE_POLL_ITEM:
                 return PollItemViewHolder.newInstance(parent);
+
             case VIEW_TYPE_POLL_ITEM_VOTE:
                 return PollVoteViewHolder.newInstance(parent);
+
             case VIEW_TYPE_POLL_SHARED_IN:
                 return PollSharedInViewHolder.newInstance(parent);
+
             case VIEW_TYPE_DIVIDER:
                 return DividerViewHolder.newInstance(parent);
+
             case VIEW_TYPE_COMMENT:
                 return CommentViewHolder.newInstance(parent);
+
             case VIEW_TYPE_STICKER:
                 return StickerViewHolder.newInstance(parent);
         }
@@ -94,27 +104,35 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
 
     @Override
     public void setPollDetails(Poll poll) {
+        LogUtil.d("tony0", poll.toString());
         List<Row<?>> rows = getPollDetailRows(poll);
 
         setRows(rows);
     }
 
     private List<Row<?>> getPollDetailRows(Poll poll) {
-        List<Row<?>> rows = new ArrayList<>();
         if (poll == null) {
-            return rows;
+            return new ArrayList<>();
         }
 
+        if ("deleted".equals(poll.getStatus())) {
+            return getDeletedPollDetailRows(poll);
+        }
+
+        List<Row<?>> rows = new ArrayList<>();
+
         rows.add(PollDetailRow.create(poll, VIEW_TYPE_PROFILE));
+
         rows.add(PollDetailRow.create(poll, VIEW_TYPE_POLL_INFO));
 
         List<Poll.Item> items = new ArrayList<>(poll.getItems());
-
         for (int i = 0; i < items.size(); i++) {
             rows.add(PollDetailRow.create(Pair.create(poll, items.get(i)), VIEW_TYPE_POLL_ITEM));
+
             if (i < items.size() - 1) {
                 DividerViewHolder.Info dividerInfo =
                         DividerViewHolder.Info.create((int) UiUtils.getPixelFromDp(5), Color.TRANSPARENT);
+
                 rows.add(PollDetailRow.create(dividerInfo, VIEW_TYPE_DIVIDER));
             }
         }
@@ -122,12 +140,14 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
         if ("enabled".equals(poll.getVoteStatus())) {
             DividerViewHolder.Info dividerInfo =
                     DividerViewHolder.Info.create((int) UiUtils.getPixelFromDp(15), Color.TRANSPARENT);
+
             rows.add(PollDetailRow.create(dividerInfo, VIEW_TYPE_DIVIDER));
             rows.add(PollDetailRow.create(poll, VIEW_TYPE_POLL_ITEM_VOTE));
         }
 
         DividerViewHolder.Info dividerInfo =
                 DividerViewHolder.Info.create((int) UiUtils.getPixelFromDp(20), Color.TRANSPARENT);
+
         rows.add(PollDetailRow.create(dividerInfo, VIEW_TYPE_DIVIDER));
 
         TopicRoom room = TeamInfoLoader.getInstance().getTopic(poll.getTopicId());
@@ -135,9 +155,24 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
         return rows;
     }
 
+    private List<Row<?>> getDeletedPollDetailRows(Poll poll) {
+        List<Row<?>> rows = new ArrayList<>();
+
+        rows.add(PollDetailRow.create(poll, VIEW_TYPE_PROFILE));
+        rows.add(PollDetailRow.create(poll, VIEW_TYPE_POLL_DELETED));
+
+        TopicRoom room = TeamInfoLoader.getInstance().getTopic(poll.getTopicId());
+        rows.add(PollDetailRow.create(room, VIEW_TYPE_POLL_SHARED_IN));
+
+        return rows;
+    }
+
     @Override
     public void replacePollDetails(Poll poll) {
+        LogUtil.d("tony0", poll.toString());
+
         List<Row<?>> rows = getPollDetailRows(poll);
+
         addRows(0, rows);
     }
 
@@ -160,6 +195,7 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
         if (comments == null || comments.isEmpty()) {
             return;
         }
+
         List<Row<?>> rows = new ArrayList<>();
 
         rows.add(getPollCommentDividerRow());

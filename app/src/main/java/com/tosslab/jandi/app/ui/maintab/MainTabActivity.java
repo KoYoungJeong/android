@@ -29,6 +29,7 @@ import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
+import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
@@ -631,6 +632,10 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
     public void onEventMainThread(MessageOfOtherTeamEvent event) {
         teamsPresenter.reInitializeTeams();
+    }
+
+    public void onEvent(RequestRefreshPollBadgeCountEvent event) {
+        mainTabPagerAdapter.updateMyPageBadge(event.getBadgeCount());
     }
 
     public void updateMoreBadge() {

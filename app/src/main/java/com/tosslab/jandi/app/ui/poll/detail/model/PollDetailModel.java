@@ -1,34 +1,33 @@
 package com.tosslab.jandi.app.ui.poll.detail.model;
 
 import android.support.annotation.VisibleForTesting;
-import android.util.Log;
-import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.MessageManipulator_;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
-import com.tosslab.jandi.app.network.client.sticker.StickerApi;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqNull;
-import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqSendPollComment;
 import com.tosslab.jandi.app.network.models.ReqVotePoll;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResDeletePoll;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResPollCommentCreated;
 import com.tosslab.jandi.app.network.models.ResPollComments;
 import com.tosslab.jandi.app.network.models.ResPollDetail;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
-import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
+import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
+import com.tosslab.jandi.app.ui.poll.detail.dto.PollDetail;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Collection;
@@ -52,49 +51,23 @@ public class PollDetailModel {
 
     MessageManipulator messageManipulator;
     EntityClientManager entityClientManager;
+
     public PollDetailModel(Lazy<PollApi> api) {
         pollApi = api;
         entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
         messageManipulator = MessageManipulator_.getInstance_(JandiApplication.getContext());
     }
 
-    public Observable<Pair<ResPollDetail, ResPollComments>> getPollDetailObservable(long pollId) {
-        return Observable.<Pair<ResPollDetail, ResPollComments>>create(subscriber -> {
+    public Observable<PollDetail> getPollDetailObservable(long pollId, final PollDetail pollDetail) {
+        return Observable.<PollDetail>create(subscriber -> {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
             if (teamId <= 0l) {
                 subscriber.onError(new NullPointerException("has not selected team."));
                 subscriber.onCompleted();
             } else {
                 try {
-                    final ResPollDetail pollDetail = pollApi.get().getPollDetail(teamId, pollId);
-
-                    getPollCommentsObservable(pollId)
-                            .subscribe(resPollComments -> {
-                                subscriber.onNext(Pair.create(pollDetail, resPollComments));
-                            }, e -> {
-                                LogUtil.d(Log.getStackTraceString(e));
-                                subscriber.onNext(Pair.create(pollDetail, ResPollComments.empty()));
-                            });
-
-                } catch (RetrofitException e) {
-                    subscriber.onError(e);
-                }
-                subscriber.onCompleted();
-            }
-        });
-    }
-
-    public Observable<ResPollDetail> getPollVoteObservable(long pollId, Collection<Integer> seqs) {
-        return Observable.<ResPollDetail>create(subscriber -> {
-            long teamId = AccountRepository.getRepository().getSelectedTeamId();
-
-            if (teamId <= 0l) {
-                subscriber.onError(new NullPointerException("has not selected team."));
-                subscriber.onCompleted();
-            } else {
-                try {
-                    ReqVotePoll reqVotePoll = ReqVotePoll.create(seqs);
-                    ResPollDetail pollDetail = pollApi.get().votePoll(teamId, pollId, reqVotePoll);
+                    ResPollDetail resPollDetail = pollApi.get().getPollDetail(teamId, pollId);
+                    pollDetail.setPoll(resPollDetail.getPoll());
                     subscriber.onNext(pollDetail);
                 } catch (RetrofitException e) {
                     subscriber.onError(e);
@@ -104,8 +77,8 @@ public class PollDetailModel {
         });
     }
 
-    public Observable<ResPollComments> getPollCommentsObservable(long pollId) {
-        return Observable.<ResPollComments>create(subscriber -> {
+    public Observable<ResDeletePoll> getPollVoteObservable(long pollId, Collection<Integer> seqs) {
+        return Observable.<ResDeletePoll>create(subscriber -> {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
 
             if (teamId <= 0l) {
@@ -113,7 +86,28 @@ public class PollDetailModel {
                 subscriber.onCompleted();
             } else {
                 try {
-                    ResPollComments pollDetail = pollApi.get().getPollComments(teamId, pollId);
+                    ReqVotePoll reqVotePoll = ReqVotePoll.create(seqs);
+                    ResDeletePoll pollDetail = pollApi.get().votePoll(teamId, pollId, reqVotePoll);
+                    subscriber.onNext(pollDetail);
+                } catch (RetrofitException e) {
+                    subscriber.onError(e);
+                }
+                subscriber.onCompleted();
+            }
+        });
+    }
+
+    public Observable<PollDetail> getPollCommentsObservable(long pollId, PollDetail pollDetail) {
+        return Observable.<PollDetail>create(subscriber -> {
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
+
+            if (teamId <= 0l) {
+                subscriber.onError(new NullPointerException("has not selected team."));
+                subscriber.onCompleted();
+            } else {
+                try {
+                    ResPollComments resPollComments = pollApi.get().getPollComments(teamId, pollId);
+                    pollDetail.setPollComments(resPollComments.getComments());
                     subscriber.onNext(pollDetail);
                 } catch (RetrofitException e) {
                     subscriber.onError(e);
@@ -264,4 +258,53 @@ public class PollDetailModel {
         });
     }
 
+    public Observable<ResDeletePoll> getPollFinishObservable(long pollId) {
+        return Observable.<ResDeletePoll>create(subscriber -> {
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
+
+            if (teamId <= 0l) {
+                subscriber.onError(new NullPointerException("has not selected team."));
+                subscriber.onCompleted();
+            } else {
+                try {
+                    ResDeletePoll pollDetail = pollApi.get().finishPoll(teamId, pollId);
+                    subscriber.onNext(pollDetail);
+                } catch (RetrofitException e) {
+                    subscriber.onError(e);
+                }
+                subscriber.onCompleted();
+            }
+        });
+    }
+
+    public Observable<ResDeletePoll> getPollDeleteObservable(long pollId) {
+        return Observable.<ResDeletePoll>create(subscriber -> {
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
+
+            if (teamId <= 0l) {
+                subscriber.onError(new NullPointerException("has not selected team."));
+                subscriber.onCompleted();
+            } else {
+                try {
+                    ResDeletePoll resDeletePoll = pollApi.get().deletePoll(teamId, pollId);
+                    subscriber.onNext(resDeletePoll);
+                } catch (RetrofitException e) {
+                    subscriber.onError(e);
+                }
+                subscriber.onCompleted();
+            }
+        });
+    }
+
+    public void upsertPoll(Poll poll) {
+        if (poll == null || poll.getId() <= 0) {
+            return;
+        }
+
+        LogUtil.i("tony24", poll.toString());
+        PollRepository.getInstance().upsertPoll(poll);
+
+        Poll pollById = PollRepository.getInstance().getPollById(poll.getId());
+        LogUtil.i("tony24", pollById.toString());
+    }
 }

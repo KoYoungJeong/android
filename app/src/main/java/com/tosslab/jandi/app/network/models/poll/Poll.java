@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.local.orm.persister.CollectionIntegerConverter;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @DatabaseTable(tableName = "poll", daoClass = PollDaoImpl.class)
@@ -204,6 +205,21 @@ public class Poll {
 
     @Override
     public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (items != null && items.isEmpty()) {
+            sb.append("[");
+            Iterator<Item> iterator = items.iterator();
+            int i = 0;
+            while (iterator.hasNext()) {
+                if (i != 0) {
+                    sb.append(", ");
+                }
+                sb.append(iterator.next().toString());
+                i++;
+            }
+            sb.append("]");
+        }
+
         return "Poll{" +
                 "id=" + id +
                 ", dueDate=" + dueDate +
@@ -220,7 +236,7 @@ public class Poll {
                 ", multipleChoice=" + multipleChoice +
                 ", anonymous=" + anonymous +
                 ", commentCount=" + commentCount +
-                ", items=" + items +
+                ", items=" + sb.toString() +
                 ", voteStatus='" + voteStatus + '\'' +
                 ", votedItemSeqs=" + votedItemSeqs +
                 '}';
@@ -233,7 +249,8 @@ public class Poll {
         @DatabaseField(generatedId = true)
         private long _id;
 
-        @DatabaseField(foreign = true, foreignAutoRefresh = true)
+        @JsonIgnore
+        @DatabaseField(foreign = true)
         private Poll poll;
 
         @DatabaseField
@@ -298,8 +315,7 @@ public class Poll {
         @Override
         public String toString() {
             return "Item{" +
-                    "poll=" + poll +
-                    ", seq=" + seq +
+                    "seq=" + seq +
                     ", name='" + name + '\'' +
                     ", votedCount=" + votedCount +
                     '}';

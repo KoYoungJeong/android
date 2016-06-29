@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.search.messages.adapter.visitor.ContentTextVisitor;
 import com.tosslab.jandi.app.ui.search.messages.adapter.visitor.FileInfoTextVisitor;
+import com.tosslab.jandi.app.ui.search.messages.adapter.visitor.PollInfoTextVisitor;
 import com.tosslab.jandi.app.ui.search.messages.adapter.visitor.TextVisitor;
 import com.tosslab.jandi.app.ui.search.messages.adapter.visitor.TypeTextVisitor;
 import com.tosslab.jandi.app.ui.search.messages.adapter.visitor.WriterTextVisitor;
@@ -43,6 +44,7 @@ public class TextStrategy {
         textVisitors.add(new WriterTextVisitor(context, textColor));
         textVisitors.add(new TypeTextVisitor(context));
         textVisitors.add(new FileInfoTextVisitor(context, textColor));
+        textVisitors.add(new PollInfoTextVisitor(context, textColor));
         textVisitors.add(new ContentTextVisitor(context, textColor, query));
 
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
