@@ -109,6 +109,7 @@
 	<string name="jandi_auto_join_explain">"邀請所有新成員至此議題"</string>
 	<string name="jandi_auto_join_title">"自動邀請"</string>
 	<string name="jandi_auto_join_title_wild">"自動邀請*"</string>
+	<string name="jandi_back">"返回"</string>
 	<string name="jandi_baidu_app_store">"百度手機助手"</string>
 	<string name="jandi_bot_role">"身為JANDI最強使者，肩負傳遞JANDI Connect和平台訊息通知的任務，絕對使命必達！"</string>
 	<string name="jandi_bot_status">"你好，我是Mr.J！"</string>
@@ -172,6 +173,10 @@
 	<string name="jandi_create_team_message">"請提供您的電子郵件地址以免費地建立新的JANDI團隊!"</string>
 	<string name="jandi_create_topic">"建立議題"</string>
 	<string name="jandi_created_this_topic">"%s建立了這議題"</string>
+	<string name="jandi_date_days">"日"</string>
+	<string name="jandi_date_hours">"時"</string>
+	<string name="jandi_date_minutes">"分"</string>
+	<string name="jandi_date_remaining">"剩餘時間"</string>
 	<string name="jandi_decide_choose">"選擇照片"</string>
 	<string name="jandi_delete_succeed">"%s已被刪除"</string>
 	<string name="jandi_deleted_file">"已刪除檔案"</string>
@@ -200,6 +205,9 @@
 	<string name="jandi_exceeded_max_text_length">"可填入最多5000字"</string>
 	<string name="jandi_expired_invitation_link">"此邀請連結已過期，請聯絡你的邀請人重新寄發新連結。"</string>
 	<string name="jandi_explain_global_push_off">"JANDI推播通知已被停用。欲重新接收推播，點擊「更多」後進入「設定」開啟推播。"</string>
+	<string name="jandi_explain_invite">"JANDI 是企業通訊與協作平台，
+越多成員使用越能改善您的工作品質。
+現在，開始邀請您的成員一起使用吧！"</string>
 	<string name="jandi_explain_topic_description">"說明 (選項)"</string>
 	<string name="jandi_export">"匯出"</string>
 	<string name="jandi_export_to_app">"匯出檔案至..."</string>
@@ -268,6 +276,8 @@
 	<string name="jandi_input_search_keyword">"按照關鍵字搜尋您的訊息"</string>
 	<string name="jandi_input_topic_name">"請輸入議題群組名稱"</string>
 	<string name="jandi_input_user_name">"輸入您的名字"</string>
+	<string name="jandi_insert_team_domain">"請輸入團隊網域"</string>
+	<string name="jandi_insert_team_name">"請輸入團隊名稱"</string>
 	<string name="jandi_invitation">"邀請"</string>
 	<string name="jandi_invitation_help">"邀請其他團隊成員加入JANDI"</string>
 	<string name="jandi_invitation_succeed">"邀請成功"</string>
@@ -394,13 +404,13 @@
 	<string name="jandi_profile_extra_introduce">"請填寫其他資訊 \n 讓成員更了解你"</string>
 	<string name="jandi_profile_main_introduce">"請設定在 \n %s團隊 \n 顯示的姓名和大頭照"</string>
 	<string name="jandi_profile_optional">"非必要"</string>
-	<string name="jandi_profile_phone_number">"手機號碼"</string>
-	<string name="jandi_profile_phone_number_hint">"電話號碼"</string>
+	<string name="jandi_profile_phone_number">"電話"</string>
+	<string name="jandi_profile_phone_number_hint">"電話"</string>
 	<string name="jandi_profile_photo_upload_succeed">"簡介照片已更新"</string>
 	<string name="jandi_profile_picture">"簡介照片"</string>
-	<string name="jandi_profile_position">"職位"</string>
+	<string name="jandi_profile_position">"職稱"</string>
 	<string name="jandi_profile_position_hint">"職稱"</string>
-	<string name="jandi_profile_status_message">"狀態"</string>
+	<string name="jandi_profile_status_message">"今天的感覺"</string>
 	<string name="jandi_profile_update">"更新"</string>
 	<string name="jandi_profile_update_succeed">"簡介已更新"</string>
 	<string name="jandi_profile_welcome">"你好！"</string>
@@ -516,11 +526,18 @@
 	<string name="jandi_tab_topic">"議題"</string>
 	<string name="jandi_tab_tos_and_pp">"點擊「下一步」即表示您同意%1$s和%2$s。"</string>
 	<string name="jandi_team">"團隊"</string>
+	<string name="jandi_team_create_domain_info">"想要給您的JANDI\n團隊設定什麼網址？"</string>
+	<string name="jandi_team_create_domain_invalid">"僅限英文字母、數字和連字符(-)"</string>
+	<string name="jandi_team_create_domain_length_invalid">"至少使用3個字元"</string>
+	<string name="jandi_team_create_input_info">"想要怎麼稱呼您的\nJANDI團隊？"</string>
+	<string name="jandi_team_create_name_length_invalid">"團隊名稱最多為20個字元"</string>
 	<string name="jandi_team_creation_succeed">"團隊建立成功！請查看您的電子郵件。"</string>
+	<string name="jandi_team_domain">"團隊網域"</string>
 	<string name="jandi_team_info">"團隊"</string>
 	<string name="jandi_team_join_fail">"處理過程中發生錯誤。請再試一次。"</string>
 	<string name="jandi_team_member">"團隊成員"</string>
 	<string name="jandi_team_member_count_with_format">"成員(%d)"</string>
+	<string name="jandi_team_name">"團隊名稱"</string>
 	<string name="jandi_team_owner">"團隊管理員"</string>
 	<string name="jandi_team_owner_with_format">"團隊管理員:%s"</string>
 	<string name="jandi_team_select_accept">"接受"</string>

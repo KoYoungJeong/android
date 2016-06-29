@@ -1,9 +1,12 @@
 package com.tosslab.jandi.app.ui.maintab.file.presenter;
 
+import android.util.Pair;
+
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.file.adapter.SearchedFilesAdapterModel;
@@ -61,81 +64,78 @@ public class FileListPresenterImpl implements FileListPresenterV3 {
                     searchQuery.setToFirst();
                     view.clearListView();
                     doSearchInBackground(index);
+                    view.onSearchHeaderReset();
                 }, throwable -> LogUtil.d("Search Fail : " + throwable.getMessage()));
     }
 
     private void doSearchInBackground(int requestCount) {
-        Boolean[] isFinish = new Boolean[1];
-        isFinish[0] = false;
+        Observable<Boolean> multicast = Observable.just(NetworkCheckUtil.isConnected()).share();
 
-        //TODO 수정
-        Observable.just(1)
+        // 네트웍이 되지 않는 경우
+        multicast.filter(it -> !it)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(i -> {
+                .subscribe(it -> {
+                    view.setInitLoadingViewVisible(android.view.View.GONE);
+                    view.setEmptyViewVisible(android.view.View.GONE);
+                    view.setSearchEmptryViewVisible(android.view.View.VISIBLE);
+                });
+
+        // 네트웍이 되는 경우
+        multicast.filter(it -> it)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(it -> {
                     view.setInitLoadingViewVisible(android.view.View.VISIBLE);
                     view.setEmptyViewVisible(android.view.View.GONE);
                     view.setSearchEmptryViewVisible(android.view.View.GONE);
-
-                    if (!NetworkCheckUtil.isConnected()) {
-                        view.setInitLoadingViewVisible(android.view.View.GONE);
-                        view.setEmptyViewVisible(android.view.View.GONE);
-                        view.setSearchEmptryViewVisible(android.view.View.VISIBLE);
-                        isFinish[0] = true;
+                })
+                .observeOn(Schedulers.io())
+                .map(it -> {
+                    ReqSearchFile reqSearchFile = searchQuery.getRequestQuery();
+                    reqSearchFile.teamId = selectedTeamId;
+                    if (requestCount > ReqSearchFile.MAX) {
+                        reqSearchFile.listCount = requestCount;
                     }
-                });
-
-        if (isFinish[0]) {
-            return;
-        }
-
-        ReqSearchFile reqSearchFile = searchQuery.getRequestQuery();
-        reqSearchFile.teamId = selectedTeamId;
-        if (requestCount > ReqSearchFile.MAX) {
-            reqSearchFile.listCount = requestCount;
-        }
-
-        Observable.create((Observable.OnSubscribe<ResSearchFile>) subscriber -> {
-            try {
-                ResSearchFile resSearchFile = fileListModel.searchFileList(reqSearchFile);
-                String keyword = reqSearchFile.keyword;
-                fileListModel.trackFileKeywordSearchSuccess(keyword);
-                if (resSearchFile.fileCount < reqSearchFile.listCount) {
-                    searchedFilesAdapterModel.setNoMoreLoad();
-                } else {
-                    searchedFilesAdapterModel.setReadyMore();
-                }
-
-                updateAdapterModel(resSearchFile);
-                subscriber.onNext(resSearchFile);
-            } catch (Exception e) {
-                subscriber.onError(e);
-            }
-            subscriber.onCompleted();
-        }).subscribeOn(Schedulers.io())
+                    return reqSearchFile;
+                })
+                .concatMap(reqSearchFile -> {
+                    try {
+                        ResSearchFile resSearchFile = fileListModel.searchFileList(reqSearchFile);
+                        String keyword = reqSearchFile.keyword;
+                        fileListModel.trackFileKeywordSearchSuccess(keyword);
+                        return Observable.just(Pair.create(reqSearchFile, resSearchFile));
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                        return Observable.error(e);
+                    }
+                })
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(resSearchFile -> {
+                .subscribe(pair -> {
+                    if (pair.second.fileCount < pair.first.listCount) {
+                        searchedFilesAdapterModel.setNoMoreLoad();
+                    } else {
+                        searchedFilesAdapterModel.setReadyMore();
+                    }
+                    updateAdapterModel(pair.second);
                     view.setInitLoadingViewVisible(android.view.View.GONE);
                     if (fileListModel.isDefaultSearchQuery(searchQuery.getRequestQuery())) {
-                        if (resSearchFile.fileCount > 0) {
+                        if (pair.second.fileCount > 0) {
                             view.setEmptyViewVisible(android.view.View.GONE);
                         } else {
                             view.setEmptyViewVisible(android.view.View.VISIBLE);
                         }
                         view.setSearchEmptryViewVisible(android.view.View.GONE);
                     } else {
-                        if (resSearchFile.fileCount > 0) {
+                        if (pair.second.fileCount > 0) {
                             view.setSearchEmptryViewVisible(android.view.View.GONE);
                         } else {
                             view.setSearchEmptryViewVisible(android.view.View.VISIBLE);
                         }
                         view.setEmptyViewVisible(android.view.View.GONE);
                     }
-                    view.searchSucceed(resSearchFile);
-                    if (fileListModel.isAllTypeFirstSearch(reqSearchFile)) {
-                        fileListModel.saveOriginFirstItems(selectedTeamId, resSearchFile);
+                    view.searchSucceed(pair.second);
+                    if (fileListModel.isAllTypeFirstSearch(pair.first)) {
+                        fileListModel.saveOriginFirstItems(selectedTeamId, pair.second);
                     }
-                })
-                .subscribe(o -> {
                 }, e -> {
                     if (e instanceof RetrofitException) {
                         RetrofitException e1 = (RetrofitException) e;
@@ -150,11 +150,9 @@ public class FileListPresenterImpl implements FileListPresenterV3 {
                         view.searchFailed(R.string.err_file_search);
                     }
                 });
-
-
     }
 
-    void getPreviousFile() {
+    public void getPreviousFile() {
         if (!NetworkCheckUtil.isConnected()) {
             return;
         }
@@ -172,12 +170,8 @@ public class FileListPresenterImpl implements FileListPresenterV3 {
                 }
             }
         }).subscribeOn(Schedulers.io())
-                .doOnSubscribe(() -> {
-                    view.showMoreProgressBar();
-                })
-                .doOnUnsubscribe(() -> {
-                    view.dismissMoreProgressBar();
-                })
+                .doOnSubscribe(() -> view.showMoreProgressBar())
+                .doOnUnsubscribe(() -> view.dismissMoreProgressBar())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(resSearchFile -> {
                     if (resSearchFile.fileCount > 0) {
@@ -192,7 +186,6 @@ public class FileListPresenterImpl implements FileListPresenterV3 {
                     }
                 })
                 .subscribe(o -> {
-
                 }, e -> {
                     if (e instanceof RetrofitException) {
                         e.printStackTrace();
@@ -240,8 +233,107 @@ public class FileListPresenterImpl implements FileListPresenterV3 {
     }
 
     @Override
-    public void doSearchByCnt(int cnt) {
-        searchSubject.onNext(cnt);
+    public void onFileShare(long teamId) {
+        if (teamId != fileListModel.getSelectedTeamId()) {
+            return;
+        }
+        int itemCount = searchedFilesAdapterModel.getItemCount();
+        searchSubject.onNext(itemCount);
+    }
+
+    @Override
+    public void onFileDeleted(long teamId, long fileId) {
+        if (teamId != fileListModel.getSelectedTeamId()) {
+            return;
+        }
+
+        int positionByFileId = searchedFilesAdapterModel.findPositionByFileId(fileId);
+        if (positionByFileId >= 0) {
+            removeItem(positionByFileId);
+        }
+    }
+
+    @Override
+    public void onFileTypeSelection(String query, String searchText) {
+        searchQuery.setFileType(query);
+        if (searchText != null) {
+            searchQuery.setKeyword(searchText);
+        }
+        view.clearListView();
+        searchSubject.onNext(-1);
+    }
+
+    @Override
+    public void onMemberSelection(String userId, String searchText) {
+        searchQuery.setWriter(userId);
+        if (searchText != null) {
+            searchQuery.setKeyword(searchText);
+        }
+        view.clearListView();
+        searchSubject.onNext(-1);
+    }
+
+    @Override
+    public void onEntitySelection(long sharedEntityId, String searchText) {
+        searchQuery.setEntityId(sharedEntityId);
+        if (searchText != null) {
+            searchQuery.setKeyword(searchText);
+        }
+        view.clearListView();
+        searchSubject.onNext(-1);
+    }
+
+    @Override
+    public void onTopicDeleted(long teamId) {
+        if (teamId != fileListModel.getSelectedTeamId()) {
+            return;
+        }
+        // 토픽이 삭제되거나 나간 경우 해당 토픽의 파일 접근 여부를 알 수 없으므로
+        // 리로드하도록 처리함
+        int itemCount = searchedFilesAdapterModel.getItemCount();
+        searchSubject.onNext(itemCount);
+    }
+
+    @Override
+    public void onNetworkConnection() {
+        if (searchedFilesAdapterModel.getItemCount() <= 0) {
+            searchSubject.onNext(-1);
+        }
+    }
+
+    @Override
+    public void doKeywordSearch(String s) {
+        searchQuery.setKeyword(s);
+        view.justRefresh();
+        searchSubject.onNext(-1);
+    }
+
+    private void removeItem(int position) {
+        searchedFilesAdapterModel.remove(position);
+        view.justRefresh();
+        if (searchedFilesAdapterModel.getItemCount() <= 0) {
+            if (fileListModel.isDefaultSearchQueryIgnoreMessageId(searchQuery.getRequestQuery())) {
+                view.setEmptyViewVisible(android.view.View.VISIBLE);
+                view.setSearchEmptryViewVisible(android.view.View.GONE);
+            } else {
+                view.setEmptyViewVisible(android.view.View.GONE);
+                view.setSearchEmptryViewVisible(android.view.View.VISIBLE);
+            }
+        }
+    }
+
+    @Override
+    public void onRefreshFileInfo(int fileId, int commentCount) {
+        int position = searchedFilesAdapterModel.findPositionByFileId(fileId);
+        if (position < 0) {
+            return;
+        }
+
+        ResMessages.FileMessage item = searchedFilesAdapterModel.getItem(position);
+        if (item != null) {
+            item.commentCount = commentCount;
+            view.justRefresh();
+        }
     }
 
 

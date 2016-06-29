@@ -1,13 +1,12 @@
 package com.tosslab.jandi.app.ui.maintab.file;
 
+import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +26,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
@@ -34,19 +34,23 @@ import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
+import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
+import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl_;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
+import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
-import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.file.adapter.SearchedFilesAdapter;
 import com.tosslab.jandi.app.ui.maintab.file.adapter.SearchedFilesAdapterView;
+import com.tosslab.jandi.app.ui.maintab.file.controller.SearchSelectorViewController;
 import com.tosslab.jandi.app.ui.maintab.file.dagger.DaggerFileListComponent;
 import com.tosslab.jandi.app.ui.maintab.file.dagger.FileListModule;
 import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenterImpl;
@@ -59,22 +63,32 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
 /**
  * Created by tee on 16. 6. 28..
  */
-public class FileListFragmentV3 extends Fragment implements FileListPresenterImpl.View {
+public class FileListFragmentV3 extends Fragment implements FileListPresenterImpl.View,
+        SearchActivity.SearchSelectView, ListScroller {
+
+    public static final String KEY_COMMENT_COUNT = "comment_count";
+    public static final String KEY_FILE_ID = "file_id";
+    public static final String PARAM_ENTITY_ID = "param_entity_id";
 
     @Inject
     FileListPresenterV3 fileListPresenter;
@@ -106,16 +120,14 @@ public class FileListFragmentV3 extends Fragment implements FileListPresenterImp
     @Bind(R.id.progress_file_list)
     ProgressBar moreLoadingProgressBar;
 
+    private SearchSelectorViewController searchSelectorViewController;
+    private FileUploadController filePickerViewModel;
+
     private long entityId = -1;
 
-    private String entityName = null;
-
     private SearchedFilesAdapterView searchedFilesAdapterView;
-
     private SearchActivity.OnSearchItemSelect onSearchItemSelect;
-
     private SearchActivity.OnSearchText onSearchText;
-
     private boolean isSearchLayoutFirst = true;
     private boolean isForeground;
 
@@ -134,10 +146,13 @@ public class FileListFragmentV3 extends Fragment implements FileListPresenterImp
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle bundle = this.getArguments();
+        entityId = bundle.getLong(PARAM_ENTITY_ID);
         DaggerFileListComponent.builder()
                 .fileListModule(new FileListModule(this, entityId))
                 .build()
                 .inject(this);
+        filePickerViewModel = MainFileUploadControllerImpl_.getInstance_(getContext());
         EventBus.getDefault().register(this);
     }
 
@@ -163,14 +178,43 @@ public class FileListFragmentV3 extends Fragment implements FileListPresenterImp
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        searchSelectorViewController = new SearchSelectorViewController(
+                getContext(), tvFileListType, tvFileListWhom, tvFileListWhom);
+
         setListView();
+
         setHasOptionsMenu(true);
+
         fileListPresenter.initSearchQuery();
+
         resetFilterLayoutPosition();
+
         if (isInSearchActivity() && isSearchLayoutFirst) {
             initSearchLayoutIfFirst();
         }
+
         fileListPresenter.doSearchAll();
+    }
+
+    @OnClick(R.id.ly_file_list_where)
+    void onEntityClick() {
+        searchSelectorViewController.showEntityDialog();
+    }
+
+    @OnClick(R.id.ly_file_list_whom)
+    void onUserClick() {
+        searchSelectorViewController.showUsersDialog();
+    }
+
+    @OnClick(R.id.ly_file_list_type)
+    void onFileTypeClick() {
+        searchSelectorViewController.showFileTypeDialog();
+    }
+
+    @OnClick(value = {R.id.btn_file_empty_upload, R.id.iv_file_empty_upload})
+    void onUploadClick() {
+        DialogFragment fileUploadTypeDialog = new FileUploadTypeDialogFragment();
+        fileUploadTypeDialog.show(getFragmentManager(), "dialog");
     }
 
     public void setListView() {
@@ -228,15 +272,6 @@ public class FileListFragmentV3 extends Fragment implements FileListPresenterImp
         searchEmptyView.setVisibility(visible);
     }
 
-    public ProgressDialog getUploadProgress(ConfirmFileUploadEvent event) {
-        final ProgressDialog progressDialog = new ProgressDialog(getContext());
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMessage(getString(R.string.jandi_file_uploading) + " " + event.realFilePath);
-        progressDialog.show();
-
-        return progressDialog;
-    }
-
     public void showSuccessToast(String message) {
         ColoredToast.show(message);
     }
@@ -255,36 +290,10 @@ public class FileListFragmentV3 extends Fragment implements FileListPresenterImp
         animation.startNow();
     }
 
-    public void dismissProgressBarDelay() {
-        dismissProgressBar();
-    }
-
-    public void openAlbumForActivityResult(Fragment fragment) {
-        Intent intent = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("image/*");
-        fragment.startActivityForResult(intent, FileUploadController.TYPE_UPLOAD_GALLERY);
-    }
-
-    public void openCameraForActivityResult(Fragment fragment, Uri fileUri) {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-        fragment.startActivityForResult(intent, FileUploadController.TYPE_UPLOAD_TAKE_PHOTO);
-    }
-
-    public void openExplorerForActivityResult(Fragment fragment) {
-        Intent intent = new Intent(getContext(), FileExplorerActivity.class);
-        fragment.startActivityForResult(intent, FileUploadController.TYPE_UPLOAD_EXPLORER);
-    }
-
     public void dismissProgressDialog(Dialog dialog) {
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
         }
-    }
-
-    public void exceedMaxFileSizeError() {
-        ColoredToast.show(getString(R.string.jandi_file_size_large_error));
     }
 
     @Override
@@ -297,32 +306,16 @@ public class FileListFragmentV3 extends Fragment implements FileListPresenterImp
         uploadEmptyView.setVisibility(visible);
     }
 
+    @Override
     public void showWarningToast(String message) {
         ColoredToast.showWarning(message);
     }
 
-    public void showErrorToast(String failMessage) {
-        ColoredToast.show(failMessage);
-    }
-
+    @Override
     public void showMoreProgressBar() {
         moreLoadingProgressBar.setVisibility(View.VISIBLE);
         Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_bottom);
         moreLoadingProgressBar.setAnimation(animation);
-        animation.startNow();
-    }
-
-    public void dismissProgressBar() {
-        moreLoadingProgressBar.getAnimation().reset();
-        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_to_bottom);
-        moreLoadingProgressBar.setAnimation(animation);
-        animation.setAnimationListener(new SimpleEndAnimationListener() {
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                moreLoadingProgressBar.setVisibility(View.GONE);
-            }
-        });
-
         animation.startNow();
     }
 
@@ -346,7 +339,6 @@ public class FileListFragmentV3 extends Fragment implements FileListPresenterImp
         } else {
             fileListPresenter.setListReadyLoadMore();
         }
-
         LogUtil.d("success to find " + resSearchFile.fileCount + " files.");
         searchedFilesAdapterView.refreshListView();
     }
@@ -365,7 +357,6 @@ public class FileListFragmentV3 extends Fragment implements FileListPresenterImp
         if (activity instanceof MainTabActivity) {
             activity.getMenuInflater().inflate(R.menu.main_activity_menu, menu);
         }
-
     }
 
     @Override
@@ -450,7 +441,6 @@ public class FileListFragmentV3 extends Fragment implements FileListPresenterImp
 
                 EventBus.getDefault().post(new SearchResultScrollEvent(FileListFragmentV3.this.getClass(),
                         offset));
-
             }
         });
     }
@@ -494,113 +484,183 @@ public class FileListFragmentV3 extends Fragment implements FileListPresenterImp
 
     public void onEvent(RefreshOldFileEvent event) {
         if (isForeground) {
-            getPreviousFile();
+            fileListPresenter.getPreviousFile();
         }
     }
 
-    public void onEvent(ShareFileEvent event) {
+    public void onEventMainThread(ShareFileEvent event) {
         if (isInSearchActivity()) {
             return;
         }
-
-        if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
-            return;
-        }
-        int itemCount = searchedFileItemListAdapter.getItemCount();
-        initSearchSubject.onNext(itemCount);
+        fileListPresenter.onFileShare(event.getTeamId());
     }
 
-    public void onEvent(CategorizedMenuOfFileType event) {
+    public void onEventMainThread(CategorizedMenuOfFileType event) {
         if (!isForeground) {
             return;
         }
-//        Log.d("INFO", "event setFileType" + event.getServerQuery());
-        mSearchQuery.setFileType(event.getServerQuery());
         if (onSearchText != null) {
-            mSearchQuery.setKeyword(onSearchText.getSearchText());
+            fileListPresenter.onFileTypeSelection(
+                    event.getServerQuery(), onSearchText.getSearchText());
+        } else {
+            fileListPresenter.onFileTypeSelection(
+                    event.getServerQuery(), null);
         }
-        searchedFileItemListAdapter.clearAdapter();
-        initSearchSubject.onNext(-1);
-        onSearchHeaderReset();
     }
 
-    public void onEvent(CategorizingAsOwner event) {
+    public void onEventMainThread(CategorizingAsOwner event) {
         if (!isForeground) {
             return;
         }
-//        Log.d("INFO", "event setOwnerType");
-        mSearchQuery.setWriter(event.userId);
         if (onSearchText != null) {
-            mSearchQuery.setKeyword(onSearchText.getSearchText());
+            fileListPresenter.onMemberSelection(
+                    event.userId, onSearchText.getSearchText());
+        } else {
+            fileListPresenter.onMemberSelection(
+                    event.userId, null);
         }
-        searchedFileItemListAdapter.clearAdapter();
-        initSearchSubject.onNext(-1);
-        onSearchHeaderReset();
     }
 
-    public void onEvent(CategorizingAsEntity event) {
+    public void onEventMainThread(CategorizingAsEntity event) {
         if (!isForeground) {
             return;
         }
-//        Log.d("INFO", "event setEntityType");
-        mSearchQuery.setSharedEntity(event.sharedEntityId);
         if (onSearchText != null) {
-            mSearchQuery.setKeyword(onSearchText.getSearchText());
+            fileListPresenter.onEntitySelection(
+                    event.sharedEntityId, onSearchText.getSearchText());
+        } else {
+            fileListPresenter.onEntitySelection(
+                    event.sharedEntityId, null);
         }
-        searchedFileItemListAdapter.clearAdapter();
-        initSearchSubject.onNext(-1);
-        onSearchHeaderReset();
+    }
+
+    public void onEvent(RequestFileUploadEvent event) {
+        if (!isForeground) {
+            return;
+        }
+        ((BaseAppCompatActivity) getActivity()).setNeedUnLockPassCode(false);
+        filePickerViewModel.selectFileSelector(event.type,
+                FileListFragmentV3.this, fileListPresenter.getSearchedEntityId());
     }
 
     public void onEventMainThread(ConfirmFileUploadEvent event) {
-
         if (!isForeground) {
             return;
         }
-
-        filePickerViewModel.startUpload(getActivity(), event.title, event.entityId, event.realFilePath, event.comment);
-
+        filePickerViewModel.startUpload(
+                getActivity(), event.title, event.entityId, event.realFilePath, event.comment);
     }
 
-    public void onEvent(DeleteFileEvent event) {
+    public void onEventMainThread(DeleteFileEvent event) {
+        if (isInSearchActivity()) {
+            return;
+        }
+        fileListPresenter.onFileDeleted(event.getTeamId(), event.getId());
+    }
 
+    public void onEventMainThread(TopicDeleteEvent event) {
+        if (isInSearchActivity()) {
+            return;
+        }
+        fileListPresenter.onTopicDeleted(event.getTeamId());
+    }
+
+    public void onEventMainThread(NetworkConnectEvent event) {
         if (isInSearchActivity()) {
             return;
         }
 
-        if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
-            return;
-        }
-
-        long fileId = event.getId();
-        int positionByFileId = searchedFileItemListAdapter.findPositionByFileId(fileId);
-        if (positionByFileId >= 0) {
-            removeItem(positionByFileId);
+        if (event.isConnected()) {
+            fileListPresenter.onNetworkConnection();
         }
     }
 
-    public void onEvent(TopicDeleteEvent event) {
-        if (isInSearchActivity()) {
+    @Override
+    public void onSearchHeaderReset() {
+        if (!isForeground) {
             return;
         }
-
-        if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
-            return;
-        }
-        // 토픽이 삭제되거나 나간 경우 해당 토픽의 파일 접근 여부를 알 수 없으므로
-        // 리로드하도록 처리함
-        int itemCount = searchedFileItemListAdapter.getItemCount();
-        initSearchSubject.onNext(itemCount);
+        resetFilterLayoutPosition();
     }
 
-    public void onEvent(NetworkConnectEvent event) {
-        if (isInSearchActivity()) {
+    @Override
+    public void justRefresh() {
+        searchedFilesAdapterView.refreshListView();
+    }
+
+    @Override
+    public void scrollToTop() {
+        lvSearchFiles.scrollToPosition(0);
+    }
+
+    @Override
+    public void onNewQuery(String query) {
+        fileListPresenter.doKeywordSearch(query);
+    }
+
+    @Override
+    public void setOnSearchText(SearchActivity.OnSearchText onSearchText) {
+        this.onSearchText = onSearchText;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case FileUploadController.TYPE_UPLOAD_GALLERY:
+                // Do Nothing
+                break;
+            case FileUploadController.TYPE_UPLOAD_TAKE_PHOTO:
+                onCameraActivityResult(resultCode, data);
+                break;
+            case FileUploadController.TYPE_UPLOAD_EXPLORER:
+                onExplorerActivityResult(resultCode, data);
+                break;
+            case JandiConstants.TYPE_FILE_DETAIL_REFRESH:
+                onFileDetailShowResult(resultCode, data);
+                break;
+        }
+    }
+
+    private void onCameraActivityResult(int resultCode, Intent intent) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        List<String> filePath = filePickerViewModel.getFilePath(getActivity(), FileUploadController.TYPE_UPLOAD_TAKE_PHOTO, intent);
+        if (filePath != null && filePath.size() > 0) {
+            FileUploadPreviewActivity_.intent(this)
+                    .singleUpload(true)
+                    .realFilePathList(new ArrayList<>(filePath))
+                    .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
+        }
+    }
+
+    private void onExplorerActivityResult(int resultCode, Intent intent) {
+        if (resultCode != Activity.RESULT_OK) {
             return;
         }
 
-        if (event.isConnected() && searchedFileItemListAdapter.getItemCount() <= 0) {
-            initSearchSubject.onNext(-1);
+        List<String> filePath = filePickerViewModel.getFilePath(getActivity(), FileUploadController.TYPE_UPLOAD_EXPLORER, intent);
+        if (filePath != null && filePath.size() > 0) {
+            FileUploadPreviewActivity_.intent(this)
+                    .singleUpload(true)
+                    .realFilePathList(new ArrayList<>(filePath))
+                    .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
         }
+    }
+
+    private void onFileDetailShowResult(int resultCode, Intent intent) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        int fileId = intent.getIntExtra(KEY_FILE_ID, -1);
+        int commentCount = intent.getIntExtra(KEY_COMMENT_COUNT, -1);
+        if (fileId <= 0 || commentCount < 0) {
+            return;
+        }
+
+        fileListPresenter.onRefreshFileInfo(fileId, commentCount);
     }
 
 }

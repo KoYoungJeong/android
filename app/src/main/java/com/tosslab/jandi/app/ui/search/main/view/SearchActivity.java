@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.search.main.view;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -19,7 +20,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
-import com.tosslab.jandi.app.ui.maintab.file.FileListFragment_;
+import com.tosslab.jandi.app.ui.maintab.file.FileListFragmentV3;
 import com.tosslab.jandi.app.ui.search.main.adapter.SearchQueryAdapter;
 import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenter;
 import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenterImpl;
@@ -52,41 +53,31 @@ import de.greenrobot.event.EventBus;
 public class SearchActivity extends BaseAppCompatActivity implements SearchPresenter.View {
 
     private static final int SPEECH_REQUEST_CODE = 201;
-    @Bean(SearchPresenterImpl.class)
-    SearchPresenter searchPresenter;
-
-    @Extra
-    boolean isFromFiles;
-
-    @Extra
-    long entityId = -1;
-
-    @ViewById(R.id.tv_search_keyword)
-    AutoCompleteTextView etSearch;
-
-    @ViewById(R.id.layout_search_bar)
-    View searchLayout;
-
-    @ViewById(R.id.tv_search_category_messages)
-    View vMessageTab;
-
-    @ViewById(R.id.tv_search_category_files)
-    View vFileTab;
-
     @ViewById(R.id.iv_search_mic)
     public ImageView ivMic;
-
+    public SearchQueryAdapter searchQueryAdapter;
+    @Bean(SearchPresenterImpl.class)
+    SearchPresenter searchPresenter;
+    @Extra
+    boolean isFromFiles;
+    @Extra
+    long entityId = -1;
+    @ViewById(R.id.tv_search_keyword)
+    AutoCompleteTextView etSearch;
+    @ViewById(R.id.layout_search_bar)
+    View searchLayout;
+    @ViewById(R.id.tv_search_category_messages)
+    View vMessageTab;
+    @ViewById(R.id.tv_search_category_files)
+    View vFileTab;
     @SystemService
     InputMethodManager inputMethodManager;
-
-    public SearchQueryAdapter searchQueryAdapter;
-
     private int searchMaxY = 0;
     private int searchMinY;
 
     private SearchSelectView searchSelectView;
     private MessageSearchFragment messageSearchFragment;
-    private FileListFragment fileListFragment;
+    private FileListFragmentV3 fileListFragment;
 
     private String[] searchQueries;
     private boolean isForeground;
@@ -120,8 +111,8 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
     public void addFragments() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fileListFragment = (FileListFragment) fragmentManager
-                .findFragmentByTag(FileListFragment.class.getName());
+        fileListFragment = (FileListFragmentV3) fragmentManager
+                .findFragmentByTag(FileListFragmentV3.class.getName());
 
         messageSearchFragment = (MessageSearchFragment) fragmentManager
                 .findFragmentByTag(MessageSearchFragment.class.getName());
@@ -130,7 +121,11 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
             return;
         }
         if (fileListFragment == null) {
-            fileListFragment = FileListFragment_.builder().entityIdForCategorizing(entityId).build();
+            Bundle bundle = new Bundle();
+            bundle.putLong(FileListFragmentV3.PARAM_ENTITY_ID, -1);
+            fileListFragment = new FileListFragmentV3();
+            fileListFragment.setArguments(bundle);
+
             fragmentTransaction.add(R.id.layout_search_content,
                     fileListFragment, FileListFragment.class.getName());
         }
@@ -199,7 +194,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
 
         if (fileListFragment == null) {
 
-            fileListFragment = FileListFragment_.builder().build();
+            fileListFragment = new FileListFragmentV3();
             fragmentTransaction.add(R.id.layout_search_content,
                     fileListFragment, FileListFragment.class.getName());
         } else {

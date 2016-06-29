@@ -73,7 +73,7 @@ import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity_;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity_;
-import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
+import com.tosslab.jandi.app.ui.maintab.file.FileListFragmentV3;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
@@ -1320,8 +1320,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             int commentCount = getCommentCount();
             if (commentCount >= 0) {
                 Intent intent = new Intent();
-                intent.putExtra(FileListFragment.KEY_FILE_ID, fileId);
-                intent.putExtra(FileListFragment.KEY_COMMENT_COUNT, commentCount);
+                intent.putExtra(FileListFragmentV3.KEY_FILE_ID, fileId);
+                intent.putExtra(FileListFragmentV3.KEY_COMMENT_COUNT, commentCount);
                 setResult(RESULT_OK, intent);
             }
         }

@@ -17,11 +17,29 @@ public interface FileListPresenterV3 {
 
     long getSearchedEntityId();
 
+    void getPreviousFile();
+
     boolean isDefaultSeachQuery();
 
     void doSearchAll();
 
-    void doSearchByCnt(int cnt);
+    void onFileShare(long teamId);
+
+    void onFileTypeSelection(String query, String searchText);
+
+    void onMemberSelection(String userId, String searchText);
+
+    void onEntitySelection(long sharedEntityId, String searchText);
+
+    void onFileDeleted(long teamId, long fileId);
+
+    void onTopicDeleted(long teamId);
+
+    void onNetworkConnection();
+
+    void doKeywordSearch(String s);
+
+    void onRefreshFileInfo(int fileId, int commentCount);
 
     interface View {
         void clearListView();
@@ -41,5 +59,9 @@ public interface FileListPresenterV3 {
         void showWarningToast(String string);
 
         void dismissMoreProgressBar();
+
+        void onSearchHeaderReset();
+
+        void justRefresh();
     }
 }

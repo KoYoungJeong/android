@@ -337,7 +337,6 @@ public class FileListFragment extends Fragment
         if (!isForeground) {
             return;
         }
-//        Log.d("INFO", "event setFileType" + event.getServerQuery());
         mSearchQuery.setFileType(event.getServerQuery());
         if (onSearchText != null) {
             mSearchQuery.setKeyword(onSearchText.getSearchText());
@@ -351,7 +350,6 @@ public class FileListFragment extends Fragment
         if (!isForeground) {
             return;
         }
-//        Log.d("INFO", "event setOwnerType");
         mSearchQuery.setWriter(event.userId);
         if (onSearchText != null) {
             mSearchQuery.setKeyword(onSearchText.getSearchText());
