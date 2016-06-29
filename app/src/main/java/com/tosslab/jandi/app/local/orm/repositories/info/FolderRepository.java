@@ -136,6 +136,10 @@ public class FolderRepository extends LockExecutorTemplate {
                 Dao<Folder, Long> dao = getHelper().getDao(Folder.class);
                 Folder folder = dao.queryForId(folderId);
                 Collection<Long> rooms = folder.getRooms();
+                if (rooms == null) {
+                    rooms = new ArrayList<Long>();
+                    folder.setRooms(rooms);
+                }
                 if (!rooms.contains(roomId)) {
                     rooms.add(roomId);
                     return dao.update(folder) > 0;
@@ -156,7 +160,7 @@ public class FolderRepository extends LockExecutorTemplate {
                 Dao<Folder, Long> dao = getHelper().getDao(Folder.class);
                 Folder folder = dao.queryForId(folderId);
                 Collection<Long> rooms = folder.getRooms();
-                if (rooms.contains(roomId)) {
+                if (rooms != null && rooms.contains(roomId)) {
                     rooms.remove(roomId);
                     return dao.update(folder) > 0;
                 } else {
@@ -218,7 +222,7 @@ public class FolderRepository extends LockExecutorTemplate {
                         .filter(folder -> {
                             for (Long roomId : roomIds) {
 
-                                if (folder.getRooms().contains(roomId)) {
+                                if (folder.getRooms() != null && folder.getRooms().contains(roomId)) {
                                     return true;
                                 }
                             }

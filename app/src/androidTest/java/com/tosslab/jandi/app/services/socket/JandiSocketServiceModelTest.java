@@ -7,21 +7,41 @@ import android.util.Pair;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.entities.ChatListRefreshEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
+import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
+import com.tosslab.jandi.app.events.entities.RefreshConnectBotEvent;
+import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
+import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
+import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.messages.AnnouncementUpdatedEvent;
 import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
+import com.tosslab.jandi.app.events.messages.MessageStarEvent;
+import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
+import com.tosslab.jandi.app.events.team.TeamJoinEvent;
+import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
+import com.tosslab.jandi.app.local.orm.repositories.info.BotRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TeamRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
+import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApi;
+import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.start.Bot;
+import com.tosslab.jandi.app.network.models.start.Folder;
+import com.tosslab.jandi.app.network.models.start.Human;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Team;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.domain.SocketStart;
@@ -32,6 +52,9 @@ import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketChatCloseEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketChatCreatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketConnectBotCreatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketConnectBotDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketConnectBotUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeletedEvent;
@@ -40,12 +63,33 @@ import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewThumbnailEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberStarredEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMemberUnstarredEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMemberUpdatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageUnstarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamDomainUpdatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamJoinEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamLeaveEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamNameUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamUpdatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicCreatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderCreatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderItemCreatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderItemDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderUpdatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicInvitedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicJoinedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicKickedoutEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicLeftEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicStarredEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicUnstarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicUpdatedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -59,27 +103,36 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.inject.Inject;
 
 import dagger.Component;
+import dagger.Lazy;
 import de.greenrobot.event.EventBus;
 import setup.BaseInitUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 @RunWith(AndroidJUnit4.class)
 public class JandiSocketServiceModelTest {
 
     private static long teamId;
+    private static InitialInfo initializeInfo;
     @Inject
     JandiSocketServiceModel model;
-    private boolean[] accept;
+
+    @Inject
+    Lazy<ChannelMessageApi> channelMessageApi;
+
+    private boolean accept;
 
     @BeforeClass
-    public static void beforeClass() {
+    public static void beforeClass() throws Exception {
         BaseInitUtil.initData();
         teamId = TeamInfoLoader.getInstance().getTeamId();
+        initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
     }
 
     @Before
@@ -88,7 +141,12 @@ public class JandiSocketServiceModelTest {
                 .socketServiceModule(new SocketServiceModule(JandiApplication.getContext()))
                 .build()
                 .inject(JandiSocketServiceModelTest.this);
-        accept[0] = false;
+        accept = false;
+
+        InitialInfoRepository.getInstance().clear();
+        InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+        TeamInfoLoader.getInstance().refresh();
+
     }
 
     @Test
@@ -102,7 +160,7 @@ public class JandiSocketServiceModelTest {
     @Test
     public void testOnTeamNameUpdated() throws Exception {
 
-        register((TeamInfoChangeEvent o) -> accept[0] = true);
+        register((TeamInfoChangeEvent o) -> accept = true);
 
         SocketTeamNameUpdatedEvent event = createEvent(SocketTeamNameUpdatedEvent.class);
         event.setTs(-1);
@@ -113,7 +171,7 @@ public class JandiSocketServiceModelTest {
         event.setTeam(team);
         model.onTeamNameUpdated(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
         assertThat(TeamInfoLoader.getInstance().getTeamName()).isEqualToIgnoringCase(name);
     }
 
@@ -136,20 +194,20 @@ public class JandiSocketServiceModelTest {
 
     @Test
     public void testOnFileCommentCreated() throws Exception {
-        register((FileCommentRefreshEvent event) -> accept[0] = true);
+        register((FileCommentRefreshEvent event) -> accept = true);
         SocketFileCommentCreatedEvent event = createEvent(SocketFileCommentCreatedEvent.class);
         event.setFile(new SocketFileCommentCreatedEvent.EventFileInfo());
         event.setEvent("file_comment_created");
         event.setComment(new SocketFileCommentCreatedEvent.EventCommentInfo());
         model.onFileCommentCreated(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnFileCommentDeleted() throws Exception {
 
-        register((FileCommentRefreshEvent event) -> accept[0] = true);
+        register((FileCommentRefreshEvent event) -> accept = true);
 
         SocketFileCommentDeletedEvent event = createEvent(SocketFileCommentDeletedEvent.class);
         event.setFile(new SocketFileCommentDeletedEvent.EventFileInfo());
@@ -157,7 +215,7 @@ public class JandiSocketServiceModelTest {
         event.setComment(new SocketFileCommentDeletedEvent.EventCommentInfo());
         model.onFileCommentDeleted(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
 
     }
 
@@ -166,7 +224,7 @@ public class JandiSocketServiceModelTest {
 
         final SocketMessageDeletedEvent[] acceptEvent = new SocketMessageDeletedEvent[1];
         register((SocketMessageDeletedEvent event) -> {
-            accept[0] = true;
+            accept = true;
             acceptEvent[0] = event;
         });
         SocketMessageDeletedEvent event = createEvent(SocketMessageDeletedEvent.class);
@@ -177,7 +235,7 @@ public class JandiSocketServiceModelTest {
         event.setData(data);
         model.onMessageDeleted(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
         assertThat(acceptEvent[0]).isEqualTo(event);
     }
 
@@ -186,7 +244,7 @@ public class JandiSocketServiceModelTest {
 
         final long[] acceptId = new long[1];
         register((TopicInfoUpdateEvent event) -> {
-            accept[0] = true;
+            accept = true;
             acceptId[0] = event.getId();
         });
 
@@ -197,7 +255,7 @@ public class JandiSocketServiceModelTest {
         event.setData(data);
         model.onTopicUpdated(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
         assertThat(acceptId[0]).isEqualTo(topic.getId());
 
     }
@@ -205,7 +263,7 @@ public class JandiSocketServiceModelTest {
     @Test
     public void testOnChatClosed() throws Exception {
         register((ChatListRefreshEvent event) -> {
-            accept[0] = true;
+            accept = true;
         });
         SocketChatCloseEvent event = createEvent(SocketChatCloseEvent.class);
         SocketChatCloseEvent.Data chat = new SocketChatCloseEvent.Data();
@@ -213,7 +271,7 @@ public class JandiSocketServiceModelTest {
         event.setChat(chat);
         model.onChatClosed(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
         assertThat(TeamInfoLoader.getInstance().getRoom(TeamInfoLoader.getInstance().getChatId(TeamInfoLoader.getInstance().getJandiBot().getId())).isJoined())
                 .isFalse();
 
@@ -222,13 +280,13 @@ public class JandiSocketServiceModelTest {
     @Test
     public void testOnChatCreated() throws Exception {
         register((ChatListRefreshEvent event) -> {
-            accept[0] = true;
+            accept = true;
         });
 
         SocketChatCreatedEvent event = getChatCreatedObject(teamId);
         model.onChatCreated(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
         assertThat(ChatRepository.getInstance().getChat(event.getData().getChat().getId())).isNotNull();
     }
 
@@ -266,7 +324,7 @@ public class JandiSocketServiceModelTest {
         final long[] leftTopicId = new long[1];
         final long[] leftTeamId = new long[1];
         register((TopicDeleteEvent event) -> {
-            accept[0] = true;
+            accept = true;
             leftTopicId[0] = event.getId();
             leftTeamId[0] = event.getTeamId();
         });
@@ -278,7 +336,7 @@ public class JandiSocketServiceModelTest {
         event.setData(data);
         model.onTopicLeft(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
         assertThat(leftTeamId[0]).isEqualTo(teamId);
         assertThat(leftTopicId[0]).isEqualTo(data.getTopicId());
     }
@@ -286,7 +344,7 @@ public class JandiSocketServiceModelTest {
     @Test
     public void testOnMemberStarred() throws Exception {
         register((MemberStarredEvent event) -> {
-            accept[0] = true;
+            accept = true;
         });
         SocketMemberStarredEvent event = createEvent(SocketMemberStarredEvent.class);
         SocketMemberStarredEvent.Member member = new SocketMemberStarredEvent.Member();
@@ -294,7 +352,7 @@ public class JandiSocketServiceModelTest {
         event.setMember(member);
         model.onMemberStarred(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
         assertThat(TeamInfoLoader.getInstance().isStarredUser(TeamInfoLoader.getInstance().getJandiBot().getId()))
                 .isTrue();
     }
@@ -302,7 +360,7 @@ public class JandiSocketServiceModelTest {
     @Test
     public void testOnFileUnshared() throws Exception {
         register((UnshareFileEvent event) -> {
-            accept[0] = true;
+            accept = true;
         });
 
         SocketFileUnsharedEvent event = createEvent(SocketFileUnsharedEvent.class);
@@ -313,39 +371,39 @@ public class JandiSocketServiceModelTest {
         event.room.id = 1;
         model.onFileUnshared(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
 
     }
 
     @Test
     public void testOnFileShared() throws Exception {
         register((ShareFileEvent event) -> {
-            accept[0] = true;
+            accept = true;
         });
         SocketFileShareEvent event = createEvent(SocketFileShareEvent.class);
         event.setFile(new SocketFileShareEvent.FileObject());
         model.onFileShared(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnRoomMarkerUpdated() throws Exception {
         register((SocketRoomMarkerEvent event) -> {
-            accept[0] = true;
+            accept = true;
         });
         SocketRoomMarkerEvent event = createEvent(SocketRoomMarkerEvent.class);
         event.setRoom(new SocketRoomMarkerEvent.MarkerRoom());
         event.setMarker(new SocketRoomMarkerEvent.Marker());
         model.onRoomMarkerUpdated(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnLinkPreviewCreated() throws Exception {
         register((LinkPreviewUpdateEvent event) -> {
-            accept[0] = true;
+            accept = true;
         });
         SocketLinkPreviewMessageEvent event = createEvent(SocketLinkPreviewMessageEvent.class);
         SocketLinkPreviewMessageEvent.Data data = new SocketLinkPreviewMessageEvent.Data();
@@ -353,7 +411,7 @@ public class JandiSocketServiceModelTest {
         event.setData(data);
 
         model.onLinkPreviewCreated(event);
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
     }
 
     @NonNull
@@ -380,7 +438,7 @@ public class JandiSocketServiceModelTest {
     @Test
     public void testOnLinkPreviewImage() throws Exception {
         register((LinkPreviewUpdateEvent event) -> {
-            accept[0] = true;
+            accept = true;
         });
 
         SocketLinkPreviewThumbnailEvent event = createEvent(SocketLinkPreviewThumbnailEvent.class);
@@ -390,14 +448,14 @@ public class JandiSocketServiceModelTest {
         event.setData(data);
         model.onLinkPreviewImage(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnAnnouncementCreated() throws Exception {
 
         register((SocketAnnouncementCreatedEvent event) -> {
-            accept[0] = true;
+            accept = true;
         });
 
         SocketAnnouncementCreatedEvent event = createEvent(SocketAnnouncementCreatedEvent.class);
@@ -407,21 +465,21 @@ public class JandiSocketServiceModelTest {
 
         model.onAnnouncementCreated(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnAnnouncementDeleted() throws Exception {
 
         register((SocketAnnouncementDeletedEvent event) -> {
-            accept[0] = true;
+            accept = true;
         });
         SocketAnnouncementDeletedEvent event = createEvent(SocketAnnouncementDeletedEvent.class);
         SocketAnnouncementDeletedEvent.Data data = new SocketAnnouncementDeletedEvent.Data();
         event.setData(data);
         model.onAnnouncementDeleted(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
     }
 
     @Test
@@ -429,7 +487,7 @@ public class JandiSocketServiceModelTest {
 
 
         register((SocketTopicPushEvent e) -> {
-            accept[0] = true;
+            accept = true;
         });
 
         SocketTopicPushEvent event = createEvent(SocketTopicPushEvent.class);
@@ -439,7 +497,7 @@ public class JandiSocketServiceModelTest {
         event.setData(data);
         model.onRoomSubscriptionUpdated(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
 
         assertThat(TeamInfoLoader.getInstance()
                 .getTopic(TeamInfoLoader.getInstance().getDefaultTopicId())
@@ -448,143 +506,421 @@ public class JandiSocketServiceModelTest {
     }
 
     @Test
-    public void testStartMarkerObserver() throws Exception {
-
-    }
-
-    @Test
-    public void testStopMarkerObserver() throws Exception {
-
-    }
-
-    @Test
     public void testOnMessageUnstarred() throws Exception {
 
+        register((MessageStarEvent event) -> {
+            accept = true;
+        });
+        SocketMessageUnstarredEvent event = createEvent(SocketMessageUnstarredEvent.class);
+        SocketMessageUnstarredEvent.StarredInfo starredInfo = new SocketMessageUnstarredEvent.StarredInfo();
+        starredInfo.setMessageId(1);
+        event.setStarredInfo(starredInfo);
+        model.onMessageUnstarred(event);
+
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnMessageStarred() throws Exception {
-
+        register((MessageStarEvent event) -> {
+            accept = true;
+        });
+        SocketMessageStarredEvent event = createEvent(SocketMessageStarredEvent.class);
+        SocketMessageStarredEvent.StarredInfo starredInfo = new SocketMessageStarredEvent.StarredInfo();
+        starredInfo.setMessageId(1);
+        event.setStarredInfo(starredInfo);
+        model.onMessageStarred(event);
     }
 
     @Test
     public void testOnFolderDeleted() throws Exception {
 
+        register((TopicFolderRefreshEvent e) -> {
+            accept = true;
+        });
+        SocketTopicFolderDeletedEvent event = createEvent(SocketTopicFolderDeletedEvent.class);
+
+        SocketTopicFolderDeletedEvent.Data data = new SocketTopicFolderDeletedEvent.Data();
+        data.setFolderId(1);
+        event.setData(data);
+        model.onFolderDeleted(event);
+
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnFolderItemCreated() throws Exception {
+        register((TopicFolderRefreshEvent event) -> {
+            accept = true;
+        });
 
+        Folder folder = new Folder();
+        folder.setId(1);
+        FolderRepository.getInstance().addFolder(TeamInfoLoader.getInstance().getTeamId(), folder);
+
+
+        SocketTopicFolderItemCreatedEvent event = createEvent(SocketTopicFolderItemCreatedEvent.class);
+        SocketTopicFolderItemCreatedEvent.Data data = new SocketTopicFolderItemCreatedEvent.Data();
+        data.setFolderId(1);
+        data.setRoomId(2);
+        event.setData(data);
+        model.onFolderItemCreated(event);
+
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnFolderItemDeleted() throws Exception {
-
+        register((TopicFolderRefreshEvent event) -> {
+            accept = true;
+        });
+        Folder folder = new Folder();
+        folder.setId(1);
+        FolderRepository.getInstance().addFolder(TeamInfoLoader.getInstance().getTeamId(), folder);
+        SocketTopicFolderItemDeletedEvent event = createEvent(SocketTopicFolderItemDeletedEvent.class);
+        SocketTopicFolderItemDeletedEvent.Data data = new SocketTopicFolderItemDeletedEvent.Data();
+        data.setFolderId(1);
+        data.setRoomId(2);
+        event.setData(data);
+        model.onFolderItemDeleted(event);
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnTopicFolderCreated() throws Exception {
+        register((TopicFolderRefreshEvent event) -> {
+            accept = true;
+        });
+        SocketTopicFolderCreatedEvent event = createEvent(SocketTopicFolderCreatedEvent.class);
+        SocketTopicFolderCreatedEvent.Data data = new SocketTopicFolderCreatedEvent.Data();
+        Folder folder = new Folder();
+        folder.setSeq(1);
+        folder.setId(1);
+        folder.setName("haha");
+        folder.setRooms(Arrays.asList(1L, 2L, 3L));
+        data.setFolder(folder);
+        event.setData(data);
+        model.onTopicFolderCreated(event);
 
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnTopicFolderUpdated() throws Exception {
+        register((TopicFolderRefreshEvent event) -> {
+            accept = true;
+        });
 
+        Folder folder = new Folder();
+        folder.setId(1);
+        FolderRepository.getInstance().addFolder(TeamInfoLoader.getInstance().getTeamId(), folder);
+
+        SocketTopicFolderUpdatedEvent event = createEvent(SocketTopicFolderUpdatedEvent.class);
+        SocketTopicFolderUpdatedEvent.Data data = new SocketTopicFolderUpdatedEvent.Data();
+        Folder folder1 = new Folder();
+        folder1.setId(1);
+        folder1.setSeq(2);
+        folder1.setName("jaj");
+        data.setFolder(folder1);
+        event.setData(data);
+        model.onTopicFolderUpdated(event);
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnTeamLeft() throws Exception {
+        register((TeamLeaveEvent teamLeaveEvent) -> {
+            accept = true;
+        });
+        SocketTeamLeaveEvent event = createEvent(SocketTeamLeaveEvent.class);
+        SocketTeamLeaveEvent.Data data = new SocketTeamLeaveEvent.Data();
+        data.setMemberId(1);
+        event.setData(data);
+        model.onTeamLeft(event);
 
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnTeamDeleted() throws Exception {
+        register((TeamDeletedEvent e) -> {
+            accept = true;
+        });
+        SocketTeamDeletedEvent event = createEvent(SocketTeamDeletedEvent.class);
+        SocketTeamDeletedEvent.Data data = new SocketTeamDeletedEvent.Data();
+        data.setTeamId(1L);
+        event.setData(data);
+        model.onTeamDeleted(event);
 
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnTopicKickOut() throws Exception {
+        register((TopicKickedoutEvent e) -> {
+            accept = true;
+        });
 
+        SocketTopicKickedoutEvent event = createEvent(SocketTopicKickedoutEvent.class);
+        event.setData(new SocketTopicKickedoutEvent.Data());
+        event.getData().setRoomId(1);
+
+        model.onTopicKickOut(event);
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnMessageCreated() throws Exception {
 
+        register((SocketMessageCreatedEvent e) -> {
+            accept = true;
+        });
+
+        ResMessages message = channelMessageApi.get().getPublicTopicMessages(TeamInfoLoader.getInstance().getTeamId(), TeamInfoLoader.getInstance().getDefaultTopicId(), -1, 1);
+        ResMessages.Link link = message.records.get(0);
+        SocketMessageCreatedEvent event = createEvent(SocketMessageCreatedEvent.class);
+        SocketMessageCreatedEvent.Data data = new SocketMessageCreatedEvent.Data();
+        data.setLinkMessage(link);
+        event.setData(data);
+        model.onMessageCreated(event);
+
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testThrowExceptionIfInvaildVersion() throws Exception {
-
+        SocketMessageCreatedEvent event = new SocketMessageCreatedEvent();
+        event.setVersion(0);
+        try {
+            model.throwExceptionIfInvaildVersion(event);
+            fail("It cannot be occured");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
     public void testOnConnectBotCreated() throws Exception {
+        register((RefreshConnectBotEvent e) -> {
+            accept = true;
+        });
+        SocketConnectBotCreatedEvent event = createEvent(SocketConnectBotCreatedEvent.class);
+        SocketConnectBotCreatedEvent.Data data = new SocketConnectBotCreatedEvent.Data();
+        Bot bot = new Bot();
+        bot.setType("connect");
+        bot.setTeamId(TeamInfoLoader.getInstance().getTeamId());
+        bot.setName("hello");
+        bot.setId(1);
+        bot.setStatus("enabled");
+        data.setBot(bot);
+        event.setData(data);
+        model.onConnectBotCreated(event);
 
+        Bot bot1 = BotRepository.getInstance().getBot(1);
+        assertThat(bot1).isNotNull();
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnConnectBotDeleted() throws Exception {
+        register((RefreshConnectBotEvent e) -> {
+            accept = true;
+        });
 
+        Bot bot = new Bot();
+        bot.setId(1);
+        bot.setName("asd");
+        bot.setTeamId(TeamInfoLoader.getInstance().getTeamId());
+        BotRepository.getInstance().addBot(bot);
+        SocketConnectBotDeletedEvent event = createEvent(SocketConnectBotDeletedEvent.class);
+        event.setData(new SocketConnectBotDeletedEvent.Data());
+        event.getData().setBotId(1);
+        model.onConnectBotDeleted(event);
+
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnConnectBotUpdated() throws Exception {
+        register((RefreshConnectBotEvent e) -> {
+            accept = true;
+        });
 
+
+        Bot bot1 = new Bot();
+        bot1.setId(1);
+        bot1.setName("asd");
+        BotRepository.getInstance().addBot(bot1);
+
+        SocketConnectBotUpdatedEvent event = createEvent(SocketConnectBotUpdatedEvent.class);
+
+        event.setData(new SocketConnectBotUpdatedEvent.Data());
+        Bot bot = new Bot();
+        bot.setType("connect");
+        bot.setTeamId(TeamInfoLoader.getInstance().getTeamId());
+        bot.setName("hello");
+        bot.setId(1);
+        bot.setStatus("enabled");
+
+        event.getData().setBot(bot);
+
+        model.onConnectBotUpdated(event);
+
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnTeamJoin() throws Exception {
+        register((TeamJoinEvent e) -> {
+            accept = true;
+        });
 
-    }
+        SocketTeamJoinEvent event = createEvent(SocketTeamJoinEvent.class);
+        event.setData(new SocketTeamJoinEvent.Data());
+        Human member = new Human();
+        member.setId(1);
+        event.getData().setMember(member);
 
-    @Test
-    public void testUpdateEventHistory() throws Exception {
+        model.onTeamJoin(event);
 
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnTopicCreated() throws Exception {
+        register((RetrieveTopicListEvent e) -> {
+            accept = true;
+        });
 
+        Topic topic = TopicRepository.getInstance().getDefaultTopic(TeamInfoLoader.getInstance().getTeamId());
+        topic.setId(1);
+
+        SocketTopicCreatedEvent event = createEvent(SocketTopicCreatedEvent.class);
+        event.setData(new SocketTopicCreatedEvent.Data());
+        event.getData().setTopic(topic);
+
+        model.onTopicCreated(event);
+
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnTopicJoined() throws Exception {
+        register((RetrieveTopicListEvent e) -> {
+            accept = true;
+        });
 
+        SocketTopicJoinedEvent event = createEvent(SocketTopicJoinedEvent.class);
+        SocketTopicJoinedEvent.Data data = new SocketTopicJoinedEvent.Data();
+        data.setTopicId(TeamInfoLoader.getInstance().getDefaultTopicId());
+        data.setMemberId(TeamInfoLoader.getInstance().getMyId());
+        event.setData(data);
+        model.onTopicJoined(event);
+
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnTopicInvitedListener() throws Exception {
+        register((RetrieveTopicListEvent e) -> {
+            accept = true;
+        });
 
+        Topic defaultTopic = TopicRepository.getInstance().getDefaultTopic(TeamInfoLoader.getInstance().getTeamId());
+        TopicRepository.getInstance().removeMember(defaultTopic.getId(), TeamInfoLoader.getInstance().getMyId());
+        SocketTopicInvitedEvent event = createEvent(SocketTopicInvitedEvent.class);
+        event.setData(new SocketTopicInvitedEvent.Data());
+        event.getData().setTopic(defaultTopic);
+        model.onTopicInvited(event);
+
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnMemberUpdated() throws Exception {
+        register((ProfileChangeEvent e) -> {
+            accept = true;
+        });
 
+        Human human = HumanRepository.getInstance().getHuman(TeamInfoLoader.getInstance().getMyId());
+        SocketMemberUpdatedEvent event = createEvent(SocketMemberUpdatedEvent.class);
+        event.setData(new SocketMemberUpdatedEvent.Data());
+        event.getData().setMember(human);
+        model.onMemberUpdated(event);
+
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnTopicDeleted() throws Exception {
+        register((RetrieveTopicListEvent e) -> {
+            accept = true;
+        });
+        SocketTopicDeletedEvent event = createEvent(SocketTopicDeletedEvent.class);
+        event.setData(new SocketTopicDeletedEvent.Data());
+        event.getData().setTopicId(TeamInfoLoader.getInstance().getDefaultTopicId());
+        model.onTopicDeleted(event);
 
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnTopicStarred() throws Exception {
+        register((TopicInfoUpdateEvent e) -> {
+            accept = true;
+        });
+        SocketTopicStarredEvent event = createEvent(SocketTopicStarredEvent.class);
+        SocketTopicStarredEvent.Topic topic = new SocketTopicStarredEvent.Topic();
+        topic.setId(TeamInfoLoader.getInstance().getDefaultTopicId());
+        event.setTopic(topic);
+        model.onTopicStarred(event);
 
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnTopicUnstarred() throws Exception {
+        register((TopicInfoUpdateEvent e) -> {
+            accept = true;
+        });
+
+        SocketTopicUnstarredEvent event = createEvent(SocketTopicUnstarredEvent.class);
+        SocketTopicUnstarredEvent.Topic topic = new SocketTopicUnstarredEvent.Topic();
+        topic.setId(TeamInfoLoader.getInstance().getDefaultTopicId());
+        event.setTopic(topic);
+        model.onTopicUnstarred(event);
+
+        assertThat(accept).isTrue();
 
     }
 
     @Test
     public void testOnMemberUnstarred() throws Exception {
+        register((MemberStarredEvent e) -> {
+            accept = true;
+        });
 
+        SocketMemberUnstarredEvent event = createEvent(SocketMemberUnstarredEvent.class);
+        SocketMemberUnstarredEvent.Member member = new SocketMemberUnstarredEvent.Member();
+        member.setId(1);
+        event.setMember(member);
+        model.onMemberUnstarred(event);
+        assertThat(accept).isTrue();
     }
 
     @Test
     public void testOnTeamDomainUpdated() throws Exception {
+        register((TeamInfoChangeEvent e) -> {
+            accept = true;
+        });
+        SocketTeamDomainUpdatedEvent event = createEvent(SocketTeamDomainUpdatedEvent.class);
+        SocketTeamDomainUpdatedEvent.Team team = new SocketTeamDomainUpdatedEvent.Team();
+        team.setId(TeamInfoLoader.getInstance().getTeamId());
+        team.setDomain("jaja");
+        event.setTeam(team);
+        model.onTeamDomainUpdated(event);
 
+        assertThat(accept).isTrue();
     }
 
     @Test
@@ -592,7 +928,7 @@ public class JandiSocketServiceModelTest {
 
         final Pair<Long, Boolean>[] pair = new Pair[1];
         register((AnnouncementUpdatedEvent event) -> {
-            accept[0] = true;
+            accept = true;
             long topicId = event.getTopicId();
             boolean opened = event.isOpened();
 
@@ -606,7 +942,7 @@ public class JandiSocketServiceModelTest {
         event.setData(data);
         model.onAnnouncementStatusUpdated(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
         assertThat(pair[0].first).isEqualTo(TeamInfoLoader.getInstance().getDefaultTopicId());
         assertThat(pair[0].second).isTrue();
     }
@@ -615,7 +951,7 @@ public class JandiSocketServiceModelTest {
     public void testOnTeamUpdated() throws Exception {
 
         register((TeamInfoChangeEvent event) -> {
-            accept[0] = true;
+            accept = true;
         });
 
         SocketTeamUpdatedEvent event = createEvent(SocketTeamUpdatedEvent.class);
@@ -626,7 +962,7 @@ public class JandiSocketServiceModelTest {
         event.getData().setTeam(team);
         model.onTeamUpdated(event);
 
-        assertThat(accept[0]).isTrue();
+        assertThat(accept).isTrue();
         assertThat(TeamInfoLoader.getInstance().getTeamName()).isEqualToIgnoringCase(name);
     }
 

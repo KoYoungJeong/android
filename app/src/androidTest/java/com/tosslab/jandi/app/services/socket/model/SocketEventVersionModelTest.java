@@ -60,19 +60,59 @@ public class SocketEventVersionModelTest {
     }
 
     @Version(1)
-    static class HasVersion {
+    static class HasVersion implements EventHistoryInfo {
         private int version;
+
+        @Override
+        public long getTs() {
+            return 0;
+        }
+
+        @Override
+        public String getEvent() {
+            return null;
+        }
+
+        @Override
+        public int getVersion() {
+            return version;
+        }
 
         public void setVersion(int version) {
             this.version = version;
         }
+
+        @Override
+        public long getTeamId() {
+            return 0;
+        }
     }
 
-    static class NoVersion {
+    static class NoVersion implements EventHistoryInfo {
         private int version;
+
+        @Override
+        public long getTs() {
+            return 0;
+        }
+
+        @Override
+        public String getEvent() {
+            return null;
+        }
+
+        @Override
+        public int getVersion() {
+            return version;
+        }
 
         public void setVersion(int version) {
             this.version = version;
+        }
+
+        @Override
+        public long getTeamId() {
+            return 0;
         }
     }
 
