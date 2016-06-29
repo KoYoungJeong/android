@@ -43,6 +43,40 @@ public class ProfileBinder {
     }
 
     public void bind(User writer) {
+        String profileUrl = writer.getPhotoUrl();
+        ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);
+
+        String writerName = writer.getName();
+        tvUserName.setText(writerName);
+
+        tvUserName.post(() -> {
+            int gap = (int) UiUtils.getPixelFromDp(2);
+
+            Rect bounds = new Rect();
+            tvUserName.getPaint().getTextBounds(writerName, 0, writerName.length(), bounds);
+            int width = bounds.width() + gap;
+
+            ViewGroup.LayoutParams params = vUserNameDisableIndicator.getLayoutParams();
+            params.width = width;
+            vUserNameDisableIndicator.setLayoutParams(params);
+        });
+
+        boolean isDisabledUser = !writer.isEnabled();
+        vUserNameDisableIndicator.setVisibility(isDisabledUser ? View.VISIBLE : View.GONE);
+        vUserProfileDisableIndicator.setVisibility(isDisabledUser ? View.VISIBLE : View.GONE);
+
+        Resources resources = tvUserName.getResources();
+        tvUserName.setTextColor(isDisabledUser
+                ? resources.getColor(R.color.deactivate_text_color)
+                : resources.getColor(R.color.black));
+
+        ivProfile.setOnClickListener(
+                v -> onProfileClick(writer.getId(), ShowProfileEvent.From.Image));
+        tvUserName.setOnClickListener(
+                v -> onProfileClick(writer.getId(), ShowProfileEvent.From.Name));
+    }
+
+    public void bindForComment(User writer) {
         ViewGroup.LayoutParams ivProfileLayoutParams = ivProfile.getLayoutParams();
         if (writer.isBot()) {
             ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(33f);

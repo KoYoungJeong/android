@@ -90,6 +90,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketPollCommentDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollFinishedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketPollVotedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDomainUpdatedEvent;
@@ -218,6 +219,7 @@ public class JandiSocketServiceModel {
         eventHistoryActorMapper.put(SocketPollCreatedEvent.class, this::onPollCreated);
         eventHistoryActorMapper.put(SocketPollDeletedEvent.class, this::onPollDeleted);
         eventHistoryActorMapper.put(SocketPollFinishedEvent.class, this::onPollFinished);
+        eventHistoryActorMapper.put(SocketPollVotedEvent.class, this::onPollVoted);
 
     }
 
@@ -1403,6 +1405,31 @@ public class JandiSocketServiceModel {
         }
     }
 
+    public void onPollVoted(Object object) {
+        try {
+            SocketPollVotedEvent event = getObject(object, SocketPollVotedEvent.class);
+            SocketPollVotedEvent.Data data = event.getData();
+
+            ResMessages.Link link = data.getLinkMessage();
+            Poll poll = link != null ? link.poll : null;
+            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()
+                    && poll != null && poll.getId() > 0 && poll.isMine()) {
+                upsertPollVotedStatus(poll);
+                poll = getPollFromDatabase(poll.getId());
+            }
+
+            TeamInfoLoader.getInstance().refresh();
+            JandiPreference.setSocketConnectedLastTime(event.getTs());
+
+            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()
+                    && poll != null && poll.getId() > 0 && poll.isMine()) {
+                postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.VOTED));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void onPollCommentCreated(Object object) {
         try {
             SocketPollCommentCreatedEvent event = getObject(object, SocketPollCommentCreatedEvent.class);
@@ -1431,6 +1458,10 @@ public class JandiSocketServiceModel {
 
     private void upsertPoll(Poll poll) {
         PollRepository.getInstance().upsertPoll(poll);
+    }
+
+    private void upsertPollVotedStatus(Poll poll) {
+        PollRepository.getInstance().upsertPollStatus(poll);
     }
 
     private Poll getPollFromDatabase(long pollId) {

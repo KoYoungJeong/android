@@ -209,8 +209,6 @@ public class PollStickerCommentViewHolder extends BaseCommentViewHolder {
     }
 
     private void bindPoll(ResMessages.Link link) {
-        LogUtil.i("tony.PollStickerComment.bind", link.toString());
-
         PollBinder.bindPoll(link.poll, false,
                 vPollIcon, tvSubject, tvCreator, tvDueDate, tvPollDeleted);
     }

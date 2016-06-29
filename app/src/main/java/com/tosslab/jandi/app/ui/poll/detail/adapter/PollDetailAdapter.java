@@ -104,7 +104,6 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
 
     @Override
     public void setPollDetails(Poll poll) {
-        LogUtil.d("tony0", poll.toString());
         List<Row<?>> rows = getPollDetailRows(poll);
 
         setRows(rows);
@@ -169,8 +168,6 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
 
     @Override
     public void replacePollDetails(Poll poll) {
-        LogUtil.d("tony0", poll.toString());
-
         List<Row<?>> rows = getPollDetailRows(poll);
 
         addRows(0, rows);

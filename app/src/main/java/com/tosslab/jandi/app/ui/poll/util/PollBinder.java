@@ -36,7 +36,7 @@ public class PollBinder {
             vPollIcon.setImageResource(R.drawable.poll_normal);
         } else {
             vPollIcon.setImageResource(R.drawable.poll_closed);
-            tvDueDate.setText("종료됨");
+            tvDueDate.setText(R.string.jandi_finished);
         }
 
         boolean deleted = "deleted".equals(status);

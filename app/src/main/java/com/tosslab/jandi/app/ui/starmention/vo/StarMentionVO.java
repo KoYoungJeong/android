@@ -32,6 +32,7 @@ public class StarMentionVO {
     private Date updatedAt;
     private List<MentionObject> mentions;
     private long writerId;
+    private String feedbackType;
 
     public int getContentType() {
         return contentType;
@@ -176,18 +177,27 @@ public class StarMentionVO {
                 ", roomId=" + roomId +
                 ", roomType=" + roomType +
                 ", fileId=" + fileId +
+                ", feedbackType=" + feedbackType +
                 ", fileName='" + fileName + '\'' +
                 ", updatedAt=" + updatedAt +
                 ", mentions=" + mentions +
                 '}';
     }
 
+    public long getWriterId() {
+        return writerId;
+    }
+
     public void setWriterId(long writerId) {
         this.writerId = writerId;
     }
 
-    public long getWriterId() {
-        return writerId;
+    public void setFeedbackType(String feedbackType) {
+        this.feedbackType = feedbackType;
+    }
+
+    public String getFeedbackType() {
+        return feedbackType;
     }
 
     public enum Type {

@@ -5,7 +5,6 @@ import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqCreatePoll;
 import com.tosslab.jandi.app.network.models.ResCreatePoll;
-import com.tosslab.jandi.app.network.models.ResPollDetail;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.poll.detail.dto.PollDetail;
 
@@ -43,7 +42,7 @@ public class PollDetailModelTest {
     @Before
     public void setup() throws Exception {
 
-        model = new PollDetailModel(() -> new PollApi(RetrofitBuilder.getInstance()));
+        model = new PollDetailModel(() -> new PollApi(RetrofitBuilder.getInstance()), messageApi);
     }
 
     @Test

@@ -62,7 +62,6 @@ public class PollViewHolder extends BaseMessageViewHolder {
             ProfileUtil.setProfile(link.fromEntity, ivProfile, vProfileCover, tvName, vDisableLineThrough);
         }
 
-        LogUtil.e("tony6 ", link.poll.getSubject() + " status = " + link.poll.getStatus());
         PollBinder.bindPoll(link.poll, false,
                 vPollIcon, tvSubject, tvCreator, tvDueDate, tvPollDeleted);
 

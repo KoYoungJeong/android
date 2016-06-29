@@ -56,7 +56,7 @@
             android:layout_toRightOf="@id/tv_poll_list_duedate"
             android:background="@drawable/admin_bg"
             android:gravity="center"
-            android:text="투표 완료"
+            android:text="@string/jandi_poll_voted"
             android:textSize="11sp"
             android:visibility="visible"/>
 

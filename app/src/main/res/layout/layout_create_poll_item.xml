@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:minHeight="48dp"
         android:layout_gravity="center_vertical"
-        android:hint="질문을 입력하셈"
+        android:hint="@string/jandi_input_poll_subject"
         android:maxLength="100"
         android:paddingRight="31dp"/>
 

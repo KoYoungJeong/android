@@ -55,7 +55,7 @@ public class CommentViewHolder extends BaseViewHolder<ResMessages.CommentMessage
         User writer = TeamInfoLoader.getInstance().getUser(commentMessage.writerId);
         ProfileBinder.newInstance(tvUserName, vUserNameDisableIndicator,
                 ivUserProfile, vUserProfileDisableIndicator)
-                .bind(writer);
+                .bindForComment(writer);
 
         bindComment(commentMessage);
     }

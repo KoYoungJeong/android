@@ -52,7 +52,7 @@ public class StickerViewHolder extends BaseViewHolder<ResMessages.CommentSticker
         User writer = TeamInfoLoader.getInstance().getUser(stickerMessage.writerId);
         ProfileBinder.newInstance(tvUserName, vUserNameDisableIndicator,
                 ivUserProfile, vUserProfileDisableIndicator)
-                .bind(writer);
+                .bindForComment(writer);
 
         bindComment(stickerMessage);
     }

@@ -108,6 +108,7 @@ public class StarMentionedMessageObject {
 
         public List<MentionObject> mentions;
         public long feedbackId;
+        public String feedbackType;
         public String feedbackTitle;
         public int commentCount;
         public Date createdAt;

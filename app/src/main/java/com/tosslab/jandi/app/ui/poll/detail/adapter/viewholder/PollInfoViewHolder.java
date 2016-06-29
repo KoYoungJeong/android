@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder;
 
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,9 +47,12 @@ public class PollInfoViewHolder extends BaseViewHolder<Poll> {
 
     @Override
     public void onBindView(Poll poll) {
+        Resources resources = tvSubject.getResources();
 
         tvSubject.setText(poll.getSubject());
-        tvParticipants.setText(poll.getVotedCount() + "명 참여");
+        String participants =
+                poll.getVotedCount() + resources.getString(R.string.jandi_poll_participants_ing);
+        tvParticipants.setText(participants);
 
         if (hasDueDate(poll)) {
             tvDueDate.setSelected(false);
@@ -70,24 +74,25 @@ public class PollInfoViewHolder extends BaseViewHolder<Poll> {
             vParticipantsMetaphor.setVisibility(View.VISIBLE);
             btnParticipants.setOnClickListener(v ->
                     EventBus.getDefault().post(RequestShowPollParticipantsEvent.all(poll)));
-            tvDueDate.setText(DateTransformator.getTimeString(poll.getFinishedAt()) + " 종료됨");
+            String finished = DateTransformator.getTimeString(poll.getFinishedAt()) +
+                    resources.getString(R.string.jandi_finished);
+            tvDueDate.setText(finished);
         }
 
         if (!poll.isAnonymous() && !poll.isMultipleChoice()) {
             tvOptions.setVisibility(View.GONE);
         } else {
             tvOptions.setVisibility(View.VISIBLE);
-
             StringBuffer sb = new StringBuffer();
             if (poll.isAnonymous()) {
-                sb.append("익명투표");
+                sb.append(resources.getString(R.string.jandi_poll_anonymous));
 
                 if (poll.isMultipleChoice()) {
-                    sb.append(", 중복투표 가능");
+                    sb.append(", " + resources.getString(R.string.jandi_poll_multiple_available));
                 }
 
             } else {
-                sb.append("중복투표 가능");
+                sb.append(resources.getString(R.string.jandi_poll_multiple_available));
             }
 
             tvOptions.setText(sb.toString());

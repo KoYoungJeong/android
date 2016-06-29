@@ -31,7 +31,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="8dp"
-                android:hint="질문을 입력하셈"
+                android:hint="@stirng/jandi_input_poll_subject"
                 android:maxLength="200"
                 android:minHeight="48dp"/>
 
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
-                android:text="종료시간"
+                android:text="@string/jandi_poll_finishedat"
                 android:textColor="@color/jandi_line_gray"
                 android:textSize="12sp"/>
 
@@ -122,7 +122,7 @@
                         android:id="@+id/tv_create_poll_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2016년 7월"/>
+                        android:text="3시"/>
 
                     <View
                         android:layout_width="10dp"
@@ -145,7 +145,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_weight="1"
-                    android:text="익명투표"
+                    android:text="@string/jandi_poll_anonymous"
                     android:textColor="@color/jandi_text"
                     android:textSize="16sp"/>
 
@@ -214,7 +214,7 @@
                 android:layout_height="36dp"
                 android:layout_margin="16dp"
                 android:background="@drawable/btn_create_poll_bg"
-                android:text="만들기"
+                android:text="@string/jandi_poll_create"
                 android:textColor="@color/white"
                 android:textSize="14sp"/>
 

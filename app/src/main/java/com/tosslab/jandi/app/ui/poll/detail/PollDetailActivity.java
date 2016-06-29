@@ -37,6 +37,7 @@ import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.local.orm.domain.ReadyCommentForPoll;
 import com.tosslab.jandi.app.local.orm.repositories.ReadyCommentForPollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
@@ -63,6 +64,8 @@ import com.tosslab.jandi.app.ui.poll.detail.component.DaggerPollDetailComponent;
 import com.tosslab.jandi.app.ui.poll.detail.module.PollDetailModule;
 import com.tosslab.jandi.app.ui.poll.detail.presenter.PollDetailPresenter;
 import com.tosslab.jandi.app.ui.poll.participants.PollParticipantsActivity;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -136,6 +139,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     private StickerInfo stickerInfo = NULL_STICKER;
     private boolean shouldRetrievePollDetail = false;
     private boolean shouldPrepareOptionsMenu;
+    private String pollStatus;
 
     public static void start(Activity activity, long pollId) {
         Intent intent = new Intent(activity, PollDetailActivity.class);
@@ -293,14 +297,17 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         pollDetailPresenter.onCommentDeleted(linkComment);
     }
 
-    public void onEvent(SocketPollEvent event) {
-        if (event.getPoll() == null
-                || event.getPoll().getId() != pollId) {
-            return;
-        }
-
-        pollDetailPresenter.onPollDataChanged(event.getPoll());
-    }
+    /**
+     * 소켓 이벤트는 무시한다. (모바일 정책)
+     */
+//    public void onEvent(SocketPollEvent event) {
+//        if (event.getPoll() == null
+//                || event.getPoll().getId() != pollId) {
+//            return;
+//        }
+//
+//        pollDetailPresenter.onPollDataChanged(event.getPoll());
+//    }
 
     public void onEvent(SelectedMemberInfoForMentionEvent event) {
         if (isFinishing()) {
@@ -320,14 +327,13 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
 
         long messageId = event.getMessageId();
 
+        ColoredToast.show("Hello World");
         switch (event.getAction()) {
             case STARRED:
                 pollDetailPresenter.onChangeCommentStarredState(messageId, true);
-//                sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap_Star);
                 break;
             case UNSTARRED:
                 pollDetailPresenter.onChangeCommentStarredState(messageId, false);
-//                sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap_Unstar);
                 break;
         }
     }
@@ -338,6 +344,14 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         }
 
         pollDetailPresenter.onDeleteComment(event.messageType, event.messageId, event.feedbackId);
+    }
+
+    public void onEvent(ShowProfileEvent event) {
+        long userEntityId = event.userId;
+
+        MemberProfileActivity_.intent(this)
+                .memberId(userEntityId)
+                .start();
     }
 
     private void setUpActionBar() {
@@ -669,6 +683,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         if ("deleted".equals(poll.getStatus())) {
             shouldPrepareOptionsMenu = false;
             vgInputWrapper.setVisibility(View.GONE);
+            invalidateOptionsMenu();
             return;
         }
 
@@ -683,7 +698,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
 
         shouldPrepareOptionsMenu = creatorId == myId
                 || TeamInfoLoader.getInstance().getUser(myId).isTeamOwner();
-
+        pollStatus = poll.getStatus();
         invalidateOptionsMenu();
     }
 
@@ -693,6 +708,9 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
 
         if (shouldPrepareOptionsMenu) {
             getMenuInflater().inflate(R.menu.poll_detail, menu);
+            if ("finished".equals(pollStatus)) {
+                menu.findItem(R.id.action_poll_detail_finish).setVisible(false);
+            }
             return true;
         }
 

@@ -31,6 +31,6 @@ public class SocketPollEvent {
     }
 
     public enum Type {
-        CREATED, FINISHED, DELETED
+        CREATED, VOTED, FINISHED, DELETED
     }
 }

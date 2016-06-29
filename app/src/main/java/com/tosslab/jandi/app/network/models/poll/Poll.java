@@ -58,6 +58,7 @@ public class Poll {
 
     @DatabaseField(persisterClass = CollectionIntegerConverter.class)
     private Collection<Integer> votedItemSeqs;
+    private boolean isMine;
 
     public long getId() {
         return id;
@@ -233,6 +234,7 @@ public class Poll {
                 ", electedItems=" + electedItems +
                 ", votedCount=" + votedCount +
                 ", status='" + status + '\'' +
+                ", isMine='" + isMine + '\'' +
                 ", multipleChoice=" + multipleChoice +
                 ", anonymous=" + anonymous +
                 ", commentCount=" + commentCount +
@@ -240,6 +242,14 @@ public class Poll {
                 ", voteStatus='" + voteStatus + '\'' +
                 ", votedItemSeqs=" + votedItemSeqs +
                 '}';
+    }
+
+    public boolean isMine() {
+        return isMine;
+    }
+
+    public void setMine(boolean mine) {
+        isMine = mine;
     }
 
     @DatabaseTable(tableName = "poll_item")

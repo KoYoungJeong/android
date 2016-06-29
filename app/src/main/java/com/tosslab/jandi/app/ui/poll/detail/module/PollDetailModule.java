@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.poll.detail.module;
 
+import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.PollDetailAdapter;
@@ -50,8 +51,8 @@ public class PollDetailModule {
 
     @Provides
     @Singleton
-    public PollDetailModel providesPollDetailModel(Lazy<PollApi> pollApi) {
-        return new PollDetailModel(pollApi);
+    public PollDetailModel providesPollDetailModel(Lazy<PollApi> pollApi, Lazy<MessageApi> messageApi) {
+        return new PollDetailModel(pollApi, messageApi);
     }
 
 }

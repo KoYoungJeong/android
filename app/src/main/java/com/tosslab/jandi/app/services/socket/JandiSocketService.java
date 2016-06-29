@@ -301,6 +301,9 @@ public class JandiSocketService extends Service {
         EventListener pollDeletedListener =
                 objects -> jandiSocketServiceModel.onPollDeleted(objects[0]);
         eventHashMap.put("poll_deleted", pollDeletedListener);
+        EventListener pollVotedListener =
+                objects -> jandiSocketServiceModel.onPollVoted(objects[0]);
+        eventHashMap.put("poll_voted", pollVotedListener);
 
         EventListener pollCommentCreatedListener =
                 objects -> jandiSocketServiceModel.onPollCommentCreated(objects[0]);

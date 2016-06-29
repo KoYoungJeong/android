@@ -146,7 +146,6 @@ public class PollCommentViewHolder extends BaseCommentViewHolder {
     private boolean isFromMe(ResMessages.Link link) {
         boolean isMe = false;
         if (link.feedback != null) {
-            LogUtil.e("tony14", "my = " + TeamInfoLoader.getInstance().getMyId() + " writerId = " + link.message.writerId);
             isMe = TeamInfoLoader.getInstance().getMyId() == link.message.writerId;
         }
         return isMe;

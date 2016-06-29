@@ -290,7 +290,7 @@ public class ResMessageSearch {
     public static class PollInfo {
         private long creatorId;
         private long pollId;
-        private String summary;
+        private String subject;
 
         public long getCreatorId() {
             return creatorId;
@@ -308,12 +308,12 @@ public class ResMessageSearch {
             this.pollId = pollId;
         }
 
-        public String getSummary() {
-            return summary;
+        public String getSubject() {
+            return subject;
         }
 
-        public void setSummary(String summary) {
-            this.summary = summary;
+        public void setSubject(String subject) {
+            this.subject = subject;
         }
     }
 }

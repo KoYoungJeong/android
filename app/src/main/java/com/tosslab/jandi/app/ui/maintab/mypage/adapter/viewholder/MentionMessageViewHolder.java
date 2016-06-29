@@ -45,8 +45,8 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
     TextView tvMentionContent;
     @Bind(R.id.tv_mention_message_topic_name)
     TextView tvTopicName;
-    @Bind(R.id.iv_mention_message_file_icon)
-    View ivFileIcon;
+    @Bind(R.id.iv_mention_message_content_icon)
+    ImageView ivContentIcon;
 
     private int topMarginForIvProfile;
 
@@ -74,15 +74,20 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
         if ("comment".equals(mentionMessage.getContentType())) {
             tvTopicName.setText(mentionMessage.getFeedbackTitle());
             tvTopicName.setEllipsize(TextUtils.TruncateAt.MIDDLE);
-            ivFileIcon.setVisibility(View.VISIBLE);
+            if ("poll".equals(mentionMessage.getFeedbackType())) {
+                ivContentIcon.setImageResource(R.drawable.icon_message_poll);
+            } else {
+                ivContentIcon.setImageResource(R.drawable.icon_message_file);
+            }
+            ivContentIcon.setVisibility(View.VISIBLE);
         } else if ("file".equals(mentionMessage.getContentType())) {
             tvTopicName.setText(mentionMessage.getContentTitle());
             tvTopicName.setEllipsize(TextUtils.TruncateAt.END);
-            ivFileIcon.setVisibility(View.GONE);
+            ivContentIcon.setVisibility(View.GONE);
         } else {
             tvTopicName.setText(mentionMessage.getRoomName());
             tvTopicName.setEllipsize(TextUtils.TruncateAt.END);
-            ivFileIcon.setVisibility(View.GONE);
+            ivContentIcon.setVisibility(View.GONE);
         }
 
         SpannableStringBuilder ssb = new SpannableStringBuilder(mentionMessage.getContentBody());

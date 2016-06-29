@@ -1,7 +1,10 @@
 package com.tosslab.jandi.app.local.orm.repositories;
 
+import android.text.TextUtils;
+
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 
@@ -32,6 +35,28 @@ public class PollRepository extends LockExecutorTemplate {
             try {
                 Dao<Poll, ?> dao = getHelper().getDao(Poll.class);
                 dao.createOrUpdate(poll);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+    }
+
+    public boolean upsertPollStatus(Poll poll) {
+
+        if (poll == null || poll.getId() <= 0 || TextUtils.isEmpty(poll.getStatus())) {
+            return false;
+        }
+
+        return execute(() -> {
+            try {
+                Dao<Poll, ?> dao = getHelper().getDao(Poll.class);
+                UpdateBuilder<Poll, ?> pollUpdateBuilder = dao.updateBuilder();
+                pollUpdateBuilder
+                        .updateColumnValue("status", poll.getStatus())
+                        .where()
+                        .eq("id", poll.getId());
+                pollUpdateBuilder.update();
             } catch (SQLException e) {
                 e.printStackTrace();
             }

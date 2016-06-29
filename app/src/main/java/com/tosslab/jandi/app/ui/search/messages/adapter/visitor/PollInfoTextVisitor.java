@@ -41,7 +41,7 @@ public class PollInfoTextVisitor implements TextVisitor {
         builder.append(" | ").setSpan(nameSpannable, start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         start = builder.length();
         nameSpannable = new NameSpannable(textSize, textColor);
-        builder.append(record.getPollInfo().getSummary()).setSpan(nameSpannable, start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        builder.append(record.getPollInfo().getSubject()).setSpan(nameSpannable, start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
     }
 }

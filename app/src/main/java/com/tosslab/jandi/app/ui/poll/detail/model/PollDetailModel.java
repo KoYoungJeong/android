@@ -52,8 +52,9 @@ public class PollDetailModel {
     MessageManipulator messageManipulator;
     EntityClientManager entityClientManager;
 
-    public PollDetailModel(Lazy<PollApi> api) {
-        pollApi = api;
+    public PollDetailModel(Lazy<PollApi> pollApi, Lazy<MessageApi> messageApi) {
+        this.pollApi = pollApi;
+        this.messageApi = messageApi;
         entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
         messageManipulator = MessageManipulator_.getInstance_(JandiApplication.getContext());
     }

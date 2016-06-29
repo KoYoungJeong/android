@@ -28,6 +28,7 @@ public class MentionMessage {
 
     private List<MentionObject> mentions;
     private long feedbackId;
+    private String feedbackType;
     private String feedbackTitle;
     private int commentCount;
     private Date messageCreatedAt;
@@ -55,6 +56,7 @@ public class MentionMessage {
 
             this.mentions = message.mentions;
             this.feedbackId = message.feedbackId;
+            this.feedbackType = message.feedbackType;
             this.feedbackTitle = message.feedbackTitle;
 
             this.commentCount = message.commentCount;
@@ -148,6 +150,10 @@ public class MentionMessage {
         return createdAt;
     }
 
+    public String getFeedbackType() {
+        return feedbackType;
+    }
+
     @Override
     public String toString() {
         return "MentionMessage{" +
@@ -166,6 +172,7 @@ public class MentionMessage {
                 ", contentExtensions='" + contentExtensions + '\'' +
                 ", mentions=" + mentions +
                 ", feedbackId=" + feedbackId +
+                ", feedbackType=" + feedbackType +
                 ", feedbackTitle='" + feedbackTitle + '\'' +
                 ", commentCount=" + commentCount +
                 ", messageCreatedAt=" + messageCreatedAt +
