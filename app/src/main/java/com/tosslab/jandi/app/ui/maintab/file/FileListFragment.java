@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.file;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -132,6 +131,10 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     private boolean isSearchLayoutFirst = true;
     private boolean isForeground;
 
+    public void setOnSearchItemSelect(SearchActivity.OnSearchItemSelect onSearchItemSelect) {
+        this.onSearchItemSelect = onSearchItemSelect;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_file_list, container, false);
@@ -226,7 +229,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         fileUploadTypeDialog.show(getFragmentManager(), "dialog");
     }
 
-    public void setListView() {
+    private void setListView() {
         if (getActivity() instanceof SearchActivity) {
             AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                     .event(Event.ScreenView)
@@ -277,14 +280,12 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
+    @Override
     public void setSearchEmptryViewVisible(int visible) {
         searchEmptyView.setVisibility(visible);
     }
 
-    public void showSuccessToast(String message) {
-        ColoredToast.show(message);
-    }
-
+    @Override
     public void dismissMoreProgressBar() {
         Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_to_bottom);
 
@@ -297,12 +298,6 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
         moreLoadingProgressBar.setAnimation(animation);
         animation.startNow();
-    }
-
-    public void dismissProgressDialog(Dialog dialog) {
-        if (dialog != null && dialog.isShowing()) {
-            dialog.dismiss();
-        }
     }
 
     @Override
@@ -350,10 +345,6 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         }
         LogUtil.d("success to find " + resSearchFile.fileCount + " files.");
         searchedFilesAdapterView.refreshListView();
-    }
-
-    public void setOnSearchItemSelect(SearchActivity.OnSearchItemSelect onSearchItemSelect) {
-        this.onSearchItemSelect = onSearchItemSelect;
     }
 
     @Override
