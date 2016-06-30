@@ -58,6 +58,7 @@ public class Poll {
 
     @DatabaseField(persisterClass = CollectionIntegerConverter.class)
     private Collection<Integer> votedItemSeqs;
+
     private boolean isMine;
 
     public long getId() {
@@ -204,6 +205,14 @@ public class Poll {
         this.votedItemSeqs = votedItemSeqs;
     }
 
+    public boolean isMine() {
+        return isMine;
+    }
+
+    public void setMine(boolean mine) {
+        isMine = mine;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -242,14 +251,6 @@ public class Poll {
                 ", voteStatus='" + voteStatus + '\'' +
                 ", votedItemSeqs=" + votedItemSeqs +
                 '}';
-    }
-
-    public boolean isMine() {
-        return isMine;
-    }
-
-    public void setMine(boolean mine) {
-        isMine = mine;
     }
 
     @DatabaseTable(tableName = "poll_item")

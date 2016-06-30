@@ -115,7 +115,7 @@ public class StarMentionListModel {
             starMentionVO.setWriterPictureUrl(entity.getPhotoUrl());
             starMentionVO.setTeamId(starMentionedMessageObject.getTeamId());
             starMentionVO.setMessageId(starMentionedMessageObject.getMessage().id);
-
+            starMentionVO.setPollId(starMentionedMessageObject.getMessage().pollId);
             setLastMessageId(categoryType, starMentionedMessageObject, messageId);
 
             if (type.equals("text")) {

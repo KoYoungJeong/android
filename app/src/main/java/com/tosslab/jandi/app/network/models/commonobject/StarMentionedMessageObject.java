@@ -113,6 +113,7 @@ public class StarMentionedMessageObject {
         public int commentCount;
         public Date createdAt;
         public Content content;
+        public long pollId;
 
         public Message() {
         }
@@ -127,6 +128,7 @@ public class StarMentionedMessageObject {
                     ", feedbackTitle='" + feedbackTitle + '\'' +
                     ", commentCount=" + commentCount +
                     ", createdAt=" + createdAt +
+                    ", pollId=" + pollId +
                     ", content=" + content.toString() +
                     '}';
         }

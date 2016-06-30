@@ -116,7 +116,7 @@ public class PollParticipantsActivity extends AppCompatActivity
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle("참여자");
+        actionBar.setTitle(R.string.jandi_participants);
     }
 
     private void initPollParticipantsListView() {

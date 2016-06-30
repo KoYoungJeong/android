@@ -13,10 +13,10 @@
         <menu>
             <item
                 android:id="@+id/action_poll_detail_finish"
-                android:title="투표 종료하기"/>
+                android:title="@string/jandi_action_poll_finish"/>
             <item
                 android:id="@+id/action_poll_detail_delete"
-                android:title="투표 삭제하기"/>
+                android:title="@string/jandi_action_poll_delete"/>
         </menu>
     </item>
 

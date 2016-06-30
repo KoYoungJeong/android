@@ -105,11 +105,6 @@ public class PollListAdapter extends MultiItemRecyclerAdapter
     }
 
     @Override
-    public void addPoll(Poll poll) {
-        addRow(Row.create(poll, VIEW_TYPE_POLL));
-    }
-
-    @Override
     public void addPoll(int position, Poll poll) {
         addRow(position, Row.create(poll, VIEW_TYPE_POLL));
     }
@@ -175,6 +170,11 @@ public class PollListAdapter extends MultiItemRecyclerAdapter
                     return false;
                 })
                 .subscribe();
+    }
+
+    @Override
+    public void setPoll(int index, Poll poll) {
+        setRow(index, Row.create(poll, VIEW_TYPE_POLL));
     }
 
     public interface OnPollClickListener {

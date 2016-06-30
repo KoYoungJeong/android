@@ -12,8 +12,6 @@ public interface PollListDataModel {
 
     void addPolls(List<Poll> polls);
 
-    void addPoll(Poll poll);
-
     void addPoll(int position, Poll poll);
 
     int getIndexOfFirstFinishedPoll();
@@ -23,4 +21,6 @@ public interface PollListDataModel {
     void removePollByIndex(int index);
 
     void removePollByIdAndStats(long pollId, String status);
+
+    void setPoll(int index, Poll poll);
 }

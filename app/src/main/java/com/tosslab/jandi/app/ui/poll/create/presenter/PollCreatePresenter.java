@@ -27,8 +27,6 @@ public interface PollCreatePresenter {
 
     interface View {
 
-        void showEmptyDueDateToast();
-
         void showNotEnoughPollItemsToast();
 
         void showEmptySubjectToast();
@@ -39,7 +37,7 @@ public interface PollCreatePresenter {
 
         void finish();
 
-        void showChooseRightDueDateToast();
+        void showDueDateCannotBePastTimeToast();
 
     }
 }

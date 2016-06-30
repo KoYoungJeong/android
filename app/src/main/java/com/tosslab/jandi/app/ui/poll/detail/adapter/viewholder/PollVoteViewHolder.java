@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder;
 
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,10 +39,10 @@ public class PollVoteViewHolder extends BaseViewHolder<Poll> {
 
         itemView.setEnabled(votedItemSeqs != null && votedItemSeqs.size() > 0);
 
-        String vote = "투표하기";
-        if (poll.isAnonymous()) {
-            vote += " (익명)";
-        }
+        Resources resources = itemView.getResources();
+        String vote = poll.isAnonymous()
+                ? resources.getString(R.string.jandi_vote_anonymous)
+                : resources.getString(R.string.jandi_vote);
         tvPollItemVote.setText(vote);
 
         itemView.setOnClickListener(v ->

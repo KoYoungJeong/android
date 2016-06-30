@@ -55,7 +55,7 @@ public interface PollDetailPresenter {
 
         void copyToClipboard(String text);
 
-        void initPollDetails(Poll poll);
+        void initPollDetailExtras(Poll poll);
 
         void showCheckNetworkDialog(boolean shouldFinishWhenConfirm);
 
@@ -84,5 +84,6 @@ public interface PollDetailPresenter {
 
         void showParticipants(long pollId, Poll.Item item);
 
+        void showPollDeleteSuccessToast();
     }
 }

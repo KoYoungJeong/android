@@ -131,7 +131,7 @@ public class PollListActivity extends BaseAppCompatActivity
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle("투표");
+        actionBar.setTitle(R.string.jandi_poll);
     }
 
     @Override

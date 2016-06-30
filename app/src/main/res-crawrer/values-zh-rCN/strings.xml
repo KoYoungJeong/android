@@ -68,6 +68,8 @@
 	<string name="jandi_action_login">"登录"</string>
 	<string name="jandi_action_menu_message_copy">"复制"</string>
 	<string name="jandi_action_more">"更多"</string>
+	<string name="jandi_action_poll_delete">"删除问卷"</string>
+	<string name="jandi_action_poll_finish">"停止问卷"</string>
 	<string name="jandi_action_rename">"重新命名"</string>
 	<string name="jandi_action_search">"搜索"</string>
 	<string name="jandi_action_share">"分享"</string>
@@ -95,6 +97,7 @@
 	<string name="jandi_are_you_sure_disable_external_link">"若移除共享链接，访问至该文件的权限将被撤销。 你确定要移除共享链接？"</string>
 	<string name="jandi_ask_assign_topic_owner">"你确定将议题管理权限转移至此成员？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你确定将此成员剔除议题？"</string>
+	<string name="jandi_ask_poll_finish">"你确定结束此投票？"</string>
 	<string name="jandi_ask_to_leave_if_private_topic_owner">"欲离开此议题，请先将议题管理权限转移至其他成员"</string>
 	<string name="jandi_ask_to_leave_if_topic_owner">"你可于离开议题前转移管理权限"</string>
 	<string name="jandi_assign">"转移"</string>
@@ -189,8 +192,12 @@
 	<string name="jandi_disabled_team">"你已被剔除%1$s。 进一步协助，请联络团队管理员。"</string>
 	<string name="jandi_disabled_user">"此成员权限已被暂时关闭"</string>
 	<string name="jandi_domain_is_already_taken">"网域为无效或已被使用"</string>
+	<string name="jandi_duedate">"结束时间"</string>
+	<string name="jandi_duedate_cannotbe_past_time">"问卷结束时间"</string>
 	<string name="jandi_duplicate_email">"这电子邮件已被注冊"</string>
 	<string name="jandi_empty">"""</string>
+	<string name="jandi_empty_participants">"无人参与投票"</string>
+	<string name="jandi_empty_subject">"问卷名称为必填字段"</string>
 	<string name="jandi_enable_external_link">"建立共享链接"</string>
 	<string name="jandi_enter_new_passcode">"输入新密码"</string>
 	<string name="jandi_enter_passcode">"输入您的密码"</string>
@@ -205,6 +212,9 @@
 	<string name="jandi_exceeded_max_text_length">"可填入最多5000字"</string>
 	<string name="jandi_expired_invitation_link">"此邀请链接已过期，请联络你的邀请人重新寄发新链接。"</string>
 	<string name="jandi_explain_global_push_off">"JANDI推播通知已被停用。 欲重新接收推播，点击「更多」后进入「设置」开启推播。"</string>
+	<string name="jandi_explain_invite">"JANDI 是企业信息与协作平台，
+越多成员使用越能改善您的工作品质。
+现在，开始邀请您的成员一起使用吧！"</string>
 	<string name="jandi_explain_topic_description">"描述 (选项)"</string>
 	<string name="jandi_export">"导出"</string>
 	<string name="jandi_export_to_app">"导出文件至..."</string>
@@ -238,6 +248,7 @@
 	<string name="jandi_file_upload_succeed">"文件上传成功"</string>
 	<string name="jandi_file_uploading">"上传"</string>
 	<string name="jandi_fingerprint_cannot_do_temporary">"指纹解锁暂时无法使用"</string>
+	<string name="jandi_finished">"已完成"</string>
 	<string name="jandi_folder_alread_has_name">"这名称已被使用"</string>
 	<string name="jandi_folder_ask_delete">"你确定要删除此文件夹？"</string>
 	<string name="jandi_folder_choose">"选择文件夹"</string>
@@ -268,10 +279,15 @@
 	<string name="jandi_image_too_big">"图像过大无法加载"</string>
 	<string name="jandi_incorrect_passcode">"密码不吻合"</string>
 	<string name="jandi_info">"JANDI版本"</string>
+	<string name="jandi_input_enough_items">"项目最少要2个以上"</string>
 	<string name="jandi_input_password">"请为选择的团队输入您的密码"</string>
+	<string name="jandi_input_poll_item">"调查项目"</string>
+	<string name="jandi_input_poll_subject">"問卷名稱"</string>
 	<string name="jandi_input_search_keyword">"按照关键词搜索您的信息"</string>
 	<string name="jandi_input_topic_name">"请输入议题群组名称"</string>
 	<string name="jandi_input_user_name">"输入您的名字"</string>
+	<string name="jandi_insert_team_domain">"请输入团队网域"</string>
+	<string name="jandi_insert_team_name">"请输入团队名称"</string>
 	<string name="jandi_invitation">"邀请"</string>
 	<string name="jandi_invitation_help">"邀请其他团队成员加入JANDI"</string>
 	<string name="jandi_invitation_succeed">"邀请成功"</string>
@@ -371,6 +387,7 @@
 	<string name="jandi_on">"打开"</string>
 	<string name="jandi_open_browser">"开启一个浏览器"</string>
 	<string name="jandi_page_not_found">"您找的页面不存在"</string>
+	<string name="jandi_participants">"投票人"</string>
 	<string name="jandi_password_strength_average">"普通"</string>
 	<string name="jandi_password_strength_safe">"强"</string>
 	<string name="jandi_password_strength_strong">"非常强"</string>
@@ -380,6 +397,16 @@
 	<string name="jandi_play_store">"Google Play"</string>
 	<string name="jandi_please_retry">"请重试一次"</string>
 	<string name="jandi_plz_input_topic_description">"描述 (选项)"</string>
+	<string name="jandi_poll">"问卷调查"</string>
+	<string name="jandi_poll_anonymous">"不记名"</string>
+	<string name="jandi_poll_create">"建立新的投票"</string>
+	<string name="jandi_poll_empty">"尚无问卷，\n点击[+]建立新问卷"</string>
+	<string name="jandi_poll_finishedat">"结束时间"</string>
+	<string name="jandi_poll_is_anonymous">"此问卷为不记名投票"</string>
+	<string name="jandi_poll_multiple">"可复选"</string>
+	<string name="jandi_poll_multiple_available">"可复选"</string>
+	<string name="jandi_poll_participants_ing">"成员"</string>
+	<string name="jandi_poll_voted">"已投"</string>
 	<string name="jandi_pp">"隐私权条款"</string>
 	<string name="jandi_preview_message_contents">"预览信息内容"</string>
 	<string name="jandi_privacy_policy">"隐私权条款"</string>
@@ -520,11 +547,18 @@
 	<string name="jandi_tab_topic">"议题"</string>
 	<string name="jandi_tab_tos_and_pp">"点击「下一步」即表示您同意%1$s和%2$s。"</string>
 	<string name="jandi_team">"团队"</string>
+	<string name="jandi_team_create_domain_info">"想要给您的JANDI\n团队设定什么网址？"</string>
+	<string name="jandi_team_create_domain_invalid">"仅限英文字母、数字和连字符(-)"</string>
+	<string name="jandi_team_create_domain_length_invalid">"至少使用3个字元"</string>
+	<string name="jandi_team_create_input_info">"想要怎么称呼您的团队？"</string>
+	<string name="jandi_team_create_name_length_invalid">"团队名称最多为20个字元"</string>
 	<string name="jandi_team_creation_succeed">"团队建立成功！请查看您的电子邮件。"</string>
+	<string name="jandi_team_domain">"团队网域"</string>
 	<string name="jandi_team_info">"团队"</string>
 	<string name="jandi_team_join_fail">"处理过程中产生错误。请再试一次。"</string>
 	<string name="jandi_team_member">"团队成员"</string>
 	<string name="jandi_team_member_count_with_format">"成员(%d)"</string>
+	<string name="jandi_team_name">"团队名称"</string>
 	<string name="jandi_team_owner">"团队管理员"</string>
 	<string name="jandi_team_owner_with_format">"团队管理员:%s"</string>
 	<string name="jandi_team_select_accept">"承認"</string>
@@ -591,6 +625,8 @@
 	<string name="jandi_vibrate">"振动"</string>
 	<string name="jandi_view_all">"查看全部"</string>
 	<string name="jandi_view_comment_read_more">"显示%s 则留言"</string>
+	<string name="jandi_vote">"投票"</string>
+	<string name="jandi_vote_anonymous">"不记名投票"</string>
 	<string name="jandi_welcome_message">"欢迎使用JANDI!"</string>
 	<string name="jandi_what_is_topic_type">"議題一旦建立將無法在公開或私人兩種類別之間自由轉換"</string>
 	<string name="jandi_who_of_file">"共享文件"</string>

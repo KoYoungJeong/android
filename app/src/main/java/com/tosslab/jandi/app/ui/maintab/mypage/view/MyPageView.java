@@ -42,4 +42,7 @@ public interface MyPageView {
     void hideEmptyMentionView();
 
     void setPollBadgeCount(int pollCount);
+
+    void moveToPollDetailActivity(long pollId);
+
 }

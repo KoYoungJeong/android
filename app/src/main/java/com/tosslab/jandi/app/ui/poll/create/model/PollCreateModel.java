@@ -30,7 +30,7 @@ public class PollCreateModel {
     }
 
     public boolean hasSubject(String subject) {
-        return !TextUtils.isEmpty(subject);
+        return !TextUtils.isEmpty(subject) && TextUtils.getTrimmedLength(subject) > 0;
     }
 
     // 2개 이상

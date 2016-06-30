@@ -99,15 +99,10 @@ public class PollCreatePresenterImpl implements PollCreatePresenter {
             createPollBuilder.items(filteredItems);
         }
 
-        if (!pollCreateModel.hasDueDate(createPollBuilder.getHour())) {
-            pollCreateView.showEmptyDueDateToast();
-            return;
-        } else {
-            pollCreateModel.buildDueDate(createPollBuilder);
-        }
+        pollCreateModel.buildDueDate(createPollBuilder);
 
         if (!pollCreateModel.isAvailableDueDate(createPollBuilder.getDueDate())) {
-            pollCreateView.showChooseRightDueDateToast();
+            pollCreateView.showDueDateCannotBePastTimeToast();
             return;
         }
 

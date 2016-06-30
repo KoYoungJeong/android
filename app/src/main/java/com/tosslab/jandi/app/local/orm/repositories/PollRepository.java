@@ -42,7 +42,7 @@ public class PollRepository extends LockExecutorTemplate {
         });
     }
 
-    public boolean upsertPollStatus(Poll poll) {
+    public boolean upsertPollVoteStatus(Poll poll) {
 
         if (poll == null || poll.getId() <= 0 || TextUtils.isEmpty(poll.getStatus())) {
             return false;
@@ -52,10 +52,13 @@ public class PollRepository extends LockExecutorTemplate {
             try {
                 Dao<Poll, ?> dao = getHelper().getDao(Poll.class);
                 UpdateBuilder<Poll, ?> pollUpdateBuilder = dao.updateBuilder();
-                pollUpdateBuilder
-                        .updateColumnValue("status", poll.getStatus())
-                        .where()
+
+                pollUpdateBuilder.updateColumnValue("voteStatus", poll.getVoteStatus());
+                pollUpdateBuilder.updateColumnValue("votedItemSeqs", poll.getVotedItemSeqs());
+
+                pollUpdateBuilder.where()
                         .eq("id", poll.getId());
+
                 pollUpdateBuilder.update();
             } catch (SQLException e) {
                 e.printStackTrace();

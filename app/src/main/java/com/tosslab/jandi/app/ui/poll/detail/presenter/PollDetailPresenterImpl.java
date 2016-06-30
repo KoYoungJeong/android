@@ -80,7 +80,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
 
                     pollDetailView.notifyDataSetChanged();
 
-                    pollDetailView.initPollDetails(poll);
+                    pollDetailView.initPollDetailExtras(poll);
 
                 }, e -> {
                     pollDetailView.dismissProgress();
@@ -115,7 +115,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
 
                     pollDetailView.notifyDataSetChanged();
 
-                    pollDetailView.initPollDetails(pollDetail.getPoll());
+                    pollDetailView.initPollDetailExtras(pollDetail.getPoll());
 
                 }, e -> {
                     LogUtil.e(TAG, Log.getStackTraceString(e));
@@ -152,7 +152,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     pollDetailDataModel.replacePollDetails(poll);
                     pollDetailView.notifyDataSetChanged();
 
-                    pollDetailView.initPollDetails(poll);
+                    pollDetailView.initPollDetailExtras(poll);
                 }, e -> {
                     pollDetailView.dismissProgress();
 
@@ -230,7 +230,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     pollDetailDataModel.replacePollDetails(poll1);
                     pollDetailView.notifyDataSetChanged();
 
-                    pollDetailView.initPollDetails(poll1);
+                    pollDetailView.initPollDetailExtras(poll1);
                 }, e -> {
                     LogUtil.e(TAG, Log.getStackTraceString(e));
                     pollDetailView.showUnExpectedErrorToast();
@@ -362,20 +362,8 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(resDeletePoll -> {
-                    pollDetailView.dismissProgress();
-
-                    ResMessages.Link linkMessage = resDeletePoll.getLinkMessage();
-                    if (linkMessage == null || linkMessage.poll == null || linkMessage.poll.getId() <= 0) {
-                        return;
-                    }
-
-                    Poll poll = linkMessage.poll;
-
-                    pollDetailDataModel.removePollDetailRow();
-                    pollDetailDataModel.replacePollDetails(poll);
-                    pollDetailView.notifyDataSetChanged();
-
-                    pollDetailView.initPollDetails(poll);
+                    pollDetailView.showPollDeleteSuccessToast();
+                    pollDetailView.finish();
                 }, e -> {
                     pollDetailView.dismissProgress();
 
@@ -413,7 +401,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     pollDetailDataModel.replacePollDetails(poll);
                     pollDetailView.notifyDataSetChanged();
 
-                    pollDetailView.initPollDetails(poll);
+                    pollDetailView.initPollDetailExtras(poll);
                 }, e -> {
                     pollDetailView.dismissProgress();
 

@@ -1335,7 +1335,9 @@ public class JandiSocketServiceModel {
 
             Poll poll = data != null ? data.getPoll() : null;
 
-            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()
+            boolean isSameTeam =
+                    event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId();
+            if (isSameTeam
                     && poll != null && poll.getId() > 0) {
                 upsertPoll(poll);
                 poll = getPollFromDatabase(poll.getId());
@@ -1344,7 +1346,7 @@ public class JandiSocketServiceModel {
             TeamInfoLoader.getInstance().refresh();
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
-            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()
+            if (isSameTeam
                     && poll != null && poll.getId() > 0) {
                 postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.CREATED));
             }
@@ -1360,8 +1362,9 @@ public class JandiSocketServiceModel {
 
             ResMessages.Link link = data.getLinkMessage();
             Poll poll = link != null ? link.poll : null;
-
-            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()
+            boolean isSameTeam =
+                    event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId();
+            if (isSameTeam
                     && poll != null && poll.getId() > 0) {
                 upsertPoll(poll);
                 poll = getPollFromDatabase(poll.getId());
@@ -1370,7 +1373,7 @@ public class JandiSocketServiceModel {
             TeamInfoLoader.getInstance().refresh();
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
-            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()
+            if (isSameTeam
                     && poll != null && poll.getId() > 0) {
                 postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.FINISHED));
             }
@@ -1386,8 +1389,9 @@ public class JandiSocketServiceModel {
 
             ResMessages.Link link = data.getLinkMessage();
             Poll poll = link != null ? link.poll : null;
-
-            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()
+            boolean isSameTeam =
+                    event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId();
+            if (isSameTeam
                     && poll != null && poll.getId() > 0) {
                 upsertPoll(poll);
                 poll = getPollFromDatabase(poll.getId());
@@ -1396,7 +1400,7 @@ public class JandiSocketServiceModel {
             TeamInfoLoader.getInstance().refresh();
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
-            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()
+            if (isSameTeam
                     && poll != null && poll.getId() > 0) {
                 postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.DELETED));
             }
@@ -1412,7 +1416,9 @@ public class JandiSocketServiceModel {
 
             ResMessages.Link link = data.getLinkMessage();
             Poll poll = link != null ? link.poll : null;
-            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()
+            boolean isSameTeam =
+                    event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId();
+            if (isSameTeam
                     && poll != null && poll.getId() > 0 && poll.isMine()) {
                 upsertPollVotedStatus(poll);
                 poll = getPollFromDatabase(poll.getId());
@@ -1421,8 +1427,8 @@ public class JandiSocketServiceModel {
             TeamInfoLoader.getInstance().refresh();
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
-            if (event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId()
-                    && poll != null && poll.getId() > 0 && poll.isMine()) {
+            if (isSameTeam
+                    && poll != null && poll.getId() > 0) {
                 postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.VOTED));
             }
         } catch (Exception e) {
@@ -1461,7 +1467,7 @@ public class JandiSocketServiceModel {
     }
 
     private void upsertPollVotedStatus(Poll poll) {
-        PollRepository.getInstance().upsertPollStatus(poll);
+        PollRepository.getInstance().upsertPollVoteStatus(poll);
     }
 
     private Poll getPollFromDatabase(long pollId) {

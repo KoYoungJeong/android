@@ -34,6 +34,7 @@ public class MentionMessage {
     private Date messageCreatedAt;
 
     private Date createdAt;
+    private long pollId;
 
     private MentionMessage(StarMentionedMessageObject from,
                            String roomName,
@@ -61,6 +62,8 @@ public class MentionMessage {
 
             this.commentCount = message.commentCount;
             this.messageCreatedAt = message.createdAt;
+
+            this.pollId = message.pollId;
         }
         this.writerName = writerName;
         this.writerProfileUrl = writerProfileUrl;
@@ -178,5 +181,10 @@ public class MentionMessage {
                 ", messageCreatedAt=" + messageCreatedAt +
                 ", createdAt=" + createdAt +
                 '}';
+    }
+
+
+    public long getPollId() {
+        return pollId;
     }
 }

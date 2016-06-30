@@ -1,6 +1,9 @@
 package com.tosslab.jandi.app.dialogs;
 
 import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.hardware.camera2.params.ColorSpaceTransform;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -9,9 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.DayViewDecorator;
+import com.prolificinteractive.materialcalendarview.DayViewFacade;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.format.DayFormatter;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.views.spannable.HighlightSpannable;
 
 import java.util.Calendar;
 
@@ -49,6 +56,11 @@ public class CalendarDialogFragment extends DialogFragment {
     private void initCalendarView(MaterialCalendarView calendarView) {
         calendarView.setDayFormatter(DayFormatter.DEFAULT);
         calendarView.setShowOtherDates(MaterialCalendarView.SHOW_ALL);
+        int selectionColor = calendarView.getResources()
+                .getColor(R.color.jandi_text_messages_integration_image);
+        calendarView.setSelectionColor(selectionColor);
+        calendarView.setDateTextAppearance(R.style.DayTextAppearance);
+
         MaterialCalendarView.StateBuilder stateBuilder = calendarView.state().edit();
         Calendar calendar = Calendar.getInstance();
         stateBuilder.setMinimumDate(calendar);

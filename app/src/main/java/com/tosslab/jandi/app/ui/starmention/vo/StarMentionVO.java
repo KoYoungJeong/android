@@ -33,6 +33,15 @@ public class StarMentionVO {
     private List<MentionObject> mentions;
     private long writerId;
     private String feedbackType;
+    private long pollId;
+
+    public long getPollId() {
+        return pollId;
+    }
+
+    public void setPollId(long pollId) {
+        this.pollId = pollId;
+    }
 
     public int getContentType() {
         return contentType;

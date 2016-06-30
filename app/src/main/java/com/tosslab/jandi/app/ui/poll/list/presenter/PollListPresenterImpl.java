@@ -210,6 +210,9 @@ public class PollListPresenterImpl implements PollListPresenter {
             case CREATED:
                 addPoll(poll);
                 break;
+            case VOTED:
+                changePoll(poll);
+                break;
             case FINISHED:
                 changePollToFinished(poll);
                 break;
@@ -224,6 +227,21 @@ public class PollListPresenterImpl implements PollListPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(poll1 -> {
                     pollListDataModel.addPoll(0, poll);
+                    pollListView.notifyDataSetChanged();
+                });
+    }
+
+    private void changePoll(Poll poll) {
+        Observable.just(poll)
+                .map(poll1 -> pollListDataModel.getIndexById(poll.getId()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(index -> {
+                    if (index < 0) {
+                        return;
+                    }
+
+                    pollListDataModel.setPoll(index, poll);
                     pollListView.notifyDataSetChanged();
                 });
     }

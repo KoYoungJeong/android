@@ -43,6 +43,9 @@ public class ProfileBinder {
     }
 
     public void bind(User writer) {
+        if (writer == null) {
+            return;
+        }
         String profileUrl = writer.getPhotoUrl();
         ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);
 
@@ -77,6 +80,10 @@ public class ProfileBinder {
     }
 
     public void bindForComment(User writer) {
+        if (writer == null) {
+            return;
+        }
+
         ViewGroup.LayoutParams ivProfileLayoutParams = ivProfile.getLayoutParams();
         if (writer.isBot()) {
             ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(33f);

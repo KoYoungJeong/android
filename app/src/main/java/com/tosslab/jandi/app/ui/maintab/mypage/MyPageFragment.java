@@ -37,6 +37,8 @@ import com.tosslab.jandi.app.ui.maintab.mypage.module.MyPageModule;
 import com.tosslab.jandi.app.ui.maintab.mypage.presenter.MyPagePresenter;
 import com.tosslab.jandi.app.ui.maintab.mypage.view.MyPageView;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
+import com.tosslab.jandi.app.ui.poll.detail.dto.PollDetail;
 import com.tosslab.jandi.app.ui.poll.list.PollListActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
@@ -461,6 +463,11 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
             String count = Integer.toString(pollCount);
             tvPollBadge.setText(count);
         }
+    }
+
+    @Override
+    public void moveToPollDetailActivity(long pollId) {
+        PollDetailActivity.start(getActivity(), pollId);
     }
 
     private boolean isFinishing() {

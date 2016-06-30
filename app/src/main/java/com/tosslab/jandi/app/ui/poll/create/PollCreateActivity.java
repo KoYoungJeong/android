@@ -57,6 +57,8 @@ public class PollCreateActivity extends BaseAppCompatActivity
     Toolbar toolbar;
     @Bind(R.id.vg_create_poll_item_wrapper)
     ViewGroup vgPollItems;
+    @Bind(R.id.btn_create_poll_item_add)
+    View btnCreatePoll;
     @Bind(R.id.switch_create_poll_anonymous)
     SwitchCompat switchAnonymous;
     @Bind(R.id.switch_create_poll_multiplechoice)
@@ -148,12 +150,18 @@ public class PollCreateActivity extends BaseAppCompatActivity
             etTitle.requestFocus();
         }
 
-        if (vgPollItems.getChildCount() >= 2) {
-            for (int i = 0; i < vgPollItems.getChildCount(); i++) {
+        int childCount = vgPollItems.getChildCount();
+        if (childCount >= 2) {
+            for (int i = 0; i < childCount; i++) {
                 View child = vgPollItems.getChildAt(i);
                 child.findViewById(R.id.btn_create_poll_item_delete).setVisibility(View.VISIBLE);
             }
         }
+
+        if (childCount >= 31) {
+            btnCreatePoll.setVisibility(View.GONE);
+        }
+
     }
 
     @OnTextChanged(R.id.et_create_poll_subject)
@@ -235,23 +243,18 @@ public class PollCreateActivity extends BaseAppCompatActivity
     }
 
     @Override
-    public void showEmptyDueDateToast() {
-        ColoredToast.showError("DueDate 설정해라.");
-    }
-
-    @Override
     public void showNotEnoughPollItemsToast() {
-        ColoredToast.showError("아이템들 넣어라.");
+        ColoredToast.showError(R.string.jandi_input_enough_items);
     }
 
     @Override
     public void showEmptySubjectToast() {
-        ColoredToast.showError("Subject 적어라.");
+        ColoredToast.showError(R.string.jandi_empty_subject);
     }
 
     @Override
     public void showUnExpectedErrorToast() {
-        ColoredToast.showError("API 에러다.");
+        ColoredToast.showError(R.string.jandi_err_unexpected);
     }
 
     @Override
@@ -260,8 +263,8 @@ public class PollCreateActivity extends BaseAppCompatActivity
     }
 
     @Override
-    public void showChooseRightDueDateToast() {
-        ColoredToast.showError("시간 다시 골라라.");
+    public void showDueDateCannotBePastTimeToast() {
+        ColoredToast.showError(R.string.jandi_duedate_cannotbe_past_time);
     }
 
     private void setupActionBar() {
@@ -272,6 +275,6 @@ public class PollCreateActivity extends BaseAppCompatActivity
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle("새 투표 생성");
+        actionBar.setTitle(R.string.jandi_poll_create);
     }
 }

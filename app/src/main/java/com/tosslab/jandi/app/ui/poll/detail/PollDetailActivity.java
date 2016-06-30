@@ -308,7 +308,6 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
 //
 //        pollDetailPresenter.onPollDataChanged(event.getPoll());
 //    }
-
     public void onEvent(SelectedMemberInfoForMentionEvent event) {
         if (isFinishing()) {
             return;
@@ -327,7 +326,6 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
 
         long messageId = event.getMessageId();
 
-        ColoredToast.show("Hello World");
         switch (event.getAction()) {
             case STARRED:
                 pollDetailPresenter.onChangeCommentStarredState(messageId, true);
@@ -499,6 +497,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
             return;
         }
 
+        shouldRetrievePollDetail = false;
         long myId = TeamInfoLoader.getInstance().getMyId();
         User me = TeamInfoLoader.getInstance().getUser(myId);
 
@@ -675,30 +674,34 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     }
 
     @Override
-    public void initPollDetails(Poll poll) {
+    public void initPollDetailExtras(Poll poll) {
         if (poll == null) {
             return;
         }
 
+        initOptionsMenu(poll);
+
         if ("deleted".equals(poll.getStatus())) {
-            shouldPrepareOptionsMenu = false;
             vgInputWrapper.setVisibility(View.GONE);
-            invalidateOptionsMenu();
             return;
         }
 
         initMentionControlViewModel(poll.getId(), Arrays.asList(poll.getTopicId()));
-
-        initOptionsMenu(poll);
     }
 
     private void initOptionsMenu(Poll poll) {
         long creatorId = poll.getCreatorId();
         long myId = TeamInfoLoader.getInstance().getMyId();
 
-        shouldPrepareOptionsMenu = creatorId == myId
-                || TeamInfoLoader.getInstance().getUser(myId).isTeamOwner();
+        if ("deleted".equals(poll.getStatus())) {
+            shouldPrepareOptionsMenu = false;
+        } else {
+            shouldPrepareOptionsMenu = creatorId == myId
+                    || TeamInfoLoader.getInstance().getUser(myId).isTeamOwner();
+        }
+
         pollStatus = poll.getStatus();
+
         invalidateOptionsMenu();
     }
 
@@ -720,10 +723,10 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_poll_detail_finish) {
-            pollDetailPresenter.onPollFinishAction(pollId);
+            onPollFinishAction();
             return true;
         } else if (item.getItemId() == R.id.action_poll_detail_delete) {
-            pollDetailPresenter.onPollDeleteAction(pollId);
+            onPollDeleteAction();
             return true;
         } else if (item.getItemId() == android.R.id.home) {
             finish();
@@ -733,9 +736,26 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         return super.onOptionsItemSelected(item);
     }
 
+    private void onPollDeleteAction() {
+        shouldRetrievePollDetail = false;
+        AlertUtil.showConfirmDialog(this, R.string.jandi_action_poll_delete,
+                R.string.jandi_ask_poll_finish, (dialog, which) -> {
+                    pollDetailPresenter.onPollDeleteAction(pollId);
+                }, false);
+    }
+
+    private void onPollFinishAction() {
+        shouldRetrievePollDetail = false;
+        AlertUtil.showConfirmDialog(this, R.string.jandi_action_poll_finish,
+                R.string.jandi_ask_poll_finish, (dialog, which) -> {
+                    pollDetailPresenter.onPollFinishAction(pollId);
+                }, false);
+    }
+
     @Override
     public void showCheckNetworkDialog(final boolean shouldFinishWhenConfirm) {
         runOnUiThread(() -> {
+            shouldRetrievePollDetail = false;
             DialogInterface.OnClickListener confirmListener = null;
             if (shouldFinishWhenConfirm) {
                 confirmListener = (dialog, which) -> finish();
@@ -797,17 +817,22 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
 
     @Override
     public void showEmptyParticipantsToast() {
-        ColoredToast.showError("참여자 없다.");
+        ColoredToast.showError(R.string.jandi_empty_participants);
     }
 
     @Override
     public void showPollIsAnonymousToast() {
-        ColoredToast.showError("익명 투표다.");
+        ColoredToast.showError(R.string.jandi_poll_is_anonymous);
     }
 
     @Override
     public void showParticipants(long pollId, Poll.Item item) {
         PollParticipantsActivity.start(this, pollId, item);
+    }
+
+    @Override
+    public void showPollDeleteSuccessToast() {
+        ColoredToast.show(getString(R.string.jandi_delete_succeed, "zz"));
     }
 
     @Override
