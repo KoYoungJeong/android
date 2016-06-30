@@ -111,6 +111,7 @@ public class MembersModelTest {
         Collection<Long> members = TeamInfoLoader.getInstance().getTopic(defaultTopicId).getMembers();
         int memberCnt = Observable.from(TeamInfoLoader.getInstance().getUserList())
                 .filter(user -> !members.contains(user.getId()))
+                .filter(user -> !TeamInfoLoader.getInstance().isJandiBot(user.getId()))
                 .count()
                 .toBlocking()
                 .firstOrDefault(0);

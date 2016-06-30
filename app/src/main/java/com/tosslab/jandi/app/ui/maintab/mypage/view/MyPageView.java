@@ -43,6 +43,8 @@ public interface MyPageView {
 
     void setPollBadgeCount(int pollCount);
 
+    void addNewMention(MentionMessage mentionMessages);
+
     void moveToPollDetailActivity(long pollId);
 
 }

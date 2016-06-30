@@ -75,7 +75,7 @@
             android:theme="@style/JandiTheme.PushIntro"/>
 
         <activity
-            android:name=".ui.account.AccountHomeActivity_"
+            android:name=".ui.account.AccountHomeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_select_team"
             android:screenOrientation="portrait"
@@ -416,7 +416,7 @@
         </activity>
 
         <activity
-            android:name=".push.PushInterfaceActivity_"
+            android:name=".push.PushInterfaceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/JandiTheme.PushIntro"/>
@@ -488,7 +488,7 @@
         </activity>
 
         <activity
-            android:name=".ui.share.views.ShareSelectTeamActivity_"
+            android:name=".ui.share.views.ShareSelectTeamActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_share_to_jandi"
             android:screenOrientation="portrait">

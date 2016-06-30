@@ -108,7 +108,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
 
         lvTopicFolder.setAdapter(adapter);
 
-        topicFolderSettingPresentor.onRefreshFolders(folderId);
+        topicFolderSettingPresentor.onRefreshFolders();
         switch (mode) {
             case ITEM_FOLDER_CHOOSE:
                 tvTitle.setText(getResources().getString(R.string.jandi_folder_choose));
@@ -145,7 +145,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     }
 
     public void onEvent(TopicFolderRefreshEvent event) {
-        topicFolderSettingPresentor.onRefreshFolders(folderId);
+        topicFolderSettingPresentor.onRefreshFolders();
     }
 
     @UiThread

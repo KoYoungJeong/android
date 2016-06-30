@@ -69,6 +69,7 @@ import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.DummyDeleteEvent;
 import com.tosslab.jandi.app.events.messages.DummyRetryEvent;
 import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
+import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
@@ -78,7 +79,6 @@ import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
-import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
@@ -1667,8 +1667,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         messageListPresenter.onTeamLeaveEvent(event.getTeamId(), event.getMemberId());
     }
 
-    public void onEvent(SocketMessageStarEvent event) {
-        int messageId = event.getMessageId();
+    public void onEvent(MessageStarEvent event) {
+        long messageId = event.getMessageId();
         boolean starred = event.isStarred();
 
         messageListPresenter.updateStarredOfMessage(messageId, starred);

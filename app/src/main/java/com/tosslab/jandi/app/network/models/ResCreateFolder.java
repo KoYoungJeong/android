@@ -8,30 +8,31 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResCreateFolder {
 
-    private long folderId;
-    private String folderName;
+    private long id;
+    private String name;
+    private int seq;
 
-    public long getFolderId() {
-        return folderId;
+    public long getId() {
+        return id;
     }
 
-    public void setFolderId(long folderId) {
-        this.folderId = folderId;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public String getFolderName() {
-        return folderName;
+    public String getName() {
+        return name;
     }
 
-    public void setFolderName(String folderName) {
-        this.folderName = folderName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @Override
-    public String toString() {
-        return "ResCreateFolder{" +
-                "folderId=" + folderId +
-                ", folderName='" + folderName + '\'' +
-                '}';
+    public int getSeq() {
+        return seq;
+    }
+
+    public void setSeq(int seq) {
+        this.seq = seq;
     }
 }

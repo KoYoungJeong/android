@@ -70,6 +70,23 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Long> {
     }
 
     @Override
+    public ResMessages.Link queryForId(Long aLong) throws SQLException {
+        ResMessages.Link link = super.queryForId(aLong);
+        if (link == null) {
+            return null;
+        }
+
+        if (TextUtils.equals(link.status, "event")) {
+            link.info = getEventInfo(link.info, link.eventType);
+            queryIfCreateEvent(link.info);
+        } else {
+            queryMessage(link);
+        }
+
+        return link;
+    }
+
+    @Override
     public ResMessages.Link queryForFirst(PreparedQuery<ResMessages.Link> preparedQuery) throws SQLException {
         ResMessages.Link link = super.queryForFirst(preparedQuery);
 

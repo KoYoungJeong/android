@@ -85,8 +85,7 @@ public class TextMessageDaoImpl extends BaseDaoImpl<ResMessages.TextMessage, Int
 
         if (hasLinkPreview(textMessage)) {
             Dao<ResMessages.LinkPreview, ?> linkPreviewDao = DaoManager.createDao
-                    (connectionSource, ResMessages
-                            .LinkPreview.class);
+                    (connectionSource, ResMessages.LinkPreview.class);
             linkPreviewDao.createOrUpdate(textMessage.linkPreview);
         }
     }

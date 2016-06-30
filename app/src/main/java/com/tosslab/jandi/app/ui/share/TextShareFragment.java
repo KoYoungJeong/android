@@ -26,7 +26,7 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.share.presenter.text.TextSharePresenter;
 import com.tosslab.jandi.app.ui.share.presenter.text.TextSharePresenterImpl;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
-import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
+import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -138,9 +138,7 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
     @Click(R.id.vg_team)
     void clickSelectTeam() {
         LogUtil.e("team");
-        ShareSelectTeamActivity_
-                .intent(this)
-                .start();
+        startActivity(new Intent(getActivity(), ShareSelectTeamActivity.class));
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TeamSelect);
     }

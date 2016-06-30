@@ -35,7 +35,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isSelected;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.jayway.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
@@ -43,7 +42,7 @@ import static org.hamcrest.Matchers.is;
 public class AccountHomeActivityTest {
 
     @Rule
-    public IntentsTestRule<AccountHomeActivity_> rule = new IntentsTestRule<AccountHomeActivity_>(AccountHomeActivity_.class, false, false);
+    public IntentsTestRule<AccountHomeActivity> rule = new IntentsTestRule<AccountHomeActivity>(AccountHomeActivity.class, false, false);
     private AccountHomeActivity activity;
 
     @BeforeClass
@@ -62,17 +61,7 @@ public class AccountHomeActivityTest {
 
         activity = rule.getActivity();
 
-        await().until(() -> activity.teamLayout.getChildCount() > 0);
-    }
-
-    @Test
-    public void testOnHelpOptionSelect() throws Throwable {
-        rule.runOnUiThread(() -> activity.onHelpOptionSelect());
-
-        onView(withText(R.string.jandi_account_home_help))
-                .inRoot(isDialog())
-                .check(matches(isDisplayed()));
-        pressBack();
+//        await().until(() -> activity.teamLayout != null && activity.teamLayout.getChildCount() > 0);
     }
 
     @Test
@@ -157,7 +146,7 @@ public class AccountHomeActivityTest {
 
     @Test
     public void testMoveSelectedTeam() throws Throwable {
-        rule.runOnUiThread(() -> activity.moveSelectedTeam(false));
+        rule.runOnUiThread(() -> activity.moveSelectedTeam());
         assertThat(activity.isFinishing(), is(true));
         intending(IntentMatchers.hasComponent(MainTabActivity_.class.getName()));
     }

@@ -46,10 +46,10 @@ import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
 import com.tosslab.jandi.app.events.files.FileStarredStateChangeEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
+import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
-import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.local.orm.domain.ReadyComment;
 import com.tosslab.jandi.app.local.orm.repositories.ReadyCommentRepository;
@@ -848,8 +848,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
     }
 
-    public void onEvent(SocketMessageStarEvent event) {
-        int messageId = event.getMessageId();
+    public void onEvent(MessageStarEvent event) {
+        long messageId = event.getMessageId();
         boolean starred = event.isStarred();
 
         if (messageId == fileId) {

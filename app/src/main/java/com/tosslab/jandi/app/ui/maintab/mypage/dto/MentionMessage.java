@@ -1,8 +1,10 @@
 package com.tosslab.jandi.app.ui.maintab.mypage.dto;
 
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +16,6 @@ public class MentionMessage {
     private long roomId;
     private String roomName;
     private String roomType;
-
     private long linkId;
     private long messageId;
     private long writerId;
@@ -69,6 +70,53 @@ public class MentionMessage {
         this.writerProfileUrl = writerProfileUrl;
 
         createdAt = from.getCreatedAt();
+    }
+
+    private MentionMessage(ResMessages.Link link,
+                           String roomType,
+                           String roomName,
+                           String writerName,
+                           String photoUrl) {
+        teamId = link.teamId;
+        roomId = link.roomId;
+        this.roomType = roomType;
+        this.roomName = roomName;
+        this.linkId = link.id;
+        this.messageId = link.messageId;
+        this.writerId = link.message.writerId;
+
+        if (link.message instanceof ResMessages.TextMessage) {
+            ResMessages.TextMessage message = (ResMessages.TextMessage) link.message;
+            contentType = message.contentType;
+            contentBody = message.content.body;
+            mentions = new ArrayList<>(message.mentions);
+
+            this.messageCreatedAt = message.createTime;
+        } else if (link.message instanceof ResMessages.CommentMessage) {
+            ResMessages.CommentMessage message = (ResMessages.CommentMessage) link.message;
+            this.contentType = message.contentType;
+            this.contentBody = message.content.body;
+
+            this.mentions = new ArrayList<>(message.mentions);
+            this.feedbackId = message.feedbackId;
+            if (link.feedback instanceof ResMessages.FileMessage) {
+                this.feedbackTitle = ((ResMessages.FileMessage) link.feedback).content.title;
+            }
+
+            this.messageCreatedAt = message.createTime;
+        }
+
+        this.writerName = writerName;
+        this.writerProfileUrl = photoUrl;
+        createdAt = link.time;
+    }
+
+    public static MentionMessage createForMentions(ResMessages.Link link,
+                                                   String roomType,
+                                                   String roomName,
+                                                   String writerName,
+                                                   String photoUrl) {
+        return new MentionMessage(link, roomType, roomName, writerName, photoUrl);
     }
 
     public static MentionMessage create(StarMentionedMessageObject vo,
