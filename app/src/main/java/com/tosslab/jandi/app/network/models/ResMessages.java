@@ -26,6 +26,8 @@ import com.tosslab.jandi.app.local.orm.dao.event.PrivateCreateInfoDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.PublicCreateInfoDaoImpl;
 import com.tosslab.jandi.app.local.orm.persister.CollectionLongConverter;
 import com.tosslab.jandi.app.local.orm.persister.DateConverter;
+import com.tosslab.jandi.app.local.orm.persister.FormatMessageConverter;
+import com.tosslab.jandi.app.network.jackson.deserialize.message.CommentMessageConverter;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.EventInfoDeserialize;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.InviteInfoDeserializer;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.LinkShareEntityDeserializer;
@@ -187,7 +189,6 @@ public class ResMessages {
             @JsonSubTypes.Type(value = StickerMessage.class, name = "sticker"),
             @JsonSubTypes.Type(value = CommentStickerMessage.class, name = "comment_sticker"),
             @JsonSubTypes.Type(value = CommentMessage.class, name = "comment")})
-    @JsonDeserialize()
     public static class OriginalMessage {
         @DatabaseField(id = true)
         public long id;
@@ -211,6 +212,15 @@ public class ResMessages {
         public String linkPreviewId;
         @DatabaseField
         public boolean isStarred;
+
+        @DatabaseField
+        public boolean isFormatted;
+        @DatabaseField
+        public String formatKey;
+        public Map formatParams;
+        @JsonIgnore
+        @DatabaseField(persisterClass = FormatMessageConverter.class)
+        public FormatParam formatMessage;
 
         @Override
         public String toString() {
@@ -333,6 +343,7 @@ public class ResMessages {
     @DatabaseTable(tableName = "messagec_comment")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonDeserialize(converter = CommentMessageConverter.class)
     public static class CommentMessage extends OriginalMessage {
         @ForeignCollectionField(foreignFieldName = "commentOf")
         public Collection<IntegerWrapper> shareEntities;

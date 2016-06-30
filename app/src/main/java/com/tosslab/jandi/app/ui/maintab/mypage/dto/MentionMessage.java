@@ -94,7 +94,9 @@ public class MentionMessage {
 
             this.mentions = new ArrayList<>(message.mentions);
             this.feedbackId = message.feedbackId;
-            this.feedbackTitle = link.feedback.content.title;
+            if (link.feedback instanceof ResMessages.FileMessage) {
+                this.feedbackTitle = ((ResMessages.FileMessage) link.feedback).content.title;
+            }
 
             this.messageCreatedAt = message.createTime;
         }

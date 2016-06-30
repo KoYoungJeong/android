@@ -1,7 +1,19 @@
 package com.tosslab.jandi.app.network.models.dynamicl10n;
 
-/**
- * Created by tonyjs on 16. 6. 29..
- */
-public interface FormatParam {
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+public class FormatParam {
+    private String typOf;
+
+    public String getTypOf() {
+        return typOf;
+    }
+
+    public void setTypOf(String typOf) {
+        this.typOf = typOf;
+    }
 }
