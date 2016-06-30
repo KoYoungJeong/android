@@ -48,13 +48,13 @@ import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
-import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
 import com.tosslab.jandi.app.events.entities.MessageCreatedEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RefreshConnectBotEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
+import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
@@ -1332,6 +1332,12 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
+    public void onEvent(TopicInfoUpdateEvent event) {
+        if (event.getId() == room.getRoomId()) {
+            modifyTitle(TeamInfoLoader.getInstance().getTopic(room.getRoomId()).getName());
+        }
+    }
+
     public void onEvent(SocketMessageDeletedEvent event) {
 
         messageListPresenter.removeOfMessageId(event.getData().getMessageId());
@@ -1356,14 +1362,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         if (room.getRoomId() > 0) {
             messageListPresenter.addOldMessageQueue(true);
         }
-    }
-
-    public void onEvent(EntitiesUpdatedEvent event) {
-        if (!isForeground) {
-            return;
-        }
-
-        refreshMessages();
     }
 
     public void onEvent(MentionableMembersRefreshEvent event) {

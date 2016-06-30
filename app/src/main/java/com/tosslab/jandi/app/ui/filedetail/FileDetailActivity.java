@@ -1311,6 +1311,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         adapter.addRow(adapterPosition, new FileDetailAdapter.Row<>(comment, viewType));
     }
 
+    @Override
+    public void showNotAccessedFile() {
+        showToast(getString(R.string.jandi_unshared_message), true);
+    }
+
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @OptionsItem(android.R.id.home)
     @Override

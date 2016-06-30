@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 
@@ -108,8 +108,8 @@ public class StarMentionListModel {
 
             long messageId = getMessageId(categoryType, starMentionedMessageObject);
 
-            User entity = TeamInfoLoader.getInstance()
-                    .getUser(starMentionedMessageObject.getMessage().writerId);
+            Member entity = TeamInfoLoader.getInstance()
+                    .getMember(starMentionedMessageObject.getMessage().writerId);
             starMentionVO.setWriterName(entity.getName());
             starMentionVO.setWriterId(starMentionedMessageObject.getMessage().writerId);
             starMentionVO.setWriterPictureUrl(entity.getPhotoUrl());

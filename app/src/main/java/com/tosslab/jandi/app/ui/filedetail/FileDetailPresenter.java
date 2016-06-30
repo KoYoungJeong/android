@@ -99,7 +99,11 @@ public class FileDetailPresenter {
             fileDetail = fileDetailModel.getFileDetailFromServer(fileId);
         } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
-            view.showUnexpectedErrorToast();
+            if (e.getResponseCode() == 40300) {
+                view.showNotAccessedFile();
+            } else {
+                view.showUnexpectedErrorToast();
+            }
             view.finish();
             return;
         }
@@ -631,6 +635,7 @@ public class FileDetailPresenter {
 
         void addComment(int adapterPosition, ResMessages.OriginalMessage comment);
 
+        void showNotAccessedFile();
     }
 
 }
