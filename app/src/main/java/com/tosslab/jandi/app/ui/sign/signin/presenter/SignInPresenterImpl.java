@@ -139,18 +139,27 @@ public class SignInPresenterImpl implements SignInPresenter {
 
     @Override
     public void forgotPassword(String email) {
-        Observable.<Boolean>create(subscriber -> {
+        Observable.defer(() -> {
             try {
-                model.requestPasswordReset(email);
-                subscriber.onNext(true);
-            } catch (Exception e) {
-                subscriber.onError(e);
+                return Observable.just(model.requestPasswordReset(email));
+            } catch (RetrofitException e) {
+                return Observable.error(e);
             }
-            subscriber.onCompleted();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> view.showSuccessPasswordResetToast(),
-                        e -> view.showFailPasswordResetToast());
+                        e -> {
+                            if (e instanceof RetrofitException) {
+                                RetrofitException error = (RetrofitException) e;
+                                if (error.getResponseCode() == 40000) {
+                                    view.showSuggestJoin(email);
+                                } else {
+                                    view.showNetworkErrorToast();
+                                }
+                            } else {
+                                view.showFailPasswordResetToast();
+                            }
+                        });
     }
 
 }

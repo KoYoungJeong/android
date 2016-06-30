@@ -68,6 +68,8 @@
 	<string name="jandi_action_login">"ログインする"</string>
 	<string name="jandi_action_menu_message_copy">"コピー"</string>
 	<string name="jandi_action_more">"もっと見る"</string>
+	<string name="jandi_action_poll_delete">"投票を削除する"</string>
+	<string name="jandi_action_poll_finish">"投票を終了する"</string>
 	<string name="jandi_action_rename">"変更する"</string>
 	<string name="jandi_action_search">"検索"</string>
 	<string name="jandi_action_share">"共有する"</string>
@@ -95,6 +97,7 @@
 	<string name="jandi_are_you_sure_disable_external_link">"削除すると、リンクをもう使用することができません。本当に削除しますか？"</string>
 	<string name="jandi_ask_assign_topic_owner">"このメンバーにトピック管理者の権限を譲りますか？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"本当にこのメンバーをトピックから退出させますか？"</string>
+	<string name="jandi_ask_poll_finish">"投票を終了しますか？"</string>
 	<string name="jandi_ask_to_leave_if_private_topic_owner">"あなたはこのトピックの管理者です。他のメンバーに管理者の権限を譲った後トピックから退出できます。"</string>
 	<string name="jandi_ask_to_leave_if_topic_owner">"あなたはこのトピックの管理者です。トピックから退出するには管理者権限を他のメンバーに譲ってください。"</string>
 	<string name="jandi_assign">"譲る"</string>
@@ -109,6 +112,7 @@
 	<string name="jandi_auto_join_explain">"新しいメンバー全員をこのトピックに招待する"</string>
 	<string name="jandi_auto_join_title">"自動招待"</string>
 	<string name="jandi_auto_join_title_wild">"自動招待*"</string>
+	<string name="jandi_back">"戻る"</string>
 	<string name="jandi_baidu_app_store">"百度アプリストア"</string>
 	<string name="jandi_bot_role">"僕はJANDIの利用中必ず必要なメッセージや、JANDIコネクトのメッセージをお送りします。"</string>
 	<string name="jandi_bot_status">"こんにちは、ミスターJと言います。"</string>
@@ -172,6 +176,10 @@
 	<string name="jandi_create_team_message">"メールアドレスを入力してください。チームの作成方法をお送りします"</string>
 	<string name="jandi_create_topic">"トピック作成"</string>
 	<string name="jandi_created_this_topic">"%sさんがこのトピックを作成しました"</string>
+	<string name="jandi_date_days">"日"</string>
+	<string name="jandi_date_hours">"時"</string>
+	<string name="jandi_date_minutes">"分"</string>
+	<string name="jandi_date_remaining">"残り"</string>
 	<string name="jandi_decide_choose">"写真を選択"</string>
 	<string name="jandi_delete_succeed">"%sが削除されました"</string>
 	<string name="jandi_deleted_file">"削除されたファイル"</string>
@@ -184,8 +192,12 @@
 	<string name="jandi_disabled_team">"%1$sから無効化されました。チーム管理者にお問い合わせ下さい"</string>
 	<string name="jandi_disabled_user">"このメンバーは現在無効化されています"</string>
 	<string name="jandi_domain_is_already_taken">"そのドメイン名はすでに利用されているか、正しい形式ではありません。"</string>
+	<string name="jandi_duedate">"終了時間"</string>
+	<string name="jandi_duedate_cannotbe_past_time">"終了時間は過去に設定することができません。"</string>
 	<string name="jandi_duplicate_email">"そのメールアドレスは既に使用されています"</string>
 	<string name="jandi_empty">""</string>
+	<string name="jandi_empty_participants">"参加者がいません。"</string>
+	<string name="jandi_empty_subject">"質問を入力してください。"</string>
 	<string name="jandi_enable_external_link">"共有用リンクを作成する"</string>
 	<string name="jandi_enter_new_passcode">"新しいパスコードを入力 "</string>
 	<string name="jandi_enter_passcode">"パスワードを入力してください"</string>
@@ -200,6 +212,9 @@
 	<string name="jandi_exceeded_max_text_length">"５０００文字まで入力できます"</string>
 	<string name="jandi_expired_invitation_link">"この招待リンクの有効期限が切れています。新しいリンクをリクエストしてください"</string>
 	<string name="jandi_explain_global_push_off">"アプリの通知がオフに設定されています。「もっと見る > 設定」で通知をオンにしてください。"</string>
+	<string name="jandi_explain_invite">"メッセージ検索ができるビジネスメッセンジャーJANDIは
+チーム全員んで使う時その真価がわかります。
+今すぐチームメンバーを招待してみましょう。"</string>
 	<string name="jandi_explain_topic_description">"トピックの説明（選択）"</string>
 	<string name="jandi_export">"エクスポート"</string>
 	<string name="jandi_export_to_app">"他のアプリにエクスポート"</string>
@@ -233,6 +248,7 @@
 	<string name="jandi_file_upload_succeed">"アップロード完了"</string>
 	<string name="jandi_file_uploading">"アップロード中..."</string>
 	<string name="jandi_fingerprint_cannot_do_temporary">"しばらく指紋認証が使用できません。"</string>
+	<string name="jandi_finished">"終了"</string>
 	<string name="jandi_folder_alread_has_name">"その名前は既に使用されています"</string>
 	<string name="jandi_folder_ask_delete">"本当にこのフォルダを削除しますか？"</string>
 	<string name="jandi_folder_choose">"フォルダを選択してください"</string>
@@ -263,10 +279,15 @@
 	<string name="jandi_image_too_big">"画像が大きすぎです"</string>
 	<string name="jandi_incorrect_passcode">"パスコードが間違っています。"</string>
 	<string name="jandi_info">"JANDI情報"</string>
+	<string name="jandi_input_enough_items">"回答は少なくとも２つ以上入力してください。"</string>
 	<string name="jandi_input_password">"選択したチームのパスワードを入力してください"</string>
+	<string name="jandi_input_poll_item">"回答"</string>
+	<string name="jandi_input_poll_subject">"質問する"</string>
 	<string name="jandi_input_search_keyword">"キーワードで検索"</string>
 	<string name="jandi_input_topic_name">"トピック名を入力してください"</string>
 	<string name="jandi_input_user_name">"検索するメンバーの名前を入力"</string>
+	<string name="jandi_insert_team_domain">"チームドメインを入力してください。"</string>
+	<string name="jandi_insert_team_name">"チーム名を入力してください。"</string>
 	<string name="jandi_invitation">"招待"</string>
 	<string name="jandi_invitation_help">"あなたのチームメンバーをJANDIに招待しましょう！"</string>
 	<string name="jandi_invitation_succeed">"招待しました"</string>
@@ -368,6 +389,7 @@
 	<string name="jandi_on">"オン"</string>
 	<string name="jandi_open_browser">"ブラウザで開く"</string>
 	<string name="jandi_page_not_found">"ページが見つかりません"</string>
+	<string name="jandi_participants">"参加者"</string>
 	<string name="jandi_password_strength_average">"普通"</string>
 	<string name="jandi_password_strength_safe">"強い"</string>
 	<string name="jandi_password_strength_strong">"非常に強い"</string>
@@ -377,6 +399,18 @@
 	<string name="jandi_play_store">"Google Playストア"</string>
 	<string name="jandi_please_retry">"正しいパスワードを入力してください"</string>
 	<string name="jandi_plz_input_topic_description">"トピックの説明（選択）"</string>
+	<string name="jandi_poll">"投票"</string>
+	<string name="jandi_poll_anonymous">"匿名投票"</string>
+	<string name="jandi_poll_create">"新しい投票を作成する"</string>
+	<string name="jandi_poll_empty">"投票がありません。\nトピックで「＋」を押し、投票を作成してください。"</string>
+	<string name="jandi_poll_finished_with_most">"投票が終了しました。最多得票の項目は、「%s」です。"</string>
+	<string name="jandi_poll_finished_without_participants">"投票が終了しました。参加者がいません。"</string>
+	<string name="jandi_poll_finishedat">"NEW KEY"</string>
+	<string name="jandi_poll_is_anonymous">"この投票は匿名投票です。"</string>
+	<string name="jandi_poll_multiple">"複数選択"</string>
+	<string name="jandi_poll_multiple_available">"複数選択可能"</string>
+	<string name="jandi_poll_participants_ing">"メンバー"</string>
+	<string name="jandi_poll_voted">"投票完了"</string>
 	<string name="jandi_pp">"プライバシーポリシー"</string>
 	<string name="jandi_preview_message_contents">"メッセージプレビュー"</string>
 	<string name="jandi_privacy_policy">"プライバシーポリシー"</string>
@@ -395,13 +429,13 @@
 	<string name="jandi_profile_extra_introduce">"他のメンバー達が分かるように \n 追加情報を設定してください。"</string>
 	<string name="jandi_profile_main_introduce">"%sで使用する \n お名前とプロフィール写真を \n 設定してください。"</string>
 	<string name="jandi_profile_optional">"(任意)"</string>
-	<string name="jandi_profile_phone_number">"携帯番号"</string>
+	<string name="jandi_profile_phone_number">"電話番号"</string>
 	<string name="jandi_profile_phone_number_hint">"電話番号"</string>
 	<string name="jandi_profile_photo_upload_succeed">"プロフィール画像は正常に更新されました"</string>
 	<string name="jandi_profile_picture">"プロフィール画像"</string>
 	<string name="jandi_profile_position">"役職"</string>
 	<string name="jandi_profile_position_hint">"役職"</string>
-	<string name="jandi_profile_status_message">"今日の気分"</string>
+	<string name="jandi_profile_status_message">"ステータスメッセージ"</string>
 	<string name="jandi_profile_update">"変更する"</string>
 	<string name="jandi_profile_update_succeed">"プロフィールは正常に更新されました"</string>
 	<string name="jandi_profile_welcome">"はじめまして！"</string>
@@ -460,6 +494,7 @@
 	<string name="jandi_sign_in_block">"<u>ログインする</u>"</string>
 	<string name="jandi_sign_in_ids_explain">"JANDIからのメールを受信するメールアドレスを一つ選択してください。メールアドレスを追加しチームごとに使い分けられます"</string>
 	<string name="jandi_sign_out_message">"本当にログアウトしますか？"</string>
+	<string name="jandi_sign_up_now">"登録されていないアカウントのようです。登録しますか？"</string>
 	<string name="jandi_signup_agree_all">"以下のサービス利用規約・プライバシーポリシーを全て読み、同意します"</string>
 	<string name="jandi_signup_agree_pp">"<u><b>プライバシーポリシー</b></u>を読み同意します"</string>
 	<string name="jandi_signup_agree_tos">"<u><b>利用規約</b></u>を読み同意します"</string>
@@ -517,11 +552,18 @@
 	<string name="jandi_tab_topic">"トピックス"</string>
 	<string name="jandi_tab_tos_and_pp">"「次へ」をクリックすることによって、弊社のサービス%1$sと%2$sに同意いただいたことになります。"</string>
 	<string name="jandi_team">"チーム"</string>
+	<string name="jandi_team_create_domain_info">"チームドメインURLを指定してショー\nトカットアドレスに使うことができます。"</string>
+	<string name="jandi_team_create_domain_invalid">"英数字または(-)のみ入力してください。"</string>
+	<string name="jandi_team_create_domain_length_invalid">"3文字以上入力してください。"</string>
+	<string name="jandi_team_create_input_info">"新しいチーム作成のために\n情報を入力してください。"</string>
+	<string name="jandi_team_create_name_length_invalid">"最大20文字まで入力できます。"</string>
 	<string name="jandi_team_creation_succeed">"チームの作成に成功しました。メールを確認してください"</string>
+	<string name="jandi_team_domain">"チームドメイン"</string>
 	<string name="jandi_team_info">"チーム"</string>
 	<string name="jandi_team_join_fail">"チーム参加の際にエラーが発生しました。もう一度お試しください"</string>
 	<string name="jandi_team_member">"チームメンバー"</string>
 	<string name="jandi_team_member_count_with_format">"メンバー(%d)"</string>
+	<string name="jandi_team_name">"チーム名"</string>
 	<string name="jandi_team_owner">"チームの管理者"</string>
 	<string name="jandi_team_owner_with_format">"チームの管理者:%s"</string>
 	<string name="jandi_team_select_accept">"接受"</string>
@@ -590,6 +632,8 @@
 	<string name="jandi_vibrate">"バイブレート"</string>
 	<string name="jandi_view_all">"すべて表示"</string>
 	<string name="jandi_view_comment_read_more">"コメント%s 件を全て表示"</string>
+	<string name="jandi_vote">"投票する"</string>
+	<string name="jandi_vote_anonymous">"投票する(匿名)"</string>
 	<string name="jandi_welcome_message">"JANDIへようこそ!!"</string>
 	<string name="jandi_what_is_topic_type">"トピックを作成した後に、公開・非公開を変更することはできません"</string>
 	<string name="jandi_who_of_file">"さんのファイル"</string>

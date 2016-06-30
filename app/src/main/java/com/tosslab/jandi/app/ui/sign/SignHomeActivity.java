@@ -36,9 +36,7 @@ public class SignHomeActivity extends BaseAppCompatActivity {
             return;
         }
 
-        Intent intent = new Intent(this, SignUpActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        SignUpActivity.startActivity(SignHomeActivity.this, null);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.StartPage, AnalyticsValue.Action.SignUp);
     }
 
