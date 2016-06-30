@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.ui.sign.signin.model.SignInModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.parse.PushUtil;
 
@@ -78,6 +79,7 @@ public class SignInPresenterImpl implements SignInPresenter {
         })
                 .subscribeOn(Schedulers.io())
                 .doOnNext(accessToken -> {
+                    SignOutUtil.initSignData();
                     model.saveTokenInfo(accessToken);
                     PushUtil.registPush();
                 })

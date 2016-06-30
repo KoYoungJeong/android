@@ -100,6 +100,7 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
             }
             return false;
         });
+
         EventBus.getDefault().register(this);
     }
 
