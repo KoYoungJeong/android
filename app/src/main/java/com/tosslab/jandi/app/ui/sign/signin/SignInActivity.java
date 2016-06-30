@@ -253,6 +253,7 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
     @Override
     public void showErrorInvalidEmailOrPassword() {
         tvErrorIdOrPassword.setVisibility(View.VISIBLE);
+        startBounceAnimation(tvErrorIdOrPassword);
     }
 
     private void setMarginTopPasswordLayout(float marginDip) {
