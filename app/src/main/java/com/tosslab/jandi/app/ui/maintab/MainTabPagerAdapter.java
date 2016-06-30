@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.chat.MainChatListFragment_;
+import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
 import com.tosslab.jandi.app.ui.maintab.mypage.MyPageFragment;
 import com.tosslab.jandi.app.ui.maintab.team.TeamFragment;
 import com.tosslab.jandi.app.ui.maintab.topic.MainTopicListFragment_;
@@ -48,11 +49,7 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
                         .selectedEntity(selectedEntity)
                         .build();
             case TAB_FILE:
-                return MainChatListFragment_
-                        .builder()
-                        .selectedEntity(selectedEntity)
-                        .build();
-//                return new FileListFragmentV3();
+                return new FileListFragment();
             case TAB_TEAM:
                 return new TeamFragment();
             case TAB_MYPAGE:

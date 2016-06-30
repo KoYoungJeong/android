@@ -55,6 +55,7 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func0;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -109,34 +110,38 @@ public class MessageListV2Presenter {
         messageLoadSubscription = messageRequestQueue
                 .onBackpressureBuffer()
                 .observeOn(Schedulers.io())
-                .concatMap(messageContainer1 -> {
-                    Observable<MessageContainer> messageObservable = Observable.just(messageContainer1);
-                    switch (messageContainer1.getQueueType()) {
-                        case Old:
-                            return messageObservable
-                                    .compose(this::composeOldMessage);
+                .concatMap(new Func1<MessageContainer, Observable<? extends MessageContainer>>() {
+                    @Override
+                    public Observable<? extends MessageContainer> call(MessageContainer messageContainer1) {
+                        Observable<MessageContainer> messageObservable = Observable.just(messageContainer1);
+                        switch (messageContainer1.getQueueType()) {
+                            case Old:
+                                return messageObservable
+                                        .compose(MessageListV2Presenter.this::composeOldMessage);
+                            case New:
+                                return messageObservable
+                                        .compose(MessageListV2Presenter.this::composeNewMessage);
+                            case NewFromLocal:
+                                return messageObservable
+                                        .compose(MessageListV2Presenter.this::composeNewMessageFromLocal);
+                            case Send:
+                                return messageObservable
+                                        .compose(MessageListV2Presenter.this::composeSend);
+                            case UpdateLinkPreview:
 
-                        case New:
-                            return messageObservable
-                                    .compose(this::composeNewMessage);
-                        case NewFromLocal:
-                            return messageObservable
-                                    .compose(this::composeNewMessageFromLocal);
-                        case Send:
-                            return messageObservable
-                                    .compose(this::composeSend);
-                        case UpdateLinkPreview:
+                                return messageObservable
+                                        .compose(MessageListV2Presenter.this::composeLinkPreview);
+                        }
 
-                            return messageObservable
-                                    .compose(this::composeLinkPreview);
+                        return messageObservable;
                     }
-
-                    return messageObservable;
                 })
-                .subscribe(messageContainer -> {}, throwable -> {
+                .subscribe(messageContainer -> {
+                }, throwable -> {
                     LogUtil.e("Message Publish Fail!!");
                     throwable.printStackTrace();
-                }, () -> {});
+                }, () -> {
+                });
 
         markerRequestQueue = PublishSubject.create();
         markerRequestQueue.onBackpressureBuffer()

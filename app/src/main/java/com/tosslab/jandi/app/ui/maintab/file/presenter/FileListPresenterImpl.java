@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
-import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.file.adapter.SearchedFilesAdapterModel;
 import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
 import com.tosslab.jandi.app.ui.maintab.file.to.SearchQueryTO;
@@ -16,7 +15,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -25,22 +23,23 @@ import rx.subjects.PublishSubject;
  * Created by tee on 16. 6. 28..
  */
 
-public class FileListPresenterImpl implements FileListPresenterV3 {
+public class FileListPresenterImpl implements FileListPresenter {
 
-    View view;
+    private FileListPresenter.View view;
 
-    FileListModel fileListModel;
+    private FileListModel fileListModel;
 
     private long entityId;
     private SearchedFilesAdapterModel searchedFilesAdapterModel;
     private long selectedTeamId;
-    private String entityName;
     private PublishSubject<Integer> searchSubject;
     private SearchQueryTO searchQuery;
+    private PublishSubject<Object> previousLoadSubject;
 
-    public FileListPresenterImpl(long entityId, FileListModel fileListModel) {
+    public FileListPresenterImpl(long entityId, FileListModel fileListModel, FileListPresenter.View view) {
         this.entityId = entityId;
         this.fileListModel = fileListModel;
+        this.view = view;
         selectedTeamId = fileListModel.getSelectedTeamId();
     }
 
@@ -54,42 +53,44 @@ public class FileListPresenterImpl implements FileListPresenterV3 {
         searchQuery = new SearchQueryTO();
         if (entityId >= 0) {
             searchQuery.setEntityId(entityId);
-            this.entityName = TeamInfoLoader.getInstance()
-                    .getName(entityId);
         }
 
         searchSubject = PublishSubject.create();
-        searchSubject.observeOn(Schedulers.io())
-                .subscribe(index -> {
+        searchSubject.onBackpressureBuffer()
+                .observeOn(Schedulers.io())
+                .concatMap(requestCount -> {
                     searchQuery.setToFirst();
                     view.clearListView();
-                    doSearchInBackground(index);
+                    return loadSearchObservable(requestCount);
+                })
+                .subscribe(o -> {
                     view.onSearchHeaderReset();
                 }, throwable -> LogUtil.d("Search Fail : " + throwable.getMessage()));
+
+        previousLoadSubject = PublishSubject.create();
+        previousLoadSubject
+                .onBackpressureBuffer()
+                .observeOn(Schedulers.io())
+                .concatMap(o -> FileListPresenterImpl.this.loadPreviousFileObservable())
+                .subscribe(o -> {
+                }, throwable -> LogUtil.d("Load Fail : " + throwable.getMessage()));
     }
 
-    private void doSearchInBackground(int requestCount) {
-        Observable<Boolean> multicast = Observable.just(NetworkCheckUtil.isConnected()).share();
+    private Observable<Object> loadSearchObservable(int requestCount) {
 
-        // 네트웍이 되지 않는 경우
-        multicast.filter(it -> !it)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(it -> {
-                    view.setInitLoadingViewVisible(android.view.View.GONE);
-                    view.setEmptyViewVisible(android.view.View.GONE);
-                    view.setSearchEmptryViewVisible(android.view.View.VISIBLE);
-                });
+        if (!NetworkCheckUtil.isConnected()) {
+            return Observable.empty();
+        }
 
-        // 네트웍이 되는 경우
-        multicast.filter(it -> it)
+        return Observable.just(1)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(it -> {
+                .doOnNext(i -> {
                     view.setInitLoadingViewVisible(android.view.View.VISIBLE);
                     view.setEmptyViewVisible(android.view.View.GONE);
                     view.setSearchEmptryViewVisible(android.view.View.GONE);
                 })
                 .observeOn(Schedulers.io())
-                .map(it -> {
+                .map(i -> {
                     ReqSearchFile reqSearchFile = searchQuery.getRequestQuery();
                     reqSearchFile.teamId = selectedTeamId;
                     if (requestCount > ReqSearchFile.MAX) {
@@ -109,7 +110,7 @@ public class FileListPresenterImpl implements FileListPresenterV3 {
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(pair -> {
+                .doOnNext(pair -> {
                     if (pair.second.fileCount < pair.first.listCount) {
                         searchedFilesAdapterModel.setNoMoreLoad();
                     } else {
@@ -136,7 +137,7 @@ public class FileListPresenterImpl implements FileListPresenterV3 {
                     if (fileListModel.isAllTypeFirstSearch(pair.first)) {
                         fileListModel.saveOriginFirstItems(selectedTeamId, pair.second);
                     }
-                }, e -> {
+                }).doOnError(e -> {
                     if (e instanceof RetrofitException) {
                         RetrofitException e1 = (RetrofitException) e;
                         int errorCode = e1.getStatusCode();
@@ -149,34 +150,41 @@ public class FileListPresenterImpl implements FileListPresenterV3 {
                         fileListModel.trackFileKeywordSearchFail(-1);
                         view.searchFailed(R.string.err_file_search);
                     }
-                });
+                }).map(pair -> new Object());
     }
 
+    @Override
     public void getPreviousFile() {
+        previousLoadSubject.onNext(new Object());
+    }
+
+    public Observable<Object> loadPreviousFileObservable() {
         if (!NetworkCheckUtil.isConnected()) {
-            return;
+            return Observable.empty();
         }
 
-        Observable.create(new Observable.OnSubscribe<ResSearchFile>() {
-            @Override
-            public void call(Subscriber<? super ResSearchFile> subscriber) {
-                try {
-                    ReqSearchFile reqSearchFile = searchQuery.getRequestQuery();
-                    reqSearchFile.teamId = selectedTeamId;
-                    ResSearchFile resSearchFile = fileListModel.searchFileList(reqSearchFile);
-                    subscriber.onNext(resSearchFile);
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-            }
-        }).subscribeOn(Schedulers.io())
-                .doOnSubscribe(() -> view.showMoreProgressBar())
-                .doOnUnsubscribe(() -> view.dismissMoreProgressBar())
+        return Observable.defer(() -> {
+            ReqSearchFile reqSearchFile = searchQuery.getRequestQuery();
+            reqSearchFile.teamId = selectedTeamId;
+            return Observable.just(reqSearchFile);
+        })
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(it -> view.showMoreProgressBar())
+                .observeOn(Schedulers.io())
+                .concatMap(reqSearchFile -> {
+                    try {
+                        ResSearchFile resSearchFile = fileListModel.searchFileList(reqSearchFile);
+                        return Observable.just(resSearchFile);
+                    } catch (Exception e) {
+                        return Observable.error(e);
+                    }
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(resSearchFile -> {
                     if (resSearchFile.fileCount > 0) {
                         searchQuery.setNext(resSearchFile.firstIdOfReceivedList);
                         searchedFilesAdapterModel.add(fileListModel.descSortByCreateTime(resSearchFile.files));
+                        view.justRefresh();
                     }
                     if (resSearchFile.fileCount < ReqSearchFile.MAX) {
                         view.showWarningToast(JandiApplication.getContext().getString(R.string.warn_no_more_files));
@@ -184,9 +192,8 @@ public class FileListPresenterImpl implements FileListPresenterV3 {
                     } else {
                         setListReadyLoadMore();
                     }
-                })
-                .subscribe(o -> {
-                }, e -> {
+                    view.dismissMoreProgressBar();
+                }).doOnError(e -> {
                     if (e instanceof RetrofitException) {
                         e.printStackTrace();
                         LogUtil.e("fail to get searched files.", e);
@@ -195,7 +202,8 @@ public class FileListPresenterImpl implements FileListPresenterV3 {
                         e.printStackTrace();
                         view.searchFailed(R.string.err_file_search);
                     }
-                });
+                }).map(i -> new Object());
+
     }
 
     private void updateAdapterModel(ResSearchFile resSearchFile) {
@@ -229,6 +237,7 @@ public class FileListPresenterImpl implements FileListPresenterV3 {
 
     @Override
     public void doSearchAll() {
+        view.clearListView();
         searchSubject.onNext(-1);
     }
 
@@ -335,6 +344,5 @@ public class FileListPresenterImpl implements FileListPresenterV3 {
             view.justRefresh();
         }
     }
-
 
 }

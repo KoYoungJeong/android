@@ -20,7 +20,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
-import com.tosslab.jandi.app.ui.maintab.file.FileListFragmentV3;
 import com.tosslab.jandi.app.ui.search.main.adapter.SearchQueryAdapter;
 import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenter;
 import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenterImpl;
@@ -77,7 +76,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
 
     private SearchSelectView searchSelectView;
     private MessageSearchFragment messageSearchFragment;
-    private FileListFragmentV3 fileListFragment;
+    private FileListFragment fileListFragment;
 
     private String[] searchQueries;
     private boolean isForeground;
@@ -111,8 +110,8 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
     public void addFragments() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fileListFragment = (FileListFragmentV3) fragmentManager
-                .findFragmentByTag(FileListFragmentV3.class.getName());
+        fileListFragment = (FileListFragment) fragmentManager
+                .findFragmentByTag(FileListFragment.class.getName());
 
         messageSearchFragment = (MessageSearchFragment) fragmentManager
                 .findFragmentByTag(MessageSearchFragment.class.getName());
@@ -122,8 +121,8 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
         }
         if (fileListFragment == null) {
             Bundle bundle = new Bundle();
-            bundle.putLong(FileListFragmentV3.PARAM_ENTITY_ID, -1);
-            fileListFragment = new FileListFragmentV3();
+            bundle.putLong(FileListFragment.PARAM_ENTITY_ID, entityId);
+            fileListFragment = new FileListFragment();
             fileListFragment.setArguments(bundle);
 
             fragmentTransaction.add(R.id.layout_search_content,
@@ -194,7 +193,7 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
 
         if (fileListFragment == null) {
 
-            fileListFragment = new FileListFragmentV3();
+            fileListFragment = new FileListFragment();
             fragmentTransaction.add(R.id.layout_search_content,
                     fileListFragment, FileListFragment.class.getName());
         } else {

@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.tosslab.jandi.app.ui.maintab.file.FileListFragmentV3;
+import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
 import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment_;
 
 /**
@@ -31,7 +31,7 @@ public class SearchAdapter extends FragmentPagerAdapter {
                     fragment = MessageSearchFragment_.builder().build();
                     break;
                 case 1:
-                    fragment = new FileListFragmentV3();
+                    fragment = new FileListFragment();
                     break;
             }
 

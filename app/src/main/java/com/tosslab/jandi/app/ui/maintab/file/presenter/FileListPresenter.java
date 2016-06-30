@@ -6,7 +6,7 @@ import com.tosslab.jandi.app.ui.maintab.file.adapter.SearchedFilesAdapterModel;
 /**
  * Created by tee on 16. 6. 28..
  */
-public interface FileListPresenterV3 {
+public interface FileListPresenter {
     void setSearchedFilesAdapterModel(SearchedFilesAdapterModel adapterModel);
 
     void initSearchQuery();

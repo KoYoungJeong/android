@@ -4,7 +4,7 @@ import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
 import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenterImpl;
-import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenterV3;
+import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenter;
 
 import dagger.Lazy;
 import dagger.Module;
@@ -26,7 +26,7 @@ public class FileListModule {
     }
 
     @Provides
-    FileListPresenterV3.View provideViewOfFileListPresenter() {
+    FileListPresenter.View provideViewOfFileListPresenter() {
         return view;
     }
 
@@ -36,8 +36,8 @@ public class FileListModule {
     }
 
     @Provides
-    FileListPresenterV3 provideFileListPresenter(FileListModel model) {
-        return new FileListPresenterImpl(searchedEntityId, model);
+    FileListPresenter provideFileListPresenter(FileListModel model) {
+        return new FileListPresenterImpl(searchedEntityId, model, view);
     }
 
 }

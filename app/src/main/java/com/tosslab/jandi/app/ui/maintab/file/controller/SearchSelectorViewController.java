@@ -55,14 +55,19 @@ public class SearchSelectorViewController {
         this.tvFileListWhere = tvFileListWhere;
         this.tvFileListWhom = tvFileListWhom;
         this.tvFileListType = tvFileListType;
-        setSpinnerFileType();
+        setSpinnerByFileType();
         setSpinnerByWhom();
         setSpinnerByWhere();
     }
 
-    private void setSpinnerFileType() {
+    public void setCurrentEntityNameText(String currentEntityNameText) {
+        this.currentEntityNameText = currentEntityNameText;
+        setSpinnerByWhere();
+    }
+
+    private void setSpinnerByFileType() {
         tvFileListType.setText(
-                (currentFileTypeText == null)
+                (currentFileTypeText == null || currentEntityNameText.equals(""))
                         ? JandiApplication.getContext().getString(R.string.jandi_file_category_all)
                         : currentFileTypeText
         );
@@ -70,7 +75,7 @@ public class SearchSelectorViewController {
 
     private void setSpinnerByWhom() {
         tvFileListWhom.setText(
-                (currentUserNameText == null)
+                (currentUserNameText == null || currentUserNameText.equals(""))
                         ? JandiApplication.getContext().getString(R.string.jandi_file_category_everyone)
                         : currentUserNameText
         );
@@ -78,7 +83,7 @@ public class SearchSelectorViewController {
 
     private void setSpinnerByWhere() {
         tvFileListWhere.setText(
-                (currentEntityNameText == null)
+                (currentEntityNameText == null || currentEntityNameText.equals(""))
                         ? JandiApplication.getContext().getString(R.string.jandi_file_category_everywhere)
                         : currentEntityNameText
         );

@@ -20,30 +20,29 @@ import de.greenrobot.event.EventBus;
 public class SearchedFilesAdapter extends RecyclerView.Adapter
         implements SearchedFilesAdapterModel, SearchedFilesAdapterView {
 
-    List<ResMessages.FileMessage> searedFiles;
+    List<ResMessages.FileMessage> searchedFiles;
 
     MoreState moreState = MoreState.Idle;
 
     OnRecyclerItemClickListener onRecyclerItemClickListener;
+
+    public SearchedFilesAdapter() {
+        searchedFiles = new ArrayList<>();
+    }
 
     public void setOnRecyclerItemClickListener(OnRecyclerItemClickListener onRecyclerItemClickListener) {
         this.onRecyclerItemClickListener = onRecyclerItemClickListener;
     }
 
     @Override
-    public void setList(ArrayList<ResMessages.FileMessage> list) {
-        this.searedFiles = list;
-    }
-
-    @Override
     public void clearListView() {
-        searedFiles.clear();
+        searchedFiles.clear();
         notifyDataSetChanged();
     }
 
     @Override
     public void clearList() {
-        searedFiles.clear();
+        searchedFiles.clear();
     }
 
     @Override
@@ -54,7 +53,7 @@ public class SearchedFilesAdapter extends RecyclerView.Adapter
     @Override
     public void add(List<ResMessages.OriginalMessage> files) {
         for (ResMessages.OriginalMessage message : files) {
-            searedFiles.add((ResMessages.FileMessage) message);
+            searchedFiles.add((ResMessages.FileMessage) message);
         }
     }
 
@@ -96,12 +95,12 @@ public class SearchedFilesAdapter extends RecyclerView.Adapter
 
     @Override
     public ResMessages.FileMessage getItem(int position) {
-        return searedFiles.get(position);
+        return searchedFiles.get(position);
     }
 
     @Override
     public int getItemCount() {
-        return searedFiles.size();
+        return searchedFiles.size();
     }
 
     @Override
@@ -117,7 +116,7 @@ public class SearchedFilesAdapter extends RecyclerView.Adapter
 
     @Override
     public void remove(int position) {
-        searedFiles.remove(position);
+        searchedFiles.remove(position);
     }
 
     private enum MoreState {

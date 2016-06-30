@@ -13,7 +13,7 @@ public class SearchQueryTO {
     private String searchFileType;
     private String searchUser;
     private String keyword;
-    private long entityId;
+    private long entityId = -1;
     private long startMessageId;
 
     public SearchQueryTO() {
@@ -43,13 +43,13 @@ public class SearchQueryTO {
         searchUser = writerId;
     }
 
+    public long getEntityId() {
+        return entityId;
+    }
+
     public void setEntityId(long entityId) {
         setToFirst();
         this.entityId = entityId;
-    }
-
-    public long getEntityId() {
-        return entityId;
     }
 
     public String getSearchFileType() {

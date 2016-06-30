@@ -2,15 +2,12 @@ package com.tosslab.jandi.app.ui.maintab.file.adapter;
 
 import com.tosslab.jandi.app.network.models.ResMessages;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by tee on 16. 6. 28..
  */
 public interface SearchedFilesAdapterModel {
-
-    public void setList(ArrayList<ResMessages.FileMessage> list);
 
     public void clearList();
 
