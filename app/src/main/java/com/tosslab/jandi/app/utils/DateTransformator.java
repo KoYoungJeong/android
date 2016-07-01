@@ -71,7 +71,6 @@ public class DateTransformator {
     @Nullable
     public static String getRemainingDays(Date date) {
         if (new Date().compareTo(date) >= 0) {
-            Log.e("tony3", "wlskrkTek");
             return "";
         }
 

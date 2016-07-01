@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -131,7 +132,9 @@ public class ProfileBinder {
     }
 
     private void onProfileClick(final long writerId, ShowProfileEvent.From clickType) {
-        EventBus.getDefault().post(new ShowProfileEvent(writerId, clickType));
+        if (TeamInfoLoader.getInstance().isUser(writerId)) {
+            EventBus.getDefault().post(new ShowProfileEvent(writerId, clickType));
+        }
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewProfile);
     }
 

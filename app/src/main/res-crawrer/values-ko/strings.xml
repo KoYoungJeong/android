@@ -212,7 +212,7 @@
 	<string name="jandi_exceeded_max_text_length">"5000자 까지 입력할 수 있습니다."</string>
 	<string name="jandi_expired_invitation_link">"이 초대 링크는 만료되었습니다. 새로운 링크를 요청하세요."</string>
 	<string name="jandi_explain_global_push_off">"앱의 알림 설정이 꺼져 있습니다. 더보기 > 설정에서 알림을 켜야 알림을 받을 수 있습니다."</string>
-	<string name="jandi_explain_invite">"메세지 검색이 가능한 업무용 메신저 잔디는 
+	<string name="jandi_explain_invite">"메세지 검색이 가능한 업무용 메신저 잔디는
 팀원 모두와 함께 사용해야 그 진가가 발휘됩니다.
 지금 바로 멤버들을 초대하세요."</string>
 	<string name="jandi_explain_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>

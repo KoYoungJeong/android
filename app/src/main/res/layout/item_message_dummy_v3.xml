@@ -20,7 +20,6 @@
         android:maxLines="1"
         android:maxWidth="200dp"
         android:singleLine="true"
-        android:text="빠빠빠"
         android:textColor="@color/jandi_messages_name"
         android:textSize="@dimen/jandi_messages_user_name"
         android:textStyle="bold"/>

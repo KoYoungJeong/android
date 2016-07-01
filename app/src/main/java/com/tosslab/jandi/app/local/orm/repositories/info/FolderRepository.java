@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.local.orm.repositories.info;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
@@ -78,31 +79,48 @@ public class FolderRepository extends LockExecutorTemplate {
         });
     }
 
-    public boolean updateFolderSeq(long teamId, long folderId, int seq) {
+    public boolean updateFolderSeq(long teamId, long folderId, int newSeq) {
         return execute(() -> {
             try {
                 Dao<Folder, Long> dao = getHelper().getDao(Folder.class);
                 Folder folder = dao.queryForId(folderId);
-                if (folder.getSeq() == seq) {
+                int oldSeq = folder.getSeq();
+                if (oldSeq == newSeq) {
                     return true;
                 }
 
                 UpdateBuilder<Folder, ?> folderUpdateBuilder = dao.updateBuilder();
-                folderUpdateBuilder.updateColumnValue("seq", seq)
+                folderUpdateBuilder.updateColumnValue("seq", newSeq)
                         .where()
                         .eq("id", folderId);
                 folderUpdateBuilder.update();
 
-                List<Folder> folders = dao.queryBuilder()
+
+                Where<Folder, Long> where = dao.queryBuilder()
                         .where()
                         .eq("initialInfo_id", teamId)
                         .and()
-                        .ge("seq", seq)
-                        .and()
                         .ne("id", folderId)
-                        .query();
+                        .and();
+                List<Folder> folders;
+                int plusValue;
+                if (oldSeq > newSeq) {
+                    folders = where
+                            .ge("seq", newSeq)
+                            .and()
+                            .le("seq", oldSeq)
+                            .query();
+                    plusValue = 1;
+                } else {
+                    folders = where
+                            .ge("seq", oldSeq)
+                            .and()
+                            .le("seq", newSeq)
+                            .query();
+                    plusValue = -1;
+                }
                 for (Folder folder1 : folders) {
-                    folder1.setSeq(folder1.getSeq() + 1);
+                    folder1.setSeq(folder1.getSeq() + plusValue);
                     dao.update(folder1);
                 }
 

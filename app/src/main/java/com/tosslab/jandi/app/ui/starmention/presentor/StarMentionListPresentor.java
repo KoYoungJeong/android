@@ -43,8 +43,7 @@ public class StarMentionListPresentor {
             view.onShowMoreProgressBar();
         }
         try {
-            List<StarMentionVO> starMentionList;
-            starMentionList = starMentionListModel.
+            List<StarMentionVO> starMentionList = starMentionListModel.
                     getStarMentionedMessages(listType, requestCount);
             view.onAddAndShowList(starMentionList);
             if (starMentionListModel.hasMore()) {
