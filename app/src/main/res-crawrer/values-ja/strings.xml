@@ -400,9 +400,12 @@
 	<string name="jandi_please_retry">"正しいパスワードを入力してください"</string>
 	<string name="jandi_plz_input_topic_description">"トピックの説明（選択）"</string>
 	<string name="jandi_poll">"投票"</string>
+	<string name="jandi_poll_add_item">"回答を追加する"</string>
 	<string name="jandi_poll_anonymous">"匿名投票"</string>
-	<string name="jandi_poll_create">"新しい投票を作成する"</string>
+	<string name="jandi_poll_create">"作成"</string>
 	<string name="jandi_poll_empty">"投票がありません。\nトピックで「＋」を押し、投票を作成してください。"</string>
+	<string name="jandi_poll_finished_with_most">"投票が終了しました。最多得票の項目は、「%s」です。"</string>
+	<string name="jandi_poll_finished_without_participants">"投票が終了しました。参加者がいません。"</string>
 	<string name="jandi_poll_finishedat">"NEW KEY"</string>
 	<string name="jandi_poll_is_anonymous">"この投票は匿名投票です。"</string>
 	<string name="jandi_poll_multiple">"複数選択"</string>
@@ -492,6 +495,7 @@
 	<string name="jandi_sign_in_block">"<u>ログインする</u>"</string>
 	<string name="jandi_sign_in_ids_explain">"JANDIからのメールを受信するメールアドレスを一つ選択してください。メールアドレスを追加しチームごとに使い分けられます"</string>
 	<string name="jandi_sign_out_message">"本当にログアウトしますか？"</string>
+	<string name="jandi_sign_up_now">"登録されていないアカウントのようです。登録しますか？"</string>
 	<string name="jandi_signup_agree_all">"以下のサービス利用規約・プライバシーポリシーを全て読み、同意します"</string>
 	<string name="jandi_signup_agree_pp">"<u><b>プライバシーポリシー</b></u>を読み同意します"</string>
 	<string name="jandi_signup_agree_tos">"<u><b>利用規約</b></u>を読み同意します"</string>

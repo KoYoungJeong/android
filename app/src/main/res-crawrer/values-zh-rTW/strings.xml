@@ -243,8 +243,7 @@
 	<string name="jandi_file_search_user">"按成員篩選搜尋結果"</string>
 	<string name="jandi_file_size_large_error">"無法上傳大於300MB的檔案"</string>
 	<string name="jandi_file_upload_finish">"檔案已成功上傳"</string>
-	<string name="jandi_file_upload_go_topic">"
-點擊進入JANDI瀏覽"</string>
+	<string name="jandi_file_upload_go_topic">"點擊進入JANDI瀏覽"</string>
 	<string name="jandi_file_upload_state">"上傳檔案中 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"檔案上傳成功"</string>
 	<string name="jandi_file_uploading">"上傳"</string>
@@ -399,9 +398,12 @@
 	<string name="jandi_please_retry">"請重試一次"</string>
 	<string name="jandi_plz_input_topic_description">"說明 (選項)"</string>
 	<string name="jandi_poll">"問卷調查"</string>
+	<string name="jandi_poll_add_item">"添加選項"</string>
 	<string name="jandi_poll_anonymous">"不記名"</string>
-	<string name="jandi_poll_create">"建立新的投票"</string>
+	<string name="jandi_poll_create">"建立"</string>
 	<string name="jandi_poll_empty">"尚無問卷，\n點擊[+]建立新問卷"</string>
+	<string name="jandi_poll_finished_with_most">"問卷已完成，得票最高的是 \"%s\""</string>
+	<string name="jandi_poll_finished_without_participants">"問卷已完成，此問卷無投票人"</string>
 	<string name="jandi_poll_finishedat">"結束時間"</string>
 	<string name="jandi_poll_is_anonymous">"此問卷為不記名投票"</string>
 	<string name="jandi_poll_multiple">"可複選"</string>
@@ -491,6 +493,7 @@
 	<string name="jandi_sign_in_block">"<u>登入</u>"</string>
 	<string name="jandi_sign_in_ids_explain">"請選擇一個電子郵件地址讓我們將全部與JANDI相關的電子郵件寄給您。增加其它電子郵件地址以指定給特定團隊。"</string>
 	<string name="jandi_sign_out_message">"您確定您要登出？"</string>
+	<string name="jandi_sign_up_now">"此電郵尚未註冊，何不如現在註冊？"</string>
 	<string name="jandi_signup_agree_all">"選擇您的簡介名稱給其他團隊成員看到"</string>
 	<string name="jandi_signup_agree_pp">"我已經看過并且同意這<u><b>隱私權</b></u>條款"</string>
 	<string name="jandi_signup_agree_tos">"我已經看過并且同意這<u><b>服務條款</b></u>"</string>

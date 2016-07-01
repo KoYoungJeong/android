@@ -277,28 +277,40 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, Bot.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_POLL, () -> {
-                            Dao<ResMessages.CommentMessage, ?> commentMessageDao =
-                                    DaoManager.createDao(connectionSource, ResMessages.CommentMessage.class);
-                            commentMessageDao.executeRaw("ALTER TABLE `messagec_comment` ADD COLUMN pollId INTEGER;");
+                        dropTable(connectionSource, ResMessages.Link.class);
+                        dropTable(connectionSource, ResMessages.TextMessage.class);
+                        dropTable(connectionSource, ResMessages.FileMessage.class);
+                        dropTable(connectionSource, ResMessages.StickerMessage.class);
+                        dropTable(connectionSource, ResMessages.CommentMessage.class);
+                        dropTable(connectionSource, ResMessages.CommentStickerMessage.class);
 
-                            Dao<ResMessages.CommentStickerMessage, ?> commentStickerMessageDao =
-                                    DaoManager.createDao(connectionSource, ResMessages.CommentStickerMessage.class);
-                            commentStickerMessageDao.executeRaw("ALTER TABLE `message_commentsticker` ADD COLUMN pollId INTEGER;");
+//                        Dao<ResMessages.CommentMessage, ?> commentMessageDao =
+//                                DaoManager.createDao(connectionSource, ResMessages.CommentMessage.class);
+//                        commentMessageDao.executeRaw("ALTER TABLE `messagec_comment` ADD COLUMN pollId INTEGER;");
 
-                            Dao<ResMessages.Link, ?> dao = DaoManager.createDao(connectionSource, ResMessages.Link.class);
-                            dao.executeRaw("ALTER TABLE `message_link` ADD COLUMN pollId INTEGER;" +
-                                    "ALTER TABLE `message_link` ADD COLUMN poll_id INTEGER;" +
-                                    "ALTER TABLE `message_link` ADD COLUMN feedbackType INTEGER;");
-                            MessageRepository.getRepository().deleteAllLink();
+//                        Dao<ResMessages.CommentStickerMessage, ?> commentStickerMessageDao =
+//                                DaoManager.createDao(connectionSource, ResMessages.CommentStickerMessage.class);
+//                        commentStickerMessageDao.executeRaw("ALTER TABLE `message_commentsticker` ADD COLUMN pollId INTEGER;");
 
-                            createTable(connectionSource, Poll.class);
-                            createTable(connectionSource, Poll.Item.class);
+//                        Dao<ResMessages.Link, ?> dao = DaoManager.createDao(connectionSource, ResMessages.Link.class);
+//                        dao.executeRaw("ALTER TABLE `message_link` ADD COLUMN pollId INTEGER;" +
+//                                "ALTER TABLE `message_link` ADD COLUMN poll_id INTEGER;" +
+//                                "ALTER TABLE `message_link` ADD COLUMN feedbackType INTEGER;");
+                        createTable(connectionSource, ResMessages.Link.class);
+                        createTable(connectionSource, ResMessages.TextMessage.class);
+                        createTable(connectionSource, ResMessages.FileMessage.class);
+                        createTable(connectionSource, ResMessages.StickerMessage.class);
+                        createTable(connectionSource, ResMessages.CommentMessage.class);
+                        createTable(connectionSource, ResMessages.CommentStickerMessage.class);
 
-                            createTable(connectionSource, ResMessages.PollMessage.class);
-                            createTable(connectionSource, ResMessages.PollContent.class);
-                            createTable(connectionSource, ResMessages.PollConnectInfo.class);
+                        createTable(connectionSource, Poll.class);
+                        createTable(connectionSource, Poll.Item.class);
 
-                            createTable(connectionSource, ReadyCommentForPoll.class);
+                        createTable(connectionSource, ResMessages.PollMessage.class);
+                        createTable(connectionSource, ResMessages.PollContent.class);
+                        createTable(connectionSource, ResMessages.PollConnectInfo.class);
+
+                        createTable(connectionSource, ReadyCommentForPoll.class);
                     }));
 
 

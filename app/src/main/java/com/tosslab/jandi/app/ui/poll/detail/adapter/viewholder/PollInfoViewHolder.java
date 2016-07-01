@@ -75,7 +75,7 @@ public class PollInfoViewHolder extends BaseViewHolder<Poll> {
             btnParticipants.setOnClickListener(v ->
                     EventBus.getDefault().post(RequestShowPollParticipantsEvent.all(poll)));
             String finished = DateTransformator.getTimeString(poll.getFinishedAt()) +
-                    resources.getString(R.string.jandi_finished);
+                    " " + resources.getString(R.string.jandi_finished);
             tvDueDate.setText(finished);
         }
 

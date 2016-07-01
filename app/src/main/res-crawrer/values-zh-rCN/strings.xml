@@ -398,9 +398,12 @@
 	<string name="jandi_please_retry">"请重试一次"</string>
 	<string name="jandi_plz_input_topic_description">"描述 (选项)"</string>
 	<string name="jandi_poll">"问卷调查"</string>
+	<string name="jandi_poll_add_item">"添加选项"</string>
 	<string name="jandi_poll_anonymous">"不记名"</string>
-	<string name="jandi_poll_create">"建立新的投票"</string>
+	<string name="jandi_poll_create">"建立"</string>
 	<string name="jandi_poll_empty">"尚无问卷，\n点击[+]建立新问卷"</string>
+	<string name="jandi_poll_finished_with_most">"问卷已完成，得票最高的是 \"%s\""</string>
+	<string name="jandi_poll_finished_without_participants">"问卷已完成，此问卷无投票人"</string>
 	<string name="jandi_poll_finishedat">"结束时间"</string>
 	<string name="jandi_poll_is_anonymous">"此问卷为不记名投票"</string>
 	<string name="jandi_poll_multiple">"可复选"</string>
@@ -490,6 +493,7 @@
 	<string name="jandi_sign_in_block">"<u>登录</u>"</string>
 	<string name="jandi_sign_in_ids_explain">"请选择一个电子邮件地址让我们将全部与JANDI相关的电子邮件寄给您。增加其它电子邮件地址以指定给特定团队。"</string>
 	<string name="jandi_sign_out_message">"您确定您要登出？"</string>
+	<string name="jandi_sign_up_now">"此电邮尚未注册，何不如现在注册？"</string>
 	<string name="jandi_signup_agree_all">"选择您的简介名称给其他团队成员看到"</string>
 	<string name="jandi_signup_agree_pp">"我已经看过并且同意这隐<u><b>隐私权</b></u>条款"</string>
 	<string name="jandi_signup_agree_tos">"我已经看过并且同意这<u><b>服务条款</b></u>"</string>

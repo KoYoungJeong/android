@@ -301,6 +301,7 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
     @OnClick(R.id.btn_my_profile_move_to_poll)
     void moveToPollListActivity() {
         PollListActivity.start(getActivity());
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.Polls);
     }
 
     @Override

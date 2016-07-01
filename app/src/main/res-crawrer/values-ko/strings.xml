@@ -214,8 +214,7 @@
 	<string name="jandi_explain_global_push_off">"앱의 알림 설정이 꺼져 있습니다. 더보기 > 설정에서 알림을 켜야 알림을 받을 수 있습니다."</string>
 	<string name="jandi_explain_invite">"메세지 검색이 가능한 업무용 메신저 잔디는 
 팀원 모두와 함께 사용해야 그 진가가 발휘됩니다.
-지금 바로 멤버들을 초대하세요.
-"</string>
+지금 바로 멤버들을 초대하세요."</string>
 	<string name="jandi_explain_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 	<string name="jandi_export">"내보내기"</string>
 	<string name="jandi_export_to_app">"다음 앱으로 파일 내보내기"</string>
@@ -403,9 +402,12 @@
 	<string name="jandi_please_retry">"다시 시도해주세요."</string>
 	<string name="jandi_plz_input_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 	<string name="jandi_poll">"투표"</string>
+	<string name="jandi_poll_add_item">"보기추가"</string>
 	<string name="jandi_poll_anonymous">"익명투표"</string>
-	<string name="jandi_poll_create">"새 투표 작성하기"</string>
+	<string name="jandi_poll_create">"만들기"</string>
 	<string name="jandi_poll_empty">"투표가 없습니다. \n토픽에서 [+]를 눌러 투표를 만들 수 있습니다."</string>
+	<string name="jandi_poll_finished_with_most">"투표가 완료되었습니다. 가장 많이 투표된 항목은 \"%s\" 입니다. "</string>
+	<string name="jandi_poll_finished_without_participants">"투표가 완료되었습니다. 참여자가 없었습니다."</string>
 	<string name="jandi_poll_finishedat">"종료 시각"</string>
 	<string name="jandi_poll_is_anonymous">"이 투표는 익명투표입니다."</string>
 	<string name="jandi_poll_multiple">"복수선택"</string>
@@ -496,6 +498,7 @@
 	<string name="jandi_sign_in_block">"<u>로그인</u>"</string>
 	<string name="jandi_sign_in_ids_explain">"등록된 이메일 주소들을 로그인 ID로 사용하실 수 있습니다. 이 이메일 주소들은 각각 연동된 팀의 프로필에도 사용됩니다."</string>
 	<string name="jandi_sign_out_message">"정말 로그아웃 하시겠습니까?"</string>
+	<string name="jandi_sign_up_now">"가입하지 않은 것 같습니다. 지금 가입할까요?"</string>
 	<string name="jandi_signup_agree_all">"잔디 회원가입 약관에 모두 동의합니다."</string>
 	<string name="jandi_signup_agree_pp">"<u><b>개인정보취급방침</b></u>에 관한 약관을 확인하였으며 이에 동의합니다."</string>
 	<string name="jandi_signup_agree_tos">"<u><b>서비스 이용약관</b></u>을 확인하였으며 이에 동의합니다."</string>

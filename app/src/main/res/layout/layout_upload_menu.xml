@@ -27,7 +27,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/icon_upload_image"/>
+                android:src="@drawable/selector_icon_upload_image"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -52,7 +52,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/icon_upload_camera"/>
+                android:src="@drawable/selector_icon_upload_camera"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -76,7 +76,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/icon_upload_file"/>
+                android:src="@drawable/selector_icon_upload_file"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -100,7 +100,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/icon_upload_poll"/>
+                android:src="@drawable/selector_icon_upload_poll"/>
 
             <TextView
                 android:layout_width="wrap_content"

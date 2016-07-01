@@ -31,10 +31,7 @@ public class PollListAdapter extends MultiItemRecyclerAdapter
 
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == VIEW_TYPE_POLL) {
-            return PollViewHolder.newInstance(parent);
-        }
-        return null;
+        return PollViewHolder.newInstance(parent);
     }
 
     @Override

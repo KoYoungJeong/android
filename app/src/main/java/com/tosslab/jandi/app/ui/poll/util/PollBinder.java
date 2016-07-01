@@ -35,7 +35,11 @@ public class PollBinder {
             tvDueDate.setText(dueDate);
             vPollIcon.setImageResource(R.drawable.poll_normal);
         } else {
-            vPollIcon.setImageResource(R.drawable.poll_closed);
+            if ("deleted".equals(status)) {
+                vPollIcon.setImageResource(R.drawable.poll_deleted);
+            } else {
+                vPollIcon.setImageResource(R.drawable.poll_closed);
+            }
             tvDueDate.setText(R.string.jandi_finished);
         }
 

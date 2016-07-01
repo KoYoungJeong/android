@@ -156,33 +156,39 @@
             android:layout_weight="1"
             android:background="?attr/selectableItemBackground">
 
-            <View
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/tv_tab_poll"
-                android:background="@drawable/icon_tab_poll"/>
-
-            <TextView
-                android:id="@+id/tv_tab_poll"
+            <LinearLayout
+                android:id="@+id/v_tab_poll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_marginLeft="7dp"
-                android:text="@string/jandi_poll"
-                android:textColor="@color/jandi_text_light"
-                android:textSize="14sp"/>
+                android:gravity="center">
+
+                <View
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:background="@drawable/icon_tab_poll"/>
+
+                <TextView
+                    android:id="@+id/tv_tab_poll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="7dp"
+                    android:text="@string/jandi_poll"
+                    android:textColor="@color/jandi_text_light"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/tv_poll_badge"
                 style="@style/JandiMainTabBadge.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
                 android:layout_marginRight="5dp"
-                android:layout_toRightOf="@+id/tv_tab_poll"
+                android:layout_marginTop="4dp"
+                android:layout_toRightOf="@+id/v_tab_poll"
                 android:text="9"
-                android:visibility="visible"/>
+                android:visibility="gone"/>
 
         </RelativeLayout>
 

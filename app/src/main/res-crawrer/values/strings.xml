@@ -365,8 +365,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_mypage">"My Page"</string>
 	<string name="jandi_name">"Name"</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
-	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic.
-"</string>
+	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic."</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>
 	<string name="jandi_next">"Next"</string>
 	<string name="jandi_no_invite_email">"Provide the email addresses of the team members you want to invite"</string>
@@ -399,9 +398,12 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_please_retry">"Please try again."</string>
 	<string name="jandi_plz_input_topic_description">"Description (optional)"</string>
 	<string name="jandi_poll">"Poll"</string>
+	<string name="jandi_poll_add_item">"Add a Choice"</string>
 	<string name="jandi_poll_anonymous">"Anonymous"</string>
-	<string name="jandi_poll_create">"Create a New Poll"</string>
+	<string name="jandi_poll_create">"Create"</string>
 	<string name="jandi_poll_empty">"There are no polls. \nYou can start a poll by tapping [+] button in a topic."</string>
+	<string name="jandi_poll_finished_with_most">"The poll has just been ended. The most voted choice was \"%s\"."</string>
+	<string name="jandi_poll_finished_without_participants">"The poll has just been ended. There was no participant."</string>
 	<string name="jandi_poll_finishedat">"<![CDATA[End Date & Time]]>"</string>
 	<string name="jandi_poll_is_anonymous">"This poll is an anonymous poll."</string>
 	<string name="jandi_poll_multiple">"Multiple Choices"</string>
@@ -491,6 +493,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_sign_in_block">"<u>Sign In</u>"</string>
 	<string name="jandi_sign_in_ids_explain">"Choose an email address where we should send all of your JANDI related emails. Add other email addresses to assign to specific teams."</string>
 	<string name="jandi_sign_out_message">"Are you sure you want to sign out?"</string>
+	<string name="jandi_sign_up_now">"It seems your email didn't signed up. Sign-up now?"</string>
 	<string name="jandi_signup_agree_all">"Accept all of JANDI's usage policies"</string>
 	<string name="jandi_signup_agree_pp">"I have reviewed and agree to the <u><b>Privacy Policy</b></u>"</string>
 	<string name="jandi_signup_agree_tos">"I have reviewed and agree to the<u><b> Terms of Service</b></u>"</string>

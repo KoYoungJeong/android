@@ -39,18 +39,20 @@
             android:layout_alignLeft="@id/tv_poll_list_subject"
             android:layout_below="@id/tv_poll_list_subject"
             android:layout_marginTop="5dp"
+            android:layout_toRightOf="@id/tv_poll_list_duedate"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:singleLine="true"
             android:text="3d"
             android:textColor="@color/jandi_file_search_item_type_text"
-            android:textSize="@dimen/jandi_file_search_item_type_text"/>
+            android:textSize="13sp"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tv_poll_list_status_badge"
             android:layout_width="wrap_content"
             android:layout_height="17dp"
-            android:layout_alignBaseline="@id/tv_poll_list_duedate"
+            android:layout_alignBottom="@id/tv_poll_list_duedate"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/tv_poll_list_duedate"
@@ -58,7 +60,7 @@
             android:gravity="center"
             android:text="@string/jandi_poll_voted"
             android:textSize="11sp"
-            android:visibility="visible"/>
+            android:visibility="gone"/>
 
         <com.tosslab.jandi.app.views.FixedLinearLayout
             android:layout_width="match_parent"

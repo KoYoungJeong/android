@@ -52,7 +52,7 @@ public class TimePickerDialogFragment extends DialogFragment {
         }
 
         return new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.jandi_verify_fingerprint)
+                .setTitle(R.string.jandi_duedate)
                 .setView(view)
                 .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
                     if (getActivity() instanceof OnHourSelectedListener) {

@@ -267,10 +267,16 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
 
     public void onEventMainThread(RequestShowPollParticipantsEvent event) {
         pollDetailPresenter.onRequestShowPollParticipantsAction(event);
+        if (event.getType() == RequestShowPollParticipantsEvent.Type.ALL) {
+            sendAnalyticsEvent(AnalyticsValue.Action.ViewPollParticipant);
+        } else {
+            sendAnalyticsEvent(AnalyticsValue.Action.ViewChoiceParticipant);
+        }
     }
 
     public void onEvent(RequestVotePollEvent event) {
         pollDetailPresenter.onVote(event.getPollId(), event.getSeqs());
+        sendAnalyticsEvent(AnalyticsValue.Action.Vote);
     }
 
     public void onEvent(SocketPollCommentCreatedEvent event) {
@@ -389,7 +395,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
             }
             setCommentSendButtonEnabled();
 
-//            sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Select);
+            sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Select);
         });
 
         stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendComment());
@@ -486,7 +492,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     public void onEvent(FileCommentClickEvent event) {
         if (event.isLongClick()) {
             showChooseDialogIfNeed(event.getComment());
-//            sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap);
+            sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap);
         } else {
             hideKeyboard();
         }
@@ -523,6 +529,8 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         long entityId = event.getEntityId();
 
         moveToSharedEntity(entityId);
+
+        sendAnalyticsEvent(AnalyticsValue.Action.TopicName);
     }
 
     private void moveToSharedEntity(long entityId) {
@@ -583,10 +591,10 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
                     pollId, stickerGroupId, stickerId, message, mentions);
 
             stickerInfo = NULL_STICKER;
-//            sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Send);
+            sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Send);
         } else {
             pollDetailPresenter.onSendComment(pollId, message, mentions);
-//            sendAnalyticsEvent(AnalyticsValue.Action.Send);
+            sendAnalyticsEvent(AnalyticsValue.Action.Send);
         }
 
         etComment.setText("");
@@ -630,7 +638,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     }
 
     private void sendAnalyticsEvent(AnalyticsValue.Action action) {
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, action);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.PollDetail, action);
     }
 
     @Override
@@ -740,6 +748,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         shouldRetrievePollDetail = false;
         AlertUtil.showConfirmDialog(this, R.string.jandi_action_poll_delete,
                 R.string.jandi_ask_poll_finish, (dialog, which) -> {
+                    sendAnalyticsEvent(AnalyticsValue.Action.DeletePoll);
                     pollDetailPresenter.onPollDeleteAction(pollId);
                 }, false);
     }
@@ -748,6 +757,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         shouldRetrievePollDetail = false;
         AlertUtil.showConfirmDialog(this, R.string.jandi_action_poll_finish,
                 R.string.jandi_ask_poll_finish, (dialog, which) -> {
+                    sendAnalyticsEvent(AnalyticsValue.Action.ClosePoll);
                     pollDetailPresenter.onPollFinishAction(pollId);
                 }, false);
     }

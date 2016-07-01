@@ -51,8 +51,14 @@ public class PollViewHolder extends BaseViewHolder<Poll> {
 
     @Override
     public void onBindView(Poll poll) {
+
         bindCreator(poll);
 
+        bindPoll(poll);
+
+    }
+
+    private void bindPoll(Poll poll) {
         tvSubject.setText(poll.getSubject());
         tvCreateDate.setText(DateTransformator.getTimeString(poll.getCreatedAt()));
 
@@ -73,13 +79,14 @@ public class PollViewHolder extends BaseViewHolder<Poll> {
         } else {
             vPollIcon.setImageResource(R.drawable.poll_closed);
 
-            tvDueDate.setText(DateTransformator.getTimeString(poll.getFinishedAt()) + " 종료됨");
+            String finished = DateTransformator.getTimeString(poll.getFinishedAt()) +
+                    " " + tvDueDate.getResources().getString(R.string.jandi_finished);
+            tvDueDate.setText(finished);
 
             tvStatusBadge.setVisibility(View.GONE);
 
             vgPollListInfo.setAlpha(0.3f);
         }
-
     }
 
     void bindCreator(Poll poll) {

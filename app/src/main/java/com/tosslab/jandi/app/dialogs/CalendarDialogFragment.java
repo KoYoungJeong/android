@@ -40,7 +40,7 @@ public class CalendarDialogFragment extends DialogFragment {
         initCalendarView(calendarView);
 
         return new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
-                .setTitle(R.string.jandi_verify_fingerprint)
+                .setTitle(R.string.jandi_duedate)
                 .setView(view)
                 .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
                     if (getActivity() instanceof OnDateSelectedListener) {

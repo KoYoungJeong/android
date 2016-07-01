@@ -65,7 +65,7 @@
             android:id="@+id/v_message_poll_icon"
             android:layout_width="42dp"
             android:layout_height="42dp"
-            android:padding="3.5dp"
+            android:padding="3dp"
             android:src="@drawable/poll_normal"/>
 
         <TextView
@@ -74,6 +74,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:layout_toRightOf="@id/v_message_poll_icon"
             android:textColor="@color/jandi_text"
             android:textSize="14sp"

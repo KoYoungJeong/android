@@ -26,6 +26,8 @@ import com.tosslab.jandi.app.ui.poll.create.module.PollCreateModule;
 import com.tosslab.jandi.app.ui.poll.create.presenter.PollCreatePresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import java.text.DateFormat;
@@ -85,13 +87,18 @@ public class PollCreateActivity extends BaseAppCompatActivity
 
         setupActionBar();
 
-        addPollItem();
-
         initPollCreate();
+
+        addDefaultPollItem();
 
         onDateSelected(CalendarDay.today());
 
         onHourSelected(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1);
+    }
+
+    private void addDefaultPollItem() {
+        addPollItem();
+        addPollItem();
     }
 
     private void initPollCreate() {
@@ -114,6 +121,9 @@ public class PollCreateActivity extends BaseAppCompatActivity
     @OnClick(R.id.btn_create_poll_item_add)
     void addPollItem() {
         final int position = vgPollItems.getChildCount();
+        if (position > 2) {
+            sendAnalyticsEvent(AnalyticsValue.Action.AddChoice);
+        }
 
         LayoutInflater inflater = getLayoutInflater();
         final View itemView = inflater.inflate(R.layout.layout_create_poll_item, vgPollItems, false);
@@ -127,31 +137,33 @@ public class PollCreateActivity extends BaseAppCompatActivity
         });
 
         View btnItemDelete = itemView.findViewById(R.id.btn_create_poll_item_delete);
-        btnItemDelete.setVisibility(position >= 2 ? View.VISIBLE : View.GONE);
+        btnItemDelete.setVisibility(position > 2 ? View.VISIBLE : View.GONE);
         btnItemDelete.setOnClickListener(v -> {
+            sendAnalyticsEvent(AnalyticsValue.Action.DeleteChoice);
             pollCreatePresenter.onPollItemRemove(position);
             vgPollItems.removeView(itemView);
 
-            if (vgPollItems.getChildCount() < 2) {
-                for (int i = 0; i < vgPollItems.getChildCount(); i++) {
+            int childCount = vgPollItems.getChildCount();
+            if (childCount < 3) {
+                for (int i = 0; i < childCount; i++) {
                     View child = vgPollItems.getChildAt(i);
                     child.findViewById(R.id.btn_create_poll_item_delete).setVisibility(View.GONE);
                 }
             }
 
-            View child = vgPollItems.getChildAt(vgPollItems.getChildCount() - 1);
+            View child = vgPollItems.getChildAt(childCount - 1);
             if (child != null) {
                 child.requestFocus();
             }
         });
 
         vgPollItems.addView(itemView);
-        if (position != 0) {
+        if (position > 1) {
             etTitle.requestFocus();
         }
 
         int childCount = vgPollItems.getChildCount();
-        if (childCount >= 2) {
+        if (childCount > 2) {
             for (int i = 0; i < childCount; i++) {
                 View child = vgPollItems.getChildAt(i);
                 child.findViewById(R.id.btn_create_poll_item_delete).setVisibility(View.VISIBLE);
@@ -226,20 +238,29 @@ public class PollCreateActivity extends BaseAppCompatActivity
     @OnClick(R.id.btn_create_poll_anonymous)
     void onClickAnonymous() {
         boolean checked = switchAnonymous.isChecked();
-        pollCreatePresenter.onPollAnonymousOptionChanged(!checked);
-        switchAnonymous.setChecked(!checked);
+        boolean future = !checked;
+        pollCreatePresenter.onPollAnonymousOptionChanged(future);
+        switchAnonymous.setChecked(future);
+
+        sendAnalyticsEvent(AnalyticsValue.Action.Anonymous,
+                future ? AnalyticsValue.Label.On : AnalyticsValue.Label.Off);
     }
 
     @OnClick(R.id.btn_create_poll_multiplechoice)
     void onClickMultipleChoice() {
         boolean checked = switchMultipleChoice.isChecked();
-        pollCreatePresenter.onPollMultipleChoiceOptionChanged(!checked);
-        switchMultipleChoice.setChecked(!checked);
+        boolean future = !checked;
+        pollCreatePresenter.onPollMultipleChoiceOptionChanged(future);
+        switchMultipleChoice.setChecked(future);
+
+        sendAnalyticsEvent(AnalyticsValue.Action.AllowMultipleChoices,
+                future ? AnalyticsValue.Label.On : AnalyticsValue.Label.Off);
     }
 
     @OnClick(R.id.btn_create_poll)
     void createPoll() {
         pollCreatePresenter.onCreatePoll();
+        sendAnalyticsEvent(AnalyticsValue.Action.CreatePoll);
     }
 
     @Override
@@ -276,5 +297,13 @@ public class PollCreateActivity extends BaseAppCompatActivity
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
         actionBar.setTitle(R.string.jandi_poll_create);
+    }
+
+    private void sendAnalyticsEvent(AnalyticsValue.Action action) {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.CreatePoll, action);
+    }
+
+    private void sendAnalyticsEvent(AnalyticsValue.Action action, AnalyticsValue.Label label) {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.CreatePoll, action, label);
     }
 }

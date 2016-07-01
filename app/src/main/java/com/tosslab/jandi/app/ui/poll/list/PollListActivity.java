@@ -25,6 +25,8 @@ import com.tosslab.jandi.app.ui.poll.list.module.PollListModule;
 import com.tosslab.jandi.app.ui.poll.list.presenter.PollListPresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import java.util.Date;
 
@@ -110,6 +112,13 @@ public class PollListActivity extends BaseAppCompatActivity
         pollListAdapter.setOnLoadMoreCallback(moreRequestHandler);
         pollListAdapter.setOnPollClickListener(poll -> {
             PollDetailActivity.start(PollListActivity.this, poll.getId());
+
+            if ("created".equals(poll.getStatus())) {
+                sendAnalyticsEvent(AnalyticsValue.Action.ViewPollDetail, AnalyticsValue.Label.ongoing);
+            } else {
+                sendAnalyticsEvent(AnalyticsValue.Action.ViewPollDetail, AnalyticsValue.Label.completed);
+            }
+
         });
 
         lvPollList.setLayoutManager(new LinearLayoutManager(getBaseContext()));
@@ -210,6 +219,14 @@ public class PollListActivity extends BaseAppCompatActivity
 
     public void onEvent(SocketPollEvent event) {
         pollListPresenter.onPollDataChanged(event.getType(), event.getPoll());
+    }
+
+    private void sendAnalyticsEvent(AnalyticsValue.Action action) {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Polls, action);
+    }
+
+    private void sendAnalyticsEvent(AnalyticsValue.Action action, AnalyticsValue.Label label) {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Polls, action, label);
     }
 
     private class MorePollListRequestHandler implements PollListAdapter.OnLoadMoreCallback {

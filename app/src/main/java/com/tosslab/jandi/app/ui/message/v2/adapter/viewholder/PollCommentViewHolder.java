@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -13,6 +14,9 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.dynamicl10n.FormatParam;
+import com.tosslab.jandi.app.network.models.dynamicl10n.PollFinished;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -20,6 +24,7 @@ import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.ui.poll.util.PollBinder;
+import com.tosslab.jandi.app.ui.poll.util.PollUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -28,6 +33,9 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
+import java.util.Collection;
+
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
 public class PollCommentViewHolder extends BaseCommentViewHolder {
@@ -197,27 +205,7 @@ public class PollCommentViewHolder extends BaseCommentViewHolder {
 
             long myId = TeamInfoLoader.getInstance().getMyId();
             if (commentMessage.content.contentBuilder == null) {
-
-                SpannableStringBuilder messageBuilder = new SpannableStringBuilder();
-                messageBuilder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
-                messageBuilder.append(" ");
-
-                MentionAnalysisInfo mentionAnalysisInfo =
-                        MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
-                                .textSize(tvProfileNestedCommentContent.getTextSize())
-                                .clickable(true)
-                                .build();
-
-                SpannableLookUp.text(messageBuilder)
-                        .hyperLink(false)
-                        .markdown(false)
-                        .webLink(false)
-                        .emailLink(false)
-                        .telLink(false)
-                        .mention(mentionAnalysisInfo, false)
-                        .lookUp(tvProfileNestedCommentContent.getContext());
-
-                commentMessage.content.contentBuilder = messageBuilder;
+                buildCommentMessage(commentMessage, myId);
             }
 
             SpannableStringBuilder builderWithBadge = new SpannableStringBuilder(commentMessage.content.contentBuilder);
@@ -251,8 +239,89 @@ public class PollCommentViewHolder extends BaseCommentViewHolder {
                         }
                         tvProfileNestedCommentContent.setText(builderWithBadge, TextView.BufferType.SPANNABLE);
                     });
-
         }
+    }
+
+    private void buildCommentMessage(ResMessages.CommentMessage commentMessage, long myId) {
+        FormatParam formatMessage = commentMessage.formatMessage;
+        if (formatMessage != null && formatMessage instanceof PollFinished) {
+
+            commentMessage.content.contentBuilder =
+                    PollUtil.buildFormatMessage(context, (PollFinished) formatMessage,
+                            commentMessage, myId,
+                            tvProfileNestedCommentContent.getTextSize());
+        } else {
+            SpannableStringBuilder messageBuilder = new SpannableStringBuilder();
+            messageBuilder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
+            messageBuilder.append(" ");
+
+            MentionAnalysisInfo mentionAnalysisInfo =
+                    MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
+                            .textSize(tvProfileNestedCommentContent.getTextSize())
+                            .clickable(true)
+                            .build();
+
+            SpannableLookUp.text(messageBuilder)
+                    .hyperLink(false)
+                    .markdown(false)
+                    .webLink(false)
+                    .emailLink(false)
+                    .telLink(false)
+                    .mention(mentionAnalysisInfo, false)
+                    .lookUp(tvProfileNestedCommentContent.getContext());
+
+            commentMessage.content.contentBuilder = messageBuilder;
+        }
+    }
+
+    private void buildFormatMessage(Context context, PollFinished pollFinished,
+                                    ResMessages.CommentMessage commentMessage, long myId) {
+        LogUtil.e("tony124", pollFinished.toString());
+
+        SpannableStringBuilder messageBuilder = new SpannableStringBuilder();
+        Collection<MentionObject> mentions = commentMessage.mentions;
+        if (mentions != null && !mentions.isEmpty()) {
+            Observable.from(mentions)
+                    .takeFirst(mentionObject -> true)
+                    .subscribe(mentionObject -> {
+                        int start = mentionObject.getOffset();
+                        int end = start + mentionObject.getLength();
+                        String mention =
+                                commentMessage.content.body.substring(start, end);
+                        messageBuilder.append(mention + " ");
+                    });
+        }
+
+        Resources resources = context.getResources();
+        int votedCount = pollFinished.getVotedCount();
+        if (votedCount <= 0) {
+            String message = resources.getString(R.string.jandi_poll_finished_without_participants);
+            messageBuilder.append(message);
+        } else {
+            StringBuilder sb = new StringBuilder();
+            int i = 0;
+            for (PollFinished.ElectedItem item : pollFinished.getElectedItems()) {
+                if (i != 0) {
+                    sb.append(", ");
+                }
+                sb.append(item.getName());
+                i++;
+            }
+            String message = resources.getString(R.string.jandi_poll_finished_with_most, sb.toString());
+            messageBuilder.append(message);
+        }
+
+        MentionAnalysisInfo mentionAnalysisInfo =
+                MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
+                        .textSize(tvProfileNestedCommentContent.getTextSize())
+                        .clickable(true)
+                        .build();
+
+        SpannableLookUp.text(messageBuilder)
+                .mention(mentionAnalysisInfo, false)
+                .lookUp(context);
+
+        commentMessage.content.contentBuilder = messageBuilder;
     }
 
     private void bindPoll(ResMessages.Link link) {

@@ -1751,6 +1751,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     }
 
     public void onEvent(RequestCreatePollEvent event) {
+        sendAnalyticsEvent(AnalyticsValue.Action.Upload_Poll);
         PollCreateActivity.start(getActivity(), room.getRoomId());
     }
 

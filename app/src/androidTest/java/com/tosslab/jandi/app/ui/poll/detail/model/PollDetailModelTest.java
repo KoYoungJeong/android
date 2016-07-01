@@ -1,10 +1,12 @@
 package com.tosslab.jandi.app.ui.poll.detail.model;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqCreatePoll;
 import com.tosslab.jandi.app.network.models.ResCreatePoll;
+import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.poll.detail.dto.PollDetail;
 
@@ -42,7 +44,8 @@ public class PollDetailModelTest {
     @Before
     public void setup() throws Exception {
 
-        model = new PollDetailModel(() -> new PollApi(RetrofitBuilder.getInstance()), messageApi);
+        model = new PollDetailModel(() -> new PollApi(RetrofitBuilder.getInstance()),
+                () -> new MessageApi(RetrofitBuilder.getInstance()));
     }
 
     @Test
@@ -55,11 +58,12 @@ public class PollDetailModelTest {
         calendar.set(2016, 06, 30, 12, 30, 00);
         ReqCreatePoll reqCreatePoll = ReqCreatePoll.create(topicId, "HiHi", false, true, calendar.getTime(), Arrays.asList("a,b,c".split(",")));
         System.out.println(reqCreatePoll.toString());
-        ResCreatePoll poll = model.pollApi.get().createPoll(teamId, reqCreatePoll);
-        System.out.println(poll.toString());
+        ResCreatePoll resCreatePoll = model.pollApi.get().createPoll(teamId, reqCreatePoll);
+        System.out.println(resCreatePoll.toString());
+        Poll poll = resCreatePoll.getLinkMessage().poll;
 
         Observable<PollDetail> pollDetailObservable =
-                model.getPollDetailObservable(poll.getPoll().getId(), new PollDetail());
+                model.getPollDetailObservable(poll.getId(), new PollDetail());
 
         TestSubscriber<PollDetail> testSubscriber = new TestSubscriber<>();
         pollDetailObservable.subscribe(testSubscriber);
@@ -69,7 +73,7 @@ public class PollDetailModelTest {
 
         PollDetail pollDetail = testSubscriber.getOnNextEvents().get(0);
         System.out.println(pollDetail.toString());
-        assertEquals(poll.getPoll().getId(), pollDetail.getPoll().getId());
+        assertEquals(poll.getId(), pollDetail.getPoll().getId());
         testSubscriber.assertCompleted();
     }
 

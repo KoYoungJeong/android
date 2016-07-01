@@ -26,6 +26,8 @@ import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import java.util.List;
 
@@ -55,6 +57,7 @@ public class PollParticipantsActivity extends AppCompatActivity
 
     private PollParticipantsAdapter pollParticipantsAdapter;
     private ProgressWheel progressWheel;
+    private boolean isPollItemParticipants = false;
 
     public static void startForAllParticipants(Activity activity, long pollId) {
         Intent intent = new Intent(activity, PollParticipantsActivity.class);
@@ -97,6 +100,7 @@ public class PollParticipantsActivity extends AppCompatActivity
         }
 
         int seq = intent.getIntExtra(KEY_SEQUENCE, -1);
+        isPollItemParticipants = seq != -1;
         String title = intent.getStringExtra(KEY_TITLE);
         presenter.onInitializePollParticipants(pollId, seq, title);
     }
@@ -125,6 +129,13 @@ public class PollParticipantsActivity extends AppCompatActivity
         lvParticipants.setAdapter(pollParticipantsAdapter);
 
         pollParticipantsAdapter.setOnMemberClickListener(member -> {
+            if (isPollItemParticipants) {
+                AnalyticsUtil.sendEvent(
+                        AnalyticsValue.Screen.ChoiceParticipant, AnalyticsValue.Action.ViewMember);
+            } else {
+                AnalyticsUtil.sendEvent(
+                        AnalyticsValue.Screen.PollParticipant, AnalyticsValue.Action.ViewMember);
+            }
             MemberProfileActivity_.intent(PollParticipantsActivity.this)
                     .memberId(member.getId())
                     .start();

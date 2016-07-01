@@ -57,5 +57,22 @@ public class PollFinished extends FormatParam {
         public void setSeq(int seq) {
             this.seq = seq;
         }
+
+        @Override
+        public String toString() {
+            return "ElectedItem{" +
+                    "votedCount=" + votedCount +
+                    ", name='" + name + '\'' +
+                    ", seq=" + seq +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "PollFinished{" +
+                "electedItems=" + electedItems +
+                ", votedCount=" + votedCount +
+                '}';
     }
 }

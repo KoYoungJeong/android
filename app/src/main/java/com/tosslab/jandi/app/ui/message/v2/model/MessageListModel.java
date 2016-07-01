@@ -40,6 +40,8 @@ import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.dynamicl10n.FormatParam;
+import com.tosslab.jandi.app.network.models.dynamicl10n.PollFinished;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
@@ -52,6 +54,7 @@ import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
+import com.tosslab.jandi.app.ui.poll.util.PollUtil;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -677,27 +680,35 @@ public class MessageListModel {
         ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) link.message;
         long myId = TeamInfoLoader.getInstance().getMyId();
         if (commentMessage.content.contentBuilder == null) {
+            FormatParam formatMessage = commentMessage.formatMessage;
+            if (formatMessage != null && formatMessage instanceof PollFinished) {
 
-            SpannableStringBuilder messageBuilder = new SpannableStringBuilder();
-            messageBuilder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
-            messageBuilder.append(" ");
+                commentMessage.content.contentBuilder =
+                        PollUtil.buildFormatMessage(JandiApplication.getContext(), (PollFinished) formatMessage,
+                                commentMessage, myId,
+                                UiUtils.getPixelFromSp(11f));
+            } else {
+                SpannableStringBuilder messageBuilder = new SpannableStringBuilder();
+                messageBuilder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
+                messageBuilder.append(" ");
 
-            MentionAnalysisInfo mentionAnalysisInfo =
-                    MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
-                            .textSize(UiUtils.getPixelFromSp(11f))
-                            .clickable(true)
-                            .build();
+                MentionAnalysisInfo mentionAnalysisInfo =
+                        MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
+                                .textSize(UiUtils.getPixelFromSp(11f))
+                                .clickable(true)
+                                .build();
 
-            SpannableLookUp.text(messageBuilder)
-                    .hyperLink(false)
-                    .markdown(false)
-                    .webLink(false)
-                    .emailLink(false)
-                    .telLink(false)
-                    .mention(mentionAnalysisInfo, false)
-                    .lookUp(JandiApplication.getContext());
+                SpannableLookUp.text(messageBuilder)
+                        .hyperLink(false)
+                        .markdown(false)
+                        .webLink(false)
+                        .emailLink(false)
+                        .telLink(false)
+                        .mention(mentionAnalysisInfo, false)
+                        .lookUp(JandiApplication.getContext());
 
-            commentMessage.content.contentBuilder = messageBuilder;
+                commentMessage.content.contentBuilder = messageBuilder;
+            }
         }
     }
 

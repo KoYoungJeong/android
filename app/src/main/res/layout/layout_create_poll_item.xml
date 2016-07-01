@@ -5,14 +5,16 @@
 
     <EditText
         android:id="@+id/et_create_poll_item_title"
-        android:theme="@style/CreatePollEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="48dp"
         android:layout_gravity="center_vertical"
         android:hint="@string/jandi_input_poll_item"
         android:maxLength="100"
-        android:paddingRight="31dp"/>
+        android:maxLines="1"
+        android:minHeight="48dp"
+        android:paddingRight="31dp"
+        android:singleLine="true"
+        android:theme="@style/CreatePollEditText"/>
 
     <ImageView
         android:id="@+id/btn_create_poll_item_delete"

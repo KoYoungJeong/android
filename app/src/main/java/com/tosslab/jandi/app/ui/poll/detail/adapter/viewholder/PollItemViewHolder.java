@@ -30,6 +30,7 @@ public class PollItemViewHolder extends BaseViewHolder<Pair<Poll, Poll.Item>> {
     private View vSpace;
     private TextView tvTitle;
     private TextView tvParticipants;
+    private View vParticipants;
     private int defaultTitleLeftMargin;
 
     private PollItemViewHolder(View itemView) {
@@ -37,6 +38,7 @@ public class PollItemViewHolder extends BaseViewHolder<Pair<Poll, Poll.Item>> {
         progressBar = (ProgressRelativeLayout) itemView.findViewById(R.id.progress_bar);
         tvTitle = (TextView) itemView.findViewById(R.id.tv_poll_detail_item_title);
         tvParticipants = (TextView) itemView.findViewById(R.id.tv_poll_detail_item_participants);
+        vParticipants = itemView.findViewById(R.id.vg_poll_detail_item_participants);
         vSelectedIcon = itemView.findViewById(R.id.v_poll_detail_item_selected);
         vSpace = itemView.findViewById(R.id.space_poll_detail_item);
 
@@ -70,7 +72,7 @@ public class PollItemViewHolder extends BaseViewHolder<Pair<Poll, Poll.Item>> {
     }
 
     void bindSelectablePoll(final Poll poll, final Poll.Item item) {
-        tvParticipants.setVisibility(View.INVISIBLE);
+        vParticipants.setVisibility(View.INVISIBLE);
 
         progressBar.setProgress(0);
         progressBar.setMax(0);
@@ -132,8 +134,8 @@ public class PollItemViewHolder extends BaseViewHolder<Pair<Poll, Poll.Item>> {
     }
 
     private void bindUnSelectablePoll(final Poll poll, final Poll.Item item) {
-        tvParticipants.setText(item.getVotedCount() + "명");
-        tvParticipants.setVisibility(View.VISIBLE);
+        tvParticipants.setText(Integer.toString(item.getVotedCount()));
+        vParticipants.setVisibility(View.VISIBLE);
 
         progressBar.setSelected(false);
         progressBar.setOnClickListener(v ->
