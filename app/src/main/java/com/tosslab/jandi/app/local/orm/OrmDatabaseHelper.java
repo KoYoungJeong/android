@@ -284,18 +284,6 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         dropTable(connectionSource, ResMessages.CommentMessage.class);
                         dropTable(connectionSource, ResMessages.CommentStickerMessage.class);
 
-//                        Dao<ResMessages.CommentMessage, ?> commentMessageDao =
-//                                DaoManager.createDao(connectionSource, ResMessages.CommentMessage.class);
-//                        commentMessageDao.executeRaw("ALTER TABLE `messagec_comment` ADD COLUMN pollId INTEGER;");
-
-//                        Dao<ResMessages.CommentStickerMessage, ?> commentStickerMessageDao =
-//                                DaoManager.createDao(connectionSource, ResMessages.CommentStickerMessage.class);
-//                        commentStickerMessageDao.executeRaw("ALTER TABLE `message_commentsticker` ADD COLUMN pollId INTEGER;");
-
-//                        Dao<ResMessages.Link, ?> dao = DaoManager.createDao(connectionSource, ResMessages.Link.class);
-//                        dao.executeRaw("ALTER TABLE `message_link` ADD COLUMN pollId INTEGER;" +
-//                                "ALTER TABLE `message_link` ADD COLUMN poll_id INTEGER;" +
-//                                "ALTER TABLE `message_link` ADD COLUMN feedbackType INTEGER;");
                         createTable(connectionSource, ResMessages.Link.class);
                         createTable(connectionSource, ResMessages.TextMessage.class);
                         createTable(connectionSource, ResMessages.FileMessage.class);

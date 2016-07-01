@@ -274,59 +274,7 @@ public class PollCommentViewHolder extends BaseCommentViewHolder {
         }
     }
 
-    private void buildFormatMessage(Context context, PollFinished pollFinished,
-                                    ResMessages.CommentMessage commentMessage, long myId) {
-        LogUtil.e("tony124", pollFinished.toString());
-
-        SpannableStringBuilder messageBuilder = new SpannableStringBuilder();
-        Collection<MentionObject> mentions = commentMessage.mentions;
-        if (mentions != null && !mentions.isEmpty()) {
-            Observable.from(mentions)
-                    .takeFirst(mentionObject -> true)
-                    .subscribe(mentionObject -> {
-                        int start = mentionObject.getOffset();
-                        int end = start + mentionObject.getLength();
-                        String mention =
-                                commentMessage.content.body.substring(start, end);
-                        messageBuilder.append(mention + " ");
-                    });
-        }
-
-        Resources resources = context.getResources();
-        int votedCount = pollFinished.getVotedCount();
-        if (votedCount <= 0) {
-            String message = resources.getString(R.string.jandi_poll_finished_without_participants);
-            messageBuilder.append(message);
-        } else {
-            StringBuilder sb = new StringBuilder();
-            int i = 0;
-            for (PollFinished.ElectedItem item : pollFinished.getElectedItems()) {
-                if (i != 0) {
-                    sb.append(", ");
-                }
-                sb.append(item.getName());
-                i++;
-            }
-            String message = resources.getString(R.string.jandi_poll_finished_with_most, sb.toString());
-            messageBuilder.append(message);
-        }
-
-        MentionAnalysisInfo mentionAnalysisInfo =
-                MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
-                        .textSize(tvProfileNestedCommentContent.getTextSize())
-                        .clickable(true)
-                        .build();
-
-        SpannableLookUp.text(messageBuilder)
-                .mention(mentionAnalysisInfo, false)
-                .lookUp(context);
-
-        commentMessage.content.contentBuilder = messageBuilder;
-    }
-
     private void bindPoll(ResMessages.Link link) {
-        LogUtil.i("tony.PollComment.bind", link.toString());
-
         PollBinder.bindPoll(link.poll, false,
                 vPollIcon, tvSubject, tvCreator, tvDueDate, tvPollDeleted);
     }

@@ -205,7 +205,6 @@ public class PollListPresenterImpl implements PollListPresenter {
 
     @Override
     public void onPollDataChanged(SocketPollEvent.Type type, Poll poll) {
-        LogUtil.d("jsp", type.name() + " && " + poll.toString());
         switch (type) {
             case CREATED:
                 addPoll(poll);
@@ -256,7 +255,6 @@ public class PollListPresenterImpl implements PollListPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(pair -> {
                     Poll poll1 = pair.second;
-                    LogUtil.e("jsp2", pair.first + " & " + poll1.toString());
                     if (poll1 == null || poll1.getId() <= 0) {
                         return;
                     }
@@ -279,7 +277,6 @@ public class PollListPresenterImpl implements PollListPresenter {
                 .subscribe(index -> {
                     try {
                         pollListDataModel.removePollByIndex(index);
-                        LogUtil.i("jsp", "index = " + index);
                         pollListView.notifyDataSetChanged();
                     } catch (Exception e) {
                         e.printStackTrace();

@@ -128,6 +128,7 @@ public class StarMentionedMessageObject {
                     ", feedbackTitle='" + feedbackTitle + '\'' +
                     ", commentCount=" + commentCount +
                     ", createdAt=" + createdAt +
+                    ", feedbackType=" + feedbackType +
                     ", pollId=" + pollId +
                     ", content=" + content.toString() +
                     '}';

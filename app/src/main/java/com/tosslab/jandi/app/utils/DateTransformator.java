@@ -141,7 +141,6 @@ public class DateTransformator {
             sb.append(leftDays + days + " " + resources.getString(R.string.jandi_date_remaining));
 
             String left = sb.toString();
-            LogUtil.d("tony4", "left = " + left);
             return left;
         }
 
@@ -155,7 +154,6 @@ public class DateTransformator {
                 + resources.getString(R.string.jandi_date_remaining);
         sb.append(leftMinutes + remaining);
         String left = sb.toString();
-        LogUtil.d("tony4", "left = " + left);
         return left;
     }
 

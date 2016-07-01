@@ -58,7 +58,7 @@ public class PoolableRequestApiExecutor {
     }
 
     private <RESULT> RESULT handleException(Executor<Response<RESULT>> apiExecutor, Response response, Exception e) throws RetrofitException {
-        LogUtil.e("PoolableRequestApiExecutor", Log.getStackTraceString(e));
+
         // 현재(2015/6) 시나리오엔 존재하지 않지만 Client측의 Network Connection에러를 UI단에 던지기 위한 코드 추가
         if (!isActiveNetwork()) {
             if (response != null) {

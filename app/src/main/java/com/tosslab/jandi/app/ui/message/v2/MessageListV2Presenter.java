@@ -1111,7 +1111,6 @@ public class MessageListV2Presenter {
 
     public void changePollData(Poll poll) {
         List<Integer> indexes = adapterModel.getIndexListByPollId(poll.getId());
-        LogUtil.d("tony6", indexes.toString());
         if (indexes.size() <= 0) {
             return;
         }

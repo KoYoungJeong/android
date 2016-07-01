@@ -302,10 +302,6 @@ public class PollDetailModel {
             return;
         }
 
-        LogUtil.i("tony24", poll.toString());
         PollRepository.getInstance().upsertPoll(poll);
-
-        Poll pollById = PollRepository.getInstance().getPollById(poll.getId());
-        LogUtil.i("tony24", pollById.toString());
     }
 }

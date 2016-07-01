@@ -117,10 +117,6 @@ public class MyPageModel {
                         poll.getTeamId() == teamId
                                 && "created".equals(poll.getStatus())
                                 && "enabled".equals(poll.getVoteStatus()))
-                .map(poll -> {
-                    LogUtil.e("tony50", poll.toString());
-                    return poll;
-                })
                 .toList();
 
     }

@@ -29,8 +29,6 @@ public class PollUtil {
     public static SpannableStringBuilder buildFormatMessage(Context context, PollFinished pollFinished,
                                     ResMessages.CommentMessage commentMessage, long myId,
                                     float mentionTextSize) {
-        LogUtil.e("tony124", pollFinished.toString());
-
         SpannableStringBuilder messageBuilder = new SpannableStringBuilder();
         Collection<MentionObject> mentions = commentMessage.mentions;
         if (mentions != null && !mentions.isEmpty()) {

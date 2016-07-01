@@ -44,10 +44,8 @@ public class AccountHomeModel {
     private Lazy<AccountApi> accountApi;
     private Lazy<AccountProfileApi> accountProfileApi;
     private Lazy<StartApi> startApi;
+    private Lazy<PollApi> pollApi;
 
-
-    @Inject
-    Lazy<PollApi> pollApi;
     @Inject
     public AccountHomeModel(Lazy<InvitationApi> invitationApi,
                             Lazy<AccountApi> accountApi,
@@ -58,6 +56,7 @@ public class AccountHomeModel {
         this.accountApi = accountApi;
         this.accountProfileApi = accountProfileApi;
         this.startApi = startApi;
+        this.pollApi = pollApi;
     }
 
     public void refreshAccountInfo() {

@@ -742,10 +742,6 @@ public class MessageListModel {
 
     }
 
-    public void upsertMessage(ResMessages.Link link) {
-        MessageRepository.getRepository().upsertMessage(link);
-    }
-
     public void deletePollMessage(long teamId, long pollId) throws RetrofitException {
         pollApi.get().deletePoll(teamId, pollId);
     }

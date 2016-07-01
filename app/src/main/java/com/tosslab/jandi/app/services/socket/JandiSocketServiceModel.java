@@ -976,7 +976,6 @@ public class JandiSocketServiceModel {
 
             long roomId = event.getData().getLinkMessage().toEntity[0];
             ResMessages.Link linkMessage = event.getData().getLinkMessage();
-            LogUtil.d("tony", linkMessage.toString());
             linkMessage.roomId = roomId;
             MessageRepository.getRepository().upsertMessage(linkMessage);
             postEvent(new MessageCreatedEvent(event.getTeamId(), roomId, linkMessage.id));

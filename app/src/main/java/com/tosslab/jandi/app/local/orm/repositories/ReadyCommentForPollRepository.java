@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.local.orm.repositories;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
-import com.tosslab.jandi.app.local.orm.domain.ReadyComment;
 import com.tosslab.jandi.app.local.orm.domain.ReadyCommentForPoll;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
 
