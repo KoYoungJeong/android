@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.views.spannable;
 
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import de.greenrobot.event.EventBus;
 
@@ -17,6 +18,8 @@ public class ClickableNameSpannable extends NameSpannable implements ClickableSp
 
     @Override
     public void onClick() {
-        EventBus.getDefault().post(new ShowProfileEvent(entityId, ShowProfileEvent.From.SystemMessage));
+        if (TeamInfoLoader.getInstance().isUser(entityId)) {
+            EventBus.getDefault().post(new ShowProfileEvent(entityId, ShowProfileEvent.From.SystemMessage));
+        }
     }
 }
