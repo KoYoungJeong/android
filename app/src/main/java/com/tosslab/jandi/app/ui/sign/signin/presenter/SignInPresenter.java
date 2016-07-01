@@ -41,6 +41,8 @@ public interface SignInPresenter {
         void showSuccessPasswordResetToast();
 
         void showFailPasswordResetToast();
+
+        void showSuggestJoin(String email);
     }
 
 }

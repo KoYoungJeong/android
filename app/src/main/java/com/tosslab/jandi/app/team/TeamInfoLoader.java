@@ -494,7 +494,7 @@ public class TeamInfoLoader {
         return execute(() -> users.containsKey(memberId) || bots.containsKey(memberId));
     }
 
-    public Member getMember(Long memberId) {
+    public Member getMember(long memberId) {
         return execute(() -> {
             if (users.containsKey(memberId)) {
                 return users.get(memberId);

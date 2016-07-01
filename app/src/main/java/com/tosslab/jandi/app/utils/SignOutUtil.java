@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.utils.parse.PushUtil;
 public class SignOutUtil {
     public static void removeSignData() {
         JandiPreference.signOut(JandiApplication.getContext());
+        BadgeUtils.clearBadge(JandiApplication.getContext());
         PushUtil.unsubscribeParsePush();
         OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
                 .clearAllData();
@@ -20,6 +21,7 @@ public class SignOutUtil {
 
     public static void initSignData() {
         PushUtil.unsubscribeParsePush();
+        BadgeUtils.clearBadge(JandiApplication.getContext());
         OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
                 .clearAllData();
         TokenUtil.clearTokenInfo();

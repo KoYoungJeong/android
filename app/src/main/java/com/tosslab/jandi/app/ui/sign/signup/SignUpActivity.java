@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.sign.signup;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.text.Editable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.MenuItem;
@@ -51,6 +53,7 @@ import butterknife.OnFocusChange;
 
 public class SignUpActivity extends BaseAppCompatActivity implements SignUpPresenter.View {
 
+    private static final String EXTRA_PRESERVED_EMAIL = "preserved_email";
     @Inject
     SignUpPresenter signUpPresenter;
 
@@ -87,6 +90,17 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
 
     private android.view.View previousFocusView;
 
+    private String preservedEmail;
+
+    public static void startActivity(Context context, String preservedEmail) {
+        Intent intent = new Intent(context, SignUpActivity.class);
+        if (!TextUtils.isEmpty(preservedEmail)) {
+            intent.putExtra(EXTRA_PRESERVED_EMAIL, preservedEmail);
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(intent);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,12 +108,14 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
         setNeedUnLockPassCode(false);
         setShouldReconnectSocketService(false);
 
+        ButterKnife.bind(this);
+
         DaggerSignUpComponent.builder()
                 .signUpModule(new SignUpModule(this))
                 .build()
                 .inject(this);
 
-        ButterKnife.bind(this);
+        initExtra();
 
         btnSignUp.setEnabled(false);
         etName.addTextChangedListener(new TextInputWatcher());
@@ -115,6 +131,16 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
             }
             return false;
         });
+
+        if (!TextUtils.isEmpty(preservedEmail)) {
+            etEmail.setText(preservedEmail);
+        }
+    }
+
+    private void initExtra() {
+        if (getIntent() != null) {
+            preservedEmail = getIntent().getStringExtra(EXTRA_PRESERVED_EMAIL);
+        }
     }
 
     @Override

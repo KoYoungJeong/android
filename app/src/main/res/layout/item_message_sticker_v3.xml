@@ -30,7 +30,6 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:singleLine="true"
-        android:text="빠빠빠"
         android:textColor="@color/jandi_messages_name"
         android:textSize="13sp"
         android:textStyle="bold"

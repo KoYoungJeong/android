@@ -249,6 +249,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         tvProfileEmail.setText(userEmail);
         if (TextUtils.isEmpty(userEmail)) {
             tvProfileEmail.setVisibility(View.GONE);
+        } else {
+            tvProfileEmail.setVisibility(View.VISIBLE);
         }
 
         if (!isJandiBot(member)) {
@@ -257,6 +259,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             tvProfilePhone.setText(userPhoneNumber);
             if (TextUtils.isEmpty(userPhoneNumber)) {
                 tvProfilePhone.setVisibility(View.GONE);
+            } else {
+                tvProfilePhone.setVisibility(View.VISIBLE);
             }
         }
 
