@@ -4,10 +4,6 @@ import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.network.client.account.AccountApi;
-import com.tosslab.jandi.app.network.client.start.StartApi;
-import com.tosslab.jandi.app.network.client.teams.TeamApi;
-import com.tosslab.jandi.app.network.client.validation.ValidationApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapterDataView;
@@ -17,7 +13,6 @@ import com.tosslab.jandi.app.ui.entities.chats.presenter.ChatChoosePresenterImpl
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor_;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.model.InsertTeamInfoModel;
 
-import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
 
@@ -35,14 +30,6 @@ public class ChatChooseModule {
     @Provides
     ChatChooseAdapterDataView provideChatChooseAdapterDataView() {
         return chatChooseAdapter;
-    }
-
-    @Provides
-    InsertTeamInfoModel provideInsertTeamInfoModel(Lazy<TeamApi> teamApi,
-                                                   Lazy<ValidationApi> validationApi,
-                                                   Lazy<AccountApi> accountApi,
-                                                   Lazy<StartApi> startApi) {
-        return new InsertTeamInfoModel(teamApi, validationApi, accountApi, startApi);
     }
 
     @Provides

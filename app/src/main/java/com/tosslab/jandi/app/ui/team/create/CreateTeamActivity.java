@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.team.create;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,7 +9,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.insert.views.InsertProfileFirstPageFragment;
 import com.tosslab.jandi.app.ui.profile.insert.views.InsertProfileSecondPageFragment;
@@ -31,14 +29,8 @@ public class CreateTeamActivity extends BaseAppCompatActivity
         InsertProfileFirstPageFragment.OnChangePageClickListener,
         InsertProfileSecondPageFragment.OnChangePageClickListener {
 
-    @Bind(R.id.iv_page_icon_first)
-    ImageView ivPageIconFirst;
-    @Bind(R.id.iv_page_icon_second)
-    ImageView ivPageIconSecond;
-    @Bind(R.id.iv_page_icon_third)
-    ImageView ivPageIconThird;
-    @Bind(R.id.iv_page_icon_forth)
-    ImageView ivPageIconForth;
+    @Bind(value = {R.id.iv_page_icon_first, R.id.iv_page_icon_second, R.id.iv_page_icon_third, R.id.iv_page_icon_forth})
+    ImageView[] ivPageIndicator;
 
     private NonSwipeableViewPager viewPager;
     private CreateTeamPagerAdapter adapter;
@@ -67,31 +59,12 @@ public class CreateTeamActivity extends BaseAppCompatActivity
 
     @Override
     public void onPageSelected(int position) {
-        switch (position) {
-            case 0:
-                ivPageIconFirst.setImageDrawable(pageNationFocus);
-                ivPageIconSecond.setImageDrawable(pageNationNomal);
-                ivPageIconThird.setImageDrawable(pageNationNomal);
-                ivPageIconForth.setImageDrawable(pageNationNomal);
-                break;
-            case 1:
-                ivPageIconFirst.setImageDrawable(pageNationNomal);
-                ivPageIconSecond.setImageDrawable(pageNationFocus);
-                ivPageIconThird.setImageDrawable(pageNationNomal);
-                ivPageIconForth.setImageDrawable(pageNationNomal);
-                break;
-            case 2:
-                ivPageIconFirst.setImageDrawable(pageNationNomal);
-                ivPageIconSecond.setImageDrawable(pageNationNomal);
-                ivPageIconThird.setImageDrawable(pageNationFocus);
-                ivPageIconForth.setImageDrawable(pageNationNomal);
-                break;
-            case 3:
-                ivPageIconFirst.setImageDrawable(pageNationNomal);
-                ivPageIconSecond.setImageDrawable(pageNationNomal);
-                ivPageIconThird.setImageDrawable(pageNationNomal);
-                ivPageIconForth.setImageDrawable(pageNationFocus);
-                break;
+        for (int idx = 0; idx < ivPageIndicator.length; idx++) {
+            if (position == idx) {
+                ivPageIndicator[idx].setImageDrawable(pageNationFocus);
+            } else {
+                ivPageIndicator[idx].setImageDrawable(pageNationNomal);
+            }
         }
         final InputMethodManager imm = (InputMethodManager) getSystemService(
                 Context.INPUT_METHOD_SERVICE);

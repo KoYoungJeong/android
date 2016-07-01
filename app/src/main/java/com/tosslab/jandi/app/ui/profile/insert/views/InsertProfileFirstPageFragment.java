@@ -127,7 +127,6 @@ public class InsertProfileFirstPageFragment extends Fragment
         super.onResume();
         EventBus.getDefault().register(this);
         updateLocalProfileImage(photoFile);
-        JandiSocketService.startServiceIfNeed(getActivity().getApplication());
     }
 
     @Override

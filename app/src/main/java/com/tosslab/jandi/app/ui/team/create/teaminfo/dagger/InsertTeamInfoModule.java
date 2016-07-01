@@ -1,15 +1,9 @@
 package com.tosslab.jandi.app.ui.team.create.teaminfo.dagger;
 
-import com.tosslab.jandi.app.network.client.account.AccountApi;
-import com.tosslab.jandi.app.network.client.start.StartApi;
-import com.tosslab.jandi.app.network.client.teams.TeamApi;
-import com.tosslab.jandi.app.network.client.validation.ValidationApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
-import com.tosslab.jandi.app.ui.team.create.teaminfo.model.InsertTeamInfoModel;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.presenter.InsertTeamInfoPresenter;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.presenter.InsertTeamInfoPresenterImpl;
 
-import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
 
@@ -24,14 +18,6 @@ public class InsertTeamInfoModule {
 
     public InsertTeamInfoModule(InsertTeamInfoPresenter.View view) {
         this.view = view;
-    }
-
-    @Provides
-    InsertTeamInfoModel provideTeamInsertInfoModel(Lazy<TeamApi> teamApi,
-                                                   Lazy<ValidationApi> validationApi,
-                                                   Lazy<AccountApi> accountApi,
-                                                   Lazy<StartApi> startApi) {
-        return new InsertTeamInfoModel(teamApi, validationApi, accountApi, startApi);
     }
 
     @Provides
