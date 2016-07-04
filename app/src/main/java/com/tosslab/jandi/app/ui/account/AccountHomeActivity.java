@@ -2,15 +2,16 @@ package com.tosslab.jandi.app.ui.account;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,8 +23,9 @@ import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
+import com.tosslab.jandi.app.ui.account.dagger.AccountHomeModule;
+import com.tosslab.jandi.app.ui.account.dagger.DaggerAccountHomeComponent;
 import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenter;
-import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenterImpl;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
@@ -43,52 +45,66 @@ import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OnActivityResult;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.List;
 
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by Steve SeongUg Jung on 15. 3. 2..
- */
-@EActivity(R.layout.activity_account_main)
-@OptionsMenu(R.menu.account_home)
 public class AccountHomeActivity extends BaseAppCompatActivity implements AccountHomePresenter.View {
 
     private static final int REQ_TEAM_CREATE = 101;
     private static final int REQ_EMAIL_CHOOSE = 201;
     private static final int REQ_TEAM_JOIN = 301;
 
-    @Extra
     boolean shouldRefreshAccountInfo = true;
-
-    @Bean(AccountHomePresenterImpl.class)
+    @Inject
     AccountHomePresenter accountHomePresenter;
-    @ViewById(R.id.txt_account_main_name)
+    @Bind(R.id.txt_account_main_name)
     TextView tvAccountName;
-    @ViewById(R.id.txt_account_main_id_email)
+    @Bind(R.id.txt_account_main_id_email)
     TextView tvEmail;
-    @ViewById(R.id.ll_account_main_team_choose)
+    @Bind(R.id.ll_account_main_team_choose)
     LinearLayout teamLayout;
     ProgressWheel progressWheel;
 
-    @AfterInject
-    void initObject() {
-        accountHomePresenter.setView(this);
+    public static void startActivity(Context context, boolean shouldRefreshAccountInfo) {
+        Intent intent = new Intent(context, AccountHomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("shouldRefreshAccountInfo", shouldRefreshAccountInfo);
+        context.startActivity(intent);
     }
 
-    @AfterViews
+    public static Intent getActivity(Context context, boolean shouldRefreshAccountInfo) {
+        Intent intent = new Intent(context, AccountHomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("shouldRefreshAccountInfo", shouldRefreshAccountInfo);
+        return intent;
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.clear();
+        getMenuInflater().inflate(R.menu.account_home, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_help) {
+            accountHomePresenter.onHelpOptionSelect();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     void initView() {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(Event.ScreenView)
@@ -115,9 +131,20 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setShouldReconnectSocketService(false);
+
+        setContentView(R.layout.activity_account_main);
+
+        ButterKnife.bind(this);
+
+        DaggerAccountHomeComponent.builder()
+                .accountHomeModule(new AccountHomeModule(this))
+                .build()
+                .inject(this);
+
+        initView();
     }
 
     @Override
@@ -132,32 +159,25 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
         EventBus.getDefault().unregister(this);
     }
 
-    @OptionsItem(R.id.action_help)
-    void onHelpOptionSelect() {
-        accountHomePresenter.onHelpOptionSelect();
-    }
-
-    @Click(R.id.txt_account_main_name)
+    @OnClick(R.id.txt_account_main_name)
     void onNameEditClick() {
         accountHomePresenter.onAccountNameEditClick(tvAccountName.getText().toString());
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.AccountName);
     }
 
-    @Click(R.id.ll_account_main_email)
+    @OnClick(R.id.ll_account_main_email)
     void onEmailEditClick() {
         accountHomePresenter.onAccountEmailEditClick();
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.ChooseAnEmail);
     }
 
-    @UiThread
     @Override
     public void showErrorToast(String message) {
         ColoredToast.showError(message);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setTeamInfo(List<Team> allTeamInfos, ResAccountInfo.UserTeam selectedTeamInfo) {
 
@@ -179,7 +199,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
 
                     accountTeamRowView.setOnClickListener(v -> {
                         Team clickedTeam = (Team) v.getTag();
-                        accountHomePresenter.onJoinedTeamSelect(clickedTeam.getTeamId(), false);
+                        accountHomePresenter.onJoinedTeamSelect(clickedTeam.getTeamId());
                         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.ChooseTeam);
                     });
                     view = accountTeamRowView;
@@ -237,19 +257,16 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
         newFragment.show(getFragmentManager(), "dialog");
     }
 
-    @UiThread
     @Override
     public void showSuccessToast(String message) {
         ColoredToast.show(message);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setAccountName(String newName) {
         tvAccountName.setText(newName);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissProgressWheel() {
         if (progressWheel != null && progressWheel.isShowing()) {
@@ -257,7 +274,6 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showProgressWheel() {
         dismissProgressWheel();
@@ -267,21 +283,14 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void moveSelectedTeam(boolean firstJoin) {
+    public void moveSelectedTeam() {
         JandiSocketService.stopService(AccountHomeActivity.this);
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
         MainTabActivity_.intent(AccountHomeActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
-
-        if (firstJoin) { // 초대 수락 또는 팀 생성 후
-            Intent intent = new Intent(this, InsertProfileActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-        }
 
         finish();
     }
@@ -292,13 +301,11 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
                 .startForResult(REQ_EMAIL_CHOOSE);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setUserEmailText(String email) {
         tvEmail.setText(email);
     }
 
-    @UiThread
     @Override
     public void removePendingTeamView(Team selectedTeam) {
 
@@ -332,8 +339,6 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
         }
     }
 
-    @Override
-    @UiThread
     public void showTextAlertDialog(String msg, DialogInterface.OnClickListener clickListener) {
         new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setMessage(msg)
@@ -343,13 +348,11 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
                 .create().show();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void invalidAccess() {
         finish();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showCheckNetworkDialog() {
         AlertUtil.showCheckNetworkDialog(AccountHomeActivity.this, (dialog, which) -> finish());
@@ -364,18 +367,22 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
         accountHomePresenter.onChangeName(event.inputMessage);
     }
 
-    @OnActivityResult(REQ_TEAM_CREATE)
-    void onTeamCreateResult(int resultCode) {
-        if (resultCode == Activity.RESULT_OK) {
-            accountHomePresenter.onTeamCreateAcceptResult();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
         }
-    }
 
-    @OnActivityResult(REQ_EMAIL_CHOOSE)
-    void onEmailChooseResult(int resultCode) {
-        if (resultCode == Activity.RESULT_OK) {
-            accountHomePresenter.onEmailChooseResult();
+        switch (requestCode) {
+            case REQ_TEAM_CREATE:
+                accountHomePresenter.onTeamCreateAcceptResult();
+                break;
+            case REQ_EMAIL_CHOOSE:
+                accountHomePresenter.onEmailChooseResult();
+                break;
         }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

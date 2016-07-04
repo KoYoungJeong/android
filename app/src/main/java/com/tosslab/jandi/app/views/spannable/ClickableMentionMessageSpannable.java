@@ -22,9 +22,8 @@ public class ClickableMentionMessageSpannable extends MentionMessageSpannable im
     public void onClick() {
 
         boolean user = TeamInfoLoader.getInstance().isUser(entityId);
-        boolean jandiBot = TeamInfoLoader.getInstance().isJandiBot(entityId);
 
-        if ((user || jandiBot)) {
+        if ((user)) {
             EventBus.getDefault().post(new ShowProfileEvent(entityId, ShowProfileEvent.From.Mention));
         }
 

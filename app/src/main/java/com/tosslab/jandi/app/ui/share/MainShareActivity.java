@@ -21,7 +21,7 @@ import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.intro.IntroActivity_;
+import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.share.model.MainShareModel;
 import com.tosslab.jandi.app.ui.share.multi.MultiShareFragment;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -197,9 +197,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
     }
 
     private void startIntro() {
-        IntroActivity_.intent(MainShareActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                .start();
+        IntroActivity.startActivity(MainShareActivity.this, false);
     }
 
     @Override

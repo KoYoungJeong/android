@@ -47,8 +47,8 @@ public class DirectMessageApi extends ApiTemplate<DirectMessageApi.Api> {
 
     // Updated 된 Direct Message 리스트 정보 획득
     public ResMessages getDirectMarkerMessages(long teamId, long userId,
-                                               long currentLinkId) throws RetrofitException {
-        return call(() -> getApi().getDirectMarkerMessages(userId, teamId, currentLinkId));
+                                               long currentLinkId, int count) throws RetrofitException {
+        return call(() -> getApi().getDirectMarkerMessages(userId, teamId, currentLinkId, count));
     }
 
     // Direct Message 생성
@@ -96,7 +96,7 @@ public class DirectMessageApi extends ApiTemplate<DirectMessageApi.Api> {
         @GET("users/{userId}/messages")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResMessages> getDirectMarkerMessages(@Path("userId") long userId, @Query("teamId") long teamId,
-                                                  @Query("linkId") long currentLinkId);
+                                                  @Query("linkId") long currentLinkId, @Query("count") int count);
 
         // Direct Message 생성
         @POST("users/{userId}/message")

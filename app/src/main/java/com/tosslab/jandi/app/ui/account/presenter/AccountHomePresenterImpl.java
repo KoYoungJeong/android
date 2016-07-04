@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.account.presenter;
 
+import android.util.Pair;
+
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -15,31 +17,26 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
+import java.util.ArrayList;
 
-import java.util.List;
+import javax.inject.Inject;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
-/**
- * Created by Steve SeongUg Jung on 15. 3. 3..
- */
-@EBean
 public class AccountHomePresenterImpl implements AccountHomePresenter {
 
-    @Bean
-    AccountHomeModel accountHomeModel;
+    private AccountHomeModel accountHomeModel;
 
-    View view;
+    private View view;
 
-    @Override
-    public void setView(View view) {
+    @Inject
+    public AccountHomePresenterImpl(AccountHomeModel accountHomeModel, View view) {
+        this.accountHomeModel = accountHomeModel;
         this.view = view;
     }
 
-    @Background
     @Override
     public void onInitialize(boolean shouldRefreshAccountInfo) {
         if (!accountHomeModel.checkAccount()) {
@@ -47,56 +44,94 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             return;
         }
 
-        getAccountInfo();
+        Observable<Boolean> observable = Observable.defer(() -> {
+            String accountName = accountHomeModel.getAccountName();
+            ResAccountInfo.UserEmail accountEmail = accountHomeModel.getSelectedEmailInfo();
 
-        if (NetworkCheckUtil.isConnected()) {
-            if (shouldRefreshAccountInfo) {
-                accountHomeModel.refreshAccountInfo();
-            }
+            return Observable.just(Pair.create(accountName, accountEmail));
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(pair -> {
+                    view.setAccountName(pair.first);
 
-            initTeamInfo();
-        } else {
-            view.showCheckNetworkDialog();
-        }
+                    if (pair.second != null) {
+                        view.setUserEmailText(pair.second.getId());
+                    }
+
+                })
+                .observeOn(Schedulers.io())
+                .map(it -> NetworkCheckUtil.isConnected())
+                .publish().refCount();
+
+        observable.filter(it -> it)
+                .observeOn(Schedulers.io())
+                .doOnNext(it -> {
+                    if (shouldRefreshAccountInfo) {
+                        accountHomeModel.refreshAccountInfo();
+                    }
+                })
+                .map(it -> {
+                    try {
+                        return accountHomeModel.getTeamInfos();
+                    } catch (RetrofitException e) {
+                        return new ArrayList<Team>(0);
+                    }
+                })
+                .doOnNext(teamList -> {
+                    Observable.from(teamList)
+                            .map(Team::getUnread)
+                            .reduce((prev, current) -> prev + current)
+                            .subscribe(total -> {
+                                BadgeUtils.setBadge(JandiApplication.getContext(), total);
+                            });
+                })
+                .map(it -> Pair.create(it, accountHomeModel.getSelectedTeamInfo()))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(pair -> {
+                    view.setTeamInfo(pair.first, pair.second);
+                });
+
+        observable.filter(it -> !it)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
+                    view.showCheckNetworkDialog();
+                });
     }
 
-    private void getAccountInfo() {
-        String accountName = accountHomeModel.getAccountName();
-        ResAccountInfo.UserEmail accountEmail = accountHomeModel.getSelectedEmailInfo();
-
-        view.setAccountName(accountName);
-
-        if (accountEmail != null) {
-            view.setUserEmailText(accountEmail.getId());
-        }
-    }
-
-    //TODO 진입 시점에 네트워크 체킹 ?
-    @Background
     @Override
-    public void onJoinedTeamSelect(long teamId, boolean firstJoin) {
-        view.showProgressWheel();
-        try {
-            accountHomeModel.updateSelectTeam(teamId);
-            InitialInfo initialInfo = accountHomeModel.getEntityInfo(teamId);
-            accountHomeModel.updateEntityInfo(initialInfo);
-            TeamInfoLoader.getInstance().refresh();
-            JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
-            view.dismissProgressWheel();
+    public void onJoinedTeamSelect(long teamId) {
 
-            // Track Team List Sign In (with flush)
-            accountHomeModel.trackLaunchTeamSuccess(teamId);
-            view.moveSelectedTeam(firstJoin);
-        } catch (RetrofitException e) {
-            int errorCode = e.getResponseCode();
-            accountHomeModel.trackLaunchTeamFail(errorCode);
-            view.dismissProgressWheel();
-            e.printStackTrace();
-        } catch (Exception e) {
-            accountHomeModel.trackLaunchTeamFail(-1);
-            view.dismissProgressWheel();
-            e.printStackTrace();
-        }
+        view.showProgressWheel();
+        Observable.defer(() -> {
+            accountHomeModel.updateSelectTeam(teamId);
+            try {
+                InitialInfo initialInfo = accountHomeModel.getEntityInfo(teamId);
+                return Observable.just(initialInfo);
+            } catch (RetrofitException e) {
+                return Observable.error(e);
+            }
+        })
+                .doOnNext(initialInfo -> {
+                    accountHomeModel.updateEntityInfo(initialInfo);
+                    TeamInfoLoader.getInstance().refresh();
+                    JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
+                    accountHomeModel.trackLaunchTeamSuccess(teamId);
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
+                    view.dismissProgressWheel();
+                    view.moveSelectedTeam();
+                }, t -> {
+                    if (t instanceof RetrofitException) {
+                        RetrofitException t1 = (RetrofitException) t;
+                        accountHomeModel.trackLaunchTeamFail(t1.getResponseCode());
+                    } else {
+                        accountHomeModel.trackLaunchTeamFail(-1);
+                    }
+                    view.dismissProgressWheel();
+                });
     }
 
     @Override
@@ -109,39 +144,52 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         view.showNameEditDialog(oldName);
     }
 
-    @Background
     @Override
     public void onChangeName(String newName) {
         view.showProgressWheel();
-        try {
-            ResAccountInfo resAccountInfo = accountHomeModel.updateAccountName(newName);
-            accountHomeModel.trackChangeAccountNameSuccess(JandiApplication.getContext(), resAccountInfo.getId());
-
-            AccountRepository.getRepository().updateAccountName(newName);
-            view.dismissProgressWheel();
-            view.setAccountName(newName);
-            view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_success_update_account_profile));
-        } catch (RetrofitException e) {
-            int errorCode = e.getResponseCode();
-
-            accountHomeModel.trackChangeAccountNameFail(errorCode);
-
-            view.dismissProgressWheel();
-            if (e.getStatusCode() >= 500) {
-                view.showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_network));
+        Observable.defer(() -> {
+            try {
+                ResAccountInfo resAccountInfo = accountHomeModel.updateAccountName(newName);
+                return Observable.just(resAccountInfo);
+            } catch (RetrofitException e) {
+                return Observable.error(e);
             }
-            e.printStackTrace();
-        } catch (Exception e) {
-            accountHomeModel.trackChangeAccountNameFail(-1);
-            view.dismissProgressWheel();
-            e.printStackTrace();
-        }
+        })
+                .doOnNext(resAccountInfo -> {
+                    accountHomeModel.trackChangeAccountNameSuccess(JandiApplication.getContext(), resAccountInfo.getId());
+                    AccountRepository.getRepository().updateAccountName(resAccountInfo.getName());
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
+                    view.dismissProgressWheel();
+                    view.setAccountName(newName);
+                    String message = JandiApplication.getContext()
+                            .getString(R.string.jandi_success_update_account_profile);
+                    view.showSuccessToast(message);
+                }, t -> {
+                    view.dismissProgressWheel();
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        int errorCode = e.getResponseCode();
+
+                        accountHomeModel.trackChangeAccountNameFail(errorCode);
+
+                        if (e.getStatusCode() >= 500) {
+                            String message = JandiApplication.getContext()
+                                    .getString(R.string.err_network);
+                            view.showErrorToast(message);
+                        }
+                    } else {
+                        accountHomeModel.trackChangeAccountNameFail(-1);
+                    }
+                });
     }
 
     @Override
     public void onTeamCreateAcceptResult() {
         ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo();
-        onJoinedTeamSelect(selectedTeamInfo.getTeamId(), true);
+        onJoinedTeamSelect(selectedTeamInfo.getTeamId());
     }
 
     @Override
@@ -157,33 +205,44 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         }
     }
 
-    @Background
     @Override
     public void onRequestJoin(Team selectedTeam) {
+
         view.showProgressWheel();
+        Observable.defer(() -> {
+            try {
+                accountHomeModel.acceptOrDeclineInvite(
+                        selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.ACCEPT.getType());
+                return Observable.just(selectedTeam);
+            } catch (RetrofitException e) {
+                return Observable.error(e);
+            }
+        })
+                .doOnNext(team -> {
+                    try {
+                        accountHomeModel.updateTeamInfo(selectedTeam.getTeamId());
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(team1 -> {
+                    view.removePendingTeamView(selectedTeam);
+                    view.dismissProgressWheel();
+                    view.moveAfterInvitaionAccept();
+                }, t -> {
+                    view.dismissProgressWheel();
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
 
-        try {
-            accountHomeModel.acceptOrDeclineInvite(
-                    selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.ACCEPT.getType());
-
-            accountHomeModel.updateTeamInfo(selectedTeam.getTeamId());
-
-            view.removePendingTeamView(selectedTeam);
-            view.dismissProgressWheel();
-            view.moveAfterInvitaionAccept();
-        } catch (RetrofitException e) {
-            view.dismissProgressWheel();
-            e.printStackTrace();
-
-            String alertText = getJoinErrorMessage(selectedTeam, e);
-            view.showTextAlertDialog(alertText, (dialog, which) -> {
-                onRequestIgnore(selectedTeam, false);
-                view.removePendingTeamView(selectedTeam);
-            });
-        } catch (Exception e) {
-            view.dismissProgressWheel();
-            e.printStackTrace();
-        }
+                        String alertText = getJoinErrorMessage(selectedTeam, e);
+                        view.showTextAlertDialog(alertText, (dialog, which) -> {
+                            onRequestIgnore(selectedTeam, false);
+                            view.removePendingTeamView(selectedTeam);
+                        });
+                    }
+                });
     }
 
     private String getJoinErrorMessage(Team selectedTeam, RetrofitException e) {
@@ -213,48 +272,40 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         return alertText;
     }
 
-    @Background
     @Override
     public void onRequestIgnore(Team selectedTeam, boolean showErrorToast) {
-        view.showProgressWheel();
 
-        try {
-            accountHomeModel.acceptOrDeclineInvite(
-                    selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.DECLINE.getType());
-            view.dismissProgressWheel();
-            view.removePendingTeamView(selectedTeam);
-        } catch (RetrofitException e) {
-            view.dismissProgressWheel();
-            if (showErrorToast) {
-                view.showErrorToast(getJoinErrorMessage(selectedTeam, e));
+        view.showProgressWheel();
+        Observable.defer(() -> {
+            try {
+                accountHomeModel.acceptOrDeclineInvite(
+                        selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.DECLINE.getType());
+                return Observable.just(selectedTeam);
+            } catch (RetrofitException e) {
+                return Observable.error(e);
             }
-            view.removePendingTeamView(selectedTeam);
-        } catch (Exception e) {
-            view.dismissProgressWheel();
-        }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(team -> {
+                    view.dismissProgressWheel();
+                    view.removePendingTeamView(team);
+                }, t -> {
+                    view.dismissProgressWheel();
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        if (showErrorToast) {
+                            view.showErrorToast(getJoinErrorMessage(selectedTeam, e));
+                        }
+                        view.removePendingTeamView(selectedTeam);
+                    }
+                });
+
     }
 
     @Override
     public void onHelpOptionSelect() {
         view.showHelloDialog();
-    }
-
-    void initTeamInfo() {
-        try {
-            List<Team> teamList = accountHomeModel.getTeamInfos();
-
-            Observable.from(teamList)
-                    .map(Team::getUnread)
-                    .reduce((prev, current) -> prev + current)
-                    .subscribe(total -> {
-                        BadgeUtils.setBadge(JandiApplication.getContext(), total);
-                    });
-
-            ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo();
-            view.setTeamInfo(teamList, selectedTeamInfo);
-        } catch (RetrofitException e) {
-            view.showErrorToast(JandiApplication.getContext().getString(R.string.err_network));
-        }
     }
 
 }

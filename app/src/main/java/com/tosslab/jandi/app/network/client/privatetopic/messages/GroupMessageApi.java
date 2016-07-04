@@ -51,8 +51,8 @@ public class GroupMessageApi extends ApiTemplate<GroupMessageApi.Api> {
 
     // Updated 된 Private Group의 리스트 정보 획득
     public ResMessages getGroupMarkerMessages(long teamId, long groupId,
-                                              long currentLinkId) throws RetrofitException {
-        return call(() -> getApi().getGroupMarkerMessages(groupId, teamId, currentLinkId));
+                                              long currentLinkId, int count) throws RetrofitException {
+        return call(() -> getApi().getGroupMarkerMessages(groupId, teamId, currentLinkId, count));
     }
 
     // Private Group에서의 Message 생성
@@ -104,7 +104,7 @@ public class GroupMessageApi extends ApiTemplate<GroupMessageApi.Api> {
         @GET("privateGroups/{groupId}/messages")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResMessages> getGroupMarkerMessages(@Path("groupId") long groupId, @Query("teamId") long teamId,
-                                                 @Query("linkId") long currentLinkId);
+                                                 @Query("linkId") long currentLinkId, @Query("count") int count);
 
         // Private Group에서의 Message 생성
         @POST("privateGroups/{privateGroupId}/message")

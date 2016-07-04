@@ -83,7 +83,7 @@ public class SearchMemberModel {
                         .setSmallProfileImageUrl(entity.getPhotoUrl())
                         .setInactive(entity.isInactive())
                         .setEnabled(entity.isEnabled())
-                        .setStarred(teamInfoLoader.isChatStarred(entity.getId())))
+                        .setStarred(teamInfoLoader.isStarredUser(entity.getId())))
                 .collect(() -> selectableMembersLinkedHashMap,
                         (selectableMembersLinkedHashMap, searchedItem) ->
                                 selectableMembersLinkedHashMap.put(searchedItem.getId(), searchedItem))

@@ -1,10 +1,10 @@
 package com.tosslab.jandi.app.ui.intro.presenter;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
@@ -13,29 +13,29 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.PushUtil;
 
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
+import javax.inject.Inject;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
-@EBean
 public class IntroActivityPresenter {
 
     private static final long MAX_DELAY_MS = 500l;
+    private static final int DAYS_30 = 30;
 
-    @Bean
     IntroActivityModel model;
-
     View view;
 
-    public void setView(View view) {
+    @Inject
+    public IntroActivityPresenter(View view, IntroActivityModel model) {
+        this.model = model;
         this.view = view;
     }
 
-    @Background
-    public void checkNewVersion(Context context, boolean startForInvite) {
-
-        long initTime = System.currentTimeMillis();
+    public void checkNewVersion(boolean startForInvite) {
 
         if (!JandiPreference.isPutVersionCodeStamp()) {
             MessageRepository.getRepository().deleteAllLink();
@@ -45,92 +45,103 @@ public class IntroActivityPresenter {
         if (!model.isNetworkConnected()) {
             // 네트워크 연결 상태 아니면 로그인 여부만 확인하고 넘어감
             if (!model.isNeedLogin()) {
-
-                if (model.hasMigration()) {
-                    moveNextActivity(context, initTime, startForInvite);
-                } else {
-                    // 오프라인모드 첫 접근 하는 유저인 경우
-                    // 네트워크 체크 처리
-                    view.showCheckNetworkDialog();
-                }
-
+                moveNextActivity(startForInvite);
             } else {
                 // 디자인 요청사항 처음에 딜레이가 있어달라는..
-                model.sleep(initTime, MAX_DELAY_MS);
                 view.moveToSignHomeActivity();
             }
 
             return;
         }
 
-        try {
-            ResConfig config = model.getConfigInfo();
+        Observable.create((Subscriber<? super ResConfig> subscriber) -> {
+            try {
+                subscriber.onNext(model.getConfigInfo());
+            } catch (RetrofitException e) {
+                subscriber.onError(e);
+            }
 
-            int installedAppVersion = model.getInstalledAppVersion();
+            subscriber.onCompleted();
 
-            if (config.maintenance != null && config.maintenance.status) {
-                view.showMaintenanceDialog();
-            } else if (installedAppVersion < config.versions.android) {
-                model.sleep(initTime, MAX_DELAY_MS);
-                view.showUpdateDialog();
-            } else {
-                if (model.hasOldToken(context)) {
-                    // 0.4.xx 이하 버전 토큰 삭제 로직
-                    model.removeOldToken(context);
-                }
-
-                // 메세지 캐시를 삭제함. 딱 1회에 한해서만 동작함
-                clearLinkRepositoryIfFirstTime();
-
-                if (!model.isNeedLogin()) {
-                    if (model.hasMigration()) {
-                        try {
-                            refreshAccountInfo();
-                            moveNextActivity(context, initTime, startForInvite);
-                        } catch (RetrofitException retrofitError) {
-                            retrofitError.printStackTrace();
-                            if (retrofitError.getStatusCode() < 500
-                                    || retrofitError.getStatusCode() != JandiConstants.NetworkError.UNAUTHORIZED) {
-                                moveNextActivity(context, initTime, startForInvite);
-                            }
-                        }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(config -> {
+                    int installedAppVersion = model.getInstalledAppVersion();
+                    if (config.maintenance != null && config.maintenance.status) {
+                        view.showMaintenanceDialog();
+                        return false;
+                    } else if (installedAppVersion < config.versions.android) {
+                        view.showUpdateDialog();
+                        return false;
                     } else {
-                        try {
-                            migrationAccountInfos(context, initTime, startForInvite);
-                            moveNextActivity(context, initTime, startForInvite);
-                        } catch (RetrofitException retrofitError) {
-                            retrofitError.printStackTrace();
-                            if (retrofitError.getStatusCode() < 500
-                                    || retrofitError.getStatusCode() != JandiConstants.NetworkError.UNAUTHORIZED) {
-                                moveNextActivity(context, initTime, startForInvite);
-                            }
-                        }
+                        return true;
                     }
-                } else {
-                    model.sleep(initTime, MAX_DELAY_MS);
+                })
+                .observeOn(Schedulers.io())
+                .filter(it -> it)
+                .doOnNext(it -> this.clearLinkRepositoryIfFirstTime())
+                .subscribe(it -> {
+                    moveNextActivityWithRefresh(startForInvite);
+                }, t -> {
+                    LogUtil.e(Log.getStackTraceString(t));
+
+                    Observable<Throwable> errorShare = Observable.just(t)
+                            .share();
+
+                    // 네트워크 에러인 경우
+                    errorShare.ofType(RetrofitException.class)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(e -> {
+                                int statusCode = e.getStatusCode();
+                                model.trackSignInFailAndFlush(statusCode);
+                                if (statusCode == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
+                                    view.showMaintenanceDialog();
+                                } else {
+                                    moveNextActivity(startForInvite);
+                                }
+                            });
+
+                    // 알수 없는 에러인 경우
+                    errorShare.filter(e -> !(e instanceof RetrofitException))
+                            .subscribe(it -> {
+                                model.trackSignInFailAndFlush(-1);
+                                moveNextActivityWithRefresh(startForInvite);
+                            });
+
+                });
+
+    }
+
+    private void moveNextActivityWithRefresh(boolean startForInvite) {
+
+        Observable<Boolean> loginObservable = Observable.just(!model.isNeedLogin())
+                .share();
+
+        // 로그인이 완료된 경우
+        loginObservable.filter(it -> it)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
+                    moveNextActivity(startForInvite);
+                });
+
+        // 로그인이 완료된 경우 서버에서 별도로 account 정보 받아오기
+        loginObservable.filter(it -> it)
+                .observeOn(Schedulers.io())
+                .subscribe(it -> {
+                    try {
+                        model.refreshAccountInfo();
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+        // 로그인이 안 된 경우
+        loginObservable.filter(it -> !it)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
                     view.moveToSignHomeActivity();
-                }
-            }
-
-        } catch (RetrofitException e) {
-            LogUtil.e(Log.getStackTraceString(e));
-            model.sleep(initTime, MAX_DELAY_MS);
-
-            int errorCode = e.getStatusCode();
-            model.trackSignInFailAndFlush(errorCode);
-
-            if (errorCode != -1
-                    && e.getStatusCode() == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
-                view.showMaintenanceDialog();
-            } else {
-                view.showCheckNetworkDialog();
-            }
-        } catch (Exception e) {
-            LogUtil.e(Log.getStackTraceString(e));
-            model.trackSignInFailAndFlush(-1);
-            view.showCheckNetworkDialog();
-        }
-
+                });
     }
 
     private void clearLinkRepositoryIfFirstTime() {
@@ -146,51 +157,48 @@ public class IntroActivityPresenter {
         }
     }
 
-    private void migrationAccountInfos(Context context, long initTime, final boolean startForInvite) throws RetrofitException {
-        // v1.0.7 이전 설치자가 넘어온 경우
+    void moveNextActivity(final boolean startForInvite) {
 
-        model.refreshAccountInfo();
-        int selectedTeamId = model.getSelectedTeamInfoByOldData(context);
+        Observable<Boolean> hasTeamObservable = Observable.just(model.hasSelectedTeam() && !startForInvite)
+                .share();
 
-        if (selectedTeamId > 0) {
-            // 선택된 팀 정보가 있는 경우 : account 정보 > select team 설정 > Main Activity
-            model.setSelectedTeamId(selectedTeamId);
-            model.refreshEntityInfo();
-            moveNextActivity(context, initTime, startForInvite);
-        } else {
-            // 선택된 팀 정보가 없는 경우 : account 정보 > TeamSelectActivity
-            moveNextActivity(context, initTime, true);
-        }
+        // 팀 정보가 있는 경우
+        hasTeamObservable.filter(it -> it)
+                .observeOn(Schedulers.io())
+                .doOnNext(it -> PushUtil.registPush())
+                .doOnNext(it -> {
+                })
+                .doOnNext(it -> {
+                    if (NetworkCheckUtil.isConnected()) {
 
-    }
+                        long diffTime = System.currentTimeMillis() - JandiPreference.getSocketConnectedLastTime();
 
-    void refreshAccountInfo() throws RetrofitException {
-        model.refreshAccountInfo();
-    }
+                        // 30 일간 갱신 기록이 없으면 start api를 부르기 위한 사전 작업을 함
+                        if ((diffTime / (1000 * 60 * 60 * 24)) >= DAYS_30) {
+                            InitialInfoRepository.getInstance().clear();
+                            model.clearLinkRepository();
+                        }
 
-    void moveNextActivity(Context context, long initTime, final boolean startForInvite) {
+                        if (!model.hasLeftSideMenu()) {
+                            // LeftSideMenu 가 없는 경우 대비
+                            model.refreshEntityInfo();
+                        }
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
+                    model.trackAutoSignInSuccessAndFlush(true);
+                    view.moveToMainActivity();
+                }, t -> {});
 
-        // like fork & join...but need to refactor
+        // 팀 정보가 없거나 초대에 의해 시작한 경우
+        hasTeamObservable.filter(it -> !it)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
+                    model.trackAutoSignInSuccessAndFlush(false);
 
-        model.sleep(initTime, MAX_DELAY_MS);
-
-        if (model.hasSelectedTeam() && !startForInvite) {
-            PushUtil.registPush();
-
-            if (!model.hasLeftSideMenu() && NetworkCheckUtil.isConnected()) {
-                // LeftSideMenu 가 없는 경우 대비
-                model.refreshEntityInfo();
-            }
-
-            // Track Auto Sign In (with flush)
-            model.trackAutoSignInSuccessAndFlush(true);
-
-            view.moveToMainActivity();
-        } else {
-            model.trackAutoSignInSuccessAndFlush(false);
-
-            view.moveTeamSelectActivity();
-        }
+                    view.moveTeamSelectActivity();
+                });
     }
 
     public interface View {
@@ -200,13 +208,9 @@ public class IntroActivityPresenter {
 
         void moveTeamSelectActivity();
 
-        void showCheckNetworkDialog();
-
         void showMaintenanceDialog();
 
         void showUpdateDialog();
-
-        void showWarningToast(String message);
 
         void finishOnUiThread();
     }

@@ -4,9 +4,9 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.sign.signin.model.SignInModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.parse.PushUtil;
 
@@ -70,22 +70,21 @@ public class SignInPresenterImpl implements SignInPresenter {
 
         view.showProgressDialog();
 
-        Observable.<ResAccessToken>create(subscriber -> {
+        Observable.defer(() -> {
             try {
-                ResAccessToken accessToken = model.login(email, password);
-                subscriber.onNext(accessToken);
+                return Observable.just(model.login(email, password));
             } catch (RetrofitException e) {
-                subscriber.onError(e);
+                return Observable.error(e);
             }
-            subscriber.onCompleted();
-        }).subscribeOn(Schedulers.io())
+        })
+                .subscribeOn(Schedulers.io())
                 .doOnNext(accessToken -> {
+                    SignOutUtil.initSignData();
                     model.saveTokenInfo(accessToken);
                     PushUtil.registPush();
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(accessToken -> {
-                    view.dismissProgressDialog();
                     getAccountInfo(email);
                 }, t -> {
                     view.dismissProgressDialog();
@@ -116,15 +115,14 @@ public class SignInPresenterImpl implements SignInPresenter {
     }
 
     private void getAccountInfo(String email) {
-        Observable.<ResAccountInfo>create(subscriber -> {
+        Observable.defer(() -> {
             try {
-                ResAccountInfo accountInfo = model.getAccountInfo();
-                subscriber.onNext(accountInfo);
+                return Observable.just(model.getAccountInfo());
             } catch (RetrofitException e) {
-                subscriber.onError(e);
+                return Observable.error(e);
             }
-            subscriber.onCompleted();
-        }).subscribeOn(Schedulers.io())
+        })
+                .subscribeOn(Schedulers.io())
                 .doOnNext(accountInfo -> {
                     model.saveAccountInfo(accountInfo);
                     ResAccessToken accessToken = TokenUtil.getTokenObject();
@@ -141,18 +139,27 @@ public class SignInPresenterImpl implements SignInPresenter {
 
     @Override
     public void forgotPassword(String email) {
-        Observable.<Boolean>create(subscriber -> {
+        Observable.defer(() -> {
             try {
-                model.requestPasswordReset(email);
-                subscriber.onNext(true);
-            } catch (Exception e) {
-                subscriber.onError(e);
+                return Observable.just(model.requestPasswordReset(email));
+            } catch (RetrofitException e) {
+                return Observable.error(e);
             }
-            subscriber.onCompleted();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> view.showSuccessPasswordResetToast(),
-                        e -> view.showFailPasswordResetToast());
+                        e -> {
+                            if (e instanceof RetrofitException) {
+                                RetrofitException error = (RetrofitException) e;
+                                if (error.getResponseCode() == 40000) {
+                                    view.showSuggestJoin(email);
+                                } else {
+                                    view.showNetworkErrorToast();
+                                }
+                            } else {
+                                view.showFailPasswordResetToast();
+                            }
+                        });
     }
 
 }

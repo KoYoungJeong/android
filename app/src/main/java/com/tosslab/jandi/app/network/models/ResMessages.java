@@ -302,7 +302,7 @@ public class ResMessages {
         public TextContent content;
 
         public CommentMessage() {
-            contentType = "comment_message";
+            contentType = "comment";
         }
     }
 

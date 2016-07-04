@@ -79,14 +79,14 @@ public class SocketTopicPushEvent implements EventHistoryInfo {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
-        private int roomId;
+        private long roomId;
         private boolean subscribe = false;
 
-        public int getRoomId() {
+        public long getRoomId() {
             return roomId;
         }
 
-        public void setRoomId(int roomId) {
+        public void setRoomId(long roomId) {
             this.roomId = roomId;
         }
 

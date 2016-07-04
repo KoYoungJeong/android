@@ -135,7 +135,7 @@ dependencies {
     androidTestCompile "com.squareup.assertj:assertj-android-support-v4:${rootProject.ext.assertJAndroidVersion}@aar"
     androidTestCompile "com.squareup.assertj:assertj-android-appcompat-v7:${rootProject.ext.assertJAndroidVersion}@aar"
     androidTestCompile "com.squareup.assertj:assertj-android-recyclerview-v7:${rootProject.ext.assertJAndroidVersion}@aar"
-    androidTestCompile "com.google.dagger:dagger-compiler:${rootProject.ext.dagger2Version}"
+    androidTestApt "com.google.dagger:dagger-compiler:${rootProject.ext.dagger2Version}"
 
     compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
         transitive = true;
@@ -162,8 +162,8 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 158
-        versionName '2.1.4'
+        versionCode 160
+        versionName '2.1.5'
 
         // for Ui Testing
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

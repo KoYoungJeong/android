@@ -17,24 +17,6 @@ public class ChatRepository extends LockExecutorTemplate {
         return instance;
     }
 
-    public void updateStarred(long chatId, boolean isStarred) {
-        execute(() -> {
-            try {
-
-                Dao<Chat, ?> dao = getHelper().getDao(Chat.class);
-                UpdateBuilder<Chat, ?> chatUpdateBuilder = dao.updateBuilder();
-                chatUpdateBuilder.updateColumnValue("isStarred", isStarred)
-                        .where()
-                        .eq("id", chatId);
-                chatUpdateBuilder.update();
-                return true;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return false;
-        });
-    }
-
     public boolean updateChatOpened(long roomId, boolean isOpened) {
         return execute(() -> {
             try {

@@ -5,13 +5,13 @@ package com.tosslab.jandi.app.events.entities;
  */
 public class MemberStarredEvent {
 
-    private final int id;
+    private final long id;
 
-    public MemberStarredEvent(int id) {
+    public MemberStarredEvent(long id) {
         this.id = id;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 }

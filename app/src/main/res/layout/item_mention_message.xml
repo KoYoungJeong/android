@@ -76,14 +76,26 @@
                 android:textColor="@color/jandi_star_mention_item_name_content_text"
                 android:textSize="13sp" />
 
+            <ImageView
+                android:id="@+id/iv_mention_message_file_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tv_mention_message_topic_name"
+                android:layout_alignParentLeft="true"
+                android:layout_alignTop="@+id/tv_mention_message_topic_name"
+                android:layout_marginRight="3dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/icon_message_file" />
+
             <TextView
                 android:id="@+id/tv_mention_message_topic_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
+                android:layout_alignWithParentIfMissing="true"
                 android:layout_below="@id/tv_mention_message_content"
                 android:layout_marginTop="6dp"
                 android:layout_toLeftOf="@+id/tv_mention_message_date"
+                android:layout_toRightOf="@+id/iv_mention_message_file_icon"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="@color/jandi_star_mention_item_topic_name_text"

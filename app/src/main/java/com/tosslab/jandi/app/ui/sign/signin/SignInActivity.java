@@ -3,12 +3,12 @@ package com.tosslab.jandi.app.ui.sign.signin;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.DialogFragment;
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.view.MenuItem;
@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.profile.ForgotPasswordEvent;
-import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
+import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.sign.signin.dagger.DaggerSignInComponent;
 import com.tosslab.jandi.app.ui.sign.signin.dagger.SignInModule;
@@ -100,6 +100,7 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
             }
             return false;
         });
+
         EventBus.getDefault().register(this);
     }
 
@@ -166,10 +167,7 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
 
     @OnClick(R.id.btn_sign_up)
     void onClickSignUpButton() {
-        Intent intent = new Intent(this, SignUpActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        SignUpActivity.startActivity(SignInActivity.this, etEmail.getText().toString());
     }
 
     @OnClick(R.id.tv_forget_password)
@@ -255,6 +253,7 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
     @Override
     public void showErrorInvalidEmailOrPassword() {
         tvErrorIdOrPassword.setVisibility(View.VISIBLE);
+        startBounceAnimation(tvErrorIdOrPassword);
     }
 
     private void setMarginTopPasswordLayout(float marginDip) {
@@ -275,6 +274,18 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
     @Override
     public void showFailPasswordResetToast() {
         ColoredToast.showError(getString(R.string.jandi_fail_send_password_reset_email));
+    }
+
+    @Override
+    public void showSuggestJoin(String email) {
+        new AlertDialog.Builder(SignInActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setMessage(R.string.jandi_sign_up_now)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
+                    SignUpActivity.startActivity(SignInActivity.this, email);
+                })
+                .create()
+                .show();
     }
 
     @Override
@@ -299,12 +310,7 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
 
     @Override
     public void moveToTeamSelectionActivity(String myEmailId) {
-        AccountHomeActivity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK
-                        | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        | Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .shouldRefreshAccountInfo(false)
-                .start();
+        AccountHomeActivity.startActivity(SignInActivity.this, false);
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
         finish();
     }

@@ -50,10 +50,7 @@ public class MainChatListModel {
                 )
                 .map(room -> {
 
-                    long companionId = Observable.from(room.getMembers())
-                            .takeFirst(memberId -> memberId != TeamInfoLoader.getInstance().getMyId())
-                            .toBlocking()
-                            .first();
+                    long companionId = room.getCompanionId();
 
                     User userEntity = TeamInfoLoader.getInstance().getUser(companionId);
 
@@ -64,7 +61,7 @@ public class MainChatListModel {
                             .lastMessage(!TextUtils.equals(room.getLastMessageStatus(), "archived") ? room.getLastMessage() : JandiApplication.getContext().getString(R.string.jandi_deleted_message))
                             .lastMessageId(room.getLastMessageId())
                             .name(userEntity.getName())
-                            .starred(TeamInfoLoader.getInstance().isChatStarred(companionId))
+                            .starred(TeamInfoLoader.getInstance().isStarredUser(companionId))
                             .unread(room.getUnreadCount())
                             .status(userEntity.isEnabled())
                             .inactive(userEntity.isInactive())
@@ -95,7 +92,7 @@ public class MainChatListModel {
     }
 
     public boolean isStarred(long entityId) {
-        return TeamInfoLoader.getInstance().isChatStarred(entityId);
+        return TeamInfoLoader.getInstance().isStarredUser(entityId);
     }
 
     public int getUnreadCount(List<ChatItem> chatItems) {

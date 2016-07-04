@@ -2,8 +2,6 @@ package com.tosslab.jandi.app.ui.carousel;
 
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.intent.Intents;
-import android.support.test.espresso.intent.matcher.IntentMatchers;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -17,12 +15,10 @@ import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel_;
-import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +36,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Matchers.eq;
 
 @RunWith(AndroidJUnit4.class)
 public class CarouselViewerActivityTest {
@@ -114,13 +109,13 @@ public class CarouselViewerActivityTest {
         assertThat(activity.viewPager.getCurrentItem(), is(equalTo(carousel.size())));
     }
 
-    @Ignore
-    @Test
-    public void testSetInitFail() throws Throwable {
-
-        rule.runOnUiThread(() -> activity.setInitFail());
-        assertThat(activity.isFinishing(), is(true));
-    }
+//    @Ignore
+//    @Test
+//    public void testSetInitFail() throws Throwable {
+//
+//        rule.runOnUiThread(() -> activity.setInitFail());
+//        assertThat(activity.isFinishing(), is(true));
+//    }
 
     @Test
     public void testMovePosition() throws Throwable {
@@ -161,16 +156,16 @@ public class CarouselViewerActivityTest {
                 .check(matches(isDisplayed()));
     }
 
-    @Ignore
-    @Test
-    public void testMoveToFileDatail() throws Throwable {
-        rule.runOnUiThread(() -> activity.moveToFileDatail());
-
-        assertThat(activity.isFinishing(), is(true));
-
-        Intents.intending(IntentMatchers.hasComponent(FileDetailActivity_.class.getName()));
-        Intents.intending(IntentMatchers.hasExtra("roomId", eq(roomId)));
-        Intents.intending(IntentMatchers.hasExtra("fileId", eq(latestFileId)));
-    }
+//    @Ignore
+//    @Test
+//    public void testMoveToFileDatail() throws Throwable {
+//        rule.runOnUiThread(() -> activity.moveToFileDatail());
+//
+//        assertThat(activity.isFinishing(), is(true));
+//
+//        Intents.intending(IntentMatchers.hasComponent(FileDetailActivity_.class.getName()));
+//        Intents.intending(IntentMatchers.hasExtra("roomId", eq(roomId)));
+//        Intents.intending(IntentMatchers.hasExtra("fileId", eq(latestFileId)));
+//    }
 
 }

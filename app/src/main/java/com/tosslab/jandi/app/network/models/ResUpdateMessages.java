@@ -5,9 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.List;
 
-/**
- * Created by justinygchoi on 2014. 8. 19..
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResUpdateMessages {

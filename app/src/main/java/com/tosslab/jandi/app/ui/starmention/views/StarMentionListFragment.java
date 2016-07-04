@@ -19,8 +19,8 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
+import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldStarMentionedEvent;
-import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
@@ -136,6 +136,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
             StarMentionVO starMentionVO = adapter.getItemsByPosition(position);
             starMentionListPresentor.executeClickEvent(starMentionVO,
                     StarMentionListFragment.this);
+
             if (!TextUtils.equals(listType, StarMentionListActivity.TYPE_MENTION_LIST)) {
                 if (starMentionVO.getContentType() == StarMentionVO.Type.Text.getValue()) {
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Stars, AnalyticsValue.Action.ChooseMsg);
@@ -240,7 +241,7 @@ public class StarMentionListFragment extends Fragment implements StarMentionList
     }
 
 
-    public void onEventMainThread(SocketMessageStarEvent event) {
+    public void onEventMainThread(MessageStarEvent event) {
 
         if (TextUtils.equals(StarMentionListActivity.TYPE_MENTION_LIST, listType)) {
             return;

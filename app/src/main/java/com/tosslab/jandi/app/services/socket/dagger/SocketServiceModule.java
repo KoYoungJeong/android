@@ -2,15 +2,8 @@ package com.tosslab.jandi.app.services.socket.dagger;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.network.client.account.AccountApi;
-import com.tosslab.jandi.app.network.client.events.EventsApi;
-import com.tosslab.jandi.app.network.client.main.LoginApi;
-import com.tosslab.jandi.app.network.client.messages.MessageApi;
-import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
-import com.tosslab.jandi.app.services.socket.JandiSocketServiceModel;
 
-import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
 
@@ -19,16 +12,6 @@ public class SocketServiceModule {
     private Context context;
 
     public SocketServiceModule(Context context) {this.context = context;}
-
-    @Provides
-    JandiSocketServiceModel provideJandiSocketServiceModel(Context context,
-                                                           Lazy<AccountApi> accountApi,
-                                                           Lazy<MessageApi> messageApi,
-                                                           Lazy<LoginApi> loginApi,
-                                                           Lazy<EventsApi> eventsApi,
-                                                           Lazy<RoomsApi> roomsApi) {
-        return new JandiSocketServiceModel(context, accountApi, loginApi, eventsApi, roomsApi);
-    }
 
     @Provides
     Context provideContext() {

@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.sign.signup.verify;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -20,7 +19,7 @@ import android.widget.TextView;
 import com.google.ads.conversiontracking.AdWordsConversionReporter;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
+import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.sign.signup.verify.presenter.SignUpVerifyPresenter;
 import com.tosslab.jandi.app.ui.sign.signup.verify.view.SignUpVerifyView;
@@ -243,10 +242,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
                 "957512006", "M3MOCM6ij2MQxvLJyAM", "0.00", true);
 
 
-        AccountHomeActivity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        | Intent.FLAG_ACTIVITY_NEW_TASK)
-                .start();
+        AccountHomeActivity.startActivity(this, true);
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
         finish();
     }

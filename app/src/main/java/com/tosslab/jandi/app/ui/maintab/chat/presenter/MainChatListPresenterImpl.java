@@ -150,7 +150,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
     @Override
     public void onEntityStarredUpdate(long entityId) {
-        boolean isStarred = TeamInfoLoader.getInstance().isChatStarred(entityId);
+        boolean isStarred = TeamInfoLoader.getInstance().isStarredUser(entityId);
         view.setStarred(entityId, isStarred);
     }
 }

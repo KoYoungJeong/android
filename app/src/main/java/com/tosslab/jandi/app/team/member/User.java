@@ -71,4 +71,13 @@ public class User implements Member {
     public String getPhoneNumber() {
         return human.getProfile().getPhoneNumber();
     }
+
+    @Override
+    public boolean isStarred() {
+        return human.isStarred();
+    }
+
+    public boolean isProfileUpdated() {
+        return human.getProfile().isUpdated();
+    }
 }

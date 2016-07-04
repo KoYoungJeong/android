@@ -48,13 +48,13 @@ import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
-import com.tosslab.jandi.app.events.entities.EntitiesUpdatedEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
 import com.tosslab.jandi.app.events.entities.MessageCreatedEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RefreshConnectBotEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
+import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
@@ -68,6 +68,7 @@ import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.DummyDeleteEvent;
 import com.tosslab.jandi.app.events.messages.DummyRetryEvent;
 import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
+import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
@@ -76,7 +77,6 @@ import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
-import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
@@ -1332,6 +1332,12 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
+    public void onEvent(TopicInfoUpdateEvent event) {
+        if (event.getId() == room.getRoomId()) {
+            modifyTitle(TeamInfoLoader.getInstance().getTopic(room.getRoomId()).getName());
+        }
+    }
+
     public void onEvent(SocketMessageDeletedEvent event) {
 
         messageListPresenter.removeOfMessageId(event.getData().getMessageId());
@@ -1356,14 +1362,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         if (room.getRoomId() > 0) {
             messageListPresenter.addOldMessageQueue(true);
         }
-    }
-
-    public void onEvent(EntitiesUpdatedEvent event) {
-        if (!isForeground) {
-            return;
-        }
-
-        refreshMessages();
     }
 
     public void onEvent(MentionableMembersRefreshEvent event) {
@@ -1638,8 +1636,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         messageListPresenter.onTeamLeaveEvent(event.getTeamId(), event.getMemberId());
     }
 
-    public void onEvent(SocketMessageStarEvent event) {
-        int messageId = event.getMessageId();
+    public void onEvent(MessageStarEvent event) {
+        long messageId = event.getMessageId();
         boolean starred = event.isStarred();
 
         messageListPresenter.updateStarredOfMessage(messageId, starred);

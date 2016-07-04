@@ -1,7 +1,11 @@
 package com.tosslab.jandi.app.ui.settings.main;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -9,18 +13,22 @@ import android.view.MenuItem;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.settings.main.view.SettingsFragment;
-import com.tosslab.jandi.app.ui.settings.main.view.SettingsFragment_;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-
-/**
- * Created by justinygchoi on 2014. 7. 18..
- */
-@EActivity(R.layout.activity_setting)
 public class SettingsActivity extends BaseAppCompatActivity {
 
-    @AfterViews
+    public static void startActivity(Context context) {
+        Intent intent = new Intent(context, SettingsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_setting);
+        initView();
+    }
+
     void initView() {
         setUpActionBar();
 
@@ -29,7 +37,7 @@ public class SettingsActivity extends BaseAppCompatActivity {
         if (settingFragment == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fl_content,
-                            SettingsFragment_.builder().build(), SettingsFragment.class.getName())
+                            SettingsFragment.instantiate(SettingsActivity.this, SettingsFragment.class.getName()))
                     .commit();
         }
     }

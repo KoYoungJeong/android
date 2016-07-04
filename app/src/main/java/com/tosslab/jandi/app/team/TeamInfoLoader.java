@@ -162,6 +162,7 @@ public class TeamInfoLoader {
         members.clear();
         users.clear();
         bots.clear();
+        jandiBot = null;
 
         getUserObservable()
                 .map(User::new)
@@ -180,6 +181,9 @@ public class TeamInfoLoader {
                     bots.put(bot.getId(), bot);
                 });
 
+        if (jandiBot == null) {
+            jandiBot = new User(new Human());
+        }
     }
 
     private void setUpTopicFolders() {
@@ -280,12 +284,14 @@ public class TeamInfoLoader {
         return execute(() -> topicRooms.get(topicId).isAnnouncementOpened());
     }
 
-    public boolean isChatStarred(long userId) {
-        return execute(() -> getChatObservable().takeFirst(chat -> chat.getMembers().contains(userId))
-                .map(Chat::isStarred)
-                .defaultIfEmpty(false)
-                .toBlocking()
-                .first());
+    public boolean isStarredUser(long userId) {
+        return execute(() -> {
+            if (users.containsKey(userId)) {
+                return users.get(userId).isStarred();
+            } else {
+                return false;
+            }
+        });
     }
 
     public long getChatId(long userId) {
@@ -339,7 +345,7 @@ public class TeamInfoLoader {
             if (topicRooms.containsKey(roomId)) {
                 return topicRooms.get(roomId).isStarred();
             } else if (chatRooms.containsKey(roomId)) {
-                return chatRooms.get(roomId).isStarred();
+                return isStarredUser(chatRooms.get(roomId).getCompanionId());
             }
 
             return false;
@@ -431,11 +437,11 @@ public class TeamInfoLoader {
     }
 
     public boolean isJandiBot(long memberId) {
-        return execute(() -> jandiBot.getId() == memberId);
+        return execute(() -> jandiBot != null && jandiBot.getId() == memberId);
     }
 
     public boolean hasJandiBot() {
-        return execute(() -> jandiBot != null);
+        return execute(() -> jandiBot != null && jandiBot.getId() > 0);
     }
 
     public Room getRoom(long roomId) {
@@ -447,6 +453,10 @@ public class TeamInfoLoader {
             }
             return null;
         });
+    }
+
+    public boolean isRoom(long roomId) {
+        return execute(() -> topicRooms.containsKey(roomId) || chatRooms.containsKey(roomId));
     }
 
     public long getDefaultTopicId() {
@@ -466,6 +476,10 @@ public class TeamInfoLoader {
         return execute(() -> topicRooms.containsKey(id));
     }
 
+    public boolean isChat(long id) {
+        return execute(() -> chatRooms.containsKey(id));
+    }
+
     public WebhookBot getBot(long botId) {
         return execute(() -> {
             if (bots.containsKey(botId)) {
@@ -480,7 +494,7 @@ public class TeamInfoLoader {
         return execute(() -> users.containsKey(memberId) || bots.containsKey(memberId));
     }
 
-    public Member getMember(Long memberId) {
+    public Member getMember(long memberId) {
         return execute(() -> {
             if (users.containsKey(memberId)) {
                 return users.get(memberId);

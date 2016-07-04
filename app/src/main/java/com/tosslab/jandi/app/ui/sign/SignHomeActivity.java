@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.sign.signin.SignInActivity;
 import com.tosslab.jandi.app.ui.sign.signup.SignUpActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -25,6 +26,7 @@ public class SignHomeActivity extends BaseAppCompatActivity {
         setNeedUnLockPassCode(false);
         setShouldReconnectSocketService(false);
         ButterKnife.bind(this);
+        SignOutUtil.initSignData();
     }
 
     @OnClick(R.id.btn_sign_up)
@@ -34,9 +36,7 @@ public class SignHomeActivity extends BaseAppCompatActivity {
             return;
         }
 
-        Intent intent = new Intent(this, SignUpActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        SignUpActivity.startActivity(SignHomeActivity.this, null);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.StartPage, AnalyticsValue.Action.SignUp);
     }
 

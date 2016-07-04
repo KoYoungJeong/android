@@ -16,13 +16,14 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.EntityMenuDialogModel;
-import com.tosslab.jandi.app.ui.settings.main.SettingsActivity_;
+import com.tosslab.jandi.app.ui.settings.main.SettingsActivity;
 import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -139,10 +140,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
     }
 
     private void movePushSettingActivity() {
-        SettingsActivity_
-                .intent(JandiApplication.getContext())
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                .start();
+        SettingsActivity.startActivity(getActivity());
         SettingPushActivity_
                 .intent(JandiApplication.getContext())
                 .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -201,7 +199,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
             }
             boolean isUser = roomId != entityId;
             if (isUser) {
-                ChatRepository.getInstance().updateStarred(roomId, !starred);
+                HumanRepository.getInstance().updateStarred(entityId, !starred);
             } else {
                 TopicRepository.getInstance().updateStarred(roomId, !starred);
             }

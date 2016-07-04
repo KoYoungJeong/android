@@ -198,7 +198,8 @@ public class FileUploadManager {
                         notificationBuilder
                                 .setContentTitle(JandiApplication.getContext().getString(R.string.jandi_file_upload_finish))
                                 .setContentText(JandiApplication.getContext().getString(R.string.jandi_file_upload_go_topic))
-                                .setSmallIcon(android.R.drawable.stat_sys_upload_done)
+                                .setProgress(0, 0, false)
+                                .setSmallIcon(R.drawable.icon_push_notification)
                                 .setAutoCancel(true)
                                 .setOngoing(false);
                         showNotification(context);

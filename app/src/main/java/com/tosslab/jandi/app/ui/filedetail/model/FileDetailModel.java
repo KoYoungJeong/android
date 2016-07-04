@@ -392,6 +392,8 @@ public class FileDetailModel {
         List<Member> members = new ArrayList<>();
         List<User> first = Observable.from(TeamInfoLoader.getInstance().getUserList())
                 .filter(User::isEnabled)
+                .filter(user -> !TeamInfoLoader.getInstance().isJandiBot(user.getId()))
+                .filter(user -> TeamInfoLoader.getInstance().getMyId() != user.getId())
                 .toSortedList((formattedEntity, formattedEntity2) -> {
                     return StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
                 })

@@ -40,6 +40,8 @@ public class FolderRepositoryTest {
     @Before
     public void setUp() throws Exception {
         FolderRepository.getInstance().deleteFolder(getFolder().getId());
+        InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+        TeamInfoLoader.getInstance().refresh();
 
     }
 

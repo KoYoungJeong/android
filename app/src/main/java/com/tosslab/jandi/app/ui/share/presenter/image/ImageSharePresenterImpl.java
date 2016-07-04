@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
@@ -88,17 +87,6 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
         this.teamId = teamId;
         this.teamName = teamName;
 
-        if (!shareModel.hasLeftSideMenu(teamId)) {
-            try {
-                InitialInfo initialInfo = shareModel.getInitialInfo(teamId);
-                shareModel.updateInitialInfo(initialInfo);
-            } catch (Exception e) {
-                e.printStackTrace();
-                view.moveIntro();
-                return;
-            }
-        }
-
         teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
 
         this.roomId = teamInfoLoader.getDefaultTopicId();
@@ -145,6 +133,7 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
                         .getString(R.string.jandi_file_upload_succeed));
                 int entityType = 0;
                 setupSelectedTeam(teamId);
+                view.dismissDialog(uploadProgress);
                 view.moveEntity(teamId, roomId, roomType);
 
                 view.finishOnUiThread();
@@ -155,15 +144,15 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
             }
         } catch (ExecutionException e) {
 
+            view.dismissDialog(uploadProgress);
             if (view != null) {
                 view.showFailToast(JandiApplication.getContext()
                         .getString(R.string.jandi_canceled));
             }
         } catch (Exception e) {
+            view.dismissDialog(uploadProgress);
             view.showFailToast(JandiApplication.getContext()
                     .getString(R.string.err_file_upload_failed));
-        } finally {
-            view.dismissDialog(uploadProgress);
         }
     }
 

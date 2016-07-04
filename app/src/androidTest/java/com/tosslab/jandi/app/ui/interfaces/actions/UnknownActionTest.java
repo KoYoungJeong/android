@@ -6,7 +6,7 @@ import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.intro.IntroActivity_;
+import com.tosslab.jandi.app.ui.intro.IntroActivity;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -37,6 +37,6 @@ public class UnknownActionTest {
         rule.runOnUiThread(() -> action.execute(null));
 
         assertThat(rule.getActivity().isFinishing(), is(true));
-        Intents.intending(IntentMatchers.hasComponent(IntroActivity_.class.getName()));
+        Intents.intending(IntentMatchers.hasComponent(IntroActivity.class.getName()));
     }
 }
