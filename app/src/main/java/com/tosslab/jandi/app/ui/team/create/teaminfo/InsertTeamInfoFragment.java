@@ -167,8 +167,8 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
 
     @OnClick(R.id.iv_team_create_next)
     void onClickTeamCreateNext() {
-        String teamName = etInsertTeamName.getText().toString();
-        String teamDomain = etInsertTeamDomain.getText().toString();
+        String teamName = etInsertTeamName.getText().toString().trim();
+        String teamDomain = etInsertTeamDomain.getText().toString().trim();
         teamInsertInfoPresenter.createTeam(teamName, teamDomain.toLowerCase());
     }
 
