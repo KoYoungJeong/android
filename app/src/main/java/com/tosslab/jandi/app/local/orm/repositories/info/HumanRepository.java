@@ -101,48 +101,6 @@ public class HumanRepository extends LockExecutorTemplate {
         });
     }
 
-    public boolean updateEmail(long memberId, String email) {
-        return execute(() -> {
-            try {
-                Dao<Human, Long> dao = getHelper().getDao(Human.class);
-                Human human = dao.queryForId(memberId);
-
-                long profileId = human.getProfile().get_id();
-                Dao<Human.Profile, ?> profileDao = getHelper().getDao(Human.Profile.class);
-                UpdateBuilder<Human.Profile, ?> profileUpdateBuilder = profileDao.updateBuilder();
-                profileUpdateBuilder.updateColumnValue("email", email)
-                        .where()
-                        .eq("_id", profileId);
-                return profileUpdateBuilder.update() > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return false;
-        });
-    }
-
-    public boolean updateProfile(long memberId, String department, String phoneNumber, String position, String statusMessage) {
-        return execute(() -> {
-            try {
-                Dao<Human, Long> dao = getHelper().getDao(Human.class);
-                Human human = dao.queryForId(memberId);
-                long profileId = human.getProfile().get_id();
-                Dao<Human.Profile, Long> profileDao = getHelper().getDao(Human.Profile.class);
-                Human.Profile profile = profileDao.queryForId(profileId);
-                profile.setDepartment(department);
-                profile.setEmail(phoneNumber);
-                profile.setPosition(position);
-                profile.setStatusMessage(statusMessage);
-
-                return profileDao.update(profile) > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-            return false;
-        });
-    }
-
     public boolean updatePhotoUrl(long memberId, String photoUrl) {
         return execute(() -> {
             try {
@@ -193,12 +151,16 @@ public class HumanRepository extends LockExecutorTemplate {
         });
     }
 
-    public boolean removeHuman(long memberId) {
+    public boolean updateStarred(long memberId, boolean isStarred) {
         return execute(() -> {
 
             try {
-                Dao<Human, Long> dao = getDao(Human.class);
-                return dao.deleteById(memberId) > 0;
+                Dao<Human, Object> dao = getDao(Human.class);
+                UpdateBuilder<Human, Object> updateBuilder = dao.updateBuilder();
+                updateBuilder.updateColumnValue("isStarred", isStarred)
+                        .where()
+                        .eq("id", memberId);
+                return updateBuilder.update() > 0;
             } catch (SQLException e) {
                 e.printStackTrace();
             }

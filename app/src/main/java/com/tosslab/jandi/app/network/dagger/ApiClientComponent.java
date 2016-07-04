@@ -2,13 +2,10 @@ package com.tosslab.jandi.app.network.dagger;
 
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
-import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
-import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
 import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenterImpl;
 import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.interfaces.actions.OpenAction;
-import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.chat.model.MainChatListModel;
 import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
@@ -34,17 +31,11 @@ public interface ApiClientComponent {
 
     void inject(EntityClientManager injector);
 
-    void inject(JandiInterfaceModel jandiInterfaceModel);
-
-    void inject(IntroActivityModel introActivityModel);
-
     void inject(SignUpVerifyModel signUpVerifyModel);
 
     void inject(AccountHomePresenterImpl accountHomePresenter);
 
     void inject(OpenAction openAction);
-
-    void inject(AccountHomeModel accountHomeModel);
 
     void inject(ShareModel shareModel);
 

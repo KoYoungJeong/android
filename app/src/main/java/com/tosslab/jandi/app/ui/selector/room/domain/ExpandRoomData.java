@@ -2,9 +2,7 @@ package com.tosslab.jandi.app.ui.selector.room.domain;
 
 import android.support.annotation.Nullable;
 
-import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.Member;
-import com.tosslab.jandi.app.team.room.TopicRoom;
 
 public class ExpandRoomData {
 
@@ -21,17 +19,6 @@ public class ExpandRoomData {
     private int type;
     private boolean isFirstAmongNoFolderItem;
 
-    public static ExpandRoomData newRoomData(TopicRoom topicRoom) {
-        ExpandRoomData userData = new ExpandRoomData();
-        userData.setIsUser(true);
-        userData.setName(topicRoom.getName());
-        userData.setEnabled(topicRoom.isEnabled());
-        userData.setInactive(false);
-        userData.setEntityId(topicRoom.getId());
-        userData.setIsStarred(topicRoom.isStarred());
-        userData.setIsFolder(false);
-        return userData;
-    }
     public static ExpandRoomData newMemberData(Member member) {
         ExpandRoomData userData = new ExpandRoomData();
         userData.setIsUser(true);
@@ -45,7 +32,7 @@ public class ExpandRoomData {
         userData.setInactive(member.isInactive());
         userData.setEmail(member.getEmail());
         userData.setEntityId(member.getId());
-        userData.setIsStarred(TeamInfoLoader.getInstance().isChatStarred(member.getId()));
+        userData.setIsStarred(member.isStarred());
         userData.setIsFolder(false);
         return userData;
     }

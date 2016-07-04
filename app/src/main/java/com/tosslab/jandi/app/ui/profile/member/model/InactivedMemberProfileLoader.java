@@ -50,7 +50,7 @@ public class InactivedMemberProfileLoader implements ProfileLoader {
 
     @Override
     public void setStarButton(View btnProfileStar, Member member) {
-        btnProfileStar.setSelected(TeamInfoLoader.getInstance().isChatStarred(member.getId()));
+        btnProfileStar.setSelected(TeamInfoLoader.getInstance().isStarredUser(member.getId()));
         boolean isMe = isMe(member.getId());
         btnProfileStar.setVisibility(isMe ? View.INVISIBLE : View.VISIBLE);
         btnProfileStar.setEnabled(!isMe);

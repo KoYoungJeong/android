@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
 import com.tosslab.jandi.app.ui.profile.insert.dagger.DaggerInsertProfileSecondPageComponent;
 import com.tosslab.jandi.app.ui.profile.insert.dagger.InsertProfileSecondPageModule;
 import com.tosslab.jandi.app.ui.profile.insert.presenter.InsertProfileSecondPagePresenter;
@@ -177,8 +178,11 @@ public class InsertProfileSecondPageFragment extends Fragment
 
     @Override
     public void showFailProfile() {
-        ColoredToast.showError(
-                JandiApplication.getContext().getString(R.string.err_profile_get_info));
+        // TODO AccountHome, MainTab 각각의 접근하는 경우가 달라야 함
+        if (getActivity() instanceof InsertProfileActivity) {
+            ColoredToast.showError(
+                    JandiApplication.getContext().getString(R.string.err_profile_get_info));
+        }
     }
 
     private String getEmail() {

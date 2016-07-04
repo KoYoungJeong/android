@@ -6,10 +6,8 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapterDataModel;
-import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
+import com.tosslab.jandi.app.ui.entities.chats.dagger.ChatChooseModule;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor_;
-import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel_;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -17,6 +15,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.inject.Inject;
+
+import dagger.Component;
 import setup.BaseInitUtil;
 
 import static com.jayway.awaitility.Awaitility.await;
@@ -30,7 +31,8 @@ import static org.mockito.Mockito.verify;
 @RunWith(AndroidJUnit4.class)
 public class ChatChoosePresenterImplTest {
 
-    private ChatChoosePresenterImpl presenter;
+    @Inject
+    ChatChoosePresenter presenter;
     private ChatChoosePresenter.View mockView;
     private ChatChooseAdapterDataModel dataModel;
 
@@ -47,11 +49,11 @@ public class ChatChoosePresenterImplTest {
     @Before
     public void setUp() throws Exception {
         mockView = mock(ChatChoosePresenter.View.class);
-
         dataModel = spy(new ChatChooseAdapter(JandiApplication.getContext()));
-        presenter = new ChatChoosePresenterImpl(new ChatChooseModel(), TeamDomainInfoModel_.getInstance_(JandiApplication.getContext()), InvitationDialogExecutor_.getInstance_(JandiApplication.getContext()), mockView, dataModel);
+        DaggerChatChoosePresenterImplTest_TestComponent.builder()
+                .chatChooseModule(new ChatChooseModule(mockView, ((ChatChooseAdapter) dataModel)))
+                .build();
     }
-
 
     @Test
     public void testInitMembers() throws Exception {
@@ -81,12 +83,12 @@ public class ChatChoosePresenterImplTest {
 
     @Test
     public void testInvite() throws Exception {
-        presenter.invitationDialogExecutor = mock(InvitationDialogExecutor.class);
+        ((ChatChoosePresenterImpl) presenter).invitationDialogExecutor = mock(InvitationDialogExecutor.class);
 
         presenter.invite();
 
-        verify(presenter.invitationDialogExecutor).execute();
-        verify(presenter.invitationDialogExecutor).setFrom(eq(InvitationDialogExecutor.FROM_CHAT_CHOOSE));
+        verify(((ChatChoosePresenterImpl) presenter).invitationDialogExecutor).execute();
+        verify(((ChatChoosePresenterImpl) presenter).invitationDialogExecutor).setFrom(eq(InvitationDialogExecutor.FROM_CHAT_CHOOSE));
     }
 
     @Test
@@ -99,5 +101,10 @@ public class ChatChoosePresenterImplTest {
         presenter.onMoveChatMessage(1L);
         await().until(() -> finish[0]);
         verify(mockView).moveChatMessage(eq(TeamInfoLoader.getInstance().getTeamId()), eq(1L));
+    }
+
+    @Component(modules = ChatChooseModule.class)
+    public interface TestComponent {
+        void inject(ChatChoosePresenterImplTest test);
     }
 }

@@ -1,11 +1,10 @@
 package com.tosslab.jandi.app.ui.maintab.topic.views.create.presenter;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.topic.views.create.model.TopicCreateModel;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -13,7 +12,8 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
-import org.json.JSONException;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -40,15 +40,17 @@ public class TopicCreatePresenterImpl implements TopicCreatePresenter {
 
         view.showProgressWheel();
         try {
-            ResCommon topic = topicCreateModel.createTopic(topicTitle, isPublic, topicDescriptionText, isAutojoin);
+            Topic topic = topicCreateModel.createTopic(topicTitle, isPublic, topicDescriptionText, isAutojoin);
+            topicCreateModel.addTopic(topic);
+
+            TeamInfoLoader.getInstance().refresh();
+            EventBus.getDefault().post(new RetrieveTopicListEvent());
+
+            long teamId = TeamInfoLoader.getInstance().getTeamId();
+            topicCreateModel.trackTopicCreateSuccess(topic.getId());
 
             view.dismissProgressWheel();
-
-            long teamId = AccountRepository.getRepository().getSelectedTeamId();
-
-            topicCreateModel.trackTopicCreateSuccess(topic.id);
-
-            view.createTopicSuccess(teamId, topic.id, topicTitle, isPublic);
+            view.createTopicSuccess(teamId, topic.getId(), topicTitle, isPublic);
         } catch (RetrofitException e) {
             view.dismissProgressWheel();
             int errorCode = e.getResponseCode();

@@ -24,7 +24,7 @@ public class DisabledEntityChooseModel {
                         .entityId(user.getId())
                         .statusMessage(user.getStatusMessage())
                         .name(user.getName())
-                        .starred(TeamInfoLoader.getInstance().isChatStarred(user.getId()))
+                        .starred(TeamInfoLoader.getInstance().isStarredUser(user.getId()))
                         .enabled(false)
                         .photoUrl(user.getPhotoUrl()))
                 .toSortedList((lhs, rhs) -> {

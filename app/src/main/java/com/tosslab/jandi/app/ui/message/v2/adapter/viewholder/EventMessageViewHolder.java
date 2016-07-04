@@ -15,7 +15,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
@@ -129,7 +129,7 @@ public class EventMessageViewHolder implements BodyViewHolder {
             ResMessages.PublicCreateInfo publicCreateInfo =
                     (ResMessages.PublicCreateInfo) eventInfo.createInfo;
             long creatorId = publicCreateInfo.creatorId;
-            User creator = teamInfoLoader.getUser(creatorId);
+            Member creator = teamInfoLoader.getMember(creatorId);
 
             ClickableNameSpannable profileSpannable = new ClickableNameSpannable(creatorId, textSize11sp, Color.WHITE);
             int beforeLength = builder.length();
@@ -145,7 +145,7 @@ public class EventMessageViewHolder implements BodyViewHolder {
                     (ResMessages.PrivateCreateInfo) eventInfo.createInfo;
 
             long creatorId = privateCreateInfo.creatorId;
-            User creatorEntity = teamInfoLoader.getUser(creatorId);
+            Member creatorEntity = teamInfoLoader.getMember(creatorId);
 
             ClickableNameSpannable profileSpannable = new ClickableNameSpannable(creatorId, textSize11sp, Color.WHITE);
             int beforeLength = builder.length();
@@ -162,7 +162,7 @@ public class EventMessageViewHolder implements BodyViewHolder {
     private void buildInviteEvent(ResMessages.InviteEvent eventInfo,
                                   SpannableStringBuilder builder, TeamInfoLoader teamInfoLoader) {
         long invitorId = eventInfo.invitorId;
-        User invitorEntity = teamInfoLoader.getUser(invitorId);
+        Member invitorEntity = teamInfoLoader.getMember(invitorId);
 
         String invitorName = invitorEntity.getName();
 
@@ -180,13 +180,13 @@ public class EventMessageViewHolder implements BodyViewHolder {
 
         int tempIndex = nameIndexOf;
 
-        User tempEntity;
+        Member tempEntity;
         Collection<ResMessages.InviteEvent.IntegerWrapper> inviteUsers = eventInfo.inviteUsers;
         int size = inviteUsers.size();
         Iterator<ResMessages.InviteEvent.IntegerWrapper> iterator = inviteUsers.iterator();
         boolean first = true;
         while (iterator.hasNext()) {
-            tempEntity = teamInfoLoader.getUser(iterator.next().getInviteUserId());
+            tempEntity = teamInfoLoader.getMember(iterator.next().getInviteUserId());
             if (tempEntity != null) {
                 if (!first) {
                     builder.insert(tempIndex, ", ");
@@ -207,8 +207,8 @@ public class EventMessageViewHolder implements BodyViewHolder {
     }
 
     private void buildJoinEvent(SpannableStringBuilder builder, long fromEntity) {
-        User entity =
-                TeamInfoLoader.getInstance().getInstance().getUser(fromEntity);
+        Member entity =
+                TeamInfoLoader.getInstance().getInstance().getMember(fromEntity);
         String name;
         if (entity != null) {
             name = entity.getName();
@@ -227,8 +227,8 @@ public class EventMessageViewHolder implements BodyViewHolder {
     }
 
     private void buildLeaveEvent(SpannableStringBuilder builder, long fromEntity) {
-        User entity =
-                TeamInfoLoader.getInstance().getUser(fromEntity);
+        Member entity =
+                TeamInfoLoader.getInstance().getMember(fromEntity);
         String name = entity.getName();
 
         ClickableNameSpannable profileSpannable = new ClickableNameSpannable(fromEntity, textSize11sp, Color.WHITE);
@@ -244,11 +244,11 @@ public class EventMessageViewHolder implements BodyViewHolder {
     private void buildAnnouncementCreateEvent(ResMessages.AnnouncementCreateEvent event, long creatorId,
                                               SpannableStringBuilder builder, TeamInfoLoader teamInfoLoader) {
 
-        User creatorEntity = teamInfoLoader.getUser(creatorId);
+        Member creatorEntity = teamInfoLoader.getMember(creatorId);
         String creator = creatorEntity.getName();
 
         long writerId = event.getEventInfo().getWriterId();
-        User entity = teamInfoLoader.getUser(writerId);
+        Member entity = teamInfoLoader.getMember(writerId);
         String writer = entity.getName();
 
         String format = context.getResources().getString(R.string.jandi_announcement_created, creator, writer);
@@ -269,11 +269,11 @@ public class EventMessageViewHolder implements BodyViewHolder {
 
     private void buildAnnouncementUpdateEvent(ResMessages.AnnouncementUpdateEvent event, long creatorId,
                                               SpannableStringBuilder builder, TeamInfoLoader entityManager) {
-        User creatorEntity = entityManager.getUser(creatorId);
+        Member creatorEntity = entityManager.getMember(creatorId);
         String creator = creatorEntity.getName();
 
         long writerId = event.getEventInfo().getWriterId();
-        User entity = entityManager.getUser(writerId);
+        Member entity = entityManager.getMember(writerId);
         String writer = entity.getName();
 
         String format = context.getResources().getString(R.string.jandi_announcement_created, creator, writer);
@@ -295,7 +295,7 @@ public class EventMessageViewHolder implements BodyViewHolder {
 
     private void buildAnnouncementDeleteEvent(long from,
                                               SpannableStringBuilder builder, TeamInfoLoader teamInfoLoader) {
-        User entity = teamInfoLoader.getUser(from);
+        Member entity = teamInfoLoader.getMember(from);
         String name = entity.getName();
 
         ClickableNameSpannable profileSpannable = new ClickableNameSpannable(from, textSize11sp, Color.WHITE);

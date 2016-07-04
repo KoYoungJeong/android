@@ -2,8 +2,6 @@ package com.tosslab.jandi.app.ui.settings.main.presenter;
 
 public interface SettingsPresenter {
 
-    void setView(View view);
-
     void onSignOut();
 
     void startSignOut();

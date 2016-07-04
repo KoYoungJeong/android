@@ -26,7 +26,7 @@ public class ChannelMessageApi extends ApiTemplate<ChannelMessageApi.Api> {
     }
 
     public ResMessages getPublicTopicMessages(long teamId, long channelId,
-                                       long fromId, int count) throws RetrofitException {
+                                              long fromId, int count) throws RetrofitException {
         return call(() -> getApi().getPublicTopicMessages(channelId, teamId, fromId, count));
     }
 
@@ -36,41 +36,41 @@ public class ChannelMessageApi extends ApiTemplate<ChannelMessageApi.Api> {
 
     // 채널의 업데이트 Message 리스트 정보 획득
     public ResUpdateMessages getPublicTopicUpdatedMessages(int teamId, int channelId,
-                                                    int currentLinkId) throws RetrofitException {
+                                                           int currentLinkId) throws RetrofitException {
         return call(() -> getApi().getPublicTopicUpdatedMessages(channelId, currentLinkId, teamId));
     }
 
     public ResMessages getPublicTopicUpdatedMessagesForMarker(long teamId, long channelId,
-                                                       long currentLinkId) throws RetrofitException {
+                                                              long currentLinkId) throws RetrofitException {
         return call(() -> getApi().getPublicTopicUpdatedMessagesForMarker(channelId, teamId, currentLinkId));
     }
 
     public ResMessages getPublicTopicUpdatedMessagesForMarker(long teamId, long channelId,
-                                                       long currentLinkId, int count) throws RetrofitException {
+                                                              long currentLinkId, int count) throws RetrofitException {
         return call(() -> getApi().getPublicTopicUpdatedMessagesForMarker(channelId, teamId, currentLinkId));
     }
 
 
     public ResMessages getPublicTopicMarkerMessages(long teamId, long channelId,
-                                             long currentLinkId) throws RetrofitException {
-        return call(() -> getApi().getPublicTopicMarkerMessages(channelId, teamId, currentLinkId));
+                                                    long currentLinkId, int count) throws RetrofitException {
+        return call(() -> getApi().getPublicTopicMarkerMessages(channelId, teamId, currentLinkId, count));
     }
 
     // 채널에서 Message 생성
     public ResCommon sendPublicTopicMessage(long channelId, long teamId,
-                                     ReqSendMessageV3 reqSendMessageV3) throws RetrofitException {
+                                            ReqSendMessageV3 reqSendMessageV3) throws RetrofitException {
         return call(() -> getApi().sendPublicTopicMessage(channelId, teamId, reqSendMessageV3));
     }
 
     // 채널에서 Message 수정
     public ResCommon modifyPublicTopicMessage(ReqModifyMessage message, int channelId,
-                                       int messageId) throws RetrofitException {
+                                              int messageId) throws RetrofitException {
         return call(() -> getApi().modifyPublicTopicMessage(channelId, messageId, message));
     }
 
     // 채널에서 Message 삭제
     public ResCommon deletePublicTopicMessage(long teamId, long channelId,
-                                       long messageId) throws RetrofitException {
+                                              long messageId) throws RetrofitException {
         return call(() -> getApi().deletePublicTopicMessage(channelId, messageId, teamId));
     }
 
@@ -106,7 +106,7 @@ public class ChannelMessageApi extends ApiTemplate<ChannelMessageApi.Api> {
         @GET("channels/{channelId}/messages")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResMessages> getPublicTopicMarkerMessages(@Path("channelId") long channelId, @Query("teamId") long teamId,
-                                                       @Query("linkId") long currentLinkId);
+                                                       @Query("linkId") long currentLinkId, @Query("count") int count);
 
         // 채널에서 Message 생성
         @POST("channels/{channelId}/message")

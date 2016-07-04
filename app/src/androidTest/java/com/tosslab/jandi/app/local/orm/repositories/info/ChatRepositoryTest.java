@@ -48,15 +48,6 @@ public class ChatRepositoryTest {
     }
 
     @Test
-    public void testUpdateStarred() throws Exception {
-        Chat chat = getChat();
-        ChatRepository.getInstance().updateStarred(chat.getId(), !chat.isStarred());
-
-        Chat chat1 = ChatRepository.getInstance().getChat(chat.getId());
-        assertThat(chat1.isStarred()).isEqualTo(!chat.isStarred());
-    }
-
-    @Test
     public void testUpdateChatOpened() throws Exception {
         Chat chat = getChat();
         ChatRepository.getInstance().updateChatOpened(chat.getId(), !chat.isOpened());

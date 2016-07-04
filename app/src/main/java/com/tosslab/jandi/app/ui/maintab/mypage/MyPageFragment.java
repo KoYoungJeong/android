@@ -24,6 +24,9 @@ import com.baidu.android.pushservice.PushSettings;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.MentionToMeEvent;
+import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.mypage.adapter.MyPageAdapter;
@@ -35,7 +38,7 @@ import com.tosslab.jandi.app.ui.maintab.mypage.view.MyPageView;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
-import com.tosslab.jandi.app.ui.settings.main.SettingsActivity_;
+import com.tosslab.jandi.app.ui.settings.main.SettingsActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
 import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -58,6 +61,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by tonyjs on 16. 3. 17..
@@ -207,13 +212,34 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.action_mypage_setting) {
-            SettingsActivity_.intent(this)
-                    .start();
+            SettingsActivity.startActivity(getActivity());
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.Setting);
             return true;
         }
 
         return super.onOptionsItemSelected(menuItem);
+    }
+
+    public void onEvent(SocketMessageCreatedEvent event) {
+        ResMessages.Link link = event.getData().getLinkMessage();
+        if (link.message == null) {
+            return;
+        }
+
+        presenter.addMentionedMessage(link);
+
+    }
+
+    public void onEvent(SocketMessageDeletedEvent event) {
+        Observable.just(event.getData().getLinkId())
+                .map(linkId -> adapter.indexOfLink(linkId))
+                .filter(index -> index >= 0)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(index -> {
+                    adapter.remove(index);
+                    adapter.notifyDataSetChanged();
+                });
+
     }
 
     public void onEvent(MentionToMeEvent event) {
@@ -417,6 +443,14 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
         }
         vEmptyLayout.setVisibility(View.GONE);
     }
+
+    @Override
+    public void addNewMention(MentionMessage mentionMessages) {
+        if (adapter.indexOfLink(mentionMessages.getLinkId()) < 0) {
+            adapter.add(0, mentionMessages);
+        }
+    }
+
 
     private boolean isFinishing() {
         return getActivity() == null || getActivity().isFinishing();

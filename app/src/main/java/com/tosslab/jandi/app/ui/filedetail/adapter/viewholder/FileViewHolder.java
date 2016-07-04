@@ -209,7 +209,7 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
                     }
 
                     EntitySpannable entitySpannable = new EntitySpannable(context,
-                            teamId, id, entityType, teamInfoLoader.isStarred(id) || teamInfoLoader.isChatStarred(id));
+                            teamId, id, entityType, teamInfoLoader.isStarred(id) || teamInfoLoader.isStarredUser(id));
                     entitySpannable.setColor(context.getResources().getColor(R.color.jandi_accent_color));
 
                     int length = ssb.length();

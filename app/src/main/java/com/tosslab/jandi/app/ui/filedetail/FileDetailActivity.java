@@ -46,10 +46,10 @@ import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
 import com.tosslab.jandi.app.events.files.FileStarredStateChangeEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
+import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
-import com.tosslab.jandi.app.events.messages.SocketMessageStarEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.local.orm.domain.ReadyComment;
 import com.tosslab.jandi.app.local.orm.repositories.ReadyCommentRepository;
@@ -776,7 +776,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             isStarred = teamInfoLoader.isStarred(entityId);
         } else if (teamInfoLoader.isUser(entityId)) {
             entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
-            isStarred = teamInfoLoader.isChatStarred(entityId);
+            isStarred = teamInfoLoader.isStarredUser(entityId);
             isUser = true;
             if (teamInfoLoader.isJandiBot(entityId)) {
                 isBot = true;
@@ -848,8 +848,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
     }
 
-    public void onEvent(SocketMessageStarEvent event) {
-        int messageId = event.getMessageId();
+    public void onEvent(MessageStarEvent event) {
+        long messageId = event.getMessageId();
         boolean starred = event.isStarred();
 
         if (messageId == fileId) {
@@ -1309,6 +1309,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 ? FileDetailAdapter.VIEW_TYPE_STICKER
                 : FileDetailAdapter.VIEW_TYPE_COMMENT;
         adapter.addRow(adapterPosition, new FileDetailAdapter.Row<>(comment, viewType));
+    }
+
+    @Override
+    public void showNotAccessedFile() {
+        showToast(getString(R.string.jandi_unshared_message), true);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

@@ -1,8 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Pair;
 
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
@@ -34,6 +33,7 @@ import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
 import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
+import com.tosslab.jandi.app.ui.message.v2.model.MessageRepositoryModel;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -53,6 +53,7 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -76,6 +77,7 @@ public class MessageListV2Presenter {
     private MessagePointer messagePointer;
     private boolean isInitialized;
     private MessageListAdapterModel adapterModel;
+    private MessageRepositoryModel messageRepositoryModel;
 
     public void setView(View view) {
         this.view = view;
@@ -87,6 +89,7 @@ public class MessageListV2Presenter {
 
     public void setEntityInfo() {
         messageListModel.setEntityInfo(room.getEntityType(), room.getEntityId());
+        messageRepositoryModel.setEntityInfo(room.getEntityType(), room.getEntityId());
     }
 
     public void setMessagePointer(MessagePointer messagePointer) {
@@ -96,6 +99,7 @@ public class MessageListV2Presenter {
     @AfterInject
     void initObjects() {
         currentMessageState = new MessageState();
+        messageRepositoryModel = new MessageRepositoryModel();
 
         initMessageLoadQueue();
     }
@@ -105,30 +109,34 @@ public class MessageListV2Presenter {
         messageLoadSubscription = messageRequestQueue
                 .onBackpressureBuffer()
                 .observeOn(Schedulers.io())
-                .subscribe(messageContainer -> {
-                    switch (messageContainer.getQueueType()) {
+                .concatMap(messageContainer1 -> {
+                    Observable<MessageContainer> messageObservable = Observable.just(messageContainer1);
+                    switch (messageContainer1.getQueueType()) {
                         case Old:
-                            loadOldMessage((OldMessageContainer) messageContainer);
-                            break;
+                            return messageObservable
+                                    .compose(this::composeOldMessage);
+
                         case New:
-                            loadNewMessage((NewMessageContainer) messageContainer);
-                            break;
+                            return messageObservable
+                                    .compose(this::composeNewMessage);
                         case NewFromLocal:
-                            addNewMessageFromLocal();
-                            break;
+                            return messageObservable
+                                    .compose(this::composeNewMessageFromLocal);
                         case Send:
-                            sendMessage((SendingMessageContainer) messageContainer);
-                            break;
+                            return messageObservable
+                                    .compose(this::composeSend);
                         case UpdateLinkPreview:
-                            updateLinkPreview((UpdateLinkPreviewMessageContainer) messageContainer);
-                            break;
+
+                            return messageObservable
+                                    .compose(this::composeLinkPreview);
                     }
-                }, throwable -> {
+
+                    return messageObservable;
+                })
+                .subscribe(messageContainer -> {}, throwable -> {
                     LogUtil.e("Message Publish Fail!!");
                     throwable.printStackTrace();
-                }, () -> {
-
-                });
+                }, () -> {});
 
         markerRequestQueue = PublishSubject.create();
         markerRequestQueue.onBackpressureBuffer()
@@ -146,6 +154,203 @@ public class MessageListV2Presenter {
                         }
                     }
                 }, Throwable::printStackTrace);
+    }
+
+    private Observable<UpdateLinkPreviewMessageContainer> composeLinkPreview(Observable<MessageContainer> observable) {
+        return observable.cast(UpdateLinkPreviewMessageContainer.class)
+                .observeOn(Schedulers.io())
+                .doOnNext(container -> {
+                    long messageId = container.getData();
+
+                    ResMessages.TextMessage textMessage =
+                            MessageRepository.getRepository().getTextMessage(messageId);
+
+                    int index = adapterModel.indexByMessageId(messageId);
+                    if (index < 0) {
+                        return;
+                    }
+
+                    ResMessages.Link link = adapterModel.getItem(index);
+                    if (!(link.message instanceof ResMessages.TextMessage)) {
+                        return;
+                    }
+                    link.message = textMessage;
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(it -> view.refreshMessages());
+    }
+
+    private Observable<SendingMessageContainer> composeSend(Observable<MessageContainer> observable) {
+        return observable.cast(SendingMessageContainer.class)
+                .observeOn(Schedulers.io())
+                .doOnNext(container -> {
+                    SendingMessage data = container.getData();
+                    long messageId;
+                    if (data.getStickerInfo() != null) {
+                        messageId = messageListModel.sendStickerMessage(room.getTeamId(), room.getEntityId(),
+                                data.getStickerInfo(), data.getLocalId());
+                    } else {
+                        List<MentionObject> mentions = data.getMentions();
+                        messageId = messageListModel.sendMessage(data.getLocalId(), data.getMessage(), mentions);
+                    }
+
+                    int position = adapterModel.getDummyMessagePositionByLocalId(data.getLocalId());
+                    if (position >= 0) {
+                        adapterModel.getItem(position).messageId = messageId;
+                    }
+
+                    if (messageId > 0) {
+                        if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
+                            // 소켓이 안 붙어 있으면 임의로 갱신 요청
+                            addNewMessageQueue(true);
+                        }
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(container -> view.refreshMessages());
+    }
+
+    private Observable<MessageContainer> composeNewMessageFromLocal(Observable<MessageContainer> observable) {
+        return observable
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(container -> view.updateRecyclerViewInfo())
+                .observeOn(Schedulers.io())
+                .filter(container -> view != null || adapterModel != null)
+                .map(container -> {
+                    ResMessages.Link item = adapterModel.getItem(adapterModel.getCount() - 1 - adapterModel.getDummyMessageCount());
+
+                    long minId = -1;
+                    if (item != null) {
+                        minId = item.id + 1;
+                    }
+
+                    List<ResMessages.Link> messages = MessageRepository.getRepository().getMessages(room.getRoomId(), minId, Integer.MAX_VALUE);
+                    messageListModel.presetTextContent(messages);
+                    return Pair.create(container, messages);
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(pair -> addMessages(pair.second, currentMessageState.isFirstLoadNewMessage(), new ArrayList<>()))
+                .observeOn(Schedulers.io())
+                .doOnNext(pair -> {
+                    if (pair.second.size() > 0) {
+                        long lastLinkId = pair.second.get(pair.second.size() - 1).id;
+                        messageListModel.upsertMyMarker(room.getRoomId(), lastLinkId);
+
+                        addMarkerQueue();
+                    }
+                })
+                .map(pair -> pair.first);
+    }
+
+    private Observable<NewMessageContainer> composeNewMessage(Observable<MessageContainer> observable) {
+        return observable.cast(NewMessageContainer.class)
+                .observeOn(Schedulers.io())
+                .doOnNext(this::loadNewMessage);
+    }
+
+    private Observable<OldMessageContainer> composeOldMessage(Observable<MessageContainer> observable) {
+        return observable.cast(OldMessageContainer.class)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(oldMessageContainer -> {
+                    if (!oldMessageContainer.getData().isFirstLoadOldMessage()) {
+                        view.showOldLoadProgress();
+                    }
+                })
+                .observeOn(Schedulers.io())
+                .map(oldMessageContainer1 -> {
+                    long roomId = room.getRoomId();
+                    ResMessages.Link item = adapterModel.getItem(0);
+                    long linkId;
+                    if (item != null) {
+                        linkId = item.id;
+                    } else {
+                        linkId = -1;
+                    }
+
+                    return Pair.create(oldMessageContainer1, messageRepositoryModel.getMessages(roomId, linkId));
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(pair -> {
+                    List<ResMessages.Link> messages = pair.second;
+                    if (messages == null
+                            || messages.isEmpty()) {
+
+                        view.dismissProgressWheel();
+                        view.dismissProgressView();
+                        view.dismissOldLoadProgress();
+
+                        if (pair.first.getData().isFirstLoadOldMessage()) {
+                            view.showEmptyView(true);
+                        }
+
+                    }
+                })
+                .observeOn(Schedulers.io())
+                .doOnNext(pair -> {
+                    if (pair.second.isEmpty()) {
+                        return;
+                    }
+                    messageListModel.sortByTime(pair.second);
+                    messageListModel.presetTextContent(pair.second);
+
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(pair -> {
+                    if (pair.second.isEmpty()) {
+                        return;
+                    }
+                    view.dismissProgressWheel();
+                    view.dismissProgressView();
+                    view.dismissOldLoadProgress();
+
+                    boolean isFirstLoad = adapterModel.getCount() <= 0;
+
+                    if (!isFirstLoad) {
+                        view.updateRecyclerViewInfo();
+                    }
+
+                    if (adapterModel.getCount() - adapterModel.getDummyMessageCount() == 0) {
+                        adapterModel.removeAllDummy();
+                    }
+
+                    boolean isFirstMessage = pair.second.size() < MessageRepositoryModel.MAX_COUNT;
+                    adapterModel.addAll(0, pair.second);
+                    view.refreshMessages();
+                    if (!isFirstMessage) {
+                        adapterModel.setOldLoadingComplete();
+                    } else {
+                        adapterModel.setOldNoMoreLoading();
+                    }
+                    // TODO 처음 Scroll 을 위한 변수 수정, AdapterModel.getCount == 0
+                    view.setUpOldMessage(isFirstLoad);
+
+                    currentMessageState.setIsFirstLoadOldMessage(false);
+                    currentMessageState.setIsFirstMessage(isFirstMessage);
+                })
+                .doOnNext(pair -> {
+                    if (pair.second.isEmpty()) {
+                        return;
+                    }
+                    int count = pair.second.size() - 1;
+                    ResMessages.Link lastLink = pair.second.get(count);
+                    long myId = TeamInfoLoader.getInstance().getMyId();
+                    Marker myMarker = RoomMarkerRepository.getInstance().getMarker(room.getRoomId(), myId);
+
+                    if (myMarker == null || myMarker.getReadLinkId() < lastLink.id) {
+                        addMarkerQueue();
+                        messageListModel.upsertMyMarker(room.getRoomId(), lastLink.id);
+                    }
+                })
+                .doOnError(t -> {
+                    view.dismissProgressWheel();
+                    view.dismissProgressView();
+                    view.dismissOldLoadProgress();
+
+                    if (currentMessageState.isFirstMessage()) {
+                        view.showEmptyView(true);
+                    }
+                })
+                .map(pair -> pair.first);
     }
 
     public void onDetermineUserStatus() {
@@ -352,142 +557,6 @@ public class MessageListV2Presenter {
         addQueue(sendingMessageQueue);
     }
 
-    private void loadOldMessage(long teamId, long roomId, long linkId, boolean isFirst,
-                                boolean isCacheMode) {
-
-        if (!isFirst) {
-            view.showOldLoadProgress();
-        }
-
-        ResMessages resOldMessage;
-
-        try {
-            int messagesCount = linkId > 0
-                    ? MessageRepository.getRepository().getMessagesCount(roomId, linkId)
-                    : MessageManipulator.NUMBER_OF_MESSAGES;
-
-            // 모든 요청은 dummy 가 아닌 실제 데이터 기준...
-            int max = Math.max(MessageManipulator.NUMBER_OF_MESSAGES, messagesCount);
-            int offset = Math.min(max, MessageManipulator.MAX_OF_MESSAGES);
-
-            resOldMessage =
-                    loadOldMessagesFromDatabase(roomId, linkId, isFirst, offset);
-
-            if (resOldMessage == null) {
-                resOldMessage = loadOldMessagesFromServer(teamId, linkId, isFirst, offset);
-
-                if (isCacheMode && resOldMessage != null) {
-                    messageListModel.upsertMessages(resOldMessage);
-                }
-            } else if (resOldMessage.records.size() < offset) {
-                resOldMessage = loadMoreOldMessagesFromServer(resOldMessage, offset, isCacheMode);
-            }
-
-            if (resOldMessage == null
-                    || resOldMessage.records == null
-                    || resOldMessage.records.isEmpty()) {
-
-                view.dismissProgressWheel();
-                view.dismissProgressView();
-                view.dismissOldLoadProgress();
-
-                if (isFirst) {
-                    view.showEmptyView(true);
-                }
-
-            } else {
-                List<ResMessages.Link> records = resOldMessage.records;
-                messageListModel.sortByTime(records);
-
-                long firstLinkIdInMessage = records.get(0).id;
-                currentMessageState.setIsFirstLoadOldMessage(false);
-                boolean isFirstMessage = resOldMessage.firstLinkId == firstLinkIdInMessage;
-                currentMessageState.setIsFirstMessage(isFirstMessage);
-
-                view.dismissProgressWheel();
-                view.dismissProgressView();
-                view.dismissOldLoadProgress();
-
-                if (!isFirst) {
-                    view.updateRecyclerViewInfo();
-                }
-
-                messageListModel.presetTextContent(resOldMessage.records);
-                adapterModel.addAll(0, resOldMessage.records);
-                view.refreshMessages();
-                if (!isFirstMessage) {
-                    adapterModel.setOldLoadingComplete();
-                } else {
-                    adapterModel.setOldNoMoreLoading();
-                }
-                view.setUpOldMessage(isFirst);
-
-                int count = resOldMessage.records.size() - 1;
-                ResMessages.Link lastLink = resOldMessage.records.get(count);
-                long myId = TeamInfoLoader.getInstance().getMyId();
-                Marker myMarker = RoomMarkerRepository.getInstance().getMarker(room.getRoomId(), myId);
-
-                if (myMarker.getReadLinkId() < lastLink.id) {
-                    addMarkerQueue();
-                    messageListModel.upsertMyMarker(room.getRoomId(), lastLink.id);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            view.dismissProgressWheel();
-            view.dismissProgressView();
-            view.dismissOldLoadProgress();
-
-            if (isFirst) {
-                view.showEmptyView(true);
-            }
-        }
-    }
-
-    private void loadOldMessage(OldMessageContainer messageContainer) {
-
-        long teamId = room.getTeamId();
-        long roomId = room.getRoomId();
-        ResMessages.Link item = adapterModel.getItem(0);
-        long linkId;
-        if (item != null) {
-            linkId = item.id;
-        } else {
-            linkId = -1;
-        }
-        boolean isFirstLoad = messageContainer.getData().isFirstLoadOldMessage();
-        boolean isCacheMode = messageContainer.isCacheMode();
-
-        loadOldMessage(teamId, roomId, linkId, isFirstLoad, isCacheMode);
-
-    }
-
-    @NonNull
-    private ResMessages loadMoreOldMessagesFromServer(ResMessages resOldMessage,
-                                                      int offset,
-                                                      boolean isCacheMode)
-            throws RetrofitException {
-        try {
-            // 캐시된 데이터가 부족한 경우
-            ResMessages.Link firstLink =
-                    resOldMessage.records.get(resOldMessage.records.size() - 1);
-            ResMessages addOldMessage =
-                    messageListModel.getOldMessage(firstLink.id, offset);
-
-            if (isCacheMode) {
-                messageListModel.upsertMessages(addOldMessage);
-            }
-
-            addOldMessage.records.addAll(resOldMessage.records);
-
-            resOldMessage = addOldMessage;
-        } catch (RetrofitException retrofitError) {
-            checkInvalidTopic(retrofitError.getResponseCode());
-            retrofitError.printStackTrace();
-        }
-        return resOldMessage;
-    }
-
     private void checkInvalidTopic(int responseCode) {
         if (responseCode == 40300) {
             view.showInvalidEntityToast();
@@ -495,68 +564,10 @@ public class MessageListV2Presenter {
         }
     }
 
-    @Nullable
-    private ResMessages loadOldMessagesFromServer(long teamId, long linkId,
-                                                  boolean isFirst, int offset)
-            throws RetrofitException {
-        ResMessages resOldMessage = null;
-        // 캐시가 없는 경우
-        if (!isFirst) {
-            // 요청한 링크 ID 이전 값 가져오기
-            try {
-                resOldMessage = messageListModel.getOldMessage(linkId, offset);
-            } catch (RetrofitException retrofitError) {
-                checkInvalidTopic(retrofitError.getResponseCode());
-                retrofitError.printStackTrace();
-            }
-        } else {
-            // 첫 요청이라 판단
-            // 마커 기준 위아래 값 요청
-            resOldMessage = messageListModel.getBeforeMarkerMessage(messagePointer.getLastReadLinkId());
-            if (resOldMessage != null
-                    && resOldMessage.records != null
-                    && resOldMessage.records.size() > 0) {
-                if (resOldMessage.records.get(resOldMessage.records.size() - 1).id == linkId) {
-                    messagePointer.setLastReadLinkId(-1);
-                }
-                adapterModel.removeAllDummy();
-                view.refreshMessages();
-                messageListModel.deleteCompletedSendingMessage(resOldMessage.entityId);
-            }
-            // 첫 대화인 경우 해당 채팅방의 보내는 중인 메세지 캐시 데이터 삭제함
-        }
-        return resOldMessage;
-    }
-
-    private ResMessages loadOldMessagesFromDatabase(long roomId, long linkId,
-                                                    boolean firstLoad, int offset) {
-        ResMessages resOldMessage = null;
-
-        List<ResMessages.Link> oldMessages = messageListModel.loadOldMessages(
-                roomId,
-                linkId,
-                firstLoad,
-                offset);
-
-        if (oldMessages != null && !oldMessages.isEmpty()) {
-            resOldMessage = new ResMessages();
-            // 현재 챗의 첫 메세지가 아니라고 하기 위함
-            resOldMessage.firstLinkId = -1;
-            // 마커 업로드를 하지 않기 위함
-            resOldMessage.lastLinkId = oldMessages.get(0).id;
-            resOldMessage.entityId = roomId;
-            resOldMessage.records = oldMessages;
-        }
-
-        return resOldMessage;
-    }
-
     private void loadNewMessage(NewMessageContainer messageContainer) {
-        MessageState data = messageContainer.getData();
         long lastUpdateLinkId = MessageRepository.getRepository()
                 .getLastMessageWitoutDirty(room.getRoomId()).id;
 
-        long teamId = room.getTeamId();
         long roomId = room.getRoomId();
         ResMessages.Link item = adapterModel.getItem(0);
         long firstCursorLinkId;
@@ -566,29 +577,6 @@ public class MessageListV2Presenter {
             firstCursorLinkId = -1;
         }
         int currentItemCount = adapterModel.getCount();
-
-        if (lastUpdateLinkId < 0) {
-            messageListModel.deleteAllDummyMessageAtDatabase(room.getRoomId());
-
-            boolean firstLoadOldMessage = messageContainer.getData().isFirstLoadOldMessage();
-            loadOldMessage(teamId, roomId, lastUpdateLinkId, firstLoadOldMessage, true);
-
-            lastUpdateLinkId = MessageRepository.getRepository()
-                    .getLastMessageWitoutDirty(room.getRoomId()).id;
-
-            currentItemCount = MessageRepository.getRepository()
-                    .getMessagesCount(roomId, firstCursorLinkId);
-
-        }
-
-
-        boolean moveToLink = data.isFirstLoadNewMessage();
-
-        boolean loadHistory = currentMessageState.loadHistory();
-
-        if (!loadHistory) {
-            moveToLink = true;
-        }
 
         List<ResMessages.Link> newMessages = getResUpdateMessages(lastUpdateLinkId);
 
@@ -632,7 +620,6 @@ public class MessageListV2Presenter {
                 }
             }
 
-            int size = newMessages.size();
             long minLinkId = -1;
             ResMessages.Link lastItem = adapterModel.getItem(adapterModel.getCount() - adapterModel.getDummyMessageCount() - 1);
             if (lastItem != null) {
@@ -850,33 +837,6 @@ public class MessageListV2Presenter {
             SendingMessageContainer messageQueue = new SendingMessageContainer(sendingMessage);
             addQueue(messageQueue);
         }
-    }
-
-    private void sendMessage(SendingMessageContainer messageContainer) {
-        SendingMessage data = messageContainer.getData();
-        long messageId;
-        if (data.getStickerInfo() != null) {
-            messageId = messageListModel.sendStickerMessage(room.getTeamId(), room.getEntityId(),
-                    data.getStickerInfo(), data.getLocalId());
-        } else {
-            List<MentionObject> mentions = data.getMentions();
-            messageId = messageListModel.sendMessage(data.getLocalId(), data.getMessage(), mentions);
-        }
-
-        int position = adapterModel.getDummyMessagePositionByLocalId(data.getLocalId());
-        if (position >= 0) {
-            adapterModel.getItem(position).messageId = messageId;
-        }
-
-
-        if (messageId > 0) {
-            if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
-                // 소켓이 안 붙어 있으면 임의로 갱신 요청
-                addNewMessageQueue(true);
-            }
-        }
-
-        view.refreshMessages();
     }
 
     public void restoreStatus() {
@@ -1124,7 +1084,7 @@ public class MessageListV2Presenter {
 
     }
 
-    public void updateStarredOfMessage(int messageId, boolean starred) {
+    public void updateStarredOfMessage(long messageId, boolean starred) {
         int index = adapterModel.indexByMessageId(messageId);
         adapterModel.modifyStarredStateByPosition(index, starred);
         view.refreshMessages();
@@ -1136,36 +1096,6 @@ public class MessageListV2Presenter {
             onInitMessages(true);
         }
 
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    void addNewMessageFromLocal() {
-        if (view == null || adapterModel == null) {
-            return;
-        }
-        view.updateRecyclerViewInfo();
-
-        ResMessages.Link item = adapterModel.getItem(adapterModel.getCount() - 1 - adapterModel.getDummyMessageCount());
-
-        long minId = -1;
-        if (item != null) {
-            minId = item.id + 1;
-        }
-
-        List<ResMessages.Link> messages = MessageRepository.getRepository().getMessages(room.getRoomId(), minId, Integer.MAX_VALUE);
-        messageListModel.presetTextContent(messages);
-        addMessages(messages, currentMessageState.isFirstLoadNewMessage(), new ArrayList<>());
-
-        Observable.just(new Object())
-                .observeOn(Schedulers.io())
-                .subscribe(o -> {
-                    if (messages.size() > 0) {
-                        long lastLinkId = messages.get(messages.size() - 1).id;
-                        messageListModel.upsertMyMarker(room.getRoomId(), lastLinkId);
-
-                        addMarkerQueue();
-                    }
-                });
     }
 
     private void addMarkerQueue() {

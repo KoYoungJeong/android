@@ -15,7 +15,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
-import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -62,7 +62,7 @@ public class ChatDetailFragment extends Fragment {
     @AfterViews
     void initViews() {
         setUpActionbar();
-        boolean isStarred = TeamInfoLoader.getInstance().isChatStarred(entityId);
+        boolean isStarred = TeamInfoLoader.getInstance().isStarredUser(entityId);
         setStarred(isStarred);
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MessageDescription);
 
@@ -114,7 +114,7 @@ public class ChatDetailFragment extends Fragment {
 
     public void onEvent(MemberStarredEvent event) {
         if (event.getId() == entityId) {
-            boolean isStarred = TeamInfoLoader.getInstance().isChatStarred(entityId);
+            boolean isStarred = TeamInfoLoader.getInstance().isStarredUser(entityId);
             setStarred(isStarred);
         }
     }
@@ -122,7 +122,7 @@ public class ChatDetailFragment extends Fragment {
     @Background
     @Click(R.id.vg_chat_detail_starred)
     void onChatStarClick() {
-        boolean isStarred = TeamInfoLoader.getInstance().isChatStarred(entityId);
+        boolean isStarred = TeamInfoLoader.getInstance().isStarredUser(entityId);
 
         try {
 
@@ -140,9 +140,7 @@ public class ChatDetailFragment extends Fragment {
                 showSuccessToast(getString(R.string.jandi_message_starred));
             }
 
-            long chatId = TeamInfoLoader.getInstance().getChatId(entityId);
-
-            ChatRepository.getInstance().updateStarred(chatId, !isStarred);
+            HumanRepository.getInstance().updateStarred(entityId, !isStarred);
             TeamInfoLoader.getInstance().refresh();
 
             setStarred(!isStarred);

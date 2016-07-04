@@ -18,8 +18,6 @@ public interface Room {
 
     int getUnreadCount();
 
-    boolean isStarred();
-
     boolean isEnabled();
 
     boolean isPublicTopic();

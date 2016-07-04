@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 
@@ -65,6 +66,20 @@ public class InitialInfoRepository extends LockExecutorTemplate {
             try {
                 Dao<InitialInfo, Long> dao = getHelper().getDao(InitialInfo.class);
                 return dao.deleteById(teamId) > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+    }
+
+    public boolean clear() {
+        return execute(() -> {
+            try {
+                Dao<InitialInfo, Object> dao = getDao(InitialInfo.class);
+                DeleteBuilder<InitialInfo, Object> deleteBuilder = dao.deleteBuilder();
+                return deleteBuilder.delete() > 0;
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }

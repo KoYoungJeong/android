@@ -24,6 +24,8 @@ public class JandiProfileTransform implements Transformation<Bitmap> {
     private int borderColor = Integer.MAX_VALUE;
     private int backgroundColor = Integer.MAX_VALUE;
 
+    private String transformId;
+
     public JandiProfileTransform(Context context) {
         this(context,
                 TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
@@ -45,6 +47,8 @@ public class JandiProfileTransform implements Transformation<Bitmap> {
         this.borderWidth = borderWidth;
         this.borderColor = borderColor;
         this.backgroundColor = bgColor;
+
+        transformId = "JandiProfileTransform/" + backgroundColor + "/" + borderColor + "/" + borderWidth;
     }
 
     @Override
@@ -103,6 +107,6 @@ public class JandiProfileTransform implements Transformation<Bitmap> {
 
     @Override
     public String getId() {
-        return "JandiProfileTransform";
+        return transformId;
     }
 }

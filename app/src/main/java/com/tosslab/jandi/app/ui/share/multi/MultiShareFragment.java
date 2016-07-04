@@ -22,7 +22,7 @@ import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
 import com.tosslab.jandi.app.services.upload.UploadNotificationActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
-import com.tosslab.jandi.app.ui.intro.IntroActivity_;
+import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.share.MainShareActivity;
 import com.tosslab.jandi.app.ui.share.multi.adapter.ShareAdapterDataView;
 import com.tosslab.jandi.app.ui.share.multi.adapter.ShareFragmentPageAdapter;
@@ -30,7 +30,7 @@ import com.tosslab.jandi.app.ui.share.multi.dagger.DaggerMultiShareComponent;
 import com.tosslab.jandi.app.ui.share.multi.dagger.MultiShareModule;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenter;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
-import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity_;
+import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -173,9 +173,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @OnClick(R.id.vg_multi_share_team)
     void onTeamNameClick() {
-        ShareSelectTeamActivity_
-                .intent(this)
-                .startForResult(REQ_SELECT_TEAM);
+        startActivity(new Intent(getActivity(), ShareSelectTeamActivity.class));
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TeamSelect);
     }
@@ -216,9 +214,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @Override
     public void moveIntro() {
-        IntroActivity_.intent(getActivity())
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                .start();
+        IntroActivity.startActivity(getActivity(), false);
 
         getActivity().finish();
 

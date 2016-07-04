@@ -75,7 +75,7 @@ public class ViewPagerIndicator extends View {
         indicatorCount = a.getInt(R.styleable.ViewPagerIndicator_indicatorCount, indicatorCount);
 
         indicatorMargin = a.getDimensionPixelSize(R.styleable.ViewPagerIndicator_indicatorMargin, indicatorMargin);
-        indicatorWidth = a.getDimensionPixelSize(R.styleable.ViewPagerIndicator_indicatorWidth, indicatorMargin);
+        indicatorWidth = a.getDimensionPixelSize(R.styleable.ViewPagerIndicator_indicatorWidth, indicatorWidth);
 
         a.recycle();
 

@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.start.Human;
+import com.tosslab.jandi.app.network.models.start.Topic;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -73,7 +74,7 @@ public class EntityClientManager {
                 .inject(this);
     }
 
-    public ResCommon createPublicTopic(String entityName, String topicDescription, boolean isAutojoin) throws RetrofitException {
+    public Topic createPublicTopic(String entityName, String topicDescription, boolean isAutojoin) throws RetrofitException {
         final ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
         reqCreateTopic.teamId = selectedTeamId;
         reqCreateTopic.name = entityName;
@@ -82,7 +83,7 @@ public class EntityClientManager {
         return channelApi.get().createChannel(selectedTeamId, reqCreateTopic);
     }
 
-    public ResCommon createPrivateGroup(String entityName, String topicDescription, boolean isAutojoin) throws RetrofitException {
+    public Topic createPrivateGroup(String entityName, String topicDescription, boolean isAutojoin) throws RetrofitException {
         final ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
         reqCreateTopic.teamId = selectedTeamId;
         reqCreateTopic.name = entityName;

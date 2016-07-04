@@ -2,71 +2,87 @@ package com.tosslab.jandi.app.ui.intro;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
+import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.intro.dagger.DaggerIntroComponent;
+import com.tosslab.jandi.app.ui.intro.dagger.IntroModule;
 import com.tosslab.jandi.app.ui.intro.presenter.IntroActivityPresenter;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.sign.SignHomeActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
-import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.Fullscreen;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
+import javax.inject.Inject;
 
-/**
- * Created by justinygchoi on 14. 11. 6..
- * 크게 3가지 체크가 이루어진다.
- * 1. 업데이트 해야할 최신 버전이 마켓에 업데이트되어 있으면 업데이트 안내가 뜬다.
- * 2. 자동 로그인 여부를 체크하여 이동한다.
- */
-@Fullscreen
-@EActivity(R.layout.activity_intro)
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class IntroActivity extends BaseAppCompatActivity implements IntroActivityPresenter.View {
 
-    @Extra
+    private static final String EXTRA_START_FOR_INVITE = "startForInvite";
     boolean startForInvite = false;
 
-    @ViewById(R.id.iv_jandi_icon)
+    @Bind(R.id.iv_jandi_icon)
     ImageView ivJandiIcon;
 
-    @Bean
+    @Inject
     IntroActivityPresenter presenter;
+
+    public static void startActivity(Context context, boolean startForInvite) {
+        Intent intent = new Intent(context, IntroActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(EXTRA_START_FOR_INVITE, startForInvite);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().setFlags(LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_intro);
         setNeedUnLockPassCode(false);
         setShouldReconnectSocketService(false);
+
+        ButterKnife.bind(this);
+        DaggerIntroComponent.builder()
+                .introModule(new IntroModule(this))
+                .build()
+                .inject(this);
+
+        initExtra();
+
+        startOn();
     }
 
-    @AfterViews
+    private void initExtra() {
+        Intent intent = getIntent();
+        if (intent != null) {
+            startForInvite = intent.getBooleanExtra(EXTRA_START_FOR_INVITE, false);
+        }
+    }
+
     void startOn() {
-        presenter.setView(this);
-        presenter.checkNewVersion(getApplicationContext(), startForInvite);
+        presenter.checkNewVersion(startForInvite);
         JandiPreference.setLastExecutedTime(System.currentTimeMillis());
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveTeamSelectActivity() {
-        Intent intent = AccountHomeActivity_.intent(IntroActivity.this).get();
+        Intent intent = AccountHomeActivity.getActivity(IntroActivity.this, false);
         startActivityWithAnimationAndFinish(intent);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveToMainActivity() {
         Intent intent = MainTabActivity_.intent(IntroActivity.this)
@@ -76,7 +92,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
         startActivityWithAnimationAndFinish(intent);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveToSignHomeActivity() {
         Intent intent = new Intent(IntroActivity.this, SignHomeActivity.class);
@@ -114,20 +129,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
         overridePendingTransition(0, 0);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void showCheckNetworkDialog() {
-        AlertUtil.showConfirmDialog(IntroActivity.this,
-                R.string.jandi_msg_network_offline_warn, (dialog, which) -> finish(), false);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void showWarningToast(String message) {
-        ColoredToast.showWarning(message);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showMaintenanceDialog() {
         AlertUtil.showConfirmDialog(IntroActivity.this,
@@ -135,7 +136,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                 false);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showUpdateDialog() {
         AlertUtil.showConfirmDialog(IntroActivity.this, R.string.jandi_update_title,
@@ -154,7 +154,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                 false);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void finishOnUiThread() {
         finish();

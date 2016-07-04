@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
@@ -69,26 +70,33 @@ public class MyPageModel {
         }
 
         Observable.from(records)
-                .filter(mention -> mention.getLinkId() > 0 && mention.getRoom() != null && mention.getRoom().id > 0)
+                .filter(mention -> mention.getMessage() != null)
+                .filter(mention -> TeamInfoLoader.getInstance().isUser(mention.getMessage().writerId))
+                .filter(mention -> TeamInfoLoader.getInstance().isRoom(mention.getRoom().id))
                 .map(mentionMessage -> {
-                    User user =
-                            TeamInfoLoader.getInstance().getUser(
-                                    mentionMessage.getMessage().writerId);
-                    Room room =
-                            TeamInfoLoader.getInstance().getRoom(mentionMessage.getRoom().id);
+                    User user = TeamInfoLoader.getInstance()
+                            .getUser(mentionMessage.getMessage().writerId);
 
-                    if (TeamInfoLoader.getInstance().isTopic(room.getId())) {
-                        TopicRoom topicRoom = (TopicRoom) room;
-                        return MentionMessage.create(mentionMessage,
-                                topicRoom.getName(),
-                                user.getName(), user.getPhotoUrl());
+                    if (mentionMessage.getRoom().id > 0) {
+                        // message
+                        if (TeamInfoLoader.getInstance().isTopic(mentionMessage.getRoom().id)) {
+                            TopicRoom topic = TeamInfoLoader.getInstance().getTopic(mentionMessage.getRoom().id);
+                            return MentionMessage.create(mentionMessage,
+                                    topic.getName(),
+                                    user.getName(), user.getPhotoUrl());
+                        } else {
+                            Room room = TeamInfoLoader.getInstance().getRoom(mentionMessage.getRoom().id);
+                            DirectMessageRoom room1 = (DirectMessageRoom) room;
+                            long companionId = room1.getCompanionId();
+                            String userName = TeamInfoLoader.getInstance().getMemberName(companionId);
+                            return MentionMessage.create(mentionMessage,
+                                    userName,
+                                    user.getName(), user.getPhotoUrl());
+                        }
                     } else {
-                        String name = Observable.from(room.getMembers())
-                                .takeFirst(memberId -> memberId != TeamInfoLoader.getInstance().getMyId())
-                                .map(memberId -> TeamInfoLoader.getInstance().getUser(memberId).getName())
-                                .toBlocking()
-                                .firstOrDefault("");
-                        return MentionMessage.create(mentionMessage, name,
+                        // comment
+                        return MentionMessage.create(mentionMessage,
+                                mentionMessage.getMessage().feedbackTitle,
                                 user.getName(), user.getPhotoUrl());
                     }
 

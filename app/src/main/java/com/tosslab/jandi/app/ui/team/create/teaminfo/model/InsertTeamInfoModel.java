@@ -27,6 +27,8 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import dagger.Lazy;
 import rx.Observable;
 
@@ -41,6 +43,7 @@ public class InsertTeamInfoModel {
     private Lazy<ValidationApi> validationApi;
     private Lazy<TeamApi> teamApi;
 
+    @Inject
     public InsertTeamInfoModel(Lazy<TeamApi> teamApi,
                                Lazy<ValidationApi> validationApi,
                                Lazy<AccountApi> accountApi,

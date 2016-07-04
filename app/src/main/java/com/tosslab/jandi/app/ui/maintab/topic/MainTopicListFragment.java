@@ -369,6 +369,14 @@ public class MainTopicListFragment extends Fragment
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        mainTopicListPresenter.refreshList();
+        mainTopicListPresenter.onRefreshUpdatedTopicList();
+    }
+
+    @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
@@ -508,25 +516,37 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEvent(RetrieveTopicListEvent event) {
-        mainTopicListPresenter.refreshList();
-        mainTopicListPresenter.onRefreshUpdatedTopicList();
+        if (isResumed()) {
+            mainTopicListPresenter.refreshList();
+            mainTopicListPresenter.onRefreshUpdatedTopicList();
+        }
     }
 
     public void onEvent(TopicFolderRefreshEvent event) {
+        if (!isResumed()) {
+            return;
+        }
         mainTopicListPresenter.refreshList();
     }
 
     public void onEvent(SocketTopicPushEvent event) {
-        mainTopicListPresenter.refreshList();
-        mainTopicListPresenter.onRefreshUpdatedTopicList();
+        if (isResumed()) {
+            mainTopicListPresenter.refreshList();
+            mainTopicListPresenter.onRefreshUpdatedTopicList();
+        }
     }
 
     public void onEvent(TopicInfoUpdateEvent event) {
-        mainTopicListPresenter.refreshList();
-        mainTopicListPresenter.onRefreshUpdatedTopicList();
+        if (isResumed()) {
+            mainTopicListPresenter.refreshList();
+            mainTopicListPresenter.onRefreshUpdatedTopicList();
+        }
     }
 
     public void onEvent(SocketMessageDeletedEvent event) {
+        if (!isResumed()) {
+            return;
+        }
         if (isCurrentFolder()) {
             mainTopicListPresenter.refreshList();
         } else {
@@ -535,6 +555,9 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEvent(SocketRoomMarkerEvent event) {
+        if (!isResumed()) {
+            return;
+        }
         if (isCurrentFolder()) {
             mainTopicListPresenter.refreshList();
         } else {
@@ -543,6 +566,9 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEvent(SocketMessageCreatedEvent event) {
+        if (!isResumed()) {
+            return;
+        }
         if (isCurrentFolder()) {
             mainTopicListPresenter.refreshList();
         } else {

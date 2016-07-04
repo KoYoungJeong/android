@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import rx.Observable;
 import setup.BaseInitUtil;
 
+import static junit.framework.Assert.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
@@ -86,8 +87,12 @@ public class TopicDetailModelTest {
         }
 
         {
-            boolean autoJoin = topicDetailModel.isAutoJoin(-1);
-            assertThat(autoJoin, is(false));
+            try {
+                topicDetailModel.isAutoJoin(-1);
+                fail("It cannot occured");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }

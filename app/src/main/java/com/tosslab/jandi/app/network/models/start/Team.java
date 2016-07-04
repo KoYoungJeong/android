@@ -12,8 +12,6 @@ public class Team {
     @DatabaseField(id = true)
     private long id;
     @DatabaseField
-    private String type;
-    @DatabaseField
     private String name;
     @DatabaseField
     private String status;
@@ -36,14 +34,6 @@ public class Team {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getName() {
@@ -114,7 +104,6 @@ public class Team {
     public String toString() {
         return "Team{" +
                 "id=" + id +
-                ", type='" + type + '\'' +
                 ", name='" + name + '\'' +
                 ", status='" + status + '\'' +
                 ", domain='" + domain + '\'' +

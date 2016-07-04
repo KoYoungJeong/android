@@ -2,20 +2,29 @@ package com.tosslab.jandi.app.services.socket.to;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
+
 /**
  * Created by tee on 16. 2. 5..
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @Version(1)
-public class SocketFileShareEvent {
+public class SocketFileShareEvent implements EventHistoryInfo {
     private String event;
     private int version;
     private long teamId;
     private long writer;
     private FileObject file;
+    private long ts;
 
+    @Override
+    public long getTs() {
+        return ts;
+    }
+
+    @Override
     public String getEvent() {
         return event;
     }
@@ -24,6 +33,7 @@ public class SocketFileShareEvent {
         this.event = event;
     }
 
+    @Override
     public int getVersion() {
         return version;
     }
@@ -32,6 +42,7 @@ public class SocketFileShareEvent {
         this.version = version;
     }
 
+    @Override
     public long getTeamId() {
         return teamId;
     }
@@ -70,7 +81,7 @@ public class SocketFileShareEvent {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    public class FileObject {
+    public static class FileObject {
         private long id;
 
         public long getId() {

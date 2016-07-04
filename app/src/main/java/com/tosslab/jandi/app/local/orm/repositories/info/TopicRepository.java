@@ -284,6 +284,11 @@ public class TopicRepository extends LockExecutorTemplate {
                 Dao<Topic, Long> topicDao = getHelper().getDao(Topic.class);
 
                 Topic topic = topicDao.queryForId(topicId);
+
+                if (topic == null) {
+                    return true;
+                }
+
                 Topic.Announcement announcement = topic.getAnnouncement();
                 if (announcement == null) {
                     return true;
@@ -312,7 +317,8 @@ public class TopicRepository extends LockExecutorTemplate {
                 InitialInfo initialInfo = new InitialInfo();
                 initialInfo.setTeamId(topic.getTeamId());
                 topic.setInitialInfo(initialInfo);
-                return dao.create(topic) > 0;
+                dao.createIfNotExists(topic);
+                return true;
             } catch (SQLException e) {
                 e.printStackTrace();
             }

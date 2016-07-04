@@ -6,6 +6,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,9 +29,6 @@ import com.tosslab.jandi.app.utils.image.transform.TransformConfig;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-/**
- * Created by tonyjs on 16. 3. 17..
- */
 public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
 
     @Bind(R.id.iv_mention_message_profile)
@@ -47,6 +45,8 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
     TextView tvMentionContent;
     @Bind(R.id.tv_mention_message_topic_name)
     TextView tvTopicName;
+    @Bind(R.id.iv_mention_message_file_icon)
+    View ivFileIcon;
 
     private int topMarginForIvProfile;
 
@@ -73,10 +73,16 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
     private void bindContent(MentionMessage mentionMessage) {
         if ("comment".equals(mentionMessage.getContentType())) {
             tvTopicName.setText(mentionMessage.getFeedbackTitle());
+            tvTopicName.setEllipsize(TextUtils.TruncateAt.MIDDLE);
+            ivFileIcon.setVisibility(View.VISIBLE);
         } else if ("file".equals(mentionMessage.getContentType())) {
             tvTopicName.setText(mentionMessage.getContentTitle());
+            tvTopicName.setEllipsize(TextUtils.TruncateAt.END);
+            ivFileIcon.setVisibility(View.GONE);
         } else {
             tvTopicName.setText(mentionMessage.getRoomName());
+            tvTopicName.setEllipsize(TextUtils.TruncateAt.END);
+            ivFileIcon.setVisibility(View.GONE);
         }
 
         SpannableStringBuilder ssb = new SpannableStringBuilder(mentionMessage.getContentBody());

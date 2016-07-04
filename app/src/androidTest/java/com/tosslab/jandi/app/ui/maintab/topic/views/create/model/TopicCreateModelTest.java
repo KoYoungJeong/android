@@ -3,12 +3,15 @@ package com.tosslab.jandi.app.ui.maintab.topic.views.create.model;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
+import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
-import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 
@@ -24,6 +27,7 @@ import setup.BaseInitUtil;
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -54,27 +58,24 @@ public class TopicCreateModelTest {
     public void testCreateTopic() throws Exception {
         {
             // When
-            String topicName = "haha";
+            String topicName = "haha_" + new Date().toString();
             String topicDescription = "haha2";
-            ResCommon topic = topicCreateModel.createTopic(topicName, true, topicDescription, true);
+            Topic topic = topicCreateModel.createTopic(topicName, true, topicDescription, true);
 
             // Then
-            TopicRoom topicRoom = TeamInfoLoader.getInstance().getTopic(topic.id);
-            assertThat(topicRoom, is(notNullValue()));
-            assertThat(topicRoom.getName(), is(equalTo(topicName)));
-            assertThat(topicRoom.getDescription(), is(equalTo(topicDescription)));
-            assertThat(topicRoom.isAutoJoin(), is(true));
+            assertThat(topic, is(notNullValue()));
+            assertThat(topic.getId(), is(greaterThanOrEqualTo(0L)));
 
             // Restore
             new ChannelApi(RetrofitBuilder.getInstance())
-                    .deleteTopic(topic.id, new ReqDeleteTopic(TeamInfoLoader.getInstance().getTeamId()));
+                    .deleteTopic(topic.getId(), new ReqDeleteTopic(TeamInfoLoader.getInstance().getTeamId()));
         }
 
         {
             // When
             String topicName = "haha";
             String topicDescription = "haha2";
-            ResCommon topic = null;
+            Topic topic = null;
             try {
                 topic = topicCreateModel.createTopic(topicName, false, topicDescription, true);
                 fail("절대로 성공하면 안됨");
@@ -87,11 +88,13 @@ public class TopicCreateModelTest {
             // When
             String topicName = "haha" + new Date().toString();
             String topicDescription = "haha2" + new Date().toString();
-            ResCommon topic = topicCreateModel.createTopic(topicName, false, topicDescription, false);
-            Thread.sleep(200);
+            Topic topic = topicCreateModel.createTopic(topicName, false, topicDescription, false);
+            InitialInfo initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
+            InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+            TeamInfoLoader.getInstance().refresh();
 
             // Then
-            TopicRoom entity = TeamInfoLoader.getInstance().getTopic(topic.id);
+            TopicRoom entity = TeamInfoLoader.getInstance().getTopic(topic.getId());
             assertThat(entity, is(notNullValue()));
             assertThat(entity.getName(), is(equalTo(topicName)));
             assertThat(entity.getDescription(), is(equalTo(topicDescription)));
@@ -99,7 +102,7 @@ public class TopicCreateModelTest {
 
             // Restore
             new GroupApi(RetrofitBuilder.getInstance())
-                    .deleteGroup(TeamInfoLoader.getInstance().getTeamId(), topic.id);
+                    .deleteGroup(TeamInfoLoader.getInstance().getTeamId(), topic.getId());
         }
 
     }

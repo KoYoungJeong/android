@@ -26,7 +26,6 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
-import com.tosslab.jandi.app.events.ServiceMaintenanceEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
@@ -49,6 +48,7 @@ import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -197,6 +197,13 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
         initializeTeamsView();
+
+
+        User me = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
+        if (!me.isProfileUpdated()) {
+            moveSetProfileActivity();
+        }
+
     }
 
     private void initMainTabViewPager() {
@@ -336,9 +343,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     private boolean needInvitePopup() {
-        long teamId = AccountRepository.getRepository().getSelectedTeamId();
-        int memberCount = HumanRepository.getInstance().getMemberCount(teamId);
-        return JandiPreference.isInvitePopup(MainTabActivity.this) && memberCount > 0;
+        int memberCount = TeamInfoLoader.getInstance().getUserList().size();
+        return JandiPreference.isInvitePopup(MainTabActivity.this) && memberCount <= 1;
     }
 
     private void setupActionBar(String teamName) {
@@ -651,12 +657,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         }
         teamsPresenter.reInitializeTeams();
 
-    }
-
-    public void onEventMainThread(ServiceMaintenanceEvent event) {
-        AlertUtil.showConfirmDialog(MainTabActivity.this,
-                R.string.jandi_service_maintenance, (dialog, which) -> finish(),
-                false);
     }
 
     private void trackScreenView(int position) {

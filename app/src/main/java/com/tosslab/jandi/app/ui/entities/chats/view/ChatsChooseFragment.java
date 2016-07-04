@@ -18,6 +18,8 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
+import com.tosslab.jandi.app.events.team.TeamJoinEvent;
+import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapterDataView;
 import com.tosslab.jandi.app.ui.entities.chats.dagger.ChatChooseModule;
@@ -48,6 +50,9 @@ public class ChatsChooseFragment extends Fragment implements ChatChoosePresenter
 
     @Bind(R.id.layout_member_empty)
     View emptyMemberView;
+
+    @Bind(R.id.et_chat_choose_search)
+    TextView tvSearch;
     @Inject
     ChatChooseAdapterDataView chatChooseAdapterDataView;
     @Inject
@@ -132,6 +137,14 @@ public class ChatsChooseFragment extends Fragment implements ChatChoosePresenter
         getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
     }
 
+
+    public void onEvent(TeamJoinEvent event) {
+        presenter.onSearch(tvSearch.getText().toString());
+    }
+
+    public void onEvent(TeamLeaveEvent event) {
+        presenter.onSearch(tvSearch.getText().toString());
+    }
 
     public void onEventMainThread(ShowProfileEvent event) {
         MemberProfileActivity_.intent(getActivity())

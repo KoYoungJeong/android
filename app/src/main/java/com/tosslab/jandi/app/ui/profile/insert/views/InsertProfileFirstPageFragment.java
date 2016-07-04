@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
 import com.tosslab.jandi.app.ui.profile.insert.dagger.DaggerInsertProfileFirstPageComponent;
 import com.tosslab.jandi.app.ui.profile.insert.dagger.InsertProfileFirstPageModule;
 import com.tosslab.jandi.app.ui.profile.insert.presenter.InsertProfileFirstPagePresenter;
@@ -127,7 +128,6 @@ public class InsertProfileFirstPageFragment extends Fragment
         super.onResume();
         EventBus.getDefault().register(this);
         updateLocalProfileImage(photoFile);
-        JandiSocketService.startServiceIfNeed(getActivity().getApplication());
     }
 
     @Override
@@ -322,7 +322,10 @@ public class InsertProfileFirstPageFragment extends Fragment
 
     @Override
     public void showFailProfile() {
-        ColoredToast.showError(JandiApplication.getContext().getString(R.string.err_profile_get_info));
+        // TODO AccountHome, MainTab 각각의 접근하는 경우가 달라야 함
+        if (getActivity() instanceof InsertProfileActivity) {
+            ColoredToast.showError(JandiApplication.getContext().getString(R.string.err_profile_get_info));
+        }
     }
 
     @Override

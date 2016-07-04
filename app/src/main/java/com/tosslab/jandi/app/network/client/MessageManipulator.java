@@ -61,8 +61,8 @@ public class MessageManipulator {
     }
 
     public void initEntity(int entityType, long entityId) {
-        this.entityId = entityId;
         this.entityType = entityType;
+        this.entityId = entityId;
     }
 
     public ResMessages getMessages(final long firstItemId, int count) throws RetrofitException {
@@ -150,16 +150,16 @@ public class MessageManipulator {
     }
 
 
-    public ResMessages getBeforeMarkerMessage(long linkId) throws RetrofitException {
+    public ResMessages getBeforeMarkerMessage(long linkId, int maxCount) throws RetrofitException {
 
         switch (entityType) {
             case JandiConstants.TYPE_DIRECT_MESSAGE:
-                return directMessageApi.get().getDirectMarkerMessages(selectedTeamId, entityId, linkId);
+                return directMessageApi.get().getDirectMarkerMessages(selectedTeamId, entityId, linkId, maxCount);
             case JandiConstants.TYPE_PRIVATE_TOPIC:
-                return groupMessageApi.get().getGroupMarkerMessages(selectedTeamId, entityId, linkId);
+                return groupMessageApi.get().getGroupMarkerMessages(selectedTeamId, entityId, linkId, maxCount);
             case JandiConstants.TYPE_PUBLIC_TOPIC:
             default:
-                return channelMessageApi.get().getPublicTopicMarkerMessages(selectedTeamId, entityId, linkId);
+                return channelMessageApi.get().getPublicTopicMarkerMessages(selectedTeamId, entityId, linkId, maxCount);
 
         }
 

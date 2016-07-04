@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.profile.modify.presenter;
 
+import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
@@ -160,6 +161,7 @@ public class ModifyProfilePresenterImplTest {
         {
             User user = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
             presenter.onProfileChange(user);
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             Mockito.verify(mockView).displayProfile(Mockito.eq(user));
             Mockito.verify(mockView).closeDialogFragment();
         }

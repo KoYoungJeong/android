@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.Member;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
@@ -266,7 +267,11 @@ public class FileListPresenter {
                         }
                 );
         List<Member> users = new ArrayList<>();
-        users.addAll(teamInfoLoader.getUserList());
+        Observable.from(teamInfoLoader.getUserList())
+                .filter(User::isEnabled)
+                .filter(user -> !TeamInfoLoader.getInstance().isJandiBot(user.getId()))
+                .collect(() -> users, List::add)
+                .subscribe();
         if (teamInfoLoader.hasJandiBot()) {
             users.add(0, TeamInfoLoader.getInstance().getJandiBot());
         }

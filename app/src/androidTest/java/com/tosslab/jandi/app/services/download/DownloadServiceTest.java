@@ -1,9 +1,7 @@
 package com.tosslab.jandi.app.services.download;
 
-import android.app.Application;
 import android.content.Intent;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.ApplicationTestCase;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -19,10 +17,7 @@ import static org.mockito.Mockito.when;
  * Created by tonyjs on 15. 11. 18..
  */
 @RunWith(AndroidJUnit4.class)
-public class DownloadServiceTest extends ApplicationTestCase<Application> {
-    public DownloadServiceTest() {
-        super(Application.class);
-    }
+public class DownloadServiceTest {
 
     @Test
     public void testOnHandleIntentWithInvalidateArgs() throws Exception {

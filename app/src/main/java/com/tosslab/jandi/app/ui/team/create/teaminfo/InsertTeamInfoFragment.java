@@ -112,61 +112,49 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
 
     @Override
     public void showTeamNameLengthError() {
-        etInsertTeamName.setBackgroundDrawable(
-                getResources().getDrawable(R.drawable.profile_text_input2_bg_error_left));
-        tvTeamNameLength.setBackgroundDrawable(
-                getResources().getDrawable(R.drawable.profile_text_input2_bg_error_right));
+        etInsertTeamName.setBackgroundResource(R.drawable.profile_text_input2_bg_error_left);
+        tvTeamNameLength.setBackgroundResource(R.drawable.profile_text_input2_bg_error_right);
         tvTeamNameInsertError.setVisibility(View.VISIBLE);
-        tvTeamNameInsertError.setText(getString(R.string.jandi_team_create_name_length_invalid));
+        tvTeamNameInsertError.setText(R.string.jandi_team_create_name_length_invalid);
     }
 
     public void hideTeamNameError() {
-        etInsertTeamName.setBackgroundDrawable(
-                getResources().getDrawable(R.drawable.profile_text_input2_bg_left));
-        tvTeamNameLength.setBackgroundDrawable(
-                getResources().getDrawable(R.drawable.profile_text_input2_bg_right));
+        etInsertTeamName.setBackgroundResource(R.drawable.profile_text_input2_bg_left);
+        tvTeamNameLength.setBackgroundResource(R.drawable.profile_text_input2_bg_right);
         tvTeamNameInsertError.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void showTeamDomainInvalidUrlError() {
-        etInsertTeamDomain.setBackgroundDrawable(
-                getResources().getDrawable(R.drawable.profile_text_input2_bg_error_left));
-        tvDomainTail.setBackgroundDrawable(
-                getResources().getDrawable(R.drawable.profile_text_input2_bg_error_right));
+        etInsertTeamDomain.setBackgroundResource(R.drawable.profile_text_input2_bg_error_left);
+        tvDomainTail.setBackgroundResource(R.drawable.profile_text_input2_bg_error_right);
         tvTeamDomainInsertError.setVisibility(View.VISIBLE);
-        tvTeamDomainInsertError.setText(getString(R.string.jandi_team_create_domain_invalid));
+        tvTeamDomainInsertError.setText(R.string.jandi_team_create_domain_invalid);
         isShownTeamDomainError = true;
     }
 
     @Override
     public void showTeamDomainLengthError() {
-        etInsertTeamDomain.setBackgroundDrawable(
-                getResources().getDrawable(R.drawable.profile_text_input2_bg_error_left));
-        tvDomainTail.setBackgroundDrawable(
-                getResources().getDrawable(R.drawable.profile_text_input2_bg_error_right));
+        etInsertTeamDomain.setBackgroundResource(R.drawable.profile_text_input2_bg_error_left);
+        tvDomainTail.setBackgroundResource(R.drawable.profile_text_input2_bg_error_right);
         tvTeamDomainInsertError.setVisibility(View.VISIBLE);
-        tvTeamDomainInsertError.setText(getString(R.string.jandi_team_create_domain_length_invalid));
+        tvTeamDomainInsertError.setText(R.string.jandi_team_create_domain_length_invalid);
         isShownTeamDomainError = true;
     }
 
     @Override
     public void showTeamInvalidOrSameDomainError() {
-        etInsertTeamDomain.setBackgroundDrawable(
-                getResources().getDrawable(R.drawable.profile_text_input2_bg_error_left));
-        tvDomainTail.setBackgroundDrawable(
-                getResources().getDrawable(R.drawable.profile_text_input2_bg_error_right));
+        etInsertTeamDomain.setBackgroundResource(R.drawable.profile_text_input2_bg_error_left);
+        tvDomainTail.setBackgroundResource(R.drawable.profile_text_input2_bg_error_right);
         tvTeamDomainInsertError.setVisibility(View.VISIBLE);
-        tvTeamDomainInsertError.setText(getString(R.string.jandi_domain_is_already_taken));
+        tvTeamDomainInsertError.setText(R.string.jandi_domain_is_already_taken);
         isShownTeamDomainError = true;
     }
 
     public void hideTeamDomainError() {
         if (isShownTeamDomainError) {
-            etInsertTeamDomain.setBackgroundDrawable(
-                    getResources().getDrawable(R.drawable.profile_text_input2_bg_left));
-            tvDomainTail.setBackgroundDrawable(
-                    getResources().getDrawable(R.drawable.profile_text_input2_bg_right));
+            etInsertTeamDomain.setBackgroundResource(R.drawable.profile_text_input2_bg_left);
+            tvDomainTail.setBackgroundResource(R.drawable.profile_text_input2_bg_right);
             tvTeamDomainInsertError.setVisibility(View.INVISIBLE);
             isShownTeamDomainError = false;
         }
@@ -179,8 +167,8 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
 
     @OnClick(R.id.iv_team_create_next)
     void onClickTeamCreateNext() {
-        String teamName = etInsertTeamName.getText().toString();
-        String teamDomain = etInsertTeamDomain.getText().toString();
+        String teamName = etInsertTeamName.getText().toString().trim();
+        String teamDomain = etInsertTeamDomain.getText().toString().trim();
         teamInsertInfoPresenter.createTeam(teamName, teamDomain.toLowerCase());
     }
 
@@ -236,8 +224,7 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
                     tvTeamNameLength.setVisibility(View.VISIBLE);
                     if (!isInsertTeamNamePositiveLength) {
                         isInsertTeamNamePositiveLength = true;
-                        etInsertTeamName.setBackgroundDrawable(
-                                getResources().getDrawable(R.drawable.profile_text_input2_bg_left));
+                        etInsertTeamName.setBackgroundResource(R.drawable.profile_text_input2_bg_left);
                         params.leftMargin = margin;
                         params.rightMargin = 0;
                         etInsertTeamName.setLayoutParams(params);
@@ -261,8 +248,7 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
                     tvTeamNameLength.setVisibility(View.GONE);
                     if (isInsertTeamNamePositiveLength) {
                         isInsertTeamNamePositiveLength = false;
-                        etInsertTeamName.setBackgroundDrawable(
-                                getResources().getDrawable(R.drawable.profile_text_input_bg));
+                        etInsertTeamName.setBackgroundResource(R.drawable.profile_text_input_bg);
                         params.leftMargin = margin;
                         params.rightMargin = margin;
                         etInsertTeamName.setLayoutParams(params);

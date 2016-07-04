@@ -109,23 +109,29 @@ public class JandiBotViewHolder implements BodyViewHolder {
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
-            SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
-            messageStringBuilder.append(!TextUtils.isEmpty(textMessage.content.body) ? textMessage.content.body : "");
+            SpannableStringBuilder messageStringBuilder;
+            if (textMessage.content.contentBuilder == null) {
 
-            long myId = TeamInfoLoader.getInstance().getMyId();
-            MentionAnalysisInfo mentionAnalysisInfo =
-                    MentionAnalysisInfo.newBuilder(myId, textMessage.mentions)
-                            .textSize(tvMessage.getTextSize())
-                            .build();
+                messageStringBuilder = new SpannableStringBuilder();
+                messageStringBuilder.append(!TextUtils.isEmpty(textMessage.content.body) ? textMessage.content.body : "");
 
-            SpannableLookUp.text(messageStringBuilder)
-                    .hyperLink(false)
-                    .markdown(false)
-                    .emailLink(false)
-                    .webLink(false)
-                    .telLink(false)
-                    .mention(mentionAnalysisInfo, false)
-                    .lookUp(context);
+                long myId = TeamInfoLoader.getInstance().getMyId();
+                MentionAnalysisInfo mentionAnalysisInfo =
+                        MentionAnalysisInfo.newBuilder(myId, textMessage.mentions)
+                                .textSize(tvMessage.getTextSize())
+                                .build();
+
+                SpannableLookUp.text(messageStringBuilder)
+                        .hyperLink(false)
+                        .markdown(false)
+                        .emailLink(false)
+                        .webLink(false)
+                        .telLink(false)
+                        .mention(mentionAnalysisInfo, false)
+                        .lookUp(context);
+            } else {
+                messageStringBuilder = new SpannableStringBuilder(textMessage.content.contentBuilder);
+            }
 
             LinkifyUtil.setOnLinkClick(tvMessage);
 
@@ -161,6 +167,7 @@ public class JandiBotViewHolder implements BodyViewHolder {
                 tvMessageTime.setVisibility(View.GONE);
             }
 
+            tvMessage.setText(messageStringBuilder);
 
         }
 

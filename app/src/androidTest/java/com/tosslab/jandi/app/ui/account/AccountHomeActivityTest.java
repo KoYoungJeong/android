@@ -10,13 +10,12 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
-import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
+import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,12 +29,12 @@ import setup.BaseInitUtil;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.intent.Intents.intending;
 import static android.support.test.espresso.matcher.RootMatchers.isDialog;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isSelected;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.jayway.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
@@ -43,7 +42,7 @@ import static org.hamcrest.Matchers.is;
 public class AccountHomeActivityTest {
 
     @Rule
-    public IntentsTestRule<AccountHomeActivity_> rule = new IntentsTestRule<AccountHomeActivity_>(AccountHomeActivity_.class, false, false);
+    public IntentsTestRule<AccountHomeActivity> rule = new IntentsTestRule<AccountHomeActivity>(AccountHomeActivity.class, false, false);
     private AccountHomeActivity activity;
 
     @BeforeClass
@@ -62,17 +61,7 @@ public class AccountHomeActivityTest {
 
         activity = rule.getActivity();
 
-        await().until(() -> activity.teamLayout.getChildCount() > 0);
-    }
-
-    @Test
-    public void testOnHelpOptionSelect() throws Throwable {
-        rule.runOnUiThread(() -> activity.onHelpOptionSelect());
-
-        onView(withText(R.string.jandi_account_home_help))
-                .inRoot(isDialog())
-                .check(matches(isDisplayed()));
-        pressBack();
+//        await().until(() -> activity.teamLayout != null && activity.teamLayout.getChildCount() > 0);
     }
 
     @Test
@@ -85,13 +74,13 @@ public class AccountHomeActivityTest {
         pressBack();
     }
 
-    @Ignore
-    @Test
-    public void testOnEmailEditClick() throws Throwable {
-
-        rule.runOnUiThread(() -> activity.onEmailEditClick());
-        Intents.intending(IntentMatchers.hasComponent(EmailChooseActivity_.class.getName()));
-    }
+//    @Ignore
+//    @Test
+//    public void testOnEmailEditClick() throws Throwable {
+//
+//        rule.runOnUiThread(() -> activity.onEmailEditClick());
+//        intending(IntentMatchers.hasComponent(EmailChooseActivity_.class.getName()));
+//    }
 
     @Test
     public void testSetTeamInfo() throws Throwable {
@@ -115,8 +104,7 @@ public class AccountHomeActivityTest {
     public void testLoadTeamCreateActivity() throws Throwable {
         rule.runOnUiThread(() -> activity.loadTeamCreateActivity());
 
-        onView(withText(R.string.team_info))
-                .check(matches(isDisplayed()));
+        Intents.intending(IntentMatchers.hasComponent(CreateTeamActivity.class.getName()));
 
     }
 
@@ -158,22 +146,22 @@ public class AccountHomeActivityTest {
 
     @Test
     public void testMoveSelectedTeam() throws Throwable {
-        rule.runOnUiThread(() -> activity.moveSelectedTeam(false));
+        rule.runOnUiThread(() -> activity.moveSelectedTeam());
         assertThat(activity.isFinishing(), is(true));
-        Intents.intending(IntentMatchers.hasComponent(MainTabActivity_.class.getName()));
+        intending(IntentMatchers.hasComponent(MainTabActivity_.class.getName()));
     }
 
-    @Ignore
-    @Test
-    public void testMoveEmailEditClick() throws Throwable {
-        Intents.init();
-
-        rule.runOnUiThread(() -> activity.moveEmailEditClick());
-        Intents.intending(IntentMatchers.hasComponent(EmailChooseActivity_.class.getName()));
-
-        Intents.release();
-
-    }
+//    @Ignore
+//    @Test
+//    public void testMoveEmailEditClick() throws Throwable {
+//        Intents.init();
+//
+//        rule.runOnUiThread(() -> activity.moveEmailEditClick());
+//        intending(IntentMatchers.hasComponent(EmailChooseActivity_.class.getName()));
+//
+//        Intents.release();
+//
+//    }
 
     @Test
     public void testSetUserEmailText() throws Throwable {

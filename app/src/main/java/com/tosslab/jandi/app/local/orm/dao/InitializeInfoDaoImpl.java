@@ -27,12 +27,12 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitialInfo, Long> {
 
         if (data.getSelf() != null) {
             Dao<InitialInfo.Self, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.Self.class);
-            dao.create(data.getSelf());
+            dao.createOrUpdate(data.getSelf());
         }
 
         if (data.getTeam() != null) {
             Dao<Team, ?> dao = DaoManager.createDao(getConnectionSource(), Team.class);
-            dao.create(data.getTeam());
+            dao.createOrUpdate(data.getTeam());
         }
 
         upsertFolders(data.getTeamId(), data.getFolders());

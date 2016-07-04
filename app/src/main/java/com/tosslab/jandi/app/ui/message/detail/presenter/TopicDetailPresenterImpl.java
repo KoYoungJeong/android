@@ -203,6 +203,8 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         view.showProgressWheel();
         try {
             topicDetailModel.modifyTopicName(entityType, entityId, topicName);
+            TopicRepository.getInstance().updateName(entityId, topicName);
+            TeamInfoLoader.getInstance().refresh();
 
             view.setTopicName(topicName);
 

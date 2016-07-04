@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.ui.maintab.topic.views.folderlist;
 
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.adapter.DragnDropTouchHelper;
@@ -39,6 +42,8 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by tee on 15. 8. 30..
@@ -103,7 +108,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
 
         lvTopicFolder.setAdapter(adapter);
 
-        topicFolderSettingPresentor.onRefreshFolders(folderId);
+        topicFolderSettingPresentor.onRefreshFolders();
         switch (mode) {
             case ITEM_FOLDER_CHOOSE:
                 tvTitle.setText(getResources().getString(R.string.jandi_folder_choose));
@@ -125,6 +130,22 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
         });
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MoveToaFolder);
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    public void onEvent(TopicFolderRefreshEvent event) {
+        topicFolderSettingPresentor.onRefreshFolders();
     }
 
     @UiThread

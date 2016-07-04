@@ -3,9 +3,11 @@ package com.tosslab.jandi.app.ui.maintab.topic.views.create.model;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.start.Marker;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -14,6 +16,9 @@ import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -25,7 +30,7 @@ public class TopicCreateModel {
     @Bean
     EntityClientManager entityClientManager;
 
-    public ResCommon createTopic(String entityName, boolean publicSelected, String topicDescription, boolean isAutojoin) throws RetrofitException {
+    public Topic createTopic(String entityName, boolean publicSelected, String topicDescription, boolean isAutojoin) throws RetrofitException {
         if (publicSelected) {
             return entityClientManager.createPublicTopic(entityName, topicDescription, isAutojoin);
         } else {
@@ -58,5 +63,23 @@ public class TopicCreateModel {
                 .property(PropertyKey.ErrorCode, errorCode)
                 .build());
 
+    }
+
+    public void addTopic(Topic topic) {
+        List<Marker> markers = new ArrayList<>();
+        for (Long memberId : topic.getMembers()) {
+            Marker marker = new Marker();
+            marker.setTopic(topic);
+            marker.setMemberId(memberId);
+            marker.setReadLinkId(-1);
+            markers.add(marker);
+        }
+
+        topic.setIsJoined(true);
+        topic.setReadLinkId(-1);
+        topic.setLastLinkId(-1);
+        topic.setMarkers(markers);
+        topic.setSubscribe(true);
+        TopicRepository.getInstance().addTopic(topic);
     }
 }

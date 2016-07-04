@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
@@ -25,9 +24,6 @@ import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.EBean;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,25 +32,22 @@ import javax.inject.Inject;
 import dagger.Lazy;
 
 
-/**
- * Created by Steve SeongUg Jung on 15. 3. 3..
- */
-@EBean
 public class AccountHomeModel {
 
-    @Inject
-    Lazy<InvitationApi> invitationApi;
-    @Inject
-    Lazy<AccountApi> accountApi;
-    @Inject
-    Lazy<AccountProfileApi> accountProfileApi;
+    private Lazy<InvitationApi> invitationApi;
+    private Lazy<AccountApi> accountApi;
+    private Lazy<AccountProfileApi> accountProfileApi;
+    private Lazy<StartApi> startApi;
 
     @Inject
-    Lazy<StartApi> startApi;
-
-    @AfterInject
-    void initObject() {
-        DaggerApiClientComponent.create().inject(this);
+    public AccountHomeModel(Lazy<InvitationApi> invitationApi,
+                            Lazy<AccountApi> accountApi,
+                            Lazy<AccountProfileApi> accountProfileApi,
+                            Lazy<StartApi> startApi) {
+        this.invitationApi = invitationApi;
+        this.accountApi = accountApi;
+        this.accountProfileApi = accountProfileApi;
+        this.startApi = startApi;
     }
 
     public void refreshAccountInfo() {

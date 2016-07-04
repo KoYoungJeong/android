@@ -51,7 +51,7 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     RecyclerView lvProfileItemSelector;
 
     @ViewById(R.id.iv_main_image)
-    ImageView lvMainImage;
+    ImageView ivMain;
 
     @Bean
     ProfileImageSelectorPresenter profileImageSelectorPresenter;
@@ -176,8 +176,7 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     }
 
     private void showMainProfileImage() {
-        ImageUtil.loadProfileImage(lvMainImage,
-                Uri.parse(selectedCharacterUrl), 0, selectedColor);
+        ImageUtil.loadProfileImage(ivMain, Uri.parse(selectedCharacterUrl), 0, selectedColor);
     }
 
     @Override

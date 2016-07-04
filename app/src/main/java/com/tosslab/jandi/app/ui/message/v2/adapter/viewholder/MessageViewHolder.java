@@ -99,7 +99,7 @@ public class MessageViewHolder extends BaseMessageViewHolder {
 
     private void setMessageBackground(ResMessages.Link link) {
         long writerId = link.fromEntity;
-        if (TeamInfoLoader.getInstance().getMyId() != writerId) {
+        if (TeamInfoLoader.getInstance().getMyId() == writerId) {
             tvMessage.setBackgroundResource(R.drawable.bg_message_item_selector_mine);
         } else {
             tvMessage.setBackgroundResource(R.drawable.bg_message_item_selector);
