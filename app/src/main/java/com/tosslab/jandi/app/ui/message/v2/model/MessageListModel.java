@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.message.v2.model;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableStringBuilder;
@@ -58,7 +57,6 @@ import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
@@ -84,9 +82,6 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.functions.Func0;
 
-/**
- * Created by Steve SeongUg Jung on 15. 1. 20..
- */
 @EBean
 public class MessageListModel {
 
@@ -135,10 +130,6 @@ public class MessageListModel {
         return TextUtils.isEmpty(text.toString().trim());
     }
 
-    public List<ResMessages.Link> getNewMessage(long linkId) throws RetrofitException {
-        return messageManipulator.updateMessages(linkId);
-    }
-
     public void deleteMessage(long messageId) throws RetrofitException {
         messageManipulator.deleteMessage(messageId);
     }
@@ -153,10 +144,6 @@ public class MessageListModel {
 
     public boolean isCommentType(ResMessages.OriginalMessage message) {
         return message instanceof ResMessages.CommentMessage;
-    }
-
-    public boolean isStickerType(ResMessages.OriginalMessage message) {
-        return message instanceof ResMessages.StickerMessage;
     }
 
     public boolean isStickerCommentType(ResMessages.OriginalMessage message) {
@@ -471,68 +458,20 @@ public class MessageListModel {
         MessageRepository.getRepository().clearLinks(teamId, roomId);
     }
 
-    public void upsertMessages(ResMessages messages) {
-        Observable.from(messages.records)
-                .subscribe(link -> {
-                    link.roomId = messages.entityId;
-                });
-        MessageRepository.getRepository().upsertMessages(messages.records);
-        if (messages.records != null && !messages.records.isEmpty()) {
-            long firstId = messages.records.get(0).id;
-            long lastId = messages.records.get(messages.records.size() - 1).id;
-            messages.records = MessageRepository.getRepository()
-                    .getMessages(messages.entityId, firstId, lastId + 1);
-        }
-
-    }
-
-    public long getLastReadLinkId(long roomId, long memberId) {
-        if (roomId > 0) {
-            // 기존의 마커 정보 가져오기
-            Marker marker = RoomMarkerRepository.getInstance().getMarker(roomId, memberId);
-
-            if (marker != null && marker.getReadLinkId() > 0) {
-                return marker.getReadLinkId();
-            }
-        }
-
-        // 엔티티 기준으로 정보 가져오기
-        long chatId = TeamInfoLoader.getInstance().getChatId(memberId);
-        Room room = TeamInfoLoader.getInstance().getRoom(chatId);
+    public long getLastReadLinkId(long roomId) {
+        long myId = TeamInfoLoader.getInstance().getMyId();
+        Room room = TeamInfoLoader.getInstance().getRoom(roomId);
 
         return Observable.from(room.getMarkers())
-                .filter(messageMarker -> messageMarker.getMemberId() == memberId)
+                .filter(messageMarker -> messageMarker.getMemberId() == myId)
                 .map(Marker::getReadLinkId)
                 .firstOrDefault(-1L)
                 .toBlocking()
                 .first();
     }
 
-    @Nullable
-    public List<ResMessages.Link> loadOldMessages(long roomId, long linkId,
-                                                  boolean firstLoad,
-                                                  int offset) {
-
-        List<ResMessages.Link> oldMessages;
-        if (firstLoad) {
-            // 처음 로드면 현재 링크 ~ 이전 20개 로드
-            oldMessages =
-                    MessageRepository.getRepository().getOldMessages(roomId, linkId + 1, offset);
-        } else {
-            // 처음 로드 아니면 현재 링크 - 1 ~ 이전 itemCount 로드
-            oldMessages =
-                    MessageRepository.getRepository().getOldMessages(roomId, linkId, offset);
-        }
-
-        return oldMessages;
-    }
-
     public void sortByTime(List<ResMessages.Link> records) {
         Collections.sort(records, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
-    }
-
-    public void deleteCompletedSendingMessage(long roomId) {
-        SendMessageRepository.getRepository().deleteCompletedMessageOfRoom(roomId);
     }
 
     public long getMyId() {
@@ -580,10 +519,6 @@ public class MessageListModel {
 
                 });
 
-    }
-
-    public AnalyticsValue.Screen getScreen(long entityId) {
-        return isUser(entityId) ? AnalyticsValue.Screen.Message : AnalyticsValue.Screen.TopicChat;
     }
 
     public long insertSendingMessageIfCan(long entityId, long roomId, String message, List<MentionObject> mentions) {
@@ -644,10 +579,6 @@ public class MessageListModel {
     public boolean isInactiveUser(long entityId) {
         return TeamInfoLoader.getInstance().isUser(entityId)
                 && TeamInfoLoader.getInstance().getUser(entityId).isInactive();
-    }
-
-    public void deleteAllDummyMessageAtDatabase(long roomId) {
-        SendMessageRepository.getRepository().deleteAllSendingMessage(roomId);
     }
 
     public ResMessages.Link getDummyMessage(long localId) {

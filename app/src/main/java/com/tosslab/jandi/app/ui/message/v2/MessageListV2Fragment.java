@@ -336,6 +336,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         super.onResume();
 
         isForeground = true;
+        messageListPresenter.onResumeOfView();
 
         PushMonitor.getInstance().register(roomId);
 
@@ -441,6 +442,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             mentionControlViewModel.removeClipboardListener();
         }
 
+        messageListPresenter.onPauseOfView();
+
         super.onPause();
     }
 
@@ -464,7 +467,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @AfterInject
     void initObjects() {
-        room = Room.create(entityId, roomId, isFromPush);
+        room = Room.create(entityId, isFromPush);
         messagePointer = MessagePointer.create(lastReadLinkId);
     }
 

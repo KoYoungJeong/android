@@ -110,7 +110,7 @@ public class MessageRepository extends LockExecutorTemplate {
         });
     }
 
-    public ResMessages.Link getLastMessageWitoutDirty(long roomId) {
+    public ResMessages.Link getLastMessage(long roomId) {
         return execute(() -> {
             ResMessages.Link link = null;
             try {
@@ -122,8 +122,6 @@ public class MessageRepository extends LockExecutorTemplate {
                         .eq("teamId", teamId)
                         .and()
                         .eq("roomId", roomId)
-                        .and()
-                        .eq("dirty", false)
                         .queryForFirst();
             } catch (SQLException e) {
                 e.printStackTrace();
