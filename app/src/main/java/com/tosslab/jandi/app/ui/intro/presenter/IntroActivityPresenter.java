@@ -185,7 +185,8 @@ public class IntroActivityPresenter {
                 })
                 .map(it -> {
                     if (NetworkCheckUtil.isConnected()) {
-                        return model.getEventHistoryCount();
+//                        return model.getEventHistoryCount();
+                        return 0;
                     } else {
                         return 0;
                     }

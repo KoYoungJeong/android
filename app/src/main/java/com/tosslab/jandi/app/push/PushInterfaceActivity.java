@@ -152,7 +152,8 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
                 .map(it -> jandiInterfaceModel.getEntityInfo(roomId, roomType))
                 .subscribeOn(Schedulers.io())
                 .map(entityId -> {
-                    int count = jandiInterfaceModel.getEventHistoryCount();
+//                    int count = jandiInterfaceModel.getEventHistoryCount();
+                    int count = 0;
 
                     return Pair.create(entityId, count);
                 })
