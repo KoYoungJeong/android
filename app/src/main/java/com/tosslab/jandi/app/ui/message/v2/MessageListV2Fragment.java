@@ -1024,8 +1024,10 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 || link.message instanceof ResMessages.CommentStickerMessage) {
 
             if (ResMessages.FeedbackType.POLL.value().equals(link.feedbackType)) {
+
                 PollDetailActivity.start(getActivity(), link.poll.getId());
                 getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+
             } else {
                 sendAnalyticsEvent(AnalyticsValue.Action.FileView_ByComment);
 
@@ -1038,8 +1040,10 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             }
         } else {
             if (link.message instanceof ResMessages.PollMessage) {
+
                 PollDetailActivity.start(getActivity(), link.pollId);
                 getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+
             } else if (link.message instanceof ResMessages.FileMessage) {
                 ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
                 sendAnalyticsEvent(fileMessage.content.type.startsWith("image")

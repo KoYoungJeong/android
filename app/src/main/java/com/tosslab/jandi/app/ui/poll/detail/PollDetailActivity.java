@@ -746,20 +746,28 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
 
     private void onPollDeleteAction() {
         shouldRetrievePollDetail = false;
-        AlertUtil.showConfirmDialog(this, R.string.jandi_action_poll_delete,
-                R.string.jandi_ask_poll_finish, (dialog, which) -> {
+        AlertUtil.showDialog(this, R.string.jandi_action_poll_delete,
+                R.string.jandi_ask_poll_delete,
+                R.string.jandi_confirm, (dialog, which) -> {
                     sendAnalyticsEvent(AnalyticsValue.Action.DeletePoll);
                     pollDetailPresenter.onPollDeleteAction(pollId);
-                }, false);
+                },
+                -1, null,
+                R.string.jandi_cancel, null,
+                true);
     }
 
     private void onPollFinishAction() {
         shouldRetrievePollDetail = false;
-        AlertUtil.showConfirmDialog(this, R.string.jandi_action_poll_finish,
-                R.string.jandi_ask_poll_finish, (dialog, which) -> {
+        AlertUtil.showDialog(this, R.string.jandi_action_poll_finish,
+                R.string.jandi_ask_poll_finish,
+                R.string.jandi_confirm, (dialog, which) -> {
                     sendAnalyticsEvent(AnalyticsValue.Action.ClosePoll);
                     pollDetailPresenter.onPollFinishAction(pollId);
-                }, false);
+                },
+                -1, null,
+                R.string.jandi_cancel, null,
+                true);
     }
 
     @Override

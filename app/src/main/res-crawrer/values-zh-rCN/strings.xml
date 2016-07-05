@@ -97,6 +97,7 @@
 	<string name="jandi_are_you_sure_disable_external_link">"若移除共享链接，访问至该文件的权限将被撤销。 你确定要移除共享链接？"</string>
 	<string name="jandi_ask_assign_topic_owner">"你确定将议题管理权限转移至此成员？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你确定将此成员剔除议题？"</string>
+	<string name="jandi_ask_poll_delete">"确定要删除此次投票？"</string>
 	<string name="jandi_ask_poll_finish">"你确定结束此投票？"</string>
 	<string name="jandi_ask_to_leave_if_private_topic_owner">"欲离开此议题，请先将议题管理权限转移至其他成员"</string>
 	<string name="jandi_ask_to_leave_if_topic_owner">"你可于离开议题前转移管理权限"</string>
@@ -400,7 +401,7 @@
 	<string name="jandi_poll">"问卷调查"</string>
 	<string name="jandi_poll_add_item">"添加选项"</string>
 	<string name="jandi_poll_anonymous">"不记名"</string>
-	<string name="jandi_poll_create">"建立"</string>
+	<string name="jandi_poll_create">"建立新的投票"</string>
 	<string name="jandi_poll_empty">"尚无问卷，\n点击[+]建立新问卷"</string>
 	<string name="jandi_poll_finished_with_most">"问卷已完成，得票最高的是 \"%s\""</string>
 	<string name="jandi_poll_finished_without_participants">"问卷已完成，此问卷无投票人"</string>

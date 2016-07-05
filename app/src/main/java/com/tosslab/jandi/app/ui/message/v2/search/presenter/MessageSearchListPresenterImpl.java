@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
@@ -13,6 +14,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
@@ -26,6 +28,7 @@ import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
+import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -307,27 +310,37 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
             view.showDummyMessageDialog(dummyMessageLink.getLocalId());
 
-        } else {
-            AnalyticsValue.Screen screen = view.getScreen(entityId);
+            return;
+        }
 
-            if (messageListModel.isFileType(link.message)) {
+        AnalyticsValue.Screen screen = view.getScreen(entityId);
+
+        if (link.message instanceof ResMessages.CommentMessage
+                || link.message instanceof ResMessages.CommentStickerMessage) {
+
+            if (ResMessages.FeedbackType.POLL.value().equals(link.feedbackType)) {
+
+                view.movePollDetailActivity(link.poll.getId());
+
+            } else {
+                AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.FileView_ByComment);
+
+                view.moveFileDetailActivity(fragment, link.message.feedbackId, roomId, link.messageId);
+            }
+        } else {
+            if (link.message instanceof ResMessages.PollMessage) {
+
+                view.movePollDetailActivity(link.poll.getId());
+
+            } else if (link.message instanceof ResMessages.FileMessage) {
                 view.moveFileDetailActivity(fragment, link.messageId, roomId, link.messageId);
                 if (((ResMessages.FileMessage) link.message).content.type.startsWith("image")) {
                     AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.FileView_ByPhoto);
                 } else {
                     AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.FileView_ByFile);
                 }
-            } else if (messageListModel.isCommentType(link.message)) {
-                view.moveFileDetailActivity(fragment, link.message.feedbackId, roomId, link.messageId);
-                AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.FileView_ByComment);
-            } else if (messageListModel.isStickerCommentType(link.message)) {
-                view.moveFileDetailActivity(fragment, link.message
-                        .feedbackId, roomId, link.messageId);
-                AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.FileView_ByComment);
             }
         }
-
-
     }
 
     @Override

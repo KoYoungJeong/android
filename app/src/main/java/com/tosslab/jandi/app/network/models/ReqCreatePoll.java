@@ -2,8 +2,6 @@ package com.tosslab.jandi.app.network.models;
 
 import com.fasterxml.jackson.databind.util.ISO8601Utils;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;

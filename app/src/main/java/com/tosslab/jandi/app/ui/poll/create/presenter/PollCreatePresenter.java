@@ -33,11 +33,12 @@ public interface PollCreatePresenter {
 
         void showUnExpectedErrorToast();
 
-        void showSuccessToast();
-
         void finish();
 
         void showDueDateCannotBePastTimeToast();
 
+        void showProgress();
+
+        void dismissProgress();
     }
 }

@@ -106,14 +106,16 @@ public class PollCreatePresenterImpl implements PollCreatePresenter {
             return;
         }
 
+        pollCreateView.showProgress();
         ReqCreatePoll reqCreatePoll = createPollBuilder.build();
         pollCreateModel.getCreatePollObservable(reqCreatePoll)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(resCreatePoll -> {
-                    pollCreateView.showSuccessToast();
+                    pollCreateView.dismissProgress();
                     pollCreateView.finish();
                 }, throwable -> {
+                    pollCreateView.dismissProgress();
                     LogUtil.e(Log.getStackTraceString(throwable));
                     pollCreateView.showUnExpectedErrorToast();
                 });

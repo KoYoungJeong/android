@@ -141,7 +141,11 @@ dependencies {
         transitive = true;
     }
 
+    // Calendar View
     compile 'com.prolificinteractive:material-calendarview:1.4.0'
+
+    // Joda time
+    compile 'net.danlew:android.joda:2.9.4'
 
     // newrelic
     compile 'com.newrelic.agent.android:android-agent:4.273.4'
