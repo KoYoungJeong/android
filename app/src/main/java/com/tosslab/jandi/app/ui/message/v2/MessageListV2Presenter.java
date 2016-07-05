@@ -1004,15 +1004,6 @@ public class MessageListV2Presenter {
     }
 
     @Background
-    public void onRoomMarkerChange(long teamId, long roomId, long memberId, long lastLinkId) {
-        // Presenter 에 객체들이 initialize 되기 전에 Event 가 호출 되면서 NullPointerException 이 나는 경우가 있음.
-        // Presenter 전체적으로 개선해야 할 필요 있음.
-        if (view != null) {
-            view.refreshMessages();
-        }
-    }
-
-    @Background
     public void deleteReadyMessage() {
         messageListModel.deleteReadyMessage(room.getRoomId());
     }

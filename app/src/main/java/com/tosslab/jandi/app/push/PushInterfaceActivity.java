@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.push;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Pair;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
@@ -12,6 +13,7 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.socketevent.SocketInitActivity;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -29,7 +31,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
     public static final String TAG = "JANDI.PushInterfaceActivity";
 
     public static final String EXTRA_ROOM_TYPE = "roomType";
-    public static final String EXTRA_ENTITY_ID = "entityId";
+    public static final String EXTRA_ROOM_ID = "entityId";
     // Push로 부터 넘어온 MainActivity의 Extra
     public static final String EXTRA_ENTITY_TYPE = "entityType";
     public static final String EXTRA_IS_FROM_PUSH = "isFromPush";
@@ -38,7 +40,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
 
     public static long selectedEntityId;
 
-    long entityId;
+    long roomId;
     int entityType;
     boolean isFromPush;
     long teamId;
@@ -47,7 +49,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
     JandiInterfaceModel jandiInterfaceModel;
 
     public static void startActivity(Context context,
-                                     long entityId,
+                                     long roomId,
                                      int entityType,
                                      boolean isFromPush,
                                      long teamId, String roomType) {
@@ -55,7 +57,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra(EXTRA_ENTITY_ID, entityId);
+        intent.putExtra(EXTRA_ROOM_ID, roomId);
         intent.putExtra(EXTRA_ENTITY_TYPE, entityType);
         intent.putExtra(EXTRA_IS_FROM_PUSH, isFromPush);
         intent.putExtra(EXTRA_TEAM_ID, teamId);
@@ -65,7 +67,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
     }
 
     public static Intent getIntent(Context context,
-                                   long entityId,
+                                   long roomId,
                                    int entityType,
                                    boolean isFromPush,
                                    long teamId, String roomType) {
@@ -73,7 +75,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra(EXTRA_ENTITY_ID, entityId);
+        intent.putExtra(EXTRA_ROOM_ID, roomId);
         intent.putExtra(EXTRA_ENTITY_TYPE, entityType);
         intent.putExtra(EXTRA_IS_FROM_PUSH, isFromPush);
         intent.putExtra(EXTRA_TEAM_ID, teamId);
@@ -113,7 +115,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
 
     void getExtra() {
         Intent intent = getIntent();
-        entityId = intent.getLongExtra(EXTRA_ENTITY_ID, 0);
+        roomId = intent.getLongExtra(EXTRA_ROOM_ID, 0);
         entityType = intent.getIntExtra(EXTRA_ENTITY_TYPE, 0);
         isFromPush = intent.getBooleanExtra(EXTRA_IS_FROM_PUSH, false);
         teamId = intent.getLongExtra(EXTRA_TEAM_ID, 0);
@@ -126,7 +128,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
         boolean used = (getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;
 
         if (!used) {
-            selectedEntityId = entityId;
+            selectedEntityId = roomId;
 
             checkTeamInfo();
         } else {
@@ -147,13 +149,22 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
 
         // 팀 정보가 있다면
         share.filter(it -> it)
-                .map(it -> jandiInterfaceModel.getEntityInfo(entityId, roomType))
+                .map(it -> jandiInterfaceModel.getEntityInfo(roomId, roomType))
                 .subscribeOn(Schedulers.io())
+                .map(entityId -> {
+                    int count = jandiInterfaceModel.getEventHistoryCount();
+
+                    return Pair.create(entityId, count);
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(pair -> {
-                    if (pair.second > 0) {
+                    if (pair.first > 0) {
 
-                        moveMessageListActivity(entityId, pair.second);
+                        if (pair.second >= 0 && pair.second < 50) {
+                            moveMessageListActivity(roomId, pair.first);
+                        } else {
+                            moveSocketInitActivity(roomId, pair.first);
+                        }
                     } else {
                         // entity 정보가 없으면 인트로로 이동하도록 지정
                         moveIntroActivity();
@@ -167,6 +178,10 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> moveIntroActivity());
 
+    }
+
+    private void moveSocketInitActivity(long roomId, long entityId) {
+        SocketInitActivity.startActivity(PushInterfaceActivity.this, teamId, roomId, entityId, entityType);
     }
 
     void moveIntroActivity() {

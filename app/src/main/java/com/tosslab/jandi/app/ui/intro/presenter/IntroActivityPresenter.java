@@ -167,8 +167,6 @@ public class IntroActivityPresenter {
                 .observeOn(Schedulers.io())
                 .doOnNext(it -> PushUtil.registPush())
                 .doOnNext(it -> {
-                })
-                .doOnNext(it -> {
                     if (NetworkCheckUtil.isConnected()) {
 
                         long diffTime = System.currentTimeMillis() - JandiPreference.getSocketConnectedLastTime();
@@ -185,10 +183,21 @@ public class IntroActivityPresenter {
                         }
                     }
                 })
+                .map(it -> {
+                    if (NetworkCheckUtil.isConnected()) {
+                        return model.getEventHistoryCount();
+                    } else {
+                        return 0;
+                    }
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
                     model.trackAutoSignInSuccessAndFlush(true);
-                    view.moveToMainActivity();
+                    if (it >= 0 && it < 50) {
+                        view.moveToMainActivity();
+                    } else {
+                        view.moveToSocketInitActivity();
+                    }
                 }, t -> {});
 
         // 팀 정보가 없거나 초대에 의해 시작한 경우
@@ -213,6 +222,8 @@ public class IntroActivityPresenter {
         void showUpdateDialog();
 
         void finishOnUiThread();
+
+        void moveToSocketInitActivity();
     }
 
 }

@@ -16,4 +16,23 @@ public class ShareFileEvent {
     public long getTeamId() {
         return teamId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ShareFileEvent that = (ShareFileEvent) o;
+
+        if (teamId != that.teamId) return false;
+        return id == that.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (teamId ^ (teamId >>> 32));
+        result = 31 * result + (int) (id ^ (id >>> 32));
+        return result;
+    }
 }

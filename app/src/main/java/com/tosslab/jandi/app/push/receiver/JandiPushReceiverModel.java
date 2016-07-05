@@ -44,9 +44,9 @@ public class JandiPushReceiverModel {
         this.notificationManager = notificationManager;
     }
 
-    public PendingIntent generatePendingIntent(Context context, long chatId, int chatType, long teamId, String roomType) {
+    public PendingIntent generatePendingIntent(Context context, long roomId, int chatType, long teamId, String roomType) {
 
-        Intent intent = PushInterfaceActivity.getIntent(context, chatId, chatType, true, teamId, roomType);
+        Intent intent = PushInterfaceActivity.getIntent(context, roomId, chatType, true, teamId, roomType);
 
         // 노티피케이션은 해제 됐지만 PendingIntent 가 살아있는 경우가 있어 cancel 을 호출해줌.
         PendingIntent.getActivity(context,

@@ -28,4 +28,23 @@ public class AnnouncementUpdatedEvent {
     public void setOpened(boolean opened) {
         isOpened = opened;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AnnouncementUpdatedEvent that = (AnnouncementUpdatedEvent) o;
+
+        if (topicId != that.topicId) return false;
+        return isOpened == that.isOpened;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (topicId ^ (topicId >>> 32));
+        result = 31 * result + (isOpened ? 1 : 0);
+        return result;
+    }
 }

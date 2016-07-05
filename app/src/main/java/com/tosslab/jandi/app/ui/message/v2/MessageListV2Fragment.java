@@ -50,7 +50,6 @@ import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
-import com.tosslab.jandi.app.events.entities.MessageCreatedEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RefreshConnectBotEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
@@ -96,8 +95,8 @@ import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketServiceStopEvent;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -1325,8 +1324,10 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         oldProgressBar.startAnimation(outAnim);
     }
 
-    public void onEvent(MessageCreatedEvent event) {
-        if (event.getRoomId() != room.getRoomId()) {
+    public void onEvent(SocketMessageCreatedEvent event) {
+        if (event.getData() != null
+                && event.getData().getLinkMessage() != null
+                && event.getData().getLinkMessage().roomId != room.getRoomId()) {
             return;
         }
 
@@ -1401,18 +1402,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
 
 
-        refreshMessages();
-    }
-
-    public void onEvent(SocketRoomMarkerEvent event) {
-        if (!isForeground) {
-            return;
-        }
-
-        if (event.getRoom().getId() == room.getRoomId()) {
-            SocketRoomMarkerEvent.Marker marker = event.getMarker();
-            messageListPresenter.onRoomMarkerChange(
-                    room.getTeamId(), room.getRoomId(), marker.getMemberId(), marker.getLastLinkId());
+        if (event.getRoomId() == room.getRoomId()) {
+            refreshMessages();
         }
     }
 

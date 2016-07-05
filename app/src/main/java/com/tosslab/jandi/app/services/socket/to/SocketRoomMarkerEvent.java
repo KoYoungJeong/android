@@ -106,6 +106,27 @@ public class SocketRoomMarkerEvent implements EventHistoryInfo {
         public void setMembers(List<Long> members) {
             this.members = members;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            MarkerRoom that = (MarkerRoom) o;
+
+            if (id != that.id) return false;
+            if (type != null ? !type.equals(that.type) : that.type != null) return false;
+            return members != null ? members.equals(that.members) : that.members == null;
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = (int) (id ^ (id >>> 32));
+            result = 31 * result + (type != null ? type.hashCode() : 0);
+            result = 31 * result + (members != null ? members.hashCode() : 0);
+            return result;
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -130,6 +151,7 @@ public class SocketRoomMarkerEvent implements EventHistoryInfo {
         public void setLastLinkId(long lastLinkId) {
             this.lastLinkId = lastLinkId;
         }
+
     }
 }
 

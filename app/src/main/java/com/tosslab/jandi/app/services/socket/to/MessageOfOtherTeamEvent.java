@@ -33,4 +33,23 @@ public class MessageOfOtherTeamEvent {
                 "version=" + version +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MessageOfOtherTeamEvent that = (MessageOfOtherTeamEvent) o;
+
+        if (version != that.version) return false;
+        return ts == that.ts;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = version;
+        result = 31 * result + (int) (ts ^ (ts >>> 32));
+        return result;
+    }
 }

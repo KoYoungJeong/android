@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.push.model;
 
-import android.support.v4.util.Pair;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -8,6 +7,7 @@ import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.PushToken;
@@ -29,14 +29,16 @@ import rx.Observable;
 
 public class JandiInterfaceModel {
 
-    Lazy<AccountApi> accountApi;
-    Lazy<StartApi> startApi;
+    private Lazy<AccountApi> accountApi;
+    private Lazy<StartApi> startApi;
+    private Lazy<EventsApi> eventApi;
 
     @Inject
     public JandiInterfaceModel(Lazy<AccountApi> accountApi,
-                               Lazy<StartApi> startApi) {
+                               Lazy<StartApi> startApi, Lazy<EventsApi> eventApi) {
         this.accountApi = accountApi;
         this.startApi = startApi;
+        this.eventApi = eventApi;
     }
 
     public void refreshAccountInfo() throws RetrofitException {
@@ -106,14 +108,13 @@ public class JandiInterfaceModel {
      *
      * @return (갱신 여부, 요청한 entityId)
      */
-    public Pair<Boolean, Long> getEntityInfo(long roomId, String roomType) {
+    public long getEntityInfo(long roomId, String roomType) {
 
-        boolean entityRefreshed = false;
         long entityId = -1L;
 
 
         if (!isKnowRoomType(roomType)) {
-            entityRefreshed = getEntityInfo();
+            getEntityInfo();
 
             if (hasEntity(roomId)) {
                 if (!TeamInfoLoader.getInstance().isUser(roomId)) {
@@ -132,7 +133,7 @@ public class JandiInterfaceModel {
             if (hasEntity(roomId)) {
                 entityId = roomId;
             } else {
-                entityRefreshed = getEntityInfo();
+                getEntityInfo();
                 if (hasEntity(roomId)) {
                     entityId = roomId;
                 } else {
@@ -143,12 +144,12 @@ public class JandiInterfaceModel {
             long chatMemberId = getChatMemberId(roomId);
 
             if (!hasEntity(chatMemberId)) {
-                entityRefreshed = getEntityInfo();
+                getEntityInfo();
             }
             entityId = chatMemberId;
         }
 
-        return new Pair<>(entityRefreshed, entityId);
+        return entityId;
     }
 
     private boolean isKnowRoomType(String roomTypeRaw) {
@@ -187,4 +188,14 @@ public class JandiInterfaceModel {
         return pushTokenList.isEmpty();
     }
 
+    public int getEventHistoryCount() {
+        long ts = JandiPreference.getSocketConnectedLastTime();
+        long myId = TeamInfoLoader.getInstance().getMyId();
+        try {
+            return eventApi.get().getEventHistory(ts, myId, 1).getTotal();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
 }

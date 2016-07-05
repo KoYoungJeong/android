@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.ui.intro.dagger.IntroModule;
 import com.tosslab.jandi.app.ui.intro.presenter.IntroActivityPresenter;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.sign.SignHomeActivity;
+import com.tosslab.jandi.app.ui.socketevent.SocketInitActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -156,6 +157,12 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
     @Override
     public void finishOnUiThread() {
+        finish();
+    }
+
+    @Override
+    public void moveToSocketInitActivity() {
+        SocketInitActivity.startActivity(IntroActivity.this);
         finish();
     }
 
