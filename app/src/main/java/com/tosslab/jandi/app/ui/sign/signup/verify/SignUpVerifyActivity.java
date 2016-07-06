@@ -276,7 +276,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
                     AnalyticsValue.Action.Resend);
             JandiPreference.setEmailAuthSendTime();
         } else {
-            ColoredToast.show("메일이 발송중입니다. 잠시만 기다려주세요.");
+            ColoredToast.show(R.string.jandi_mail_sending);
         }
     }
 

@@ -97,6 +97,7 @@
 	<string name="jandi_are_you_sure_disable_external_link">"若移除共享連結，存取至該檔案的權限將被撤銷。你確定要移除共享連結？"</string>
 	<string name="jandi_ask_assign_topic_owner">"你確定將議題管理權限轉移至此成員？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你確定將此成員剔除議題？"</string>
+	<string name="jandi_ask_poll_delete">"確定要刪除此次投票？"</string>
 	<string name="jandi_ask_poll_finish">"你確定結束此投票？"</string>
 	<string name="jandi_ask_to_leave_if_private_topic_owner">"欲離開此議題，請先將議題管理權限轉移至其他成員"</string>
 	<string name="jandi_ask_to_leave_if_topic_owner">"你可於離開議題前轉移管理權限"</string>
@@ -185,6 +186,7 @@
 	<string name="jandi_deleted_file">"已刪除檔案"</string>
 	<string name="jandi_deleted_message">"(刪除的訊息)"</string>
 	<string name="jandi_deleted_team">"此團隊已被刪除"</string>
+	<string name="jandi_department">"所有部門"</string>
 	<string name="jandi_device_storage">"行動裝置"</string>
 	<string name="jandi_disable_external_link">"移除共享連結"</string>
 	<string name="jandi_disable_user_profile_explain">"此成員權限已被暫時關閉。\n欲知更多細節，請聯絡團隊管理員。"</string>
@@ -243,7 +245,8 @@
 	<string name="jandi_file_search_user">"按成員篩選搜尋結果"</string>
 	<string name="jandi_file_size_large_error">"無法上傳大於300MB的檔案"</string>
 	<string name="jandi_file_upload_finish">"檔案已成功上傳"</string>
-	<string name="jandi_file_upload_go_topic">"點擊進入JANDI瀏覽"</string>
+	<string name="jandi_file_upload_go_topic">"
+點擊進入JANDI瀏覽"</string>
 	<string name="jandi_file_upload_state">"上傳檔案中 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"檔案上傳成功"</string>
 	<string name="jandi_file_uploading">"上傳"</string>
@@ -312,6 +315,7 @@
 	<string name="jandi_is_newcomer">"還沒使用過JANDI?"</string>
 	<string name="jandi_is_topic_required">"公開/私人"</string>
 	<string name="jandi_it_has_no_topic_description">"(無議題內容)"</string>
+	<string name="jandi_job_title">"所有職稱"</string>
 	<string name="jandi_join_topic">"加入"</string>
 	<string name="jandi_joined_team">"你已加入%1$s，請再次確認團隊列表。"</string>
 	<string name="jandi_kicked_message">"你已被移除出%s"</string>
@@ -319,6 +323,7 @@
 	<string name="jandi_launch">"開啓JANDI"</string>
 	<string name="jandi_left_topic">"%s已經離開"</string>
 	<string name="jandi_logout">"登出"</string>
+	<string name="jandi_mail_sending">"驗證碼正在寄送中，請稍候"</string>
 	<string name="jandi_member_invite_popup_1">"現在就邀請您所有的團隊成員！"</string>
 	<string name="jandi_member_invite_popup_2">"JANDI是一個群組導向的平台，因此您可以在工作流程中與您全部團隊一同找到最棒的經驗。"</string>
 	<string name="jandi_member_profile_call">"通話"</string>
@@ -366,6 +371,8 @@
 	<string name="jandi_name">"名稱"</string>
 	<string name="jandi_name_in_jandi">"帳號名稱"</string>
 	<string name="jandi_need_to_assign_topic_owner">"你為此議題的管理員，請於離開議題前，先將管理權限轉移給其他成員"</string>
+	<string name="jandi_new_department">"新部門"</string>
+	<string name="jandi_new_job_title">"添加職稱"</string>
 	<string name="jandi_new_team_name">"新團隊名稱"</string>
 	<string name="jandi_next">"下一步"</string>
 	<string name="jandi_no_invite_email">"請提供您想邀請的團隊成員的電子郵件地址"</string>
@@ -385,6 +392,7 @@
 	<string name="jandi_nowhere_shared_file">"檔案尚未分享到其它議題"</string>
 	<string name="jandi_off">"關閉"</string>
 	<string name="jandi_on">"打開"</string>
+	<string name="jandi_one_to_one">"1:1"</string>
 	<string name="jandi_open_browser">"開啓一個瀏覽器"</string>
 	<string name="jandi_page_not_found">"您找的頁面不存在"</string>
 	<string name="jandi_participants">"投票人"</string>
@@ -398,6 +406,7 @@
 	<string name="jandi_please_retry">"請重試一次"</string>
 	<string name="jandi_plz_input_topic_description">"說明 (選項)"</string>
 	<string name="jandi_poll">"問卷調查"</string>
+	<string name="jandi_poll_add_item">"添加選項"</string>
 	<string name="jandi_poll_anonymous">"不記名"</string>
 	<string name="jandi_poll_create">"建立新的投票"</string>
 	<string name="jandi_poll_empty">"尚無問卷，\n點擊[+]建立新問卷"</string>
