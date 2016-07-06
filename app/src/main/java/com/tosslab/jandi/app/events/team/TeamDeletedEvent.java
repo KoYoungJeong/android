@@ -15,4 +15,20 @@ public class TeamDeletedEvent {
     public long getTeamId() {
         return teamId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TeamDeletedEvent that = (TeamDeletedEvent) o;
+
+        return teamId == that.teamId;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (teamId ^ (teamId >>> 32));
+    }
 }

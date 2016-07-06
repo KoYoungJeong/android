@@ -26,11 +26,11 @@ import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
+import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.libraries.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.folder.ExpandableTopicAdapter;
@@ -554,7 +554,7 @@ public class MainTopicListFragment extends Fragment
         }
     }
 
-    public void onEvent(SocketRoomMarkerEvent event) {
+    public void onEvent(RoomMarkerEvent event) {
         if (!isResumed()) {
             return;
         }

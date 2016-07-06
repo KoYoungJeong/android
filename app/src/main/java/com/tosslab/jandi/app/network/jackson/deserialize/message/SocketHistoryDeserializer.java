@@ -54,7 +54,6 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.UnknownEventHistoryInfo;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -63,8 +62,6 @@ import java.util.Map;
 import rx.Observable;
 
 public class SocketHistoryDeserializer extends JsonDeserializer<EventHistoryInfo> {
-
-    private static final String TAG = "SocketHistoryDeserializer";
 
     @Override
     public EventHistoryInfo deserialize(JsonParser jp, DeserializationContext ctxt)
@@ -95,7 +92,6 @@ public class SocketHistoryDeserializer extends JsonDeserializer<EventHistoryInfo
     }
 
     public EventType getEventType(String eventTypeValue) {
-        LogUtil.d(TAG, eventTypeValue);
         if (TextUtils.isEmpty(eventTypeValue)) {
             return EventType.Unknown;
         }

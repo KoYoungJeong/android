@@ -27,4 +27,23 @@ public class TopicKickedoutEvent {
     public int getRoomId() {
         return roomId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TopicKickedoutEvent that = (TopicKickedoutEvent) o;
+
+        if (roomId != that.roomId) return false;
+        return teamId == that.teamId;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = roomId;
+        result = 31 * result + teamId;
+        return result;
+    }
 }

@@ -168,7 +168,7 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 160
+        versionCode 162
         versionName '2.1.5'
 
         // for Ui Testing
@@ -275,7 +275,7 @@ android {
     }
 
     dexOptions {
-        javaMaxHeapSize "3g"
+        javaMaxHeapSize "2g"
         incremental true
         maxProcessCount Math.max(1, ((int) (Runtime.getRuntime().availableProcessors() / 2)))
     }

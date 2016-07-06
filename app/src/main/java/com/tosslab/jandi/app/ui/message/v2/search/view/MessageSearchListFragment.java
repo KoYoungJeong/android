@@ -57,7 +57,6 @@ import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -638,15 +637,8 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         if (!isForeground) {
             return;
         }
-        justRefresh();
-    }
 
-    public void onEvent(SocketRoomMarkerEvent event) {
-        if (!isForeground) {
-            return;
-        }
-
-        if (event.getRoom().getId() == roomId) {
+        if (event.getRoomId() == roomId) {
             justRefresh();
         }
     }

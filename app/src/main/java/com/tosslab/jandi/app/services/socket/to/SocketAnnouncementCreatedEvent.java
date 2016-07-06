@@ -124,5 +124,49 @@ public class SocketAnnouncementCreatedEvent implements EventHistoryInfo {
         public void setAnnouncement(Topic.Announcement announcement) {
             this.announcement = announcement;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Data data = (Data) o;
+
+            if (topicId != data.topicId) return false;
+            return announcement != null ? announcement.equals(data.announcement) : data.announcement == null;
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = (int) (topicId ^ (topicId >>> 32));
+            result = 31 * result + (announcement != null ? announcement.hashCode() : 0);
+            return result;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SocketAnnouncementCreatedEvent that = (SocketAnnouncementCreatedEvent) o;
+
+        if (version != that.version) return false;
+        if (ts != that.ts) return false;
+        if (teamId != that.teamId) return false;
+        if (event != null ? !event.equals(that.event) : that.event != null) return false;
+        return data != null ? data.equals(that.data) : that.data == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = event != null ? event.hashCode() : 0;
+        result = 31 * result + version;
+        result = 31 * result + (int) (ts ^ (ts >>> 32));
+        result = 31 * result + (int) (teamId ^ (teamId >>> 32));
+        result = 31 * result + (data != null ? data.hashCode() : 0);
+        return result;
     }
 }

@@ -105,5 +105,49 @@ public class SocketTopicPushEvent implements EventHistoryInfo {
                     ", subscribe=" + subscribe +
                     '}';
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Data data = (Data) o;
+
+            if (roomId != data.roomId) return false;
+            return subscribe == data.subscribe;
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = (int) (roomId ^ (roomId >>> 32));
+            result = 31 * result + (subscribe ? 1 : 0);
+            return result;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SocketTopicPushEvent that = (SocketTopicPushEvent) o;
+
+        if (version != that.version) return false;
+        if (ts != that.ts) return false;
+        if (teamId != that.teamId) return false;
+        if (event != null ? !event.equals(that.event) : that.event != null) return false;
+        return data != null ? data.equals(that.data) : that.data == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = event != null ? event.hashCode() : 0;
+        result = 31 * result + version;
+        result = 31 * result + (data != null ? data.hashCode() : 0);
+        result = 31 * result + (int) (ts ^ (ts >>> 32));
+        result = 31 * result + (int) (teamId ^ (teamId >>> 32));
+        return result;
     }
 }
