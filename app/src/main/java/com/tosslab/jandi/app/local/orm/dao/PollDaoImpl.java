@@ -48,15 +48,6 @@ public class PollDaoImpl extends BaseDaoImpl<Poll, Integer> {
                 pollItemDao.create(item);
             }
         }
-
-//        Collection<Poll.Item> electedItems = poll.getElectedItems();
-//        if (electedItems != null && !electedItems.isEmpty()) {
-//            for (Poll.Item item : electedItems) {
-//                item.setElected(true);
-//                item.setPoll(poll);
-//                pollItemDao.createOrUpdate(item);
-//            }
-//        }
     }
 
 }

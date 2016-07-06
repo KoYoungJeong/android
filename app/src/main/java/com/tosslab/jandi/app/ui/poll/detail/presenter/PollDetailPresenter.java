@@ -44,6 +44,10 @@ public interface PollDetailPresenter {
 
     void onRequestShowPollParticipantsAction(RequestShowPollParticipantsEvent event);
 
+    void onTopicDeleted(long topicId);
+
+    void clearAllEventQueue();
+
     interface View {
         void showProgress();
 

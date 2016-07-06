@@ -27,6 +27,8 @@ import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
+import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
+import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.poll.PollDataChangedEvent;
 import com.tosslab.jandi.app.events.poll.RequestShowPollParticipantsEvent;
 import com.tosslab.jandi.app.events.RequestVotePollEvent;
@@ -233,6 +235,12 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     }
 
     @Override
+    protected void onDestroy() {
+        pollDetailPresenter.clearAllEventQueue();
+        super.onDestroy();
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         Observable.just(1)
@@ -306,14 +314,18 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     /**
      * 소켓 이벤트는 무시한다. (모바일 정책)
      */
-//    public void onEvent(SocketPollEvent event) {
-//        if (event.getPoll() == null
-//                || event.getPoll().getId() != pollId) {
-//            return;
-//        }
-//
-//        pollDetailPresenter.onPollDataChanged(event.getPoll());
-//    }
+    public void onEvent(SocketPollEvent event) {
+        if (event.getPoll() == null
+                || event.getPoll().getId() != pollId) {
+            return;
+        }
+
+        if (SocketPollEvent.Type.DELETED == event.getType()
+                || SocketPollEvent.Type.FINISHED == event.getType()) {
+            pollDetailPresenter.reInitializePollDetail(pollId);
+        }
+    }
+
     public void onEvent(SelectedMemberInfoForMentionEvent event) {
         if (isFinishing()) {
             return;
@@ -340,6 +352,22 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
                 pollDetailPresenter.onChangeCommentStarredState(messageId, false);
                 break;
         }
+    }
+
+    public void onEvent(ConfirmCopyMessageEvent event) {
+        if (isFinishing()) {
+            return;
+        }
+
+        copyToClipboard(event.contentString);
+    }
+
+    public void onEvent(TopicDeleteEvent event) {
+        if (isFinishing()) {
+            return;
+        }
+
+        pollDetailPresenter.onTopicDeleted(event.getId());
     }
 
     public void onEvent(RequestDeleteMessageEvent event) {
@@ -835,11 +863,13 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
 
     @Override
     public void showEmptyParticipantsToast() {
+        SuperToast.cancelAllSuperToasts();
         ColoredToast.showError(R.string.jandi_empty_participants);
     }
 
     @Override
     public void showPollIsAnonymousToast() {
+        SuperToast.cancelAllSuperToasts();
         ColoredToast.showError(R.string.jandi_poll_is_anonymous);
     }
 

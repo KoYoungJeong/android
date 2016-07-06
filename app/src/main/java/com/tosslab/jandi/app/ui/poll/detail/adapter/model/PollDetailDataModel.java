@@ -35,4 +35,6 @@ public interface PollDetailDataModel {
     Pair<Integer, ResMessages.OriginalMessage> removeCommentByMessageIdAndGet(long messageId);
 
     void removePollComment(long messageId);
+
+    Poll getPoll();
 }

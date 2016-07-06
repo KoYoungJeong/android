@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.network.models.ReqCreatePoll;
 import com.tosslab.jandi.app.network.models.ReqSendPollComment;
 import com.tosslab.jandi.app.network.models.ReqVotePoll;
 import com.tosslab.jandi.app.network.models.ResCreatePoll;
-import com.tosslab.jandi.app.network.models.ResDeletePoll;
+import com.tosslab.jandi.app.network.models.ResPollLink;
 import com.tosslab.jandi.app.network.models.ResPollCommentCreated;
 import com.tosslab.jandi.app.network.models.ResPollComments;
 import com.tosslab.jandi.app.network.models.ResPollDetail;
@@ -43,11 +43,11 @@ public class PollApi extends ApiTemplate<PollApi.Api> {
         return call(() -> getApi().createPoll(teamId, reqCreatePoll));
     }
 
-    public ResDeletePoll deletePoll(long teamId, long pollId) throws RetrofitException {
+    public ResPollLink deletePoll(long teamId, long pollId) throws RetrofitException {
         return call(() -> getApi().deletePoll(teamId, pollId));
     }
 
-    public ResDeletePoll votePoll(long teamId, long pollId, ReqVotePoll reqVotePoll) throws RetrofitException {
+    public ResPollLink votePoll(long teamId, long pollId, ReqVotePoll reqVotePoll) throws RetrofitException {
         return call(() -> getApi().vote(teamId, pollId, reqVotePoll));
     }
 
@@ -59,7 +59,7 @@ public class PollApi extends ApiTemplate<PollApi.Api> {
         return call(() -> getApi().sendPollComment(teamId, pollId, reqSendComment));
     }
 
-    public ResDeletePoll finishPoll(long teamId, long pollId) throws RetrofitException {
+    public ResPollLink finishPoll(long teamId, long pollId) throws RetrofitException {
         return call(() -> getApi().finishPoll(teamId, pollId));
     }
 
@@ -91,12 +91,12 @@ public class PollApi extends ApiTemplate<PollApi.Api> {
 
         @DELETE("teams/{teamId}/polls/{pollId}")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResDeletePoll> deletePoll(@Path("teamId") long teamId, @Path("pollId") long pollId);
+        Call<ResPollLink> deletePoll(@Path("teamId") long teamId, @Path("pollId") long pollId);
 
         @HTTP(path = "teams/{teamId}/polls/{pollId}/vote", hasBody = true, method = "PUT")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResDeletePoll> vote(@Path("teamId") long teamId, @Path("pollId") long pollId,
-                                 @Body ReqVotePoll reqVotePoll);
+        Call<ResPollLink> vote(@Path("teamId") long teamId, @Path("pollId") long pollId,
+                               @Body ReqVotePoll reqVotePoll);
 
         @GET("teams/{teamId}/polls/{pollId}/comments")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
@@ -109,7 +109,7 @@ public class PollApi extends ApiTemplate<PollApi.Api> {
 
         @PUT("teams/{teamId}/polls/{pollId}/finish")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResDeletePoll> finishPoll(@Path("teamId") long teamId, @Path("pollId") long pollId);
+        Call<ResPollLink> finishPoll(@Path("teamId") long teamId, @Path("pollId") long pollId);
 
         @GET("teams/{teamId}/polls/{pollId}/votedMembers")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)

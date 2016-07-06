@@ -20,14 +20,17 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
 
 /**
  * Created by tonyjs on 16. 6. 14..
@@ -38,6 +41,9 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
     private final PollDetailPresenter.View pollDetailView;
     private final PollDetailDataModel pollDetailDataModel;
 
+    private final PublishSubject<Long> reInitializePollDetailQueue;
+    private final Subscription reInitializePollDetailQueueSubs;
+
     @Inject
     public PollDetailPresenterImpl(PollDetailModel pollDetailModel,
                                    PollDetailDataModel pollDetailDataModel,
@@ -45,6 +51,36 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
         this.pollDetailModel = pollDetailModel;
         this.pollDetailDataModel = pollDetailDataModel;
         this.pollDetailView = pollDetailView;
+
+        reInitializePollDetailQueue = PublishSubject.create();
+        reInitializePollDetailQueueSubs =
+                reInitializePollDetailQueue.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
+                        .onBackpressureBuffer()
+                        .concatMap(pollId ->
+                                pollDetailModel.getPollDetailObservable(pollId, new PollDetail(pollId)))
+                        .concatMap(pollDetail ->
+                                pollDetailModel.getPollCommentsObservable(pollDetail.getPollId(), pollDetail))
+                        .doOnNext(pollDetail -> pollDetailModel.upsertPoll(pollDetail.getPoll()))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(pollDetail -> {
+                            pollDetailDataModel.removeAllRows();
+
+                            pollDetailDataModel.setPollDetails(pollDetail.getPoll());
+
+                            List<ResMessages.OriginalMessage> pollComments = pollDetail.getPollComments();
+                            if (pollComments != null && !pollComments.isEmpty()) {
+                                pollDetailModel.sortByDate(pollComments);
+                                pollDetailDataModel.addPollComments(pollComments);
+                            }
+
+                            pollDetailView.notifyDataSetChanged();
+
+                            pollDetailView.initPollDetailExtras(pollDetail.getPoll());
+
+                        }, e -> {
+                            LogUtil.e(TAG, Log.getStackTraceString(e));
+                        });
     }
 
     @Override
@@ -55,8 +91,9 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
         }
 
         pollDetailView.showProgress();
-        pollDetailModel.getPollDetailObservable(pollId, new PollDetail())
-                .concatMap(pollDetail -> pollDetailModel.getPollCommentsObservable(pollId, pollDetail))
+        pollDetailModel.getPollDetailObservable(pollId, new PollDetail(pollId))
+                .concatMap(pollDetail ->
+                        pollDetailModel.getPollCommentsObservable(pollDetail.getPollId(), pollDetail))
                 .doOnNext(pollDetail -> pollDetailModel.upsertPoll(pollDetail.getPoll()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -97,29 +134,30 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
             return;
         }
 
-        pollDetailModel.getPollDetailObservable(pollId, new PollDetail())
-                .concatMap(pollDetail -> pollDetailModel.getPollCommentsObservable(pollId, pollDetail))
-                .doOnNext(pollDetail -> pollDetailModel.upsertPoll(pollDetail.getPoll()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(pollDetail -> {
-                    pollDetailDataModel.removeAllRows();
-
-                    pollDetailDataModel.setPollDetails(pollDetail.getPoll());
-
-                    List<ResMessages.OriginalMessage> pollComments = pollDetail.getPollComments();
-                    if (pollComments != null && !pollComments.isEmpty()) {
-                        pollDetailModel.sortByDate(pollComments);
-                        pollDetailDataModel.addPollComments(pollComments);
-                    }
-
-                    pollDetailView.notifyDataSetChanged();
-
-                    pollDetailView.initPollDetailExtras(pollDetail.getPoll());
-
-                }, e -> {
-                    LogUtil.e(TAG, Log.getStackTraceString(e));
-                });
+        reInitializePollDetailQueue.onNext(pollId);
+//        pollDetailModel.getPollDetailObservable(pollId, new PollDetail())
+//                .concatMap(pollDetail -> pollDetailModel.getPollCommentsObservable(pollId, pollDetail))
+//                .doOnNext(pollDetail -> pollDetailModel.upsertPoll(pollDetail.getPoll()))
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(pollDetail -> {
+//                    pollDetailDataModel.removeAllRows();
+//
+//                    pollDetailDataModel.setPollDetails(pollDetail.getPoll());
+//
+//                    List<ResMessages.OriginalMessage> pollComments = pollDetail.getPollComments();
+//                    if (pollComments != null && !pollComments.isEmpty()) {
+//                        pollDetailModel.sortByDate(pollComments);
+//                        pollDetailDataModel.addPollComments(pollComments);
+//                    }
+//
+//                    pollDetailView.notifyDataSetChanged();
+//
+//                    pollDetailView.initPollDetailExtras(pollDetail.getPoll());
+//
+//                }, e -> {
+//                    LogUtil.e(TAG, Log.getStackTraceString(e));
+//                });
     }
 
     @Override
@@ -142,7 +180,8 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     pollDetailView.dismissProgress();
 
                     ResMessages.Link linkMessage = resDeletePoll.getLinkMessage();
-                    if (linkMessage == null || linkMessage.poll == null || linkMessage.poll.getId() <= 0) {
+                    if (linkMessage == null
+                            || linkMessage.poll == null || linkMessage.poll.getId() <= 0) {
                         return;
                     }
 
@@ -422,6 +461,26 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
             // 옵션 참여자
 
             showOptionParticipants(event, poll);
+        }
+    }
+
+    @Override
+    public void onTopicDeleted(long topicId) {
+        Poll poll = pollDetailDataModel.getPoll();
+        if (poll == null || poll.getId() <= 0) {
+            return;
+        }
+
+        if (poll.getTopicId() == topicId) {
+            pollDetailView.finish();
+        }
+    }
+
+    @Override
+    public void clearAllEventQueue() {
+        if (reInitializePollDetailQueueSubs != null
+                && !reInitializePollDetailQueueSubs.isUnsubscribed()) {
+            reInitializePollDetailQueueSubs.unsubscribe();
         }
     }
 

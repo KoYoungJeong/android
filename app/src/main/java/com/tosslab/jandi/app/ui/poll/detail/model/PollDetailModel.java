@@ -17,7 +17,7 @@ import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ReqSendPollComment;
 import com.tosslab.jandi.app.network.models.ReqVotePoll;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.ResDeletePoll;
+import com.tosslab.jandi.app.network.models.ResPollLink;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResPollCommentCreated;
 import com.tosslab.jandi.app.network.models.ResPollComments;
@@ -28,7 +28,6 @@ import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.poll.detail.dto.PollDetail;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -78,8 +77,8 @@ public class PollDetailModel {
         });
     }
 
-    public Observable<ResDeletePoll> getPollVoteObservable(long pollId, Collection<Integer> seqs) {
-        return Observable.<ResDeletePoll>create(subscriber -> {
+    public Observable<ResPollLink> getPollVoteObservable(long pollId, Collection<Integer> seqs) {
+        return Observable.<ResPollLink>create(subscriber -> {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
 
             if (teamId <= 0l) {
@@ -88,7 +87,7 @@ public class PollDetailModel {
             } else {
                 try {
                     ReqVotePoll reqVotePoll = ReqVotePoll.create(seqs);
-                    ResDeletePoll pollDetail = pollApi.get().votePoll(teamId, pollId, reqVotePoll);
+                    ResPollLink pollDetail = pollApi.get().votePoll(teamId, pollId, reqVotePoll);
                     subscriber.onNext(pollDetail);
                 } catch (RetrofitException e) {
                     subscriber.onError(e);
@@ -259,8 +258,8 @@ public class PollDetailModel {
         });
     }
 
-    public Observable<ResDeletePoll> getPollFinishObservable(long pollId) {
-        return Observable.<ResDeletePoll>create(subscriber -> {
+    public Observable<ResPollLink> getPollFinishObservable(long pollId) {
+        return Observable.<ResPollLink>create(subscriber -> {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
 
             if (teamId <= 0l) {
@@ -268,7 +267,7 @@ public class PollDetailModel {
                 subscriber.onCompleted();
             } else {
                 try {
-                    ResDeletePoll pollDetail = pollApi.get().finishPoll(teamId, pollId);
+                    ResPollLink pollDetail = pollApi.get().finishPoll(teamId, pollId);
                     subscriber.onNext(pollDetail);
                 } catch (RetrofitException e) {
                     subscriber.onError(e);
@@ -278,8 +277,8 @@ public class PollDetailModel {
         });
     }
 
-    public Observable<ResDeletePoll> getPollDeleteObservable(long pollId) {
-        return Observable.<ResDeletePoll>create(subscriber -> {
+    public Observable<ResPollLink> getPollDeleteObservable(long pollId) {
+        return Observable.<ResPollLink>create(subscriber -> {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
 
             if (teamId <= 0l) {
@@ -287,8 +286,8 @@ public class PollDetailModel {
                 subscriber.onCompleted();
             } else {
                 try {
-                    ResDeletePoll resDeletePoll = pollApi.get().deletePoll(teamId, pollId);
-                    subscriber.onNext(resDeletePoll);
+                    ResPollLink resPollLink = pollApi.get().deletePoll(teamId, pollId);
+                    subscriber.onNext(resPollLink);
                 } catch (RetrofitException e) {
                     subscriber.onError(e);
                 }

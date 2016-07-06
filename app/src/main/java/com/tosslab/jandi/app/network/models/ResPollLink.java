@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class ResDeletePoll {
+public class ResPollLink {
     private ResMessages.Link linkMessage;
 
     public ResMessages.Link getLinkMessage() {
@@ -21,7 +21,7 @@ public class ResDeletePoll {
 
     @Override
     public String toString() {
-        return "ResDeletePoll{" +
+        return "ResPollLink{" +
                 "linkMessage=" + linkMessage +
                 '}';
     }

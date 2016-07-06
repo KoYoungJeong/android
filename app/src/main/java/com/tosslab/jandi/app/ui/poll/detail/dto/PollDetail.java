@@ -9,8 +9,13 @@ import java.util.List;
  * Created by tonyjs on 16. 6. 27..
  */
 public class PollDetail {
+    private long pollId;
     private Poll poll;
     private List<ResMessages.OriginalMessage> pollComments;
+
+    public PollDetail(long pollId) {
+        this.pollId = pollId;
+    }
 
     public Poll getPoll() {
         return poll;
@@ -26,6 +31,10 @@ public class PollDetail {
 
     public void setPollComments(List<ResMessages.OriginalMessage> pollComments) {
         this.pollComments = pollComments;
+    }
+
+    public long getPollId() {
+        return pollId;
     }
 
     @Override
