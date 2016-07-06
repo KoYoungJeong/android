@@ -59,7 +59,7 @@ public class PollDetailModelTest {
 
         // When
         Observable<PollDetail> pollDetailObservable =
-                model.getPollDetailObservable(poll.getId(), new PollDetail());
+                model.getPollDetailObservable(poll.getId(), new PollDetail(poll.getId()));
 
         TestSubscriber<PollDetail> testSubscriber = new TestSubscriber<>();
         pollDetailObservable.subscribe(testSubscriber);
