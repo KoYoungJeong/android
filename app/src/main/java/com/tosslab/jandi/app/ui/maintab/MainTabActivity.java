@@ -201,7 +201,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
         initializeTeamsView();
 
-
         User me = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
         if (!me.isProfileUpdated()) {
             moveSetProfileActivity();

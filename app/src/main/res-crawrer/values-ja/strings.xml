@@ -97,6 +97,7 @@
 	<string name="jandi_are_you_sure_disable_external_link">"削除すると、リンクをもう使用することができません。本当に削除しますか？"</string>
 	<string name="jandi_ask_assign_topic_owner">"このメンバーにトピック管理者の権限を譲りますか？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"本当にこのメンバーをトピックから退出させますか？"</string>
+	<string name="jandi_ask_poll_delete">"投票を削除しますか？"</string>
 	<string name="jandi_ask_poll_finish">"投票を終了しますか？"</string>
 	<string name="jandi_ask_to_leave_if_private_topic_owner">"あなたはこのトピックの管理者です。他のメンバーに管理者の権限を譲った後トピックから退出できます。"</string>
 	<string name="jandi_ask_to_leave_if_topic_owner">"あなたはこのトピックの管理者です。トピックから退出するには管理者権限を他のメンバーに譲ってください。"</string>
@@ -387,6 +388,7 @@
 	<string name="jandi_nowhere_shared_file">"共有されたファイルがありません"</string>
 	<string name="jandi_off">"オフ"</string>
 	<string name="jandi_on">"オン"</string>
+	<string name="jandi_one_to_one">"1:1"</string>
 	<string name="jandi_open_browser">"ブラウザで開く"</string>
 	<string name="jandi_page_not_found">"ページが見つかりません"</string>
 	<string name="jandi_participants">"参加者"</string>
@@ -400,6 +402,7 @@
 	<string name="jandi_please_retry">"正しいパスワードを入力してください"</string>
 	<string name="jandi_plz_input_topic_description">"トピックの説明（選択）"</string>
 	<string name="jandi_poll">"投票"</string>
+	<string name="jandi_poll_add_item">"回答を追加する"</string>
 	<string name="jandi_poll_anonymous">"匿名投票"</string>
 	<string name="jandi_poll_create">"新しい投票を作成する"</string>
 	<string name="jandi_poll_empty">"投票がありません。\nトピックで「＋」を押し、投票を作成してください。"</string>

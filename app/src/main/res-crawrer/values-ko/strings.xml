@@ -97,6 +97,7 @@
 	<string name="jandi_are_you_sure_disable_external_link">"기존에 공유된 링크로 접속할 경우 더 이상 파일을 볼 수 없게 됩니다. 삭제하시겠습니까?"</string>
 	<string name="jandi_ask_assign_topic_owner">"이 멤버를 토픽 관리자로 지정하시겠습니까?"</string>
 	<string name="jandi_ask_kick_user_from_topic">"정말 이 멤버를 내보내시겠습니까?"</string>
+	<string name="jandi_ask_poll_delete">"투표를 삭제할까요?"</string>
 	<string name="jandi_ask_poll_finish">"투표를 종료하시겠습니까?"</string>
 	<string name="jandi_ask_to_leave_if_private_topic_owner">"회원님은 이 토픽의 관리자입니다. 다음 토픽 관리자를 지정한 후 토픽에서 나가실 수 있습니다"</string>
 	<string name="jandi_ask_to_leave_if_topic_owner">"회원님은 이 토픽의 관리자입니다. 토픽에서 나가기 전에 다음 토픽 관리자를 지정하실 수 있습니다."</string>
@@ -214,7 +215,8 @@
 	<string name="jandi_explain_global_push_off">"앱의 알림 설정이 꺼져 있습니다. 더보기 > 설정에서 알림을 켜야 알림을 받을 수 있습니다."</string>
 	<string name="jandi_explain_invite">"메세지 검색이 가능한 업무용 메신저 잔디는 
 팀원 모두와 함께 사용해야 그 진가가 발휘됩니다.
-지금 바로 멤버들을 초대하세요."</string>
+지금 바로 멤버들을 초대하세요.
+"</string>
 	<string name="jandi_explain_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 	<string name="jandi_export">"내보내기"</string>
 	<string name="jandi_export_to_app">"다음 앱으로 파일 내보내기"</string>
@@ -389,6 +391,7 @@
 	<string name="jandi_nowhere_shared_file">"공유된 대화방이 없습니다"</string>
 	<string name="jandi_off">"끄기"</string>
 	<string name="jandi_on">"켜기"</string>
+	<string name="jandi_one_to_one">"1:1"</string>
 	<string name="jandi_open_browser">"브라우저에서 열기"</string>
 	<string name="jandi_page_not_found">"페이지를 찾을 수 없습니다."</string>
 	<string name="jandi_participants">"참여자"</string>
@@ -402,6 +405,7 @@
 	<string name="jandi_please_retry">"다시 시도해주세요."</string>
 	<string name="jandi_plz_input_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 	<string name="jandi_poll">"투표"</string>
+	<string name="jandi_poll_add_item">"보기추가"</string>
 	<string name="jandi_poll_anonymous">"익명투표"</string>
 	<string name="jandi_poll_create">"새 투표 작성하기"</string>
 	<string name="jandi_poll_empty">"투표가 없습니다. \n토픽에서 [+]를 눌러 투표를 만들 수 있습니다."</string>
@@ -412,7 +416,7 @@
 	<string name="jandi_poll_multiple">"복수선택"</string>
 	<string name="jandi_poll_multiple_available">"중복 투표 가능"</string>
 	<string name="jandi_poll_participants_ing">"명 참여중"</string>
-	<string name="jandi_poll_voted">"투표 완료"</string>
+	<string name="jandi_poll_voted">"투표함"</string>
 	<string name="jandi_pp">"개인정보 취급방침"</string>
 	<string name="jandi_preview_message_contents">"메시지 내용 미리보기"</string>
 	<string name="jandi_privacy_policy">"개인정보 취급방침"</string>
