@@ -275,9 +275,9 @@
     <color name="button_text_color">#ff00abe8</color>
     <color name="button_text_color_dim">#7600abe8</color>
 
-    <color name="ff00abe8_30">#4C00ABE8</color>
-    <color name="ff0081b8">#FF0081B8</color>
-    <color name="ff00abe8">#FF00ABE8</color>
+    <color name="rgb_00abe8_30">#4C00ABE8</color>
+    <color name="rgb_0081b8">#FF0081B8</color>
+    <color name="rgb_00abe8">#FF00ABE8</color>
 
     <color name="jandi_web_button_retry_background_selected">#FFE0E0E0</color>
     <color name="jandi_web_button_retry_background">#FFFFFFFF</color>
@@ -299,6 +299,8 @@
     <color name="jandi_54_opacity_black">#8A000000</color>
 
     <color name="jandi_red">#f15544</color>
+
+    <color name="jandi_error_red">#ff5b49</color>
 
     <color name="jandi_horizontal_progress_background">#fff0f0f0</color>
     <color name="jandi_horizontal_progress_selected">#ffdbdbdb</color>

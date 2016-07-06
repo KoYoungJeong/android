@@ -1,29 +1,30 @@
 package com.tosslab.jandi.app.ui.profile.insert;
 
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.widget.ImageView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.insert.adapter.ProfilePagerAdapter;
-import com.tosslab.jandi.app.ui.profile.insert.views.SetProfileFirstPageFragment;
+import com.tosslab.jandi.app.ui.profile.insert.views.InsertProfileFirstPageFragment;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.ViewById;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Created by tee on 16. 3. 15..
  */
 
-@EActivity(R.layout.activity_set_new_profile)
-public class SetProfileActivity extends BaseAppCompatActivity
-        implements ViewPager.OnPageChangeListener, SetProfileFirstPageFragment.OnChangePageClickListener {
+public class InsertProfileActivity extends BaseAppCompatActivity
+        implements ViewPager.OnPageChangeListener,
+        InsertProfileFirstPageFragment.OnChangePageClickListener {
 
-    @ViewById(R.id.iv_page_icon_first)
+    @Bind(R.id.iv_page_icon_first)
     ImageView ivPageIconFirst;
-    @ViewById(R.id.iv_page_icon_second)
+    @Bind(R.id.iv_page_icon_second)
     ImageView ivPageIconSecond;
 
     private ViewPager viewPager;
@@ -32,10 +33,18 @@ public class SetProfileActivity extends BaseAppCompatActivity
     private Drawable pageNationNomal;
     private Drawable pageNationFocus;
 
-    @AfterViews
-    void init() {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_set_new_profile);
         pageNationNomal = getResources().getDrawable(R.drawable.pagenation_normal);
         pageNationFocus = getResources().getDrawable(R.drawable.pagenation_focus);
+        ButterKnife.bind(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         setUpView();
     }
 
@@ -71,7 +80,7 @@ public class SetProfileActivity extends BaseAppCompatActivity
     }
 
     @Override
-    public void onClickChangePage() {
+    public void onClickMoveProfileNextPage() {
         if (viewPager != null) {
             viewPager.setCurrentItem(1);
         }

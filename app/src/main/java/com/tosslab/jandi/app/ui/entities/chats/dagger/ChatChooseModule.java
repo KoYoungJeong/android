@@ -4,18 +4,19 @@ import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapterDataView;
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 import com.tosslab.jandi.app.ui.entities.chats.presenter.ChatChoosePresenter;
 import com.tosslab.jandi.app.ui.entities.chats.presenter.ChatChoosePresenterImpl;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor_;
-import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel_;
+import com.tosslab.jandi.app.ui.team.create.teaminfo.model.InsertTeamInfoModel;
 
 import dagger.Module;
 import dagger.Provides;
 
-@Module
+@Module(includes = ApiClientModule.class)
 public class ChatChooseModule {
 
     private final ChatChoosePresenter.View view;
@@ -32,9 +33,9 @@ public class ChatChooseModule {
     }
 
     @Provides
-    ChatChoosePresenter providesChatChoosePresenter() {
+    ChatChoosePresenter providesChatChoosePresenter(InsertTeamInfoModel insertTeamInfoModel) {
         return new ChatChoosePresenterImpl(new ChatChooseModel(),
-                TeamDomainInfoModel_.getInstance_(JandiApplication.getContext()),
+                insertTeamInfoModel,
                 InvitationDialogExecutor_.getInstance_(JandiApplication.getContext()),
                 view,
                 chatChooseAdapter);

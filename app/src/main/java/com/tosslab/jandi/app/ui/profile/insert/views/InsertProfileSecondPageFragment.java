@@ -1,66 +1,115 @@
 package com.tosslab.jandi.app.ui.profile.insert.views;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.member.User;
-import com.tosslab.jandi.app.ui.profile.insert.presenter.SetProfileSecondPagePresenter;
+import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
+import com.tosslab.jandi.app.ui.profile.insert.dagger.DaggerInsertProfileSecondPageComponent;
+import com.tosslab.jandi.app.ui.profile.insert.dagger.InsertProfileSecondPageModule;
+import com.tosslab.jandi.app.ui.profile.insert.presenter.InsertProfileSecondPagePresenter;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by tee on 16. 3. 16..
  */
 
-@EFragment(R.layout.fragment_insert_profile_second)
-public class SetProfileSecondPageFragment extends Fragment
-        implements SetProfileSecondPagePresenter.View {
+public class InsertProfileSecondPageFragment extends Fragment
+        implements InsertProfileSecondPagePresenter.View {
 
-    @Bean
-    SetProfileSecondPagePresenter presenter;
+    @Inject
+    InsertProfileSecondPagePresenter presenter;
 
-    @ViewById(R.id.tv_email)
+    @Bind(R.id.tv_email)
     TextView tvEmail;
 
-    @ViewById(R.id.et_department)
+    @Bind(R.id.et_department)
     EditText etDepartment;
 
-    @ViewById(R.id.et_positon)
+    @Bind(R.id.et_positon)
     EditText etPosition;
 
-    @ViewById(R.id.et_phone_number)
+    @Bind(R.id.et_phone_number)
     EditText etPhoneNumber;
 
-    @ViewById(R.id.et_status_message)
+    @Bind(R.id.et_status_message)
     EditText etStatusMessage;
 
-    private ProgressWheel progressWheel;
+    @Bind(R.id.vg_bottom_for_insert_profile)
+    ViewGroup vgBottomForInsertProfile;
 
-    @AfterInject
-    void initObject() {
-        presenter.setView(this);
+    @Bind(R.id.vg_bottom_for_create_team_next)
+    ViewGroup vgBottomForCreateTeamNext;
+
+    @Bind(R.id.vg_bottom_for_create_team_previous)
+    ViewGroup getVgBottomForCreateTeamPrevious;
+
+    private ProgressWheel progressWheel;
+    private String pageMode;
+
+    private OnChangePageClickListener onChangePageClickListener;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_insert_profile_second, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
-    @AfterViews
-    void initViews() {
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnChangePageClickListener) {
+            onChangePageClickListener = (OnChangePageClickListener) context;
+        }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        DaggerInsertProfileSecondPageComponent.builder()
+                .insertProfileSecondPageModule(new InsertProfileSecondPageModule(this))
+                .build()
+                .inject(this);
+        Bundle bundle = getArguments();
+        pageMode = bundle.getString(InsertProfileFirstPageFragment.MODE);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (pageMode.equals(InsertProfileFirstPageFragment.MODE_INSERT_PROFILE)) {
+            vgBottomForInsertProfile.setVisibility(View.VISIBLE);
+            vgBottomForCreateTeamNext.setVisibility(View.GONE);
+            getVgBottomForCreateTeamPrevious.setVisibility(View.GONE);
+        } else {
+            vgBottomForInsertProfile.setVisibility(View.GONE);
+            vgBottomForCreateTeamNext.setVisibility(View.VISIBLE);
+            getVgBottomForCreateTeamPrevious.setVisibility(View.VISIBLE);
+        }
         presenter.requestProfile();
     }
 
-    @Click(R.id.iv_profile_check)
+    @OnClick(R.id.iv_profile_check)
     void onClickProfileCheck() {
         presenter.uploadExtraInfo(
                 etDepartment.getText().toString(),
@@ -70,7 +119,17 @@ public class SetProfileSecondPageFragment extends Fragment
         );
     }
 
-    @Click(R.id.tv_email)
+    @OnClick(R.id.iv_team_create_next)
+    void onClickTeamCreateNext() {
+        onClickProfileCheck();
+    }
+
+    @OnClick(R.id.iv_team_create_previous)
+    void onClickTeamCreatePrevious() {
+        onChangePageClickListener.onClickMovePrevPage();
+    }
+
+    @OnClick(R.id.tv_email)
     void onClickChooseEmail() {
         presenter.chooseEmail(getEmail());
     }
@@ -101,7 +160,6 @@ public class SetProfileSecondPageFragment extends Fragment
                 .create().show();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showProgressWheel() {
         dismissProgressWheel();
@@ -111,7 +169,6 @@ public class SetProfileSecondPageFragment extends Fragment
         progressWheel.show();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissProgressWheel() {
         if (progressWheel != null && progressWheel.isShowing()) {
@@ -119,11 +176,13 @@ public class SetProfileSecondPageFragment extends Fragment
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showFailProfile() {
-        ColoredToast.showError(
-                JandiApplication.getContext().getString(R.string.err_profile_get_info));
+        // TODO AccountHome, MainTab 각각의 접근하는 경우가 달라야 함
+        if (getActivity() instanceof InsertProfileActivity) {
+            ColoredToast.showError(
+                    JandiApplication.getContext().getString(R.string.err_profile_get_info));
+        }
     }
 
     private String getEmail() {
@@ -135,7 +194,6 @@ public class SetProfileSecondPageFragment extends Fragment
     }
 
     @Override
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setEmail(String[] accountEmails, String email) {
         if (accountEmails.length == 1) {
             tvEmail.setText(email);
@@ -147,7 +205,6 @@ public class SetProfileSecondPageFragment extends Fragment
     }
 
     @Override
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void displayProfileInfos(User me) {
         presenter.setEmail(me.getEmail());
 
@@ -176,29 +233,38 @@ public class SetProfileSecondPageFragment extends Fragment
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void updateProfileSucceed() {
         ColoredToast.show(JandiApplication.getContext()
                 .getString(R.string.jandi_profile_update_succeed));
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void updateProfileFailed() {
         ColoredToast.showError(JandiApplication.getContext()
                 .getString(R.string.err_profile_update));
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showCheckNetworkDialog() {
         AlertUtil.showCheckNetworkDialog(getActivity(), null);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void finish() {
-        getActivity().finish();
+        if (pageMode.equals(InsertProfileFirstPageFragment.MODE_INSERT_PROFILE)) {
+            // 프로필 입력 모드 시
+            getActivity().finish();
+        } else {
+            // 팀 생성 모드 시
+            onChangePageClickListener.onClickMoveFinalPage();
+        }
     }
+
+    public interface OnChangePageClickListener {
+        void onClickMoveFinalPage();
+
+        void onClickMovePrevPage();
+    }
+
 }

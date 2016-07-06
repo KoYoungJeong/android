@@ -59,9 +59,8 @@ import com.tosslab.jandi.app.ui.maintab.teams.module.TeamsModule;
 import com.tosslab.jandi.app.ui.maintab.teams.presenter.TeamsPresenter;
 import com.tosslab.jandi.app.ui.maintab.teams.view.TeamsView;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
-import com.tosslab.jandi.app.ui.profile.insert.SetProfileActivity_;
-import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
-import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
+import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
+import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
@@ -119,8 +118,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     FloatingActionMenu floatingActionMenu;
     @Bean
     EntityClientManager entityClientManager;
-    @Bean
-    TeamDomainInfoModel teamDomainInfoModel;
     @SystemService
     ClipboardManager clipboardManager;
     @Bean
@@ -381,11 +378,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         recyclerView.setLayoutManager(layoutManager);
         teamsAdapter = new TeamsAdapter();
         teamsAdapter.setOnRequestTeamCreateListener(() -> {
-            TeamDomainInfoActivity_.intent(MainTabActivity.this)
-                    .startForResult(REQUEST_TEAM_CREATE);
-
+            Intent intent = new Intent(this, CreateTeamActivity.class);
+            startActivityForResult(intent, REQUEST_TEAM_CREATE);
             teamsPopupWindow.dismiss();
-
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.CreateNewTeam);
         });
         teamsAdapter.setOnTeamClickListener(team -> {
@@ -494,9 +489,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void moveSetProfileActivity() {
-        SetProfileActivity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .start();
+        Intent intent = new Intent(this, InsertProfileActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
     }
 
     public void onEvent(TeamInviteIgnoreEvent event) {
@@ -596,7 +591,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @OnActivityResult(REQUEST_TEAM_CREATE)
     void onTeamCreateResult(int resultCode) {
         if (resultCode == RESULT_OK) {
-            teamsPresenter.onTeamCreated(true);
+            teamsPresenter.onTeamCreated();
         }
     }
 
@@ -685,11 +680,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                 screen = AnalyticsValue.Screen.FilesTab;
                 break;
             case 3:
-//                screenView = ScreenViewProperty.SETTING_PANEL;
                 screen = AnalyticsValue.Screen.TeamTab;
                 break;
             case 4:
-//                screenView = ScreenViewProperty.SETTING_PANEL;
                 screen = AnalyticsValue.Screen.MypageTab;
                 break;
         }
