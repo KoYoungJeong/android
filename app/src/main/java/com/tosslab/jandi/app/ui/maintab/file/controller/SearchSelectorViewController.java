@@ -1,32 +1,21 @@
-package com.tosslab.jandi.app.ui.maintab.file;
+package com.tosslab.jandi.app.ui.maintab.file.controller;
 
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
-import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
-import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
-import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.selector.filetype.FileTypeSelector;
 import com.tosslab.jandi.app.ui.selector.filetype.FileTypeSelectorImpl;
@@ -34,16 +23,8 @@ import com.tosslab.jandi.app.ui.selector.room.RoomSelector;
 import com.tosslab.jandi.app.ui.selector.room.RoomSelectorImpl;
 import com.tosslab.jandi.app.ui.selector.user.UserSelector;
 import com.tosslab.jandi.app.ui.selector.user.UserSelectorImpl;
-import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,91 +33,72 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 /**
- * Created by Steve SeongUg Jung on 15. 1. 8..
+ * Created by tee on 16. 6. 29..
  */
-@EBean
-public class FileListPresenter {
+public class SearchSelectorViewController {
 
-    @RootContext
-    Context context;
+    private TextView tvFileListWhere;
+    private TextView tvFileListWhom;
+    private TextView tvFileListType;
 
-    // 카테코리 탭
-    @ViewById(R.id.txt_file_list_where)
-    TextView textViewFileListWhere;
+    private Context context;
 
-    @ViewById(R.id.txt_file_list_whom)
-    TextView textViewFileListWhom;
+    private String currentFileTypeText = null;
+    private String currentUserNameText = null;
+    private String currentEntityNameText = null;
 
-    @ViewById(R.id.txt_file_list_type)
-    TextView textViewFileListType;
-
-    @ViewById(R.id.layout_file_list_empty)
-    View uploadEmptyView;
-
-    @ViewById(R.id.layout_file_list_search_empty)
-    View searchEmptyView;
-
-    @ViewById(R.id.layout_file_list_loading)
-    View initLoadingView;
-
-    @ViewById(R.id.progress_file_list)
-    ProgressBar moreLoadingProgressBar;
-
-    long entityIdForCategorizing = -1;
-    String mCurrentEntityCategorizingAccodingBy = null;
-    private String mCurrentUserNameCategorizingAccodingBy = null;
-    private String mCurrentFileTypeCategorizingAccodingBy = null;
-
-    public void setEntityIdForCategorizing(long entityIdForCategorizing) {
-        this.entityIdForCategorizing = entityIdForCategorizing;
+    public SearchSelectorViewController(Context context,
+                                        TextView tvFileListWhere,
+                                        TextView tvFileListWhom,
+                                        TextView tvFileListType) {
+        this.context = context;
+        this.tvFileListWhere = tvFileListWhere;
+        this.tvFileListWhom = tvFileListWhom;
+        this.tvFileListType = tvFileListType;
+        setSpinnerByFileType();
+        setSpinnerByWhom();
+        setSpinnerByWhere();
     }
 
-    public void setCurrentEntityCategorizingAccodingBy(String mCurrentEntityCategorizingAccodingBy) {
-        this.mCurrentEntityCategorizingAccodingBy = mCurrentEntityCategorizingAccodingBy;
+    public void setCurrentEntityNameText(String currentEntityNameText) {
+        this.currentEntityNameText = currentEntityNameText;
+        setSpinnerByWhere();
     }
 
-    @AfterViews
-    void initViews() {
-        setSpinnerAsCategorizingAccodingByFileType();
-        setSpinnerAsCategorizingAccodingByWhere();
-        setSpinnerAsCategorizingAccodingByWhom();
-
-    }
-
-    private void setSpinnerAsCategorizingAccodingByFileType() {
-        textViewFileListType.setText(
-                (mCurrentFileTypeCategorizingAccodingBy == null)
-                        ? context.getString(R.string.jandi_file_category_all)
-                        : mCurrentFileTypeCategorizingAccodingBy
+    private void setSpinnerByFileType() {
+        tvFileListType.setText(
+                (currentFileTypeText == null || currentEntityNameText.equals(""))
+                        ? JandiApplication.getContext().getString(R.string.jandi_file_category_all)
+                        : currentFileTypeText
         );
     }
 
-    private void setSpinnerAsCategorizingAccodingByWhom() {
-        textViewFileListWhom.setText(
-                (mCurrentUserNameCategorizingAccodingBy == null)
-                        ? context.getString(R.string.jandi_file_category_everyone)
-                        : mCurrentUserNameCategorizingAccodingBy
+    private void setSpinnerByWhom() {
+        tvFileListWhom.setText(
+                (currentUserNameText == null || currentUserNameText.equals(""))
+                        ? JandiApplication.getContext().getString(R.string.jandi_file_category_everyone)
+                        : currentUserNameText
         );
     }
 
-    private void setSpinnerAsCategorizingAccodingByWhere() {
-        textViewFileListWhere.setText(
-                (mCurrentEntityCategorizingAccodingBy == null)
-                        ? context.getString(R.string.jandi_file_category_everywhere)
-                        : mCurrentEntityCategorizingAccodingBy
+    private void setSpinnerByWhere() {
+        tvFileListWhere.setText(
+                (currentEntityNameText == null || currentEntityNameText.equals(""))
+                        ? JandiApplication.getContext().getString(R.string.jandi_file_category_everywhere)
+                        : currentEntityNameText
         );
     }
 
     public void showFileTypeDialog() {
-        setUpTypeTextView(textViewFileListType, true);
+        setUpTypeTextView(tvFileListType, true);
 
         FileTypeSelector fileSelector = new FileTypeSelectorImpl();
         fileSelector.setOnFileTypeSelectListener(position -> {
 
-            mCurrentFileTypeCategorizingAccodingBy =
+            currentFileTypeText =
                     context.getString(CategorizedMenuOfFileType.stringTitleResourceList[position]);
-            textViewFileListType.setText(mCurrentFileTypeCategorizingAccodingBy);
-            textViewFileListType.invalidate();
+            tvFileListType.setText(currentFileTypeText);
+            tvFileListType.invalidate();
             EventBus.getDefault().post(new CategorizedMenuOfFileType(position));
 
             fileSelector.dismiss();
@@ -185,14 +147,15 @@ public class FileListPresenter {
         });
 
         fileSelector.setOnFileTypeDismissListener(() -> {
-            setUpTypeTextView(textViewFileListType, false);
+            setUpTypeTextView(tvFileListType, false);
             if (context instanceof SearchActivity) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseTypeFilter);
             } else {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.CloseTypeFilter);
             }
         });
-        fileSelector.show(((View) textViewFileListType.getParent().getParent()));
+
+        fileSelector.show(((View) tvFileListType.getParent().getParent()));
 
         if (context instanceof SearchActivity) {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTypeFilter);
@@ -202,24 +165,21 @@ public class FileListPresenter {
     }
 
     public void showUsersDialog() {
-
-        setUpTypeTextView(textViewFileListWhom, true);
-
-
+        setUpTypeTextView(tvFileListWhom, true);
         UserSelector userSelector = new UserSelectorImpl();
         userSelector.setOnUserSelectListener(item -> {
 
             if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
-                mCurrentUserNameCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everyone);
-                textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
+                currentUserNameText = context.getString(R.string.jandi_file_category_everyone);
+                tvFileListWhom.setText(currentUserNameText);
                 EventBus.getDefault().post(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
             } else if (item.getEntityId() == TeamInfoLoader.getInstance().getMyId()) {
-                mCurrentUserNameCategorizingAccodingBy = context.getString(R.string.jandi_my_files);
-                textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
+                currentUserNameText = context.getString(R.string.jandi_my_files);
+                tvFileListWhom.setText(currentUserNameText);
                 EventBus.getDefault().post(new CategorizingAsOwner(item.getEntityId()));
             } else {
-                mCurrentUserNameCategorizingAccodingBy = item.getName();
-                textViewFileListWhom.setText(mCurrentUserNameCategorizingAccodingBy);
+                currentUserNameText = item.getName();
+                tvFileListWhom.setText(currentUserNameText);
                 EventBus.getDefault().post(new CategorizingAsOwner(item.getEntityId()));
             }
             userSelector.dismiss();
@@ -239,7 +199,7 @@ public class FileListPresenter {
         });
 
         userSelector.setOnUserDismissListener(() -> {
-            setUpTypeTextView(textViewFileListWhom, false);
+            setUpTypeTextView(tvFileListWhom, false);
             if (context instanceof SearchActivity) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseMemberFilter);
             } else {
@@ -247,7 +207,7 @@ public class FileListPresenter {
             }
         });
 
-        userSelector.show(((View) textViewFileListWhom.getParent().getParent()));
+        userSelector.show(((View) tvFileListWhom.getParent().getParent()));
 
         if (context instanceof SearchActivity) {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenMemberFilter);
@@ -257,7 +217,7 @@ public class FileListPresenter {
     }
 
     public void showEntityDialog() {
-        setUpTypeTextView(textViewFileListWhere, true);
+        setUpTypeTextView(tvFileListWhere, true);
 
         TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
         List<TopicRoom> allTopics = new ArrayList<>();
@@ -281,13 +241,13 @@ public class FileListPresenter {
             long sharedEntityId = CategorizingAsEntity.EVERYWHERE;
             if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
                 // 첫번째는 "Everywhere"인 더미 entity
-                mCurrentEntityCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everywhere);
+                currentEntityNameText = context.getString(R.string.jandi_file_category_everywhere);
             } else {
                 sharedEntityId = item.getEntityId();
-                mCurrentEntityCategorizingAccodingBy = item.getName();
+                currentEntityNameText = item.getName();
             }
-            textViewFileListWhere.setText(mCurrentEntityCategorizingAccodingBy);
-            textViewFileListWhere.invalidate();
+            tvFileListWhere.setText(currentEntityNameText);
+            tvFileListWhere.invalidate();
             EventBus.getDefault().post(new CategorizingAsEntity(sharedEntityId));
             roomSelector.dismiss();
 
@@ -308,7 +268,7 @@ public class FileListPresenter {
         });
 
         roomSelector.setOnRoomDismissListener(() -> {
-            setUpTypeTextView(textViewFileListWhere, false);
+            setUpTypeTextView(tvFileListWhere, false);
             if (context instanceof SearchActivity) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseTopicFilter);
             } else {
@@ -316,7 +276,7 @@ public class FileListPresenter {
             }
         });
 
-        roomSelector.show(((View) textViewFileListWhere.getParent().getParent()));
+        roomSelector.show(((View) tvFileListWhere.getParent().getParent()));
         if (context instanceof SearchActivity) {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter);
         } else {
@@ -343,122 +303,7 @@ public class FileListPresenter {
             }
             ((View) textVew.getParent()).setBackgroundColor(Color.TRANSPARENT);
         }
-
         textVew.setCompoundDrawablesWithIntrinsicBounds(null, null, rightDrawable, null);
     }
 
-    @UiThread
-    public void setInitLoadingViewVisible(int visible) {
-        initLoadingView.setVisibility(visible);
-    }
-
-    @UiThread
-    public void setEmptyViewVisible(int visible) {
-        uploadEmptyView.setVisibility(visible);
-    }
-
-    @UiThread
-    public void showWarningToast(String message) {
-        ColoredToast.showWarning(message);
-    }
-
-    @UiThread
-    public void showErrorToast(String failMessage) {
-        ColoredToast.show(failMessage);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void showMoreProgressBar() {
-        moreLoadingProgressBar.setVisibility(View.VISIBLE);
-
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_in_bottom);
-        moreLoadingProgressBar.setAnimation(animation);
-        animation.startNow();
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void dismissProgressBar() {
-
-        moreLoadingProgressBar.getAnimation().reset();
-
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_out_to_bottom);
-        moreLoadingProgressBar.setAnimation(animation);
-        animation.setAnimationListener(new SimpleEndAnimationListener() {
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                moreLoadingProgressBar.setVisibility(View.GONE);
-            }
-        });
-
-        animation.startNow();
-
-    }
-
-    @UiThread(delay = 10000)
-    public void dismissProgressBarDelay() {
-        dismissProgressBar();
-    }
-
-    public void openAlbumForActivityResult(Fragment fragment) {
-        Intent intent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("image/*");
-        fragment.startActivityForResult(intent, FileUploadController.TYPE_UPLOAD_GALLERY);
-    }
-
-    public void openCameraForActivityResult(Fragment fragment, Uri fileUri) {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-        fragment.startActivityForResult(intent, FileUploadController.TYPE_UPLOAD_TAKE_PHOTO);
-    }
-
-    public void openExplorerForActivityResult(Fragment fragment) {
-        Intent intent = new Intent(context, FileExplorerActivity.class);
-        fragment.startActivityForResult(intent, FileUploadController.TYPE_UPLOAD_EXPLORER);
-    }
-
-    @UiThread
-    public void dismissProgressDialog(Dialog dialog) {
-        if (dialog != null && dialog.isShowing()) {
-            dialog.dismiss();
-        }
-    }
-
-    public void exceedMaxFileSizeError() {
-        ColoredToast.show(context.getString(R.string.jandi_file_size_large_error));
-
-    }
-
-    @UiThread
-    public void setSearchEmptryViewVisible(int visible) {
-        searchEmptyView.setVisibility(visible);
-    }
-
-    public ProgressDialog getUploadProgress(ConfirmFileUploadEvent event) {
-        final ProgressDialog progressDialog = new ProgressDialog(context);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMessage(context.getString(R.string.jandi_file_uploading) + " " + event.realFilePath);
-        progressDialog.show();
-
-        return progressDialog;
-    }
-
-    @UiThread
-    public void showSuccessToast(String message) {
-        ColoredToast.show(message);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void dismissMoreProgressBar() {
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_out_to_bottom);
-        animation.setAnimationListener(new SimpleEndAnimationListener() {
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                moreLoadingProgressBar.setVisibility(View.GONE);
-            }
-        });
-
-        moreLoadingProgressBar.setAnimation(animation);
-        animation.startNow();
-    }
 }

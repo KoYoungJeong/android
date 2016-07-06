@@ -21,7 +21,7 @@
         android:smoothScrollbar="true" />
 
     <include
-        android:id="@+id/layout_file_list_empty"
+        android:id="@+id/vg_file_list_empty"
         layout="@layout/view_search_list_empty"
         android:visibility="gone" />
 
@@ -43,7 +43,7 @@
                 style="@style/JandiFileListCategoryTab.Layout">
 
                 <TextView
-                    android:id="@+id/txt_file_list_where"
+                    android:id="@+id/tv_file_list_where"
                     style="@style/JandiFileListCategoryTab.Text" />
 
             </LinearLayout>
@@ -53,7 +53,7 @@
                 style="@style/JandiFileListCategoryTab.Layout">
 
                 <TextView
-                    android:id="@+id/txt_file_list_whom"
+                    android:id="@+id/tv_file_list_whom"
                     style="@style/JandiFileListCategoryTab.Text" />
 
             </LinearLayout>
@@ -63,7 +63,7 @@
                 style="@style/JandiFileListCategoryTab.Layout">
 
                 <TextView
-                    android:id="@+id/txt_file_list_type"
+                    android:id="@+id/tv_file_list_type"
                     style="@style/JandiFileListCategoryTab.Text" />
 
             </LinearLayout>
@@ -79,12 +79,12 @@
 
 
     <include
-        android:id="@+id/layout_file_list_search_empty"
+        android:id="@+id/vg_file_list_search_empty"
         layout="@layout/view_search_list_search_empty"
         android:visibility="gone" />
 
     <include
-        android:id="@+id/layout_file_list_loading"
+        android:id="@+id/vg_file_list_loading"
         layout="@layout/progress_wheel" />
 
     <ProgressBar

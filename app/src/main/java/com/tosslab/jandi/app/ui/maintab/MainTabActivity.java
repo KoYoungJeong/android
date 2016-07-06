@@ -502,14 +502,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     public void onEvent(TeamInviteIgnoreEvent event) {
         teamsPopupWindow.dismiss();
         teamsPresenter.onTeamInviteIgnoreAction(event.getTeam());
-
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.AcceptTeamInvitation);
     }
 
     public void onEvent(TeamInviteAcceptEvent event) {
         teamsPopupWindow.dismiss();
         teamsPresenter.onTeamInviteAcceptAction(event.getTeam());
-
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.IgnoreTeamInvitation);
     }
 

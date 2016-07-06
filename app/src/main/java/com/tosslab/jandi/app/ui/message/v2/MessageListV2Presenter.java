@@ -134,12 +134,10 @@ public class MessageListV2Presenter {
 
                     return messageObservable;
                 })
-                .subscribe(messageContainer -> {
-                }, throwable -> {
+                .subscribe(messageContainer -> {}, throwable -> {
                     LogUtil.e("Message Publish Fail!!");
                     throwable.printStackTrace();
-                }, () -> {
-                });
+                }, () -> {});
 
         markerRequestQueue = PublishSubject.create();
         markerRequestQueue.onBackpressureBuffer()
