@@ -464,7 +464,6 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
     }
 
     private class MentionMessageMoreRequestHandler implements MyPageAdapter.OnLoadMoreCallback {
-
         private boolean shouldRequestMore = true;
 
         public void setShouldRequestMore(boolean shouldRequestMore) {
@@ -479,4 +478,5 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
             presenter.loadMoreMentions(messageId);
         }
     }
+
 }
