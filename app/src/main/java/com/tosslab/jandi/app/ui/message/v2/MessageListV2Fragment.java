@@ -69,7 +69,6 @@ import com.tosslab.jandi.app.events.messages.DummyRetryEvent;
 import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
-import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
@@ -1347,16 +1346,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         messageListPresenter.removeOfMessageId(event.getData().getMessageId());
     }
 
-    public void onEvent(RefreshNewMessageEvent event) {
-        if (!isForeground) {
-            return;
-        }
-
-        if (room.getRoomId() > 0) {
-//            messageListPresenter.addNewMessageQueue(true);
-        }
-    }
-
     public void onEvent(RefreshOldMessageEvent event) {
         if (!isForeground) {
             return;
@@ -1811,22 +1800,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @Override
     public void modifyTitle(String name) {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(name);
-    }
-
-    @Override
-    public void showDuplicatedTopicName() {
-        String message = JandiApplication.getContext()
-                .getResources()
-                .getString(R.string.err_entity_duplicated_name);
-        showToast(message, true /* isError */);
-    }
-
-    @Override
-    public void showModifyEntityError() {
-        String message = JandiApplication.getContext()
-                .getResources()
-                .getString(R.string.err_entity_modify);
-        showToast(message, true /* isError */);
     }
 
     @Override

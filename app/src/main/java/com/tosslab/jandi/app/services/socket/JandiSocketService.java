@@ -349,7 +349,6 @@ public class JandiSocketService extends Service {
         jandiSocketManager.release();
         jandiSocketServiceModel.stopMarkerObserver();
         jandiSocketServiceModel.stopEventPublisher();
-        jandiSocketServiceModel.stopMessageCreatePublisher();
     }
 
     private void sendBroadcastForRestart() {

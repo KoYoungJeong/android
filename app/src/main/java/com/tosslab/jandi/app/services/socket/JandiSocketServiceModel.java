@@ -146,12 +146,10 @@ public class JandiSocketServiceModel {
 
     private PublishSubject<SocketRoomMarkerEvent> markerPublishSubject;
     private Subscription markerSubscribe;
-    private Map<Class<? extends EventHistoryInfo>, Command> eventHistoryActorMapper;
+    private Map<Class<? extends EventHistoryInfo>, Command> messageEventActorMapper;
 
     private PublishSubject<Object> eventPublisher;
     private Subscription eventSubscribe;
-
-    private PublishSubject<SocketMessageCreatedEvent> messageCreatePublisher;
 
     @Inject
     public JandiSocketServiceModel(Context context,
@@ -166,27 +164,6 @@ public class JandiSocketServiceModel {
         initEventActor();
 
         initEventPublisher();
-        initMessageCreatePublisher();
-    }
-
-    private void initMessageCreatePublisher() {
-        messageCreatePublisher = PublishSubject.<SocketMessageCreatedEvent>create();
-        messageCreatePublisher
-                .onBackpressureBuffer()
-                .buffer(700, TimeUnit.MILLISECONDS)
-                .filter(it -> it != null && it.size() > 0)
-                .subscribe(events -> {
-
-                    ArrayList<ResMessages.Link> links = new ArrayList<>();
-                    for (SocketMessageCreatedEvent event : events) {
-                        links.add(event.getData().getLinkMessage());
-                    }
-
-                    MessageRepository.getRepository().upsertMessages(links);
-                    for (SocketMessageCreatedEvent event : events) {
-                        postEvent(event);
-                    }
-                });
     }
 
     private void initEventPublisher() {
@@ -211,12 +188,6 @@ public class JandiSocketServiceModel {
         eventPublisher.onCompleted();
         if (eventSubscribe != null && !eventSubscribe.isUnsubscribed()) {
             eventSubscribe.unsubscribe();
-        }
-    }
-
-    public void stopMessageCreatePublisher() {
-        if (messageCreatePublisher != null) {
-            messageCreatePublisher.onCompleted();
         }
     }
 
@@ -262,49 +233,51 @@ public class JandiSocketServiceModel {
     }
 
     private void initEventActor() {
-        eventHistoryActorMapper = new HashMap<>();
+        messageEventActorMapper = new HashMap<>();
 
-        eventHistoryActorMapper.put(SocketMemberUpdatedEvent.class, this::onMemberUpdated);
-        eventHistoryActorMapper.put(SocketTeamJoinEvent.class, this::onTeamJoin);
-        eventHistoryActorMapper.put(SocketTeamLeaveEvent.class, this::onTeamLeft);
-        eventHistoryActorMapper.put(SocketTeamDeletedEvent.class, this::onTeamDeleted);
-        eventHistoryActorMapper.put(SocketChatCloseEvent.class, this::onChatClosed);
-        eventHistoryActorMapper.put(SocketChatCreatedEvent.class, this::onChatCreated);
-        eventHistoryActorMapper.put(SocketConnectBotCreatedEvent.class, this::onConnectBotCreated);
-        eventHistoryActorMapper.put(SocketConnectBotDeletedEvent.class, this::onConnectBotDeleted);
-        eventHistoryActorMapper.put(SocketConnectBotUpdatedEvent.class, this::onConnectBotUpdated);
-        eventHistoryActorMapper.put(SocketTopicLeftEvent.class, this::onTeamLeft);
-        eventHistoryActorMapper.put(SocketTopicDeletedEvent.class, this::onTopicDeleted);
-        eventHistoryActorMapper.put(SocketTopicCreatedEvent.class, this::onTopicCreated);
-        eventHistoryActorMapper.put(SocketTopicInvitedEvent.class, this::onTopicInvited);
-        eventHistoryActorMapper.put(SocketTopicJoinedEvent.class, this::onTopicJoined);
-        eventHistoryActorMapper.put(SocketTopicUpdatedEvent.class, this::onTopicJoined);
-        eventHistoryActorMapper.put(SocketTopicStarredEvent.class, this::onTopicStarred);
-        eventHistoryActorMapper.put(SocketTopicUnstarredEvent.class, this::onTopicUnstarred);
-        eventHistoryActorMapper.put(SocketTopicKickedoutEvent.class, this::onTopicKickOut);
-        eventHistoryActorMapper.put(SocketMemberStarredEvent.class, this::onMemberStarred);
-        eventHistoryActorMapper.put(SocketTeamNameUpdatedEvent.class, this::onTeamNameUpdated);
-        eventHistoryActorMapper.put(SocketTeamDomainUpdatedEvent.class, this::onTeamDomainUpdated);
-        eventHistoryActorMapper.put(SocketFileDeletedEvent.class, this::onFileDeleted);
-        eventHistoryActorMapper.put(SocketFileUnsharedEvent.class, this::onFileUnshared);
-        eventHistoryActorMapper.put(SocketFileCommentDeletedEvent.class, this::onFileCommentDeleted);
-        eventHistoryActorMapper.put(SocketMessageDeletedEvent.class, this::onMessageDeleted);
-        eventHistoryActorMapper.put(SocketMessageCreatedEvent.class, this::onMessageCreated);
-        eventHistoryActorMapper.put(SocketMessageStarredEvent.class, this::onMessageStarred);
-        eventHistoryActorMapper.put(SocketMessageUnstarredEvent.class, this::onMessageUnstarred);
-        eventHistoryActorMapper.put(SocketRoomMarkerEvent.class, this::onRoomMarkerUpdated);
-        eventHistoryActorMapper.put(SocketAnnouncementDeletedEvent.class, this::onAnnouncementDeleted);
-        eventHistoryActorMapper.put(SocketAnnouncementUpdatedEvent.class, this::onAnnouncementStatusUpdated);
-        eventHistoryActorMapper.put(SocketAnnouncementCreatedEvent.class, this::onAnnouncementCreated);
-        eventHistoryActorMapper.put(SocketLinkPreviewMessageEvent.class, this::onLinkPreviewCreated);
-        eventHistoryActorMapper.put(SocketLinkPreviewThumbnailEvent.class, this::onLinkPreviewImage);
-        eventHistoryActorMapper.put(SocketTopicPushEvent.class, this::onRoomSubscriptionUpdated);
-        eventHistoryActorMapper.put(SocketTopicFolderCreatedEvent.class, this::onTopicFolderCreated);
-        eventHistoryActorMapper.put(SocketTopicFolderUpdatedEvent.class, this::onTopicFolderUpdated);
-        eventHistoryActorMapper.put(SocketTopicFolderDeletedEvent.class, this::onFolderDeleted);
-        eventHistoryActorMapper.put(SocketTopicFolderItemCreatedEvent.class, this::onFolderItemCreated);
-        eventHistoryActorMapper.put(SocketTopicFolderItemDeletedEvent.class, this::onFolderItemDeleted);
-        eventHistoryActorMapper.put(SocketTeamUpdatedEvent.class, this::onTeamUpdated);
+        messageEventActorMapper.put(SocketMemberUpdatedEvent.class, this::onMemberUpdated);
+        messageEventActorMapper.put(SocketTeamJoinEvent.class, this::onTeamJoin);
+        messageEventActorMapper.put(SocketTeamLeaveEvent.class, this::onTeamLeft);
+        messageEventActorMapper.put(SocketTeamDeletedEvent.class, this::onTeamDeleted);
+        messageEventActorMapper.put(SocketChatCloseEvent.class, this::onChatClosed);
+        messageEventActorMapper.put(SocketChatCreatedEvent.class, this::onChatCreated);
+        messageEventActorMapper.put(SocketConnectBotCreatedEvent.class, this::onConnectBotCreated);
+        messageEventActorMapper.put(SocketConnectBotDeletedEvent.class, this::onConnectBotDeleted);
+        messageEventActorMapper.put(SocketConnectBotUpdatedEvent.class, this::onConnectBotUpdated);
+        messageEventActorMapper.put(SocketTopicLeftEvent.class, this::onTeamLeft);
+        messageEventActorMapper.put(SocketTopicDeletedEvent.class, this::onTopicDeleted);
+        messageEventActorMapper.put(SocketTopicCreatedEvent.class, this::onTopicCreated);
+        messageEventActorMapper.put(SocketTopicInvitedEvent.class, this::onTopicInvited);
+        messageEventActorMapper.put(SocketTopicJoinedEvent.class, this::onTopicJoined);
+        messageEventActorMapper.put(SocketTopicUpdatedEvent.class, this::onTopicUpdated);
+        messageEventActorMapper.put(SocketTopicStarredEvent.class, this::onTopicStarred);
+        messageEventActorMapper.put(SocketTopicUnstarredEvent.class, this::onTopicUnstarred);
+        messageEventActorMapper.put(SocketTopicKickedoutEvent.class, this::onTopicKickOut);
+        messageEventActorMapper.put(SocketMemberStarredEvent.class, this::onMemberStarred);
+        messageEventActorMapper.put(SocketTeamNameUpdatedEvent.class, this::onTeamNameUpdated);
+        messageEventActorMapper.put(SocketTeamDomainUpdatedEvent.class, this::onTeamDomainUpdated);
+        messageEventActorMapper.put(SocketAnnouncementDeletedEvent.class, this::onAnnouncementDeleted);
+        messageEventActorMapper.put(SocketAnnouncementUpdatedEvent.class, this::onAnnouncementStatusUpdated);
+        messageEventActorMapper.put(SocketAnnouncementCreatedEvent.class, this::onAnnouncementCreated);
+        messageEventActorMapper.put(SocketTopicPushEvent.class, this::onRoomSubscriptionUpdated);
+        messageEventActorMapper.put(SocketTopicFolderCreatedEvent.class, this::onTopicFolderCreated);
+        messageEventActorMapper.put(SocketTopicFolderUpdatedEvent.class, this::onTopicFolderUpdated);
+        messageEventActorMapper.put(SocketTopicFolderDeletedEvent.class, this::onFolderDeleted);
+        messageEventActorMapper.put(SocketTopicFolderItemCreatedEvent.class, this::onFolderItemCreated);
+        messageEventActorMapper.put(SocketTopicFolderItemDeletedEvent.class, this::onFolderItemDeleted);
+        messageEventActorMapper.put(SocketTeamUpdatedEvent.class, this::onTeamUpdated);
+
+
+        messageEventActorMapper.put(SocketFileDeletedEvent.class, this::onFileDeleted);
+        messageEventActorMapper.put(SocketFileUnsharedEvent.class, this::onFileUnshared);
+        messageEventActorMapper.put(SocketFileCommentDeletedEvent.class, this::onFileCommentDeleted);
+        messageEventActorMapper.put(SocketMessageDeletedEvent.class, this::onMessageDeleted);
+        messageEventActorMapper.put(SocketRoomMarkerEvent.class, this::onRoomMarkerUpdated);
+//        messageEventActorMapper.put(SocketMessageCreatedEvent.class, this::onMessageCreated);
+        messageEventActorMapper.put(SocketMessageStarredEvent.class, this::onMessageStarred);
+        messageEventActorMapper.put(SocketMessageUnstarredEvent.class, this::onMessageUnstarred);
+        messageEventActorMapper.put(SocketLinkPreviewMessageEvent.class, this::onLinkPreviewCreated);
+        messageEventActorMapper.put(SocketLinkPreviewThumbnailEvent.class, this::onLinkPreviewImage);
 
     }
 
@@ -578,11 +551,17 @@ public class JandiSocketServiceModel {
 
             if (TeamInfoLoader.getInstance().getMyId() == memberId) {
                 if (TeamInfoLoader.getInstance().isTopic(roomId)) {
+                    Topic topic = TopicRepository.getInstance().getTopic(roomId);
+                    long oldReadLinkId = topic.getReadLinkId();
+                    int messagesCount = MessageRepository.getRepository().getMessagesCount(roomId, oldReadLinkId, lastLinkId);
                     TopicRepository.getInstance().updateReadId(roomId, lastLinkId);
-                    TopicRepository.getInstance().updateUnreadCount(roomId, 0);
+                    TopicRepository.getInstance().updateUnreadCount(roomId, Math.max(topic.getUnreadCount() - messagesCount, 0));
                 } else if (TeamInfoLoader.getInstance().isChat(roomId)) {
+                    Chat chat = ChatRepository.getInstance().getChat(roomId);
+                    long oldReadLinkId = chat.getReadLinkId();
+                    int messagesCount = MessageRepository.getRepository().getMessagesCount(roomId, oldReadLinkId, lastLinkId);
                     ChatRepository.getInstance().updateReadLinkId(roomId, lastLinkId);
-                    ChatRepository.getInstance().updateUnreadCount(roomId, 0);
+                    ChatRepository.getInstance().updateUnreadCount(roomId, Math.max(chat.getUnreadCount() - messagesCount, 0));
                 }
             }
 
@@ -930,53 +909,60 @@ public class JandiSocketServiceModel {
         try {
             SocketMessageCreatedEvent event = getObject(object, SocketMessageCreatedEvent.class);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
+
             long roomId = event.getData().getLinkMessage().toEntity[0];
             ResMessages.Link linkMessage = event.getData().getLinkMessage();
             linkMessage.roomId = roomId;
-            messageCreatePublisher.onNext(event);
+            MessageRepository.getRepository().upsertMessage(linkMessage);
 
-            if (linkMessage.message == null) {
-                // 시스템 메세지인 경우..
-                return;
-            }
-            boolean isTopic = TeamInfoLoader.getInstance().isTopic(linkMessage.roomId);
-            boolean isMyMessage = TeamInfoLoader.getInstance().getMyId() == linkMessage.message.writerId;
-            if (isTopic) {
-                Topic topic = TopicRepository.getInstance().getTopic(linkMessage.roomId);
-                TopicRepository.getInstance().updateLastLinkId(linkMessage.roomId, linkMessage.id);
-                if (!isMyMessage) {
-                    TopicRepository.getInstance().updateUnreadCount(linkMessage.roomId, topic.getUnreadCount() + 1);
-                }
-            } else if (TeamInfoLoader.getInstance().isChat(linkMessage.roomId)) {
+            doAfterMessageCreated(linkMessage);
 
-                ResMessages.OriginalMessage message = linkMessage.message;
-                String text = "";
-                if (message instanceof ResMessages.TextMessage) {
-                    text = ((ResMessages.TextMessage) message).content.body;
-                } else if (message instanceof ResMessages.CommentMessage) {
-                    text = ((ResMessages.CommentMessage) message).content.body;
-                } else if (message instanceof ResMessages.FileMessage) {
-                    text = ((ResMessages.FileMessage) message).content.title;
-                } else if (message instanceof ResMessages.StickerMessage
-                        || message instanceof ResMessages.CommentStickerMessage) {
-                    text = "(sticker)";
-                } else {
-                    text = "";
-                }
-
-                long lastMessageId = TeamInfoLoader.getInstance().getChat(linkMessage.roomId).getLastMessageId();
-                ChatRepository.getInstance().updateLastMessage(linkMessage.roomId, lastMessageId, text, "created");
-                ChatRepository.getInstance().updateLastLinkId(linkMessage.roomId, linkMessage.id);
-
-                if (!isMyMessage) {
-                    Chat chat = ChatRepository.getInstance().getChat(linkMessage.roomId);
-                    ChatRepository.getInstance().updateUnreadCount(linkMessage.roomId, chat.getUnreadCount() + 1);
-                }
-
-            }
+            postEvent(event);
 
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
+        }
+    }
+
+    private void doAfterMessageCreated(ResMessages.Link linkMessage) {
+        if (linkMessage.message == null) {
+            // 시스템 메세지인 경우..
+            return;
+        }
+        boolean isTopic = TeamInfoLoader.getInstance().isTopic(linkMessage.roomId);
+        boolean isMyMessage = TeamInfoLoader.getInstance().getMyId() == linkMessage.message.writerId;
+        if (isTopic) {
+            Topic topic = TopicRepository.getInstance().getTopic(linkMessage.roomId);
+            TopicRepository.getInstance().updateLastLinkId(linkMessage.roomId, linkMessage.id);
+            if (!isMyMessage) {
+                TopicRepository.getInstance().updateUnreadCount(linkMessage.roomId, topic.getUnreadCount() + 1);
+            }
+        } else if (TeamInfoLoader.getInstance().isChat(linkMessage.roomId)) {
+
+            ResMessages.OriginalMessage message = linkMessage.message;
+            String text = "";
+            if (message instanceof ResMessages.TextMessage) {
+                text = ((ResMessages.TextMessage) message).content.body;
+            } else if (message instanceof ResMessages.CommentMessage) {
+                text = ((ResMessages.CommentMessage) message).content.body;
+            } else if (message instanceof ResMessages.FileMessage) {
+                text = ((ResMessages.FileMessage) message).content.title;
+            } else if (message instanceof ResMessages.StickerMessage
+                    || message instanceof ResMessages.CommentStickerMessage) {
+                text = "(sticker)";
+            } else {
+                text = "";
+            }
+
+            long lastMessageId = TeamInfoLoader.getInstance().getChat(linkMessage.roomId).getLastMessageId();
+            ChatRepository.getInstance().updateLastMessage(linkMessage.roomId, lastMessageId, text, "created");
+            ChatRepository.getInstance().updateLastLinkId(linkMessage.roomId, linkMessage.id);
+
+            if (!isMyMessage) {
+                Chat chat = ChatRepository.getInstance().getChat(linkMessage.roomId);
+                ChatRepository.getInstance().updateUnreadCount(linkMessage.roomId, chat.getUnreadCount() + 1);
+            }
+
         }
     }
 
@@ -1063,63 +1049,6 @@ public class JandiSocketServiceModel {
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
         }
-    }
-
-    public void updateEventHistory() {
-
-        long socketConnectedLastTime = JandiPreference.getSocketConnectedLastTime();
-        getEventHistory(socketConnectedLastTime)
-                .doOnCompleted(() -> Log.e(TAG, "updateEventHistory: " + new Date().toString()))
-                .subscribe(eventHistoryInfo -> {
-                    Command command = eventHistoryActorMapper.get(eventHistoryInfo.getClass());
-                    if (command != null) {
-                        command.command(eventHistoryInfo);
-                    }
-                }, Throwable::printStackTrace);
-
-    }
-
-    @NonNull
-    private Observable<EventHistoryInfo> getEventHistory(long socketConnectedLastTime) {
-        return Observable.create(new Observable.OnSubscribe<ResEventHistory>() {
-            @Override
-            public void call(Subscriber<? super ResEventHistory> subscriber) {
-                long ts = socketConnectedLastTime;
-                if (ts <= 0) {
-                    if (!subscriber.isUnsubscribed()) {
-                        subscriber.onCompleted();
-                    }
-                }
-
-                long userId = TeamInfoLoader.getInstance().getMyId();
-                try {
-                    boolean hasMore;
-                    ResEventHistory eventHistory = eventsApi.get().getEventHistory(ts, userId);
-                    hasMore = eventHistory.isHasMore();
-                    if (!hasMore) {
-                        if (!subscriber.isUnsubscribed()) {
-                            subscriber.onNext(eventHistory);
-                        }
-                    } else {
-                        // 데이터 삭제 후 인트로로 전환
-                        InitialInfoRepository.getInstance().clear();
-                        MessageRepository.getRepository().deleteAllLink();
-                        JandiPreference.setSocketConnectedLastTime(-1);
-                        IntroActivity.startActivity(context, false);
-                    }
-                } catch (RetrofitException e) {
-                    e.printStackTrace();
-                }
-                if (!subscriber.isUnsubscribed()) {
-                    subscriber.onCompleted();
-                }
-
-            }
-        })
-                .doOnNext(it -> Log.e(TAG, "updateEventHistory: " + new Date().toString()))
-                .doOnNext(it -> Log.i(TAG, "getEventHistory: size - " + it.getRecords().size()))
-                .flatMap(resEventHistory -> Observable.from(resEventHistory.getRecords()))
-                .filter(SocketEventVersionModel::validVersion);
     }
 
     public void onTopicCreated(Object object) {
@@ -1323,7 +1252,108 @@ public class JandiSocketServiceModel {
         }
     }
 
+    public void updateEventHistory() {
+
+        Map<String, List<EventHistoryInfo>> updateBatchMapper;
+        updateBatchMapper = new HashMap<>();
+
+        long socketConnectedLastTime = JandiPreference.getSocketConnectedLastTime();
+        getEventHistory(socketConnectedLastTime)
+                .doOnCompleted(() -> Log.e(TAG, "updateEventHistory: " + new Date().toString()))
+                .subscribe(eventInfo -> {
+
+                    String eventName;
+                    if (eventInfo.getClass() == SocketMessageCreatedEvent.class) {
+                        SocketMessageCreatedEvent event = (SocketMessageCreatedEvent) eventInfo;
+                        long roomId = event.getData().getLinkMessage().toEntity[0];
+                        ResMessages.Link linkMessage = event.getData().getLinkMessage();
+                        linkMessage.roomId = roomId;
+                        doAfterMessageCreated(event.getData().getLinkMessage());
+                        eventName = "message_created";
+                    } else {
+                        eventName = "etc";
+                    }
+
+                    if (!updateBatchMapper.containsKey(eventName)) {
+                        updateBatchMapper.put(eventName, new ArrayList<>());
+                    }
+                    updateBatchMapper.get(eventName).add(eventInfo);
+                }, Throwable::printStackTrace, () -> {
+                    List<EventHistoryInfo> eventHistoryInfos = updateBatchMapper.get("message_created");
+
+                    if (eventHistoryInfos != null) {
+                        // Message 넣기
+                        List<ResMessages.Link> links = new ArrayList<>();
+                        for (EventHistoryInfo eventHistoryInfo : eventHistoryInfos) {
+                            links.add(((SocketMessageCreatedEvent) eventHistoryInfo).getData().getLinkMessage());
+                        }
+
+                        MessageRepository.getRepository().upsertMessages(links);
+                        for (EventHistoryInfo eventHistoryInfo : eventHistoryInfos) {
+                            postEvent(eventHistoryInfo);
+                        }
+
+                    }
+
+                    List<EventHistoryInfo> etc = updateBatchMapper.get("etc");
+                    if (etc != null) {
+                        for (EventHistoryInfo eventHistoryInfo : etc) {
+                            Command command = messageEventActorMapper.get(eventHistoryInfo.getClass());
+                            if (command != null) {
+                                command.command(eventHistoryInfo);
+                            }
+                        }
+                    }
+
+                });
+
+    }
+
+    @NonNull
+    private Observable<EventHistoryInfo> getEventHistory(long socketConnectedLastTime) {
+        return Observable.create(new Observable.OnSubscribe<ResEventHistory>() {
+            @Override
+            public void call(Subscriber<? super ResEventHistory> subscriber) {
+                long ts = socketConnectedLastTime;
+                if (ts <= 0) {
+                    if (!subscriber.isUnsubscribed()) {
+                        subscriber.onCompleted();
+                    }
+                }
+
+                long userId = TeamInfoLoader.getInstance().getMyId();
+                try {
+                    boolean hasMore;
+                    ResEventHistory eventHistory = eventsApi.get().getEventHistory(ts, userId);
+                    hasMore = eventHistory.isHasMore();
+                    if (!hasMore) {
+                        if (!subscriber.isUnsubscribed()) {
+                            subscriber.onNext(eventHistory);
+                        }
+                    } else {
+                        // 데이터 삭제 후 인트로로 전환
+                        InitialInfoRepository.getInstance().clear();
+                        MessageRepository.getRepository().deleteAllLink();
+                        JandiPreference.setSocketConnectedLastTime(-1);
+                        IntroActivity.startActivity(context, false);
+                    }
+                } catch (RetrofitException e) {
+                    e.printStackTrace();
+                }
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onCompleted();
+                }
+
+            }
+        })
+                .doOnNext(it -> Log.e(TAG, "updateEventHistory: " + new Date().toString()))
+                .doOnNext(it -> Log.i(TAG, "getEventHistory: size - " + it.getRecords().size()))
+                .flatMap(resEventHistory -> Observable.from(resEventHistory.getRecords()))
+                .filter(SocketEventVersionModel::validVersion);
+    }
+
     interface Command {
+
         void command(EventHistoryInfo t);
     }
 }

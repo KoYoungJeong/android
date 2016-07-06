@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.push;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Pair;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
@@ -13,7 +12,6 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
-import com.tosslab.jandi.app.ui.socketevent.SocketInitActivity;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -151,21 +149,10 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
         share.filter(it -> it)
                 .map(it -> jandiInterfaceModel.getEntityInfo(roomId, roomType))
                 .subscribeOn(Schedulers.io())
-                .map(entityId -> {
-//                    int count = jandiInterfaceModel.getEventHistoryCount();
-                    int count = 0;
-
-                    return Pair.create(entityId, count);
-                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(pair -> {
-                    if (pair.first > 0) {
-
-                        if (pair.second >= 0 && pair.second < 50) {
-                            moveMessageListActivity(roomId, pair.first);
-                        } else {
-                            moveSocketInitActivity(roomId, pair.first);
-                        }
+                    if (pair > 0) {
+                        moveMessageListActivity(roomId, pair);
                     } else {
                         // entity 정보가 없으면 인트로로 이동하도록 지정
                         moveIntroActivity();
@@ -179,10 +166,6 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> moveIntroActivity());
 
-    }
-
-    private void moveSocketInitActivity(long roomId, long entityId) {
-        SocketInitActivity.startActivity(PushInterfaceActivity.this, teamId, roomId, entityId, entityType);
     }
 
     void moveIntroActivity() {

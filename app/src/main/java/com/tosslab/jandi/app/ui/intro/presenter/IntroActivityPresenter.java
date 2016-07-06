@@ -183,22 +183,10 @@ public class IntroActivityPresenter {
                         }
                     }
                 })
-                .map(it -> {
-                    if (NetworkCheckUtil.isConnected()) {
-//                        return model.getEventHistoryCount();
-                        return 0;
-                    } else {
-                        return 0;
-                    }
-                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
                     model.trackAutoSignInSuccessAndFlush(true);
-                    if (it >= 0 && it < 50) {
-                        view.moveToMainActivity();
-                    } else {
-                        view.moveToSocketInitActivity();
-                    }
+                    view.moveToMainActivity();
                 }, t -> {});
 
         // 팀 정보가 없거나 초대에 의해 시작한 경우
@@ -224,7 +212,6 @@ public class IntroActivityPresenter {
 
         void finishOnUiThread();
 
-        void moveToSocketInitActivity();
     }
 
 }

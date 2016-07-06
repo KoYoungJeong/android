@@ -433,9 +433,9 @@ public class MessageRepository extends LockExecutorTemplate {
                         .and()
                         .eq("roomId", roomId)
                         .and()
-                        .ge("id", startLinkId)
+                        .gt("id", startLinkId)
                         .and()
-                        .lt("id", endLinkId)
+                        .le("id", endLinkId)
                         .countOf())).intValue();
             } catch (SQLException e) {
                 e.printStackTrace();
