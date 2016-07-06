@@ -33,6 +33,7 @@ import com.tosslab.jandi.app.ui.sign.signup.presenter.SignUpPresenter;
 import com.tosslab.jandi.app.ui.sign.signup.verify.SignUpVerifyActivity_;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -357,6 +358,7 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
 
     @Override
     public void startSignUpRequestVerifyActivity() {
+        JandiPreference.setEmailAuthSendTime();
         SignUpVerifyActivity_.intent(this)
                 .email(etEmail.getText().toString())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK)
