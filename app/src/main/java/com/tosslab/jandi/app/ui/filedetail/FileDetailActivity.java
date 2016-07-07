@@ -44,6 +44,7 @@ import com.tosslab.jandi.app.events.files.FileCommentClickEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
 import com.tosslab.jandi.app.events.files.FileStarredStateChangeEvent;
+import com.tosslab.jandi.app.events.files.RequestShowCarouselViewerEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarEvent;
@@ -63,6 +64,8 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
+import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
@@ -85,6 +88,7 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.BackPressCatchEditText;
 import com.tosslab.jandi.app.views.SoftInputDetectLinearLayout;
@@ -121,6 +125,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public static final int REQUEST_CODE_SHARE = 0;
     public static final int REQUEST_CODE_PICK = 1;
     public static final int REQUEST_CODE_UNSHARE = 2;
+    public static final int REQUEST_CODE_RETURN_FILE_ID = 3;
 
     public static final int REQ_STORAGE_PERMISSION = 101;
     public static final int REQ_STORAGE_PERMISSION_EXPORT = 102;
@@ -272,7 +277,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     private void initFileInfoViews() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getBaseContext());
         listView.setLayoutManager(layoutManager);
-        listView.setAdapter(adapter = new FileDetailAdapter(roomId));
+        listView.setAdapter(adapter = new FileDetailAdapter());
 
         fileDetailPresenter.setView(this);
         fileDetailPresenter.onInitializeFileDetail(fileId, true /* withProgress */);
@@ -707,6 +712,36 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             LogUtil.e(TAG, Log.getStackTraceString(e));
             showToast(getString(R.string.jandi_err_unexpected), true);
         }
+    }
+
+    public void onEvent(RequestShowCarouselViewerEvent event) {
+        long fileMessageId = event.getFileMessageId();
+        ResMessages.FileContent content = event.getContent();
+        boolean shouldOpenImmediately = event.shouldOpenImmediately();
+
+        if (roomId > 0) {
+            CarouselViewerActivity_.intent(this)
+                    .mode(CarouselViewerActivity.CAROUSEL_MODE)
+                    .roomId(roomId)
+                    .startLinkId(fileMessageId)
+                    .imageOriginUrl(shouldOpenImmediately ? content.fileUrl : "")
+                    .shouldOpenImmediately(shouldOpenImmediately)
+                    .startForResult(REQUEST_CODE_RETURN_FILE_ID);
+        } else {
+            String thumbUrl = ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.THUMB);
+            CarouselViewerActivity_.intent(this)
+                    .mode(CarouselViewerActivity.SINGLE_IMAGE_MODE)
+                    .imageExt(content.ext)
+                    .imageOriginUrl(content.fileUrl)
+                    .imageThumbUrl(thumbUrl)
+                    .imageType(content.type)
+                    .imageName(content.name)
+                    .imageSize(content.size)
+                    .shouldOpenImmediately(shouldOpenImmediately)
+                    .start();
+        }
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewPhoto);
     }
 
     public void onEvent(ShowProfileEvent event) {
@@ -1265,6 +1300,22 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         long entityId = data.getLongExtra(FileSharedEntityChooseActivity.KEY_ENTITY_ID, -1);
         fileDetailPresenter.onUnshareAction(entityId, fileMessage.id);
+    }
+
+    @OnActivityResult(REQUEST_CODE_RETURN_FILE_ID)
+    void onCarouselResult(int resultCode, Intent data) {
+        if (resultCode != RESULT_OK
+                || data == null
+                || !data.hasExtra(CarouselViewerActivity.KEY_FILE_ID)) {
+            return;
+        }
+
+        long fileId = data.getLongExtra(CarouselViewerActivity.KEY_FILE_ID, -1);
+        if (fileId > 0 && this.fileId != fileId) {
+            this.fileId = fileId;
+            fileDetailPresenter.onInitializeFileDetail(this.fileId, true);
+        }
+
     }
 
     @Override

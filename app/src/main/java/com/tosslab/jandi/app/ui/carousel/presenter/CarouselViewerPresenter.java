@@ -19,8 +19,6 @@ public interface CarouselViewerPresenter {
 
     void onFileDownload(CarouselFileInfo fileInfo);
 
-    void onFileDatail();
-
     void setFileId(long startLinkId);
 
     void setRoomId(long roomId);
@@ -38,8 +36,6 @@ public interface CarouselViewerPresenter {
         void setFileWriterName(String fileWriterName);
 
         void setFileCreateTime(String fileCreateTime);
-
-        void moveToFileDatail();
 
         void addFileInfos(int position, List<CarouselFileInfo> imageFiles);
 

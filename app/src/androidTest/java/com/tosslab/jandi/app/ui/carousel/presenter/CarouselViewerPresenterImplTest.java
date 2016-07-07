@@ -154,10 +154,4 @@ public class CarouselViewerPresenterImplTest {
 //        Intents.release();
 //    }
 
-    @Test
-    public void testOnFileDatail() throws Exception {
-        presenter.onFileDatail();
-
-        verify(mockView).moveToFileDatail();
-    }
 }
