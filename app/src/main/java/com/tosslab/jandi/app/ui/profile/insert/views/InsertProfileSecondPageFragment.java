@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.member.User;
-import com.tosslab.jandi.app.ui.profile.inputlist.InsertJobTitleDepartmentActivity;
+import com.tosslab.jandi.app.ui.profile.inputlist.InputProfileListActivity;
 import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
 import com.tosslab.jandi.app.ui.profile.insert.dagger.DaggerInsertProfileSecondPageComponent;
 import com.tosslab.jandi.app.ui.profile.insert.dagger.InsertProfileSecondPageModule;
@@ -141,18 +141,18 @@ public class InsertProfileSecondPageFragment extends Fragment
 
     @OnClick(R.id.tv_department)
     void onClickChooseDepartment() {
-        Intent intent = new Intent(getContext(), InsertJobTitleDepartmentActivity.class);
-        intent.putExtra(InsertJobTitleDepartmentActivity.INPUT_MODE,
-                InsertJobTitleDepartmentActivity.DEPARTMENT_MODE);
+        Intent intent = new Intent(getContext(), InputProfileListActivity.class);
+        intent.putExtra(InputProfileListActivity.INPUT_MODE,
+                InputProfileListActivity.DEPARTMENT_MODE);
         startActivityForResult(intent, REQUEST_GET_DEPARTMENT);
     }
 
     @OnClick(R.id.tv_positon)
     void onClickChooseJobTitle(View view) {
         // 직책
-        Intent intent = new Intent(getContext(), InsertJobTitleDepartmentActivity.class);
-        intent.putExtra(InsertJobTitleDepartmentActivity.INPUT_MODE,
-                InsertJobTitleDepartmentActivity.JOB_TITLE_MODE);
+        Intent intent = new Intent(getContext(), InputProfileListActivity.class);
+        intent.putExtra(InputProfileListActivity.INPUT_MODE,
+                InputProfileListActivity.JOB_TITLE_MODE);
         startActivityForResult(intent, REQUEST_GET_JOB_TITLE);
     }
 
@@ -298,14 +298,14 @@ public class InsertProfileSecondPageFragment extends Fragment
 
     private void onGetJobTitle(int resultCode, Intent data) {
         if (resultCode == getActivity().RESULT_OK) {
-            String jobTitle = data.getStringExtra(InsertJobTitleDepartmentActivity.RESULT_EXTRA);
+            String jobTitle = data.getStringExtra(InputProfileListActivity.RESULT_EXTRA);
             tvPosition.setText(jobTitle);
         }
     }
 
     private void onGetDepartmentResult(int resultCode, Intent data) {
         if (resultCode == getActivity().RESULT_OK) {
-            String department = data.getStringExtra(InsertJobTitleDepartmentActivity.RESULT_EXTRA);
+            String department = data.getStringExtra(InputProfileListActivity.RESULT_EXTRA);
             tvDepartment.setText(department);
         }
     }

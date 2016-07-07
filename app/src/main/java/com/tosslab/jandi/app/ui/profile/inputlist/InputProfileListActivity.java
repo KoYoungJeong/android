@@ -19,7 +19,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.profile.inputlist.adapter.InsertJobTitleDepartmentAdapter;
+import com.tosslab.jandi.app.ui.profile.inputlist.adapter.InputProfileListAdapter;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
@@ -34,7 +34,7 @@ import rx.Observable;
 /**
  * Created by tee on 16. 7. 5..
  */
-public class InsertJobTitleDepartmentActivity extends BaseAppCompatActivity {
+public class InputProfileListActivity extends BaseAppCompatActivity {
 
     public static final String RESULT_EXTRA = "result_extra";
     public static final String INPUT_MODE = "input_mode";
@@ -54,7 +54,7 @@ public class InsertJobTitleDepartmentActivity extends BaseAppCompatActivity {
     @Bind(R.id.tv_jobtitle_department_list)
     TextView tvList;
 
-    private InsertJobTitleDepartmentAdapter adapter;
+    private InputProfileListAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,7 +65,7 @@ public class InsertJobTitleDepartmentActivity extends BaseAppCompatActivity {
         ButterKnife.bind(this);
         listView.setLayoutManager(new LinearLayoutManager(
                 this, LinearLayoutManager.VERTICAL, false));
-        adapter = new InsertJobTitleDepartmentAdapter();
+        adapter = new InputProfileListAdapter();
         adapter.setMode(mode);
         listView.setAdapter(adapter);
         setOnTextChangeListener();

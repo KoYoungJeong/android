@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.profile.inputlist.InsertJobTitleDepartmentActivity;
+import com.tosslab.jandi.app.ui.profile.inputlist.InputProfileListActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by tee on 16. 7. 5..
  */
-public class InsertJobTitleDepartmentAdapter extends RecyclerView.Adapter {
+public class InputProfileListAdapter extends RecyclerView.Adapter {
 
     private List<String> datas = new ArrayList<>();
 
@@ -29,7 +29,7 @@ public class InsertJobTitleDepartmentAdapter extends RecyclerView.Adapter {
 
     private OnItemClickListener onItemClickListener;
 
-    private String mode = InsertJobTitleDepartmentActivity.JOB_TITLE_MODE;
+    private String mode = InputProfileListActivity.JOB_TITLE_MODE;
 
     public void setDatas(List<String> datas) {
         this.datas = datas;
@@ -54,34 +54,38 @@ public class InsertJobTitleDepartmentAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
         String data = datas.get(position);
-        if (mode.equals(InsertJobTitleDepartmentActivity.JOB_TITLE_MODE)) {
+
+        if (data == null || data.equals("")) {
+            viewHolder.getTvName().setText("");
+            viewHolder.getTvNewAdd().setVisibility(View.GONE);
+            return;
+        }
+
+        if (mode.equals(InputProfileListActivity.JOB_TITLE_MODE)) {
             viewHolder.getTvNewAdd().setText(R.string.jandi_new_job_title);
-        } else if (mode.equals(InsertJobTitleDepartmentActivity.DEPARTMENT_MODE)) {
+        } else if (mode.equals(InputProfileListActivity.DEPARTMENT_MODE)) {
             viewHolder.getTvNewAdd().setText(R.string.jandi_new_department);
         }
-        if (data != null && !data.equals("")) {
-            if (hasResults) {
-                SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder(data);
-                if (keyword != null && keyword.length() > 0) {
-                    messageStringBuilder.setSpan(
-                            new ForegroundColorSpan(0xFF00A2E2),
-                            data.toLowerCase().indexOf(keyword.toLowerCase()),
-                            data.toLowerCase().indexOf(keyword.toLowerCase()) + keyword.length(),
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
-                viewHolder.getTvName().setText(messageStringBuilder);
-                viewHolder.getTvName().setTextColor(
-                        JandiApplication.getContext().getResources().getColor(R.color.dark_gray));
-                viewHolder.getTvNewAdd().setVisibility(View.INVISIBLE);
-                viewHolder.contentView.setOnClickListener(
-                        v -> onItemClickListener.onItemClick(datas.get(position)));
-            } else {
-                viewHolder.getTvName().setText(datas.get(position));
-                viewHolder.getTvName().setTextColor(0xFF00A2E2);
-                viewHolder.getTvNewAdd().setVisibility(View.VISIBLE);
+
+        if (hasResults) {
+            SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder(data);
+            if (keyword != null && keyword.length() > 0) {
+                messageStringBuilder.setSpan(
+                        new ForegroundColorSpan(0xFF00A2E2),
+                        data.toLowerCase().indexOf(keyword.toLowerCase()),
+                        data.toLowerCase().indexOf(keyword.toLowerCase()) + keyword.length(),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
+            viewHolder.getTvName().setText(messageStringBuilder);
+            viewHolder.getTvName().setTextColor(
+                    JandiApplication.getContext().getResources().getColor(R.color.dark_gray));
+            viewHolder.getTvNewAdd().setVisibility(View.GONE);
+            viewHolder.contentView.setOnClickListener(
+                    v -> onItemClickListener.onItemClick(datas.get(position)));
         } else {
-            viewHolder.getTvNewAdd().setVisibility(View.INVISIBLE);
+            viewHolder.getTvName().setText(datas.get(position));
+            viewHolder.getTvName().setTextColor(0xFF00A2E2);
+            viewHolder.getTvNewAdd().setVisibility(View.VISIBLE);
         }
     }
 

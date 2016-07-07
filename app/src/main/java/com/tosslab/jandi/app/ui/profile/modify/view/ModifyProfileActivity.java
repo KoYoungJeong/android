@@ -33,7 +33,7 @@ import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.profile.inputlist.InsertJobTitleDepartmentActivity;
+import com.tosslab.jandi.app.ui.profile.inputlist.InputProfileListActivity;
 import com.tosslab.jandi.app.ui.profile.modify.dagger.DaggerModifyProfileComponent;
 import com.tosslab.jandi.app.ui.profile.modify.dagger.ModifyProfileModule;
 import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenter;
@@ -218,18 +218,18 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     @OnClick(R.id.profile_user_division)
     void editDivision() {
         // 부서
-        Intent intent = new Intent(this, InsertJobTitleDepartmentActivity.class);
-        intent.putExtra(InsertJobTitleDepartmentActivity.INPUT_MODE,
-                InsertJobTitleDepartmentActivity.DEPARTMENT_MODE);
+        Intent intent = new Intent(this, InputProfileListActivity.class);
+        intent.putExtra(InputProfileListActivity.INPUT_MODE,
+                InputProfileListActivity.DEPARTMENT_MODE);
         startActivityForResult(intent, REQUEST_GET_DEPARTMENT);
     }
 
     @OnClick(R.id.profile_user_position)
     void editPosition() {
         // 직책
-        Intent intent = new Intent(this, InsertJobTitleDepartmentActivity.class);
-        intent.putExtra(InsertJobTitleDepartmentActivity.INPUT_MODE,
-                InsertJobTitleDepartmentActivity.JOB_TITLE_MODE);
+        Intent intent = new Intent(this, InputProfileListActivity.class);
+        intent.putExtra(InputProfileListActivity.INPUT_MODE,
+                InputProfileListActivity.JOB_TITLE_MODE);
         startActivityForResult(intent, REQUEST_GET_JOB_TITLE);
     }
 
@@ -367,7 +367,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     private void onGetJobTitle(int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            String jobTitle = data.getStringExtra(InsertJobTitleDepartmentActivity.RESULT_EXTRA);
+            String jobTitle = data.getStringExtra(InputProfileListActivity.RESULT_EXTRA);
             tvProfileUserPosition.setText(jobTitle);
             ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
             reqUpdateProfile.position = jobTitle;
@@ -377,7 +377,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     private void onGetDepartmentResult(int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            String department = data.getStringExtra(InsertJobTitleDepartmentActivity.RESULT_EXTRA);
+            String department = data.getStringExtra(InputProfileListActivity.RESULT_EXTRA);
             tvProfileUserDivision.setText(department);
             ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
             reqUpdateProfile.department = department;

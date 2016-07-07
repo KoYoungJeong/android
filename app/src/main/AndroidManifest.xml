@@ -578,7 +578,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.profile.inputlist.InsertJobTitleDepartmentActivity"
+            android:name=".ui.profile.inputlist.InputProfileListActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
 
