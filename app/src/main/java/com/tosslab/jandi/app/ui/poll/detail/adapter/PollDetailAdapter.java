@@ -288,6 +288,19 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
         return poll;
     }
 
+    @Override
+    public ResMessages.Link getPollCommentById(long id) {
+        for (Row row : getRows()) {
+            if (row.getItem() instanceof ResMessages.Link) {
+                return (ResMessages.Link) row.getItem();
+            }
+        }
+
+        ResMessages.Link link = new ResMessages.Link();
+        link.id = -1;
+        return link;
+    }
+
     public Row getPollCommentDividerRow() {
         int dividerColor = JandiApplication.getContext()
                 .getResources().getColor(R.color.jandi_file_search_item_divider);

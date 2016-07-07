@@ -14,8 +14,6 @@ public interface PollListPresenter {
 
     void onInitializePollList();
 
-    void reInitializePollList();
-
     void onLoadMorePollList(Date lastItemFinishedAt);
 
     void onPollDataChanged(SocketPollEvent.Type type, Poll poll);

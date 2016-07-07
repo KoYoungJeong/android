@@ -135,29 +135,6 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
         }
 
         reInitializePollDetailQueue.onNext(pollId);
-//        pollDetailModel.getPollDetailObservable(pollId, new PollDetail())
-//                .concatMap(pollDetail -> pollDetailModel.getPollCommentsObservable(pollId, pollDetail))
-//                .doOnNext(pollDetail -> pollDetailModel.upsertPoll(pollDetail.getPoll()))
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(pollDetail -> {
-//                    pollDetailDataModel.removeAllRows();
-//
-//                    pollDetailDataModel.setPollDetails(pollDetail.getPoll());
-//
-//                    List<ResMessages.OriginalMessage> pollComments = pollDetail.getPollComments();
-//                    if (pollComments != null && !pollComments.isEmpty()) {
-//                        pollDetailModel.sortByDate(pollComments);
-//                        pollDetailDataModel.addPollComments(pollComments);
-//                    }
-//
-//                    pollDetailView.notifyDataSetChanged();
-//
-//                    pollDetailView.initPollDetailExtras(pollDetail.getPoll());
-//
-//                }, e -> {
-//                    LogUtil.e(TAG, Log.getStackTraceString(e));
-//                });
     }
 
     @Override
@@ -210,6 +187,12 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
         Observable.just(linkComment.message)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
+                .filter(comment -> {
+                    // 이미 있는 코멘트 인 경우 무시한다.
+                    ResMessages.Link initializedPollComment =
+                            pollDetailDataModel.getPollCommentById(linkComment.id);
+                    return initializedPollComment.id <= 0;
+                })
                 .subscribe(comment -> {
 
                     pollDetailDataModel.addPollComment(comment);
@@ -220,6 +203,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     }
 
                 }, Throwable::printStackTrace);
+
     }
 
     @Override

@@ -61,48 +61,7 @@ public class PollListPresenterImpl implements PollListPresenter {
                     pollListModel.sortPollListByFinishedAt(finished);
                     List<Poll> mergedPollList =
                             pollListModel.getMergedPollList(onGoing, finished);
-                    resPollList.setPollList(mergedPollList);
-                    return resPollList;
-                })
-                .subscribe(resPollList -> {
-                    pollListView.dismissProgress();
-
-                    List<Poll> pollList = resPollList.getPollList();
-                    if (pollList == null || pollList.isEmpty()) {
-                        pollListView.showEmptyView();
-                        pollListView.setHasMore(false);
-                    } else {
-                        pollListDataModel.addPolls(pollList);
-                        pollListView.setHasMore(resPollList.hasMore());
-                        pollListView.notifyDataSetChanged();
-                    }
-                }, e -> {
-                    LogUtil.e(TAG, Log.getStackTraceString(e));
-
-                    initializeFromDatabase();
-                });
-    }
-
-    @Override
-    public void reInitializePollList() {
-        if (!NetworkCheckUtil.isConnected()) {
-            return;
-        }
-
-        pollListModel.getPollListObservable(PollListModel.DEFAULT_REQUEST_ITEM_COUNT)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(resPollList -> {
-                    if (resPollList == null) {
-                        return new ResPollList();
-                    }
-
-                    List<Poll> onGoing = resPollList.getOnGoing();
-                    pollListModel.sortPollListByDueDate(onGoing);
-                    List<Poll> finished = resPollList.getFinished();
-                    pollListModel.sortPollListByFinishedAt(finished);
-                    List<Poll> mergedPollList =
-                            pollListModel.getMergedPollList(onGoing, finished);
+                    pollListModel.upsertPolls(mergedPollList);
                     resPollList.setPollList(mergedPollList);
                     return resPollList;
                 })

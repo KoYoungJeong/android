@@ -37,4 +37,6 @@ public interface PollDetailDataModel {
     void removePollComment(long messageId);
 
     Poll getPoll();
+
+    ResMessages.Link getPollCommentById(long id);
 }
