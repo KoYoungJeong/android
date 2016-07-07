@@ -25,19 +25,13 @@ public class FileDetailAdapter extends MultiItemRecyclerAdapter {
     public static final int VIEW_TYPE_COMMENT = 3;
     public static final int VIEW_TYPE_STICKER = 4;
 
-    private long roomId;
-
-    public FileDetailAdapter(long roomId) {
-        this.roomId = roomId;
-    }
-
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case VIEW_TYPE_FILE:
                 return NormalFileViewHolder.newInstance(parent);
             case VIEW_TYPE_IMAGE:
-                return ImageFileViewHolder.newInstance(parent, roomId);
+                return ImageFileViewHolder.newInstance(parent);
             case VIEW_TYPE_COMMENT:
                 return CommentViewHolder.newInstance(parent);
             case VIEW_TYPE_STICKER:

@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.target.Target;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.files.RequestShowCarouselViewerEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
@@ -25,6 +26,8 @@ import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
+import de.greenrobot.event.EventBus;
+
 /**
  * Created by tonyjs on 16. 1. 19..
  *
@@ -32,21 +35,18 @@ import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
  */
 public class ImageFileViewHolder extends FileViewHolder {
 
-    private long roomId;
-
     private ImageView ivFileThumb;
 
     private View btnTapToView;
 
     private View vUnavailableIndicator;
 
-    private ImageFileViewHolder(View itemView, long roomId) {
+    private ImageFileViewHolder(View itemView) {
         super(itemView);
-        this.roomId = roomId;
     }
 
-    public static ImageFileViewHolder newInstance(ViewGroup parent, long roomId) {
-        return new ImageFileViewHolder(FileViewHolder.getItemView(parent), roomId);
+    public static ImageFileViewHolder newInstance(ViewGroup parent) {
+        return new ImageFileViewHolder(FileViewHolder.getItemView(parent));
     }
 
     @Override
@@ -168,30 +168,7 @@ public class ImageFileViewHolder extends FileViewHolder {
 
     private void moveToPhotoViewer(long fileMessageId, ResMessages.FileContent content,
                                    boolean shouldOpenImmediately) {
-        Context context = getContext();
-
-        if (roomId > 0) {
-            CarouselViewerActivity_.intent(context)
-                    .mode(CarouselViewerActivity.CAROUSEL_MODE)
-                    .roomId(roomId)
-                    .startLinkId(fileMessageId)
-                    .imageOriginUrl(shouldOpenImmediately ? content.fileUrl : "")
-                    .shouldOpenImmediately(shouldOpenImmediately)
-                    .start();
-        } else {
-            String thumbUrl = ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.THUMB);
-            CarouselViewerActivity_.intent(context)
-                    .mode(CarouselViewerActivity.SINGLE_IMAGE_MODE)
-                    .imageExt(content.ext)
-                    .imageOriginUrl(content.fileUrl)
-                    .imageThumbUrl(thumbUrl)
-                    .imageType(content.type)
-                    .imageName(content.name)
-                    .imageSize(content.size)
-                    .shouldOpenImmediately(shouldOpenImmediately)
-                    .start();
-        }
-
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewPhoto);
+        EventBus.getDefault().post(
+                new RequestShowCarouselViewerEvent(fileMessageId, content, shouldOpenImmediately));
     }
 }
