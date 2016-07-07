@@ -186,6 +186,8 @@
 	<string name="jandi_deleted_file">"已刪除檔案"</string>
 	<string name="jandi_deleted_message">"(刪除的訊息)"</string>
 	<string name="jandi_deleted_team">"此團隊已被刪除"</string>
+	<string name="jandi_department">"部門"</string>
+	<string name="jandi_department_list">"所有部門"</string>
 	<string name="jandi_device_storage">"行動裝置"</string>
 	<string name="jandi_disable_external_link">"移除共享連結"</string>
 	<string name="jandi_disable_user_profile_explain">"此成員權限已被暫時關閉。\n欲知更多細節，請聯絡團隊管理員。"</string>
@@ -273,8 +275,8 @@
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_guide_to_assign_topic_owner">"此成員為議題管理員，欲剔除此成員，請先進入「議題資訊」將管理權限轉移給其他成員"</string>
 	<string name="jandi_has_joined">"%s已加入"</string>
-	<string name="jandi_has_no_search_result">"沒有符合 '%s' 的結果"</string>
-	<string name="jandi_has_no_searched_member">"沒有符合 <![CDATA[<b><font color=#404040>%s</font></b>]]> 的結果"</string>
+	<string name="jandi_has_no_search_result">""</string>
+	<string name="jandi_has_no_searched_member">""</string>
 	<string name="jandi_have_an_account_already">"已經有團隊註冊了嗎?"</string>
 	<string name="jandi_help">"説明"</string>
 	<string name="jandi_hi_apk_store">"安卓市場"</string>
@@ -288,6 +290,8 @@
 	<string name="jandi_input_search_keyword">"按照關鍵字搜尋您的訊息"</string>
 	<string name="jandi_input_topic_name">"請輸入議題群組名稱"</string>
 	<string name="jandi_input_user_name">"輸入您的名字"</string>
+	<string name="jandi_insert_new_department">"(新部門)"</string>
+	<string name="jandi_insert_new_job_title">"(新職稱)"</string>
 	<string name="jandi_insert_team_domain">"請輸入團隊網域"</string>
 	<string name="jandi_insert_team_name">"請輸入團隊名稱"</string>
 	<string name="jandi_invitation">"邀請"</string>
@@ -314,6 +318,8 @@
 	<string name="jandi_is_newcomer">"還沒使用過JANDI?"</string>
 	<string name="jandi_is_topic_required">"公開/私人"</string>
 	<string name="jandi_it_has_no_topic_description">"(無議題內容)"</string>
+	<string name="jandi_job_title">"職位"</string>
+	<string name="jandi_job_title_list">"所有職稱"</string>
 	<string name="jandi_join_topic">"加入"</string>
 	<string name="jandi_joined_team">"你已加入%1$s，請再次確認團隊列表。"</string>
 	<string name="jandi_kicked_message">"你已被移除出%s"</string>
@@ -321,6 +327,7 @@
 	<string name="jandi_launch">"開啓JANDI"</string>
 	<string name="jandi_left_topic">"%s已經離開"</string>
 	<string name="jandi_logout">"登出"</string>
+	<string name="jandi_mail_sending">"驗證碼正在寄送中，請稍候"</string>
 	<string name="jandi_member_invite_popup_1">"現在就邀請您所有的團隊成員！"</string>
 	<string name="jandi_member_invite_popup_2">"JANDI是一個群組導向的平台，因此您可以在工作流程中與您全部團隊一同找到最棒的經驗。"</string>
 	<string name="jandi_member_profile_call">"通話"</string>
@@ -368,6 +375,8 @@
 	<string name="jandi_name">"名稱"</string>
 	<string name="jandi_name_in_jandi">"帳號名稱"</string>
 	<string name="jandi_need_to_assign_topic_owner">"你為此議題的管理員，請於離開議題前，先將管理權限轉移給其他成員"</string>
+	<string name="jandi_new_department">"新部門"</string>
+	<string name="jandi_new_job_title">"添加職稱"</string>
 	<string name="jandi_new_team_name">"新團隊名稱"</string>
 	<string name="jandi_next">"下一步"</string>
 	<string name="jandi_no_invite_email">"請提供您想邀請的團隊成員的電子郵件地址"</string>
@@ -387,6 +396,7 @@
 	<string name="jandi_nowhere_shared_file">"檔案尚未分享到其它議題"</string>
 	<string name="jandi_off">"關閉"</string>
 	<string name="jandi_on">"打開"</string>
+	<string name="jandi_one_to_one">"1:1"</string>
 	<string name="jandi_open_browser">"開啓一個瀏覽器"</string>
 	<string name="jandi_page_not_found">"您找的頁面不存在"</string>
 	<string name="jandi_participants">"投票人"</string>
@@ -402,8 +412,9 @@
 	<string name="jandi_poll">"問卷調查"</string>
 	<string name="jandi_poll_add_item">"添加選項"</string>
 	<string name="jandi_poll_anonymous">"不記名"</string>
-	<string name="jandi_poll_create">"建立新的投票"</string>
-	<string name="jandi_poll_empty">"尚無問卷，\n點擊[+]建立新問卷"</string>
+	<string name="jandi_poll_create">"建立"</string>
+	<string name="jandi_poll_empty_1">"無進行中的問卷"</string>
+	<string name="jandi_poll_empty_2">"\n點擊[+]建立新問卷"</string>
 	<string name="jandi_poll_finished_with_most">"問卷已完成，得票最高的是 \"%s\""</string>
 	<string name="jandi_poll_finished_without_participants">"問卷已完成，此問卷無投票人"</string>
 	<string name="jandi_poll_finishedat">"結束時間"</string>
@@ -609,7 +620,7 @@
 	<string name="jandi_unpinned_message">"已取消標示"</string>
 	<string name="jandi_unread_messages_below">"以下為未讀訊息"</string>
 	<string name="jandi_unshare_succeed">"%s已被取消分享"</string>
-	<string name="jandi_unshared_file">"檔案已取消分享"</string>
+	<string name="jandi_unshared_file">""</string>
 	<string name="jandi_unshared_file_in_dm">"此檔案已經從這個對話中取消分享"</string>
 	<string name="jandi_unshared_message">"無法存取該檔案/訊息"</string>
 	<string name="jandi_unstarred">"取消標記"</string>

@@ -58,28 +58,30 @@ public class ProfileUtil {
     }
 
     public static void setProfileForCommment(long fromEntityId,
-                                  ImageView ivProfile,
-                                  View vProfileCover,
-                                  TextView tvName,
-                                  View vDisableLineThrough) {
+                                             ImageView ivProfile,
+                                             View vProfileCover,
+                                             TextView tvName,
+                                             View vDisableLineThrough) {
         if (!TeamInfoLoader.getInstance().isUser(fromEntityId)) {
             return;
         }
+
         User entity = TeamInfoLoader.getInstance().getUser(fromEntityId);
 
         ViewGroup.LayoutParams ivProfileLayoutParams = ivProfile.getLayoutParams();
         if (entity.isBot()) {
             ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(32f);
             ivProfile.setLayoutParams(ivProfileLayoutParams);
+            ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             ImageLoader.loadFromResources(ivProfile, R.drawable.bot_43x54);
         } else {
             ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(25f);
-            ivProfile.setLayoutParams(ivProfileLayoutParams);
             ivProfile.setLayoutParams(ivProfileLayoutParams);
             if (entity.isEnabled()) {
                 ImageUtil.loadProfileImage(
                         ivProfile, entity.getPhotoUrl(), R.drawable.profile_img);
             } else {
+                ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_43);
             }
         }

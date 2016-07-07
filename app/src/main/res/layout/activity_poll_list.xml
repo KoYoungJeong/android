@@ -37,15 +37,33 @@
             android:background="@color/white"
             android:visibility="gone">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <LinearLayout
                 android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:text="@string/jandi_poll_empty"
-                android:textColor="@color/jandi_text_light"
-                android:textSize="16sp"/>
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:text="@string/jandi_poll_empty_1"
+                    android:textColor="@color/jandi_text"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:text="@string/jandi_poll_empty_2"
+                    android:textColor="@color/jandi_text_light"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+
 
         </FrameLayout>
     </FrameLayout>

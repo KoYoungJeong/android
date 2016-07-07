@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.views.viewgroup.ProgressRelativeLayout;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import de.greenrobot.event.EventBus;
@@ -97,6 +98,62 @@ public class PollItemViewHolder extends BaseViewHolder<Pair<Poll, Poll.Item>> {
         progressBar.setOnClickListener(v -> selectItem(poll, item, !v.isSelected()));
     }
 
+    private void bindUnSelectablePoll(final Poll poll, final Poll.Item item) {
+        tvParticipants.setText(Integer.toString(item.getVotedCount()));
+        vParticipants.setVisibility(View.VISIBLE);
+
+        progressBar.setSelected(false);
+        progressBar.setOnClickListener(v ->
+                EventBus.getDefault().post(RequestShowPollParticipantsEvent.option(poll, item)));
+
+        progressBar.setProgress(item.getVotedCount());
+        progressBar.setMax(poll.getVotedCount());
+
+        Resources resources = itemView.getResources();
+        int progressBackgroundColor =
+                resources.getColor(R.color.jandi_horizontal_progress_background);
+        progressBar.setProgressBackgroundColor(progressBackgroundColor);
+
+        if ("created".equals(poll.getStatus())) {
+            boolean amIVoted = "voted".equals(poll.getVoteStatus());
+
+            int progressColor = amIVoted ? resources.getColor(R.color.jandi_horizontal_progress_voted)
+                    : resources.getColor(R.color.jandi_horizontal_progress_selected);
+            progressBar.setProgressColor(progressColor);
+        } else {
+            boolean isElectedItem = isElectedItem(poll.getElectedItems(), item.getSeq());
+
+            int progressColor = isElectedItem ? resources.getColor(R.color.jandi_horizontal_progress_voted)
+                    : resources.getColor(R.color.jandi_horizontal_progress_selected);
+            progressBar.setProgressColor(progressColor);
+        }
+
+        boolean isSelected = isInSelectedItems(poll.getVotedItemSeqs(), item.getSeq());
+        vSelectedIcon.setVisibility(isSelected ? View.VISIBLE : View.GONE);
+        vSpace.setVisibility(isSelected ? View.GONE : View.VISIBLE);
+
+        final ViewGroup.MarginLayoutParams marginLayoutParams =
+                (ViewGroup.MarginLayoutParams) tvTitle.getLayoutParams();
+        marginLayoutParams.leftMargin = isSelected ? 0 : defaultTitleLeftMargin;
+        tvTitle.setLayoutParams(marginLayoutParams);
+    }
+
+    private boolean isElectedItem(Collection<Poll.Item> electedItems, int seq) {
+        if (electedItems == null || electedItems.isEmpty()) {
+            return false;
+        }
+
+        Iterator<Poll.Item> iterator = electedItems.iterator();
+        while (iterator.hasNext()) {
+            Poll.Item next = iterator.next();
+            if (next.getSeq() == seq) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private boolean isInSelectedItems(Collection<Integer> votedItemSeqs, int seq) {
         if (votedItemSeqs == null || votedItemSeqs.isEmpty()) {
             return false;
@@ -131,38 +188,5 @@ public class PollItemViewHolder extends BaseViewHolder<Pair<Poll, Poll.Item>> {
         poll.setVotedItemSeqs(votedItemSeqs);
 
         EventBus.getDefault().post(PollDataChangedEvent.create(poll));
-    }
-
-    private void bindUnSelectablePoll(final Poll poll, final Poll.Item item) {
-        tvParticipants.setText(Integer.toString(item.getVotedCount()));
-        vParticipants.setVisibility(View.VISIBLE);
-
-        progressBar.setSelected(false);
-        progressBar.setOnClickListener(v ->
-                EventBus.getDefault().post(RequestShowPollParticipantsEvent.option(poll, item)));
-
-        progressBar.setProgress(item.getVotedCount());
-        progressBar.setMax(poll.getVotedCount());
-
-        boolean amIVoted = "voted".equals(poll.getVoteStatus());
-
-        Resources resources = itemView.getResources();
-        int progressBackgroundColor =
-                resources.getColor(R.color.jandi_horizontal_progress_background);
-        progressBar.setProgressBackgroundColor(progressBackgroundColor);
-
-        int progressColor = amIVoted ? resources.getColor(R.color.jandi_horizontal_progress_voted)
-                : resources.getColor(R.color.jandi_horizontal_progress_selected);
-        progressBar.setProgressColor(progressColor);
-
-        boolean isSelected = isInSelectedItems(poll.getVotedItemSeqs(), item.getSeq());
-
-        vSelectedIcon.setVisibility(isSelected ? View.VISIBLE : View.GONE);
-        vSpace.setVisibility(isSelected ? View.GONE : View.VISIBLE);
-
-        final ViewGroup.MarginLayoutParams marginLayoutParams =
-                (ViewGroup.MarginLayoutParams) tvTitle.getLayoutParams();
-        marginLayoutParams.leftMargin = isSelected ? 0 : defaultTitleLeftMargin;
-        tvTitle.setLayoutParams(marginLayoutParams);
     }
 }

@@ -143,14 +143,14 @@ public class PollCreateActivity extends BaseAppCompatActivity
         });
 
         View btnItemDelete = itemView.findViewById(R.id.btn_create_poll_item_delete);
-        btnItemDelete.setVisibility(position > 2 ? View.VISIBLE : View.GONE);
+        btnItemDelete.setVisibility(position >= 2 ? View.VISIBLE : View.GONE);
         btnItemDelete.setOnClickListener(v -> {
             sendAnalyticsEvent(AnalyticsValue.Action.DeleteChoice);
             pollCreatePresenter.onPollItemRemove(position);
             vgPollItems.removeView(itemView);
 
             int childCount = vgPollItems.getChildCount();
-            if (childCount < 3) {
+            if (childCount < 2) {
                 for (int i = 0; i < childCount; i++) {
                     View child = vgPollItems.getChildAt(i);
                     child.findViewById(R.id.btn_create_poll_item_delete).setVisibility(View.GONE);
@@ -169,7 +169,7 @@ public class PollCreateActivity extends BaseAppCompatActivity
         }
 
         int childCount = vgPollItems.getChildCount();
-        if (childCount > 2) {
+        if (childCount >= 2) {
             for (int i = 0; i < childCount; i++) {
                 View child = vgPollItems.getChildAt(i);
                 child.findViewById(R.id.btn_create_poll_item_delete).setVisibility(View.VISIBLE);
