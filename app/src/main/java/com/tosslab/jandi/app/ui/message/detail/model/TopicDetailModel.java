@@ -6,8 +6,8 @@ import android.preference.PreferenceManager;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -18,11 +18,6 @@ import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-import org.json.JSONException;
-
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,20 +26,16 @@ import dagger.Lazy;
 import rx.Observable;
 
 
-@EBean
 public class TopicDetailModel {
 
-    @Bean
-    EntityClientManager entityClientManager;
+    private EntityClientManager entityClientManager;
+    private Lazy<RoomsApi> roomsApi;
 
     @Inject
-    Lazy<RoomsApi> roomsApi;
-
-    @AfterInject
-    void initObject() {
-        DaggerApiClientComponent.create().inject(this);
+    public TopicDetailModel(Lazy<RoomsApi> roomsApi) {
+        this.roomsApi = roomsApi;
+        this.entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());;
     }
-
 
     public String getTopicName(long entityId) {
 
@@ -220,8 +211,8 @@ public class TopicDetailModel {
                 && !TeamInfoLoader.getInstance().isPublicTopic(entityId);
     }
 
-    public boolean isAutoJoin(long entityId) {
-        return TeamInfoLoader.getInstance().getTopic(entityId).isAutoJoin();
+    public boolean isAutoJoin(long topicId) {
+        return TeamInfoLoader.getInstance().getTopic(topicId).isAutoJoin();
     }
 
     public boolean isStandAlone(long entityId) {
@@ -235,5 +226,13 @@ public class TopicDetailModel {
     public boolean isOnGlobalPush() {
         return PreferenceManager.getDefaultSharedPreferences(JandiApplication.getContext())
                 .getBoolean("setting_push_auto_alarm", true);
+    }
+
+    public void updateTopicStatus(long entityId, boolean starred) throws RetrofitException {
+        if (starred) {
+            entityClientManager.enableFavorite(entityId);
+        } else {
+            entityClientManager.disableFavorite(entityId);
+        }
     }
 }

@@ -10,13 +10,13 @@ public interface TopicDetailPresenter {
 
     void setView(View view);
 
-    void onInit(Context context, long entityId);
+    void onInit(long entityId);
 
     void onTopicInvite(Activity activity, long entityId);
 
     void onTopicDescriptionMove(long entityId);
 
-    void onTopicStar(Context context, long entityId);
+    void onTopicStar(long entityId);
 
     void onAssignTopicOwner(long entityId);
 

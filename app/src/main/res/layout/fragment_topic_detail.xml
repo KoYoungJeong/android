@@ -111,8 +111,8 @@
                     android:layout_alignTop="@+id/tv_topic_detail_member_count_title"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@+id/tv_topic_detail_member_count"
-                    android:scaleType="centerInside"
                     android:cropToPadding="true"
+                    android:scaleType="centerInside"
                     android:src="@drawable/setting_icon_member" />
 
                 <TextView
@@ -185,12 +185,12 @@
                 style="@style/JandiTopicDetail.Layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="104dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:paddingTop="24dp"
-                android:paddingBottom="24dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:minHeight="104dp"
+                android:orientation="horizontal"
+                android:paddingBottom="24dp"
+                android:paddingTop="24dp">
 
                 <LinearLayout
                     android:id="@+id/vg_topic_detail_set_auto_join_text"
@@ -233,7 +233,16 @@
                         android:clickable="false"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
-                        android:gravity="center" />
+                        android:gravity="center"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tv_topic_detail_set_auto_join"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="@string/jandi_auto_join_on" />
+
                 </LinearLayout>
 
 

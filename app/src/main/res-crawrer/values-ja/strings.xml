@@ -111,6 +111,8 @@
 	<string name="jandi_auto_join_cannot_be_default_topic">"基本トピックでは自動招待を解除できません"</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"自動招待は公開トピックのみで可能です"</string>
 	<string name="jandi_auto_join_explain">"新しいメンバー全員をこのトピックに招待する"</string>
+	<string name="jandi_auto_join_off">"オフ"</string>
+	<string name="jandi_auto_join_on">"オン"</string>
 	<string name="jandi_auto_join_title">"自動招待"</string>
 	<string name="jandi_auto_join_title_wild">"自動招待*"</string>
 	<string name="jandi_back">"戻る"</string>
