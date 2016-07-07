@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -8,7 +7,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_poll_list"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"/>
+        android:layout_height="?attr/actionBarSize" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -19,7 +18,7 @@
             android:id="@+id/lv_poll_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical"/>
+            android:scrollbars="vertical" />
 
         <ProgressBar
             android:id="@+id/progress_poll_list_more_loading"
@@ -28,7 +27,7 @@
             android:layout_gravity="center_horizontal|bottom"
             android:layout_marginBottom="20dp"
             android:background="@drawable/bg_circle_white"
-            android:indeterminate="true"/>
+            android:indeterminate="true" />
 
         <FrameLayout
             android:id="@+id/vg_poll_list_empty"
@@ -43,9 +42,9 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:text="@string/jandi_poll_empty"
+                android:text="@string/jandi_poll_empty_1"
                 android:textColor="@color/jandi_text_light"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
 
         </FrameLayout>
     </FrameLayout>

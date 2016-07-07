@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.profile.insert.views;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.ui.profile.inputlist.InsertJobTitleDepartmentActivity;
 import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
 import com.tosslab.jandi.app.ui.profile.insert.dagger.DaggerInsertProfileSecondPageComponent;
 import com.tosslab.jandi.app.ui.profile.insert.dagger.InsertProfileSecondPageModule;
@@ -36,17 +38,20 @@ import butterknife.OnClick;
 public class InsertProfileSecondPageFragment extends Fragment
         implements InsertProfileSecondPagePresenter.View {
 
+    public static final int REQUEST_GET_JOB_TITLE = 0x21;
+    public static final int REQUEST_GET_DEPARTMENT = 0x22;
+
     @Inject
     InsertProfileSecondPagePresenter presenter;
 
     @Bind(R.id.tv_email)
     TextView tvEmail;
 
-    @Bind(R.id.et_department)
-    EditText etDepartment;
+    @Bind(R.id.tv_department)
+    TextView tvDepartment;
 
-    @Bind(R.id.et_positon)
-    EditText etPosition;
+    @Bind(R.id.tv_positon)
+    TextView tvPosition;
 
     @Bind(R.id.et_phone_number)
     EditText etPhoneNumber;
@@ -112,8 +117,8 @@ public class InsertProfileSecondPageFragment extends Fragment
     @OnClick(R.id.iv_profile_check)
     void onClickProfileCheck() {
         presenter.uploadExtraInfo(
-                etDepartment.getText().toString(),
-                etPosition.getText().toString(),
+                tvDepartment.getText().toString(),
+                tvPosition.getText().toString(),
                 etPhoneNumber.getText().toString(),
                 etStatusMessage.getText().toString()
         );
@@ -133,6 +138,24 @@ public class InsertProfileSecondPageFragment extends Fragment
     void onClickChooseEmail() {
         presenter.chooseEmail(getEmail());
     }
+
+    @OnClick(R.id.tv_department)
+    void onClickChooseDepartment() {
+        Intent intent = new Intent(getContext(), InsertJobTitleDepartmentActivity.class);
+        intent.putExtra(InsertJobTitleDepartmentActivity.INPUT_MODE,
+                InsertJobTitleDepartmentActivity.DEPARTMENT_MODE);
+        startActivityForResult(intent, REQUEST_GET_DEPARTMENT);
+    }
+
+    @OnClick(R.id.tv_positon)
+    void onClickChooseJobTitle(View view) {
+        // 직책
+        Intent intent = new Intent(getContext(), InsertJobTitleDepartmentActivity.class);
+        intent.putExtra(InsertJobTitleDepartmentActivity.INPUT_MODE,
+                InsertJobTitleDepartmentActivity.JOB_TITLE_MODE);
+        startActivityForResult(intent, REQUEST_GET_JOB_TITLE);
+    }
+
 
     @Override
     public void showEmailChooseDialog(String[] emails, String currentEmail) {
@@ -211,13 +234,13 @@ public class InsertProfileSecondPageFragment extends Fragment
         // 부서
         String strDivision = (me.getDivision());
         if (!TextUtils.isEmpty(strDivision)) {
-            etDepartment.setText(strDivision);
+            tvDepartment.setText(strDivision);
         }
 
         // 직책
         String strPosition = me.getPosition();
         if (!TextUtils.isEmpty(strPosition)) {
-            etPosition.setText(strPosition);
+            tvPosition.setText(strPosition);
         }
 
         // 폰넘버
@@ -258,6 +281,32 @@ public class InsertProfileSecondPageFragment extends Fragment
         } else {
             // 팀 생성 모드 시
             onChangePageClickListener.onClickMoveFinalPage();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_GET_JOB_TITLE:
+                onGetJobTitle(resultCode, data);
+                break;
+            case REQUEST_GET_DEPARTMENT:
+                onGetDepartmentResult(resultCode, data);
+                break;
+        }
+    }
+
+    private void onGetJobTitle(int resultCode, Intent data) {
+        if (resultCode == getActivity().RESULT_OK) {
+            String jobTitle = data.getStringExtra(InsertJobTitleDepartmentActivity.RESULT_EXTRA);
+            tvPosition.setText(jobTitle);
+        }
+    }
+
+    private void onGetDepartmentResult(int resultCode, Intent data) {
+        if (resultCode == getActivity().RESULT_OK) {
+            String department = data.getStringExtra(InsertJobTitleDepartmentActivity.RESULT_EXTRA);
+            tvDepartment.setText(department);
         }
     }
 
