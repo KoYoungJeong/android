@@ -82,6 +82,7 @@ import java.util.concurrent.TimeUnit;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by tee on 15. 8. 26..
@@ -126,6 +127,7 @@ public class MainTopicListFragment extends Fragment
         // delay를 삽입함.
         Observable.just(1)
                 .delay(200, TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(Integer -> {
                     floatingActionMenu = mainTabActivity.getFloatingActionMenu();
