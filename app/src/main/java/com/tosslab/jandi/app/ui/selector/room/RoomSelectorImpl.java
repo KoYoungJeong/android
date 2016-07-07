@@ -211,8 +211,6 @@ public class RoomSelectorImpl implements RoomSelector {
     public List<ExpandRoomData> getTopicDatas() {
         List<ExpandRoomData> topicDatas = new ArrayList<>();
 
-        // 로컬에서 가져오기
-        List<TopicRoom> topicRooms = TeamInfoLoader.getInstance().getTopicList();
         List<TopicFolder> topicFolders = TeamInfoLoader.getInstance().getTopicFolders();
 
         LinkedHashMap<Long, TopicRoom> joinTopics = getJoinTopics(getTopics());
