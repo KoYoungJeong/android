@@ -46,7 +46,7 @@ public class InsertJobTitleDepartmentAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_division, parent, false);
+                .inflate(R.layout.item_department_jobtitle, parent, false);
         return new ViewHolder(view);
     }
 
@@ -105,7 +105,7 @@ public class InsertJobTitleDepartmentAdapter extends RecyclerView.Adapter {
     }
 
     public interface OnItemClickListener {
-        void onItemClick(String division);
+        void onItemClick(String item);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
