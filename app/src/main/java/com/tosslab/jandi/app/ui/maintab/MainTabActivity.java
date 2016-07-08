@@ -671,7 +671,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
             setupActionBar(selectedTeamInfo.getName());
         }
         teamsPresenter.reInitializeTeams();
-
     }
 
     private void trackScreenView(int position) {

@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
+import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamJoinEvent;
@@ -45,6 +46,7 @@ import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
@@ -53,6 +55,7 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
@@ -153,6 +156,7 @@ public class JandiSocketServiceModel {
     private final Lazy<AccountApi> accountApi;
     private final Lazy<LoginApi> loginApi;
     private final Lazy<EventsApi> eventsApi;
+    private final Lazy<PollApi> pollApi;
     private Lazy<StartApi> startApi;
 
     private PublishSubject<SocketRoomMarkerEvent> markerPublishSubject;
@@ -167,12 +171,14 @@ public class JandiSocketServiceModel {
                                    Lazy<AccountApi> accountApi,
                                    Lazy<LoginApi> loginApi,
                                    Lazy<EventsApi> eventsApi,
-                                   Lazy<StartApi> startApi) {
+                                   Lazy<StartApi> startApi,
+                                   Lazy<PollApi> pollApi) {
         this.context = context;
         this.accountApi = accountApi;
         this.loginApi = loginApi;
         this.eventsApi = eventsApi;
         this.startApi = startApi;
+        this.pollApi = pollApi;
         this.objectMapper = JacksonMapper.getInstance().getObjectMapper();
         initEventActor();
 
@@ -1312,14 +1318,17 @@ public class JandiSocketServiceModel {
 
                             boolean successRefresh = false;
                             try {
-                                InitialInfo initializeInfo = startApi.get().getInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
+                                long teamId = TeamInfoLoader.getInstance().getTeamId();
+                                InitialInfo initializeInfo = startApi.get().getInitializeInfo(teamId);
                                 InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
                                 TeamInfoLoader.getInstance().refresh();
+                                refreshPollList(teamId);
                                 JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
                                 successRefresh = true;
                                 postEvent(new RetrieveTopicListEvent());
                                 postEvent(new ChatListRefreshEvent());
                                 postEvent(new TeamInfoChangeEvent());
+                                postEvent(new RequestRefreshPollBadgeCountEvent(teamId));
                             } catch (RetrofitException e) {
                                 successRefresh = false;
                             }
@@ -1412,6 +1421,64 @@ public class JandiSocketServiceModel {
             MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
             postEvent(event);
 
+        } else if (eventHistoryInfo instanceof SocketPollCreatedEvent) {
+            SocketPollCreatedEvent event = (SocketPollCreatedEvent) eventHistoryInfo;
+            SocketPollCreatedEvent.Data data = event.getData();
+
+            Poll poll = data != null ? data.getPoll() : null;
+
+            boolean isSameTeam =
+                    event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId();
+            if (isSameTeam
+                    && poll != null && poll.getId() > 0) {
+                upsertPoll(poll);
+                poll = getPollFromDatabase(poll.getId());
+
+                postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.CREATED));
+            }
+        } else if (eventHistoryInfo instanceof SocketPollFinishedEvent) {
+            SocketPollFinishedEvent event = (SocketPollFinishedEvent) eventHistoryInfo;
+            SocketPollFinishedEvent.Data data = event.getData();
+
+            ResMessages.Link link = data.getLinkMessage();
+            Poll poll = link != null ? link.poll : null;
+            boolean isSameTeam =
+                    event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId();
+            if (isSameTeam
+                    && poll != null && poll.getId() > 0) {
+                upsertPoll(poll);
+                poll = getPollFromDatabase(poll.getId());
+                postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.FINISHED));
+            }
+
+        } else if (eventHistoryInfo instanceof SocketPollDeletedEvent) {
+            SocketPollDeletedEvent event = (SocketPollDeletedEvent) eventHistoryInfo;
+            SocketPollDeletedEvent.Data data = event.getData();
+
+            ResMessages.Link link = data.getLinkMessage();
+            Poll poll = link != null ? link.poll : null;
+            boolean isSameTeam =
+                    event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId();
+            if (isSameTeam
+                    && poll != null && poll.getId() > 0) {
+                upsertPoll(poll);
+                poll = getPollFromDatabase(poll.getId());
+                postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.DELETED));
+            }
+        } else if (eventHistoryInfo instanceof SocketPollVotedEvent) {
+            SocketPollVotedEvent event = (SocketPollVotedEvent) eventHistoryInfo;
+            SocketPollVotedEvent.Data data = event.getData();
+
+            ResMessages.Link link = data.getLinkMessage();
+            Poll poll = link != null ? link.poll : null;
+            boolean isSameTeam =
+                    event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId();
+            if (isSameTeam
+                    && poll != null && poll.getId() > 0 && poll.isMine()) {
+                upsertPollVotedStatus(poll);
+                poll = getPollFromDatabase(poll.getId());
+                postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.VOTED));
+            }
         }
     }
 
@@ -1602,6 +1669,28 @@ public class JandiSocketServiceModel {
 
     private Poll getPollFromDatabase(long pollId) {
         return PollRepository.getInstance().getPollById(pollId);
+    }
+
+    private void refreshPollList(long teamId) {
+        try {
+            PollRepository.getInstance().clearAll();
+
+            ResPollList resPollList = pollApi.get().getPollList(teamId, 50);
+            List<Poll> onGoing = resPollList.getOnGoing();
+            if (onGoing == null) {
+                onGoing = new ArrayList<>();
+            }
+            List<Poll> finished = resPollList.getFinished();
+            if (finished == null) {
+                finished = new ArrayList<>();
+            }
+            Observable.merge(Observable.from(onGoing), Observable.from(finished))
+                    .toList()
+                    .subscribe(polls -> PollRepository.getInstance().upsertPollList(polls),
+                            Throwable::printStackTrace);
+        } catch (RetrofitException retrofitError) {
+            retrofitError.printStackTrace();
+        }
     }
 
     interface Command {

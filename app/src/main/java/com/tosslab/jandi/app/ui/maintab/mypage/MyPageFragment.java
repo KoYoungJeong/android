@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.MentionToMeEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.poll.RefreshPollBadgeCountEvent;
+import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -261,6 +262,14 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
         Poll poll = event.getPoll();
         if (poll == null
                 || poll.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
+            return;
+        }
+
+        presenter.onInitializePollBadge();
+    }
+
+    public void onEvent(RequestRefreshPollBadgeCountEvent event) {
+        if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
 
