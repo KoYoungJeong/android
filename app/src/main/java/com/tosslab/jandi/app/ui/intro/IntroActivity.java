@@ -117,8 +117,8 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                             return;
                         }
 
-                        overridePendingTransition(0, 0);
                         startActivity(intent);
+                        overridePendingTransition(0, 0);
                         finish();
                     }
                 });
