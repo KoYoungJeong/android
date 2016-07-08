@@ -78,6 +78,7 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.MaxHeightRecyclerView;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
+import com.tosslab.jandi.app.views.TabView;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -211,12 +212,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     private void initMainTabViewPager() {
-        View[] tabViews = new View[5];
-        tabViews[0] = getLayoutInflater().inflate(R.layout.tab_topic, null);
-        tabViews[1] = getLayoutInflater().inflate(R.layout.tab_chat, null);
-        tabViews[2] = getLayoutInflater().inflate(R.layout.tab_file, null);
-        tabViews[3] = getLayoutInflater().inflate(R.layout.tab_team, null);
-        tabViews[4] = getLayoutInflater().inflate(R.layout.tab_mypage, null);
+        TabView[] tabViews = new TabView[5];
+        tabViews[0] = (TabView) getLayoutInflater().inflate(R.layout.tab_topic, null);
+        tabViews[1] = (TabView) getLayoutInflater().inflate(R.layout.tab_chat, null);
+        tabViews[2] = (TabView) getLayoutInflater().inflate(R.layout.tab_file, null);
+        tabViews[3] = (TabView) getLayoutInflater().inflate(R.layout.tab_team, null);
+        tabViews[4] = (TabView) getLayoutInflater().inflate(R.layout.tab_mypage, null);
         mainTabPagerAdapter =
                 new MainTabPagerAdapter(getSupportFragmentManager(), tabViews, selectedEntity);
         vpMainTab.setOverScrollMode(ViewPager.OVER_SCROLL_NEVER);
@@ -576,7 +577,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
         fromPush = false;
 
-        updateMoreBadge();
         updateTopicBadge();
         updateChatBadge();
 
@@ -634,15 +634,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
     public void onEvent(RefreshPollBadgeCountEvent event) {
         mainTabPagerAdapter.updateMyPageBadge(event.getBadgeCount());
-    }
-
-    public void updateMoreBadge() {
-        int messageCount = getOtherTeamMessageCount();
-        if (messageCount > 0) {
-            mainTabPagerAdapter.showMoreNewBadge();
-        } else {
-            mainTabPagerAdapter.hideMoreNewBadge();
-        }
     }
 
     private int getOtherTeamMessageCount() {

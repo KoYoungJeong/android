@@ -52,7 +52,7 @@
         android:id="@+id/sliding_tabs"
         style="@style/PagerSlidingTabStrip"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="?attr/actionBarSize"
         android:layout_alignParentBottom="true"/>
 
     <android.support.v4.view.ViewPager
@@ -86,7 +86,7 @@
         android:layout_width="match_parent"
         android:layout_height="4dp"
         android:layout_above="@id/sliding_tabs"
-        android:background="@drawable/jandi_gradient_main_tab_border"/>
+        android:background="@drawable/menu_shadow"/>
 
     <View
         android:layout_width="match_parent"

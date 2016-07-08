@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.UiUtils;
 
 import java.util.List;
 
@@ -125,7 +126,7 @@ class StickerViewPagerAdapter extends PagerAdapter {
 
             View view = new View(context);
             view.setLayoutParams(imageViewLayoutParams);
-            view.setBackgroundDrawable(getStickerBackground(context));
+            view.setBackgroundDrawable(UiUtils.getRippleEffectBackgroundDrawable());
 
             wrapper.addView(view);
 
@@ -151,20 +152,6 @@ class StickerViewPagerAdapter extends PagerAdapter {
         }
 
         return linearLayout;
-    }
-
-    private Drawable getStickerBackground(Context context) {
-        int selectableItemBackground = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-                ? android.R.attr.selectableItemBackgroundBorderless
-                : android.R.attr.selectableItemBackground;
-        int[] attrs = new int[] {selectableItemBackground};
-
-        TypedArray ta = context.obtainStyledAttributes(attrs);
-
-        Drawable drawable = ta.getDrawable(0 /* index */);
-
-        ta.recycle();
-        return drawable;
     }
 
 }
