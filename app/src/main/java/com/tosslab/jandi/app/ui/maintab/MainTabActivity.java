@@ -51,6 +51,7 @@ import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -102,6 +103,8 @@ import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by justinygchoi on 2014. 8. 11..
@@ -284,26 +287,31 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
     private void updateChatBadge() {
 
-        final int[] total = {0};
         Observable.from(TeamInfoLoader.getInstance().getDirectMessageRooms())
-                .subscribe(formattedEntity -> {
-                    total[0] += formattedEntity.getUnreadCount();
+                .map(DirectMessageRoom::getUnreadCount)
+                .scan((lhs, rhs) -> lhs + rhs)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(count -> {
+                    mainTabPagerAdapter.updateChatBadge(count);
                 });
-        mainTabPagerAdapter.updateChatBadge(total[0]);
 
     }
 
     private void updateTopicBadge() {
-        long teamId = AccountRepository.getRepository().getSelectedTeamId();
-        List<Topic> topics = TopicRepository.getInstance().getTopics(teamId);
 
-        int count = Observable.from(topics)
+        Observable.defer(() -> {
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
+            return Observable.from(TopicRepository.getInstance().getTopics(teamId));
+        })
+                .filter(Topic::isJoined)
                 .map(Topic::getUnreadCount)
                 .scan((count1, count2) -> count1 + count2)
-                .toBlocking()
-                .firstOrDefault(0);
-
-        mainTabPagerAdapter.updateTopicBadge(count);
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(count -> {
+                    mainTabPagerAdapter.updateTopicBadge(count);
+                });
 
     }
 
@@ -636,23 +644,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         mainTabPagerAdapter.updateMyPageBadge(event.getBadgeCount());
     }
 
-    private int getOtherTeamMessageCount() {
-        final int[] messageCount = {0};
-        long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-        Observable.from(AccountRepository.getRepository().getAccountTeams())
-                .filter(userTeam -> userTeam.getTeamId() != selectedTeamId)
-                .map(ResAccountInfo.UserTeam::getUnread)
-                .subscribe(integer -> messageCount[0] += integer);
-        return messageCount[0];
-    }
-
     public void onEventMainThread(TeamInfoChangeEvent event) {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         if (selectedTeamInfo != null) {
             setupActionBar(selectedTeamInfo.getName());
         }
         teamsPresenter.reInitializeTeams();
-
     }
 
     private void trackScreenView(int position) {
