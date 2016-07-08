@@ -53,6 +53,7 @@ public class PollRepository extends LockExecutorTemplate {
                 Dao<Poll, ?> dao = getHelper().getDao(Poll.class);
                 UpdateBuilder<Poll, ?> pollUpdateBuilder = dao.updateBuilder();
 
+                pollUpdateBuilder.updateColumnValue("status", poll.getStatus());
                 pollUpdateBuilder.updateColumnValue("voteStatus", poll.getVoteStatus());
                 pollUpdateBuilder.updateColumnValue("votedItemSeqs", poll.getVotedItemSeqs());
 

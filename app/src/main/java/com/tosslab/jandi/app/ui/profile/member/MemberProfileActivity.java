@@ -253,8 +253,9 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             tvProfileEmail.setVisibility(View.VISIBLE);
         }
 
-        if (!isJandiBot(member)) {
-
+        if (isJandiBot(member)) {
+            tvProfilePhone.setVisibility(View.GONE);
+        } else {
             String userPhoneNumber = ((User) member).getPhoneNumber();
             tvProfilePhone.setText(userPhoneNumber);
             if (TextUtils.isEmpty(userPhoneNumber)) {
