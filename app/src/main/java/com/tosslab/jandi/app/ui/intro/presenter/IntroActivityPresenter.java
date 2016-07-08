@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResConfig;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -182,6 +183,8 @@ public class IntroActivityPresenter {
                             model.refreshEntityInfo();
                         }
                     }
+
+                    TeamInfoLoader.getInstance();
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
@@ -209,8 +212,6 @@ public class IntroActivityPresenter {
         void showMaintenanceDialog();
 
         void showUpdateDialog();
-
-        void finishOnUiThread();
 
     }
 

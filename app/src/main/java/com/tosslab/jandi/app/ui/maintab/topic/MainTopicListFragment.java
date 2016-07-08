@@ -350,8 +350,10 @@ public class MainTopicListFragment extends Fragment
             showGroupSettingPopupView(view, folderId, folderName, topicFolderData.getSeq());
         });
 
-        int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()));
-        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+        mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()))
+                .subscribe(unreadCount -> {
+                    EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+                });
         setFolderExpansion();
     }
 
@@ -368,14 +370,6 @@ public class MainTopicListFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        mainTopicListPresenter.refreshList();
-        mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     @Override
@@ -447,8 +441,10 @@ public class MainTopicListFragment extends Fragment
     public void refreshList(TopicFolderListDataProvider topicFolderListDataProvider) {
         expandableTopicAdapter.setProvider(topicFolderListDataProvider);
         notifyDatasetChangedForFolder();
-        int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()));
-        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+        mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()))
+                .subscribe(unreadCount -> {
+                    EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+                });
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

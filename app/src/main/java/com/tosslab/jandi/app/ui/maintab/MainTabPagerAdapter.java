@@ -125,11 +125,4 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
         this.selectedEntity = selectedEntity;
     }
 
-    public void showMoreNewBadge() {
-        showBadge(TAB_MYPAGE);
-    }
-
-    public void hideMoreNewBadge() {
-        hideBadge(TAB_MYPAGE);
-    }
 }

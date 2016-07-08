@@ -9,8 +9,6 @@ import java.util.List;
  */
 public interface TeamsView {
 
-    void initializeTeamsView();
-
     void setTeams(List<Team> second);
 
     void showAnotherTeamHasMessageMetaphor();

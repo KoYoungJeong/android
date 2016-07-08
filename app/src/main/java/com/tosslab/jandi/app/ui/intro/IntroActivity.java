@@ -117,16 +117,11 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                             return;
                         }
 
+                        overridePendingTransition(0, 0);
                         startActivity(intent);
                         finish();
                     }
                 });
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        overridePendingTransition(0, 0);
     }
 
     @Override
@@ -152,11 +147,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                     }
                 },
                 false);
-    }
-
-    @Override
-    public void finishOnUiThread() {
-        finish();
     }
 
 }
