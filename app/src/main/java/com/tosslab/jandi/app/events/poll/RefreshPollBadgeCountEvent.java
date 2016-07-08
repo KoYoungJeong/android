@@ -3,10 +3,10 @@ package com.tosslab.jandi.app.events.poll;
 /**
  * Created by tonyjs on 16. 6. 28..
  */
-public class RequestRefreshPollBadgeCountEvent {
+public class RefreshPollBadgeCountEvent {
     private int badgeCount;
 
-    public RequestRefreshPollBadgeCountEvent(int badgeCount) {
+    public RefreshPollBadgeCountEvent(int badgeCount) {
         this.badgeCount = badgeCount;
     }
 

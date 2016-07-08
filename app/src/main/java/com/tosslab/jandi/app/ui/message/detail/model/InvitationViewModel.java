@@ -149,6 +149,7 @@ public class InvitationViewModel {
 
             return Observable.from(userList)
                     .filter(user -> !members.contains(user.getId()))
+                    .filter(User::isEnabled)
                     .collect((Func0<ArrayList<User>>) ArrayList::new, ArrayList::add)
                     .toBlocking()
                     .firstOrDefault(new ArrayList<>());

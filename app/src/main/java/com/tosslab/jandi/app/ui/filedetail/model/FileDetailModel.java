@@ -381,7 +381,7 @@ public class FileDetailModel {
         List<TopicRoom> topicList = TeamInfoLoader.getInstance().getTopicList();
 
         return Observable.from(topicList)
-                .filter(TopicRoom::isEnabled)
+                .filter(TopicRoom::isJoined)
                 .toSortedList((formattedEntity, formattedEntity2) -> {
                     return StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
                 })

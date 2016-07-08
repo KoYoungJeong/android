@@ -7,8 +7,8 @@ import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResPollList;
-import com.tosslab.jandi.app.network.models.ResPollParticipants;
 import com.tosslab.jandi.app.network.models.poll.Poll;
+import com.tosslab.jandi.app.ui.poll.util.PollUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -97,4 +97,9 @@ public class PollListModel {
     public void sortPollListByFinishedAt(List<Poll> finished) {
         Collections.sort(finished, (lhs, rhs) -> rhs.getFinishedAt().compareTo(lhs.getFinishedAt()));
     }
+
+    public void upsertPolls(List<Poll> pollList) {
+        PollRepository.getInstance().upsertPollList(pollList);
+    }
+
 }
