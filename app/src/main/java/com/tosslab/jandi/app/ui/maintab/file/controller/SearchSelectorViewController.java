@@ -222,10 +222,8 @@ public class SearchSelectorViewController {
         TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
         List<TopicRoom> allTopics = new ArrayList<>();
         Observable.from(teamInfoLoader.getTopicList())
-                .subscribe(entity -> {
-                            allTopics.add(entity);
-                        }
-                );
+                .filter(TopicRoom::isJoined)
+                .subscribe(allTopics::add);
         List<Member> users = new ArrayList<>();
         Observable.from(teamInfoLoader.getUserList())
                 .filter(User::isEnabled)
