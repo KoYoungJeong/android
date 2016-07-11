@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.services.socket;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tosslab.jandi.app.JandiApplication;
@@ -119,7 +118,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -1257,11 +1255,12 @@ public class JandiSocketServiceModel {
 
         long socketConnectedLastTime = JandiPreference.getSocketConnectedLastTime();
         getEventHistory(socketConnectedLastTime)
-                .doOnCompleted(() -> Log.e(TAG, "doOnCompleted updateEventHistory: " + new Date().toString()))
+                .filter(it -> messageEventActorMapper.containsKey(it.getClass()))
                 .toSortedList((lhs, rhs) -> ((Long) (lhs.getTs() - rhs.getTs())).intValue())
                 .subscribe(eventInfos -> {
 
-                    if (eventInfos.size() <= 50) {
+                    boolean handleMessageCreated = getMessageCreatedEventCount(eventInfos) <= 30;
+                    if (handleMessageCreated) {
                         for (EventHistoryInfo eventInfo : eventInfos) {
                             Command command = messageEventActorMapper.get(eventInfo.getClass());
                             if (command != null) {
@@ -1323,6 +1322,17 @@ public class JandiSocketServiceModel {
 
                 }, Throwable::printStackTrace);
 
+    }
+
+    private int getMessageCreatedEventCount(List<EventHistoryInfo> eventInfos) {
+        int total = 0;
+        int size = eventInfos.size();
+        for (int idx = 0; idx < size; idx++) {
+            if (eventInfos.get(idx) instanceof SocketMessageCreatedEvent) {
+                total++;
+            }
+        }
+        return total;
     }
 
     private void bulkInsertMessage(Map<String, List<EventHistoryInfo>> updateBatchMapper) {
@@ -1436,8 +1446,6 @@ public class JandiSocketServiceModel {
 
             }
         })
-                .doOnNext(it -> Log.e(TAG, "doOnNext updateEventHistory: " + new Date().toString()))
-                .doOnNext(it -> Log.i(TAG, "getEventHistory: size - " + it.getRecords().size()))
                 .concatMap(resEventHistory -> Observable.from(resEventHistory.getRecords()))
                 .filter(SocketEventVersionModel::validVersion);
     }
