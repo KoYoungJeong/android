@@ -155,7 +155,7 @@
     <color name="jandi_member_profile_disabled">#99FFFFFF</color>
     <!-- File detail -->
     <color name="jandi_file_detail_bg">#FFFFFF</color>
-    <color name="jandi_file_detail_date">#999999</color>
+    <color name="jand_detail_page_date">#999999</color>
     <color name="jandi_file_detail_comment_text">#333333</color>
     <color name="jandi_file_detail_comments_bg">#F6F6F6</color>
     <color name="jandi_file_detail_type_text">#999999</color>
@@ -260,7 +260,7 @@
     <color name="jandi_star_mention_item_name_content_text">#FF000000</color>
     <color name="jandi_star_mention_item_topic_name_text">#02a6eb</color>
     <color name="jandi_star_mention_item_date_text">#999999</color>
-    <color name="jandi__star_mention_item_divider">#DDDDDD</color>
+    <color name="jandi_star_mention_item_divider">#DDDDDD</color>
 
     <color name="jandi_deleted_file_image_background">#FFE9E9E9</color>
 
@@ -275,6 +275,10 @@
     <color name="button_text_color">#ff00abe8</color>
     <color name="button_text_color_dim">#7600abe8</color>
 
+    <color name="rgb_00abe8_30">#4C00ABE8</color>
+    <color name="rgb_0081b8">#FF0081B8</color>
+    <color name="rgb_00abe8">#FF00ABE8</color>
+    <color name="rgb_dd2c00">#FFDD2C00</color>
 
     <color name="jandi_web_button_retry_background_selected">#FFE0E0E0</color>
     <color name="jandi_web_button_retry_background">#FFFFFFFF</color>
@@ -297,4 +301,9 @@
 
     <color name="jandi_red">#f15544</color>
 
+    <color name="jandi_error_red">#ff5b49</color>
+
+    <color name="jandi_horizontal_progress_background">#fff0f0f0</color>
+    <color name="jandi_horizontal_progress_selected">#ffdbdbdb</color>
+    <color name="jandi_horizontal_progress_voted">#ffcaeefd</color>
 </resources>

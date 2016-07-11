@@ -108,10 +108,12 @@ public class StarMentionedMessageObject {
 
         public List<MentionObject> mentions;
         public long feedbackId;
+        public String feedbackType;
         public String feedbackTitle;
         public int commentCount;
         public Date createdAt;
         public Content content;
+        public long pollId;
 
         public Message() {
         }
@@ -126,6 +128,8 @@ public class StarMentionedMessageObject {
                     ", feedbackTitle='" + feedbackTitle + '\'' +
                     ", commentCount=" + commentCount +
                     ", createdAt=" + createdAt +
+                    ", feedbackType=" + feedbackType +
+                    ", pollId=" + pollId +
                     ", content=" + content.toString() +
                     '}';
         }

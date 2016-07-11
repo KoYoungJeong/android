@@ -97,6 +97,7 @@
 	<string name="jandi_are_you_sure_disable_external_link">"若移除共享链接，访问至该文件的权限将被撤销。 你确定要移除共享链接？"</string>
 	<string name="jandi_ask_assign_topic_owner">"你确定将议题管理权限转移至此成员？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你确定将此成员剔除议题？"</string>
+	<string name="jandi_ask_poll_delete">"确定要删除此次投票？"</string>
 	<string name="jandi_ask_poll_finish">"你确定结束此投票？"</string>
 	<string name="jandi_ask_to_leave_if_private_topic_owner">"欲离开此议题，请先将议题管理权限转移至其他成员"</string>
 	<string name="jandi_ask_to_leave_if_topic_owner">"你可于离开议题前转移管理权限"</string>
@@ -185,6 +186,8 @@
 	<string name="jandi_deleted_file">"已删除文件"</string>
 	<string name="jandi_deleted_message">"(删除的信息)"</string>
 	<string name="jandi_deleted_team">"此团队已被删除"</string>
+	<string name="jandi_department">"部门"</string>
+	<string name="jandi_department_list">"所有部门"</string>
 	<string name="jandi_device_storage">"行动装置"</string>
 	<string name="jandi_disable_external_link">"移除共享链接"</string>
 	<string name="jandi_disable_user_profile_explain">"此成员权限已被暂时关闭。\n欲知更多细节，请联络团队管理員。"</string>
@@ -286,6 +289,8 @@
 	<string name="jandi_input_search_keyword">"按照关键词搜索您的信息"</string>
 	<string name="jandi_input_topic_name">"请输入议题群组名称"</string>
 	<string name="jandi_input_user_name">"输入您的名字"</string>
+	<string name="jandi_insert_new_department">"(新部门)"</string>
+	<string name="jandi_insert_new_job_title">"(新职称)"</string>
 	<string name="jandi_insert_team_domain">"请输入团队网域"</string>
 	<string name="jandi_insert_team_name">"请输入团队名称"</string>
 	<string name="jandi_invitation">"邀请"</string>
@@ -312,6 +317,8 @@
 	<string name="jandi_is_newcomer">"还没使用过JANDI吗?"</string>
 	<string name="jandi_is_topic_required">"公开/私人"</string>
 	<string name="jandi_it_has_no_topic_description">"(无议题内容)"</string>
+	<string name="jandi_job_title">"职位"</string>
+	<string name="jandi_job_title_list">"所有职称"</string>
 	<string name="jandi_join_topic">"加入"</string>
 	<string name="jandi_joined_team">"你已加入%1$s，请再次确认团队列表。"</string>
 	<string name="jandi_kicked_message">"你已被移除出%s"</string>
@@ -319,6 +326,7 @@
 	<string name="jandi_launch">"开启JANDI"</string>
 	<string name="jandi_left_topic">"%s已经离开"</string>
 	<string name="jandi_logout">"登出"</string>
+	<string name="jandi_mail_sending">"验证码正在寄送中，请稍候"</string>
 	<string name="jandi_member_invite_popup_1">"现在就邀请您所有的团队成员！"</string>
 	<string name="jandi_member_invite_popup_2">"JANDI是一个群组导向的平台，因此您可以在工作流程中与您全部团队一同找到最棒的经验。"</string>
 	<string name="jandi_member_profile_call">"通话"</string>
@@ -366,6 +374,8 @@
 	<string name="jandi_name">"名称"</string>
 	<string name="jandi_name_in_jandi">"账号名称"</string>
 	<string name="jandi_need_to_assign_topic_owner">"你为此议题的管理员，请于离开议题前，先将管理权限转移给其他成员"</string>
+	<string name="jandi_new_department">"新部门"</string>
+	<string name="jandi_new_job_title">"添加职称"</string>
 	<string name="jandi_new_team_name">"新团队名称"</string>
 	<string name="jandi_next">"下一步"</string>
 	<string name="jandi_no_invite_email">"请提供您想邀请的团队成员的电子邮件地址"</string>
@@ -385,6 +395,7 @@
 	<string name="jandi_nowhere_shared_file">"文件尚未分享到其它议题"</string>
 	<string name="jandi_off">"关闭"</string>
 	<string name="jandi_on">"打开"</string>
+	<string name="jandi_one_to_one">"1:1"</string>
 	<string name="jandi_open_browser">"开启一个浏览器"</string>
 	<string name="jandi_page_not_found">"您找的页面不存在"</string>
 	<string name="jandi_participants">"投票人"</string>
@@ -398,9 +409,11 @@
 	<string name="jandi_please_retry">"请重试一次"</string>
 	<string name="jandi_plz_input_topic_description">"描述 (选项)"</string>
 	<string name="jandi_poll">"问卷调查"</string>
+	<string name="jandi_poll_add_item">"添加选项"</string>
 	<string name="jandi_poll_anonymous">"不记名"</string>
-	<string name="jandi_poll_create">"建立新的投票"</string>
-	<string name="jandi_poll_empty">"尚无问卷，\n点击[+]建立新问卷"</string>
+	<string name="jandi_poll_create">"建立"</string>
+	<string name="jandi_poll_empty_1">"无进行中的问卷"</string>
+	<string name="jandi_poll_empty_2">"\n点击[+]建立新问卷"</string>
 	<string name="jandi_poll_finished_with_most">"问卷已完成，得票最高的是 \"%s\""</string>
 	<string name="jandi_poll_finished_without_participants">"问卷已完成，此问卷无投票人"</string>
 	<string name="jandi_poll_finishedat">"结束时间"</string>

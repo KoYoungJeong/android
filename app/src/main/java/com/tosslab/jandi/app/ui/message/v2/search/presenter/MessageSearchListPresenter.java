@@ -112,5 +112,6 @@ public interface MessageSearchListPresenter {
 
         void dismissUserStatusLayout();
 
+        void movePollDetailActivity(long pollId);
     }
 }

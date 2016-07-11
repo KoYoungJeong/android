@@ -24,7 +24,7 @@ public class Room {
         this.roomId = roomId;
     }
 
-    public static Room create(long entityId, long roomId, boolean fromPush) {
+    public static Room create(long entityId, boolean fromPush) {
         int entityType;
 
         if (TeamInfoLoader.getInstance().isTopic(entityId)) {
@@ -38,8 +38,11 @@ public class Room {
             entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
         }
 
-        if (roomId <= 0 && entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
+        long roomId;
+        if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
             roomId = entityId;
+        } else {
+            roomId = TeamInfoLoader.getInstance().getChatId(entityId);
         }
 
         long teamId = TeamInfoLoader.getInstance().getTeamId();

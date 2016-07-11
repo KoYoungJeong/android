@@ -20,4 +20,23 @@ public class MessageStarEvent {
     public long getMessageId() {
         return messageId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MessageStarEvent that = (MessageStarEvent) o;
+
+        if (messageId != that.messageId) return false;
+        return isStarred == that.isStarred;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (messageId ^ (messageId >>> 32));
+        result = 31 * result + (isStarred ? 1 : 0);
+        return result;
+    }
 }

@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.chat.MainChatListFragment_;
-import com.tosslab.jandi.app.ui.maintab.file.FileListFragment_;
+import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
 import com.tosslab.jandi.app.ui.maintab.mypage.MyPageFragment;
 import com.tosslab.jandi.app.ui.maintab.team.TeamFragment;
 import com.tosslab.jandi.app.ui.maintab.topic.MainTopicListFragment_;
@@ -49,9 +49,7 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
                         .selectedEntity(selectedEntity)
                         .build();
             case TAB_FILE:
-                return FileListFragment_
-                        .builder()
-                        .build();
+                return new FileListFragment();
             case TAB_TEAM:
                 return new TeamFragment();
             case TAB_MYPAGE:
@@ -117,6 +115,8 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
             return tabView.findViewById(R.id.tab_badge_topic_new);
         } else if (position == TAB_CHAT) {
             return tabView.findViewById(R.id.tab_badge_chat_new);
+        } else if (position == TAB_MYPAGE) {
+            return tabView.findViewById(R.id.tab_badge_mypage_new);
         }
         return null;
     }
@@ -131,5 +131,10 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
 
     public void hideMoreNewBadge() {
         hideBadge(TAB_MYPAGE);
+    }
+
+    public void updateMyPageBadge(int badgeCount) {
+        TextView tvMyPage = (TextView) getBadgeView(TAB_MYPAGE);
+        updateBadgeText(badgeCount, tvMyPage, TAB_MYPAGE);
     }
 }

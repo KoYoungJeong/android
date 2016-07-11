@@ -100,6 +100,16 @@ public class MyPagePresenterImpl implements MyPagePresenter {
     }
 
     @Override
+    public void onInitializePollBadge() {
+        model.getEnablePollListObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(polls -> {
+                    view.setPollBadgeCount(polls.size());
+                }, Throwable::printStackTrace);
+    }
+
+    @Override
     public void onRetrieveMyInfo() {
         view.setMe(model.getMe());
     }
@@ -137,13 +147,14 @@ public class MyPagePresenterImpl implements MyPagePresenter {
 
             onClickTextTypeMessage(mention);
 
-        } else if (TextUtils.equals("file", contentType)
-                || TextUtils.equals("comment", contentType)) {
-
-            long fileId = TextUtils.equals("file", contentType)
-                    ? mention.getMessageId() : mention.getFeedbackId();
-
-            view.moveToFileDetailActivity(fileId, mention.getMessageId());
+        } else if (TextUtils.equals("file", contentType)) {
+            view.moveToFileDetailActivity(mention.getMessageId(), mention.getMessageId());
+        } else if (TextUtils.equals("comment", contentType)) {
+            if ("poll".equals(mention.getFeedbackType())) {
+                view.moveToPollDetailActivity(mention.getPollId());
+            } else {
+                view.moveToFileDetailActivity(mention.getFeedbackId(), mention.getMessageId());
+            }
         }
     }
 

@@ -1,6 +1,12 @@
 package com.tosslab.jandi.app.utils;
 
+import android.content.res.Resources;
+import android.support.annotation.Nullable;
+
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.R;
+
+import org.joda.time.Interval;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -59,6 +65,40 @@ public class DateTransformator {
             default:
                 return getTimeString(date, "h:mm a");
         }
+    }
+
+    @Nullable
+    public static String getRemainingDays(Date date) {
+        if (new Date().compareTo(date) >= 0) {
+            return "";
+        }
+
+        Interval interval = new Interval(new Date().getTime(), date.getTime());
+        long leftDay = interval.toPeriod().getDays();
+        long leftHour = interval.toPeriod().getHours();
+        long leftMinute = interval.toPeriod().getMinutes();
+
+        Resources resources = JandiApplication.getContext().getResources();
+        StringBuilder sb = new StringBuilder();
+
+        if (leftDay > 0) {
+            String days = resources.getString(R.string.jandi_date_days);
+            sb.append(leftDay + days + " " + resources.getString(R.string.jandi_date_remaining));
+            String left = sb.toString();
+            return left;
+        }
+
+        if (leftHour > 0) {
+            String hours = resources.getString(R.string.jandi_date_hours);
+            sb.append(leftHour + hours + " ");
+        }
+
+        String remaining = resources.getString(R.string.jandi_date_minutes)
+                + " "
+                + resources.getString(R.string.jandi_date_remaining);
+        sb.append(leftMinute + remaining);
+        String left = sb.toString();
+        return left;
     }
 
 }

@@ -167,8 +167,6 @@ public class IntroActivityPresenter {
                 .observeOn(Schedulers.io())
                 .doOnNext(it -> PushUtil.registPush())
                 .doOnNext(it -> {
-                })
-                .doOnNext(it -> {
                     if (NetworkCheckUtil.isConnected()) {
 
                         long diffTime = System.currentTimeMillis() - JandiPreference.getSocketConnectedLastTime();
@@ -213,6 +211,7 @@ public class IntroActivityPresenter {
         void showUpdateDialog();
 
         void finishOnUiThread();
+
     }
 
 }

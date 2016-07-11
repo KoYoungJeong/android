@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:overScrollMode="never">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:color="@color/dark_gray"
+            android:gravity="center_horizontal"
+            android:text="@string/jandi_profile_welcome"
+            android:textSize="25dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="19dp"
+            android:gravity="center_horizontal"
+            android:lineSpacingExtra="1dp"
+            android:text="@string/jandi_team_create_input_info"
+            android:textColor="@color/dark_gray"
+            android:textSize="14dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:gravity="center_horizontal"
+            android:text="@string/jandi_team_name"
+            android:textSize="14dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_team_name_length"
+                android:layout_width="53dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="35dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/profile_text_input2_bg_right"
+                android:gravity="center"
+                android:text="20/20"
+                android:textColor="@color/jandi_border_gray"
+                android:textSize="14dp"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/et_insert_team_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="35dp"
+                android:layout_marginRight="35dp"
+                android:layout_marginTop="12dp"
+                android:layout_toLeftOf="@id/tv_team_name_length"
+                android:layout_weight="1"
+                android:background="@drawable/profile_text_input_bg"
+                android:gravity="center"
+                android:hint="@string/jandi_insert_team_name"
+                android:imeOptions="actionNext"
+                android:maxLength="21"
+                android:maxLines="1"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:textColor="@color/dark_gray"
+                android:textSize="14dp" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_team_name_insert_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center_horizontal"
+            android:textColor="@color/jandi_error_red"
+            android:textSize="11dp"
+            android:visibility="invisible" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center_horizontal"
+            android:text="@string/jandi_team_domain"
+            android:textSize="14dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_horizontal"
+            android:lineSpacingExtra="3dp"
+            android:text="@string/jandi_team_create_domain_info"
+            android:textColor="@color/jandi_border_gray" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_domain_tail"
+                android:layout_width="87dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="35dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/profile_text_input2_bg_right"
+                android:gravity="center"
+                android:hint=".jandi.com"
+                android:paddingRight="11dp"
+                android:textColor="@color/dark_gray"
+                android:textSize="14dp" />
+
+            <EditText
+                android:id="@+id/et_insert_team_domain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="35dp"
+                android:layout_marginTop="15dp"
+                android:layout_toLeftOf="@id/tv_domain_tail"
+                android:background="@drawable/profile_text_input2_bg_left"
+                android:gravity="center"
+                android:hint="@string/jandi_insert_team_domain"
+                android:imeOptions="actionDone"
+                android:maxLines="1"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:textColor="@color/dark_gray"
+                android:textSize="14dp" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_team_domain_insert_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center_horizontal"
+            android:maxLines="2"
+            android:textColor="@color/jandi_error_red"
+            android:textSize="11dp"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp">
+
+            <LinearLayout
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="9dp"
+                android:layout_marginTop="32dp"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:paddingBottom="38dp">
+
+                <ImageView
+                    android:id="@+id/iv_team_create_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/btn_profile_cancel" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/jandi_cancel"
+                    android:textColor="@color/jandi_text_light"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="9dp"
+                android:layout_marginTop="32dp"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:paddingBottom="38dp">
+
+                <ImageView
+                    android:id="@+id/iv_team_create_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/btn_profile_next" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/jandi_next"
+                    android:textColor="@color/jandi_text_light"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</ScrollView>

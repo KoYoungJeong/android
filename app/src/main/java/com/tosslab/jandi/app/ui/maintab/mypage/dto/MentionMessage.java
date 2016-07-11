@@ -29,11 +29,13 @@ public class MentionMessage {
 
     private List<MentionObject> mentions;
     private long feedbackId;
+    private String feedbackType;
     private String feedbackTitle;
     private int commentCount;
     private Date messageCreatedAt;
 
     private Date createdAt;
+    private long pollId;
 
     private MentionMessage(StarMentionedMessageObject from,
                            String roomName,
@@ -56,10 +58,13 @@ public class MentionMessage {
 
             this.mentions = message.mentions;
             this.feedbackId = message.feedbackId;
+            this.feedbackType = message.feedbackType;
             this.feedbackTitle = message.feedbackTitle;
 
             this.commentCount = message.commentCount;
             this.messageCreatedAt = message.createdAt;
+
+            this.pollId = message.pollId;
         }
         this.writerName = writerName;
         this.writerProfileUrl = writerProfileUrl;
@@ -94,7 +99,9 @@ public class MentionMessage {
 
             this.mentions = new ArrayList<>(message.mentions);
             this.feedbackId = message.feedbackId;
-            this.feedbackTitle = link.feedback.content.title;
+            if (link.feedback instanceof ResMessages.FileMessage) {
+                this.feedbackTitle = ((ResMessages.FileMessage) link.feedback).content.title;
+            }
 
             this.messageCreatedAt = message.createTime;
         }
@@ -194,6 +201,10 @@ public class MentionMessage {
         return createdAt;
     }
 
+    public String getFeedbackType() {
+        return feedbackType;
+    }
+
     @Override
     public String toString() {
         return "MentionMessage{" +
@@ -212,10 +223,16 @@ public class MentionMessage {
                 ", contentExtensions='" + contentExtensions + '\'' +
                 ", mentions=" + mentions +
                 ", feedbackId=" + feedbackId +
+                ", feedbackType=" + feedbackType +
                 ", feedbackTitle='" + feedbackTitle + '\'' +
                 ", commentCount=" + commentCount +
                 ", messageCreatedAt=" + messageCreatedAt +
                 ", createdAt=" + createdAt +
                 '}';
+    }
+
+
+    public long getPollId() {
+        return pollId;
     }
 }

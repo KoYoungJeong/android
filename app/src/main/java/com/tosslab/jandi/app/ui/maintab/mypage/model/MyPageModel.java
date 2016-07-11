@@ -2,16 +2,20 @@ package com.tosslab.jandi.app.ui.maintab.mypage.model;
 
 import android.util.Pair;
 
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
+import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,5 +107,17 @@ public class MyPageModel {
                 })
                 .subscribe(mentions::add);
         return mentions;
+    }
+
+    public Observable<List<Poll>> getEnablePollListObservable() {
+        long teamId = AccountRepository.getRepository().getSelectedTeamId();
+
+        return Observable.from(PollRepository.getInstance().getPolls())
+                .filter(poll ->
+                        poll.getTeamId() == teamId
+                                && "created".equals(poll.getStatus())
+                                && "enabled".equals(poll.getVoteStatus()))
+                .toList();
+
     }
 }

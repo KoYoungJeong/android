@@ -20,63 +20,67 @@ public abstract class MultiItemRecyclerAdapter extends RecyclerView.Adapter<Base
     }
 
     @SuppressWarnings("unchecked")
-    public <ITEM> ITEM getItem(int position) {
+    public synchronized <ITEM> ITEM getItem(int position) {
         return (ITEM) rows.get(position).getItem();
     }
 
-    public void addRow(int position, Row<?> row) {
+    public synchronized void addRow(int position, Row<?> row) {
         if (getItemCount() - 1 < position) {
             return;
         }
         this.rows.add(position, row);
     }
 
-    public void addRow(Row<?> row) {
+    public synchronized void addRow(Row<?> row) {
         this.rows.add(row);
     }
 
-    public void addRows(List<Row<?>> rows) {
+    public synchronized void addRows(List<Row<?>> rows) {
         this.rows.addAll(rows);
     }
 
-    public void setRow(int position, Row<?> row) {
+    public synchronized void setRow(int position, Row<?> row) {
         if (getItemCount() - 1 < position) {
             this.rows.add(position, row);
         }
         this.rows.set(position, row);
     }
 
-    public void setRows(List<Row<?>> rows) {
-        this.rows.clear();
-        this.rows.addAll(rows);
-    }
-
-    public void remove(int position) {
+    public synchronized void remove(int position) {
         if (getItemCount() - 1 < position) {
             return;
         }
         this.rows.remove(position);
     }
 
-    public List<Row<?>> getRows() {
+    public synchronized List<Row<?>> getRows() {
         return rows;
     }
 
-    public void remove(Row<?> row) {
+    public synchronized void setRows(List<Row<?>> rows) {
+        this.rows.clear();
+        this.rows.addAll(rows);
+    }
+
+    public synchronized void addRows(int position, List<Row<?>> rows) {
+        this.rows.addAll(position, rows);
+    }
+
+    public synchronized void remove(Row<?> row) {
         this.rows.remove(row);
     }
 
-    public void clear() {
+    public synchronized void clear() {
         this.rows.clear();
     }
 
     @Override
-    public int getItemCount() {
+    public synchronized int getItemCount() {
         return rows.size();
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public synchronized int getItemViewType(int position) {
         int viewType = rows.get(position).getItemViewType();
         return viewType;
     }
@@ -94,6 +98,10 @@ public abstract class MultiItemRecyclerAdapter extends RecyclerView.Adapter<Base
         public Row(ITEM item, int itemViewType) {
             this.item = item;
             this.itemViewType = itemViewType;
+        }
+
+        public static <ITEM> Row<ITEM> create(ITEM item, int itemViewType) {
+            return new Row<>(item, itemViewType);
         }
 
         public ITEM getItem() {

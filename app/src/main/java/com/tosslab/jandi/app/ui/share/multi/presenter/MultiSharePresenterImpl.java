@@ -72,6 +72,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
         Observable
                 .defer(() -> {
                     teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
+                    shareModel.refreshPollList(teamId);
                     return Observable.just(teamInfoLoader);
                 })
                 .subscribeOn(Schedulers.io())

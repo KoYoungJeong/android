@@ -17,23 +17,31 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.tosslab.jandi.app.local.orm.dao.FileMessageDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.LinkDaoImpl;
+import com.tosslab.jandi.app.local.orm.dao.PollMessageDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.TextMessageDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.AnnounceCreateEventDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.CreateEventDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.InviteEventDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.PrivateCreateInfoDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.PublicCreateInfoDaoImpl;
+import com.tosslab.jandi.app.local.orm.persister.CollectionLongConverter;
 import com.tosslab.jandi.app.local.orm.persister.DateConverter;
+import com.tosslab.jandi.app.local.orm.persister.FormatMessageConverter;
+import com.tosslab.jandi.app.network.jackson.deserialize.message.CommentMessageConverter;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.EventInfoDeserialize;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.InviteInfoDeserializer;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.LinkShareEntityDeserializer;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.PrivateTopicCreateInfoDeserializer;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.PublicTopicCreateInfoDeserializer;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.dynamicl10n.FormatParam;
+import com.tosslab.jandi.app.network.models.poll.Poll;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by justinygchoi on 2014. 6. 18..
@@ -50,7 +58,8 @@ public class ResMessages {
     @Override
     public String toString() {
         return "ResMessages{" +
-                "lastLinkId=" + lastLinkId +
+                "entityId=" + entityId +
+                ", lastLinkId=" + lastLinkId +
                 ", firstLinkId=" + firstLinkId +
                 ", records=" + records +
                 '}';
@@ -61,7 +70,25 @@ public class ResMessages {
     }
 
     public enum MessageType {
-        TEXT, FILE, COMMENT, STICKER, COMMENT_STICKER, NONE
+        TEXT, FILE, COMMENT, STICKER, COMMENT_STICKER, POLL, NONE
+    }
+
+    public enum FeedbackType {
+        FILE("file"), POLL("poll");
+
+        String value;
+
+        FeedbackType(String value) {
+            this.value = value;
+        }
+
+        public String value() {
+            return value;
+        }
+    }
+
+    public interface Commentable {
+        int getCommentCount();
     }
 
     @DatabaseTable(tableName = "message_link", daoClass = LinkDaoImpl.class)
@@ -88,8 +115,10 @@ public class ResMessages {
         public EventInfo info; // How to convert other type
         @DatabaseField
         public String eventType;
-        @DatabaseField(foreign = true, foreignAutoRefresh = true)
-        public FileMessage feedback;
+        @DatabaseField
+        public String feedbackType;
+        @DatabaseField(foreign = true)
+        public OriginalMessage feedback;
         @DatabaseField(foreign = true)
         public OriginalMessage message;
         @DatabaseField
@@ -98,6 +127,11 @@ public class ResMessages {
         @DatabaseField
         public boolean dirty;
         public Long[] toEntity;
+
+        @DatabaseField
+        public long pollId;
+        @DatabaseField(foreign = true, foreignAutoRefresh = true)
+        public Poll poll;
 
         public boolean hasLinkPreview() {
             boolean isTextMessage = message != null && message instanceof TextMessage;
@@ -114,14 +148,22 @@ public class ResMessages {
             return "Link{" +
                     "id=" + id +
                     ", teamId=" + teamId +
+                    ", roomId=" + roomId +
                     ", fromEntity=" + fromEntity +
                     ", time=" + time +
                     ", messageId=" + messageId +
                     ", status='" + status + '\'' +
                     ", feedbackId=" + feedbackId +
                     ", info=" + info +
+                    ", eventType='" + eventType + '\'' +
+                    ", feedbackType='" + feedbackType + '\'' +
                     ", feedback=" + feedback +
                     ", message=" + message +
+                    ", messageType='" + messageType + '\'' +
+                    ", dirty=" + dirty +
+                    ", toEntity=" + Arrays.toString(toEntity) +
+                    ", pollId=" + pollId +
+                    ", poll=" + poll +
                     '}';
         }
     }
@@ -143,6 +185,7 @@ public class ResMessages {
     @JsonSubTypes({
             @JsonSubTypes.Type(value = TextMessage.class, name = "text"),
             @JsonSubTypes.Type(value = FileMessage.class, name = "file"),
+            @JsonSubTypes.Type(value = PollMessage.class, name = "poll"),
             @JsonSubTypes.Type(value = StickerMessage.class, name = "sticker"),
             @JsonSubTypes.Type(value = CommentStickerMessage.class, name = "comment_sticker"),
             @JsonSubTypes.Type(value = CommentMessage.class, name = "comment")})
@@ -169,6 +212,15 @@ public class ResMessages {
         public String linkPreviewId;
         @DatabaseField
         public boolean isStarred;
+
+        @DatabaseField
+        public boolean isFormatted;
+        @DatabaseField
+        public String formatKey;
+        public Map formatParams;
+        @JsonIgnore
+        @DatabaseField(persisterClass = FormatMessageConverter.class)
+        public FormatParam formatMessage;
 
         @Override
         public String toString() {
@@ -291,6 +343,7 @@ public class ResMessages {
     @DatabaseTable(tableName = "messagec_comment")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonDeserialize(converter = CommentMessageConverter.class)
     public static class CommentMessage extends OriginalMessage {
         @ForeignCollectionField(foreignFieldName = "commentOf")
         public Collection<IntegerWrapper> shareEntities;
@@ -300,6 +353,8 @@ public class ResMessages {
 
         @DatabaseField(foreign = true, foreignAutoRefresh = true)
         public TextContent content;
+        @DatabaseField
+        public long pollId;
 
         public CommentMessage() {
             contentType = "comment";
@@ -309,7 +364,7 @@ public class ResMessages {
     @DatabaseTable(tableName = "message_file", daoClass = FileMessageDaoImpl.class)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class FileMessage extends OriginalMessage {
+    public static class FileMessage extends OriginalMessage implements Commentable {
         @ForeignCollectionField(foreignFieldName = "fileOf")
         public Collection<IntegerWrapper> shareEntities;
 
@@ -329,6 +384,11 @@ public class ResMessages {
                     ", content=" + content +
                     ", commentCount=" + commentCount +
                     '}';
+        }
+
+        @Override
+        public int getCommentCount() {
+            return commentCount;
         }
     }
 
@@ -364,6 +424,44 @@ public class ResMessages {
         }
     }
 
+    @DatabaseTable(tableName = "message_poll_content")
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class PollContent {
+        @DatabaseField(generatedId = true)
+        public long _id;
+
+        @DatabaseField(foreign = true)
+        @JsonIgnore
+        public PollMessage pollMessage;
+
+        @DatabaseField
+        public String body;
+
+        @JsonIgnore
+        public SpannableStringBuilder contentBuilder;
+
+        @DatabaseField
+        public String connectType;
+        @DatabaseField
+        public String connectColor;
+        @ForeignCollectionField(foreignFieldName = "pollContentOf")
+        public Collection<PollConnectInfo> connectInfo;
+
+        @Override
+        public String toString() {
+            return "PollContent{" +
+                    "_id=" + _id +
+                    ", pollMessage=" + pollMessage +
+                    ", body='" + body + '\'' +
+                    ", contentBuilder=" + contentBuilder +
+                    ", connectType='" + connectType + '\'' +
+                    ", connectColor='" + connectColor + '\'' +
+                    ", connectInfo=" + connectInfo +
+                    '}';
+        }
+    }
+
     @DatabaseTable(tableName = "message_text_content_connectInfo")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -394,6 +492,37 @@ public class ResMessages {
         }
     }
 
+    @DatabaseTable(tableName = "message_poll_content_connectInfo")
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class PollConnectInfo {
+        @DatabaseField(generatedId = true)
+        public long _id;
+        @DatabaseField(foreign = true)
+        @JsonIgnore
+        public PollContent pollContentOf;
+        @DatabaseField
+        public String event;
+        @DatabaseField
+        public String title;
+        @DatabaseField
+        public String imageUrl;
+        @DatabaseField
+        public String description;
+
+        @Override
+        public String toString() {
+            return "PollConnectInfo{" +
+                    "_id=" + _id +
+                    ", pollContentOf=" + pollContentOf +
+                    ", event='" + event + '\'' +
+                    ", title='" + title + '\'' +
+                    ", imageUrl='" + imageUrl + '\'' +
+                    ", description='" + description + '\'' +
+                    '}';
+        }
+    }
+
     @DatabaseTable(tableName = "message_sticker")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -411,6 +540,42 @@ public class ResMessages {
         }
     }
 
+    @DatabaseTable(tableName = "message_poll", daoClass = PollMessageDaoImpl.class)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class PollMessage extends OriginalMessage implements Commentable {
+        @DatabaseField(foreign = true, foreignAutoRefresh = true)
+        public PollContent content;
+
+        @DatabaseField(persisterClass = CollectionLongConverter.class)
+        public Collection<Long> shareEntities;
+
+        @DatabaseField
+        public long pollId;
+
+        @DatabaseField
+        public int commentCount;
+
+        public PollMessage() {
+            contentType = "poll";
+        }
+
+        @Override
+        public int getCommentCount() {
+            return commentCount;
+        }
+
+        @Override
+        public String toString() {
+            return "PollMessage{" +
+                    "content=" + content +
+                    ", shareEntities=" + shareEntities +
+                    ", pollId=" + pollId +
+                    ", commentCount=" + commentCount +
+                    '}';
+        }
+    }
+
     @DatabaseTable(tableName = "message_commentsticker")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -423,8 +588,21 @@ public class ResMessages {
         @DatabaseField
         public int version;
 
+        @DatabaseField
+        public long pollId;
+
         public CommentStickerMessage() {
             contentType = "comment_sticker";
+        }
+
+        @Override
+        public String toString() {
+            return "CommentStickerMessage{" +
+                    "shareEntities=" + shareEntities +
+                    ", content=" + content +
+                    ", version=" + version +
+                    ", pollId=" + pollId +
+                    '}';
         }
     }
 

@@ -22,4 +22,12 @@
         android:textColor="@color/jandi_selector_font"
         android:textSize="@dimen/jandi_tab_text_size" />
 
+    <TextView
+        android:id="@+id/tab_badge_mypage_new"
+        style="@style/JandiMainTabBadge.Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/tab_icon_mypage"
+        android:visibility="gone"/>
 </RelativeLayout>

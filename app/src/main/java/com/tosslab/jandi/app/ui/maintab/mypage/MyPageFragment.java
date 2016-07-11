@@ -24,6 +24,11 @@ import com.baidu.android.pushservice.PushSettings;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.MentionToMeEvent;
+import com.tosslab.jandi.app.events.messages.SocketPollEvent;
+import com.tosslab.jandi.app.events.poll.RefreshPollBadgeCountEvent;
+import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
@@ -36,6 +41,8 @@ import com.tosslab.jandi.app.ui.maintab.mypage.module.MyPageModule;
 import com.tosslab.jandi.app.ui.maintab.mypage.presenter.MyPagePresenter;
 import com.tosslab.jandi.app.ui.maintab.mypage.view.MyPageView;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
+import com.tosslab.jandi.app.ui.poll.list.PollListActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.settings.main.SettingsActivity;
@@ -88,6 +95,9 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
     TextView tvEmail;
     @Bind(R.id.btn_mypage_my_profile_setting)
     View btnSetting;
+
+    @Bind(R.id.tv_poll_badge)
+    TextView tvPollBadge;
 
     @Bind(R.id.lv_mypage)
     RecyclerView lvMyPage;
@@ -248,9 +258,29 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
         presenter.onNewMentionComing(event.getTeamId(), latestCreatedAt);
     }
 
+    public void onEvent(SocketPollEvent event) {
+        Poll poll = event.getPoll();
+        if (poll == null
+                || poll.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
+            return;
+        }
+
+        presenter.onInitializePollBadge();
+    }
+
+    public void onEvent(RequestRefreshPollBadgeCountEvent event) {
+        if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
+            return;
+        }
+
+        presenter.onInitializePollBadge();
+    }
+
     @Override
     public void onResume() {
         super.onResume();
+
+        presenter.onInitializePollBadge();
 
         if (isLaidOut) {
             presenter.onRetrieveMyInfo();
@@ -274,6 +304,12 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
                 .start();
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.Stars);
+    }
+
+    @OnClick(R.id.btn_my_profile_move_to_poll)
+    void moveToPollListActivity() {
+        PollListActivity.start(getActivity());
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.Polls);
     }
 
     @Override
@@ -451,6 +487,32 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
         }
     }
 
+
+    @Override
+    public void setPollBadgeCount(int pollCount) {
+        EventBus.getDefault().post(new RefreshPollBadgeCountEvent(pollCount));
+
+        if (isFinishing()) {
+            return;
+        }
+
+        if (pollCount <= 0) {
+            tvPollBadge.setVisibility(View.GONE);
+        } else if (pollCount >= 1000) {
+            tvPollBadge.setVisibility(View.VISIBLE);
+            String count = "999+";
+            tvPollBadge.setText(count);
+        } else {
+            tvPollBadge.setVisibility(View.VISIBLE);
+            String count = Integer.toString(pollCount);
+            tvPollBadge.setText(count);
+        }
+    }
+
+    @Override
+    public void moveToPollDetailActivity(long pollId) {
+        PollDetailActivity.start(getActivity(), pollId);
+    }
 
     private boolean isFinishing() {
         return getActivity() == null || getActivity().isFinishing();

@@ -77,7 +77,7 @@
                 android:textSize="13sp" />
 
             <ImageView
-                android:id="@+id/iv_mention_message_file_icon"
+                android:id="@+id/iv_mention_message_content_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/tv_mention_message_topic_name"
@@ -95,7 +95,7 @@
                 android:layout_below="@id/tv_mention_message_content"
                 android:layout_marginTop="6dp"
                 android:layout_toLeftOf="@+id/tv_mention_message_date"
-                android:layout_toRightOf="@+id/iv_mention_message_file_icon"
+                android:layout_toRightOf="@+id/iv_mention_message_content_icon"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="@color/jandi_star_mention_item_topic_name_text"

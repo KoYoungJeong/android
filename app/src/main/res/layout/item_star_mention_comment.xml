@@ -54,7 +54,7 @@
             android:textSize="13sp" />
 
         <ImageView
-            android:id="@+id/iv_icon_message_file"
+            android:id="@+id/iv_icon_message_content_icon"
             android:layout_width="10dp"
             android:layout_height="13dp"
             android:layout_alignBottom="@+id/tv_star_mention_file_name"
@@ -71,7 +71,7 @@
             android:layout_below="@id/tv_star_mention_comment"
             android:layout_marginTop="6dp"
             android:layout_toLeftOf="@+id/tv_star_mention_date"
-            android:layout_toRightOf="@id/iv_icon_message_file"
+            android:layout_toRightOf="@id/iv_icon_message_content_icon"
             android:ellipsize="middle"
             android:maxLines="1"
             android:singleLine="true"

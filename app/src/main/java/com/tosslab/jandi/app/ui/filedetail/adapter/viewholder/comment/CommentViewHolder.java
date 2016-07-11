@@ -9,12 +9,15 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.dynamicl10n.FormatParam;
+import com.tosslab.jandi.app.network.models.dynamicl10n.PollFinished;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.ProfileBinder;
+import com.tosslab.jandi.app.ui.poll.util.PollUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 
@@ -55,7 +58,7 @@ public class CommentViewHolder extends BaseViewHolder<ResMessages.CommentMessage
         User writer = TeamInfoLoader.getInstance().getUser(commentMessage.writerId);
         ProfileBinder.newInstance(tvUserName, vUserNameDisableIndicator,
                 ivUserProfile, vUserProfileDisableIndicator)
-                .bind(writer);
+                .bindForComment(writer);
 
         bindComment(commentMessage);
     }
@@ -65,28 +68,41 @@ public class CommentViewHolder extends BaseViewHolder<ResMessages.CommentMessage
         String createTime = DateTransformator.getTimeString(commentMessage.createTime);
         tvCreatedDate.setText(createTime);
 
-        // 댓글 내용
-        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-        spannableStringBuilder.append(commentMessage.content.body);
-
         long myId = TeamInfoLoader.getInstance().getMyId();
 
-        MentionAnalysisInfo mentionAnalysisInfo =
-                MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
-                        .textSizeFromResource(R.dimen.jandi_mention_comment_item_font_size)
-                        .build();
+        if (commentMessage.content.contentBuilder == null) {
+            // 댓글 내용
+            FormatParam formatMessage = commentMessage.formatMessage;
+            if (formatMessage != null && formatMessage instanceof PollFinished) {
 
-        SpannableLookUp.text(spannableStringBuilder)
-                .hyperLink(false)
-                .webLink(false)
-                .emailLink(false)
-                .telLink(false)
-                .markdown(false)
-                .mention(mentionAnalysisInfo, false)
-                .lookUp(tvCommentContent.getContext());
+                commentMessage.content.contentBuilder =
+                        PollUtil.buildFormatMessage(
+                                tvCommentContent.getContext(), (PollFinished) formatMessage,
+                                commentMessage, myId,
+                                tvCommentContent.getTextSize());
+            } else {
+                SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+                spannableStringBuilder.append(commentMessage.content.body);
+
+                MentionAnalysisInfo mentionAnalysisInfo =
+                        MentionAnalysisInfo.newBuilder(myId, commentMessage.mentions)
+                                .textSizeFromResource(R.dimen.jandi_mention_comment_item_font_size)
+                                .build();
+
+                SpannableLookUp.text(spannableStringBuilder)
+                        .hyperLink(false)
+                        .webLink(false)
+                        .emailLink(false)
+                        .telLink(false)
+                        .markdown(false)
+                        .mention(mentionAnalysisInfo, false)
+                        .lookUp(tvCommentContent.getContext());
+
+                commentMessage.content.contentBuilder = spannableStringBuilder;
+            }
+        }
 
         LinkifyUtil.setOnLinkClick(tvCommentContent);
-
-        tvCommentContent.setText(spannableStringBuilder, TextView.BufferType.SPANNABLE);
+        tvCommentContent.setText(commentMessage.content.contentBuilder, TextView.BufferType.SPANNABLE);
     }
 }

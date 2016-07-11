@@ -97,6 +97,7 @@
 	<string name="jandi_are_you_sure_disable_external_link">"기존에 공유된 링크로 접속할 경우 더 이상 파일을 볼 수 없게 됩니다. 삭제하시겠습니까?"</string>
 	<string name="jandi_ask_assign_topic_owner">"이 멤버를 토픽 관리자로 지정하시겠습니까?"</string>
 	<string name="jandi_ask_kick_user_from_topic">"정말 이 멤버를 내보내시겠습니까?"</string>
+	<string name="jandi_ask_poll_delete">"투표를 삭제할까요?"</string>
 	<string name="jandi_ask_poll_finish">"투표를 종료하시겠습니까?"</string>
 	<string name="jandi_ask_to_leave_if_private_topic_owner">"회원님은 이 토픽의 관리자입니다. 다음 토픽 관리자를 지정한 후 토픽에서 나가실 수 있습니다"</string>
 	<string name="jandi_ask_to_leave_if_topic_owner">"회원님은 이 토픽의 관리자입니다. 토픽에서 나가기 전에 다음 토픽 관리자를 지정하실 수 있습니다."</string>
@@ -185,6 +186,8 @@
 	<string name="jandi_deleted_file">"삭제된 파일"</string>
 	<string name="jandi_deleted_message">"(삭제된 메세지)"</string>
 	<string name="jandi_deleted_team">"이 팀은 잔디에서 삭제되었으며 더 이상 존재하지 않습니다."</string>
+	<string name="jandi_department">"부서"</string>
+	<string name="jandi_department_list">"부서 목록"</string>
 	<string name="jandi_device_storage">"장치"</string>
 	<string name="jandi_disable_external_link">"외부 공유용 링크 삭제"</string>
 	<string name="jandi_disable_user_profile_explain">"차단된 멤버입니다.\n궁금하신 사항은 팀 관리자에게 문의하세요."</string>
@@ -214,7 +217,8 @@
 	<string name="jandi_explain_global_push_off">"앱의 알림 설정이 꺼져 있습니다. 더보기 > 설정에서 알림을 켜야 알림을 받을 수 있습니다."</string>
 	<string name="jandi_explain_invite">"메세지 검색이 가능한 업무용 메신저 잔디는 
 팀원 모두와 함께 사용해야 그 진가가 발휘됩니다.
-지금 바로 멤버들을 초대하세요."</string>
+지금 바로 멤버들을 초대하세요.
+"</string>
 	<string name="jandi_explain_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 	<string name="jandi_export">"내보내기"</string>
 	<string name="jandi_export_to_app">"다음 앱으로 파일 내보내기"</string>
@@ -271,8 +275,8 @@
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_guide_to_assign_topic_owner">"토픽 상세보기 > 토픽 관리자 변경하기에서 다음 관리자를 지정한 후 토픽에서 내보낼 수 있습니다."</string>
 	<string name="jandi_has_joined">"%s님이 참여하였습니다"</string>
-	<string name="jandi_has_no_search_result">" '%s'의 검색 결과가 없습니다."</string>
-	<string name="jandi_has_no_searched_member">"<![CDATA[<b><font color=#404040>%s</font></b>]]>의 검색 결과가 없습니다."</string>
+	<string name="jandi_has_no_search_result">""</string>
+	<string name="jandi_has_no_searched_member">""</string>
 	<string name="jandi_have_an_account_already">"이미 계정이 있으신가요?"</string>
 	<string name="jandi_help">"도움말"</string>
 	<string name="jandi_hi_apk_store">"Hi Apk 스토어"</string>
@@ -286,6 +290,8 @@
 	<string name="jandi_input_search_keyword">"검색어를 입력해주세요."</string>
 	<string name="jandi_input_topic_name">"토픽 이름을 입력해주세요."</string>
 	<string name="jandi_input_user_name">"사용자 이름을 입력하세요"</string>
+	<string name="jandi_insert_new_department">"새로운 부서 입력"</string>
+	<string name="jandi_insert_new_job_title">"새로운 직책 입력"</string>
 	<string name="jandi_insert_team_domain">"팀 도메인을 입력해 주세요"</string>
 	<string name="jandi_insert_team_name">"팀 이름을 입력해 주세요"</string>
 	<string name="jandi_invitation">"팀으로 초대"</string>
@@ -313,6 +319,8 @@
 	<string name="jandi_is_newcomer">"잔디가 처음이신가요?"</string>
 	<string name="jandi_is_topic_required">"공개 여부"</string>
 	<string name="jandi_it_has_no_topic_description">"(토픽 설명이 없습니다)"</string>
+	<string name="jandi_job_title">"직책"</string>
+	<string name="jandi_job_title_list">"직책 목록"</string>
 	<string name="jandi_join_topic">"참여하기"</string>
 	<string name="jandi_joined_team">"이미 %1$s의 멤버입니다. 팀 리스트를 확인해주세요."</string>
 	<string name="jandi_kicked_message">"%s에서 관리자에 의해 퇴장되었습니다."</string>
@@ -320,6 +328,7 @@
 	<string name="jandi_launch">"잔디 시작하기"</string>
 	<string name="jandi_left_topic">"%s님이 나갔습니다"</string>
 	<string name="jandi_logout">"로그아웃"</string>
+	<string name="jandi_mail_sending">"메일이 발송중입니다. 잠시만 기다려주세요."</string>
 	<string name="jandi_member_invite_popup_1">"지금 바로 멤버들을 초대하세요!"</string>
 	<string name="jandi_member_invite_popup_2">"업무용 메신저 잔디는 팀원 모두와 함께 사용해야 그 진가가 발휘됩니다."</string>
 	<string name="jandi_member_profile_call">"전화하기"</string>
@@ -370,6 +379,8 @@
 	<string name="jandi_need_to_assign_topic_owner">"회원님은 이 토픽의 관리자입니다.
 토픽 상세정보 > 토픽 관리자 변경하기 에서
 관리자를 변경한 후 나갈 수 있습니다."</string>
+	<string name="jandi_new_department">"새로운 부서"</string>
+	<string name="jandi_new_job_title">"새로운 직책"</string>
 	<string name="jandi_new_team_name">"성"</string>
 	<string name="jandi_next">"다음"</string>
 	<string name="jandi_no_invite_email">"팀에 초대를 원하는 멤버들의 이메일 주소를 입력해주세요"</string>
@@ -389,6 +400,7 @@
 	<string name="jandi_nowhere_shared_file">"공유된 대화방이 없습니다"</string>
 	<string name="jandi_off">"끄기"</string>
 	<string name="jandi_on">"켜기"</string>
+	<string name="jandi_one_to_one">"1:1"</string>
 	<string name="jandi_open_browser">"브라우저에서 열기"</string>
 	<string name="jandi_page_not_found">"페이지를 찾을 수 없습니다."</string>
 	<string name="jandi_participants">"참여자"</string>
@@ -402,9 +414,11 @@
 	<string name="jandi_please_retry">"다시 시도해주세요."</string>
 	<string name="jandi_plz_input_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 	<string name="jandi_poll">"투표"</string>
+	<string name="jandi_poll_add_item">"보기추가"</string>
 	<string name="jandi_poll_anonymous">"익명투표"</string>
-	<string name="jandi_poll_create">"새 투표 작성하기"</string>
-	<string name="jandi_poll_empty">"투표가 없습니다. \n토픽에서 [+]를 눌러 투표를 만들 수 있습니다."</string>
+	<string name="jandi_poll_create">"만들기"</string>
+	<string name="jandi_poll_empty_1">"진행중인 투표가 없습니다."</string>
+	<string name="jandi_poll_empty_2">"토픽에서 [+]를 눌러 투표를 만들 수 있습니다."</string>
 	<string name="jandi_poll_finished_with_most">"투표가 완료되었습니다. 가장 많이 투표된 항목은 \"%s\" 입니다. "</string>
 	<string name="jandi_poll_finished_without_participants">"투표가 완료되었습니다. 참여자가 없었습니다."</string>
 	<string name="jandi_poll_finishedat">"종료 시각"</string>
@@ -412,7 +426,7 @@
 	<string name="jandi_poll_multiple">"복수선택"</string>
 	<string name="jandi_poll_multiple_available">"중복 투표 가능"</string>
 	<string name="jandi_poll_participants_ing">"명 참여중"</string>
-	<string name="jandi_poll_voted">"투표 완료"</string>
+	<string name="jandi_poll_voted">"투표함"</string>
 	<string name="jandi_pp">"개인정보 취급방침"</string>
 	<string name="jandi_preview_message_contents">"메시지 내용 미리보기"</string>
 	<string name="jandi_privacy_policy">"개인정보 취급방침"</string>
@@ -612,7 +626,7 @@
 	<string name="jandi_unpinned_message">"즐겨찾기 해제됨"</string>
 	<string name="jandi_unread_messages_below">"여기까지 읽었습니다."</string>
 	<string name="jandi_unshare_succeed">"%s 공유가 해제되었습니다."</string>
-	<string name="jandi_unshared_file">"공유 해제됨"</string>
+	<string name="jandi_unshared_file">""</string>
 	<string name="jandi_unshared_file_in_dm">"이 파일은 이 대화에서 공유 해제되어 더 이상 즐겨찾기를 하실 수 없습니다."</string>
 	<string name="jandi_unshared_message">"원본에 대한 접근 권한이 없습니다."</string>
 	<string name="jandi_unstarred">"즐겨찾기 해제"</string>
