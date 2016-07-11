@@ -81,6 +81,8 @@ public class MembersModel {
                             .enabled(user.isEnabled())
                             .inactive(user.isInactive())
                             .email(user.getEmail())
+                            .department(user.getDivision())
+                            .jobTitle(user.getPosition())
                             .owner(topic.getCreatorId() == user.getId())
                             .name(user.getName());
                 })
@@ -105,6 +107,8 @@ public class MembersModel {
                             .enabled(user.isEnabled())
                             .inactive(user.isInactive())
                             .email(user.getEmail())
+                            .department(user.getDivision())
+                            .jobTitle(user.getPosition())
                             .owner(user.isTeamOwner())
                             .name(user.getName());
                 })
@@ -142,6 +146,8 @@ public class MembersModel {
                             .enabled(user.isEnabled())
                             .inactive(user.isInactive())
                             .email(user.getEmail())
+                            .department(user.getDivision())
+                            .jobTitle(user.getPosition())
                             .owner(user.isTeamOwner())
                             .name(user.getName());
                 })

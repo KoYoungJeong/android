@@ -9,6 +9,8 @@ public class ChatChooseItem {
     private String statusMessage;
     private String photoUrl;
     private String email;
+    private String department;
+    private String jobTitle;
     private boolean isBot = false;
     private boolean isStarred;
     private boolean isEnabled;
@@ -49,6 +51,16 @@ public class ChatChooseItem {
 
     }
 
+    public ChatChooseItem department(String department) {
+        this.department = department;
+        return this;
+    }
+
+    public ChatChooseItem jobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+        return this;
+    }
+
     public boolean isStarred() {
         return isStarred;
     }
@@ -75,6 +87,14 @@ public class ChatChooseItem {
 
     public boolean isEnabled() {
         return isEnabled;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public String getJobTitle() {
+        return jobTitle;
     }
 
     public ChatChooseItem enabled(boolean isEnabled) {

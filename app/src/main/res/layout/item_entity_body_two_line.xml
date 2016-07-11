@@ -37,7 +37,8 @@
             android:paddingRight="18dp">
 
             <RelativeLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/vg_listitem_name"
+                android:layout_width="70dp"
                 android:layout_height="wrap_content">
 
                 <TextView
@@ -61,18 +62,20 @@
                     android:layout_alignRight="@+id/tv_entity_listitem_name"
                     android:layout_alignTop="@+id/tv_entity_listitem_name"
                     android:src="@drawable/line_black" />
+
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/tv_owner_badge"
-                android:layout_width="wrap_content"
-                android:layout_height="17dp"
+                android:id="@+id/tv_job_title"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="7dp"
-                android:background="@drawable/admin_bg"
-                android:gravity="center"
-                android:textSize="11sp"
-                android:visibility="gone" />
+                android:layout_marginLeft="5dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="Android Developer"
+                android:textColor="@color/dark_gray"
+                android:textSize="12dp" />
         </com.tosslab.jandi.app.views.FixedLinearLayout>
 
         <TextView
@@ -89,7 +92,7 @@
             android:singleLine="true"
             android:text="So Good"
             android:textColor="@color/jandi_text_light"
-            android:textSize="@dimen/jandi_text_size_small" />
+            android:textSize="12dp" />
 
     </LinearLayout>
 
@@ -99,9 +102,23 @@
         android:layout_height="30dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="16dp"
+        android:layout_marginRight="9dp"
         android:scaleType="centerInside"
         android:src="@drawable/kick_member" />
+
+    <TextView
+        android:id="@+id/tv_owner_badge"
+        android:layout_width="80dp"
+        android:layout_height="17dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="9dp"
+        android:layout_marginTop="17dp"
+        android:layout_toLeftOf="@id/iv_entity_listitem_user_kick"
+        android:background="@drawable/admin_bg"
+        android:gravity="center"
+        android:text="@string/jandi_topic_owner"
+        android:textSize="11dp"
+        android:visibility="visible" />
 
     <View
         android:id="@+id/v_entity_listitem_warning"

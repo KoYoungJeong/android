@@ -24,8 +24,10 @@ public class MemberViewHolder extends BaseViewHolder<User> {
 
     @Bind(R.id.tv_team_member_name)
     TextView tvName;
-    @Bind(R.id.tv_team_member_status)
-    TextView tvStatus;
+    @Bind(R.id.tv_team_member_job_title)
+    TextView tvJobTitle;
+    @Bind(R.id.tv_team_member_department)
+    TextView tvDepartment;
     @Bind(R.id.iv_team_member_profile)
     ImageView ivProfile;
 
@@ -49,9 +51,11 @@ public class MemberViewHolder extends BaseViewHolder<User> {
             tvName.setText(user.getEmail());
         }
 
-        String userStatusMessage = user.getStatusMessage();
-        tvStatus.setVisibility(TextUtils.isEmpty(userStatusMessage) ? View.GONE : View.VISIBLE);
-        tvStatus.setText(userStatusMessage);
+        tvJobTitle.setVisibility(TextUtils.isEmpty(user.getPosition()) ? View.GONE : View.VISIBLE);
+        tvJobTitle.setText(user.getPosition());
+
+        tvDepartment.setVisibility(TextUtils.isEmpty(user.getDivision()) ? View.GONE : View.VISIBLE);
+        tvDepartment.setText(user.getDivision());
 
         ViewGroup.LayoutParams ivProfileLayoutParams = ivProfile.getLayoutParams();
         if (user.isBot()) {

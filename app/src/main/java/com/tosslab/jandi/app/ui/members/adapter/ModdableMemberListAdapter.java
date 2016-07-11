@@ -13,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -189,7 +190,6 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
 
             ivIcon.setOnClickListener(v ->
                     EventBus.getDefault().post(new ShowProfileEvent(item.getEntityId())));
-
         }
     }
 
@@ -202,6 +202,8 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
         private View vDisableCover;
         private View ivKick;
         private TextView tvOwnerBadge;
+        private TextView tvJobTitle;
+        private ViewGroup vgListItemName;
 
         public MemberViewHolder(View itemView) {
             super(itemView);
@@ -213,6 +215,8 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
             vDisableCover = itemView.findViewById(R.id.v_entity_listitem_warning);
             ivKick = itemView.findViewById(R.id.iv_entity_listitem_user_kick);
             tvOwnerBadge = (TextView) itemView.findViewById(R.id.tv_owner_badge);
+            tvJobTitle = (TextView) itemView.findViewById(R.id.tv_job_title);
+            vgListItemName = (ViewGroup) itemView.findViewById(R.id.vg_listitem_name);
         }
 
         public void bindView(ChatChooseItem item, int ownerType, boolean kickMode, long myId,
@@ -222,7 +226,6 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
             } else {
                 tvName.setText(item.getEmail());
             }
-
             Resources resources = tvOwnerBadge.getResources();
             tvOwnerBadge.setText(ownerType == ModdableMemberListAdapter.OWNER_TYPE_TEAM
                     ? resources.getString(R.string.jandi_team_owner)
@@ -230,8 +233,11 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
 
             tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
 
-            tvAdditional.setVisibility(!TextUtils.isEmpty(item.getStatusMessage()) ? View.VISIBLE : View.GONE);
-            tvAdditional.setText(item.getStatusMessage());
+            tvJobTitle.setVisibility(!TextUtils.isEmpty(item.getJobTitle()) ? View.VISIBLE : View.GONE);
+            tvJobTitle.setText(item.getJobTitle());
+
+            tvAdditional.setVisibility(!TextUtils.isEmpty(item.getDepartment()) ? View.VISIBLE : View.GONE);
+            tvAdditional.setText(item.getDepartment());
 
             ivFavorite.setVisibility(View.GONE);
 
@@ -267,6 +273,13 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
 
             itemView.setOnClickListener(v ->
                     EventBus.getDefault().post(new ShowProfileEvent(item.getEntityId())));
+
+//            DisplayMetrics displayMetrics = JandiApplication.getContext().getResources().getDisplayMetrics();
+//            int width = displayMetrics.widthPixels;
+//            int kickImageWidth = ivKick.getMeasuredHeight();
+//            int
         }
+
+
     }
 }
