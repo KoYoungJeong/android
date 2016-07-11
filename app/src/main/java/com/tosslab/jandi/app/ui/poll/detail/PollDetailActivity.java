@@ -205,8 +205,8 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putLong(KEY_POLL_ID, pollId);
     }
 

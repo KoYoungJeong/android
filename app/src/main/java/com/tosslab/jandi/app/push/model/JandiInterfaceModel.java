@@ -210,6 +210,7 @@ public class JandiInterfaceModel {
             return -1;
         }
     }
+
     public void refreshPollList(long teamId) {
         try {
             PollRepository.getInstance().clearAll();

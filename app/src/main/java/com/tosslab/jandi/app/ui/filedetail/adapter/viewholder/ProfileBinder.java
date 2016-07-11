@@ -89,6 +89,7 @@ public class ProfileBinder {
         if (writer.isBot()) {
             ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(33f);
             ivProfile.setLayoutParams(ivProfileLayoutParams);
+            ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             ImageLoader.loadFromResources(ivProfile, R.drawable.bot_43x54);
         } else {
             ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(26f);
@@ -97,6 +98,7 @@ public class ProfileBinder {
                 ImageUtil.loadProfileImage(
                         ivProfile, writer.getPhotoUrl(), R.drawable.profile_img);
             } else {
+                ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_43);
             }
         }

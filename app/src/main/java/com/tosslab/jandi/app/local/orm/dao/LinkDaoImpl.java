@@ -337,7 +337,7 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Long> {
                             .where()
                             .eq("id", link.feedbackId)
                             .queryForFirst();
-                } else if (ResMessages.FeedbackType.FILE.value().equals(link.feedbackType)) {
+                } else {
                     link.feedback = DaoManager.createDao(getConnectionSource(), ResMessages.FileMessage.class)
                             .queryBuilder()
                             .where()
@@ -360,7 +360,7 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Long> {
                             .where()
                             .eq("id", link.feedbackId)
                             .queryForFirst();
-                } else if (ResMessages.FeedbackType.FILE.value().equals(link.feedbackType)) {
+                } else {
                     link.feedback = DaoManager.createDao(getConnectionSource(), ResMessages.FileMessage.class)
                             .queryBuilder()
                             .where()
