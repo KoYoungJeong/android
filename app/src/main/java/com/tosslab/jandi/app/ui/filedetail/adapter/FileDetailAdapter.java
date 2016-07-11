@@ -81,4 +81,17 @@ public class FileDetailAdapter extends MultiItemRecyclerAdapter {
         }
     }
 
+    public int findIndexOfMessageId(long messageId) {
+        int itemCount = getItemCount();
+        for (int count = itemCount - 1; count >= 0; count--) {
+            int itemViewType = getItemViewType(count);
+            if (itemViewType == VIEW_TYPE_COMMENT) {
+                ResMessages.CommentMessage item = getItem(count);
+                if (item.id == messageId) {
+                    return count;
+                }
+            }
+        }
+        return -1;
+    }
 }

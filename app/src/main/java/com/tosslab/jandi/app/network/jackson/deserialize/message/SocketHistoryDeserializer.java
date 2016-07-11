@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketChatCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketConnectBotCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketConnectBotDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketConnectBotUpdatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketFileCommentCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
@@ -43,6 +44,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderItemCreatedEven
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderItemDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicInvitedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicJoinedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicKickedoutEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicLeftEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
@@ -107,6 +109,8 @@ public class SocketHistoryDeserializer extends JsonDeserializer<EventHistoryInfo
         TeamJoined("team_joined", SocketTeamJoinEvent.class),
         TeamLeft("team_left", SocketTeamLeaveEvent.class),
         TeamDeleted("team_deleted", SocketTeamDeletedEvent.class),
+        TeamNameUpdated("team_name_updated", SocketTeamNameUpdatedEvent.class),
+        TeamDomainUpdated("team_domain_updated", SocketTeamDomainUpdatedEvent.class),
         TeamUpdated("team_updated", SocketTeamUpdatedEvent.class),
         ChatClose("chat_close", SocketChatCloseEvent.class),
         ChatCreated("chat_created", SocketChatCreatedEvent.class),
@@ -117,17 +121,17 @@ public class SocketHistoryDeserializer extends JsonDeserializer<EventHistoryInfo
         TopicDeleted("topic_deleted", SocketTopicDeletedEvent.class),
         TopicCreated("topic_created", SocketTopicCreatedEvent.class),
         TopicInvited("topic_invited", SocketTopicInvitedEvent.class),
+        TopicJoined("topic_joined", SocketTopicJoinedEvent.class),
         TopicUpdated("topic_updated", SocketTopicUpdatedEvent.class),
         TopicStarred("topic_starred", SocketTopicStarredEvent.class),
         TopicUnstarred("topic_unstarred", SocketTopicStarredEvent.class),
         TopicKickedOut("topic_kicked_out", SocketTopicKickedoutEvent.class),
         MemberStarred("member_starred", SocketMemberStarredEvent.class),
-        MemberProfileUpdated("member_updated", SocketMemberUpdatedEvent.class),
         MemberUnstarred("member_unstarred", SocketMemberUnstarredEvent.class),
-        TeamNameUpdated("team_name_updated", SocketTeamNameUpdatedEvent.class),
-        TeamDomainUpdated("team_domain_updated", SocketTeamDomainUpdatedEvent.class),
+        MemberProfileUpdated("member_updated", SocketMemberUpdatedEvent.class),
         FileDeleted("file_deleted", SocketFileDeletedEvent.class),
         FileUnshared("file_unshared", SocketFileUnsharedEvent.class),
+        CommentCreated("file_comment_created", SocketFileCommentCreatedEvent.class),
         CommentDeleted("file_comment_deleted", SocketFileCommentDeletedEvent.class),
         MessageDeleted("message_deleted", SocketMessageDeletedEvent.class),
         MessageCreated("message_created", SocketMessageCreatedEvent.class),
