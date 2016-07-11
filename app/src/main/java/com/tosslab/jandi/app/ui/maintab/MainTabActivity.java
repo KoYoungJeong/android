@@ -166,6 +166,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
 
         DaggerTeamsComponent.builder()
                 .teamsModule(new TeamsModule(this))
@@ -213,12 +214,20 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                 });
 
         initializeTeamsView();
+        teamsPresenter.onInitializeTeams();
 
+        Observable.defer(() -> {
+            long myId = TeamInfoLoader.getInstance().getMyId();
+            User me = TeamInfoLoader.getInstance().getUser(myId);
+            return Observable.just(me);
+        })
+                .filter(me -> !me.isProfileUpdated())
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(user -> {
+                    moveSetProfileActivity();
+                });
 
-        User me = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
-        if (!me.isProfileUpdated()) {
-            moveSetProfileActivity();
-        }
 
     }
 
@@ -575,11 +584,11 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         }
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
         // Entity의 리스트를 획득하여 저장한다.
-        EventBus.getDefault().register(this);
 
         if (NetworkCheckUtil.isConnected()) {
             offlineLayer.dismissOfflineView();
@@ -590,11 +599,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         fromPush = false;
     }
 
-    @Override
-    public void onPause() {
-        EventBus.getDefault().unregister(this);
-        super.onPause();
-    }
 
     @OnActivityResult(REQUEST_TEAM_CREATE)
     void onTeamCreateResult(int resultCode) {
@@ -606,6 +610,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @Override
     protected void onDestroy() {
         teamsPresenter.clearTeamInitializeQueue();
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
