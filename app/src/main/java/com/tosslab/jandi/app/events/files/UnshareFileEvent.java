@@ -20,4 +20,23 @@ public class UnshareFileEvent {
     public long getFileId() {
         return fileId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UnshareFileEvent that = (UnshareFileEvent) o;
+
+        if (roomId != that.roomId) return false;
+        return fileId == that.fileId;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (roomId ^ (roomId >>> 32));
+        result = 31 * result + (int) (fileId ^ (fileId >>> 32));
+        return result;
+    }
 }

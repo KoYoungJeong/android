@@ -87,6 +87,7 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
         this.teamId = teamId;
         this.teamName = teamName;
 
+        shareModel.refreshPollList(teamId);
         teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
 
         this.roomId = teamInfoLoader.getDefaultTopicId();

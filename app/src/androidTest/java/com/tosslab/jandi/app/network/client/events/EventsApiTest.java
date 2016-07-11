@@ -40,7 +40,7 @@ public class EventsApiTest {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -3);
         int size = 10;
-        ResEventHistory message = eventsApi.getEventHistory(calendar.getTimeInMillis(), myId, "message", size);
+        ResEventHistory message = eventsApi.getEventHistory(calendar.getTimeInMillis(), myId, size);
         assertThat(message).isNotNull();
         assertThat(message.getSize()).isGreaterThanOrEqualTo(0);
         assertThat(message.getRecords().size()).isGreaterThanOrEqualTo(0);

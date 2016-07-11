@@ -13,18 +13,21 @@ public class TypeUtil {
     public static final int TYPE_VIEW_STICKER_MESSAGE = 1 << 2;
     public static final int TYPE_VIEW_IMAGE_MESSAGE = 1 << 3;
     public static final int TYPE_VIEW_FILE_MESSAGE = 1 << 4;
-    public static final int TYPE_VIEW_STICKER_COMMENT = 1 << 5;
-    public static final int TYPE_VIEW_MESSAGE_COMMENT = 1 << 6;
+    public static final int TYPE_VIEW_STICKER_COMMENT_FOR_FILE = 1 << 5;
+    public static final int TYPE_VIEW_MESSAGE_COMMENT_FOR_FILE = 1 << 6;
     public static final int TYPE_VIEW_DUMMY_NORMAL_MESSAGE = 1 << 7;
     public static final int TYPE_VIEW_DUMMY_STICKER = 1 << 8;
     public static final int TYPE_VIEW_EVENT_MESSAGE = 1 << 9;
     public static final int TYPE_VIEW_JANDI_BOT_MESSAGE = 1 << 10;
     public static final int TYPE_VIEW_INTEGRATION_BOT_MESSAGE = 1 << 11;
+    public static final int TYPE_VIEW_POLL = 1 << 12;
+    public static final int TYPE_VIEW_STICKER_COMMENT_FOR_POLL = 1 << 13;
+    public static final int TYPE_VIEW_MESSAGE_COMMENT_FOR_POLL = 1 << 14;
 
     public static final int TYPE_OPTION_PURE = 1 << 20;
     public static final int TYPE_OPTION_HAS_ONLY_BADGE = 1 << 21;
     public static final int TYPE_OPTION_HAS_BOTTOM_MARGIN = 1 << 22;
-    public static final int TYPE_OPTION_HAS_COMMENT_FILE_INFO = 1 << 23;
+    public static final int TYPE_OPTION_HAS_COMMENT_CONTENT_INFO = 1 << 23;
     public static final int TYPE_OPTION_HAS_COMMENT_BUBBLE_TAIL = 1 << 24;
     public static final int TYPE_OPTION_HAS_COMMENT_VIEW_ALL = 1 << 25;
     public static final int TYPE_OPTION_HAS_COMMENT_NESTED_PROFILE = 1 << 26;

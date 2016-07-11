@@ -129,8 +129,7 @@ public class TeamsPresenterImpl implements TeamsPresenter {
                 .subscribe(o -> {
                     view.removePendingTeam(team);
 
-                    // 같은 액션을 한다.
-                    onTeamCreated(true /* shouldOpenModifyProfileActivity */);
+                    onTeamCreated();
 
                 }, error -> {
                     LogUtil.e(TAG, Log.getStackTraceString(error));
@@ -167,7 +166,7 @@ public class TeamsPresenterImpl implements TeamsPresenter {
     }
 
     @Override
-    public void onTeamCreated(boolean shouldOpenModifyProfileActivity) {
+    public void onTeamCreated() {
         view.showProgressWheel();
 
         model.getSelectedTeamObservable()

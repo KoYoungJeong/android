@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity">
+
+    <item
+        android:id="@+id/menu_overflow"
+        android:icon="@drawable/actionbar_icon_moremenu"
+        android:showAsAction="always"
+        android:title="@string/jandi_tab_more"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/action_poll_detail_finish"
+                android:title="@string/jandi_action_poll_finish"/>
+            <item
+                android:id="@+id/action_poll_detail_delete"
+                android:title="@string/jandi_action_poll_delete"/>
+        </menu>
+    </item>
+
+</menu>

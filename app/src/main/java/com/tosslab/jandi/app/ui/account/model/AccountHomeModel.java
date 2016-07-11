@@ -5,17 +5,22 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
+import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -30,6 +35,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dagger.Lazy;
+import rx.Observable;
 
 
 public class AccountHomeModel {
@@ -38,16 +44,19 @@ public class AccountHomeModel {
     private Lazy<AccountApi> accountApi;
     private Lazy<AccountProfileApi> accountProfileApi;
     private Lazy<StartApi> startApi;
+    private Lazy<PollApi> pollApi;
 
     @Inject
     public AccountHomeModel(Lazy<InvitationApi> invitationApi,
                             Lazy<AccountApi> accountApi,
                             Lazy<AccountProfileApi> accountProfileApi,
-                            Lazy<StartApi> startApi) {
+                            Lazy<StartApi> startApi,
+                            Lazy<PollApi> pollApi) {
         this.invitationApi = invitationApi;
         this.accountApi = accountApi;
         this.accountProfileApi = accountProfileApi;
         this.startApi = startApi;
+        this.pollApi = pollApi;
     }
 
     public void refreshAccountInfo() {
@@ -59,15 +68,6 @@ public class AccountHomeModel {
             retrofitError.printStackTrace();
         }
     }
-
-    public void updateTeamInfo(long teamId) throws RetrofitException {
-
-        ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
-        AccountUtil.removeDuplicatedTeams(resAccountInfo);
-        AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
-        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
-    }
-
 
     public ResTeamDetailInfo acceptOrDeclineInvite(String invitationId, String type) throws RetrofitException {
 
@@ -162,6 +162,13 @@ public class AccountHomeModel {
         return null;
     }
 
+    public void updateTeamInfo(long teamId) throws RetrofitException {
+        ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+        AccountUtil.removeDuplicatedTeams(resAccountInfo);
+        AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
+    }
+
     public String getAccountName() {
         return AccountRepository.getRepository().getAccountInfo().getName();
     }
@@ -205,4 +212,25 @@ public class AccountHomeModel {
                 .build());
     }
 
+    public void refreshPollList(long teamId) {
+        try {
+            PollRepository.getInstance().clearAll();
+
+            ResPollList resPollList = pollApi.get().getPollList(teamId, 50);
+            List<Poll> onGoing = resPollList.getOnGoing();
+            if (onGoing == null) {
+                onGoing = new ArrayList<>();
+            }
+            List<Poll> finished = resPollList.getFinished();
+            if (finished == null) {
+                finished = new ArrayList<>();
+            }
+            Observable.merge(Observable.from(onGoing), Observable.from(finished))
+                    .toList()
+                    .subscribe(polls -> PollRepository.getInstance().upsertPollList(polls),
+                            Throwable::printStackTrace);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

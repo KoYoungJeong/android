@@ -44,4 +44,6 @@ public interface MessageListAdapterModel {
     void updateCachedType(int indexOfUnsharedFile);
 
     void modifyStarredStateByPosition(int index, boolean starred);
+
+    List<Integer> getIndexListByPollId(long pollId);
 }

@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.ui.profile.insert.presenter;
 
 import com.jayway.awaitility.Awaitility;
-import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -11,12 +11,15 @@ import org.mockito.Mockito;
 
 import setup.BaseInitUtil;
 
+import static org.mockito.Mockito.mock;
+
 /**
  * Created by tee on 16. 3. 17..
  */
 public class SetProfileSecondPagePresenterTest {
-    private SetProfileSecondPagePresenter presenter;
-    private SetProfileSecondPagePresenter.View mockView;
+    private InsertProfileSecondPagePresenterImpl presenter;
+    private InsertProfileSecondPagePresenterImpl.View mockView;
+    private ModifyProfileModel mockModel;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -30,9 +33,9 @@ public class SetProfileSecondPagePresenterTest {
 
     @Before
     public void setUp() throws Exception {
-        presenter = SetProfileSecondPagePresenter_.getInstance_(JandiApplication.getContext());
-        mockView = Mockito.mock(SetProfileSecondPagePresenter.View.class);
-        presenter.setView(mockView);
+        mockView = mock(InsertProfileSecondPagePresenterImpl.View.class);
+        mockModel = mock(ModifyProfileModel.class);
+        presenter = new InsertProfileSecondPagePresenterImpl(mockModel, mockView);
     }
 
 

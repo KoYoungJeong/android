@@ -17,4 +17,20 @@ public class LinkPreviewUpdateEvent {
     public void setMessageId(long messageId) {
         this.messageId = messageId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LinkPreviewUpdateEvent that = (LinkPreviewUpdateEvent) o;
+
+        return messageId == that.messageId;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (messageId ^ (messageId >>> 32));
+    }
 }

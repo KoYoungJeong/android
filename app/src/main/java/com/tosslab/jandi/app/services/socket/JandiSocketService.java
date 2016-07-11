@@ -292,6 +292,25 @@ public class JandiSocketService extends Service {
                 objects -> jandiSocketServiceModel.onFolderItemDeleted(objects[0]);
         eventHashMap.put("folder_item_deleted", folderItemDeletedListener);
 
+        EventListener pollCreatedListener =
+                objects -> jandiSocketServiceModel.onPollCreated(objects[0]);
+        eventHashMap.put("poll_created", pollCreatedListener);
+        EventListener pollFinishedListener =
+                objects -> jandiSocketServiceModel.onPollFinished(objects[0]);
+        eventHashMap.put("poll_finished", pollFinishedListener);
+        EventListener pollDeletedListener =
+                objects -> jandiSocketServiceModel.onPollDeleted(objects[0]);
+        eventHashMap.put("poll_deleted", pollDeletedListener);
+        EventListener pollVotedListener =
+                objects -> jandiSocketServiceModel.onPollVoted(objects[0]);
+        eventHashMap.put("poll_voted", pollVotedListener);
+
+        EventListener pollCommentCreatedListener =
+                objects -> jandiSocketServiceModel.onPollCommentCreated(objects[0]);
+        eventHashMap.put("poll_comment_created", pollCommentCreatedListener);
+        EventListener pollCommentDeletedListener =
+                objects -> jandiSocketServiceModel.onPollCommentDeleted(objects[0]);
+        eventHashMap.put("poll_comment_deleted", pollCommentDeletedListener);
 
         eventHashMap.put("ready_to_start", objects -> {
             JandiPreference.setSocketReconnectDelay(0l);
@@ -348,6 +367,7 @@ public class JandiSocketService extends Service {
         jandiSocketManager.disconnect();
         jandiSocketManager.release();
         jandiSocketServiceModel.stopMarkerObserver();
+        jandiSocketServiceModel.stopEventPublisher();
     }
 
     private void sendBroadcastForRestart() {

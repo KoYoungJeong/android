@@ -67,9 +67,10 @@
                 android:id="@+id/tv_error_id_or_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingLeft="4dp"
                 android:layout_marginLeft="16dp"
                 android:text="@string/err_login_invalid_id_or_password"
-                android:textColor="@color/jandi_red"
+                android:textColor="@color/rgb_dd2c00"
                 android:textSize="12sp"
                 android:visibility="gone"/>
 

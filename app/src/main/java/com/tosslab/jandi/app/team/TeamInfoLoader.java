@@ -531,6 +531,10 @@ public class TeamInfoLoader {
         return execute(() -> Collections.unmodifiableList(new ArrayList<>(chatRooms.values())));
     }
 
+    public DirectMessageRoom getChat(long roomId) {
+        return execute(() -> chatRooms.get(roomId));
+    }
+
 
     interface Call0<T> {
         T execute();

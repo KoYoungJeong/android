@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.domain.LeftSideMenu;
 import com.tosslab.jandi.app.local.orm.domain.PushHistory;
 import com.tosslab.jandi.app.local.orm.domain.ReadyComment;
+import com.tosslab.jandi.app.local.orm.domain.ReadyCommentForPoll;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.RecentSticker;
 import com.tosslab.jandi.app.local.orm.domain.SelectedTeam;
@@ -30,6 +31,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
@@ -66,7 +68,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_MESSAGE_DIRTY = 14;
     private static final int DATABASE_VERSION_CONNECT_INFO_IMAGE = 15;
     private static final int DATABASE_VERSION_START_API = 16;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_START_API;
+    private static final int DATABASE_VERSION_POLL = 17;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_POLL;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -156,6 +159,13 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, Human.Profile.class);
             createTable(connectionSource, Bot.class);
 
+            createTable(connectionSource, Poll.class);
+            createTable(connectionSource, Poll.Item.class);
+            createTable(connectionSource, ResMessages.PollMessage.class);
+            createTable(connectionSource, ResMessages.PollContent.class);
+            createTable(connectionSource, ResMessages.PollConnectInfo.class);
+
+            createTable(connectionSource, ReadyCommentForPoll.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -265,6 +275,30 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, Human.class);
                         createTable(connectionSource, Human.Profile.class);
                         createTable(connectionSource, Bot.class);
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_POLL, () -> {
+                        dropTable(connectionSource, ResMessages.Link.class);
+                        dropTable(connectionSource, ResMessages.TextMessage.class);
+                        dropTable(connectionSource, ResMessages.FileMessage.class);
+                        dropTable(connectionSource, ResMessages.StickerMessage.class);
+                        dropTable(connectionSource, ResMessages.CommentMessage.class);
+                        dropTable(connectionSource, ResMessages.CommentStickerMessage.class);
+
+                        createTable(connectionSource, ResMessages.Link.class);
+                        createTable(connectionSource, ResMessages.TextMessage.class);
+                        createTable(connectionSource, ResMessages.FileMessage.class);
+                        createTable(connectionSource, ResMessages.StickerMessage.class);
+                        createTable(connectionSource, ResMessages.CommentMessage.class);
+                        createTable(connectionSource, ResMessages.CommentStickerMessage.class);
+
+                        createTable(connectionSource, Poll.class);
+                        createTable(connectionSource, Poll.Item.class);
+
+                        createTable(connectionSource, ResMessages.PollMessage.class);
+                        createTable(connectionSource, ResMessages.PollContent.class);
+                        createTable(connectionSource, ResMessages.PollConnectInfo.class);
+
+                        createTable(connectionSource, ReadyCommentForPoll.class);
                     }));
 
 
@@ -353,6 +387,14 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(getConnectionSource(), Human.class);
         clearTable(getConnectionSource(), Human.Profile.class);
         clearTable(getConnectionSource(), Bot.class);
+
+        clearTable(getConnectionSource(), Poll.class);
+        clearTable(getConnectionSource(), Poll.Item.class);
+        clearTable(getConnectionSource(), ResMessages.PollMessage.class);
+        clearTable(getConnectionSource(), ResMessages.PollContent.class);
+        clearTable(getConnectionSource(), ResMessages.PollConnectInfo.class);
+
+        clearTable(getConnectionSource(), ReadyCommentForPoll.class);
     }
 
     private void clearTable(ConnectionSource connectionSource, Class<?> dataClass) {

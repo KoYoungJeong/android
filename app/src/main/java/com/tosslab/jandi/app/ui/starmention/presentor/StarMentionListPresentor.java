@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.ui.starmention.model.StarMentionListModel;
 import com.tosslab.jandi.app.ui.starmention.vo.StarMentionVO;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -96,13 +97,22 @@ public class StarMentionListPresentor {
             } else {
                 ColoredToast.show(fragment.getString(R.string.jandi_starmention_no_longer_in_topic));
             }
-        } else if (contentType == StarMentionVO.Type.Comment.getValue()
-                || contentType == StarMentionVO.Type.File.getValue()) {
+        } else if (contentType == StarMentionVO.Type.File.getValue()) {
             FileDetailActivity_
                     .intent(fragment)
                     .fileId(starMentionVO.getFileId())
                     .selectMessageId(starMentionVO.getMessageId())
                     .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+        } else if (contentType == StarMentionVO.Type.Comment.getValue()) {
+            if ("poll".equals(starMentionVO.getFeedbackType())) {
+                PollDetailActivity.start(fragment.getActivity(), starMentionVO.getPollId());
+            } else {
+                FileDetailActivity_
+                        .intent(fragment)
+                        .fileId(starMentionVO.getFileId())
+                        .selectMessageId(starMentionVO.getMessageId())
+                        .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+            }
         }
     }
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="169dp"
+    android:layout_centerHorizontal="true"
+    android:background="@color/jandi_file_detail_tab_to_view_bg"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="53dp"
+        android:layout_height="53dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/poll_deleted"/>
+
+    <TextView
+        android:id="@+id/tv_poll_detail_info_deleted_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/jandi_text_medium"
+        android:textSize="12sp"/>
+
+</LinearLayout>

@@ -37,7 +37,8 @@ public class AnalyticsValue {
         Setting,
         UserProfile,
         InputPasscode, WrongPasscode, SetPasscode, MyProfile,
-        SwitchTeam, MypageTab, Account, TeamTab
+        SwitchTeam, MypageTab, Account, TeamTab,
+        Polls, PollDetail, CreatePoll, PollParticipant, ChoiceParticipant,
     }
 
     public enum Action {
@@ -111,6 +112,7 @@ public class AnalyticsValue {
         Upload_Camera,
         Upload_File,
         Upload_Video,
+        Upload_Poll,
         Upload_Cancel,
         Upload_Close,
         Message_Search,
@@ -217,13 +219,15 @@ public class AnalyticsValue {
         DirectMessage, TurnOffPasscode, TurnOnPasscode, ChangePasscode, ChangeTopicOrder, Call,
         CreateNewTeam, MemberSearch, ViewMyProfile,
         Notifications, Sounds, Vibrate, PhoneLed,
-        Passcode, Account, SetPasscode, ChooseTopicFilter, ChooseMemberFilter, ChooseTypeFilter, Star, OpenTeamList
+        Passcode, Account, SetPasscode, ChooseTopicFilter, ChooseMemberFilter, ChooseTypeFilter, Star, Polls, OpenTeamList,
+        ViewPollDetail, ViewChoiceParticipant, ViewPollParticipant, ClosePoll, DeletePoll, AddChoice, DeleteChoice, Anonymous, AllowMultipleChoices, CreatePoll, ViewMember, Vote
     }
 
     public enum Label {
         Folder, On, Off, UpdateDate,
         AllTopic, Topic, Member,
         AllMember,
-        AllType, GoogleDocs, Words, Presentations, Spreadsheets, PDFs, Images, Videos, Audios
+        AllType, GoogleDocs, Words, Presentations, Spreadsheets, PDFs, Images, Videos, Audios,
+        ongoing, completed
     }
 }

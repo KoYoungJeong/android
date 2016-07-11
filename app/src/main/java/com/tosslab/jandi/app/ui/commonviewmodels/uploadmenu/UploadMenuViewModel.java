@@ -4,9 +4,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.poll.RequestCreatePollEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 
@@ -21,38 +21,52 @@ public class UploadMenuViewModel {
     Context context;
 
     private View vgUploadMenuSelector;
-    private ImageView ivUploadImage;
-    private ImageView ivUploadCamera;
-    private ImageView ivUploadFile;
+    private View btnUploadImage;
+    private View btnShowCamera;
+    private View btnUploadFile;
+    private View btnCreatePoll;
 
     private boolean isShow = false;
+    private RoomType roomType = RoomType.TOPIC;
 
     private OnClickUploadEventListener onClickUploadEventListener;
 
     public void showUploadPanel(ViewGroup root) {
         vgUploadMenuSelector =
-                LayoutInflater.from(context).inflate(R.layout.layout_listview_upload_menu, root, true);
-        ivUploadImage = (ImageView) vgUploadMenuSelector.findViewById(R.id.iv_upload_image);
-        ivUploadCamera = (ImageView) vgUploadMenuSelector.findViewById(R.id.iv_upload_camera);
-        ivUploadFile = (ImageView) vgUploadMenuSelector.findViewById(R.id.iv_upload_file);
+                LayoutInflater.from(context).inflate(R.layout.layout_upload_menu, root, true);
+        btnUploadImage = vgUploadMenuSelector.findViewById(R.id.btn_upload_menu_choose_image);
+        btnShowCamera =  vgUploadMenuSelector.findViewById(R.id.btn_upload_menu_show_camera);
+        btnUploadFile =  vgUploadMenuSelector.findViewById(R.id.btn_upload_menu_choose_file);
+        btnCreatePoll =  vgUploadMenuSelector.findViewById(R.id.btn_upload_menu_create_poll);
+
+        if (roomType == RoomType.DM) {
+            btnCreatePoll.setVisibility(View.GONE);
+        }
+
         initClickEvent();
     }
 
     void initClickEvent() {
-        ivUploadImage.setOnClickListener(v -> {
+        btnUploadImage.setOnClickListener(v -> {
             EventBus.getDefault().post(new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_GALLERY));
             if (onClickUploadEventListener != null) {
                 onClickUploadEventListener.onClick();
             }
         });
-        ivUploadCamera.setOnClickListener(v -> {
+        btnShowCamera.setOnClickListener(v -> {
             EventBus.getDefault().post(new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_TAKE_PHOTO));
             if (onClickUploadEventListener != null) {
                 onClickUploadEventListener.onClick();
             }
         });
-        ivUploadFile.setOnClickListener(v -> {
+        btnUploadFile.setOnClickListener(v -> {
             EventBus.getDefault().post(new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_EXPLORER));
+            if (onClickUploadEventListener != null) {
+                onClickUploadEventListener.onClick();
+            }
+        });
+        btnCreatePoll.setOnClickListener(v -> {
+            EventBus.getDefault().post(new RequestCreatePollEvent());
             if (onClickUploadEventListener != null) {
                 onClickUploadEventListener.onClick();
             }
@@ -67,8 +81,16 @@ public class UploadMenuViewModel {
         this.onClickUploadEventListener = l;
     }
 
+    public void setRoomType(RoomType roomType) {
+        this.roomType = roomType;
+    }
+
     public interface OnClickUploadEventListener {
         void onClick();
+    }
+
+    public enum RoomType {
+        DM, TOPIC
     }
 
 }

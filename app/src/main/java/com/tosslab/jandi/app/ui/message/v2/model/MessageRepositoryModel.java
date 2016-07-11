@@ -102,10 +102,4 @@ public class MessageRepositoryModel {
         return oldMessages;
     }
 
-    public List<ResMessages.Link> getNewMessages() {
-
-
-        return new ArrayList<>();
-    }
-
 }

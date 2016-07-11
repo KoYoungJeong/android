@@ -115,6 +115,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
                 .doOnNext(initialInfo -> {
                     accountHomeModel.updateEntityInfo(initialInfo);
                     TeamInfoLoader.getInstance().refresh();
+                    accountHomeModel.refreshPollList(teamId);
                     JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
                     accountHomeModel.trackLaunchTeamSuccess(teamId);
                 })
