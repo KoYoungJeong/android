@@ -110,6 +110,7 @@ import java.util.concurrent.TimeUnit;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by justinygchoi on 2014. 7. 19..
@@ -868,7 +869,21 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     public void onEvent(FileCommentRefreshEvent event) {
         if (event.getFileId() == fileId) {
-            fileDetailPresenter.onInitializeFileDetail(event.getFileId(), false);
+            if (event.isAdded()) {
+                int position = adapter.findIndexOfMessageId(event.getCommentId());
+                if (position < 0) {
+                    fileDetailPresenter.onInitializeFileDetail(event.getFileId(), false);
+                }
+            } else {
+                Observable.just(event)
+                        .map(event1 -> adapter.findIndexOfMessageId(event1.getCommentId()))
+                        .filter(position -> position >= 0)
+                        .subscribeOn(Schedulers.computation())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(position -> adapter.remove(position), Throwable::printStackTrace, () -> {
+                            adapter.notifyDataSetChanged();
+                        });
+            }
         }
     }
 

@@ -971,8 +971,7 @@ public class JandiSocketServiceModel {
                 text = "";
             }
 
-            long lastMessageId = TeamInfoLoader.getInstance().getChat(linkMessage.roomId).getLastMessageId();
-            ChatRepository.getInstance().updateLastMessage(linkMessage.roomId, lastMessageId, text, "created");
+            ChatRepository.getInstance().updateLastMessage(linkMessage.roomId, linkMessage.messageId, text, "created");
             ChatRepository.getInstance().updateLastLinkId(linkMessage.roomId, linkMessage.id);
             ChatRepository.getInstance().updateChatOpened(linkMessage.roomId, true);
 
