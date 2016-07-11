@@ -514,37 +514,25 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEvent(RetrieveTopicListEvent event) {
-        if (isResumed()) {
-            mainTopicListPresenter.refreshList();
-            mainTopicListPresenter.onRefreshUpdatedTopicList();
-        }
+        mainTopicListPresenter.refreshList();
+        mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void onEvent(TopicFolderRefreshEvent event) {
-        if (!isResumed()) {
-            return;
-        }
         mainTopicListPresenter.refreshList();
     }
 
     public void onEvent(SocketTopicPushEvent event) {
-        if (isResumed()) {
-            mainTopicListPresenter.refreshList();
-            mainTopicListPresenter.onRefreshUpdatedTopicList();
-        }
+        mainTopicListPresenter.refreshList();
+        mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void onEvent(TopicInfoUpdateEvent event) {
-        if (isResumed()) {
-            mainTopicListPresenter.refreshList();
-            mainTopicListPresenter.onRefreshUpdatedTopicList();
-        }
+        mainTopicListPresenter.refreshList();
+        mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void onEvent(SocketMessageDeletedEvent event) {
-        if (!isResumed()) {
-            return;
-        }
         if (isCurrentFolder()) {
             mainTopicListPresenter.refreshList();
         } else {
@@ -553,9 +541,6 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEvent(RoomMarkerEvent event) {
-        if (!isResumed()) {
-            return;
-        }
         if (isCurrentFolder()) {
             mainTopicListPresenter.refreshList();
         } else {
@@ -564,9 +549,6 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEvent(SocketMessageCreatedEvent event) {
-        if (!isResumed()) {
-            return;
-        }
         if (isCurrentFolder()) {
             mainTopicListPresenter.refreshList();
         } else {

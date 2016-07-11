@@ -36,9 +36,6 @@ import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-/**
- * Created by Steve SeongUg Jung on 15. 1. 6..
- */
 @EActivity(R.layout.activity_topic_create)
 @OptionsMenu(R.menu.add_topic_text)
 public class TopicCreateActivity extends BaseAppCompatActivity implements TopicCreatePresenter.View {
