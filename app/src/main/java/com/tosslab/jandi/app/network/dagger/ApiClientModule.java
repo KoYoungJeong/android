@@ -29,6 +29,7 @@ import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.sticker.StickerApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.client.teams.folder.FolderApi;
+import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.client.validation.ValidationApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 
@@ -191,5 +192,10 @@ public class ApiClientModule {
     @Provides
     StartApi provideStartApi(RetrofitBuilder retrofitBuilder) {
         return new StartApi(retrofitBuilder);
+    }
+
+    @Provides
+    PollApi providePollApi(RetrofitBuilder retrofitBuilder) {
+        return new PollApi(retrofitBuilder);
     }
 }

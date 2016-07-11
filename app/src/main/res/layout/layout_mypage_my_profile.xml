@@ -139,14 +139,58 @@
                     android:textColor="@color/jandi_text_light"
                     android:textSize="14sp"/>
 
-                <View
-                    android:layout_width="6dp"
-                    android:layout_height="9dp"
-                    android:layout_marginLeft="6dp"
-                    android:background="@drawable/more_icon_arrow_right"/>
-
             </LinearLayout>
         </FrameLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="6dp"
+            android:layout_marginTop="6dp"
+            android:background="@color/jandi_starred_list_line"/>
+
+        <RelativeLayout
+            android:id="@+id/btn_my_profile_move_to_poll"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground">
+
+            <LinearLayout
+                android:id="@+id/v_tab_poll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center">
+
+                <View
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:background="@drawable/icon_tab_poll"/>
+
+                <TextView
+                    android:id="@+id/tv_tab_poll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="7dp"
+                    android:text="@string/jandi_poll"
+                    android:textColor="@color/jandi_text_light"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/tv_poll_badge"
+                style="@style/JandiMainTabBadge.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="4dp"
+                android:layout_toRightOf="@+id/v_tab_poll"
+                android:text="9"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
 
     </LinearLayout>
 

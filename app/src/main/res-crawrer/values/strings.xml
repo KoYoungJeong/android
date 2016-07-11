@@ -186,7 +186,8 @@
 	<string name="jandi_deleted_file">"Deleted File"</string>
 	<string name="jandi_deleted_message">"(Deleted Message)"</string>
 	<string name="jandi_deleted_team">"This team has been deleted from JANDI and no longer exists."</string>
-	<string name="jandi_department">"All Departments"</string>
+	<string name="jandi_department">"Departments"</string>
+	<string name="jandi_department_list">"All Departments"</string>
 	<string name="jandi_device_storage">"Device"</string>
 	<string name="jandi_disable_external_link">"Remove public link"</string>
 	<string name="jandi_disable_user_profile_explain">"This member has been temporarily disabled.\nPlease contact the team administrator for more information."</string>
@@ -273,8 +274,8 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_guide_to_assign_topic_owner">"Please designate another member to transfer the topic admin permission to before you remove this member from this topic."</string>
 	<string name="jandi_has_joined">"%s has joined"</string>
-	<string name="jandi_has_no_search_result">" '%s' has no matches."</string>
-	<string name="jandi_has_no_searched_member">"<![CDATA[<b><font color=#404040>%s</font></b>]]> has no matches."</string>
+	<string name="jandi_has_no_search_result">""</string>
+	<string name="jandi_has_no_searched_member">""</string>
 	<string name="jandi_have_an_account_already">"Already have an account?"</string>
 	<string name="jandi_help">"Help"</string>
 	<string name="jandi_hi_apk_store">"Hi Apk Store"</string>
@@ -288,6 +289,8 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_input_search_keyword">"Search by keyword(s)"</string>
 	<string name="jandi_input_topic_name">"Enter the topic name"</string>
 	<string name="jandi_input_user_name">"Enter your name"</string>
+	<string name="jandi_insert_new_department">"(New department)"</string>
+	<string name="jandi_insert_new_job_title">"(New job title)"</string>
 	<string name="jandi_insert_team_domain">"Choose the address you will use to sign in to JANDI."</string>
 	<string name="jandi_insert_team_name">"Name your team after the group that will be using JANDI together."</string>
 	<string name="jandi_invitation">"Invite"</string>
@@ -314,7 +317,8 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_is_newcomer">"New to JANDI?"</string>
 	<string name="jandi_is_topic_required">"Type*"</string>
 	<string name="jandi_it_has_no_topic_description">"(There is no topic description)"</string>
-	<string name="jandi_job_title">"All Job Titles"</string>
+	<string name="jandi_job_title">"Job Titles"</string>
+	<string name="jandi_job_title_list">"All Job Titles"</string>
 	<string name="jandi_join_topic">"Join"</string>
 	<string name="jandi_joined_team">"You have already joined %1$s. Please check your team list."</string>
 	<string name="jandi_kicked_message">"You have been removed from %s."</string>
@@ -408,8 +412,9 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_poll">"Poll"</string>
 	<string name="jandi_poll_add_item">"Add a Choice"</string>
 	<string name="jandi_poll_anonymous">"Anonymous"</string>
-	<string name="jandi_poll_create">"Create a New Poll"</string>
-	<string name="jandi_poll_empty">"There are no polls. \nYou can start a poll by tapping [+] button in a topic."</string>
+	<string name="jandi_poll_create">"Create"</string>
+	<string name="jandi_poll_empty_1">"There are no on-going polls."</string>
+	<string name="jandi_poll_empty_2">"You can start a poll by tapping [+] button in a topic."</string>
 	<string name="jandi_poll_finished_with_most">"The poll has just been ended. The most voted choice was \"%s\"."</string>
 	<string name="jandi_poll_finished_without_participants">"The poll has just been ended. There was no participant."</string>
 	<string name="jandi_poll_finishedat">"<![CDATA[End Date & Time]]>"</string>
@@ -617,7 +622,7 @@ We combined everything you love about messaging apps and cloud storage with powe
 	<string name="jandi_unpinned_message">"Unstarred"</string>
 	<string name="jandi_unread_messages_below">"Unread messages below"</string>
 	<string name="jandi_unshare_succeed">"%s has been unshared"</string>
-	<string name="jandi_unshared_file">"Unshared file"</string>
+	<string name="jandi_unshared_file">""</string>
 	<string name="jandi_unshared_file_in_dm">"This file has been unshared from this conversation."</string>
 	<string name="jandi_unshared_message">"You cannot access this item anymore."</string>
 	<string name="jandi_unstarred">"Unstar"</string>

@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="01/14/2016, 08:59 pm"
-            android:textColor="@color/jandi_file_detail_date"
+            android:textColor="@color/jand_detail_page_date"
             android:textSize="@dimen/jandi_file_detail_text_date" />
 
     </com.tosslab.jandi.app.views.FixedLinearLayout>

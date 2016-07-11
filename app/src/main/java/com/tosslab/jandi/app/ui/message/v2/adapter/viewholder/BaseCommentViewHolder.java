@@ -4,7 +4,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -16,8 +15,8 @@ import com.tosslab.jandi.app.network.models.ResMessages;
  */
 public abstract class BaseCommentViewHolder implements BodyViewHolder {
 
-    protected ViewStub stubFileInfo;
-    protected ViewGroup vgFileInfo;
+    protected ViewStub stubContentInfo;
+    protected ViewGroup vgContentInfo;
     protected View vCommentSemiDivider;
     protected View vCommentNormalDivider;
     protected View vMargin;
@@ -30,13 +29,13 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
     protected boolean hasSemiDivider = false;
     private boolean hasCommentBubbleTail = false;
     private boolean hasViewAllComment = false;
-    private boolean hasFileInfoView = false;
+    private boolean hasContentInfo = false;
     private TextView tvReadMore;
 
 
     @Override
     public void initView(View rootView) {
-        stubFileInfo = (ViewStub) rootView.findViewById(R.id.vg_file_item);
+        stubContentInfo = (ViewStub) rootView.findViewById(R.id.vg_content);
         stubReadMore = (ViewStub) rootView.findViewById(R.id.vg_read_more);
 
         vgMessageLastRead = (ViewGroup) rootView.findViewById(R.id.vg_message_last_read);
@@ -47,12 +46,11 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
         vCommentBubbleTail = rootView.findViewById(R.id.iv_comment_bubble_tail);
 
         initObjects();
-        setOptionView();
     }
 
-    private void setOptionView() {
-        if (hasFileInfoView && stubFileInfo != null) {
-            vgFileInfo = (ViewGroup) stubFileInfo.inflate();
+    protected void setOptionView() {
+        if (hasContentInfo && stubContentInfo != null) {
+            vgContentInfo = (ViewGroup) stubContentInfo.inflate();
         }
 
         if (hasViewAllComment) {
@@ -94,7 +92,8 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
     @Override
     public void bindData(ResMessages.Link link, long teamId, long roomId, long entityId) {
         if (hasViewAllComment) {
-            int count = link.feedback.commentCount;
+            int count = link.feedback instanceof ResMessages.Commentable
+                    ? ((ResMessages.Commentable) link.feedback).getCommentCount() : 0;
             String countString
                     = JandiApplication.getContext().getResources().getString(R.string.jandi_view_comment_read_more, count);
             tvReadMore.setText(countString);
@@ -144,11 +143,11 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
         this.hasViewAllComment = hasViewAllComment;
     }
 
-    protected void setHasFileInfoView(boolean hasFileInfoView) {
-        this.hasFileInfoView = hasFileInfoView;
+    protected void setHasContentInfo(boolean hasContentInfo) {
+        this.hasContentInfo = hasContentInfo;
     }
 
-    protected boolean hasFileInfoView() {
-        return hasFileInfoView;
+    protected boolean hasContentInfo() {
+        return hasContentInfo;
     }
 }

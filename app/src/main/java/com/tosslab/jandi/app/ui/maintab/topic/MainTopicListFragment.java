@@ -26,11 +26,11 @@ import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
+import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.libraries.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.folder.ExpandableTopicAdapter;
@@ -82,6 +82,7 @@ import java.util.concurrent.TimeUnit;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by tee on 15. 8. 26..
@@ -126,6 +127,7 @@ public class MainTopicListFragment extends Fragment
         // delay를 삽입함.
         Observable.just(1)
                 .delay(200, TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(Integer -> {
                     floatingActionMenu = mainTabActivity.getFloatingActionMenu();
@@ -554,7 +556,7 @@ public class MainTopicListFragment extends Fragment
         }
     }
 
-    public void onEvent(SocketRoomMarkerEvent event) {
+    public void onEvent(RoomMarkerEvent event) {
         if (!isResumed()) {
             return;
         }

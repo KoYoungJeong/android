@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.main.ConfigApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -39,12 +40,17 @@ public class IntroActivityModel {
     Lazy<AccountApi> accountApi;
     Lazy<StartApi> startApi;
     Lazy<ConfigApi> configApi;
+    Lazy<EventsApi> eventApi;
 
     @Inject
-    public IntroActivityModel(Lazy<AccountApi> accountApi, Lazy<StartApi> startApi, Lazy<ConfigApi> configApi) {
+    public IntroActivityModel(Lazy<AccountApi> accountApi,
+                              Lazy<StartApi> startApi,
+                              Lazy<ConfigApi> configApi,
+                              Lazy<EventsApi> eventApi) {
         this.accountApi = accountApi;
         this.startApi = startApi;
         this.configApi = configApi;
+        this.eventApi = eventApi;
     }
 
     public boolean isNetworkConnected() {
@@ -146,5 +152,16 @@ public class IntroActivityModel {
 
     public int clearLinkRepository() {
         return MessageRepository.getRepository().deleteAllLink();
+    }
+
+    public int getEventHistoryCount() {
+        long ts = JandiPreference.getSocketConnectedLastTime();
+        long myId = TeamInfoLoader.getInstance().getMyId();
+        try {
+            return eventApi.get().getEventHistory(ts, myId, 1).getTotal();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 }

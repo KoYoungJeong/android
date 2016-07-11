@@ -57,7 +57,6 @@ import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -69,6 +68,7 @@ import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPre
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.DateAnimator;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
+import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -378,25 +378,6 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
                 messageSearchListPresenter.onMessageItemClick(MessageSearchListFragment.this, messageAdapter.getItem(position), entityId);
             } catch (Exception e) {
             }
-
-//            int itemViewType = adapter.getItemViewType(position);
-//
-//            BodyViewHolder.Type type = BodyViewHolder.Type.values()[itemViewType];
-//            switch (type) {
-//                case FileWithoutDivider:
-//                case File:
-//                    AnalyticsUtil.sendEvent(getScreen(entityId), AnalyticsValue.Action.FileView_ByFile);
-//                    break;
-//                case FileComment:
-//                case FileStickerComment:
-//                    break;
-//                case CollapseStickerComment:
-//                case CollapseComment:
-//                case PureComment:
-//                case PureStickerComment:
-//                    AnalyticsUtil.sendEvent(getScreen(entityId), AnalyticsValue.Action.FileView_ByComment);
-//                    break;
-//            }
         });
 
         messageAdapter.setOnItemLongClickListener((adapter, position) -> {
@@ -656,15 +637,8 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         if (!isForeground) {
             return;
         }
-        justRefresh();
-    }
 
-    public void onEvent(SocketRoomMarkerEvent event) {
-        if (!isForeground) {
-            return;
-        }
-
-        if (event.getRoom().getId() == roomId) {
+        if (event.getRoomId() == roomId) {
             justRefresh();
         }
     }
@@ -797,6 +771,12 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     @Override
     public void dismissUserStatusLayout() {
         vDisabledUser.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void movePollDetailActivity(long pollId) {
+        PollDetailActivity.start(getActivity(), pollId);
+        getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
     @Override

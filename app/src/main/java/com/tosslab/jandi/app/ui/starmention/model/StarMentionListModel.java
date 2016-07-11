@@ -115,7 +115,7 @@ public class StarMentionListModel {
             starMentionVO.setWriterPictureUrl(entity.getPhotoUrl());
             starMentionVO.setTeamId(starMentionedMessageObject.getTeamId());
             starMentionVO.setMessageId(starMentionedMessageObject.getMessage().id);
-
+            starMentionVO.setPollId(starMentionedMessageObject.getMessage().pollId);
             setLastMessageId(categoryType, starMentionedMessageObject, messageId);
 
             if (type.equals("text")) {
@@ -141,6 +141,7 @@ public class StarMentionListModel {
                 starMentionVO.setMentions(starMentionedMessageObject.getMessage().mentions);
                 starMentionVO.setLinkId(starMentionedMessageObject.getLinkId());
             } else if (type.equals("comment")) {
+                starMentionVO.setFeedbackType(starMentionedMessageObject.getMessage().feedbackType);
                 starMentionVO.setContentType(StarMentionVO.Type.Comment.getValue());
                 starMentionVO.setFileName(starMentionedMessageObject.getMessage().feedbackTitle);
                 starMentionVO.setFileId(starMentionedMessageObject.getMessage().feedbackId);

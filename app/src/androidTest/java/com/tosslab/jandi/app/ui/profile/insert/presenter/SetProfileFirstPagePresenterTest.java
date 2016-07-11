@@ -1,9 +1,10 @@
 package com.tosslab.jandi.app.ui.profile.insert.presenter;
 
 import com.jayway.awaitility.Awaitility;
-import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -24,8 +25,10 @@ import static org.mockito.Mockito.verify;
  */
 public class SetProfileFirstPagePresenterTest {
 
-    private SetProfileFirstPagePresenter presenter;
-    private SetProfileFirstPagePresenter.View mockView;
+    private InsertProfileFirstPagePresenterImpl presenter;
+    private InsertProfileFirstPagePresenterImpl.View mockView;
+    private ModifyProfileModel mockModel;
+    private FileUploadController fileUploadController;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -39,9 +42,11 @@ public class SetProfileFirstPagePresenterTest {
 
     @Before
     public void setUp() throws Exception {
-        presenter = SetProfileFirstPagePresenter_.getInstance_(JandiApplication.getContext());
-        mockView = mock(SetProfileFirstPagePresenter.View.class);
-        presenter.setView(mockView);
+        mockView = mock(InsertProfileFirstPagePresenterImpl.View.class);
+        mockModel = mock(ModifyProfileModel.class);
+        fileUploadController = mock(FileUploadController.class);
+        presenter = new InsertProfileFirstPagePresenterImpl(
+                mockView, mockModel, fileUploadController);
     }
 
     @Test

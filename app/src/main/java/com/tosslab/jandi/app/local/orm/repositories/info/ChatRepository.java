@@ -58,28 +58,29 @@ public class ChatRepository extends LockExecutorTemplate {
         });
     }
 
-    public boolean updateLastMessage(long roomId, long linkId, String text, String status) {
+    public boolean updateLastMessage(long roomId, long lastMessageId, String text, String status) {
         return execute(() -> {
 
             try {
                 Dao<Chat, Long> dao = getDao(Chat.class);
                 Dao<Chat.LastMessage, Object> lastMessageDao = getDao(Chat.LastMessage.class);
                 Chat.LastMessage lastMessage = new Chat.LastMessage();
-                lastMessage.setId(linkId);
+                lastMessage.setId(lastMessageId);
                 lastMessage.setText(text);
                 lastMessage.setStatus(status);
 
-                UpdateBuilder<Chat, Long> chatUpdateBuilder = dao.updateBuilder();
-                chatUpdateBuilder.updateColumnValue("lastMessage_id", linkId)
-                        .where()
-                        .eq("id", roomId);
-                chatUpdateBuilder.update();
-
-                if (lastMessageDao.queryForId(linkId) != null) {
-                    return lastMessageDao.update(lastMessage) > 0;
+                if (lastMessageId <= 0) {
+                    UpdateBuilder<Chat, Long> chatUpdateBuilder = dao.updateBuilder();
+                    chatUpdateBuilder.updateColumnValue("lastMessage_id", lastMessageId)
+                            .where()
+                            .eq("id", roomId);
+                    chatUpdateBuilder.update();
+                    lastMessageDao.create(lastMessage);
                 } else {
-                    return lastMessageDao.create(lastMessage) > 0;
+                    lastMessageDao.update(lastMessage);
                 }
+
+                return true;
 
             } catch (SQLException e) {
                 e.printStackTrace();

@@ -28,6 +28,11 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageUnstarredEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketPollCommentCreatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketPollCreatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketPollDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketPollFinishedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketPollVotedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDomainUpdatedEvent;
@@ -49,7 +54,6 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.UnknownEventHistoryInfo;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -58,8 +62,6 @@ import java.util.Map;
 import rx.Observable;
 
 public class SocketHistoryDeserializer extends JsonDeserializer<EventHistoryInfo> {
-
-    private static final String TAG = "SocketHistoryDeserializer";
 
     @Override
     public EventHistoryInfo deserialize(JsonParser jp, DeserializationContext ctxt)
@@ -90,7 +92,6 @@ public class SocketHistoryDeserializer extends JsonDeserializer<EventHistoryInfo
     }
 
     public EventType getEventType(String eventTypeValue) {
-        LogUtil.d(TAG, eventTypeValue);
         if (TextUtils.isEmpty(eventTypeValue)) {
             return EventType.Unknown;
         }
@@ -149,6 +150,10 @@ public class SocketHistoryDeserializer extends JsonDeserializer<EventHistoryInfo
         FolderDeleted("folder_deleted", SocketTopicFolderDeletedEvent.class),
         FolderItemCreated("folder_item_created", SocketTopicFolderItemCreatedEvent.class),
         FolderItemDeleted("folder_item_deleted", SocketTopicFolderItemDeletedEvent.class),
+        PollCreated("poll_created", SocketPollCreatedEvent.class),
+        PollFinished("poll_finished", SocketPollFinishedEvent.class),
+        PollDeleted("poll_deleted", SocketPollDeletedEvent.class),
+        PollVoted("poll_voted", SocketPollVotedEvent.class),
         Unknown("", UnknownEventHistoryInfo.class);
 
         private final String rawType;

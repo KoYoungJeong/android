@@ -5,16 +5,16 @@
     android:orientation="vertical">
 
     <ViewStub
-        android:id="@+id/vg_file_item"
+        android:id="@+id/vg_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inflatedId="@+id/vg_file_item"
+        android:inflatedId="@+id/vg_content"
         android:layout="@layout/layout_comment_file_info"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/vg_file_item"
+        android:layout_below="@+id/vg_content"
         android:layout_marginLeft="46dp"
         android:layout_marginRight="59dp"
         android:orientation="vertical">

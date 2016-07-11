@@ -45,12 +45,12 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
+import com.tosslab.jandi.app.events.poll.RequestCreatePollEvent;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
-import com.tosslab.jandi.app.events.entities.MessageCreatedEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RefreshConnectBotEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
@@ -70,7 +70,7 @@ import com.tosslab.jandi.app.events.messages.DummyRetryEvent;
 import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
-import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
+import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
@@ -96,8 +96,8 @@ import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketServiceStopEvent;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -130,6 +130,8 @@ import com.tosslab.jandi.app.ui.message.v2.viewmodel.DateAnimator;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.MessageRecyclerViewManager;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
+import com.tosslab.jandi.app.ui.poll.create.PollCreateActivity;
+import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -336,6 +338,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         super.onResume();
 
         isForeground = true;
+        messageListPresenter.onResumeOfView();
 
         PushMonitor.getInstance().register(roomId);
 
@@ -441,6 +444,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             mentionControlViewModel.removeClipboardListener();
         }
 
+        messageListPresenter.onPauseOfView();
+
         super.onPause();
     }
 
@@ -464,7 +469,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @AfterInject
     void initObjects() {
-        room = Room.create(entityId, roomId, isFromPush);
+        room = Room.create(entityId, isFromPush);
         messagePointer = MessagePointer.create(lastReadLinkId);
     }
 
@@ -495,6 +500,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
         initAnnouncement();
 
+        initUploadMenuViewModel();
+
         initSoftInputAreaController();
 
         initActionListeners();
@@ -510,6 +517,11 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 vgSoftInputDetector, vgSoftInputArea, btnAction1, btnAction2,
                 etMessage);
         softInputAreaController.init();
+    }
+
+    private void initUploadMenuViewModel() {
+        uploadMenuViewModel.setRoomType(isInDirectMessage()
+                ? UploadMenuViewModel.RoomType.DM : UploadMenuViewModel.RoomType.TOPIC);
     }
 
     private void initEmptyLayout() {
@@ -1009,35 +1021,44 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             return;
         }
 
-        FileDetailActivity_.IntentBuilder_ intentBuilder = FileDetailActivity_.intent(this);
-        intentBuilder.roomId(room.getRoomId());
-        intentBuilder.selectMessageId(link.messageId);
+        if (link.message instanceof ResMessages.CommentMessage
+                || link.message instanceof ResMessages.CommentStickerMessage) {
 
-        AnalyticsValue.Action action = null;
+            if (ResMessages.FeedbackType.POLL.value().equals(link.feedbackType)) {
 
-        if (link.message instanceof ResMessages.FileMessage) {
-            intentBuilder.fileId(link.messageId);
-            ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
-            action = fileMessage.content.type.startsWith("image")
-                    ? AnalyticsValue.Action.FileView_ByPhoto
-                    : AnalyticsValue.Action.FileView_ByFile;
-        } else if (link.message instanceof ResMessages.CommentMessage) {
-            intentBuilder.fileId(link.message.feedbackId);
-            action = AnalyticsValue.Action.FileView_ByComment;
-        } else if (link.message instanceof ResMessages.CommentStickerMessage) {
-            intentBuilder.fileId(link.message.feedbackId);
-            action = AnalyticsValue.Action.FileView_ByComment;
+                PollDetailActivity.start(getActivity(), link.poll.getId());
+                getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+
+            } else {
+                sendAnalyticsEvent(AnalyticsValue.Action.FileView_ByComment);
+
+                FileDetailActivity_.intent(this)
+                        .roomId(room.getRoomId())
+                        .selectMessageId(link.messageId)
+                        .fileId(link.message.feedbackId)
+                        .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+                getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+            }
         } else {
-            intentBuilder = null;
-        }
+            if (link.message instanceof ResMessages.PollMessage) {
 
-        if (action != null) {
-            sendAnalyticsEvent(action);
-        }
+                PollDetailActivity.start(getActivity(), link.pollId);
+                getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
 
-        if (intentBuilder != null) {
-            intentBuilder.startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
-            getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+            } else if (link.message instanceof ResMessages.FileMessage) {
+                ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
+                sendAnalyticsEvent(fileMessage.content.type.startsWith("image")
+                        ? AnalyticsValue.Action.FileView_ByPhoto
+                        : AnalyticsValue.Action.FileView_ByFile);
+
+                FileDetailActivity_.intent(this)
+                        .roomId(room.getRoomId())
+                        .selectMessageId(link.messageId)
+                        .fileId(link.messageId)
+                        .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+                getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+
+            }
         }
     }
 
@@ -1322,8 +1343,10 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         oldProgressBar.startAnimation(outAnim);
     }
 
-    public void onEvent(MessageCreatedEvent event) {
-        if (event.getRoomId() != room.getRoomId()) {
+    public void onEvent(SocketMessageCreatedEvent event) {
+        if (event.getData() != null
+                && event.getData().getLinkMessage() != null
+                && event.getData().getLinkMessage().roomId != room.getRoomId()) {
             return;
         }
 
@@ -1341,16 +1364,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     public void onEvent(SocketMessageDeletedEvent event) {
 
         messageListPresenter.removeOfMessageId(event.getData().getMessageId());
-    }
-
-    public void onEvent(RefreshNewMessageEvent event) {
-        if (!isForeground) {
-            return;
-        }
-
-        if (room.getRoomId() > 0) {
-//            messageListPresenter.addNewMessageQueue(true);
-        }
     }
 
     public void onEvent(RefreshOldMessageEvent event) {
@@ -1382,6 +1395,19 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 ? View.VISIBLE : View.GONE);
     }
 
+    public void onEvent(SocketPollEvent event) {
+        if (room == null || messageListPresenter == null) {
+            return;
+        }
+
+        if (event.getPoll() != null
+                && event.getPoll().getTeamId() == room.getTeamId()
+                && event.getPoll().getTopicId() == room.getRoomId()) {
+
+            messageListPresenter.changePollData(event.getPoll());
+        }
+    }
+
     public void onEvent(LinkPreviewUpdateEvent event) {
         long messageId = event.getMessageId();
 
@@ -1398,18 +1424,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
 
 
-        refreshMessages();
-    }
-
-    public void onEvent(SocketRoomMarkerEvent event) {
-        if (!isForeground) {
-            return;
-        }
-
-        if (event.getRoom().getId() == room.getRoomId()) {
-            SocketRoomMarkerEvent.Marker marker = event.getMarker();
-            messageListPresenter.onRoomMarkerChange(
-                    room.getTeamId(), room.getRoomId(), marker.getMemberId(), marker.getLastLinkId());
+        if (event.getRoomId() == room.getRoomId()) {
+            refreshMessages();
         }
     }
 
@@ -1719,12 +1735,18 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         requestFileUploadEventType = -1;
     }
 
+    public void onEvent(RequestCreatePollEvent event) {
+        sendAnalyticsEvent(AnalyticsValue.Action.Upload_Poll);
+        PollCreateActivity.start(getActivity(), room.getRoomId());
+    }
+
     public void onEvent(NetworkConnectEvent event) {
         if (event.isConnected()) {
             messageListPresenter.onNetworkConnect();
 
             dismissOfflineLayer();
         } else {
+
             showOfflineLayer();
 
             if (isForeground) {
@@ -1817,22 +1839,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @Override
     public void modifyTitle(String name) {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(name);
-    }
-
-    @Override
-    public void showDuplicatedTopicName() {
-        String message = JandiApplication.getContext()
-                .getResources()
-                .getString(R.string.err_entity_duplicated_name);
-        showToast(message, true /* isError */);
-    }
-
-    @Override
-    public void showModifyEntityError() {
-        String message = JandiApplication.getContext()
-                .getResources()
-                .getString(R.string.err_entity_modify);
-        showToast(message, true /* isError */);
     }
 
     @Override

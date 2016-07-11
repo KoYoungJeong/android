@@ -57,6 +57,7 @@ public class MemberViewHolder extends BaseViewHolder<User> {
         if (user.isBot()) {
             ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(54f);
             ivProfile.setLayoutParams(ivProfileLayoutParams);
+            ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             ImageLoader.loadFromResources(ivProfile, R.drawable.bot_43x54);
         } else {
             ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(43f);
@@ -65,6 +66,7 @@ public class MemberViewHolder extends BaseViewHolder<User> {
                 ImageUtil.loadProfileImage(
                         ivProfile, user.getPhotoUrl(), R.drawable.profile_img);
             } else {
+                ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_43);
             }
         }

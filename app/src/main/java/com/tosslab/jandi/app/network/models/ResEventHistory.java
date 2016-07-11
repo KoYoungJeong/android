@@ -9,6 +9,7 @@ import java.util.List;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResEventHistory {
 
+    private int total;
     private int size;
     private boolean hasMore;
     private long lastTs;
@@ -44,5 +45,13 @@ public class ResEventHistory {
 
     public void setRecords(List<EventHistoryInfo> records) {
         this.records = records;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
     }
 }

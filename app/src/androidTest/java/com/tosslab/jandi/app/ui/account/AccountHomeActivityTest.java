@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
-import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
+import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 
 import org.junit.AfterClass;
@@ -104,7 +104,7 @@ public class AccountHomeActivityTest {
     public void testLoadTeamCreateActivity() throws Throwable {
         rule.runOnUiThread(() -> activity.loadTeamCreateActivity());
 
-        Intents.intending(IntentMatchers.hasComponent(TeamDomainInfoActivity_.class.getName()));
+        Intents.intending(IntentMatchers.hasComponent(CreateTeamActivity.class.getName()));
 
     }
 

@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.ui.entities.chats.domain.DisableDummyItem;
 import com.tosslab.jandi.app.ui.entities.chats.domain.EmptyChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
+import com.tosslab.jandi.app.ui.team.create.teaminfo.model.InsertTeamInfoModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,21 +24,20 @@ import rx.subjects.PublishSubject;
 
 public class ChatChoosePresenterImpl implements ChatChoosePresenter {
     ChatChooseModel chatChooseModel;
-    TeamDomainInfoModel teamDomainInfoModel;
+    InsertTeamInfoModel insertTeamInfoModel;
     InvitationDialogExecutor invitationDialogExecutor;
     View view;
     private ChatChooseAdapterDataModel chatChooseAdapterDataModel;
+    private PublishSubject<String> publishSubject;
 
-    public ChatChoosePresenterImpl(ChatChooseModel chatChooseModel, TeamDomainInfoModel teamDomainInfoModel, InvitationDialogExecutor invitationDialogExecutor, View view, ChatChooseAdapterDataModel chatChooseAdapterDataModel) {
+    public ChatChoosePresenterImpl(ChatChooseModel chatChooseModel, InsertTeamInfoModel teamDomainInfoModel, InvitationDialogExecutor invitationDialogExecutor, View view, ChatChooseAdapterDataModel chatChooseAdapterDataModel) {
         this.chatChooseModel = chatChooseModel;
-        this.teamDomainInfoModel = teamDomainInfoModel;
+        this.insertTeamInfoModel = teamDomainInfoModel;
         this.invitationDialogExecutor = invitationDialogExecutor;
         this.view = view;
         this.chatChooseAdapterDataModel = chatChooseAdapterDataModel;
         initObject();
     }
-
-    private PublishSubject<String> publishSubject;
 
     void initObject() {
         publishSubject = PublishSubject.create();
@@ -98,7 +97,8 @@ public class ChatChoosePresenterImpl implements ChatChoosePresenter {
     public void onMoveChatMessage(long entityId) {
         Observable.empty()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(o -> {}, Throwable::printStackTrace, () -> {
+                .subscribe(o -> {
+                }, Throwable::printStackTrace, () -> {
                     long teamId = TeamInfoLoader.getInstance().getTeamId();
                     view.moveChatMessage(teamId, entityId);
                 });

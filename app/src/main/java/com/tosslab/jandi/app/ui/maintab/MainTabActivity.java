@@ -29,6 +29,7 @@ import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
+import com.tosslab.jandi.app.events.poll.RefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
@@ -49,6 +50,7 @@ import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -58,9 +60,8 @@ import com.tosslab.jandi.app.ui.maintab.teams.module.TeamsModule;
 import com.tosslab.jandi.app.ui.maintab.teams.presenter.TeamsPresenter;
 import com.tosslab.jandi.app.ui.maintab.teams.view.TeamsView;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
-import com.tosslab.jandi.app.ui.profile.insert.SetProfileActivity_;
-import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
-import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
+import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
+import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
@@ -100,6 +101,8 @@ import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by justinygchoi on 2014. 8. 11..
@@ -118,8 +121,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     FloatingActionMenu floatingActionMenu;
     @Bean
     EntityClientManager entityClientManager;
-    @Bean
-    TeamDomainInfoModel teamDomainInfoModel;
     @SystemService
     ClipboardManager clipboardManager;
     @Bean
@@ -282,26 +283,31 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
     private void updateChatBadge() {
 
-        final int[] total = {0};
         Observable.from(TeamInfoLoader.getInstance().getDirectMessageRooms())
-                .subscribe(formattedEntity -> {
-                    total[0] += formattedEntity.getUnreadCount();
+                .map(DirectMessageRoom::getUnreadCount)
+                .scan((lhs, rhs) -> lhs + rhs)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(count -> {
+                    mainTabPagerAdapter.updateChatBadge(count);
                 });
-        mainTabPagerAdapter.updateChatBadge(total[0]);
 
     }
 
     private void updateTopicBadge() {
-        long teamId = AccountRepository.getRepository().getSelectedTeamId();
-        List<Topic> topics = TopicRepository.getInstance().getTopics(teamId);
 
-        int count = Observable.from(topics)
+        Observable.defer(() -> {
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
+            return Observable.from(TopicRepository.getInstance().getTopics(teamId));
+        })
+                .filter(Topic::isJoined)
                 .map(Topic::getUnreadCount)
                 .scan((count1, count2) -> count1 + count2)
-                .toBlocking()
-                .firstOrDefault(0);
-
-        mainTabPagerAdapter.updateTopicBadge(count);
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(count -> {
+                    mainTabPagerAdapter.updateTopicBadge(count);
+                });
 
     }
 
@@ -380,11 +386,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         recyclerView.setLayoutManager(layoutManager);
         teamsAdapter = new TeamsAdapter();
         teamsAdapter.setOnRequestTeamCreateListener(() -> {
-            TeamDomainInfoActivity_.intent(MainTabActivity.this)
-                    .startForResult(REQUEST_TEAM_CREATE);
-
+            Intent intent = new Intent(this, CreateTeamActivity.class);
+            startActivityForResult(intent, REQUEST_TEAM_CREATE);
             teamsPopupWindow.dismiss();
-
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.CreateNewTeam);
         });
         teamsAdapter.setOnTeamClickListener(team -> {
@@ -493,22 +497,20 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void moveSetProfileActivity() {
-        SetProfileActivity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .start();
+        Intent intent = new Intent(this, InsertProfileActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
     }
 
     public void onEvent(TeamInviteIgnoreEvent event) {
         teamsPopupWindow.dismiss();
         teamsPresenter.onTeamInviteIgnoreAction(event.getTeam());
-
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.AcceptTeamInvitation);
     }
 
     public void onEvent(TeamInviteAcceptEvent event) {
         teamsPopupWindow.dismiss();
         teamsPresenter.onTeamInviteAcceptAction(event.getTeam());
-
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.IgnoreTeamInvitation);
     }
 
@@ -597,7 +599,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @OnActivityResult(REQUEST_TEAM_CREATE)
     void onTeamCreateResult(int resultCode) {
         if (resultCode == RESULT_OK) {
-            teamsPresenter.onTeamCreated(true);
+            teamsPresenter.onTeamCreated();
         }
     }
 
@@ -636,23 +638,31 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         teamsPresenter.reInitializeTeams();
     }
 
-    public void updateMoreBadge() {
-        int messageCount = getOtherTeamMessageCount();
-        if (messageCount > 0) {
-            mainTabPagerAdapter.showMoreNewBadge();
-        } else {
-            mainTabPagerAdapter.hideMoreNewBadge();
-        }
+    public void onEvent(RefreshPollBadgeCountEvent event) {
+        mainTabPagerAdapter.updateMyPageBadge(event.getBadgeCount());
     }
 
-    private int getOtherTeamMessageCount() {
-        final int[] messageCount = {0};
+    public void updateMoreBadge() {
+        getOtherTeamMessageCount()
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(messageCount -> {
+                    if (messageCount > 0) {
+                        mainTabPagerAdapter.showMoreNewBadge();
+                    } else {
+                        mainTabPagerAdapter.hideMoreNewBadge();
+                    }
+                });
+    }
+
+    private Observable<Integer> getOtherTeamMessageCount() {
         long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-        Observable.from(AccountRepository.getRepository().getAccountTeams())
+        return Observable.defer(() -> {
+            return Observable.from(AccountRepository.getRepository().getAccountTeams());
+        })
                 .filter(userTeam -> userTeam.getTeamId() != selectedTeamId)
                 .map(ResAccountInfo.UserTeam::getUnread)
-                .subscribe(integer -> messageCount[0] += integer);
-        return messageCount[0];
+                .scan((integer1, integer2) -> integer1 + integer2);
     }
 
     public void onEventMainThread(TeamInfoChangeEvent event) {
@@ -661,7 +671,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
             setupActionBar(selectedTeamInfo.getName());
         }
         teamsPresenter.reInitializeTeams();
-
     }
 
     private void trackScreenView(int position) {
@@ -682,11 +691,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                 screen = AnalyticsValue.Screen.FilesTab;
                 break;
             case 3:
-//                screenView = ScreenViewProperty.SETTING_PANEL;
                 screen = AnalyticsValue.Screen.TeamTab;
                 break;
             case 4:
-//                screenView = ScreenViewProperty.SETTING_PANEL;
                 screen = AnalyticsValue.Screen.MypageTab;
                 break;
         }

@@ -44,6 +44,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
         this.teamId = teamId;
 
         teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
+        shareModel.refreshPollList(teamId);
 
         String teamName = teamInfoLoader.getTeamName();
         this.roomId = teamInfoLoader.getDefaultTopicId();

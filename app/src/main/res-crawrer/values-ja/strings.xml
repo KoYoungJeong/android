@@ -186,7 +186,8 @@
 	<string name="jandi_deleted_file">"削除されたファイル"</string>
 	<string name="jandi_deleted_message">"(削除されたメッセージ)"</string>
 	<string name="jandi_deleted_team">"このチームはJANDIで削除され、もう存在しません"</string>
-	<string name="jandi_department">"部署一覧"</string>
+	<string name="jandi_department">"部署"</string>
+	<string name="jandi_department_list">"部署一覧"</string>
 	<string name="jandi_device_storage">"デバイス"</string>
 	<string name="jandi_disable_external_link">"共有用リンクを削除する"</string>
 	<string name="jandi_disable_user_profile_explain">"このメンバーは現在無効化されています。\n詳細はチーム管理者にお問い合わせ下さい"</string>
@@ -288,6 +289,8 @@
 	<string name="jandi_input_search_keyword">"キーワードで検索"</string>
 	<string name="jandi_input_topic_name">"トピック名を入力してください"</string>
 	<string name="jandi_input_user_name">"検索するメンバーの名前を入力"</string>
+	<string name="jandi_insert_new_department">"NEW KEY"</string>
+	<string name="jandi_insert_new_job_title">"NEW KEY"</string>
 	<string name="jandi_insert_team_domain">"チームドメインを入力してください。"</string>
 	<string name="jandi_insert_team_name">"チーム名を入力してください。"</string>
 	<string name="jandi_invitation">"招待"</string>
@@ -315,7 +318,8 @@
 	<string name="jandi_is_newcomer">"初めてJANDIを使いますか？"</string>
 	<string name="jandi_is_topic_required">"公開/非公開"</string>
 	<string name="jandi_it_has_no_topic_description">"（トピック説明なし）"</string>
-	<string name="jandi_job_title">"役職一覧"</string>
+	<string name="jandi_job_title">"役職"</string>
+	<string name="jandi_job_title_list">"役職一覧"</string>
 	<string name="jandi_join_topic">"参加"</string>
 	<string name="jandi_joined_team">"すでに%1$sのメンバーです。チームリストを確認してください"</string>
 	<string name="jandi_kicked_message">"%sの管理者によってトピックから退出させられました。"</string>
@@ -409,8 +413,9 @@
 	<string name="jandi_poll">"投票"</string>
 	<string name="jandi_poll_add_item">"回答を追加する"</string>
 	<string name="jandi_poll_anonymous">"匿名投票"</string>
-	<string name="jandi_poll_create">"新しい投票を作成する"</string>
-	<string name="jandi_poll_empty">"投票がありません。\nトピックで「＋」を押し、投票を作成してください。"</string>
+	<string name="jandi_poll_create">"作成"</string>
+	<string name="jandi_poll_empty_1">"実施中の投票がありません。"</string>
+	<string name="jandi_poll_empty_2">"\nトピックで「＋」を押し、投票を作成してください。"</string>
 	<string name="jandi_poll_finished_with_most">"投票が終了しました。最多得票の項目は、「%s」です。"</string>
 	<string name="jandi_poll_finished_without_participants">"投票が終了しました。参加者がいません。"</string>
 	<string name="jandi_poll_finishedat">"NEW KEY"</string>

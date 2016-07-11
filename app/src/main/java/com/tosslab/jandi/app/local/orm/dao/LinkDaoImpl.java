@@ -10,6 +10,7 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.poll.Poll;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
 /**
  * Created by Steve SeongUg Jung on 15. 7. 21..
  */
-public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
+public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Long> {
 
     public LinkDaoImpl(ConnectionSource connectionSource) throws SQLException {
         super(connectionSource, ResMessages.Link.class);
@@ -32,6 +33,7 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
             upsertEventInfo(data.info, getConnectionSource());
         } else {
             upsertMessage(data, getConnectionSource());
+            upsertPollIfExists(data);
         }
         return super.create(data);
     }
@@ -45,6 +47,7 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
             upsertEventInfo(data.info, getConnectionSource());
         } else {
             upsertMessage(data, getConnectionSource());
+            upsertPollIfExists(data);
         }
 
         return super.update(data);
@@ -64,6 +67,23 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
         }
 
         return links;
+    }
+
+    @Override
+    public ResMessages.Link queryForId(Long aLong) throws SQLException {
+        ResMessages.Link link = super.queryForId(aLong);
+        if (link == null) {
+            return null;
+        }
+
+        if (TextUtils.equals(link.status, "event")) {
+            link.info = getEventInfo(link.info, link.eventType);
+            queryIfCreateEvent(link.info);
+        } else {
+            queryMessage(link);
+        }
+
+        return link;
     }
 
     @Override
@@ -203,8 +223,6 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
             DaoManager.createDao(connectionSource, ResMessages.CommentStickerMessage.class)
                     .createOrUpdate(stickerMessage);
 
-            DaoManager.createDao(connectionSource, ResMessages.FileMessage.class)
-                    .createOrUpdate(message.feedback);
         } else if (contentMessage instanceof ResMessages.CommentMessage) {
             message.messageType = ResMessages.MessageType.COMMENT.name();
 
@@ -241,8 +259,34 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
             DaoManager.createDao(connectionSource, ResMessages.CommentMessage.class)
                     .createOrUpdate(commentMessage);
 
+        } else if (contentMessage instanceof ResMessages.PollMessage) {
+            message.messageType = ResMessages.MessageType.POLL.name();
+
+            ResMessages.PollMessage pollMessage = (ResMessages.PollMessage) contentMessage;
+
+            DaoManager.createDao(connectionSource, ResMessages.PollMessage.class)
+                    .createOrUpdate(pollMessage);
+        }
+
+        upsertFeedbackIfExists(message.feedback, connectionSource);
+
+    }
+
+    private void upsertFeedbackIfExists(ResMessages.OriginalMessage feedback,
+                                        ConnectionSource connectionSource) throws SQLException {
+        if (feedback == null || feedback.id <= 0) {
+            return;
+        }
+
+        if (feedback instanceof ResMessages.FileMessage) {
+
             DaoManager.createDao(connectionSource, ResMessages.FileMessage.class)
-                    .createOrUpdate(message.feedback);
+                    .createOrUpdate(((ResMessages.FileMessage) feedback));
+
+        } else if (feedback instanceof ResMessages.PollMessage) {
+
+            DaoManager.createDao(connectionSource, ResMessages.PollMessage.class)
+                    .createOrUpdate(((ResMessages.PollMessage) feedback));
 
         }
     }
@@ -287,12 +331,20 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
                         .eq("id", link.messageId)
                         .queryForFirst();
 
-                link.feedback = DaoManager.createDao(getConnectionSource(), ResMessages
-                        .FileMessage.class)
-                        .queryBuilder()
-                        .where()
-                        .eq("id", link.feedbackId)
-                        .queryForFirst();
+                if (ResMessages.FeedbackType.POLL.value().equals(link.feedbackType)) {
+                    link.feedback = DaoManager.createDao(getConnectionSource(), ResMessages.PollMessage.class)
+                            .queryBuilder()
+                            .where()
+                            .eq("id", link.feedbackId)
+                            .queryForFirst();
+                } else {
+                    link.feedback = DaoManager.createDao(getConnectionSource(), ResMessages.FileMessage.class)
+                            .queryBuilder()
+                            .where()
+                            .eq("id", link.feedbackId)
+                            .queryForFirst();
+                }
+
                 break;
             }
             case COMMENT_STICKER: {
@@ -302,16 +354,56 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
                         .eq("id", link.messageId)
                         .queryForFirst();
 
-                link.feedback = DaoManager.createDao(getConnectionSource(), ResMessages.FileMessage.class)
+                if (ResMessages.FeedbackType.POLL.value().equals(link.feedbackType)) {
+                    link.feedback = DaoManager.createDao(getConnectionSource(), ResMessages.PollMessage.class)
+                            .queryBuilder()
+                            .where()
+                            .eq("id", link.feedbackId)
+                            .queryForFirst();
+                } else {
+                    link.feedback = DaoManager.createDao(getConnectionSource(), ResMessages.FileMessage.class)
+                            .queryBuilder()
+                            .where()
+                            .eq("id", link.feedbackId)
+                            .queryForFirst();
+                }
+                break;
+            }
+            case POLL: {
+                link.message = DaoManager.createDao(getConnectionSource(), ResMessages.PollMessage.class)
                         .queryBuilder()
                         .where()
-                        .eq("id", link.feedbackId)
+                        .eq("id", link.messageId)
                         .queryForFirst();
-                break;
             }
             case NONE:
                 break;
         }
+
+        queryPoll(link);
+
+    }
+
+    private void queryPoll(ResMessages.Link link) throws SQLException {
+        long pollId = -1;
+
+        if (link.pollId > 0) {
+            pollId = link.pollId;
+        } else {
+            if (link.feedback instanceof ResMessages.PollMessage) {
+                pollId = ((ResMessages.PollMessage) link.feedback).pollId;
+            }
+        }
+
+        if (pollId <= 0) {
+            return;
+        }
+
+        link.poll = DaoManager.createDao(getConnectionSource(), Poll.class)
+                .queryBuilder()
+                .where()
+                .eq("id", pollId)
+                .queryForFirst();
     }
 
     private void queryIfCreateEvent(ResMessages.EventInfo info) throws SQLException {
@@ -393,4 +485,14 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
         }
 
     }
+
+    private void upsertPollIfExists(ResMessages.Link data) throws SQLException {
+        if (data.pollId <= 0 || data.poll == null || data.poll.getId() <= 0) {
+            return;
+        }
+
+        Dao<Poll, ?> dao = DaoManager.createDao(getConnectionSource(), Poll.class);
+        dao.createOrUpdate(data.poll);
+    }
+
 }

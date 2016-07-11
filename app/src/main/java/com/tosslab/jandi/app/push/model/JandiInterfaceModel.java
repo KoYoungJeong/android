@@ -1,17 +1,23 @@
 package com.tosslab.jandi.app.push.model;
 
-import android.support.v4.util.Pair;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
+import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResConfig;
+import com.tosslab.jandi.app.network.models.ResPollList;
+import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -19,6 +25,7 @@ import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -29,14 +36,19 @@ import rx.Observable;
 
 public class JandiInterfaceModel {
 
-    Lazy<AccountApi> accountApi;
-    Lazy<StartApi> startApi;
+    private Lazy<AccountApi> accountApi;
+    private Lazy<StartApi> startApi;
+    private Lazy<EventsApi> eventApi;
+    private Lazy<PollApi> pollApi;
 
     @Inject
     public JandiInterfaceModel(Lazy<AccountApi> accountApi,
-                               Lazy<StartApi> startApi) {
+                               Lazy<StartApi> startApi, Lazy<EventsApi> eventApi,
+                               Lazy<PollApi> pollApi) {
         this.accountApi = accountApi;
         this.startApi = startApi;
+        this.eventApi = eventApi;
+        this.pollApi = pollApi;
     }
 
     public void refreshAccountInfo() throws RetrofitException {
@@ -87,9 +99,11 @@ public class JandiInterfaceModel {
 
     public boolean getEntityInfo() {
         try {
-            InitialInfo initializeInfo = startApi.get().getInitializeInfo(AccountRepository.getRepository().getSelectedTeamId());
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            InitialInfo initializeInfo = startApi.get().getInitializeInfo(selectedTeamId);
             InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
             TeamInfoLoader.getInstance().refresh();
+            refreshPollList(selectedTeamId);
             JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
             return true;
         } catch (RetrofitException e) {
@@ -106,14 +120,13 @@ public class JandiInterfaceModel {
      *
      * @return (갱신 여부, 요청한 entityId)
      */
-    public Pair<Boolean, Long> getEntityInfo(long roomId, String roomType) {
+    public long getEntityInfo(long roomId, String roomType) {
 
-        boolean entityRefreshed = false;
         long entityId = -1L;
 
 
         if (!isKnowRoomType(roomType)) {
-            entityRefreshed = getEntityInfo();
+            getEntityInfo();
 
             if (hasEntity(roomId)) {
                 if (!TeamInfoLoader.getInstance().isUser(roomId)) {
@@ -132,7 +145,7 @@ public class JandiInterfaceModel {
             if (hasEntity(roomId)) {
                 entityId = roomId;
             } else {
-                entityRefreshed = getEntityInfo();
+                getEntityInfo();
                 if (hasEntity(roomId)) {
                     entityId = roomId;
                 } else {
@@ -143,12 +156,12 @@ public class JandiInterfaceModel {
             long chatMemberId = getChatMemberId(roomId);
 
             if (!hasEntity(chatMemberId)) {
-                entityRefreshed = getEntityInfo();
+                getEntityInfo();
             }
             entityId = chatMemberId;
         }
 
-        return new Pair<>(entityRefreshed, entityId);
+        return entityId;
     }
 
     private boolean isKnowRoomType(String roomTypeRaw) {
@@ -187,4 +200,36 @@ public class JandiInterfaceModel {
         return pushTokenList.isEmpty();
     }
 
+    public int getEventHistoryCount() {
+        long ts = JandiPreference.getSocketConnectedLastTime();
+        long myId = TeamInfoLoader.getInstance().getMyId();
+        try {
+            return eventApi.get().getEventHistory(ts, myId, 1).getTotal();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public void refreshPollList(long teamId) {
+        try {
+            PollRepository.getInstance().clearAll();
+
+            ResPollList resPollList = pollApi.get().getPollList(teamId, 50);
+            List<Poll> onGoing = resPollList.getOnGoing();
+            if (onGoing == null) {
+                onGoing = new ArrayList<>();
+            }
+            List<Poll> finished = resPollList.getFinished();
+            if (finished == null) {
+                finished = new ArrayList<>();
+            }
+            Observable.merge(Observable.from(onGoing), Observable.from(finished))
+                    .toList()
+                    .subscribe(polls -> PollRepository.getInstance().upsertPollList(polls),
+                            Throwable::printStackTrace);
+        } catch (RetrofitException retrofitError) {
+            retrofitError.printStackTrace();
+        }
+    }
 }

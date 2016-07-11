@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.starmention.adapter.viewholder;
 import android.graphics.Color;
 import android.text.SpannableStringBuilder;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -18,12 +19,14 @@ public class CommentStarMentionViewHolder extends CommonStarMentionViewHolder {
 
     private TextView tvComment;
     private TextView tvFileName;
+    private ImageView ivContentIcon;
 
     public CommentStarMentionViewHolder(View itemView) {
         super(itemView);
 
         tvComment = (TextView) itemView.findViewById(R.id.tv_star_mention_comment);
         tvFileName = (TextView) itemView.findViewById(R.id.tv_star_mention_file_name);
+        ivContentIcon = (ImageView) itemView.findViewById(R.id.iv_icon_message_content_icon);
     }
 
     @Override
@@ -57,5 +60,12 @@ public class CommentStarMentionViewHolder extends CommonStarMentionViewHolder {
         // for single spannable
         commentStringBuilder.append(" ");
         tvComment.setText(commentStringBuilder);
+
+        if ("poll".equals(starMentionVO.getFeedbackType())) {
+            ivContentIcon.setImageResource(R.drawable.icon_message_poll);
+        } else {
+            ivContentIcon.setImageResource(R.drawable.icon_message_file);
+        }
+        ivContentIcon.setVisibility(View.VISIBLE);
     }
 }
