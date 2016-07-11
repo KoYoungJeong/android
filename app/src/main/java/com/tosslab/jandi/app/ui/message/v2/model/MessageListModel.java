@@ -55,7 +55,6 @@ import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.poll.util.PollUtil;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.DateComparatorUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
@@ -157,11 +156,11 @@ public class MessageListModel {
     }
 
     public boolean isPublicTopic(int entityType) {
-        return (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) ? true : false;
+        return entityType == JandiConstants.TYPE_PUBLIC_TOPIC;
     }
 
     public boolean isDirectMessage(int entityType) {
-        return (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) ? true : false;
+        return entityType == JandiConstants.TYPE_DIRECT_MESSAGE;
     }
 
     public MenuCommand getMenuCommand(Fragment fragmet, long teamId, long entityId, MenuItem item) {
@@ -460,14 +459,12 @@ public class MessageListModel {
         return ReadyMessageRepository.getRepository().getReadyMessage(roomId).getText();
     }
 
-    public void clearLinks(long teamId, long roomId) {
-        MessageRepository.getRepository().clearLinks(teamId, roomId);
-    }
-
     public long getLastReadLinkId(long roomId) {
         long myId = TeamInfoLoader.getInstance().getMyId();
         Room room = TeamInfoLoader.getInstance().getRoom(roomId);
-
+        if (room == null || room.getMarkers() == null || room.getMarkers().isEmpty()) {
+            return -1;
+        }
         return Observable.from(room.getMarkers())
                 .filter(messageMarker -> messageMarker.getMemberId() == myId)
                 .map(Marker::getReadLinkId)
@@ -557,10 +554,6 @@ public class MessageListModel {
         }
 
         return localId;
-    }
-
-    public boolean isBefore30Days(Date time) {
-        return DateComparatorUtil.isBefore30Days(time);
     }
 
     /**

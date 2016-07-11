@@ -154,14 +154,4 @@ public class IntroActivityModel {
         return MessageRepository.getRepository().deleteAllLink();
     }
 
-    public int getEventHistoryCount() {
-        long ts = JandiPreference.getSocketConnectedLastTime();
-        long myId = TeamInfoLoader.getInstance().getMyId();
-        try {
-            return eventApi.get().getEventHistory(ts, myId, 1).getTotal();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
 }
