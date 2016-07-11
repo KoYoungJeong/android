@@ -467,7 +467,6 @@ public class JandiSocketServiceModel {
                 }
             }
 
-            chat.setIsOpened(true);
             chat.setReadLinkId(-1);
             chat.setCompanionId(Observable.from(chat.getMembers())
                     .takeFirst(memberId -> memberId != TeamInfoLoader.getInstance().getMyId())
@@ -956,12 +955,12 @@ public class JandiSocketServiceModel {
             long lastMessageId = TeamInfoLoader.getInstance().getChat(linkMessage.roomId).getLastMessageId();
             ChatRepository.getInstance().updateLastMessage(linkMessage.roomId, lastMessageId, text, "created");
             ChatRepository.getInstance().updateLastLinkId(linkMessage.roomId, linkMessage.id);
+            ChatRepository.getInstance().updateChatOpened(linkMessage.roomId, true);
 
             if (!isMyMessage) {
                 Chat chat = ChatRepository.getInstance().getChat(linkMessage.roomId);
                 ChatRepository.getInstance().updateUnreadCount(linkMessage.roomId, chat.getUnreadCount() + 1);
             }
-
         }
     }
 
