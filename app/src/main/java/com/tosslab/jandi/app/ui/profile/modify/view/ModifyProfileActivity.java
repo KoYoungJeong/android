@@ -219,8 +219,8 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     void editDivision() {
         // 부서
         Intent intent = new Intent(this, InputProfileListActivity.class);
-        intent.putExtra(InputProfileListActivity.INPUT_MODE,
-                InputProfileListActivity.DEPARTMENT_MODE);
+        intent.putExtra(InputProfileListActivity.EXTRA_INPUT_MODE,
+                InputProfileListActivity.EXTRA_DEPARTMENT_MODE);
         startActivityForResult(intent, REQUEST_GET_DEPARTMENT);
     }
 
@@ -228,8 +228,8 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     void editPosition() {
         // 직책
         Intent intent = new Intent(this, InputProfileListActivity.class);
-        intent.putExtra(InputProfileListActivity.INPUT_MODE,
-                InputProfileListActivity.JOB_TITLE_MODE);
+        intent.putExtra(InputProfileListActivity.EXTRA_INPUT_MODE,
+                InputProfileListActivity.EXTRA_JOB_TITLE_MODE);
         startActivityForResult(intent, REQUEST_GET_JOB_TITLE);
     }
 

@@ -142,8 +142,8 @@ public class InsertProfileSecondPageFragment extends Fragment
     @OnClick(R.id.tv_department)
     void onClickChooseDepartment() {
         Intent intent = new Intent(getContext(), InputProfileListActivity.class);
-        intent.putExtra(InputProfileListActivity.INPUT_MODE,
-                InputProfileListActivity.DEPARTMENT_MODE);
+        intent.putExtra(InputProfileListActivity.EXTRA_INPUT_MODE,
+                InputProfileListActivity.EXTRA_DEPARTMENT_MODE);
         startActivityForResult(intent, REQUEST_GET_DEPARTMENT);
     }
 
@@ -151,8 +151,8 @@ public class InsertProfileSecondPageFragment extends Fragment
     void onClickChooseJobTitle(View view) {
         // 직책
         Intent intent = new Intent(getContext(), InputProfileListActivity.class);
-        intent.putExtra(InputProfileListActivity.INPUT_MODE,
-                InputProfileListActivity.JOB_TITLE_MODE);
+        intent.putExtra(InputProfileListActivity.EXTRA_INPUT_MODE,
+                InputProfileListActivity.EXTRA_JOB_TITLE_MODE);
         startActivityForResult(intent, REQUEST_GET_JOB_TITLE);
     }
 

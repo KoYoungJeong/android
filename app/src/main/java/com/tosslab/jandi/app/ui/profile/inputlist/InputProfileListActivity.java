@@ -24,7 +24,6 @@ import com.tosslab.jandi.app.utils.StringCompareUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import butterknife.Bind;
@@ -37,23 +36,18 @@ import rx.Observable;
 public class InputProfileListActivity extends BaseAppCompatActivity {
 
     public static final String RESULT_EXTRA = "result_extra";
-    public static final String INPUT_MODE = "input_mode";
-    public static final String JOB_TITLE_MODE = "job_title_mode";
-    public static final String DEPARTMENT_MODE = "department_mode";
-    public String mode;
-
+    public static final String EXTRA_INPUT_MODE = "extra_input_mode";
+    public static final String EXTRA_JOB_TITLE_MODE = "extra_job_title_mode";
+    public static final String EXTRA_DEPARTMENT_MODE = "extra_department_mode";
     @Bind(R.id.et_jobtitle_department_name)
     EditText etName;
-
     @Bind(R.id.lv_jobtitle_department)
     RecyclerView listView;
-
     @Bind(R.id.tv_jobtitle_department_count)
     TextView tvCount;
-
     @Bind(R.id.tv_jobtitle_department_list)
     TextView tvList;
-
+    private String mode;
     private InputProfileListAdapter adapter;
 
     @Override
@@ -73,25 +67,20 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
             etName.setText(division);
             etName.setSelection(division.length());
         });
+        initView();
     }
 
     private void setMode() {
         Intent intent = getIntent();
-        mode = intent.getStringExtra(INPUT_MODE);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        initView();
+        mode = intent.getStringExtra(EXTRA_INPUT_MODE);
     }
 
     private void initView() {
-        if (mode.equals(JOB_TITLE_MODE)) {
+        if (mode.equals(EXTRA_JOB_TITLE_MODE)) {
             getSupportActionBar().setTitle(R.string.jandi_job_title);
             etName.setHint(R.string.jandi_insert_new_job_title);
             tvList.setText(R.string.jandi_job_title_list);
-        } else if (mode.equals(DEPARTMENT_MODE)) {
+        } else if (mode.equals(EXTRA_DEPARTMENT_MODE)) {
             getSupportActionBar().setTitle(R.string.jandi_department);
             etName.setHint(R.string.jandi_insert_new_department);
             tvList.setText(R.string.jandi_department_list);
@@ -107,26 +96,21 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
 
     private void setDepartmentList(String keyword) {
         final List<String> datas = new ArrayList<>();
-        HashSet<String> set = new HashSet<>();
         TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
         List<User> users = teamInfoLoader.getUserList();
         Observable.from(users)
+                .distinct()
                 .filter(user -> {
-                    if (set.contains(user.getDivision())) {
-                        return false;
-                    }
                     if (keyword != null && keyword.length() > 0) {
                         return user.getDivision().toLowerCase().contains(keyword.toLowerCase());
                     }
                     return false;
                 })
-                .map((user) -> {
-                    set.add(user.getDivision());
-                    return user.getDivision();
-                })
+                .map((user) -> user.getDivision())
                 .toSortedList((lhs, rhs) -> {
                     return StringCompareUtil.compare(lhs, rhs);
                 })
+
                 .subscribe(strings -> {
                     datas.addAll(strings);
                 });
@@ -144,23 +128,17 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
 
     private void setJobTitleList(String keyword) {
         final List<String> datas = new ArrayList<>();
-        HashSet<String> set = new HashSet<>();
         TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
         List<User> users = teamInfoLoader.getUserList();
         Observable.from(users)
+                .distinct()
                 .filter(user -> {
-                    if (set.contains(user.getPosition())) {
-                        return false;
-                    }
                     if (keyword != null && keyword.length() > 0) {
                         return user.getPosition().toLowerCase().contains(keyword.toLowerCase());
                     }
                     return false;
                 })
-                .map((user) -> {
-                    set.add(user.getPosition());
-                    return user.getPosition();
-                })
+                .map((user) -> user.getPosition())
                 .toSortedList((lhs, rhs) -> {
                     return StringCompareUtil.compare(lhs, rhs);
                 })
@@ -192,9 +170,9 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
                 if (s.length() > 60) {
                     s.replace(60, s.length(), "");
                 }
-                if (mode.equals(DEPARTMENT_MODE)) {
+                if (mode.equals(EXTRA_DEPARTMENT_MODE)) {
                     setDepartmentList(s.toString());
-                } else if (mode.equals(JOB_TITLE_MODE)) {
+                } else if (mode.equals(EXTRA_JOB_TITLE_MODE)) {
                     setJobTitleList(s.toString());
                 }
             }

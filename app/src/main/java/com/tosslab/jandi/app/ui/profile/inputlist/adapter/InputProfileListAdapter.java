@@ -29,7 +29,7 @@ public class InputProfileListAdapter extends RecyclerView.Adapter {
 
     private OnItemClickListener onItemClickListener;
 
-    private String mode = InputProfileListActivity.JOB_TITLE_MODE;
+    private String mode = InputProfileListActivity.EXTRA_JOB_TITLE_MODE;
 
     public void setDatas(List<String> datas) {
         this.datas = datas;
@@ -61,9 +61,9 @@ public class InputProfileListAdapter extends RecyclerView.Adapter {
             return;
         }
 
-        if (mode.equals(InputProfileListActivity.JOB_TITLE_MODE)) {
+        if (mode.equals(InputProfileListActivity.EXTRA_JOB_TITLE_MODE)) {
             viewHolder.getTvNewAdd().setText(R.string.jandi_new_job_title);
-        } else if (mode.equals(InputProfileListActivity.DEPARTMENT_MODE)) {
+        } else if (mode.equals(InputProfileListActivity.EXTRA_DEPARTMENT_MODE)) {
             viewHolder.getTvNewAdd().setText(R.string.jandi_new_department);
         }
 
