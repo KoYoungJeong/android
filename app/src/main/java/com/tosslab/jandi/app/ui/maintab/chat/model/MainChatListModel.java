@@ -42,12 +42,7 @@ public class MainChatListModel {
         List<ChatItem> chatItems = new ArrayList<ChatItem>();
 
         Observable.from(rooms)
-                .filter(room -> Observable.from(room.getMembers())
-                        .takeFirst(memberId -> memberId != TeamInfoLoader.getInstance().getMyId())
-                        .map(memberId -> true)
-                        .toBlocking()
-                        .firstOrDefault(false)
-                )
+                .filter(room -> TeamInfoLoader.getInstance().isUser(room.getCompanionId()))
                 .map(room -> {
 
                     long companionId = room.getCompanionId();
