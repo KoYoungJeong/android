@@ -16,6 +16,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.CalendarUtils;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.CalendarDialogFragment;
@@ -97,7 +98,9 @@ public class PollCreateActivity extends BaseAppCompatActivity
 
         addDefaultPollItem();
 
-        onDateSelected(CalendarDay.today());
+        Calendar tomorrow = CalendarUtils.getInstance();
+        tomorrow.add(Calendar.DAY_OF_MONTH, 1);
+        onDateSelected(CalendarDay.from(tomorrow));
 
         onHourSelected(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1);
     }
