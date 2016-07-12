@@ -4,11 +4,17 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.poll.create.presenter.PollCreatePresenter;
 import com.tosslab.jandi.app.ui.poll.participants.model.PollParticipantsModel;
+import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import javax.inject.Inject;
 
@@ -56,11 +62,32 @@ public class PollParticipantsPresenterImpl implements PollParticipantsPresenter 
                         view.setTitle(headerTitle);
                     }
 
-                }, e -> {
+                    AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                            .event(Event.PollMemberOfVoted)
+                            .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                            .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                            .property(PropertyKey.ResponseSuccess, true)
+                            .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
+                            .property(PropertyKey.PollId, pollId)
+                            .build());
+                }, t -> {
                     view.dismissProgress();
-                    LogUtil.e(TAG, Log.getStackTraceString(e));
+                    LogUtil.e(TAG, Log.getStackTraceString(t));
                     view.showUnExpectedErrorToast();
                     view.finish();
+
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                                .event(Event.PollMemberOfVoted)
+                                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                                .property(PropertyKey.ResponseSuccess, true)
+                                .property(PropertyKey.ErrorCode, e.getStatusCode())
+                                .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
+                                .property(PropertyKey.PollId, pollId)
+                                .build());
+                    }
                 });
 
     }

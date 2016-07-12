@@ -3,9 +3,17 @@ package com.tosslab.jandi.app.ui.poll.create.presenter;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqCreatePoll;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.poll.create.model.PollCreateModel;
+import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import java.util.Calendar;
 import java.util.List;
@@ -114,10 +122,35 @@ public class PollCreatePresenterImpl implements PollCreatePresenter {
                 .subscribe(resCreatePoll -> {
                     pollCreateView.dismissProgress();
                     pollCreateView.finish();
+
+                    AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                            .event(Event.PollCreated)
+                            .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                            .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                            .property(PropertyKey.ResponseSuccess, true)
+                            .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
+                            .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
+                            .property(PropertyKey.TopicId, reqCreatePoll.getTopicId())
+                            .property(PropertyKey.PollId, resCreatePoll.getLinkMessage().pollId)
+                            .build());
+
                 }, throwable -> {
                     pollCreateView.dismissProgress();
                     LogUtil.e(Log.getStackTraceString(throwable));
                     pollCreateView.showUnExpectedErrorToast();
+                    if (throwable instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) throwable;
+                        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                                .event(Event.PollCreated)
+                                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                                .property(PropertyKey.ResponseSuccess, false)
+                                .property(PropertyKey.ErrorCode, e.getStatusCode())
+                                .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
+                                .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
+                                .property(PropertyKey.TopicId, reqCreatePoll.getTopicId())
+                                .build());
+                    }
                 });
     }
 }

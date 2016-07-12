@@ -3,20 +3,28 @@ package com.tosslab.jandi.app.ui.poll.detail.presenter;
 import android.util.Log;
 import android.util.Pair;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.events.poll.RequestShowPollParticipantsEvent;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
+import com.tosslab.jandi.app.events.poll.RequestShowPollParticipantsEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.poll.Poll;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.model.PollDetailDataModel;
 import com.tosslab.jandi.app.ui.poll.detail.dto.PollDetail;
 import com.tosslab.jandi.app.ui.poll.detail.model.PollDetailModel;
+import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import java.util.Collection;
 import java.util.List;
@@ -169,11 +177,40 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     pollDetailView.notifyDataSetChanged();
 
                     pollDetailView.initPollDetailExtras(poll);
-                }, e -> {
+
+                    AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                            .event(Event.PollVoted)
+                            .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                            .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                            .property(PropertyKey.ResponseSuccess, true)
+                            .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
+                            .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
+                            .property(PropertyKey.TopicId, resDeletePoll.getLinkMessage().fromEntity)
+                            .property(PropertyKey.PollId, pollId)
+                            .property(PropertyKey.PollItemId, seqs)
+                            .build());
+                }, t -> {
                     pollDetailView.dismissProgress();
 
-                    LogUtil.e(TAG, Log.getStackTraceString(e));
+                    LogUtil.e(TAG, Log.getStackTraceString(t));
                     pollDetailView.showUnExpectedErrorToast();
+
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        Poll poll = pollDetailDataModel.getPoll();
+                        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                                .event(Event.PollVoted)
+                                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                                .property(PropertyKey.ResponseSuccess, false)
+                                .property(PropertyKey.ErrorCode, e.getStatusCode())
+                                .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
+                                .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
+                                .property(PropertyKey.TopicId, poll.getTopicId())
+                                .property(PropertyKey.PollId, pollId)
+                                .property(PropertyKey.PollItemId, seqs)
+                                .build());
+                    }
                 });
     }
 
@@ -229,7 +266,28 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(resPollCommentCreated -> {
-                }, throwable -> LogUtil.e(TAG, Log.getStackTraceString(throwable)));
+                    AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                            .event(Event.PollCommentCreated)
+                            .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                            .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                            .property(PropertyKey.ResponseSuccess, true)
+                            .property(PropertyKey.PollId, pollId)
+                            .build());
+
+                }, throwable -> {
+                    LogUtil.e(TAG, Log.getStackTraceString(throwable));
+                    if (throwable instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) throwable;
+                        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                                .event(Event.PollCommentCreated)
+                                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                                .property(PropertyKey.ResponseSuccess, false)
+                                .property(PropertyKey.ErrorCode, e.getStatusCode())
+                                .property(PropertyKey.PollId, pollId)
+                                .build());
+                    }
+                });
     }
 
     @Override
@@ -241,7 +299,28 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(resPollCommentCreated -> {
-                }, throwable -> LogUtil.e(TAG, Log.getStackTraceString(throwable)));
+                    AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                            .event(Event.PollCommentCreated)
+                            .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                            .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                            .property(PropertyKey.ResponseSuccess, true)
+                            .property(PropertyKey.PollId, pollId)
+                            .build());
+                }, throwable -> {
+                    LogUtil.e(TAG, Log.getStackTraceString(throwable));
+                    if (throwable instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) throwable;
+                        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                                .event(Event.PollCommentCreated)
+                                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                                .property(PropertyKey.ResponseSuccess, false)
+                                .property(PropertyKey.ErrorCode, e.getStatusCode())
+                                .property(PropertyKey.PollId, pollId)
+                                .build());
+                    }
+
+                });
     }
 
     @Override
@@ -351,6 +430,18 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                 pollDetailDataModel.addPollComment(adapterPosition, comment);
                 pollDetailView.notifyDataSetChanged();
             }
+
+            if (e instanceof RetrofitException) {
+                RetrofitException e1 = (RetrofitException) e;
+                AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                        .event(Event.PollCommentDeleted)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, e1.getStatusCode())
+                        .property(PropertyKey.PollCommentId, messageId)
+                        .build());
+            }
         };
 
         if (messageType == MessageItem.TYPE_STICKER_COMMNET) {
@@ -358,12 +449,27 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(o -> {
+                        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                                .event(Event.PollCommentDeleted)
+                                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                                .property(PropertyKey.ResponseSuccess, true)
+                                .property(PropertyKey.PollCommentId, messageId)
+                                .build());
+
                     }, error);
         } else {
             pollDetailModel.getCommentDeleteObservable(messageId, feedbackId)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(o -> {
+                        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                                .event(Event.PollCommentDeleted)
+                                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                                .property(PropertyKey.ResponseSuccess, true)
+                                .property(PropertyKey.PollCommentId, messageId)
+                                .build());
                     }, error);
         }
 
@@ -387,11 +493,40 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                 .subscribe(resDeletePoll -> {
                     pollDetailView.showPollDeleteSuccessToast();
                     pollDetailView.finish();
+
+                    AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                            .event(Event.PollDeleted)
+                            .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                            .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                            .property(PropertyKey.ResponseSuccess, true)
+                            .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
+                            .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
+                            .property(PropertyKey.TopicId, resDeletePoll.getLinkMessage().fromEntity)
+                            .property(PropertyKey.PollId, pollId)
+                            .build());
                 }, e -> {
                     pollDetailView.dismissProgress();
 
                     LogUtil.e(TAG, Log.getStackTraceString(e));
                     pollDetailView.showUnExpectedErrorToast();
+
+                    Poll poll = pollDetailDataModel.getPoll();
+
+                    if (e instanceof RetrofitException) {
+                        RetrofitException e1 = (RetrofitException) e;
+                        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                                .event(Event.PollDeleted)
+                                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                                .property(PropertyKey.ResponseSuccess, false)
+                                .property(PropertyKey.ErrorCode, e1.getStatusCode())
+                                .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
+                                .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
+                                .property(PropertyKey.TopicId, poll.getTopicId())
+                                .property(PropertyKey.PollId, pollId)
+                                .build());
+                    }
+
                 });
     }
 
@@ -425,11 +560,37 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     pollDetailView.notifyDataSetChanged();
 
                     pollDetailView.initPollDetailExtras(poll);
+
+                    AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                            .event(Event.PollFinished)
+                            .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                            .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                            .property(PropertyKey.ResponseSuccess, true)
+                            .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getMyId())
+                            .property(PropertyKey.TopicId, resDeletePoll.getLinkMessage().fromEntity)
+                            .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
+                            .property(PropertyKey.PollId, pollId)
+                            .build());
                 }, e -> {
                     pollDetailView.dismissProgress();
 
                     LogUtil.e(TAG, Log.getStackTraceString(e));
                     pollDetailView.showUnExpectedErrorToast();
+                    if (e instanceof RetrofitException) {
+                        RetrofitException e1 = (RetrofitException) e;
+                        Poll poll = pollDetailDataModel.getPoll();
+                        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                                .event(Event.PollFinished)
+                                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                                .property(PropertyKey.ResponseSuccess, false)
+                                .property(PropertyKey.ErrorCode, e1.getStatusCode())
+                                .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getMyId())
+                                .property(PropertyKey.TopicId, poll.getTopicId())
+                                .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
+                                .property(PropertyKey.PollId, pollId)
+                                .build());
+                    }
                 });
     }
 
