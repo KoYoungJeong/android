@@ -119,8 +119,7 @@ import rx.schedulers.Schedulers;
  * Created by justinygchoi on 2014. 7. 19..
  */
 @EActivity(R.layout.activity_file_detail)
-public class FileDetailActivity extends BaseAppCompatActivity
-        implements FileDetailPresenter.View, NormalFileViewHolder.OnFileClickListener {
+public class FileDetailActivity extends BaseAppCompatActivity implements FileDetailPresenter.View {
     public static final String TAG = "FileDetail";
 
     public static final int REQUEST_CODE_SHARE = 0;
@@ -720,7 +719,6 @@ public class FileDetailActivity extends BaseAppCompatActivity
         }
     }
 
-    @Override
     public void onFileClick(String fileUrl, MimeTypeUtil.SourceType sourceType) {
         if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(fileUrl)));
