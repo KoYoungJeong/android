@@ -46,6 +46,7 @@ public class InsertProfileFirstPagePresenterImpl implements InsertProfileFirstPa
 
     @Override
     public void requestProfile() {
+        view.showProgressWheel();
         Observable.create(new Observable.OnSubscribe<User>() {
             @Override
             public void call(Subscriber<? super User> subscriber) {
@@ -63,7 +64,6 @@ public class InsertProfileFirstPagePresenterImpl implements InsertProfileFirstPa
                 subscriber.onCompleted();
             }
         }).subscribeOn(Schedulers.io())
-                .doOnSubscribe(() -> view.showProgressWheel())
                 .doOnUnsubscribe(() -> view.dismissProgressWheel())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(me -> {
@@ -75,8 +75,6 @@ public class InsertProfileFirstPagePresenterImpl implements InsertProfileFirstPa
                 }, e -> {
                     LogUtil.e("get profile failed", e);
                     view.showFailProfile();
-                }, () -> {
-                    view.dismissProgressWheel();
                 });
     }
 
