@@ -106,7 +106,10 @@ public class MyPagePresenterImpl implements MyPagePresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(polls -> {
                     view.setPollBadgeCount(polls.size());
-                }, Throwable::printStackTrace);
+                }, throwable -> {
+                    LogUtil.e(TAG, Log.getStackTraceString(throwable));
+                    view.setPollBadgeCount(0);
+                });
     }
 
     @Override
