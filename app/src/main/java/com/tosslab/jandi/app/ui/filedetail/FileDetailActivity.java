@@ -40,11 +40,8 @@ import com.tosslab.jandi.app.events.entities.MoveSharedEntityEvent;
 import com.tosslab.jandi.app.events.entities.ShowMoreSharedEntitiesEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
-import com.tosslab.jandi.app.events.files.FileCommentClickEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
-import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
 import com.tosslab.jandi.app.events.files.FileStarredStateChangeEvent;
-import com.tosslab.jandi.app.events.files.RequestShowCarouselViewerEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarEvent;
@@ -72,6 +69,7 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 import com.tosslab.jandi.app.ui.filedetail.adapter.FileDetailAdapter;
+import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.NormalFileViewHolder;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity_;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
@@ -90,6 +88,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.views.BackPressCatchEditText;
 import com.tosslab.jandi.app.views.SoftInputDetectLinearLayout;
 import com.tosslab.jandi.app.views.controller.SoftInputAreaController;
@@ -120,7 +119,8 @@ import rx.schedulers.Schedulers;
  * Created by justinygchoi on 2014. 7. 19..
  */
 @EActivity(R.layout.activity_file_detail)
-public class FileDetailActivity extends BaseAppCompatActivity implements FileDetailPresenter.View {
+public class FileDetailActivity extends BaseAppCompatActivity
+        implements FileDetailPresenter.View, NormalFileViewHolder.OnFileClickListener {
     public static final String TAG = "FileDetail";
 
     public static final int REQUEST_CODE_SHARE = 0;
@@ -279,6 +279,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         LinearLayoutManager layoutManager = new LinearLayoutManager(getBaseContext());
         listView.setLayoutManager(layoutManager);
         listView.setAdapter(adapter = new FileDetailAdapter());
+
+        adapter.setOnFileClickListener(this::onFileClick);
+        adapter.setOnImageFileClickListener(this::onImageFileClick);
+        adapter.setOnCommentClickListener(comment -> hideKeyboard());
+        adapter.setOnCommentLongClickListener(this::onCommentLongClick);
 
         fileDetailPresenter.setView(this);
         fileDetailPresenter.onInitializeFileDetail(fileId, true /* withProgress */);
@@ -715,11 +720,19 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
     }
 
-    public void onEvent(RequestShowCarouselViewerEvent event) {
-        long fileMessageId = event.getFileMessageId();
-        ResMessages.FileContent content = event.getContent();
-        boolean shouldOpenImmediately = event.shouldOpenImmediately();
+    @Override
+    public void onFileClick(String fileUrl, MimeTypeUtil.SourceType sourceType) {
+        if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(fileUrl)));
+        } else {
+            startFileDownload();
+        }
+        AnalyticsUtil.sendEvent(
+                AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewFile);
+    }
 
+    public void onImageFileClick(long fileMessageId, ResMessages.FileContent content,
+                                 boolean shouldOpenImmediately) {
         if (roomId > 0) {
             CarouselViewerActivity_.intent(this)
                     .mode(CarouselViewerActivity.CAROUSEL_MODE)
@@ -743,6 +756,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewPhoto);
+
     }
 
     public void onEvent(ShowProfileEvent event) {
@@ -754,13 +768,10 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 .start();
     }
 
-    public void onEvent(FileCommentClickEvent event) {
-        if (event.isLongClick()) {
-            showChooseDialogIfNeed(event.getComment());
-            sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap);
-        } else {
-            hideKeyboard();
-        }
+    public boolean onCommentLongClick(ResMessages.OriginalMessage comment) {
+        showChooseDialogIfNeed(comment);
+        sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap);
+        return true;
     }
 
     private void showChooseDialogIfNeed(ResMessages.OriginalMessage comment) {
@@ -960,7 +971,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
     }
 
-    public void onEvent(FileDownloadStartEvent fileDownloadStartEvent) {
+    public void startFileDownload() {
         ResMessages.FileMessage fileMessage = getFileMessageFromAdapter();
         if (fileMessage == null || fileMessage.content == null) {
             return;
@@ -1012,8 +1023,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 .addRequestCode(REQ_STORAGE_PERMISSION_EXPORT)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::export)
                 .addRequestCode(REQ_STORAGE_PERMISSION_OPEN)
-                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        () -> onEvent(new FileDownloadStartEvent()))
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::startFileDownload)
                 .neverAskAgain(() -> {
                     PermissionRetryDialog.showExternalPermissionDialog(FileDetailActivity.this);
                 })

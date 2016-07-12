@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.comment;
+package com.tosslab.jandi.app.ui.comment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,16 +18,22 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 /**
  * Created by tonyjs on 16. 1. 28..
  */
-public class StickerViewHolder extends BaseViewHolder<ResMessages.CommentStickerMessage> {
+public class StickerCommentViewHolder extends BaseViewHolder<ResMessages.CommentStickerMessage> {
     private TextView tvUserName;
     private ImageView ivUserProfile;
     private View vUserNameDisableIndicator;
     private View vUserProfileDisableIndicator;
     private TextView tvCreatedDate;
     private ImageView ivSticker;
+    private OnCommentClickListener onCommentClickListener;
+    private OnCommentLongClickListener onCommentLongClickListener;
 
-    public StickerViewHolder(View itemView) {
+    public StickerCommentViewHolder(View itemView,
+                                    OnCommentClickListener onCommentClickListener,
+                                    OnCommentLongClickListener onCommentLongClickListener) {
         super(itemView);
+        this.onCommentClickListener = onCommentClickListener;
+        this.onCommentLongClickListener = onCommentLongClickListener;
 
         tvUserName = (TextView) itemView.findViewById(R.id.tv_file_detail_comment_sticker_user_name);
         ivUserProfile = (ImageView) itemView.findViewById(R.id.iv_file_detail_comment_sticker_user_profile);
@@ -41,10 +47,12 @@ public class StickerViewHolder extends BaseViewHolder<ResMessages.CommentSticker
         ivSticker = (ImageView) itemView.findViewById(R.id.iv_file_detail_comment_sticker_content);
     }
 
-    public static StickerViewHolder newInstance(ViewGroup parent) {
+    public static StickerCommentViewHolder newInstance(ViewGroup parent,
+                                                       OnCommentClickListener onCommentClickListener,
+                                                       OnCommentLongClickListener onCommentLongClickListener) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.item_file_detail_comment_sticker, parent, false);
-        return new StickerViewHolder(itemView);
+        return new StickerCommentViewHolder(itemView, onCommentClickListener, onCommentLongClickListener);
     }
 
     @Override
@@ -57,13 +65,16 @@ public class StickerViewHolder extends BaseViewHolder<ResMessages.CommentSticker
         bindComment(stickerMessage);
     }
 
-    public void bindComment(ResMessages.CommentStickerMessage stickerMessage) {
+    public void bindComment(ResMessages.CommentStickerMessage commentStickerMessage) {
         // 날짜
-        String createTime = DateTransformator.getTimeString(stickerMessage.createTime);
+        String createTime = DateTransformator.getTimeString(commentStickerMessage.createTime);
         tvCreatedDate.setText(createTime);
 
         // 댓글 내용
-        ResMessages.StickerContent content = stickerMessage.content;
+        ResMessages.StickerContent content = commentStickerMessage.content;
         StickerManager.getInstance().loadStickerNoOption(ivSticker, content.groupId, content.stickerId);
+
+        itemView.setOnClickListener(v -> onCommentClickListener.onCommentClick(commentStickerMessage));
+        itemView.setOnLongClickListener(v -> onCommentLongClickListener.onCommentLongClick(commentStickerMessage));
     }
 }
