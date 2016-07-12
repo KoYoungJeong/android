@@ -104,7 +104,9 @@ public class JandiApplication extends MultiDexApplication {
         BackgroundExecutor.setExecutor(
                 Executors.newScheduledThreadPool(PoolableRequestApiExecutor.MAX_POOL_SIZE));
 
-        Sprinkler.initialize(this, BuildConfig.FLAVOR.contains("dev"), BuildConfig.DEBUG);
+        boolean isReleaseBuild =
+                BuildConfig.FLAVOR.contains("full") || BuildConfig.FLAVOR.contains("inhouse");
+        Sprinkler.initialize(this, !isReleaseBuild, BuildConfig.DEBUG);
 
         migrationTokenIfNeed();
 
