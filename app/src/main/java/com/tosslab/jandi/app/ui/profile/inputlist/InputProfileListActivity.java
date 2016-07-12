@@ -39,6 +39,7 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
     public static final String EXTRA_INPUT_MODE = "extra_input_mode";
     public static final String EXTRA_JOB_TITLE_MODE = "extra_job_title_mode";
     public static final String EXTRA_DEPARTMENT_MODE = "extra_department_mode";
+
     @Bind(R.id.et_jobtitle_department_name)
     EditText etName;
     @Bind(R.id.lv_jobtitle_department)
@@ -47,6 +48,7 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
     TextView tvCount;
     @Bind(R.id.tv_jobtitle_department_list)
     TextView tvList;
+
     private String mode;
     private InputProfileListAdapter adapter;
 
@@ -63,9 +65,9 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
         adapter.setMode(mode);
         listView.setAdapter(adapter);
         setOnTextChangeListener();
-        adapter.setOnItemClickListener(division -> {
-            etName.setText(division);
-            etName.setSelection(division.length());
+        adapter.setOnItemClickListener(data -> {
+            etName.setText(data);
+            etName.setSelection(data.length());
         });
         initView();
     }
@@ -110,7 +112,6 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
                 .toSortedList((lhs, rhs) -> {
                     return StringCompareUtil.compare(lhs, rhs);
                 })
-
                 .subscribe(strings -> {
                     datas.addAll(strings);
                 });
