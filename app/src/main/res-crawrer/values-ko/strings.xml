@@ -424,8 +424,8 @@
 	<string name="jandi_poll_finished_without_participants">"투표가 완료되었습니다. 참여자가 없었습니다."</string>
 	<string name="jandi_poll_finishedat">"종료 시각"</string>
 	<string name="jandi_poll_is_anonymous">"이 투표는 익명투표입니다."</string>
-	<string name="jandi_poll_multiple">"복수선택"</string>
-	<string name="jandi_poll_multiple_available">"중복 투표 가능"</string>
+	<string name="jandi_poll_multiple">"복수 선택"</string>
+	<string name="jandi_poll_multiple_available">"복수 선택 가능"</string>
 	<string name="jandi_poll_participants_ing">"명 참여"</string>
 	<string name="jandi_poll_voted">"투표함"</string>
 	<string name="jandi_pp">"개인정보 취급방침"</string>

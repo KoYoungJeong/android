@@ -33,6 +33,7 @@ import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.profile.inputlist.InputProfileListActivity;
 import com.tosslab.jandi.app.ui.profile.modify.dagger.DaggerModifyProfileComponent;
 import com.tosslab.jandi.app.ui.profile.modify.dagger.ModifyProfileModule;
 import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenter;
@@ -66,6 +67,9 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     public static final int REQ_STORAGE_PERMISSION = 101;
     public static final int REQUEST_CHARACTER = 0x11;
     public static final int REQUEST_CROP = 11;
+
+    public static final int REQUEST_GET_JOB_TITLE = 0x21;
+    public static final int REQUEST_GET_DEPARTMENT = 0x22;
 
     @Inject
     ModifyProfilePresenter modifyProfilePresenter;
@@ -212,27 +216,21 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     }
 
     @OnClick(R.id.profile_user_division)
-    void editDivision(View view) {
+    void editDivision() {
         // 부서
-        if (NetworkCheckUtil.isConnected()) {
-            launchEditDialog(
-                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_DIVISION,
-                    ((TextView) view)
-            );
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Division);
-        }
+        Intent intent = new Intent(this, InputProfileListActivity.class);
+        intent.putExtra(InputProfileListActivity.EXTRA_INPUT_MODE,
+                InputProfileListActivity.EXTRA_DEPARTMENT_MODE);
+        startActivityForResult(intent, REQUEST_GET_DEPARTMENT);
     }
 
     @OnClick(R.id.profile_user_position)
-    void editPosition(View view) {
+    void editPosition() {
         // 직책
-        if (NetworkCheckUtil.isConnected()) {
-            launchEditDialog(
-                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_POSITION,
-                    ((TextView) view)
-            );
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Position);
-        }
+        Intent intent = new Intent(this, InputProfileListActivity.class);
+        intent.putExtra(InputProfileListActivity.EXTRA_INPUT_MODE,
+                InputProfileListActivity.EXTRA_JOB_TITLE_MODE);
+        startActivityForResult(intent, REQUEST_GET_JOB_TITLE);
     }
 
     @OnClick(R.id.profile_user_email)
@@ -358,6 +356,32 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
             case REQUEST_CROP:
                 onImageCropResult(resultCode, data);
                 break;
+            case REQUEST_GET_JOB_TITLE:
+                onGetJobTitle(resultCode, data);
+                break;
+            case REQUEST_GET_DEPARTMENT:
+                onGetDepartmentResult(resultCode, data);
+                break;
+        }
+    }
+
+    private void onGetJobTitle(int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            String jobTitle = data.getStringExtra(InputProfileListActivity.RESULT_EXTRA);
+            tvProfileUserPosition.setText(jobTitle);
+            ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
+            reqUpdateProfile.position = jobTitle;
+            modifyProfilePresenter.onUpdateProfile(reqUpdateProfile);
+        }
+    }
+
+    private void onGetDepartmentResult(int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            String department = data.getStringExtra(InputProfileListActivity.RESULT_EXTRA);
+            tvProfileUserDivision.setText(department);
+            ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
+            reqUpdateProfile.department = department;
+            modifyProfilePresenter.onUpdateProfile(reqUpdateProfile);
         }
     }
 

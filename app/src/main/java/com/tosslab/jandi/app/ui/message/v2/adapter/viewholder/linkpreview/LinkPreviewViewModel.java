@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -16,7 +17,6 @@ import com.bumptech.glide.request.target.Target;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
-import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
@@ -26,9 +26,11 @@ import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 public class LinkPreviewViewModel {
 
     public static final String TAG = "LinkPreviewViewModel";
+    private LinearLayout vgSummary;
     private TextView tvTitle;
     private TextView tvDomain;
     private TextView tvDescription;
+
     private ImageView ivThumb;
     private OnLinkPreviewClickListener onLinkPreviewClickListener;
 
@@ -90,7 +92,7 @@ public class LinkPreviewViewModel {
         final Resources resources = ivThumb.getResources();
 
         if (!useThumbnail) {
-            showError(resources);
+            disableImage();
         } else {
             showImage(linkPreview, resources);
         }
@@ -108,18 +110,16 @@ public class LinkPreviewViewModel {
                     @Override
                     public boolean onException(Exception e, Uri model, Target<GlideDrawable> target,
                                                boolean isFirstResource) {
-                        showError(resources);
+                        disableImage();
                         return true;
                     }
                 })
                 .into(ivThumb);
     }
 
-    void showError(Resources resources) {
-        int color = resources.getColor(R.color.jandi_messages_big_size_image_view_bg);
-        ivThumb.setBackgroundColor(color);
-        ivThumb.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        ImageLoader.loadFromResources(ivThumb, R.drawable.preview_no_img);
+    void disableImage() {
+        vgSummary.setBackgroundResource(R.drawable.bg_round_white_rect_for_message);
+        ivThumb.setVisibility(View.GONE);
     }
 
     private void initInnerView(ViewGroup vgLinkPreview) {
@@ -131,6 +131,7 @@ public class LinkPreviewViewModel {
         tvDescription = (TextView) vgLinkPreview.findViewById(R.id.tv_linkpreview_description);
         ivThumb = (ImageView) vgLinkPreview.findViewById(R.id.iv_linkpreview_thumb);
         vDividier = vgLinkPreview.findViewById(R.id.v_snippet_divider);
+        vgSummary = (LinearLayout) vgLinkPreview.findViewById(R.id.vg_snippet_summary);
     }
 
     private boolean useThumbnail(String imagUrl) {

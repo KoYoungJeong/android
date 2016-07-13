@@ -84,7 +84,7 @@ public class ModifyProfileActivityTest {
 
     @Test
     public void testEditDivision() throws Throwable {
-        rule.runOnUiThread(() -> activity.editDivision(activity.tvProfileUserDivision));
+        rule.runOnUiThread(() -> activity.editDivision());
         onView(withText(R.string.jandi_profile_division))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
@@ -93,7 +93,7 @@ public class ModifyProfileActivityTest {
 
     @Test
     public void testEditPosition() throws Throwable {
-        rule.runOnUiThread(() -> activity.editPosition(activity.tvProfileUserPosition));
+        rule.runOnUiThread(() -> activity.editPosition());
         onView(withText(R.string.jandi_profile_position))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
