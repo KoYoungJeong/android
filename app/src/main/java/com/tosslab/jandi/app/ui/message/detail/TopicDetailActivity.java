@@ -8,8 +8,8 @@ import android.view.MenuItem;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.message.detail.view.ChatDetailFragment_;
-import com.tosslab.jandi.app.ui.message.detail.view.TopicDetailFragment_;
+import com.tosslab.jandi.app.ui.message.detail.view.ChatDetailFragment;
+import com.tosslab.jandi.app.ui.message.detail.view.TopicDetailFragment;
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -34,14 +34,9 @@ public class TopicDetailActivity extends BaseAppCompatActivity {
         Fragment fragment;
 
         if (isDirectMessage) {
-            fragment = ChatDetailFragment_.builder()
-                    .entityId(entityId)
-                    .build();
+            fragment = ChatDetailFragment.createFragment(TopicDetailActivity.this, entityId);
         } else {
-            fragment = TopicDetailFragment_.builder()
-                    .entityId(entityId)
-                    .teamId(teamId)
-                    .build();
+            fragment = TopicDetailFragment.createFragment(TopicDetailActivity.this, entityId);
         }
 
         getSupportFragmentManager().beginTransaction()

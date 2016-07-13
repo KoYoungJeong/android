@@ -4,6 +4,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 
@@ -39,10 +40,7 @@ public class TopicDetailFragmentTest {
     @Before
     public void setUp() throws Exception {
 
-        fragment = TopicDetailFragment_.builder()
-                .entityId(TeamInfoLoader.getInstance().getDefaultTopicId())
-                .teamId(TeamInfoLoader.getInstance().getTeamId())
-                .build();
+        fragment = (TopicDetailFragment) TopicDetailFragment.createFragment(JandiApplication.getContext(), TeamInfoLoader.getInstance().getDefaultTopicId());
 
         BaseAppCompatActivity activity = rule.getActivity();
         activity.getSupportFragmentManager().beginTransaction()
