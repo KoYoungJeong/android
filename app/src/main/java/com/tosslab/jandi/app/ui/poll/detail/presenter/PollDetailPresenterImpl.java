@@ -6,7 +6,6 @@ import android.util.Pair;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
-import com.tosslab.jandi.app.events.poll.RequestShowPollParticipantsEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
