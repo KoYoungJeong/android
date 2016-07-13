@@ -19,7 +19,7 @@
         android:layout_marginRight="17dp"/>
 
     <ImageView
-        android:id="@+id/iv_entity_listitem_fav"
+        android:id="@+id/iv_favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/iv_entity_listitem_icon"
@@ -30,7 +30,7 @@
 
 
     <TextView
-        android:id="@+id/tv_entity_listitem_user_count"
+        android:id="@+id/tv_user_department"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/vg_entity_listitem_name"
@@ -57,7 +57,7 @@
 
 
         <TextView
-            android:id="@+id/tv_entity_listitem_name"
+            android:id="@+id/tv_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -68,22 +68,22 @@
             android:textStyle="bold" />
 
         <ImageView
-            android:id="@+id/iv_entity_listitem_line_through"
+            android:id="@+id/iv_name_line_through"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/tv_entity_listitem_name"
-            android:layout_alignLeft="@+id/tv_entity_listitem_name"
-            android:layout_alignRight="@+id/tv_entity_listitem_name"
-            android:layout_alignTop="@+id/tv_entity_listitem_name"
+            android:layout_alignBottom="@+id/tv_user_name"
+            android:layout_alignLeft="@+id/tv_user_name"
+            android:layout_alignRight="@+id/tv_user_name"
+            android:layout_alignTop="@+id/tv_user_name"
             android:src="@drawable/line_black" />
 
         <ImageView
             android:id="@+id/iv_entity_listitem_warning"
             android:layout_width="30dp"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/iv_entity_listitem_line_through"
-            android:layout_alignTop="@+id/iv_entity_listitem_line_through"
-            android:layout_toRightOf="@+id/iv_entity_listitem_line_through"
+            android:layout_alignBottom="@+id/iv_name_line_through"
+            android:layout_alignTop="@+id/iv_name_line_through"
+            android:layout_toRightOf="@+id/iv_name_line_through"
             android:scaleType="centerInside"
             android:src="@drawable/alert_icon_warning" />
     </RelativeLayout>
@@ -105,7 +105,7 @@
         android:textSize="11sp" />
 
     <View
-        android:id="@+id/v_entity_listitem_warning"
+        android:id="@+id/v_name_warning"
         android:layout_width="match_parent"
         android:layout_height="@dimen/jandi_entity_item_height"
         android:background="#66ffffff"

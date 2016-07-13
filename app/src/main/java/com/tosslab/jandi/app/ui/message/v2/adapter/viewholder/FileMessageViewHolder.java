@@ -51,7 +51,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
             ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
             vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
             tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
-            vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+            vDisableLineThrough = rootView.findViewById(R.id.iv_name_line_through);
         }
 
         ivFileImage = (ImageView) rootView.findViewById(R.id.iv_message_common_file);

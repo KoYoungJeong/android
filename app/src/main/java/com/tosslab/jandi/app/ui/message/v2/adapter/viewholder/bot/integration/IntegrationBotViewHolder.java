@@ -66,7 +66,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
         tvMessageTime = (TextView) rootView.findViewById(R.id.tv_message_time);
         tvMessageBadge = (TextView) rootView.findViewById(R.id.tv_message_badge);
-        vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+        vDisableLineThrough = rootView.findViewById(R.id.iv_name_line_through);
         vConnectLine = rootView.findViewById(R.id.v_message_sub_menu_connect_color);
 
         vgConnectInfoWrapper = rootView.findViewById(R.id.vg_message_connect_info_wrapper);

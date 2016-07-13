@@ -144,17 +144,17 @@ public class ChatChooseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         public Context context;
         @Bind(R.id.iv_entity_listitem_icon)
         public ImageView ivIcon;
-        @Bind(R.id.iv_entity_listitem_fav)
+        @Bind(R.id.iv_favorite)
         public ImageView ivFavorite;
-        @Bind(R.id.tv_entity_listitem_name)
+        @Bind(R.id.tv_user_name)
         public TextView tvName;
-        @Bind(R.id.tv_entity_listitem_user_count)
+        @Bind(R.id.tv_user_department)
         public TextView tvAdditional;
-        @Bind(R.id.iv_entity_listitem_line_through)
+        @Bind(R.id.iv_name_line_through)
         public View vDisableLineThrough;
-        @Bind(R.id.v_entity_listitem_warning)
+        @Bind(R.id.v_name_warning)
         public View vDisableCover;
-        @Bind(R.id.iv_entity_listitem_user_kick)
+        @Bind(R.id.iv_user_kick)
         public View ivKick;
         @Bind(R.id.tv_owner_badge)
         public TextView tvOwnerBadge;

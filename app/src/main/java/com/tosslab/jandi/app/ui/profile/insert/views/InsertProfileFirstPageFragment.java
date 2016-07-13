@@ -71,7 +71,7 @@ public class InsertProfileFirstPageFragment extends Fragment
     @Bind(R.id.iv_profile_picture)
     ImageView ivProfilePicture;
 
-    @Bind(R.id.tv_name)
+    @Bind(R.id.tv_user_name)
     TextView tvName;
 
     @Bind(R.id.tv_name_length)
@@ -151,7 +151,7 @@ public class InsertProfileFirstPageFragment extends Fragment
 
     }
 
-    @OnClick(R.id.tv_name)
+    @OnClick(R.id.tv_user_name)
     void onClickInputName(View view) {
         if (NetworkCheckUtil.isConnected()) {
             launchEditDialog(

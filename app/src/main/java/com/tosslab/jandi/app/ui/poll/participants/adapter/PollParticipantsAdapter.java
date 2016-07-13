@@ -3,14 +3,12 @@ package com.tosslab.jandi.app.ui.poll.participants.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
-import com.tosslab.jandi.app.ui.members.adapter.ModdableMemberListAdapter;
 import com.tosslab.jandi.app.ui.members.adapter.searchable.viewholder.MemberViewHolder;
 
 import butterknife.Bind;
@@ -23,6 +21,7 @@ public class PollParticipantsAdapter extends MultiItemRecyclerAdapter {
 
     public static int VIEW_TYPE_TITLE = 0;
     public static int VIEW_TYPE_MEMBER = 1;
+    private OnMemberClickListener onMemberClickListener;
 
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -44,8 +43,6 @@ public class PollParticipantsAdapter extends MultiItemRecyclerAdapter {
                     v -> onMemberClickListener.onMemberClick(getItem(position)));
         }
     }
-
-    private OnMemberClickListener onMemberClickListener;
 
     public void setOnMemberClickListener(OnMemberClickListener onMemberClickListener) {
         this.onMemberClickListener = onMemberClickListener;

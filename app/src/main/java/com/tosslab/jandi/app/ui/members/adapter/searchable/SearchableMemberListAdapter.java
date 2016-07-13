@@ -74,9 +74,8 @@ public class SearchableMemberListAdapter extends MultiItemRecyclerAdapter
         Observable
                 .concat(Observable.just(memberCountRow),
                         Observable.from(members)
-                                .map(entity ->
-                                        new MultiItemRecyclerAdapter.Row<User>(
-                                                entity, SearchableMemberListAdapter.VIEW_TYPE_MEMBER)))
+                                .map(entity -> new MultiItemRecyclerAdapter.Row<User>(
+                                        entity, SearchableMemberListAdapter.VIEW_TYPE_MEMBER)))
                 .subscribe(this::addRow, Throwable::printStackTrace);
     }
 

@@ -237,7 +237,7 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         ImageView ivTopicIcon;
         @Bind(R.id.vg_entity_listitem_name)
         FixedLinearLayout vgTopicName;
-        @Bind(R.id.tv_entity_listitem_name)
+        @Bind(R.id.tv_user_name)
         TextView tvTopicName;
         @Bind(R.id.tv_entity_listitem_additional)
         TextView tvTopicUserCnt;

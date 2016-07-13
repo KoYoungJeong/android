@@ -109,7 +109,7 @@ public class InsertProfileSecondPageFragment extends Fragment
         presenter.requestProfile();
     }
 
-    @OnClick(R.id.iv_profile_check)
+    @OnClick(R.id.iv_profile)
     void onClickProfileCheck() {
         presenter.uploadExtraInfo(
                 etDepartment.getText().toString(),
