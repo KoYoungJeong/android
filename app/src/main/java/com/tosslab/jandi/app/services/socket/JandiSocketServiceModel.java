@@ -161,7 +161,7 @@ public class JandiSocketServiceModel {
     private Subscription markerSubscribe;
     private Map<Class<? extends EventHistoryInfo>, Command> messageEventActorMapper;
 
-    private PublishSubject<Object> eventPublisher;
+    PublishSubject<Object> eventPublisher;
     private Subscription eventSubscribe;
 
     @Inject

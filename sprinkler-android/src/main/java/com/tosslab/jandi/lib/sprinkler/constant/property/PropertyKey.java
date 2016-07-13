@@ -9,12 +9,12 @@ public enum PropertyKey {
     ErrorCode("p14"),
     AutoSignIn("p25"),
     Email("p19"),
-    TopicId("p22"),
     TeamId("p20"),
+    MemberId("p21"),
+    TopicId("p22"),
     FileId("p23"),
     SearchKeyword("p24"),
     MessageId("p26"),
-    MemberCount("p39"),
     ScreenView("p27"),
 
     // Default Property
@@ -27,13 +27,16 @@ public enum PropertyKey {
     ScreenDPI("p36"),
     ScreenHeight("p37"),
     ScreenWidth("p38"),
+    MemberCount("p39"),
     Carrier("p40"),
     Wifi("p41"),
-    GooglePlayServices("p42")
-
-    ;
+    GooglePlayServices("p42"),
+    PollId("p46"),
+    PollCommentId("p46"),
+    PollItemId("p47");
 
     String name;
+
     PropertyKey(String keyName) {
         name = keyName;
     }

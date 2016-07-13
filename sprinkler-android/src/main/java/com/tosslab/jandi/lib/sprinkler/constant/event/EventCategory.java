@@ -10,5 +10,6 @@ public enum EventCategory {
     ScreenViewEvent,
     SystemRelatedEvent,
     TopicRelatedEvent,
-    ButtonTouchEvent;
+    ButtonTouchEvent,
+    PollEvent;
 }
