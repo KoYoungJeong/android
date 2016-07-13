@@ -100,7 +100,6 @@
                 android:layout_marginLeft="41dp"
                 android:focusable="false"
                 android:lineSpacingExtra="2dp"
-                android:text="Nested comment"
                 android:textColor="@color/jandi_messages_file_content"
                 android:textSize="11sp"/>
 

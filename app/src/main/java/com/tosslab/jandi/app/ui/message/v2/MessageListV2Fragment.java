@@ -1346,13 +1346,14 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     public void onEvent(SocketMessageCreatedEvent event) {
         if (event.getData() != null
                 && event.getData().getLinkMessage() != null
-                && event.getData().getLinkMessage().roomId != room.getRoomId()) {
-            return;
+                && event.getData().getLinkMessage().toEntity != null
+                && !event.getData().getLinkMessage().toEntity.isEmpty()
+                && event.getData().getLinkMessage().toEntity.contains(room.getRoomId())) {
+            if (messageListPresenter != null) {
+                messageListPresenter.addNewMessageOfLocalQueue();
+            }
         }
 
-        if (messageListPresenter != null) {
-            messageListPresenter.addNewMessageOfLocalQueue();
-        }
     }
 
     public void onEvent(TopicInfoUpdateEvent event) {

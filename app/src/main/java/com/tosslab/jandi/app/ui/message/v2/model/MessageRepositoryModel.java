@@ -51,16 +51,14 @@ public class MessageRepositoryModel {
             if (oldMessages == null) {
                 oldMessages = new ArrayList<>(0);
             } else {
-                Observable.from(oldMessages)
-                        .subscribe(link -> {
-                            link.roomId = roomId;
-                        });
                 MessageRepository.getRepository().upsertMessages(oldMessages);
                 if (oldMessages != null && !oldMessages.isEmpty()) {
                     long firstId = oldMessages.get(0).id;
                     long lastId = oldMessages.get(oldMessages.size() - 1).id;
                     oldMessages = MessageRepository.getRepository()
                             .getMessages(roomId, firstId, lastId + 1);
+
+                    MessageRepository.getRepository().updateDirty(roomId, firstId, lastId);
                 }
             }
 
@@ -78,16 +76,13 @@ public class MessageRepositoryModel {
                         }).toBlocking().first();
 
                 ResMessages messages = messageManipulator.getMessages(first.id, MAX_COUNT - oldMessages.size());
-                Observable.from(messages.records)
-                        .subscribe(link -> {
-                            link.roomId = roomId;
-                        });
                 MessageRepository.getRepository().upsertMessages(messages.records);
                 if (messages.records != null && !messages.records.isEmpty()) {
                     long firstId = messages.records.get(0).id;
                     long lastId = messages.records.get(messages.records.size() - 1).id;
                     messages.records = MessageRepository.getRepository()
                             .getMessages(roomId, firstId - 1, lastId + 1);
+                    MessageRepository.getRepository().updateDirty(roomId, firstId, lastId);
                 }
                 oldMessages.addAll(messages.records);
             } catch (RetrofitException e) {

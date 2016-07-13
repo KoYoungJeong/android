@@ -125,7 +125,7 @@ public class BodyViewFactory {
     // first step
     public static int getContentType(ResMessages.Link previousLink,
                                      ResMessages.Link currentLink,
-                                     ResMessages.Link nextLink) {
+                                     ResMessages.Link nextLink, long roomId) {
         int type = TypeUtil.TYPE_EMPTY;
         if (isPollMessage(currentLink)) {
 
@@ -145,7 +145,7 @@ public class BodyViewFactory {
 
         } else if (isFileMessage(currentLink)) {
 
-            type = getFileMessageType(currentLink, nextLink);
+            type = getFileMessageType(currentLink, nextLink, roomId);
 
         } else if (isCommentMessage(currentLink)) {
 
@@ -425,9 +425,9 @@ public class BodyViewFactory {
         return isFeedbackTargetToPreviousLink;
     }
 
-    private static int getFileMessageType(ResMessages.Link currentLink, ResMessages.Link nextLink) {
+    private static int getFileMessageType(ResMessages.Link currentLink, ResMessages.Link nextLink, long roomId) {
 
-        boolean isImage = isImageFileMessage(currentLink);
+        boolean isImage = isImageFileMessage(currentLink, roomId);
         int type;
 
         if (isImage) {
@@ -452,7 +452,7 @@ public class BodyViewFactory {
                 nextLink.feedbackId == currentLink.messageId;
     }
 
-    private static boolean isImageFileMessage(ResMessages.Link currentLink) {
+    private static boolean isImageFileMessage(ResMessages.Link currentLink, long roomId) {
 
         if (!isFileMessage(currentLink)) {
             return false;
@@ -469,8 +469,9 @@ public class BodyViewFactory {
         }
 
         for (ResMessages.OriginalMessage.IntegerWrapper entity : shareEntities) {
-            if (entity.getShareEntity() == currentLink.roomId) {
+            if (entity.getShareEntity() == roomId) {
                 isSharedFile = true;
+                break;
             }
         }
 

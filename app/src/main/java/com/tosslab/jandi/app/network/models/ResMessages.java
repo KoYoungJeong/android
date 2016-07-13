@@ -100,8 +100,6 @@ public class ResMessages {
         @DatabaseField
         public long teamId;
         @DatabaseField
-        public long roomId;
-        @DatabaseField
         public long fromEntity;
         @DatabaseField(persisterClass = DateConverter.class)
         public Date time;
@@ -123,10 +121,8 @@ public class ResMessages {
         public OriginalMessage message;
         @DatabaseField
         public String messageType;
-        @JsonIgnore
-        @DatabaseField
-        public boolean dirty;
-        public Long[] toEntity;
+        @DatabaseField(persisterClass = CollectionLongConverter.class)
+        public List<Long> toEntity;
 
         @DatabaseField
         public long pollId;
