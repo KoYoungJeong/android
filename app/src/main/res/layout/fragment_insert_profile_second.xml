@@ -39,8 +39,8 @@
                 android:textColor="@color/jandi_profile_text"
                 android:textSize="14sp" />
 
-            <EditText
-                android:id="@+id/et_department"
+            <TextView
+                android:id="@+id/tv_department"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:layout_marginTop="26dp"
@@ -54,8 +54,8 @@
                 android:textColor="@color/jandi_profile_text"
                 android:textSize="14sp" />
 
-            <EditText
-                android:id="@+id/et_positon"
+            <TextView
+                android:id="@+id/tv_positon"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:layout_marginTop="26dp"

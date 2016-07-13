@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="120dp"
+        android:gravity="center_vertical"
+        android:text="business"
+        android:textColor="@color/dark_gray"
+        android:textSize="16dp" />
+
+    <TextView
+        android:id="@+id/tv_new_added"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:gravity="center_vertical"
+        android:text="@string/jandi_insert_new_department"
+        android:textColor="#00a2e2"
+        android:textSize="13dp" />
+
+</RelativeLayout>
