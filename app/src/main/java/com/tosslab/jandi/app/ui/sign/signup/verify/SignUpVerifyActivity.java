@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.sign.signup.verify.presenter.SignUpVerifyPresenter;
 import com.tosslab.jandi.app.ui.sign.signup.verify.view.SignUpVerifyView;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -267,10 +268,16 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
 
     @Click(R.id.tv_resend_email)
     void resendEmail() {
-        presenter.requestNewVerificationCode(email);
+        final long permitEmailSendTermMillis = 15 * 1000;
+        if (JandiPreference.getEmailAuthSendTime() + permitEmailSendTermMillis < System.currentTimeMillis()) {
+            presenter.requestNewVerificationCode(email);
 
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.CodeVerification,
-                AnalyticsValue.Action.Resend);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.CodeVerification,
+                    AnalyticsValue.Action.Resend);
+            JandiPreference.setEmailAuthSendTime();
+        } else {
+            ColoredToast.show(R.string.jandi_mail_sending);
+        }
     }
 
     @Click(value = {
