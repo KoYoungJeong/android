@@ -26,18 +26,15 @@ import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
-import com.tosslab.jandi.app.events.RequestVotePollEvent;
+import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
+import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
+import com.tosslab.jandi.app.events.poll.PollDataChangedEvent;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
 import com.tosslab.jandi.app.events.entities.MoveSharedEntityEvent;
-import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
-import com.tosslab.jandi.app.events.files.FileCommentClickEvent;
-import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
-import com.tosslab.jandi.app.events.poll.PollDataChangedEvent;
-import com.tosslab.jandi.app.events.poll.RequestShowPollParticipantsEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.local.orm.domain.ReadyCommentForPoll;
 import com.tosslab.jandi.app.local.orm.repositories.ReadyCommentForPollRepository;
@@ -197,9 +194,24 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
                 : getIntent().getLongExtra(KEY_POLL_ID, -1);
     }
 
-    private void initPollDetailViews(PollDetailAdapter pollDetailAdapter) {
+    private void initPollDetailViews(PollDetailAdapter adapter) {
         lvPollDetail.setLayoutManager(new LinearLayoutManager(getBaseContext()));
-        lvPollDetail.setAdapter(pollDetailAdapter);
+        lvPollDetail.setAdapter(adapter);
+
+        adapter.setOnCommentClickListener(comment -> hideKeyboard());
+        adapter.setOnCommentLongClickListener(this::onCommentLongClick);
+        adapter.setOnPollParticipantsClickListener(poll -> {
+            pollDetailPresenter.onRequestShowPollParticipants(poll);
+            sendAnalyticsEvent(AnalyticsValue.Action.ViewPollParticipant);
+        });
+        adapter.setOnPollItemParticipantsClickListener((poll, item) -> {
+            pollDetailPresenter.onRequestShowPollItemParticipants(poll, item);
+            sendAnalyticsEvent(AnalyticsValue.Action.ViewChoiceParticipant);
+        });
+        adapter.setOnPollVoteClickListener((pollId, votedItemSeqs) -> {
+            pollDetailPresenter.onVote(pollId, votedItemSeqs);
+            sendAnalyticsEvent(AnalyticsValue.Action.Vote);
+        });
     }
 
     @Override
@@ -271,20 +283,6 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         pollDetailDataView.notifyDataSetChanged();
     }
 
-    public void onEventMainThread(RequestShowPollParticipantsEvent event) {
-        pollDetailPresenter.onRequestShowPollParticipantsAction(event);
-        if (event.getType() == RequestShowPollParticipantsEvent.Type.ALL) {
-            sendAnalyticsEvent(AnalyticsValue.Action.ViewPollParticipant);
-        } else {
-            sendAnalyticsEvent(AnalyticsValue.Action.ViewChoiceParticipant);
-        }
-    }
-
-    public void onEvent(RequestVotePollEvent event) {
-        pollDetailPresenter.onVote(event.getPollId(), event.getSeqs());
-        sendAnalyticsEvent(AnalyticsValue.Action.Vote);
-    }
-
     public void onEvent(SocketPollCommentCreatedEvent event) {
         Poll poll = event.getData() != null
                 ? event.getData().getPoll() : null;
@@ -309,9 +307,6 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         pollDetailPresenter.onCommentDeleted(linkComment);
     }
 
-    /**
-     * 소켓 이 트는  시한다. (  일 정책)
-     */
     public void onEvent(SocketPollEvent event) {
         if (event.getPoll() == null
                 || event.getPoll().getId() != pollId) {
@@ -515,13 +510,10 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         });
     }
 
-    public void onEvent(FileCommentClickEvent event) {
-        if (event.isLongClick()) {
-            showChooseDialogIfNeed(event.getComment());
-            sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap);
-        } else {
-            hideKeyboard();
-        }
+    public boolean onCommentLongClick(ResMessages.OriginalMessage comment) {
+        showChooseDialogIfNeed(comment);
+        sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap);
+        return true;
     }
 
     private void showChooseDialogIfNeed(ResMessages.OriginalMessage comment) {
@@ -872,7 +864,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     }
 
     @Override
-    public void showParticipants(long pollId, Poll.Item item) {
+    public void showPollItemParticipants(long pollId, Poll.Item item) {
         PollParticipantsActivity.start(this, pollId, item);
     }
 
@@ -882,7 +874,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     }
 
     @Override
-    public void showAllParticipants(long pollId) {
+    public void showPollParticipants(long pollId) {
         PollParticipantsActivity.startForAllParticipants(this, pollId);
     }
 

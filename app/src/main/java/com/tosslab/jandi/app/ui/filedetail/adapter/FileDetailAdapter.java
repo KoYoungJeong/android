@@ -2,17 +2,16 @@ package com.tosslab.jandi.app.ui.filedetail.adapter;
 
 import android.view.ViewGroup;
 
-import com.tosslab.jandi.app.events.files.FileCommentClickEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
+import com.tosslab.jandi.app.ui.comment.OnCommentClickListener;
+import com.tosslab.jandi.app.ui.comment.OnCommentLongClickListener;
 import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.DividerViewHolder;
 import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.ImageFileViewHolder;
 import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.NormalFileViewHolder;
-import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.comment.CommentViewHolder;
-import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.comment.StickerViewHolder;
-
-import de.greenrobot.event.EventBus;
+import com.tosslab.jandi.app.ui.comment.CommentViewHolder;
+import com.tosslab.jandi.app.ui.comment.StickerCommentViewHolder;
 
 /**
  * Created by tonyjs on 16. 1. 19..
@@ -25,44 +24,25 @@ public class FileDetailAdapter extends MultiItemRecyclerAdapter {
     public static final int VIEW_TYPE_COMMENT = 3;
     public static final int VIEW_TYPE_STICKER = 4;
 
-    private long roomId;
-
-    public FileDetailAdapter(long roomId) {
-        this.roomId = roomId;
-    }
+    private OnCommentClickListener onCommentClickListener;
+    private OnCommentLongClickListener onCommentLongClickListener;
+    private ImageFileViewHolder.OnImageFileClickListener onImageFileClickListener;
+    private NormalFileViewHolder.OnFileClickListener onFileClickListener;
 
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case VIEW_TYPE_FILE:
-                return NormalFileViewHolder.newInstance(parent);
+                return NormalFileViewHolder.newInstance(parent, onFileClickListener);
             case VIEW_TYPE_IMAGE:
-                return ImageFileViewHolder.newInstance(parent, roomId);
+                return ImageFileViewHolder.newInstance(parent, onImageFileClickListener);
             case VIEW_TYPE_COMMENT:
-                return CommentViewHolder.newInstance(parent);
+                return CommentViewHolder.newInstance(parent, onCommentClickListener, onCommentLongClickListener);
             case VIEW_TYPE_STICKER:
-                return StickerViewHolder.newInstance(parent);
+                return StickerCommentViewHolder.newInstance(parent, onCommentClickListener, onCommentLongClickListener);
             default:
             case VIEW_TYPE_COMMENT_DIVIDER:
                 return DividerViewHolder.newInstance(parent);
-        }
-    }
-
-    @Override
-    public void onBindViewHolder(BaseViewHolder holder, int position) {
-        super.onBindViewHolder(holder, position); /** 꼭 호출이 필요함 **/
-
-        int itemViewType = getItemViewType(position);
-        if (itemViewType == VIEW_TYPE_COMMENT || itemViewType == VIEW_TYPE_STICKER) {
-            final ResMessages.OriginalMessage item = getItem(position);
-            holder.itemView.setOnClickListener(v -> {
-                EventBus.getDefault().post(new FileCommentClickEvent(item));
-            });
-
-            holder.itemView.setOnLongClickListener(v -> {
-                EventBus.getDefault().post(new FileCommentClickEvent(item, true /* isLongClick */));
-                return true;
-            });
         }
     }
 
@@ -94,4 +74,21 @@ public class FileDetailAdapter extends MultiItemRecyclerAdapter {
         }
         return -1;
     }
+
+    public void setOnCommentClickListener(OnCommentClickListener onCommentClickListener) {
+        this.onCommentClickListener = onCommentClickListener;
+    }
+
+    public void setOnCommentLongClickListener(OnCommentLongClickListener onCommentLongClickListener) {
+        this.onCommentLongClickListener = onCommentLongClickListener;
+    }
+
+    public void setOnImageFileClickListener(ImageFileViewHolder.OnImageFileClickListener onImageFileClickListener) {
+        this.onImageFileClickListener = onImageFileClickListener;
+    }
+
+    public void setOnFileClickListener(NormalFileViewHolder.OnFileClickListener onFileClickListener) {
+        this.onFileClickListener = onFileClickListener;
+    }
+
 }

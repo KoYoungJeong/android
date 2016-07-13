@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.comment;
+package com.tosslab.jandi.app.ui.comment;
 
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
@@ -25,15 +25,22 @@ import com.tosslab.jandi.app.utils.LinkifyUtil;
  * Created by tonyjs on 16. 1. 28..
  */
 public class CommentViewHolder extends BaseViewHolder<ResMessages.CommentMessage> {
+
     private TextView tvUserName;
     private ImageView ivUserProfile;
     private View vUserNameDisableIndicator;
     private View vUserProfileDisableIndicator;
     private TextView tvCreatedDate;
     private TextView tvCommentContent;
+    private OnCommentClickListener onCommentClickListener;
+    private OnCommentLongClickListener onCommentLongClickListener;
 
-    public CommentViewHolder(View itemView) {
+    public CommentViewHolder(View itemView,
+                             OnCommentClickListener onCommentClickListener,
+                             OnCommentLongClickListener onCommentLongClickListener) {
         super(itemView);
+        this.onCommentClickListener = onCommentClickListener;
+        this.onCommentLongClickListener = onCommentLongClickListener;
 
         tvUserName = (TextView) itemView.findViewById(R.id.tv_file_detail_comment_user_name);
         ivUserProfile = (ImageView) itemView.findViewById(R.id.iv_file_detail_comment_user_profile);
@@ -47,10 +54,12 @@ public class CommentViewHolder extends BaseViewHolder<ResMessages.CommentMessage
         tvCommentContent = (TextView) itemView.findViewById(R.id.tv_file_detail_comment_content);
     }
 
-    public static CommentViewHolder newInstance(ViewGroup parent) {
+    public static CommentViewHolder newInstance(ViewGroup parent,
+                                                OnCommentClickListener onCommentClickListener,
+                                                OnCommentLongClickListener onCommentLongClickListener) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.item_file_detail_comment, parent, false);
-        return new CommentViewHolder(itemView);
+        return new CommentViewHolder(itemView, onCommentClickListener, onCommentLongClickListener);
     }
 
     @Override
@@ -104,5 +113,8 @@ public class CommentViewHolder extends BaseViewHolder<ResMessages.CommentMessage
 
         LinkifyUtil.setOnLinkClick(tvCommentContent);
         tvCommentContent.setText(commentMessage.content.contentBuilder, TextView.BufferType.SPANNABLE);
+
+        itemView.setOnClickListener(v -> onCommentClickListener.onCommentClick(commentMessage));
+        itemView.setOnLongClickListener(v -> onCommentLongClickListener.onCommentLongClick(commentMessage));
     }
 }

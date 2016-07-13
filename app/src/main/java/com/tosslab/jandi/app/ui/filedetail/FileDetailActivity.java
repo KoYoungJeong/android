@@ -40,9 +40,7 @@ import com.tosslab.jandi.app.events.entities.MoveSharedEntityEvent;
 import com.tosslab.jandi.app.events.entities.ShowMoreSharedEntitiesEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
-import com.tosslab.jandi.app.events.files.FileCommentClickEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
-import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
 import com.tosslab.jandi.app.events.files.FileStarredStateChangeEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
@@ -63,12 +61,15 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
+import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 import com.tosslab.jandi.app.ui.filedetail.adapter.FileDetailAdapter;
+import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.NormalFileViewHolder;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity_;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
@@ -85,7 +86,9 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.views.BackPressCatchEditText;
 import com.tosslab.jandi.app.views.SoftInputDetectLinearLayout;
 import com.tosslab.jandi.app.views.controller.SoftInputAreaController;
@@ -122,6 +125,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     public static final int REQUEST_CODE_SHARE = 0;
     public static final int REQUEST_CODE_PICK = 1;
     public static final int REQUEST_CODE_UNSHARE = 2;
+    public static final int REQUEST_CODE_RETURN_FILE_ID = 3;
 
     public static final int REQ_STORAGE_PERMISSION = 101;
     public static final int REQ_STORAGE_PERMISSION_EXPORT = 102;
@@ -273,7 +277,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     private void initFileInfoViews() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getBaseContext());
         listView.setLayoutManager(layoutManager);
-        listView.setAdapter(adapter = new FileDetailAdapter(roomId));
+        listView.setAdapter(adapter = new FileDetailAdapter());
+
+        adapter.setOnFileClickListener(this::onFileClick);
+        adapter.setOnImageFileClickListener(this::onImageFileClick);
+        adapter.setOnCommentClickListener(comment -> hideKeyboard());
+        adapter.setOnCommentLongClickListener(this::onCommentLongClick);
 
         fileDetailPresenter.setView(this);
         fileDetailPresenter.onInitializeFileDetail(fileId, true /* withProgress */);
@@ -710,6 +719,44 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
     }
 
+    public void onFileClick(String fileUrl, MimeTypeUtil.SourceType sourceType) {
+        if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(fileUrl)));
+        } else {
+            startFileDownload();
+        }
+        AnalyticsUtil.sendEvent(
+                AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewFile);
+    }
+
+    public void onImageFileClick(long fileMessageId, ResMessages.FileContent content,
+                                 boolean shouldOpenImmediately) {
+        if (roomId > 0) {
+            CarouselViewerActivity_.intent(this)
+                    .mode(CarouselViewerActivity.CAROUSEL_MODE)
+                    .roomId(roomId)
+                    .startLinkId(fileMessageId)
+                    .imageOriginUrl(shouldOpenImmediately ? content.fileUrl : "")
+                    .shouldOpenImmediately(shouldOpenImmediately)
+                    .startForResult(REQUEST_CODE_RETURN_FILE_ID);
+        } else {
+            String thumbUrl = ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.THUMB);
+            CarouselViewerActivity_.intent(this)
+                    .mode(CarouselViewerActivity.SINGLE_IMAGE_MODE)
+                    .imageExt(content.ext)
+                    .imageOriginUrl(content.fileUrl)
+                    .imageThumbUrl(thumbUrl)
+                    .imageType(content.type)
+                    .imageName(content.name)
+                    .imageSize(content.size)
+                    .shouldOpenImmediately(shouldOpenImmediately)
+                    .start();
+        }
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewPhoto);
+
+    }
+
     public void onEvent(ShowProfileEvent event) {
         long userEntityId = event.userId;
 
@@ -719,13 +766,10 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 .start();
     }
 
-    public void onEvent(FileCommentClickEvent event) {
-        if (event.isLongClick()) {
-            showChooseDialogIfNeed(event.getComment());
-            sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap);
-        } else {
-            hideKeyboard();
-        }
+    public boolean onCommentLongClick(ResMessages.OriginalMessage comment) {
+        showChooseDialogIfNeed(comment);
+        sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap);
+        return true;
     }
 
     private void showChooseDialogIfNeed(ResMessages.OriginalMessage comment) {
@@ -925,7 +969,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
     }
 
-    public void onEvent(FileDownloadStartEvent fileDownloadStartEvent) {
+    public void startFileDownload() {
         ResMessages.FileMessage fileMessage = getFileMessageFromAdapter();
         if (fileMessage == null || fileMessage.content == null) {
             return;
@@ -977,8 +1021,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 .addRequestCode(REQ_STORAGE_PERMISSION_EXPORT)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::export)
                 .addRequestCode(REQ_STORAGE_PERMISSION_OPEN)
-                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        () -> onEvent(new FileDownloadStartEvent()))
+                .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this::startFileDownload)
                 .neverAskAgain(() -> {
                     PermissionRetryDialog.showExternalPermissionDialog(FileDetailActivity.this);
                 })
@@ -1280,6 +1323,22 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         long entityId = data.getLongExtra(FileSharedEntityChooseActivity.KEY_ENTITY_ID, -1);
         fileDetailPresenter.onUnshareAction(entityId, fileMessage.id);
+    }
+
+    @OnActivityResult(REQUEST_CODE_RETURN_FILE_ID)
+    void onCarouselResult(int resultCode, Intent data) {
+        if (resultCode != RESULT_OK
+                || data == null
+                || !data.hasExtra(CarouselViewerActivity.KEY_FILE_ID)) {
+            return;
+        }
+
+        long fileId = data.getLongExtra(CarouselViewerActivity.KEY_FILE_ID, -1);
+        if (fileId > 0 && this.fileId != fileId) {
+            this.fileId = fileId;
+            fileDetailPresenter.onInitializeFileDetail(this.fileId, true);
+        }
+
     }
 
     @Override
