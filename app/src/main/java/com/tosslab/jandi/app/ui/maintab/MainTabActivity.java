@@ -637,7 +637,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         teamsPresenter.reInitializeTeams();
     }
 
-    public void onEvent(RefreshPollBadgeCountEvent event) {
+    public void onEventMainThread(RefreshPollBadgeCountEvent event) {
         mainTabPagerAdapter.updateMyPageBadge(event.getBadgeCount());
     }
 

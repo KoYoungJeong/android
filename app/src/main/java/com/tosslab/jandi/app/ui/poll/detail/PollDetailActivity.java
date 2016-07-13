@@ -307,9 +307,6 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         pollDetailPresenter.onCommentDeleted(linkComment);
     }
 
-    /**
-     * 소켓 이벤트는 무시한다. (모바일 정책)
-     */
     public void onEvent(SocketPollEvent event) {
         if (event.getPoll() == null
                 || event.getPoll().getId() != pollId) {

@@ -52,7 +52,8 @@ public class ChatChoosePresenterImplTest {
         dataModel = spy(new ChatChooseAdapter(JandiApplication.getContext()));
         DaggerChatChoosePresenterImplTest_TestComponent.builder()
                 .chatChooseModule(new ChatChooseModule(mockView, ((ChatChooseAdapter) dataModel)))
-                .build();
+                .build()
+                .inject(this);
     }
 
     @Test

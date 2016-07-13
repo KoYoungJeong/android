@@ -8,7 +8,7 @@ public class LoggingAppender {
     public static OkHttpClient.Builder add(OkHttpClient.Builder builder) {
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
         builder.addInterceptor(logging);
 
         return builder;
