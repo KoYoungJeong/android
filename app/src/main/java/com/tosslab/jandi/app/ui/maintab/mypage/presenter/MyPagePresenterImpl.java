@@ -230,7 +230,7 @@ public class MyPagePresenterImpl implements MyPagePresenter {
                 })
                 //내 메션인 있으면 멘션 메세지 받아오기
                 .map(link1 -> {
-                    long roomId = link1.roomId;
+                    long roomId = link1.toEntity.get(0);
                     String roomType;
                     String roomName;
                     String userName;

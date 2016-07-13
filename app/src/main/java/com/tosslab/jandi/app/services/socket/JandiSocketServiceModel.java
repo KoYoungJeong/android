@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamJoinEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
+import com.tosslab.jandi.app.local.orm.domain.RoomLinkRelation;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.BotRepository;
@@ -906,10 +907,11 @@ public class JandiSocketServiceModel {
             SocketMessageCreatedEvent event = getObject(object, SocketMessageCreatedEvent.class);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
-            long roomId = event.getData().getLinkMessage().toEntity[0];
             ResMessages.Link linkMessage = event.getData().getLinkMessage();
-            linkMessage.roomId = roomId;
             MessageRepository.getRepository().upsertMessage(linkMessage);
+            for (Long roomId : linkMessage.toEntity) {
+                MessageRepository.getRepository().updateDirty(roomId, linkMessage.id);
+            }
 
             doAfterMessageCreated(linkMessage);
 
@@ -925,38 +927,41 @@ public class JandiSocketServiceModel {
             // 시스템 메세지인 경우..
             return;
         }
-        boolean isTopic = TeamInfoLoader.getInstance().isTopic(linkMessage.roomId);
-        boolean isMyMessage = TeamInfoLoader.getInstance().getMyId() == linkMessage.message.writerId;
-        if (isTopic) {
-            Topic topic = TopicRepository.getInstance().getTopic(linkMessage.roomId);
-            TopicRepository.getInstance().updateLastLinkId(linkMessage.roomId, linkMessage.id);
-            if (!isMyMessage) {
-                TopicRepository.getInstance().updateUnreadCount(linkMessage.roomId, topic.getUnreadCount() + 1);
-            }
-        } else if (TeamInfoLoader.getInstance().isChat(linkMessage.roomId)) {
+        for (Long roomId : linkMessage.toEntity) {
 
-            ResMessages.OriginalMessage message = linkMessage.message;
-            String text = "";
-            if (message instanceof ResMessages.TextMessage) {
-                text = ((ResMessages.TextMessage) message).content.body;
-            } else if (message instanceof ResMessages.CommentMessage) {
-                text = ((ResMessages.CommentMessage) message).content.body;
-            } else if (message instanceof ResMessages.FileMessage) {
-                text = ((ResMessages.FileMessage) message).content.title;
-            } else if (message instanceof ResMessages.StickerMessage
-                    || message instanceof ResMessages.CommentStickerMessage) {
-                text = "(sticker)";
-            } else {
-                text = "";
-            }
+            boolean isTopic = TeamInfoLoader.getInstance().isTopic(roomId);
+            boolean isMyMessage = TeamInfoLoader.getInstance().getMyId() == linkMessage.message.writerId;
+            if (isTopic) {
+                Topic topic = TopicRepository.getInstance().getTopic(roomId);
+                TopicRepository.getInstance().updateLastLinkId(roomId, linkMessage.id);
+                if (!isMyMessage) {
+                    TopicRepository.getInstance().updateUnreadCount(roomId, topic.getUnreadCount() + 1);
+                }
+            } else if (TeamInfoLoader.getInstance().isChat(roomId)) {
 
-            ChatRepository.getInstance().updateLastMessage(linkMessage.roomId, linkMessage.messageId, text, "created");
-            ChatRepository.getInstance().updateLastLinkId(linkMessage.roomId, linkMessage.id);
-            ChatRepository.getInstance().updateChatOpened(linkMessage.roomId, true);
+                ResMessages.OriginalMessage message = linkMessage.message;
+                String text = "";
+                if (message instanceof ResMessages.TextMessage) {
+                    text = ((ResMessages.TextMessage) message).content.body;
+                } else if (message instanceof ResMessages.CommentMessage) {
+                    text = ((ResMessages.CommentMessage) message).content.body;
+                } else if (message instanceof ResMessages.FileMessage) {
+                    text = ((ResMessages.FileMessage) message).content.title;
+                } else if (message instanceof ResMessages.StickerMessage
+                        || message instanceof ResMessages.CommentStickerMessage) {
+                    text = "(sticker)";
+                } else {
+                    text = "";
+                }
 
-            if (!isMyMessage) {
-                Chat chat = ChatRepository.getInstance().getChat(linkMessage.roomId);
-                ChatRepository.getInstance().updateUnreadCount(linkMessage.roomId, chat.getUnreadCount() + 1);
+                ChatRepository.getInstance().updateLastMessage(roomId, linkMessage.messageId, text, "created");
+                ChatRepository.getInstance().updateLastLinkId(roomId, linkMessage.id);
+                ChatRepository.getInstance().updateChatOpened(roomId, true);
+
+                if (!isMyMessage) {
+                    Chat chat = ChatRepository.getInstance().getChat(roomId);
+                    ChatRepository.getInstance().updateUnreadCount(roomId, chat.getUnreadCount() + 1);
+                }
             }
         }
     }
@@ -1272,9 +1277,6 @@ public class JandiSocketServiceModel {
                             String eventName;
                             if (eventInfo.getClass() == SocketMessageCreatedEvent.class) {
                                 SocketMessageCreatedEvent event = (SocketMessageCreatedEvent) eventInfo;
-                                long roomId = event.getData().getLinkMessage().toEntity[0];
-                                ResMessages.Link linkMessage = event.getData().getLinkMessage();
-                                linkMessage.roomId = roomId;
                                 doAfterMessageCreated(event.getData().getLinkMessage());
                                 eventName = "message_created";
                             } else {
@@ -1340,11 +1342,24 @@ public class JandiSocketServiceModel {
         if (eventHistoryInfos != null) {
             // Message 넣기
             List<ResMessages.Link> links = new ArrayList<>();
+            List<RoomLinkRelation> relations = new ArrayList<>();
+            ResMessages.Link linkMessage;
             for (EventHistoryInfo eventHistoryInfo : eventHistoryInfos) {
-                links.add(((SocketMessageCreatedEvent) eventHistoryInfo).getData().getLinkMessage());
+                linkMessage = ((SocketMessageCreatedEvent) eventHistoryInfo).getData().getLinkMessage();
+                links.add(linkMessage);
+                RoomLinkRelation relation;
+                for (Long roomId : linkMessage.toEntity) {
+                    relation = new RoomLinkRelation();
+                    relation.setLinkId(linkMessage.id);
+                    relation.setRoomId(roomId);
+                    relation.setDirty(false);
+                    relations.add(relation);
+                }
             }
 
             MessageRepository.getRepository().upsertMessages(links);
+            MessageRepository.getRepository().updateDirty(relations);
+
             for (EventHistoryInfo eventHistoryInfo : eventHistoryInfos) {
                 postEvent(eventHistoryInfo);
             }

@@ -875,7 +875,7 @@ public class MessageListV2Presenter {
                     || messageType == MessageItem.TYPE_STICKER_COMMNET) {
                 messageListModel.deleteSticker(messageId, messageType);
             }
-            MessageRepository.getRepository().deleteLinkByMessageId(messageId);
+            MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
 
             view.dismissProgressWheel();
 

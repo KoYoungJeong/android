@@ -73,7 +73,9 @@ public class MentionMessage {
                            String writerName,
                            String photoUrl) {
         teamId = link.teamId;
-        roomId = link.roomId;
+        if (link.toEntity != null && !link.toEntity.isEmpty()) {
+            roomId = link.toEntity.get(0);
+        }
         this.roomType = roomType;
         this.roomName = roomName;
         this.linkId = link.id;

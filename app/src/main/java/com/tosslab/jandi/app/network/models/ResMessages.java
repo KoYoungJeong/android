@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.local.orm.dao.event.CreateEventDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.InviteEventDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.PrivateCreateInfoDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.event.PublicCreateInfoDaoImpl;
+import com.tosslab.jandi.app.local.orm.persister.CollectionLongConverter;
 import com.tosslab.jandi.app.local.orm.persister.DateConverter;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.EventInfoDeserialize;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.InviteInfoDeserializer;
@@ -73,8 +74,6 @@ public class ResMessages {
         @DatabaseField
         public long teamId;
         @DatabaseField
-        public long roomId;
-        @DatabaseField
         public long fromEntity;
         @DatabaseField(persisterClass = DateConverter.class)
         public Date time;
@@ -94,10 +93,8 @@ public class ResMessages {
         public OriginalMessage message;
         @DatabaseField
         public String messageType;
-        @JsonIgnore
-        @DatabaseField
-        public boolean dirty;
-        public Long[] toEntity;
+        @DatabaseField(persisterClass = CollectionLongConverter.class)
+        public List<Long> toEntity;
 
         public boolean hasLinkPreview() {
             boolean isTextMessage = message != null && message instanceof TextMessage;

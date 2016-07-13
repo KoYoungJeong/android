@@ -362,7 +362,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
                 messageListModel.deleteSticker(messageId, messageType);
                 LogUtil.d("deleteStickerInBackground : succeed");
             }
-            MessageRepository.getRepository().deleteLinkByMessageId(messageId);
+            MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
             view.deleteLinkByMessageId(messageId);
 
             messageListModel.trackMessageDeleteSuccess(messageId);

@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.MenuItem;
 
 import com.google.gson.JsonObject;
@@ -485,7 +486,6 @@ public class MessageListModel {
 
     public void upsertMessages(long roomId, List<ResMessages.Link> messages) {
         Observable.from(messages)
-                .doOnNext(link -> link.roomId = roomId)
                 .doOnNext(link -> {
                     // 삭제된 파일/코멘트/메세지만 처리
                     if (TextUtils.equals(link.status, "archived")) {
@@ -514,6 +514,13 @@ public class MessageListModel {
 
                     MessageRepository.getRepository().upsertMessages(links);
 
+                    Observable.combineLatest(
+                            Observable.from(links).map(link -> link.id).reduce(Math::min),
+                            Observable.from(links).map(link -> link.id).reduce(Math::max),
+                            Pair::create)
+                            .subscribe(pair -> {
+                                MessageRepository.getRepository().updateDirty(roomId, pair.first, pair.second);
+                            });
                 });
 
     }
