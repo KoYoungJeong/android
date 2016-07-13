@@ -7,14 +7,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.poll.RequestShowPollParticipantsEvent;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
 import java.util.Date;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by tonyjs on 16. 6. 22..
@@ -29,8 +26,12 @@ public class PollInfoViewHolder extends BaseViewHolder<Poll> {
     private View btnParticipants;
     private View vParticipantsMetaphor;
 
-    private PollInfoViewHolder(View itemView) {
+    private OnPollParticipantsClickListener onPollParticipantsClickListener;
+
+    private PollInfoViewHolder(View itemView, OnPollParticipantsClickListener onPollParticipantsClickListener) {
         super(itemView);
+        this.onPollParticipantsClickListener = onPollParticipantsClickListener;
+
         tvSubject = (TextView) itemView.findViewById(R.id.tv_poll_detail_info_subject);
         tvDueDate = (TextView) itemView.findViewById(R.id.tv_poll_detail_info_duedate);
         tvParticipants = (TextView) itemView.findViewById(R.id.tv_poll_detail_info_participants_count);
@@ -39,10 +40,11 @@ public class PollInfoViewHolder extends BaseViewHolder<Poll> {
         vParticipantsMetaphor = itemView.findViewById(R.id.v_poll_detail_info_participants_arrow);
     }
 
-    public static PollInfoViewHolder newInstance(ViewGroup parent) {
+    public static PollInfoViewHolder newInstance(ViewGroup parent,
+                                                 OnPollParticipantsClickListener onPollParticipantsClickListener) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.item_poll_detail_info, parent, false);
-        return new PollInfoViewHolder(itemView);
+        return new PollInfoViewHolder(itemView, onPollParticipantsClickListener);
     }
 
     @Override
@@ -61,10 +63,10 @@ public class PollInfoViewHolder extends BaseViewHolder<Poll> {
 
             boolean canShowParticipants = !poll.isAnonymous() && "voted".equals(poll.getVoteStatus());
             btnParticipants.setSelected(canShowParticipants);
-            vParticipantsMetaphor.setVisibility(canShowParticipants? View.VISIBLE : View.GONE);
+            vParticipantsMetaphor.setVisibility(canShowParticipants ? View.VISIBLE : View.GONE);
             if (canShowParticipants) {
                 btnParticipants.setOnClickListener(v ->
-                        EventBus.getDefault().post(RequestShowPollParticipantsEvent.all(poll)));
+                        onPollParticipantsClickListener.onAllParticipantsClick(poll));
             } else {
                 btnParticipants.setOnClickListener(null);
             }
@@ -73,7 +75,7 @@ public class PollInfoViewHolder extends BaseViewHolder<Poll> {
             btnParticipants.setSelected(true);
             vParticipantsMetaphor.setVisibility(View.VISIBLE);
             btnParticipants.setOnClickListener(v ->
-                    EventBus.getDefault().post(RequestShowPollParticipantsEvent.all(poll)));
+                    onPollParticipantsClickListener.onAllParticipantsClick(poll));
             String finished = DateTransformator.getTimeString(poll.getFinishedAt()) +
                     " " + resources.getString(R.string.jandi_finished);
             tvDueDate.setText(finished);
@@ -110,4 +112,9 @@ public class PollInfoViewHolder extends BaseViewHolder<Poll> {
         }
         return false;
     }
+
+    public interface OnPollParticipantsClickListener {
+        void onAllParticipantsClick(Poll poll);
+    }
+
 }

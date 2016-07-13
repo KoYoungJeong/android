@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.filedetail.adapter.viewholder;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -12,10 +11,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.target.Target;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.files.RequestShowCarouselViewerEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
-import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
 import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -25,8 +21,6 @@ import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by tonyjs on 16. 1. 19..
@@ -40,13 +34,15 @@ public class ImageFileViewHolder extends FileViewHolder {
     private View btnTapToView;
 
     private View vUnavailableIndicator;
+    private OnImageFileClickListener onImageFileClickListener;
 
-    private ImageFileViewHolder(View itemView) {
+    private ImageFileViewHolder(View itemView, OnImageFileClickListener onImageFileClickListener) {
         super(itemView);
+        this.onImageFileClickListener = onImageFileClickListener;
     }
 
-    public static ImageFileViewHolder newInstance(ViewGroup parent) {
-        return new ImageFileViewHolder(FileViewHolder.getItemView(parent));
+    public static ImageFileViewHolder newInstance(ViewGroup parent, OnImageFileClickListener onImageFileClickListener) {
+        return new ImageFileViewHolder(FileViewHolder.getItemView(parent), onImageFileClickListener);
     }
 
     @Override
@@ -168,7 +164,17 @@ public class ImageFileViewHolder extends FileViewHolder {
 
     private void moveToPhotoViewer(long fileMessageId, ResMessages.FileContent content,
                                    boolean shouldOpenImmediately) {
-        EventBus.getDefault().post(
-                new RequestShowCarouselViewerEvent(fileMessageId, content, shouldOpenImmediately));
+        if (onImageFileClickListener != null) {
+            onImageFileClickListener.onImageFileClick(fileMessageId, content, shouldOpenImmediately);
+        }
+    }
+
+    public void setOnImageFileClickListener(OnImageFileClickListener onImageFileClickListener) {
+        this.onImageFileClickListener = onImageFileClickListener;
+    }
+
+    public interface OnImageFileClickListener {
+        void onImageFileClick(long fileMessageId, ResMessages.FileContent content,
+                              boolean shouldOpenImmediately);
     }
 }

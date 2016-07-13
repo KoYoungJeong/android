@@ -9,20 +9,12 @@ import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.RequestVotePollEvent;
-import com.tosslab.jandi.app.network.models.poll.Poll;
-import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.filedetail.widget.LinkedEllipsizeTextView;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.EntitySpannable;
 import com.tosslab.jandi.app.views.spannable.MessageSpannable;
-
-import java.util.Collection;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by tonyjs on 16. 6. 23..

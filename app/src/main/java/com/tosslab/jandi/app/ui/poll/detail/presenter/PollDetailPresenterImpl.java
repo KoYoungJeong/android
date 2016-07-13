@@ -4,7 +4,6 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.events.poll.RequestShowPollParticipantsEvent;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
@@ -434,21 +433,6 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
     }
 
     @Override
-    public void onRequestShowPollParticipantsAction(RequestShowPollParticipantsEvent event) {
-        Poll poll = event.getPoll();
-        // 전체 참여자
-        if (event.getType() == RequestShowPollParticipantsEvent.Type.ALL) {
-
-            showAllParticipants(poll);
-
-        } else {
-            // 옵션 참여자
-
-            showOptionParticipants(event, poll);
-        }
-    }
-
-    @Override
     public void onTopicDeleted(long topicId) {
         Poll poll = pollDetailDataModel.getPoll();
         if (poll == null || poll.getId() <= 0) {
@@ -468,24 +452,25 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
         }
     }
 
-    private void showOptionParticipants(RequestShowPollParticipantsEvent event, Poll poll) {
+    @Override
+    public void onRequestShowPollItemParticipants(Poll poll, Poll.Item item) {
         if (poll.isAnonymous()) {
             pollDetailView.showPollIsAnonymousToast();
         } else {
-            Poll.Item option = event.getOption();
-            if (option.getVotedCount() <= 0) {
+            if (item.getVotedCount() <= 0) {
                 pollDetailView.showEmptyParticipantsToast();
             } else {
-                pollDetailView.showParticipants(poll.getId(), option);
+                pollDetailView.showPollItemParticipants(poll.getId(), item);
             }
         }
     }
 
-    private void showAllParticipants(Poll poll) {
+    @Override
+    public void onRequestShowPollParticipants(Poll poll) {
         if (poll.getVotedCount() <= 0) {
             pollDetailView.showEmptyParticipantsToast();
         } else {
-            pollDetailView.showAllParticipants(poll.getId());
+            pollDetailView.showPollParticipants(poll.getId());
         }
     }
 

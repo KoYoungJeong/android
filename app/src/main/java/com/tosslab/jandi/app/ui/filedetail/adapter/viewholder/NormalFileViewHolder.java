@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.ui.filedetail.adapter.viewholder;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,16 +7,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.placeholder.PlaceholderUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by tonyjs on 16. 2. 1..
@@ -26,13 +19,15 @@ import de.greenrobot.event.EventBus;
 public class NormalFileViewHolder extends FileViewHolder {
     private View vContent;
     private ImageView ivFileThumb;
+    private OnFileClickListener onFileClickListener;
 
-    private NormalFileViewHolder(View itemView) {
+    private NormalFileViewHolder(View itemView, OnFileClickListener onFileClickListener) {
         super(itemView);
+        this.onFileClickListener = onFileClickListener;
     }
 
-    public static NormalFileViewHolder newInstance(ViewGroup parent) {
-        return new NormalFileViewHolder(FileViewHolder.getItemView(parent));
+    public static NormalFileViewHolder newInstance(ViewGroup parent, OnFileClickListener onFileClickListener) {
+        return new NormalFileViewHolder(FileViewHolder.getItemView(parent), onFileClickListener);
     }
 
     @Override
@@ -60,13 +55,9 @@ public class NormalFileViewHolder extends FileViewHolder {
         } else {
             final MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
             vContent.setOnClickListener(v -> {
-                if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
-                    getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(fileUrl)));
-                } else {
-                    EventBus.getDefault().post(new FileDownloadStartEvent());
+                if (onFileClickListener != null) {
+                    onFileClickListener.onFileClick(fileUrl, sourceType);
                 }
-                AnalyticsUtil.sendEvent(
-                        AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewFile);
             });
         }
     }
@@ -110,6 +101,10 @@ public class NormalFileViewHolder extends FileViewHolder {
                 break;
         }
         return imageResourceId;
+    }
+
+    public interface OnFileClickListener {
+        void onFileClick(String fileUrl, MimeTypeUtil.SourceType sourceType);
     }
 
 }
