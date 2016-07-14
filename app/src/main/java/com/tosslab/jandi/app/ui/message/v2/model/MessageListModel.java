@@ -514,9 +514,12 @@ public class MessageListModel {
 
                     MessageRepository.getRepository().upsertMessages(links);
 
+                    Observable<Long> linkIdReplayable = Observable.from(links).map(link -> link.id)
+                            .replay()
+                            .refCount();
                     Observable.combineLatest(
-                            Observable.from(links).map(link -> link.id).reduce(Math::min),
-                            Observable.from(links).map(link -> link.id).reduce(Math::max),
+                            linkIdReplayable.reduce(Math::min),
+                            linkIdReplayable.reduce(Math::max),
                             Pair::create)
                             .subscribe(pair -> {
                                 MessageRepository.getRepository().updateDirty(roomId, pair.first, pair.second);

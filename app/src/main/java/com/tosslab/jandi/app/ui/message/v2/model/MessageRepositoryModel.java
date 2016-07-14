@@ -1,13 +1,20 @@
 package com.tosslab.jandi.app.ui.message.v2.model;
 
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.MessageManipulator_;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import rx.Observable;
@@ -62,7 +69,6 @@ public class MessageRepositoryModel {
                 }
             }
 
-
         } else if (oldMessages.size() < MAX_COUNT) {
             try {
 
@@ -88,6 +94,27 @@ public class MessageRepositoryModel {
             } catch (RetrofitException e) {
                 e.printStackTrace();
             }
+        }
+
+        if (isFirst) {
+            List<SendMessage> sendMessageOfRoom = SendMessageRepository.getRepository().getSendMessageOfRoom(roomId);
+            List<ResMessages.Link> dummyLinks = new ArrayList<>();
+            for (SendMessage sendMessage : sendMessageOfRoom) {
+                DummyMessageLink dummyMessageLink;
+                if (sendMessage.getStickerGroupId() > 0 && !TextUtils.isEmpty(sendMessage.getStickerId())) {
+                    dummyMessageLink = new DummyMessageLink(sendMessage.getId(), sendMessage.getStatus(),
+                            sendMessage.getStickerGroupId(), sendMessage.getStickerId());
+                } else {
+                    dummyMessageLink = new DummyMessageLink(sendMessage.getId(), sendMessage.getMessage(),
+                            sendMessage.getStatus(), new ArrayList<>(sendMessage.getMentionObjects()));
+                }
+                dummyMessageLink.message.writerId = TeamInfoLoader.getInstance().getMyId();
+                dummyMessageLink.message.createTime = new Date();
+                dummyMessageLink.messageId = sendMessage.getMessageId();
+
+                dummyLinks.add(dummyMessageLink);
+            }
+            oldMessages.addAll(dummyLinks);
         }
 
         if (!oldMessages.isEmpty()) {
