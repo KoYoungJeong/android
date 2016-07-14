@@ -129,15 +129,9 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
             return;
         }
 
-        Boolean[] isContainEqualKeywordData = new Boolean[1];
-        isContainEqualKeywordData[0] = false;
-
         Observable.from(users)
                 .filter(user -> {
                     if (keyword != null && keyword.length() > 0) {
-                        if (user.getDivision().equals(keyword)) {
-                            isContainEqualKeywordData[0] = true;
-                        }
                         return user.getDivision().toLowerCase().contains(keyword.toLowerCase());
                     }
                     return false;
@@ -152,7 +146,7 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
                     datas.addAll(pairs);
                 });
         if (datas.size() > 0) {
-            if (!isContainEqualKeywordData[0]) {
+            if (!datas.contains(new Pair(keyword, false))) {
                 datas.add(new Pair(keyword, true));
             }
             adapter.setDatas(datas);
@@ -188,15 +182,9 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
             return;
         }
 
-        Boolean[] isContainEqualKeywordData = new Boolean[1];
-        isContainEqualKeywordData[0] = false;
-
         Observable.from(users)
                 .filter(user -> {
                     if (keyword != null && keyword.length() > 0) {
-                        if (user.getPosition().equals(keyword)) {
-                            isContainEqualKeywordData[0] = true;
-                        }
                         return user.getPosition().toLowerCase().contains(keyword.toLowerCase());
                     }
                     return false;
@@ -211,9 +199,6 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
                     datas.addAll(pairs);
                 });
         if (datas.size() > 0) {
-            if (!isContainEqualKeywordData[0]) {
-                datas.add(new Pair(keyword, true));
-            }
             if (!datas.contains(new Pair(keyword, false))) {
                 datas.add(new Pair(keyword, true));
             }

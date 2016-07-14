@@ -22,6 +22,7 @@ import java.util.List;
  */
 public class InputProfileListAdapter extends RecyclerView.Adapter {
 
+    // first : value , second : is new value
     private List<Pair<String, Boolean>> datas = new ArrayList<>();
 
     private String keyword = "";
