@@ -176,7 +176,7 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     }
 
     private void showMainProfileImage() {
-        ImageUtil.loadProfileImage(ivMain, Uri.parse(selectedCharacterUrl), 0, selectedColor);
+        ImageUtil.loadProfileImage(ivMain, selectedCharacterUrl, 0, selectedColor);
     }
 
     @Override

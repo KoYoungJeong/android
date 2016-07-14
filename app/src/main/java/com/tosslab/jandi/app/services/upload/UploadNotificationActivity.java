@@ -90,23 +90,25 @@ public class UploadNotificationActivity extends BaseAppCompatActivity {
 
         int entityType;
 
+        long roomId;
 
         if (TeamInfoLoader.getInstance().isTopic(entityId)) {
             if (TeamInfoLoader.getInstance().isPublicTopic(entityId)) {
-
                 entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
             } else {
                 entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
-
             }
+            roomId = entityId;
         } else {
             entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
+            roomId = TeamInfoLoader.getInstance().getChatId(entityId);
         }
 
         MessageListV2Activity_.intent(UploadNotificationActivity.this)
                 .teamId(teamId)
                 .entityId(entityId)
                 .entityType(entityType)
+                .roomId(roomId)
                 .isFromPush(false)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
                 .start();

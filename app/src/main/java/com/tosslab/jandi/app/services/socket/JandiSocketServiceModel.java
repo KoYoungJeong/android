@@ -33,6 +33,7 @@ import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.local.orm.domain.RoomLinkRelation;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.BotRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
@@ -930,9 +931,15 @@ public class JandiSocketServiceModel {
 
             ResMessages.Link linkMessage = event.getData().getLinkMessage();
             MessageRepository.getRepository().upsertMessage(linkMessage);
-            for (Long roomId : linkMessage.toEntity) {
-                MessageRepository.getRepository().updateDirty(roomId, linkMessage.id);
+            if (linkMessage.fromEntity == TeamInfoLoader.getInstance().getMyId()) {
+                SendMessageRepository.getRepository().deleteCompletedMessages(Arrays.asList(linkMessage.messageId));
             }
+            final long tempLinkId = linkMessage.id;
+            Observable.from(linkMessage.toEntity)
+                    .distinct()
+                    .subscribe(roomId -> {
+                        MessageRepository.getRepository().updateDirty(roomId, tempLinkId);
+                    });
 
             doAfterMessageCreated(linkMessage);
 
@@ -1284,7 +1291,7 @@ public class JandiSocketServiceModel {
                 .toSortedList((lhs, rhs) -> ((Long) (lhs.getTs() - rhs.getTs())).intValue())
                 .subscribe(eventInfos -> {
 
-                    boolean handleMessageCreated = getMessageCreatedEventCount(eventInfos) <= 30;
+                    boolean handleMessageCreated = eventInfos.size() <= 60;
                     if (handleMessageCreated) {
                         for (EventHistoryInfo eventInfo : eventInfos) {
                             Command command = messageEventActorMapper.get(eventInfo.getClass());
@@ -1349,17 +1356,6 @@ public class JandiSocketServiceModel {
 
     }
 
-    private int getMessageCreatedEventCount(List<EventHistoryInfo> eventInfos) {
-        int total = 0;
-        int size = eventInfos.size();
-        for (int idx = 0; idx < size; idx++) {
-            if (eventInfos.get(idx) instanceof SocketMessageCreatedEvent) {
-                total++;
-            }
-        }
-        return total;
-    }
-
     private void bulkInsertMessage(Map<String, List<EventHistoryInfo>> updateBatchMapper) {
         List<EventHistoryInfo> eventHistoryInfos = updateBatchMapper.get("message_created");
 
@@ -1367,22 +1363,33 @@ public class JandiSocketServiceModel {
             // Message 넣기
             List<ResMessages.Link> links = new ArrayList<>();
             List<RoomLinkRelation> relations = new ArrayList<>();
+            List<Long> linkMessageIds = new ArrayList<>();
             ResMessages.Link linkMessage;
             for (EventHistoryInfo eventHistoryInfo : eventHistoryInfos) {
                 linkMessage = ((SocketMessageCreatedEvent) eventHistoryInfo).getData().getLinkMessage();
                 links.add(linkMessage);
-                RoomLinkRelation relation;
-                for (Long roomId : linkMessage.toEntity) {
-                    relation = new RoomLinkRelation();
-                    relation.setLinkId(linkMessage.id);
-                    relation.setRoomId(roomId);
-                    relation.setDirty(false);
-                    relations.add(relation);
+
+                if (linkMessage.fromEntity == TeamInfoLoader.getInstance().getMyId()) {
+                    linkMessageIds.add(linkMessage.messageId);
                 }
+
+                final long tempLinkId = linkMessage.id;
+                Observable.from(linkMessage.toEntity)
+                        .distinct()
+                        .map(roomId -> {
+                            RoomLinkRelation relation = new RoomLinkRelation();
+                            relation.setLinkId(tempLinkId);
+                            relation.setRoomId(roomId);
+                            relation.setDirty(false);
+                            return relation;
+                        })
+                        .collect(() -> relations, List::add)
+                        .subscribe();
             }
 
             MessageRepository.getRepository().upsertMessages(links);
             MessageRepository.getRepository().updateDirty(relations);
+            SendMessageRepository.getRepository().deleteCompletedMessages(linkMessageIds);
 
             for (EventHistoryInfo eventHistoryInfo : eventHistoryInfos) {
                 postEvent(eventHistoryInfo);

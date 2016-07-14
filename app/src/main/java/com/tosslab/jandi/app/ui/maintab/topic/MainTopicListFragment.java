@@ -558,7 +558,6 @@ public class MainTopicListFragment extends Fragment
 
     public void onEvent(MainSelectTopicEvent event) {
         selectedEntity = event.getSelectedEntity();
-        setSelectedItem(selectedEntity);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
