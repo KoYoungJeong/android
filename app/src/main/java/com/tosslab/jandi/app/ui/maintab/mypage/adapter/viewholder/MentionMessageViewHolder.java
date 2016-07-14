@@ -127,10 +127,9 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
 
         ivProfile.setLayoutParams(layoutParams);
 
-        Uri uri = Uri.parse(mentionMessage.getWriterProfileUrl());
         Resources resources = tvWriter.getResources();
         if (!isJandiBot && !isBot) {
-            ImageUtil.loadProfileImage(ivProfile, uri, R.drawable.profile_img);
+            ImageUtil.loadProfileImage(ivProfile, mentionMessage.getWriterProfileUrl(), R.drawable.profile_img);
 
             if (TeamInfoLoader.getInstance().getUser(mentionMessage.getWriterId()).isEnabled()) {
                 vProfileCover.setBackgroundColor(Color.TRANSPARENT);
@@ -164,7 +163,7 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
                             TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
                             TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
                             Color.TRANSPARENT))
-                    .uri(uri)
+                    .uri(Uri.parse(mentionMessage.getWriterProfileUrl()))
                     .into(ivProfile);
         }
     }

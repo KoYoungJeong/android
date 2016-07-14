@@ -166,9 +166,8 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return Collections.unmodifiableList(topicItemDataList);
     }
 
-    public void setSelectedEntity(long selectedEntity) {
-        this.selectedEntity = selectedEntity;
-        animStatus = AnimStatus.IDLE;
+    public void setItems(List<Topic> topics) {
+        this.topicItemDataList = topics;
     }
 
     private void animateForSelectedEntity(final View targetView) {
@@ -210,6 +209,11 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return selectedEntity;
     }
 
+    public void setSelectedEntity(long selectedEntity) {
+        this.selectedEntity = selectedEntity;
+        animStatus = AnimStatus.IDLE;
+    }
+
     public int indexOfEntity(long entityId) {
         int itemCount = getItemCount();
         for (int idx = 0; idx < itemCount; idx++) {
@@ -222,17 +226,15 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return -1;
     }
 
-    public void setItems(List<Topic> topics) {
-        this.topicItemDataList = topics;
-    }
 
+    private enum AnimStatus {
+        READY, IN_ANIM, FINISH, IDLE
+    }
 
     static class UpdatedTopicItemViewHolder extends RecyclerView.ViewHolder {
 
         @Bind(R.id.rl_topic_item_container)
         RelativeLayout container;
-        @Bind(R.id.v_entity_listitem_selector)
-        View vTopicSelector;
         @Bind(R.id.iv_entity_listitem_icon)
         ImageView ivTopicIcon;
         @Bind(R.id.vg_entity_listitem_name)
@@ -262,10 +264,6 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
-    }
-
-    private enum AnimStatus {
-        READY, IN_ANIM, FINISH, IDLE
     }
 
 }

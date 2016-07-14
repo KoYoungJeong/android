@@ -859,10 +859,18 @@ public class MessageListV2Presenter {
         }
     }
 
-    @Background
     public void onDeleteDummyMessageAction(long localId) {
-        messageListModel.deleteDummyMessageAtDatabase(localId);
-        view.refreshMessages();
+        Observable.just(localId)
+                .doOnNext(it -> {
+                    messageListModel.deleteDummyMessageAtDatabase(it);
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
+                    int position = adapterModel.getDummyMessagePositionByLocalId(it);
+                    adapterModel.remove(position);
+                    view.refreshMessages();
+                });
     }
 
     @Background

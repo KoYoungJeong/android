@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.maintab.mypage.presenter;
 
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -15,7 +14,6 @@ import com.tosslab.jandi.app.ui.maintab.mypage.view.MyPageView;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -181,15 +179,6 @@ public class MyPagePresenterImpl implements MyPagePresenter {
         } else {
             view.showUnknownEntityToast();
         }
-    }
-
-    @Override
-    public void onNewMentionComing(long teamId, @Nullable Date latestCreatedAt) {
-        if (teamId != TeamInfoLoader.getInstance().getTeamId()) {
-            return;
-        }
-
-        mentionInitializeQueue.onNext(new Object());
     }
 
     @Override

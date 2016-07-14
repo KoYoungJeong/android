@@ -79,8 +79,10 @@ public class MainTopicListPresenter {
         mainTopicModel.resetBadge(item.getEntityId());
 
         long teamId = TeamInfoLoader.getInstance().getTeamId();
-        int unreadCount = mainTopicModel.getUnreadCount();
-        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+        mainTopicModel.getUnreadCount()
+                .subscribe(unreadCount -> {
+                    EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+                });
         int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
         view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
                 item.getMarkerLinkId());

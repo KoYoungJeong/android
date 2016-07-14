@@ -23,10 +23,9 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.image.transform.TransformConfig;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
-import com.tosslab.jandi.app.utils.image.transform.TransformConfig;
 
 import java.io.File;
 
@@ -169,8 +168,32 @@ public class ImageUtil {
         return small;
     }
 
+    public static String getLargeProfileUril(String url) {
+        if (TextUtils.isEmpty(url)
+                || !url.startsWith("http")) {
+            return url;
+        }
+        String imageUrl = url;
+        try {
+            int queryStartIndex = imageUrl.lastIndexOf("?");
+            if (queryStartIndex >= 0) {
+                imageUrl = imageUrl.substring(0, queryStartIndex);
+            }
+
+            imageUrl += "?size=640";
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return imageUrl;
+    }
+
     public static void loadProfileImage(ImageView imageView, String url, int placeHolder) {
-        loadProfileImage(imageView, Uri.parse(url), placeHolder);
+        if (!TextUtils.isEmpty(url) && url.startsWith("http")) {
+            loadProfileImage(imageView, Uri.parse(ImageUtil.getLargeProfileUril(url)), placeHolder);
+        } else {
+            loadProfileImage(imageView, Uri.parse(url), placeHolder);
+        }
     }
 
     public static void loadProfileImage(ImageView imageView, Uri uri, int placeHolderResId) {
@@ -183,7 +206,7 @@ public class ImageUtil {
     }
 
     public static void loadProfileImage(ImageView imageView,
-                                        Uri uri, int placeHolderResId, int backgroundColor) {
+                                        String url, int placeHolderResId, int backgroundColor) {
         ImageLoader.newInstance()
                 .placeHolder(placeHolderResId, ImageView.ScaleType.FIT_CENTER)
                 .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
@@ -191,7 +214,7 @@ public class ImageUtil {
                         TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
                         TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
                         backgroundColor))
-                .uri(uri)
+                .uri(Uri.parse(ImageUtil.getLargeProfileUril(url)))
                 .into(imageView);
     }
 

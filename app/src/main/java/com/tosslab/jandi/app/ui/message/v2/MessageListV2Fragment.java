@@ -955,11 +955,10 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         User user = TeamInfoLoader.getInstance().getUser(item.message.writerId);
         tvPreviewUserName.setText(user.getName());
 
-        String url = ImageUtil.getImageFileUrl(user.getPhotoUrl());
-        Uri uri = Uri.parse(url);
         if (!TeamInfoLoader.getInstance().isBot(user.getId())) {
-            ImageUtil.loadProfileImage(ivPreviewProfile, uri, R.drawable.profile_img);
+            ImageUtil.loadProfileImage(ivPreviewProfile, user.getPhotoUrl(), R.drawable.profile_img);
         } else {
+            Uri uri = Uri.parse(user.getPhotoUrl());
             ImageLoader.newInstance()
                     .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
                     .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)

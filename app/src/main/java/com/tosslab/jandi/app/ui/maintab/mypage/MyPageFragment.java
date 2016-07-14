@@ -23,7 +23,6 @@ import android.widget.TextView;
 import com.baidu.android.pushservice.PushSettings;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.messages.MentionToMeEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
@@ -52,7 +51,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.spannable.OwnerSpannable;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -240,12 +238,6 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
                     adapter.notifyDataSetChanged();
                 });
 
-    }
-
-    public void onEvent(MentionToMeEvent event) {
-        Date latestCreatedAt = adapter.getItem(0) != null
-                ? adapter.getItem(0).getCreatedAt() : null;
-        presenter.onNewMentionComing(event.getTeamId(), latestCreatedAt);
     }
 
     @Override
