@@ -14,23 +14,6 @@
         android:layout_width="wrap_content"
         android:layout_height="56dp">
 
-        <EditText
-            android:id="@+id/et_jobtitle_department_name"
-            android:layout_width="wrap_content"
-            android:layout_height="56dp"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="96dp"
-            android:background="@android:color/transparent"
-            android:gravity="center_vertical"
-            android:hint="@string/jandi_insert_new_department"
-            android:inputType="text"
-            android:lines="1"
-            android:maxLines="1"
-            android:textColor="@color/dark_gray"
-            android:textSize="16dp" />
-
-
         <TextView
             android:id="@+id/tv_jobtitle_department_count_max"
             android:layout_width="wrap_content"
@@ -51,6 +34,22 @@
             android:text="0"
             android:textColor="@color/jandi_border_gray"
             android:textSize="13dp" />
+
+        <EditText
+            android:id="@+id/et_jobtitle_department_name"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_toLeftOf="@id/tv_jobtitle_department_count"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:hint="@string/jandi_insert_new_department"
+            android:inputType="text"
+            android:lines="1"
+            android:maxLines="1"
+            android:textColor="@color/dark_gray"
+            android:textSize="16dp" />
 
     </RelativeLayout>
 
