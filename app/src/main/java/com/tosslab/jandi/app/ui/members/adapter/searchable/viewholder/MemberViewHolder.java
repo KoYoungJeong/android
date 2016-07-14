@@ -68,6 +68,7 @@ public class MemberViewHolder<T> extends BaseViewHolder<T> {
     private boolean isTeamMemberList = false;
     private boolean isKickMode = false;
     private boolean isSelectMode = false;
+    private boolean isProfileImageClickable = false;
 
     public MemberViewHolder(View itemView) {
         super(itemView);
@@ -86,6 +87,10 @@ public class MemberViewHolder<T> extends BaseViewHolder<T> {
 
     public void setSelectMode(boolean selectMode) {
         isSelectMode = selectMode;
+    }
+
+    public void setProfileImageClickable(boolean profileImageClickable) {
+        isProfileImageClickable = profileImageClickable;
     }
 
     public void setIsTeamMemberList(boolean isTeamMemberList) {
@@ -116,7 +121,7 @@ public class MemberViewHolder<T> extends BaseViewHolder<T> {
         }
     }
 
-    public void bindView(ChatChooseItem item) {
+    private void bindView(ChatChooseItem item) {
         setProfileImage(item);
 
         measureContentWidth(item);
@@ -209,26 +214,31 @@ public class MemberViewHolder<T> extends BaseViewHolder<T> {
     private void measureContentWidth(ChatChooseItem item) {
         DisplayMetrics displayMetrics = JandiApplication.getContext().getResources().getDisplayMetrics();
         float displayWidth = displayMetrics.widthPixels;
+
         LinearLayout.LayoutParams contentLP = (LinearLayout.LayoutParams) vgContent.getLayoutParams();
+
         contentLP.width = (int) (displayWidth - UiUtils.getPixelFromDp(75));
         contentLP.rightMargin = (int) UiUtils.getPixelFromDp(16);
+
+        int boxWidth = (int) UiUtils.getPixelFromDp(50);
+
+        contentLP.width = contentLP.width - contentLP.rightMargin;
 
         if (isKickMode) {
             vgUserKick.setVisibility(View.VISIBLE);
             vgUserSelected.setVisibility(View.GONE);
-            contentLP.width = (int) (contentLP.width
-                    - UiUtils.getPixelFromDp(50)
-                    - UiUtils.getPixelFromDp(16));
+            if (!item.isOwner()) {
+                contentLP.width = contentLP.width - boxWidth;
+            } else {
+                contentLP.width = contentLP.width - contentLP.rightMargin;
+            }
         } else if (isSelectMode) {
             vgUserKick.setVisibility(View.GONE);
             vgUserSelected.setVisibility(View.VISIBLE);
-            contentLP.width = (int) (contentLP.width
-                    - UiUtils.getPixelFromDp(50)
-                    - UiUtils.getPixelFromDp(16));
+            contentLP.width = contentLP.width - boxWidth;
         } else {
             ivUserKick.setVisibility(View.GONE);
             vgUserSelected.setVisibility(View.GONE);
-            contentLP.width = (int) (contentLP.width - UiUtils.getPixelFromDp(32));
         }
 
         Resources resources = tvOwnerBadge.getResources();
@@ -242,8 +252,15 @@ public class MemberViewHolder<T> extends BaseViewHolder<T> {
         if (item.isOwner()) {
             tvOwnerBadge.setVisibility(View.VISIBLE);
             Paint ownerBadgePaint = tvOwnerBadge.getPaint();
-            int ownerBadgeWidth = (int) ownerBadgePaint.measureText(tvOwnerBadge.getText().toString());
-            contentLP.width = contentLP.width - ownerBadgeWidth - (int) UiUtils.getPixelFromDp(16);
+            int ownerPadding = (int) UiUtils.getPixelFromDp(14);
+            int ownerMargin = (int) UiUtils.getPixelFromDp(16);
+            int ownerBadgeWidth = (int) ownerBadgePaint.measureText(tvOwnerBadge.getText().toString()) + ownerPadding;
+
+            contentLP.width = contentLP.width - ownerBadgeWidth;
+
+            if (!(isKickMode || isSelectMode)) {
+                contentLP.width = contentLP.width - ownerMargin;
+            }
         }
 
         vgContent.setLayoutParams(contentLP);
@@ -270,14 +287,14 @@ public class MemberViewHolder<T> extends BaseViewHolder<T> {
         }
     }
 
-    public void setName(String name, boolean enabled) {
+    private void setName(String name, boolean enabled) {
         tvUserName.setText(name);
         vDisableNameLineThrough.setVisibility(enabled ? View.GONE : View.VISIBLE);
         vDisableNameWarning.setVisibility(enabled ? View.GONE : View.VISIBLE);
     }
 
-    protected void setItemViewClickListener(long itemId) {
-        if (isSelectMode) {
+    private void setItemViewClickListener(long itemId) {
+        if (isProfileImageClickable) {
             ivProfile.setOnClickListener(v ->
                     EventBus.getDefault().post(new ShowProfileEvent(itemId)));
         } else {

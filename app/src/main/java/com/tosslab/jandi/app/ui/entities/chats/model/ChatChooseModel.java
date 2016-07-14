@@ -114,6 +114,8 @@ public class ChatChooseModel {
                             .starred(TeamInfoLoader.getInstance().isStarredUser(user.getId()))
                             .enabled(user.isEnabled())
                             .inactive(user.isInactive())
+                            .department(user.getDivision())
+                            .jobTitle(user.getPosition())
                             .email(user.getEmail())
                             .owner(user.isTeamOwner())
                             .photoUrl(user.getPhotoUrl());
@@ -179,6 +181,8 @@ public class ChatChooseModel {
                             .starred(TeamInfoLoader.getInstance().isStarredUser(user.getId()))
                             .enabled(true)
                             .inactive(user.isInactive())
+                            .department(user.getDivision())
+                            .jobTitle(user.getPosition())
                             .email(user.getEmail())
                             .owner(user.isTeamOwner())
                             .photoUrl(user.getPhotoUrl());

@@ -65,10 +65,12 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
             });
         } else if (isCheckMode) {
             viewHolder.setSelectMode(true);
+            viewHolder.setProfileImageClickable(true);
             viewHolder.setKickMode(false);
             viewHolder.setKickClickListener(null);
         } else {
             viewHolder.setSelectMode(false);
+            viewHolder.setProfileImageClickable(false);
             viewHolder.setKickMode(false);
             viewHolder.setKickClickListener(null);
         }
