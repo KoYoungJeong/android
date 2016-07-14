@@ -37,7 +37,6 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.dynamicl10n.FormatParam;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -144,7 +143,6 @@ public class ResMessages {
             return "Link{" +
                     "id=" + id +
                     ", teamId=" + teamId +
-                    ", roomId=" + roomId +
                     ", fromEntity=" + fromEntity +
                     ", time=" + time +
                     ", messageId=" + messageId +
@@ -156,8 +154,7 @@ public class ResMessages {
                     ", feedback=" + feedback +
                     ", message=" + message +
                     ", messageType='" + messageType + '\'' +
-                    ", dirty=" + dirty +
-                    ", toEntity=" + Arrays.toString(toEntity) +
+                    ", toEntity=" + toEntity +
                     ", pollId=" + pollId +
                     ", poll=" + poll +
                     '}';

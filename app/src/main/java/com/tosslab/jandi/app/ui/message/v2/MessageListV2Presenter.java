@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
 import android.text.TextUtils;
-import android.util.Pair;
 import android.util.Log;
+import android.util.Pair;
 
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
@@ -868,7 +868,7 @@ public class MessageListV2Presenter {
         try {
             messageListModel.deletePollMessage(room.getTeamId(), pollId);
 
-            MessageRepository.getRepository().deleteLinkByMessageId(messageId);
+            MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
             view.dismissProgressWheel();
 
             int position = adapterModel.indexByMessageId(messageId);

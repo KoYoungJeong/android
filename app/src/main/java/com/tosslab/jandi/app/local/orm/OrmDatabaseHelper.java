@@ -284,8 +284,6 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, RoomLinkRelation.class);
                         dropTable(connectionSource, ResMessages.Link.class);
                         createTable(connectionSource, ResMessages.Link.class);
-                    })
-            );
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_POLL, () -> {
                         dropTable(connectionSource, ResMessages.Link.class);
