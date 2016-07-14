@@ -5,18 +5,6 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/tv_name"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="120dp"
-        android:gravity="center_vertical"
-        android:text="business"
-        android:textColor="@color/dark_gray"
-        android:textSize="16dp" />
-
-    <TextView
         android:id="@+id/tv_new_added"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -26,5 +14,21 @@
         android:text="@string/jandi_insert_new_department"
         android:textColor="#00a2e2"
         android:textSize="13dp" />
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="8dp"
+        android:layout_toLeftOf="@id/tv_new_added"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:lines="1"
+        android:maxLines="1"
+        android:text="businessf321WQFWEfewfqfewqfQf231f"
+        android:textColor="@color/dark_gray"
+        android:textSize="16dp" />
+
 
 </RelativeLayout>

@@ -144,6 +144,10 @@ public class InsertProfileSecondPageFragment extends Fragment
         Intent intent = new Intent(getContext(), InputProfileListActivity.class);
         intent.putExtra(InputProfileListActivity.EXTRA_INPUT_MODE,
                 InputProfileListActivity.EXTRA_DEPARTMENT_MODE);
+        if (!TextUtils.isEmpty(tvDepartment.getText().toString())) {
+            intent.putExtra(InputProfileListActivity.EXTRA_DEFAULT,
+                    tvDepartment.getText().toString());
+        }
         startActivityForResult(intent, REQUEST_GET_DEPARTMENT);
     }
 
@@ -153,6 +157,10 @@ public class InsertProfileSecondPageFragment extends Fragment
         Intent intent = new Intent(getContext(), InputProfileListActivity.class);
         intent.putExtra(InputProfileListActivity.EXTRA_INPUT_MODE,
                 InputProfileListActivity.EXTRA_JOB_TITLE_MODE);
+        if (!TextUtils.isEmpty(tvPosition.getText().toString())) {
+            intent.putExtra(InputProfileListActivity.EXTRA_DEFAULT,
+                    tvPosition.getText().toString());
+        }
         startActivityForResult(intent, REQUEST_GET_JOB_TITLE);
     }
 
