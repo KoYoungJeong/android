@@ -22,24 +22,23 @@ ext {
     androidMavenGradlePlugin = "1.4"
     jacksonDataBindVersion = "2.7.2"
 }
-
 buildscript {
+    apply from: 'dependencies.gradle'
     repositories {
         jcenter()
         // aarLinkSource
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.2'
-        classpath 'io.fabric.tools:gradle:1.+'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-        classpath 'com.google.gms:google-services:2.0.0'
-        // RetroLambda
-        classpath 'me.tatarka:gradle-retrolambda:3.2.5'
+        classpath rootProject.ext.dependecies['buildscripts']['android']
+        classpath rootProject.ext.dependecies['buildscripts']['fabric']
+        classpath rootProject.ext.dependecies['buildscripts']['android_apt']
+        classpath rootProject.ext.dependecies['buildscripts']['google_services']
+        classpath rootProject.ext.dependecies['buildscripts']['retrolambda']
 
     }
-}
 
+}
 allprojects {
     repositories {
         jcenter()

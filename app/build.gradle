@@ -62,102 +62,102 @@ dependencies {
 
     }
 
-    compile 'com.tosslab.jandi.lib:sprinkler-android:1.3'
-    compile 'com.tosslab.jandi.lib:photoview-expand:1.1'
-    compile 'com.tosslab.jandi.lib:android-image-zoom-crop:1.1'
+    compile rootProject.ext.dependecies['libraries']['sprinklrAndroid']
+    compile rootProject.ext.dependecies['libraries']['photoView']
+    compile rootProject.ext.dependecies['libraries']['imageZoomCrop']
 
 //    compile project(':sprinkler-android')
 //    compile project(':photoview-expand')
 
-    apt "org.androidannotations:androidannotations:${rootProject.ext.androidAnnotationsVersion}"
-    compile "org.androidannotations:androidannotations-api:${rootProject.ext.androidAnnotationsVersion}"
-    compile "com.jakewharton:butterknife:${rootProject.ext.butterKnifeVersion}"
+    apt rootProject.ext.dependecies['libraries']['androidAnnotationApt']
+    compile rootProject.ext.dependecies['libraries']['androidAnnotation']
+    compile rootProject.ext.dependecies['libraries']['butterknife']
 
-    apt "com.google.dagger:dagger-compiler:${rootProject.ext.dagger2Version}"
-    compile "com.google.dagger:dagger:${rootProject.ext.dagger2Version}"
-    provided 'javax.annotation:jsr250-api:1.0'
+    apt rootProject.ext.dependecies['libraries']['dagger2Apt']
+    compile rootProject.ext.dependecies['libraries']['dagger2']
+    provided rootProject.ext.dependecies['libraries']['jsr250']
 
-    compile 'com.android.support:multidex:1.0.1'
+    compile rootProject.ext.dependecies['libraries']['multidex']
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     // Google
-    compile "com.google.android.gms:play-services-analytics:${rootProject.ext.playServiceVersion}"
-    compile "com.google.android.gms:play-services-gcm:${rootProject.ext.playServiceVersion}"
-    compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:support-v13:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:cardview-v7:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:support-annotations:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:design:${rootProject.ext.supportLibVersion}"
+    compile rootProject.ext.dependecies['libraries']['googleAnalytics']
+    compile rootProject.ext.dependecies['libraries']['multidex']
+    compile rootProject.ext.dependecies['libraries']['support_appcompat']
+    compile rootProject.ext.dependecies['libraries']['support_v4']
+    compile rootProject.ext.dependecies['libraries']['support_v13']
+    compile rootProject.ext.dependecies['libraries']['support_recyclerview']
+    compile rootProject.ext.dependecies['libraries']['support_cardview']
+    compile rootProject.ext.dependecies['libraries']['support_annotation']
+    compile rootProject.ext.dependecies['libraries']['support_design']
 
     // UI
-    compile 'com.github.johnpersano:supertoasts:1.3.4@aar'
-    compile 'com.eowise:recyclerview-stickyheaders:0.5.2@aar'
-    compile 'com.soundcloud.android:android-crop:1.0.0@aar'
+    compile rootProject.ext.dependecies['libraries']['supertoast']
+    compile rootProject.ext.dependecies['libraries']['recyclerview_stickyheader']
+    compile rootProject.ext.dependecies['libraries']['android_crop']
 
     // BadgeCount
-    compile 'me.leolin:ShortcutBadger:1.1.3@aar'
+    compile rootProject.ext.dependecies['libraries']['shortcutbadger']
     // Boilerplate
-    compile 'de.greenrobot:eventbus:2.4.+'
+    compile rootProject.ext.dependecies['libraries']['eventbus']
     // Network
-    compile("io.socket:socket.io-client:${rootProject.ext.socketIoVersion}") {
+    compile(rootProject.ext.dependecies['libraries']['socketio']) {
         exclude group: 'org.json', module: 'json'
     }
 
     // Cache
-    compile 'com.koushikdutta.ion:ion:2.1.+'
+    compile rootProject.ext.dependecies['libraries']['ion']
     // Image
-    compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
-    compile 'jp.wasabeef:glide-transformations:2.0.1'
+    compile rootProject.ext.dependecies['libraries']['glide_okhttp']
+    compile rootProject.ext.dependecies['libraries']['glide_transformation']
 
     // Sliqte ORM
-    compile 'com.j256.ormlite:ormlite-android:4.+'
+    compile rootProject.ext.dependecies['libraries']['ormlite']
 
     // Analytics & report
-    compile 'com.parse:parse-android:1.10.0'
+    compile rootProject.ext.dependecies['libraries']['parse']
     // RxJava
-    compile "io.reactivex:rxandroid:${rootProject.ext.rxAndroidVersion}"
-    compile "io.reactivex:rxjava:${rootProject.ext.rxJavaVersion}"
+    compile rootProject.ext.dependecies['libraries']['rxandroid']
+    compile rootProject.ext.dependecies['libraries']['rxjava']
 
     // facebook SDK
-    compile 'com.facebook.android:facebook-android-sdk:4.5.+'
+    compile rootProject.ext.dependecies['libraries']['facebook']
 
     // Force usage of support annotations in the test app, since it is internally used by the runner module.
-    androidTestCompile "com.android.support.test:runner:${rootProject.ext.testRunnerVersion}"
-    androidTestCompile "com.android.support.test:rules:${rootProject.ext.testRunnerVersion}"
-    androidTestCompile "com.android.support.test.espresso:espresso-core:${rootProject.ext.espressoVersion}"
-    androidTestCompile "com.android.support.test.espresso:espresso-intents:${rootProject.ext.espressoVersion}"
-    androidTestCompile "com.crittercism.dexmaker:dexmaker-mockito:${rootProject.ext.dexmakerVersion}"
-    androidTestCompile "com.crittercism.dexmaker:dexmaker-dx:${rootProject.ext.dexmakerVersion}"
-    androidTestCompile "com.jayway.awaitility:awaitility:${rootProject.ext.awaitilityVersion}"
-    androidTestCompile "com.squareup.assertj:assertj-android:${rootProject.ext.assertJAndroidVersion}"
-    androidTestCompile "com.squareup.assertj:assertj-android-support-v4:${rootProject.ext.assertJAndroidVersion}@aar"
-    androidTestCompile "com.squareup.assertj:assertj-android-appcompat-v7:${rootProject.ext.assertJAndroidVersion}@aar"
-    androidTestCompile "com.squareup.assertj:assertj-android-recyclerview-v7:${rootProject.ext.assertJAndroidVersion}@aar"
-    androidTestApt "com.google.dagger:dagger-compiler:${rootProject.ext.dagger2Version}"
+    androidTestCompile rootProject.ext.dependecies['libraries']['testrunner']
+    androidTestCompile rootProject.ext.dependecies['libraries']['testrule']
+    androidTestCompile rootProject.ext.dependecies['libraries']['espresso_core']
+    androidTestCompile rootProject.ext.dependecies['libraries']['espresso_intent']
+    androidTestCompile rootProject.ext.dependecies['libraries']['dexmaker_mockito']
+    androidTestCompile rootProject.ext.dependecies['libraries']['dexmaker_dx']
+    androidTestCompile rootProject.ext.dependecies['libraries']['awaitility']
+    androidTestCompile rootProject.ext.dependecies['libraries']['assertj_android']
+    androidTestCompile rootProject.ext.dependecies['libraries']['assertj_android_support']
+    androidTestCompile rootProject.ext.dependecies['libraries']['assertj_android_appcompat']
+    androidTestCompile rootProject.ext.dependecies['libraries']['assertj_android_recyclerview']
+    androidTestApt rootProject.ext.dependecies['libraries']['dagger2Apt']
 
-    compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
+    compile(rootProject.ext.dependecies['libraries']['crashlytics']) {
         transitive = true;
     }
 
     // Calendar View
-    compile 'com.prolificinteractive:material-calendarview:1.4.0'
+    compile rootProject.ext.dependecies['libraries']['material_calendarview']
 
     // Joda time
-    compile 'net.danlew:android.joda:2.9.4'
+    compile rootProject.ext.dependecies['libraries']['joda_time']
 
     // newrelic
-    compile 'com.newrelic.agent.android:android-agent:4.273.4'
+    compile rootProject.ext.dependecies['libraries']['newrelic']
 
     //Retrofit
-    compile "com.squareup.retrofit2:retrofit:${rootProject.ext.retrofitVersion}"
-    compile "com.squareup.okhttp3:okhttp:${rootProject.ext.okhttpVersion}"
-    compile "com.squareup.okhttp3:okhttp-ws:${rootProject.ext.okhttpVersion}"
-    compile "com.fasterxml.jackson.core:jackson-databind:${rootProject.ext.jacksonDataBindVersion}"
-    debugCompile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
+    compile rootProject.ext.dependecies['libraries']['retrofit2']
+    compile rootProject.ext.dependecies['libraries']['okhttp3']
+    compile rootProject.ext.dependecies['libraries']['okhttp3_ws']
+    compile rootProject.ext.dependecies['libraries']['jackson']
+    debugCompile rootProject.ext.dependecies['libraries']['okhttp3_logging']
 
-    debugCompile 'com.facebook.stetho:stetho-okhttp3:1.3.1'
+    debugCompile rootProject.ext.dependecies['libraries']['stetho_okhttp3']
 }
 
 android {
