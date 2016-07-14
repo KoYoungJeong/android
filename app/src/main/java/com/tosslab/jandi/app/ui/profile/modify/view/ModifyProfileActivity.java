@@ -221,6 +221,10 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         Intent intent = new Intent(this, InputProfileListActivity.class);
         intent.putExtra(InputProfileListActivity.EXTRA_INPUT_MODE,
                 InputProfileListActivity.EXTRA_DEPARTMENT_MODE);
+        if (!TextUtils.isEmpty(tvProfileUserDivision.getText().toString())) {
+            intent.putExtra(InputProfileListActivity.EXTRA_DEFAULT,
+                    tvProfileUserDivision.getText().toString());
+        }
         startActivityForResult(intent, REQUEST_GET_DEPARTMENT);
     }
 
@@ -230,6 +234,10 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         Intent intent = new Intent(this, InputProfileListActivity.class);
         intent.putExtra(InputProfileListActivity.EXTRA_INPUT_MODE,
                 InputProfileListActivity.EXTRA_JOB_TITLE_MODE);
+        if (!TextUtils.isEmpty(tvProfileUserPosition.getText().toString())) {
+            intent.putExtra(InputProfileListActivity.EXTRA_DEFAULT,
+                    tvProfileUserPosition.getText().toString());
+        }
         startActivityForResult(intent, REQUEST_GET_JOB_TITLE);
     }
 

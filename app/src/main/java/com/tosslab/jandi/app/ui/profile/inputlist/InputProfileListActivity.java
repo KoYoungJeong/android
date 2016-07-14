@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -39,6 +40,7 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
     public static final String EXTRA_INPUT_MODE = "extra_input_mode";
     public static final String EXTRA_JOB_TITLE_MODE = "extra_job_title_mode";
     public static final String EXTRA_DEPARTMENT_MODE = "extra_department_mode";
+    public static final String EXTRA_DEFAULT = "extra_default";
 
     @Bind(R.id.et_jobtitle_department_name)
     EditText etName;
@@ -73,8 +75,7 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
     }
 
     private void setMode() {
-        Intent intent = getIntent();
-        mode = intent.getStringExtra(EXTRA_INPUT_MODE);
+        mode = getIntent().getStringExtra(EXTRA_INPUT_MODE);
     }
 
     private void initView() {
@@ -86,6 +87,11 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
             getSupportActionBar().setTitle(R.string.jandi_department);
             etName.setHint(R.string.jandi_insert_new_department);
             tvList.setText(R.string.jandi_department_list);
+        }
+        String defaultName = getIntent().getStringExtra(EXTRA_DEFAULT);
+        if (!TextUtils.isEmpty(defaultName)) {
+            etName.setText(defaultName);
+            etName.setSelection(defaultName.length());
         }
     }
 
@@ -100,8 +106,25 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
         final List<String> datas = new ArrayList<>();
         TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
         List<User> users = teamInfoLoader.getUserList();
+
+        if (TextUtils.isEmpty(keyword)) {
+            Observable.from(users)
+                    .map((user) -> user.getDivision())
+                    .filter(department -> !TextUtils.isEmpty(department))
+                    .distinct()
+                    .toSortedList((lhs, rhs) -> {
+                        return StringCompareUtil.compare(lhs, rhs);
+                    })
+                    .subscribe(strings -> {
+                        datas.addAll(strings);
+                    });
+            adapter.setDatas(datas);
+            adapter.setKeyword(keyword);
+            adapter.hasDataRefresh();
+            return;
+        }
+
         Observable.from(users)
-                .distinct()
                 .filter(user -> {
                     if (keyword != null && keyword.length() > 0) {
                         return user.getDivision().toLowerCase().contains(keyword.toLowerCase());
@@ -109,6 +132,7 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
                     return false;
                 })
                 .map((user) -> user.getDivision())
+                .distinct()
                 .toSortedList((lhs, rhs) -> {
                     return StringCompareUtil.compare(lhs, rhs);
                 })
@@ -131,8 +155,24 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
         final List<String> datas = new ArrayList<>();
         TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
         List<User> users = teamInfoLoader.getUserList();
+        if (TextUtils.isEmpty(keyword)) {
+            Observable.from(users)
+                    .map((user) -> user.getPosition())
+                    .filter(jobTitle -> !TextUtils.isEmpty(jobTitle))
+                    .distinct()
+                    .toSortedList((lhs, rhs) -> {
+                        return StringCompareUtil.compare(lhs, rhs);
+                    })
+                    .subscribe(strings -> {
+                        datas.addAll(strings);
+                    });
+            adapter.setDatas(datas);
+            adapter.setKeyword(keyword);
+            adapter.hasDataRefresh();
+            return;
+        }
+
         Observable.from(users)
-                .distinct()
                 .filter(user -> {
                     if (keyword != null && keyword.length() > 0) {
                         return user.getPosition().toLowerCase().contains(keyword.toLowerCase());
@@ -140,6 +180,7 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
                     return false;
                 })
                 .map((user) -> user.getPosition())
+                .distinct()
                 .toSortedList((lhs, rhs) -> {
                     return StringCompareUtil.compare(lhs, rhs);
                 })

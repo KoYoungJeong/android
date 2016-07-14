@@ -24,8 +24,9 @@
             android:background="@android:color/transparent"
             android:gravity="center_vertical"
             android:hint="@string/jandi_insert_new_department"
+            android:maxLines="1"
             android:textColor="@color/dark_gray"
-            android:textSize="25dp" />
+            android:textSize="16dp" />
 
 
         <TextView
