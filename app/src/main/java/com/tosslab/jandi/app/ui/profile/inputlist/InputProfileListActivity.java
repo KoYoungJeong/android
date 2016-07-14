@@ -92,6 +92,8 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
         if (!TextUtils.isEmpty(defaultName)) {
             etName.setText(defaultName);
             etName.setSelection(defaultName.length());
+        } else {
+            etName.setText("");
         }
     }
 
