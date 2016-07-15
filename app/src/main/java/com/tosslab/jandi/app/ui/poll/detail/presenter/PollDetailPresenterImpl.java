@@ -10,12 +10,13 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResPollComments;
+import com.tosslab.jandi.app.network.models.ResPollDetail;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.model.PollDetailDataModel;
-import com.tosslab.jandi.app.ui.poll.detail.dto.PollDetail;
 import com.tosslab.jandi.app.ui.poll.detail.model.PollDetailModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -63,19 +64,33 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
         reInitializePollDetailQueueSubs =
                 reInitializePollDetailQueue.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
                         .onBackpressureBuffer()
-                        .concatMap(pollId ->
-                                pollDetailModel.getPollDetailObservable(pollId, new PollDetail(pollId)))
-                        .concatMap(pollDetail ->
-                                pollDetailModel.getPollCommentsObservable(pollDetail.getPollId(), pollDetail))
-                        .doOnNext(pollDetail -> pollDetailModel.upsertPoll(pollDetail.getPoll()))
                         .subscribeOn(Schedulers.io())
+                        .concatMap(pollId ->
+                                Observable.combineLatest(
+                                        pollDetailModel.getPollDetailObservable(pollId),
+                                        pollDetailModel.getPollCommentsObservable(pollId),
+                                        Pair::create))
+                        .filter(pair ->
+                                pair.first != null
+                                        && pair.first.getPoll() != null
+                                        && pair.first.getPoll().getId() > 0)
+                        .doOnNext(pair -> {
+                            ResPollDetail resPollDetail = pair.first;
+                            if (resPollDetail != null && resPollDetail.getPoll() != null) {
+                                pollDetailModel.upsertPoll(resPollDetail.getPoll());
+                            }
+                        })
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(pollDetail -> {
+                        .subscribe(pair -> {
                             pollDetailDataModel.removeAllRows();
 
-                            pollDetailDataModel.setPollDetails(pollDetail.getPoll());
+                            ResPollDetail resPollDetail = pair.first;
+                            Poll poll = resPollDetail.getPoll();
+                            pollDetailDataModel.setPollDetails(poll);
 
-                            List<ResMessages.OriginalMessage> pollComments = pollDetail.getPollComments();
+                            ResPollComments resPollComments = pair.second;
+                            List<ResMessages.OriginalMessage> pollComments =
+                                    resPollComments.getComments();
                             if (pollComments != null && !pollComments.isEmpty()) {
                                 pollDetailModel.sortByDate(pollComments);
                                 pollDetailDataModel.addPollComments(pollComments);
@@ -83,7 +98,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
 
                             pollDetailView.notifyDataSetChanged();
 
-                            pollDetailView.initPollDetailExtras(pollDetail.getPoll());
+                            pollDetailView.initPollDetailExtras(poll);
 
                         }, e -> {
                             LogUtil.e(TAG, Log.getStackTraceString(e));
@@ -98,16 +113,22 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
         }
 
         pollDetailView.showProgress();
-        pollDetailModel.getPollDetailObservable(pollId, new PollDetail(pollId))
-                .concatMap(pollDetail ->
-                        pollDetailModel.getPollCommentsObservable(pollDetail.getPollId(), pollDetail))
-                .doOnNext(pollDetail -> pollDetailModel.upsertPoll(pollDetail.getPoll()))
+        Observable.combineLatest(pollDetailModel.getPollDetailObservable(pollId),
+                pollDetailModel.getPollCommentsObservable(pollId),
+                Pair::create)
+                .doOnNext(pair -> {
+                    ResPollDetail resPollDetail = pair.first;
+                    if (resPollDetail != null && resPollDetail.getPoll() != null) {
+                        pollDetailModel.upsertPoll(resPollDetail.getPoll());
+                    }
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(pollDetail -> {
+                .subscribe(pair -> {
                     pollDetailView.dismissProgress();
 
-                    Poll poll = pollDetail.getPoll();
+                    ResPollDetail resPollDetail = pair.first;
+                    Poll poll = resPollDetail.getPoll();
                     if (poll == null || poll.getId() <= 0) {
                         pollDetailView.showUnExpectedErrorToast();
                         pollDetailView.finish();
@@ -116,7 +137,8 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
 
                     pollDetailDataModel.setPollDetails(poll);
 
-                    List<ResMessages.OriginalMessage> pollComments = pollDetail.getPollComments();
+                    ResPollComments resPollComments = pair.second;
+                    List<ResMessages.OriginalMessage> pollComments = resPollComments.getComments();
                     if (pollComments != null && !pollComments.isEmpty()) {
                         pollDetailModel.sortByDate(pollComments);
                         pollDetailDataModel.addPollComments(pollComments);
@@ -319,22 +341,6 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                                 .build());
                     }
 
-                });
-    }
-
-    @Override
-    public void onPollDataChanged(Poll poll) {
-        Observable.just(poll)
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(poll1 -> {
-                    pollDetailDataModel.removePollDetailRow();
-                    pollDetailDataModel.replacePollDetails(poll1);
-                    pollDetailView.notifyDataSetChanged();
-
-                    pollDetailView.initPollDetailExtras(poll1);
-                }, e -> {
-                    LogUtil.e(TAG, Log.getStackTraceString(e));
-                    pollDetailView.showUnExpectedErrorToast();
                 });
     }
 

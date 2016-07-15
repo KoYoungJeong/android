@@ -97,7 +97,7 @@
 	<string name="jandi_are_you_sure_disable_external_link">"削除すると、リンクをもう使用することができません。本当に削除しますか？"</string>
 	<string name="jandi_ask_assign_topic_owner">"このメンバーにトピック管理者の権限を譲りますか？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"本当にこのメンバーをトピックから退出させますか？"</string>
-	<string name="jandi_ask_poll_delete">"投票を削除しますか？"</string>
+	<string name="jandi_ask_poll_delete">"投票を削除しますか？\ㅜn削除後もコメントは残ります"</string>
 	<string name="jandi_ask_poll_finish">"投票を終了しますか？"</string>
 	<string name="jandi_ask_to_leave_if_private_topic_owner">"あなたはこのトピックの管理者です。他のメンバーに管理者の権限を譲った後トピックから退出できます。"</string>
 	<string name="jandi_ask_to_leave_if_topic_owner">"あなたはこのトピックの管理者です。トピックから退出するには管理者権限を他のメンバーに譲ってください。"</string>
@@ -291,8 +291,8 @@
 	<string name="jandi_input_search_keyword">"キーワードで検索"</string>
 	<string name="jandi_input_topic_name">"トピック名を入力してください"</string>
 	<string name="jandi_input_user_name">"検索するメンバーの名前を入力"</string>
-	<string name="jandi_insert_new_department">"NEW KEY"</string>
-	<string name="jandi_insert_new_job_title">"NEW KEY"</string>
+	<string name="jandi_insert_new_department">"(新しい部署)"</string>
+	<string name="jandi_insert_new_job_title">"(新しい役職）"</string>
 	<string name="jandi_insert_team_domain">"チームドメインを入力してください。"</string>
 	<string name="jandi_insert_team_name">"チーム名を入力してください。"</string>
 	<string name="jandi_invitation">"招待"</string>
@@ -415,7 +415,8 @@
 	<string name="jandi_poll">"投票"</string>
 	<string name="jandi_poll_add_item">"回答を追加する"</string>
 	<string name="jandi_poll_anonymous">"匿名投票"</string>
-	<string name="jandi_poll_create">"作成"</string>
+	<string name="jandi_poll_create">"新しい投票を作成する"</string>
+	<string name="jandi_poll_deleted">"投票を削除しました。"</string>
 	<string name="jandi_poll_empty_1">"実施中の投票がありません。"</string>
 	<string name="jandi_poll_empty_2">"\nトピックで「＋」を押し、投票を作成してください。"</string>
 	<string name="jandi_poll_finished_with_most">"投票が終了しました。最多得票の項目は、「%s」です。"</string>
