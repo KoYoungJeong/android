@@ -95,6 +95,7 @@ public class InsertTeamInfoModel {
         AccountUtil.removeDuplicatedTeams(resAccountInfo);
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
+        TeamInfoLoader.getInstance().refresh();
     }
 
     public void trackCreateTeamSuccess(long teamId) {
@@ -123,6 +124,5 @@ public class InsertTeamInfoModel {
         InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
         JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
         MessageRepository.getRepository().deleteAllLink();
-        TeamInfoLoader.getInstance().refresh();
     }
 }
