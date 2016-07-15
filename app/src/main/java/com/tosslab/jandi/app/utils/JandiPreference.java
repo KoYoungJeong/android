@@ -369,7 +369,7 @@ public class JandiPreference {
     public static boolean isPutVersionCodeStamp() {
         // 버전 154 이하 사용자의 링크를 초기화 하기 위함
         return getSharedPreferences()
-                .getInt(PREF_VERSION_CODE_STAMP, 159) >= com.tosslab.jandi.app.BuildConfig.VERSION_CODE;
+                .getInt(PREF_VERSION_CODE_STAMP, 174) >= com.tosslab.jandi.app.BuildConfig.VERSION_CODE;
     }
 
     public static void putVersionCodeStamp() {
