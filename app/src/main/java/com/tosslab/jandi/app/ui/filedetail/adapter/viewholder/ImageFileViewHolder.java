@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.filedetail.adapter.viewholder;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -13,8 +12,6 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.target.Target;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
-import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
 import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -32,21 +29,20 @@ import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
  */
 public class ImageFileViewHolder extends FileViewHolder {
 
-    private long roomId;
-
     private ImageView ivFileThumb;
 
     private View btnTapToView;
 
     private View vUnavailableIndicator;
+    private OnImageFileClickListener onImageFileClickListener;
 
-    private ImageFileViewHolder(View itemView, long roomId) {
+    private ImageFileViewHolder(View itemView, OnImageFileClickListener onImageFileClickListener) {
         super(itemView);
-        this.roomId = roomId;
+        this.onImageFileClickListener = onImageFileClickListener;
     }
 
-    public static ImageFileViewHolder newInstance(ViewGroup parent, long roomId) {
-        return new ImageFileViewHolder(FileViewHolder.getItemView(parent), roomId);
+    public static ImageFileViewHolder newInstance(ViewGroup parent, OnImageFileClickListener onImageFileClickListener) {
+        return new ImageFileViewHolder(FileViewHolder.getItemView(parent), onImageFileClickListener);
     }
 
     @Override
@@ -168,30 +164,17 @@ public class ImageFileViewHolder extends FileViewHolder {
 
     private void moveToPhotoViewer(long fileMessageId, ResMessages.FileContent content,
                                    boolean shouldOpenImmediately) {
-        Context context = getContext();
-
-        if (roomId > 0) {
-            CarouselViewerActivity_.intent(context)
-                    .mode(CarouselViewerActivity.CAROUSEL_MODE)
-                    .roomId(roomId)
-                    .startLinkId(fileMessageId)
-                    .imageOriginUrl(shouldOpenImmediately ? content.fileUrl : "")
-                    .shouldOpenImmediately(shouldOpenImmediately)
-                    .start();
-        } else {
-            String thumbUrl = ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.THUMB);
-            CarouselViewerActivity_.intent(context)
-                    .mode(CarouselViewerActivity.SINGLE_IMAGE_MODE)
-                    .imageExt(content.ext)
-                    .imageOriginUrl(content.fileUrl)
-                    .imageThumbUrl(thumbUrl)
-                    .imageType(content.type)
-                    .imageName(content.name)
-                    .imageSize(content.size)
-                    .shouldOpenImmediately(shouldOpenImmediately)
-                    .start();
+        if (onImageFileClickListener != null) {
+            onImageFileClickListener.onImageFileClick(fileMessageId, content, shouldOpenImmediately);
         }
+    }
 
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewPhoto);
+    public void setOnImageFileClickListener(OnImageFileClickListener onImageFileClickListener) {
+        this.onImageFileClickListener = onImageFileClickListener;
+    }
+
+    public interface OnImageFileClickListener {
+        void onImageFileClick(long fileMessageId, ResMessages.FileContent content,
+                              boolean shouldOpenImmediately);
     }
 }

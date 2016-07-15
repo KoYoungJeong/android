@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.services.socket;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tosslab.jandi.app.JandiApplication;
@@ -26,12 +25,15 @@ import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
+import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamJoinEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
+import com.tosslab.jandi.app.local.orm.domain.RoomLinkRelation;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.BotRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
@@ -44,6 +46,8 @@ import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
+import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
@@ -52,6 +56,7 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
@@ -127,7 +132,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -152,23 +156,29 @@ public class JandiSocketServiceModel {
     private final Lazy<AccountApi> accountApi;
     private final Lazy<LoginApi> loginApi;
     private final Lazy<EventsApi> eventsApi;
+    private final Lazy<PollApi> pollApi;
+    private Lazy<StartApi> startApi;
 
     private PublishSubject<SocketRoomMarkerEvent> markerPublishSubject;
     private Subscription markerSubscribe;
     private Map<Class<? extends EventHistoryInfo>, Command> messageEventActorMapper;
 
-    private PublishSubject<Object> eventPublisher;
+    PublishSubject<Object> eventPublisher;
     private Subscription eventSubscribe;
 
     @Inject
     public JandiSocketServiceModel(Context context,
                                    Lazy<AccountApi> accountApi,
                                    Lazy<LoginApi> loginApi,
-                                   Lazy<EventsApi> eventsApi) {
+                                   Lazy<EventsApi> eventsApi,
+                                   Lazy<StartApi> startApi,
+                                   Lazy<PollApi> pollApi) {
         this.context = context;
         this.accountApi = accountApi;
         this.loginApi = loginApi;
         this.eventsApi = eventsApi;
+        this.startApi = startApi;
+        this.pollApi = pollApi;
         this.objectMapper = JacksonMapper.getInstance().getObjectMapper();
         initEventActor();
 
@@ -277,12 +287,13 @@ public class JandiSocketServiceModel {
         messageEventActorMapper.put(SocketTeamUpdatedEvent.class, this::onTeamUpdated);
 
 
+        // 메세지 관련 처리
         messageEventActorMapper.put(SocketFileDeletedEvent.class, this::onFileDeleted);
         messageEventActorMapper.put(SocketFileUnsharedEvent.class, this::onFileUnshared);
         messageEventActorMapper.put(SocketFileCommentDeletedEvent.class, this::onFileCommentDeleted);
         messageEventActorMapper.put(SocketMessageDeletedEvent.class, this::onMessageDeleted);
         messageEventActorMapper.put(SocketRoomMarkerEvent.class, this::onRoomMarkerUpdated);
-//        messageEventActorMapper.put(SocketMessageCreatedEvent.class, this::onMessageCreated);
+        messageEventActorMapper.put(SocketMessageCreatedEvent.class, this::onMessageCreated);
         messageEventActorMapper.put(SocketMessageStarredEvent.class, this::onMessageStarred);
         messageEventActorMapper.put(SocketMessageUnstarredEvent.class, this::onMessageUnstarred);
         messageEventActorMapper.put(SocketLinkPreviewMessageEvent.class, this::onLinkPreviewCreated);
@@ -476,7 +487,6 @@ public class JandiSocketServiceModel {
                 }
             }
 
-            chat.setIsOpened(true);
             chat.setReadLinkId(-1);
             chat.setCompanionId(Observable.from(chat.getMembers())
                     .takeFirst(memberId -> memberId != TeamInfoLoader.getInstance().getMyId())
@@ -566,17 +576,11 @@ public class JandiSocketServiceModel {
 
             if (TeamInfoLoader.getInstance().getMyId() == memberId) {
                 if (TeamInfoLoader.getInstance().isTopic(roomId)) {
-                    Topic topic = TopicRepository.getInstance().getTopic(roomId);
-                    long oldReadLinkId = topic.getReadLinkId();
-                    int messagesCount = MessageRepository.getRepository().getMessagesCount(roomId, oldReadLinkId, lastLinkId);
                     TopicRepository.getInstance().updateReadId(roomId, lastLinkId);
-                    TopicRepository.getInstance().updateUnreadCount(roomId, Math.max(topic.getUnreadCount() - messagesCount, 0));
+                    TopicRepository.getInstance().updateUnreadCount(roomId, 0);
                 } else if (TeamInfoLoader.getInstance().isChat(roomId)) {
-                    Chat chat = ChatRepository.getInstance().getChat(roomId);
-                    long oldReadLinkId = chat.getReadLinkId();
-                    int messagesCount = MessageRepository.getRepository().getMessagesCount(roomId, oldReadLinkId, lastLinkId);
                     ChatRepository.getInstance().updateReadLinkId(roomId, lastLinkId);
-                    ChatRepository.getInstance().updateUnreadCount(roomId, Math.max(chat.getUnreadCount() - messagesCount, 0));
+                    ChatRepository.getInstance().updateUnreadCount(roomId, 0);
                 }
             }
 
@@ -925,10 +929,17 @@ public class JandiSocketServiceModel {
             SocketMessageCreatedEvent event = getObject(object, SocketMessageCreatedEvent.class);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
-            long roomId = event.getData().getLinkMessage().toEntity[0];
             ResMessages.Link linkMessage = event.getData().getLinkMessage();
-            linkMessage.roomId = roomId;
             MessageRepository.getRepository().upsertMessage(linkMessage);
+            if (linkMessage.fromEntity == TeamInfoLoader.getInstance().getMyId()) {
+                SendMessageRepository.getRepository().deleteCompletedMessages(Arrays.asList(linkMessage.messageId));
+            }
+            final long tempLinkId = linkMessage.id;
+            Observable.from(linkMessage.toEntity)
+                    .distinct()
+                    .subscribe(roomId -> {
+                        MessageRepository.getRepository().updateDirty(roomId, tempLinkId);
+                    });
 
             doAfterMessageCreated(linkMessage);
 
@@ -944,40 +955,42 @@ public class JandiSocketServiceModel {
             // 시스템 메세지인 경우..
             return;
         }
-        boolean isTopic = TeamInfoLoader.getInstance().isTopic(linkMessage.roomId);
-        boolean isMyMessage = TeamInfoLoader.getInstance().getMyId() == linkMessage.message.writerId;
-        if (isTopic) {
-            Topic topic = TopicRepository.getInstance().getTopic(linkMessage.roomId);
-            TopicRepository.getInstance().updateLastLinkId(linkMessage.roomId, linkMessage.id);
-            if (!isMyMessage) {
-                TopicRepository.getInstance().updateUnreadCount(linkMessage.roomId, topic.getUnreadCount() + 1);
+        for (Long roomId : linkMessage.toEntity) {
+
+            boolean isTopic = TeamInfoLoader.getInstance().isTopic(roomId);
+            boolean isMyMessage = TeamInfoLoader.getInstance().getMyId() == linkMessage.message.writerId;
+            if (isTopic) {
+                Topic topic = TopicRepository.getInstance().getTopic(roomId);
+                TopicRepository.getInstance().updateLastLinkId(roomId, linkMessage.id);
+                if (!isMyMessage) {
+                    TopicRepository.getInstance().updateUnreadCount(roomId, topic.getUnreadCount() + 1);
+                }
+            } else if (TeamInfoLoader.getInstance().isChat(roomId)) {
+
+                ResMessages.OriginalMessage message = linkMessage.message;
+                String text = "";
+                if (message instanceof ResMessages.TextMessage) {
+                    text = ((ResMessages.TextMessage) message).content.body;
+                } else if (message instanceof ResMessages.CommentMessage) {
+                    text = ((ResMessages.CommentMessage) message).content.body;
+                } else if (message instanceof ResMessages.FileMessage) {
+                    text = ((ResMessages.FileMessage) message).content.title;
+                } else if (message instanceof ResMessages.StickerMessage
+                        || message instanceof ResMessages.CommentStickerMessage) {
+                    text = "(sticker)";
+                } else {
+                    text = "";
+                }
+
+                ChatRepository.getInstance().updateLastMessage(roomId, linkMessage.messageId, text, "created");
+                ChatRepository.getInstance().updateLastLinkId(roomId, linkMessage.id);
+                ChatRepository.getInstance().updateChatOpened(roomId, true);
+
+                if (!isMyMessage) {
+                    Chat chat = ChatRepository.getInstance().getChat(roomId);
+                    ChatRepository.getInstance().updateUnreadCount(roomId, chat.getUnreadCount() + 1);
+                }
             }
-        } else if (TeamInfoLoader.getInstance().isChat(linkMessage.roomId)) {
-
-            ResMessages.OriginalMessage message = linkMessage.message;
-            String text = "";
-            if (message instanceof ResMessages.TextMessage) {
-                text = ((ResMessages.TextMessage) message).content.body;
-            } else if (message instanceof ResMessages.CommentMessage) {
-                text = ((ResMessages.CommentMessage) message).content.body;
-            } else if (message instanceof ResMessages.FileMessage) {
-                text = ((ResMessages.FileMessage) message).content.title;
-            } else if (message instanceof ResMessages.StickerMessage
-                    || message instanceof ResMessages.CommentStickerMessage) {
-                text = "(sticker)";
-            } else {
-                text = "";
-            }
-
-            long lastMessageId = TeamInfoLoader.getInstance().getChat(linkMessage.roomId).getLastMessageId();
-            ChatRepository.getInstance().updateLastMessage(linkMessage.roomId, lastMessageId, text, "created");
-            ChatRepository.getInstance().updateLastLinkId(linkMessage.roomId, linkMessage.id);
-
-            if (!isMyMessage) {
-                Chat chat = ChatRepository.getInstance().getChat(linkMessage.roomId);
-                ChatRepository.getInstance().updateUnreadCount(linkMessage.roomId, chat.getUnreadCount() + 1);
-            }
-
         }
     }
 
@@ -1274,54 +1287,229 @@ public class JandiSocketServiceModel {
 
         long socketConnectedLastTime = JandiPreference.getSocketConnectedLastTime();
         getEventHistory(socketConnectedLastTime)
-                .doOnCompleted(() -> Log.e(TAG, "updateEventHistory: " + new Date().toString()))
-                .subscribe(eventInfo -> {
+                .filter(it -> messageEventActorMapper.containsKey(it.getClass()))
+                .toSortedList((lhs, rhs) -> ((Long) (lhs.getTs() - rhs.getTs())).intValue())
+                .subscribe(eventInfos -> {
 
-                    String eventName;
-                    if (eventInfo.getClass() == SocketMessageCreatedEvent.class) {
-                        SocketMessageCreatedEvent event = (SocketMessageCreatedEvent) eventInfo;
-                        long roomId = event.getData().getLinkMessage().toEntity[0];
-                        ResMessages.Link linkMessage = event.getData().getLinkMessage();
-                        linkMessage.roomId = roomId;
-                        doAfterMessageCreated(event.getData().getLinkMessage());
-                        eventName = "message_created";
-                    } else {
-                        eventName = "etc";
-                    }
-
-                    if (!updateBatchMapper.containsKey(eventName)) {
-                        updateBatchMapper.put(eventName, new ArrayList<>());
-                    }
-                    updateBatchMapper.get(eventName).add(eventInfo);
-                }, Throwable::printStackTrace, () -> {
-                    List<EventHistoryInfo> eventHistoryInfos = updateBatchMapper.get("message_created");
-
-                    if (eventHistoryInfos != null) {
-                        // Message 넣기
-                        List<ResMessages.Link> links = new ArrayList<>();
-                        for (EventHistoryInfo eventHistoryInfo : eventHistoryInfos) {
-                            links.add(((SocketMessageCreatedEvent) eventHistoryInfo).getData().getLinkMessage());
-                        }
-
-                        MessageRepository.getRepository().upsertMessages(links);
-                        for (EventHistoryInfo eventHistoryInfo : eventHistoryInfos) {
-                            postEvent(eventHistoryInfo);
-                        }
-
-                    }
-
-                    List<EventHistoryInfo> etc = updateBatchMapper.get("etc");
-                    if (etc != null) {
-                        for (EventHistoryInfo eventHistoryInfo : etc) {
-                            Command command = messageEventActorMapper.get(eventHistoryInfo.getClass());
+                    boolean handleMessageCreated = eventInfos.size() <= 60;
+                    if (handleMessageCreated) {
+                        for (EventHistoryInfo eventInfo : eventInfos) {
+                            Command command = messageEventActorMapper.get(eventInfo.getClass());
                             if (command != null) {
-                                command.command(eventHistoryInfo);
+                                command.command(eventInfo);
+                            }
+                        }
+                    } else {
+
+                        for (EventHistoryInfo eventInfo : eventInfos) {
+                            String eventName;
+                            if (eventInfo.getClass() == SocketMessageCreatedEvent.class) {
+                                SocketMessageCreatedEvent event = (SocketMessageCreatedEvent) eventInfo;
+                                doAfterMessageCreated(event.getData().getLinkMessage());
+                                eventName = "message_created";
+                            } else {
+                                eventName = "etc";
+                            }
+
+                            if (!updateBatchMapper.containsKey(eventName)) {
+                                updateBatchMapper.put(eventName, new ArrayList<>());
+                            }
+                            updateBatchMapper.get(eventName).add(eventInfo);
+                        }
+
+                        bulkInsertMessage(updateBatchMapper);
+
+                        List<EventHistoryInfo> etc = updateBatchMapper.get("etc");
+                        if (etc != null) {
+
+                            boolean successRefresh = false;
+                            try {
+                                long teamId = TeamInfoLoader.getInstance().getTeamId();
+                                InitialInfo initializeInfo = startApi.get().getInitializeInfo(teamId);
+                                InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+                                TeamInfoLoader.getInstance().refresh();
+                                refreshPollList(teamId);
+                                JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
+                                successRefresh = true;
+                                postEvent(new RetrieveTopicListEvent());
+                                postEvent(new ChatListRefreshEvent());
+                                postEvent(new TeamInfoChangeEvent());
+                                postEvent(new RequestRefreshPollBadgeCountEvent(teamId));
+                            } catch (RetrofitException e) {
+                                successRefresh = false;
+                            }
+
+                            for (EventHistoryInfo eventHistoryInfo : etc) {
+                                if (successRefresh) {
+                                    proccessMessageEventIfTooMuch(eventHistoryInfo);
+                                } else {
+                                    Command command = messageEventActorMapper.get(eventHistoryInfo.getClass());
+                                    if (command != null) {
+                                        command.command(eventHistoryInfo);
+                                    }
+                                }
                             }
                         }
                     }
 
-                });
+                }, Throwable::printStackTrace);
 
+    }
+
+    private void bulkInsertMessage(Map<String, List<EventHistoryInfo>> updateBatchMapper) {
+        List<EventHistoryInfo> eventHistoryInfos = updateBatchMapper.get("message_created");
+
+        if (eventHistoryInfos != null) {
+            // Message 넣기
+            List<ResMessages.Link> links = new ArrayList<>();
+            List<RoomLinkRelation> relations = new ArrayList<>();
+            List<Long> linkMessageIds = new ArrayList<>();
+            ResMessages.Link linkMessage;
+            for (EventHistoryInfo eventHistoryInfo : eventHistoryInfos) {
+                linkMessage = ((SocketMessageCreatedEvent) eventHistoryInfo).getData().getLinkMessage();
+                links.add(linkMessage);
+
+                if (linkMessage.fromEntity == TeamInfoLoader.getInstance().getMyId()) {
+                    linkMessageIds.add(linkMessage.messageId);
+                }
+
+                final long tempLinkId = linkMessage.id;
+                Observable.from(linkMessage.toEntity)
+                        .distinct()
+                        .map(roomId -> {
+                            RoomLinkRelation relation = new RoomLinkRelation();
+                            relation.setLinkId(tempLinkId);
+                            relation.setRoomId(roomId);
+                            relation.setDirty(false);
+                            return relation;
+                        })
+                        .collect(() -> relations, List::add)
+                        .subscribe();
+            }
+
+            MessageRepository.getRepository().upsertMessages(links);
+            MessageRepository.getRepository().updateDirty(relations);
+            SendMessageRepository.getRepository().deleteCompletedMessages(linkMessageIds);
+
+            for (EventHistoryInfo eventHistoryInfo : eventHistoryInfos) {
+                postEvent(eventHistoryInfo);
+            }
+
+        }
+    }
+
+    private void proccessMessageEventIfTooMuch(EventHistoryInfo eventHistoryInfo) {
+        if (eventHistoryInfo instanceof SocketFileDeletedEvent) {
+            SocketFileDeletedEvent event = (SocketFileDeletedEvent) eventHistoryInfo;
+            MessageRepository.getRepository().updateStatus(event.getFile().getId(), "archived");
+            postEvent(new DeleteFileEvent(event.getTeamId(), event.getFile().getId()));
+        } else if (eventHistoryInfo instanceof SocketFileUnsharedEvent) {
+            SocketFileUnsharedEvent event = (SocketFileUnsharedEvent) eventHistoryInfo;
+            long fileId = event.getFile().getId();
+            long roomId = event.room.id;
+
+            MessageRepository.getRepository().deleteSharedRoom(fileId, roomId);
+            postEvent(new UnshareFileEvent(roomId, fileId));
+        } else if (eventHistoryInfo instanceof SocketLinkPreviewMessageEvent) {
+            SocketLinkPreviewMessageEvent event = (SocketLinkPreviewMessageEvent) eventHistoryInfo;
+            SocketLinkPreviewMessageEvent.Data data = event.getData();
+            ResMessages.TextMessage textMessage = MessageRepository.getRepository().getTextMessage(data.getMessageId());
+            if (textMessage != null) {
+                textMessage.linkPreview = data.getLinkPreview();
+                MessageRepository.getRepository().upsertTextMessage(textMessage);
+                postEvent(new LinkPreviewUpdateEvent(data.getMessageId()));
+            }
+
+
+        } else if (eventHistoryInfo instanceof SocketLinkPreviewThumbnailEvent) {
+            SocketLinkPreviewThumbnailEvent event = (SocketLinkPreviewThumbnailEvent) eventHistoryInfo;
+            SocketLinkPreviewThumbnailEvent.Data data = event.getData();
+            ResMessages.LinkPreview linkPreview = data.getLinkPreview();
+
+            long messageId = data.getMessageId();
+
+            ResMessages.TextMessage textMessage =
+                    MessageRepository.getRepository().getTextMessage(messageId);
+            textMessage.linkPreview = linkPreview;
+            MessageRepository.getRepository().upsertTextMessage(textMessage);
+            postEvent(new LinkPreviewUpdateEvent(data.getMessageId()));
+        } else if (eventHistoryInfo instanceof SocketMessageStarredEvent) {
+            SocketMessageStarredEvent event = (SocketMessageStarredEvent) eventHistoryInfo;
+            MessageRepository.getRepository().updateStarred(event.getStarredInfo()
+                    .getMessageId(), true);
+            postEvent(new MessageStarEvent(event.getStarredInfo().getMessageId(), true));
+
+        } else if (eventHistoryInfo instanceof SocketMessageUnstarredEvent) {
+            SocketMessageUnstarredEvent event = (SocketMessageUnstarredEvent) eventHistoryInfo;
+            MessageRepository.getRepository().updateStarred(event.getStarredInfo()
+                    .getMessageId(), false);
+            postEvent(new MessageStarEvent(event.getStarredInfo().getMessageId(), false));
+
+        } else if (eventHistoryInfo instanceof SocketMessageDeletedEvent) {
+            SocketMessageDeletedEvent event = (SocketMessageDeletedEvent) eventHistoryInfo;
+            long messageId = event.getData().getMessageId();
+            MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
+            postEvent(event);
+
+        } else if (eventHistoryInfo instanceof SocketPollCreatedEvent) {
+            SocketPollCreatedEvent event = (SocketPollCreatedEvent) eventHistoryInfo;
+            SocketPollCreatedEvent.Data data = event.getData();
+
+            Poll poll = data != null ? data.getPoll() : null;
+
+            boolean isSameTeam =
+                    event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId();
+            if (isSameTeam
+                    && poll != null && poll.getId() > 0) {
+                upsertPoll(poll);
+                poll = getPollFromDatabase(poll.getId());
+
+                postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.CREATED));
+            }
+        } else if (eventHistoryInfo instanceof SocketPollFinishedEvent) {
+            SocketPollFinishedEvent event = (SocketPollFinishedEvent) eventHistoryInfo;
+            SocketPollFinishedEvent.Data data = event.getData();
+
+            ResMessages.Link link = data.getLinkMessage();
+            Poll poll = link != null ? link.poll : null;
+            boolean isSameTeam =
+                    event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId();
+            if (isSameTeam
+                    && poll != null && poll.getId() > 0) {
+                upsertPoll(poll);
+                poll = getPollFromDatabase(poll.getId());
+                postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.FINISHED));
+            }
+
+        } else if (eventHistoryInfo instanceof SocketPollDeletedEvent) {
+            SocketPollDeletedEvent event = (SocketPollDeletedEvent) eventHistoryInfo;
+            SocketPollDeletedEvent.Data data = event.getData();
+
+            ResMessages.Link link = data.getLinkMessage();
+            Poll poll = link != null ? link.poll : null;
+            boolean isSameTeam =
+                    event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId();
+            if (isSameTeam
+                    && poll != null && poll.getId() > 0) {
+                upsertPoll(poll);
+                poll = getPollFromDatabase(poll.getId());
+                postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.DELETED));
+            }
+        } else if (eventHistoryInfo instanceof SocketPollVotedEvent) {
+            SocketPollVotedEvent event = (SocketPollVotedEvent) eventHistoryInfo;
+            SocketPollVotedEvent.Data data = event.getData();
+
+            ResMessages.Link link = data.getLinkMessage();
+            Poll poll = link != null ? link.poll : null;
+            boolean isSameTeam =
+                    event.getTeamId() == AccountRepository.getRepository().getSelectedTeamId();
+            if (isSameTeam
+                    && poll != null && poll.getId() > 0 && poll.isMine()) {
+                upsertPollVotedStatus(poll);
+                poll = getPollFromDatabase(poll.getId());
+                postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.VOTED));
+            }
+        }
     }
 
     @NonNull
@@ -1361,9 +1549,7 @@ public class JandiSocketServiceModel {
 
             }
         })
-                .doOnNext(it -> Log.e(TAG, "updateEventHistory: " + new Date().toString()))
-                .doOnNext(it -> Log.i(TAG, "getEventHistory: size - " + it.getRecords().size()))
-                .flatMap(resEventHistory -> Observable.from(resEventHistory.getRecords()))
+                .concatMap(resEventHistory -> Observable.from(resEventHistory.getRecords()))
                 .filter(SocketEventVersionModel::validVersion);
     }
 
@@ -1511,6 +1697,28 @@ public class JandiSocketServiceModel {
 
     private Poll getPollFromDatabase(long pollId) {
         return PollRepository.getInstance().getPollById(pollId);
+    }
+
+    private void refreshPollList(long teamId) {
+        try {
+            PollRepository.getInstance().clearAll();
+
+            ResPollList resPollList = pollApi.get().getPollList(teamId, 50);
+            List<Poll> onGoing = resPollList.getOnGoing();
+            if (onGoing == null) {
+                onGoing = new ArrayList<>();
+            }
+            List<Poll> finished = resPollList.getFinished();
+            if (finished == null) {
+                finished = new ArrayList<>();
+            }
+            Observable.merge(Observable.from(onGoing), Observable.from(finished))
+                    .toList()
+                    .subscribe(polls -> PollRepository.getInstance().upsertPollList(polls),
+                            Throwable::printStackTrace);
+        } catch (RetrofitException retrofitError) {
+            retrofitError.printStackTrace();
+        }
     }
 
     interface Command {

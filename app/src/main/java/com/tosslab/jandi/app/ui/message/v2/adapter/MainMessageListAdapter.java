@@ -156,7 +156,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         }
 
         if (!itemTypes.containsKey(currentLink)) {
-            int contentType = BodyViewFactory.getContentType(previousLink, currentLink, nextLink);
+            int contentType = BodyViewFactory.getContentType(previousLink, currentLink, nextLink, room.getRoomId());
             itemTypes.put(currentLink, contentType);
             return contentType;
         } else {

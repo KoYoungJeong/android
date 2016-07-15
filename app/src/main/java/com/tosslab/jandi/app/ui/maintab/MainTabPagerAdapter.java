@@ -125,14 +125,6 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
         this.selectedEntity = selectedEntity;
     }
 
-    public void showMoreNewBadge() {
-        showBadge(TAB_MYPAGE);
-    }
-
-    public void hideMoreNewBadge() {
-        hideBadge(TAB_MYPAGE);
-    }
-
     public void updateMyPageBadge(int badgeCount) {
         TextView tvMyPage = (TextView) getBadgeView(TAB_MYPAGE);
         updateBadgeText(badgeCount, tvMyPage, TAB_MYPAGE);

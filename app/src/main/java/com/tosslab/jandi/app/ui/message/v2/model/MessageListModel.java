@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.MenuItem;
 
 import com.google.gson.JsonObject;
@@ -55,7 +56,6 @@ import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.poll.util.PollUtil;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.DateComparatorUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
@@ -157,11 +157,11 @@ public class MessageListModel {
     }
 
     public boolean isPublicTopic(int entityType) {
-        return (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) ? true : false;
+        return entityType == JandiConstants.TYPE_PUBLIC_TOPIC;
     }
 
     public boolean isDirectMessage(int entityType) {
-        return (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) ? true : false;
+        return entityType == JandiConstants.TYPE_DIRECT_MESSAGE;
     }
 
     public MenuCommand getMenuCommand(Fragment fragmet, long teamId, long entityId, MenuItem item) {
@@ -460,14 +460,12 @@ public class MessageListModel {
         return ReadyMessageRepository.getRepository().getReadyMessage(roomId).getText();
     }
 
-    public void clearLinks(long teamId, long roomId) {
-        MessageRepository.getRepository().clearLinks(teamId, roomId);
-    }
-
     public long getLastReadLinkId(long roomId) {
         long myId = TeamInfoLoader.getInstance().getMyId();
         Room room = TeamInfoLoader.getInstance().getRoom(roomId);
-
+        if (room == null || room.getMarkers() == null || room.getMarkers().isEmpty()) {
+            return -1;
+        }
         return Observable.from(room.getMarkers())
                 .filter(messageMarker -> messageMarker.getMemberId() == myId)
                 .map(Marker::getReadLinkId)
@@ -494,7 +492,6 @@ public class MessageListModel {
 
     public void upsertMessages(long roomId, List<ResMessages.Link> messages) {
         Observable.from(messages)
-                .doOnNext(link -> link.roomId = roomId)
                 .doOnNext(link -> {
                     // 삭제된 파일/코멘트/메세지만 처리
                     if (TextUtils.equals(link.status, "archived")) {
@@ -523,6 +520,16 @@ public class MessageListModel {
 
                     MessageRepository.getRepository().upsertMessages(links);
 
+                    Observable<Long> linkIdReplayable = Observable.from(links).map(link -> link.id)
+                            .replay()
+                            .refCount();
+                    Observable.combineLatest(
+                            linkIdReplayable.reduce(Math::min),
+                            linkIdReplayable.reduce(Math::max),
+                            Pair::create)
+                            .subscribe(pair -> {
+                                MessageRepository.getRepository().updateDirty(roomId, pair.first, pair.second);
+                            });
                 });
 
     }
@@ -557,10 +564,6 @@ public class MessageListModel {
         }
 
         return localId;
-    }
-
-    public boolean isBefore30Days(Date time) {
-        return DateComparatorUtil.isBefore30Days(time);
     }
 
     /**

@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.lists.entities;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,9 +71,7 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
 
         User entity = getItem(i);
         // 프로필 사진
-        Uri uri = Uri.parse(entity.getPhotoUrl());
-
-        ImageUtil.loadProfileImage(holder.imageView, uri, R.drawable.profile_img);
+        ImageUtil.loadProfileImage(holder.imageView, entity.getPhotoUrl(), R.drawable.profile_img);
 
         holder.textView.setText(entity.getName());
         holder.checkBox.setTag(entity);

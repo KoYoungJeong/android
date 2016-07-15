@@ -79,8 +79,10 @@ public class MainTopicListPresenter {
         mainTopicModel.resetBadge(item.getEntityId());
 
         long teamId = TeamInfoLoader.getInstance().getTeamId();
-        int unreadCount = mainTopicModel.getUnreadCount();
-        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+        mainTopicModel.getUnreadCount()
+                .subscribe(unreadCount -> {
+                    EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+                });
         int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
         view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
                 item.getMarkerLinkId());
@@ -105,8 +107,10 @@ public class MainTopicListPresenter {
 
         long teamId = TeamInfoLoader.getInstance().getTeamId();
 
-        int unreadCount = getUnreadCount(Observable.from(topicAdapter.getAllTopicItemData()));
-        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+        getUnreadCount(Observable.from(topicAdapter.getAllTopicItemData()))
+                .subscribe(unreadCount -> {
+                    EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+                });
 
         int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
         view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
@@ -132,12 +136,11 @@ public class MainTopicListPresenter {
         view.showEntityMenuDialog(entityId, folderId);
     }
 
-    public int getUnreadCount(Observable<TopicItemData> joinEntities) {
-        final int[] value = {0};
-        joinEntities.filter(topicItemData -> topicItemData.getUnreadCount() > 0)
-                .subscribe(topicItemData -> value[0] += topicItemData.getUnreadCount());
+    public Observable<Integer> getUnreadCount(Observable<TopicItemData> joinEntities) {
+        return joinEntities.filter(topicItemData -> topicItemData.getUnreadCount() > 0)
+                .map(TopicItemData::getUnreadCount)
+                .scan((lhs, rhs) -> lhs + rhs);
 
-        return value[0];
     }
 
     public void onFolderExpand(TopicFolderData topicFolderData) {

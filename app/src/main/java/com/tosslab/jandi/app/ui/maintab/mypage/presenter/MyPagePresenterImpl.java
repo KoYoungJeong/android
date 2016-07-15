@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.maintab.mypage.presenter;
 
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -15,7 +14,6 @@ import com.tosslab.jandi.app.ui.maintab.mypage.view.MyPageView;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -106,7 +104,10 @@ public class MyPagePresenterImpl implements MyPagePresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(polls -> {
                     view.setPollBadgeCount(polls.size());
-                }, Throwable::printStackTrace);
+                }, throwable -> {
+                    LogUtil.e(TAG, Log.getStackTraceString(throwable));
+                    view.setPollBadgeCount(0);
+                });
     }
 
     @Override
@@ -195,15 +196,6 @@ public class MyPagePresenterImpl implements MyPagePresenter {
     }
 
     @Override
-    public void onNewMentionComing(long teamId, @Nullable Date latestCreatedAt) {
-        if (teamId != TeamInfoLoader.getInstance().getTeamId()) {
-            return;
-        }
-
-        mentionInitializeQueue.onNext(new Object());
-    }
-
-    @Override
     public void clearMentionInitializeQueue() {
         if (mentionInitializeQueueSubscription != null
                 && !mentionInitializeQueueSubscription.isUnsubscribed()) {
@@ -241,7 +233,7 @@ public class MyPagePresenterImpl implements MyPagePresenter {
                 })
                 //내 메션인 있으면 멘션 메세지 받아오기
                 .map(link1 -> {
-                    long roomId = link1.roomId;
+                    long roomId = link1.toEntity.get(0);
                     String roomType;
                     String roomName;
                     String userName;

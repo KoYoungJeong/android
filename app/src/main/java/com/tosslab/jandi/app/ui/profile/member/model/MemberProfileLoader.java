@@ -58,12 +58,12 @@ public class MemberProfileLoader implements ProfileLoader {
     public void loadSmallThumb(ImageView ivProfileImageSmall, Member member) {
         String profileImageUrlMedium = member.getPhotoUrl();
         ImageUtil.loadProfileImage(
-                ivProfileImageSmall, profileImageUrlMedium, R.drawable.profile_img);
+                ivProfileImageSmall, ImageUtil.getLargeProfileUril(profileImageUrlMedium), R.drawable.profile_img);
     }
 
     @Override
     public void loadFullThumb(PhotoView ivProfileImageFull, String uriString) {
-        Uri uri = Uri.parse(uriString);
+        Uri uri = Uri.parse(ImageUtil.getLargeProfileUril(uriString));
 
         ImageLoader.newInstance()
                 .uri(uri)

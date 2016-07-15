@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.poll.PollDataChangedEvent;
-import com.tosslab.jandi.app.events.poll.RequestShowPollParticipantsEvent;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.utils.UiUtils;
@@ -34,8 +33,13 @@ public class PollItemViewHolder extends BaseViewHolder<Pair<Poll, Poll.Item>> {
     private View vParticipants;
     private int defaultTitleLeftMargin;
 
-    private PollItemViewHolder(View itemView) {
+    private OnPollItemParticipantsClickListener onPollItemParticipantsClickListener;
+
+    private PollItemViewHolder(View itemView,
+                               OnPollItemParticipantsClickListener onPollItemParticipantsClickListener) {
         super(itemView);
+        this.onPollItemParticipantsClickListener = onPollItemParticipantsClickListener;
+
         progressBar = (ProgressRelativeLayout) itemView.findViewById(R.id.progress_bar);
         tvTitle = (TextView) itemView.findViewById(R.id.tv_poll_detail_item_title);
         tvParticipants = (TextView) itemView.findViewById(R.id.tv_poll_detail_item_participants);
@@ -46,10 +50,11 @@ public class PollItemViewHolder extends BaseViewHolder<Pair<Poll, Poll.Item>> {
         defaultTitleLeftMargin = (int) UiUtils.getPixelFromDp(15);
     }
 
-    public static PollItemViewHolder newInstance(ViewGroup parent) {
+    public static PollItemViewHolder newInstance(ViewGroup parent,
+                                                 OnPollItemParticipantsClickListener onPollItemParticipantsClickListener) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.item_poll_detail_item, parent, false);
-        return new PollItemViewHolder(itemView);
+        return new PollItemViewHolder(itemView, onPollItemParticipantsClickListener);
     }
 
     @Override
@@ -104,7 +109,7 @@ public class PollItemViewHolder extends BaseViewHolder<Pair<Poll, Poll.Item>> {
 
         progressBar.setSelected(false);
         progressBar.setOnClickListener(v ->
-                EventBus.getDefault().post(RequestShowPollParticipantsEvent.option(poll, item)));
+                onPollItemParticipantsClickListener.onPollItemParticipantsClick(poll, item));
 
         progressBar.setProgress(item.getVotedCount());
         progressBar.setMax(poll.getVotedCount());
@@ -188,5 +193,9 @@ public class PollItemViewHolder extends BaseViewHolder<Pair<Poll, Poll.Item>> {
         poll.setVotedItemSeqs(votedItemSeqs);
 
         EventBus.getDefault().post(PollDataChangedEvent.create(poll));
+    }
+
+    public interface OnPollItemParticipantsClickListener {
+        void onPollItemParticipantsClick(Poll poll, Poll.Item item);
     }
 }

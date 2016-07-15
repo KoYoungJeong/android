@@ -22,12 +22,10 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.ui.carousel.presenter.CarouselViewerPresenter;
 import com.tosslab.jandi.app.ui.carousel.presenter.CarouselViewerPresenterImpl;
-import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.photo.PhotoViewFragment;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
 import com.tosslab.jandi.app.utils.file.FileUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -55,6 +53,9 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     public static final long SINGLE_IMAGE_MODE = 0x01;
 
     private static final int REQ_STORAGE_PERMISSION = 101;
+
+    public static final String KEY_FILE_ID = "file_id";
+
     @ViewById(R.id.vp_carousel)
     ViewPager viewPager;
 
@@ -279,23 +280,6 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         tvFileCreateTime.setText(fileCreateTime);
     }
 
-    @Override
-    public void moveToFileDatail() {
-        CarouselFileInfo fileInfo = getCarouselFileInfo();
-
-        if (fileInfo != null) {
-
-            FileDetailActivity_
-                    .intent(CarouselViewerActivity.this)
-                    .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    .roomId(roomId)
-                    .fileId(fileInfo.getFileLinkId())
-                    .start();
-
-            finish();
-        }
-    }
-
     private void setUpToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_carousel);
         setSupportActionBar(toolbar);
@@ -349,15 +333,6 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
                         grantResults));
     }
 
-    @Click(R.id.iv_file_datail_info)
-    void onMoveToFileDatail() {
-        if (mode == CAROUSEL_MODE) {
-            carouselViewerPresenter.onFileDatail();
-        } else if (mode == SINGLE_IMAGE_MODE) {
-            finish();
-        }
-    }
-
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showFailToast(String message) {
@@ -379,6 +354,18 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         }
 
         overridePendingTransition(0, anim);
+    }
+
+    @Override
+    public void finish() {
+        CarouselFileInfo fileInfo = carouselViewerAdapter.getFileInfo(viewPager.getCurrentItem());
+        if (fileInfo != null) {
+            Intent data = new Intent();
+            data.putExtra(KEY_FILE_ID, fileInfo.getFileLinkId());
+            setResult(RESULT_OK, data);
+        }
+
+        super.finish();
     }
 
     @Override

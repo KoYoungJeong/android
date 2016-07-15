@@ -61,12 +61,14 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
     @Override
     public void initView(View rootView) {
-        ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
-        tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
+        if (hasBotProfile) {
+            ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
+            tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
+            vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+        }
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
         tvMessageTime = (TextView) rootView.findViewById(R.id.tv_message_time);
         tvMessageBadge = (TextView) rootView.findViewById(R.id.tv_message_badge);
-        vDisableLineThrough = rootView.findViewById(R.id.iv_name_line_through);
         vConnectLine = rootView.findViewById(R.id.v_message_sub_menu_connect_color);
 
         vgConnectInfoWrapper = rootView.findViewById(R.id.vg_message_connect_info_wrapper);
@@ -91,8 +93,6 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
             tvName.setVisibility(View.VISIBLE);
             layoutParams.topMargin = (int) UiUtils.getPixelFromDp(5f);
         } else {
-            ivProfile.setVisibility(View.GONE);
-            tvName.setVisibility(View.GONE);
             layoutParams.topMargin = (int) UiUtils.getPixelFromDp(6f);
         }
         tvMessage.setLayoutParams(layoutParams);
@@ -109,26 +109,29 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
         WebhookBot webhookBot = TeamInfoLoader.getInstance().getBot(fromEntityId);
 
-        ImageLoader.newInstance()
-                .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
-                .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
-                .transformation(new JandiProfileTransform(ivProfile.getContext(),
-                        TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
-                        TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
-                        Color.WHITE))
-                .uri(Uri.parse(webhookBot.getPhotoUrl()))
-                .into(ivProfile);
 
-        tvName.setText(webhookBot.getName());
-
-        if (webhookBot.isEnabled()) {
-            tvName.setTextColor(tvName.getResources().getColor(R.color.jandi_messages_name));
-            vDisableLineThrough.setVisibility(View.GONE);
-        } else {
-            tvName.setTextColor(
-                    tvName.getResources().getColor(R.color.deactivate_text_color));
-            vDisableLineThrough.setVisibility(View.VISIBLE);
+        if (hasBotProfile) {
+            ImageLoader.newInstance()
+                    .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
+                    .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                    .transformation(new JandiProfileTransform(ivProfile.getContext(),
+                            TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
+                            TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
+                            Color.WHITE))
+                    .uri(Uri.parse(webhookBot.getPhotoUrl()))
+                    .into(ivProfile);
+            tvName.setText(webhookBot.getName());
+            if (webhookBot.isEnabled()) {
+                tvName.setTextColor(tvName.getResources().getColor(R.color.jandi_messages_name));
+                vDisableLineThrough.setVisibility(View.GONE);
+            } else {
+                tvName.setTextColor(
+                        tvName.getResources().getColor(R.color.deactivate_text_color));
+                vDisableLineThrough.setVisibility(View.VISIBLE);
+            }
         }
+
+
 
         ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
@@ -144,7 +147,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
                     .emailLink(false)
                     .telLink(false)
                     .lookUp(context);
-
+            textMessage.content.contentBuilder = messageStringBuilder;
         } else {
             messageStringBuilder = textMessage.content.contentBuilder;
         }
@@ -203,7 +206,11 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
 
     @Override
     public int getLayoutId() {
-        return R.layout.item_message_integration_bot_msg_v3;
+        if (hasBotProfile) {
+            return R.layout.item_message_integration_bot_msg_v3;
+        } else {
+            return R.layout.item_message_integration_bot_msg_v3_collapse;
+        }
     }
 
     @Override

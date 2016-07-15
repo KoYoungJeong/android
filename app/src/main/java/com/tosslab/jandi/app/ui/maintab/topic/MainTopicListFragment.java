@@ -82,6 +82,7 @@ import java.util.concurrent.TimeUnit;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by tee on 15. 8. 26..
@@ -126,6 +127,7 @@ public class MainTopicListFragment extends Fragment
         // delay를 삽입함.
         Observable.just(1)
                 .delay(200, TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(Integer -> {
                     floatingActionMenu = mainTabActivity.getFloatingActionMenu();
@@ -348,8 +350,10 @@ public class MainTopicListFragment extends Fragment
             showGroupSettingPopupView(view, folderId, folderName, topicFolderData.getSeq());
         });
 
-        int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()));
-        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+        mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()))
+                .subscribe(unreadCount -> {
+                    EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+                });
         setFolderExpansion();
     }
 
@@ -366,14 +370,6 @@ public class MainTopicListFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        mainTopicListPresenter.refreshList();
-        mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     @Override
@@ -445,8 +441,10 @@ public class MainTopicListFragment extends Fragment
     public void refreshList(TopicFolderListDataProvider topicFolderListDataProvider) {
         expandableTopicAdapter.setProvider(topicFolderListDataProvider);
         notifyDatasetChangedForFolder();
-        int unreadCount = mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()));
-        EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+        mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()))
+                .subscribe(unreadCount -> {
+                    EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+                });
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -516,37 +514,25 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEvent(RetrieveTopicListEvent event) {
-        if (isResumed()) {
-            mainTopicListPresenter.refreshList();
-            mainTopicListPresenter.onRefreshUpdatedTopicList();
-        }
+        mainTopicListPresenter.refreshList();
+        mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void onEvent(TopicFolderRefreshEvent event) {
-        if (!isResumed()) {
-            return;
-        }
         mainTopicListPresenter.refreshList();
     }
 
     public void onEvent(SocketTopicPushEvent event) {
-        if (isResumed()) {
-            mainTopicListPresenter.refreshList();
-            mainTopicListPresenter.onRefreshUpdatedTopicList();
-        }
+        mainTopicListPresenter.refreshList();
+        mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void onEvent(TopicInfoUpdateEvent event) {
-        if (isResumed()) {
-            mainTopicListPresenter.refreshList();
-            mainTopicListPresenter.onRefreshUpdatedTopicList();
-        }
+        mainTopicListPresenter.refreshList();
+        mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void onEvent(SocketMessageDeletedEvent event) {
-        if (!isResumed()) {
-            return;
-        }
         if (isCurrentFolder()) {
             mainTopicListPresenter.refreshList();
         } else {
@@ -555,9 +541,6 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEvent(RoomMarkerEvent event) {
-        if (!isResumed()) {
-            return;
-        }
         if (isCurrentFolder()) {
             mainTopicListPresenter.refreshList();
         } else {
@@ -566,9 +549,6 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEvent(SocketMessageCreatedEvent event) {
-        if (!isResumed()) {
-            return;
-        }
         if (isCurrentFolder()) {
             mainTopicListPresenter.refreshList();
         } else {
@@ -578,7 +558,6 @@ public class MainTopicListFragment extends Fragment
 
     public void onEvent(MainSelectTopicEvent event) {
         selectedEntity = event.getSelectedEntity();
-        setSelectedItem(selectedEntity);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

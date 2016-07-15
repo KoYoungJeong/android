@@ -1,16 +1,17 @@
 package com.tosslab.jandi.app.events.poll;
 
 /**
- * Created by tonyjs on 16. 6. 28..
+ * Created by tonyjs on 16. 7. 8..
  */
 public class RequestRefreshPollBadgeCountEvent {
-    private int badgeCount;
 
-    public RequestRefreshPollBadgeCountEvent(int badgeCount) {
-        this.badgeCount = badgeCount;
+    private long teamId;
+
+    public RequestRefreshPollBadgeCountEvent(long teamId) {
+        this.teamId = teamId;
     }
 
-    public int getBadgeCount() {
-        return badgeCount;
+    public long getTeamId() {
+        return teamId;
     }
 }

@@ -4,13 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
-import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
@@ -20,25 +20,25 @@ import com.tosslab.jandi.app.ui.message.detail.model.TopicDetailModel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
-@EBean
 public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
-    @Bean
-    TopicDetailModel topicDetailModel;
-
-    @Bean
-    LeaveViewModel leaveViewModel;
-
-    @Bean
-    EntityClientManager entityClientManager;
-
+    private TopicDetailModel topicDetailModel;
+    private LeaveViewModel leaveViewModel;
     private View view;
+
+    @Inject
+    public TopicDetailPresenterImpl(View view, TopicDetailModel topicDetailModel, LeaveViewModel leaveViewModel) {
+        this.topicDetailModel = topicDetailModel;
+        this.leaveViewModel = leaveViewModel;
+        this.view = view;
+    }
 
     @Override
     public void setView(View view) {
@@ -46,7 +46,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
     }
 
     @Override
-    public void onInit(Context context, long entityId) {
+    public void onInit(long entityId) {
         String topicName = topicDetailModel.getTopicName(entityId);
         String topicDescription = topicDetailModel.getTopicDescription(entityId);
         int topicMemberCount = topicDetailModel.getTopicMemberCount(entityId);
@@ -61,9 +61,9 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
         if (TextUtils.isEmpty(topicDescription)) {
             if (owner) {
-                topicDescription = context.getString(R.string.jandi_explain_topic_description);
+                topicDescription = JandiApplication.getContext().getString(R.string.jandi_explain_topic_description);
             } else {
-                topicDescription = context.getString(R.string.jandi_it_has_no_topic_description);
+                topicDescription = JandiApplication.getContext().getString(R.string.jandi_it_has_no_topic_description);
             }
         }
 
@@ -98,40 +98,48 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         }
     }
 
-    @Background
     @Override
-    public void onTopicStar(Context context, long entityId) {
-        boolean isStarred = topicDetailModel.isStarred(entityId);
+    public void onTopicStar(long entityId) {
+        Observable.just(topicDetailModel.isStarred(entityId))
+                .concatMap(isStarred -> {
+                    try {
+                        if (isStarred) {
+                            topicDetailModel.updateTopicStatus(entityId, false);
+                            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.Off);
+                        } else {
+                            topicDetailModel.updateTopicStatus(entityId, true);
+                            topicDetailModel.trackTopicStarSuccess(entityId);
+                            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.On);
+                        }
+                        TopicRepository.getInstance().updateStarred(entityId, !isStarred);
+                        TeamInfoLoader.getInstance().refresh();
+                        return Observable.just(isStarred);
+                    } catch (RetrofitException e) {
+                        return Observable.error(e);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(isStarred -> {
+                    if (isStarred) {
+                        view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_starred_unstarred));
+                    } else {
+                        view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_message_starred));
+                    }
+                    view.setStarred(!isStarred);
 
-        try {
+                }, t -> {
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        int errorCode = e.getStatusCode();
+                        if (topicDetailModel.isStarred(entityId)) {
+                            topicDetailModel.trackTopicUnStarFail(errorCode);
+                        } else {
+                            topicDetailModel.trackTopicStarFail(errorCode);
+                        }
+                    }
+                });
 
-            if (isStarred) {
-                entityClientManager.disableFavorite(entityId);
-
-                topicDetailModel.trackTopicUnStarSuccess(entityId);
-                view.showSuccessToast(context.getString(R.string.jandi_starred_unstarred));
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.Off);
-            } else {
-                entityClientManager.enableFavorite(entityId);
-
-                topicDetailModel.trackTopicStarSuccess(entityId);
-                view.showSuccessToast(context.getString(R.string.jandi_message_starred));
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.On);
-            }
-
-            TopicRepository.getInstance().updateStarred(entityId, !isStarred);
-            TeamInfoLoader.getInstance().refresh();
-
-            view.setStarred(!isStarred);
-
-        } catch (RetrofitException e) {
-            int errorCode = e.getStatusCode();
-            if (isStarred) {
-                topicDetailModel.trackTopicUnStarFail(errorCode);
-            } else {
-                topicDetailModel.trackTopicStarFail(errorCode);
-            }
-        }
     }
 
     @Override
@@ -152,8 +160,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             String topicName = topicDetailModel.getTopicName(entityId);
             view.showNeedToAssignTopicOwnerDialog(topicName);
         } else {
-            leaveViewModel.initData(context, entityId);
-            leaveViewModel.leave();
+            leaveViewModel.leave(entityId);
         }
     }
 
@@ -166,26 +173,36 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         view.showTopicDeleteDialog();
     }
 
-    @Background
     @Override
     public void deleteTopic(Context context, long entityId) {
         view.showProgressWheel();
-        try {
-            int entityType = topicDetailModel.getEntityType(entityId);
-            topicDetailModel.deleteTopic(entityId, entityType);
-            topicDetailModel.trackTopicDeleteSuccess(entityId);
-            view.dismissProgressWheel();
-            view.leaveTopic();
-        } catch (RetrofitException e) {
-            int errorCode = e.getStatusCode();
-            topicDetailModel.trackTopicDeleteFail(errorCode);
-            e.printStackTrace();
-            view.dismissProgressWheel();
-        } catch (Exception e) {
-            topicDetailModel.trackTopicDeleteFail(-1);
-            e.printStackTrace();
-            view.dismissProgressWheel();
-        }
+        Observable.just(entityId)
+                .concatMap(entityid -> {
+                    try {
+                        int entityType = topicDetailModel.getEntityType(entityId);
+                        topicDetailModel.deleteTopic(entityId, entityType);
+                        topicDetailModel.trackTopicDeleteSuccess(entityId);
+                        return Observable.just(entityid);
+                    } catch (RetrofitException e) {
+                        return Observable.error(e);
+                    }
+
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
+                    view.dismissProgressWheel();
+                    view.leaveTopic();
+                }, t -> {
+                    view.dismissProgressWheel();
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        int errorCode = e.getStatusCode();
+                        topicDetailModel.trackTopicDeleteFail(errorCode);
+                    } else {
+                        topicDetailModel.trackTopicDeleteFail(-1);
+                    }
+                });
     }
 
     @Override
@@ -197,110 +214,141 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         }
     }
 
-    @Background
     @Override
     public void onConfirmChangeTopicName(Context context, long entityId, String topicName, int entityType) {
         view.showProgressWheel();
-        try {
-            topicDetailModel.modifyTopicName(entityType, entityId, topicName);
-            TopicRepository.getInstance().updateName(entityId, topicName);
-            TeamInfoLoader.getInstance().refresh();
 
-            view.setTopicName(topicName);
+        Observable.just(new Object())
+                .concatMap(it -> {
+                    try {
+                        topicDetailModel.modifyTopicName(entityType, entityId, topicName);
+                        return Observable.just(topicName);
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                        return Observable.error(e);
+                    }
 
-            topicDetailModel.trackChangingEntityName(context, entityId, entityType);
-            TopicRepository.getInstance().updateName(entityId, topicName);
-            TeamInfoLoader.getInstance().refresh();
-            EventBus.getDefault().post(new TopicInfoUpdateEvent(entityId));
+                })
+                .doOnNext(it -> {
+                    TopicRepository.getInstance().updateName(entityId, topicName);
+                    TeamInfoLoader.getInstance().refresh();
+                    topicDetailModel.trackChangingEntityName(context, entityId, entityType);
+                    EventBus.getDefault().post(new TopicInfoUpdateEvent(entityId));
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(name -> {
+                    view.setTopicName(name);
+                    view.dismissProgressWheel();
+                }, t -> {
+                    view.dismissProgressWheel();
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        int errorCode = e.getStatusCode();
 
-        } catch (RetrofitException e) {
-            int errorCode = e.getStatusCode();
+                        topicDetailModel.trackChangingEntityNameFail(errorCode);
 
-            topicDetailModel.trackChangingEntityNameFail(errorCode);
-
-            if (errorCode == JandiConstants.NetworkError.DUPLICATED_NAME) {
-                view.showFailToast(context.getString(R.string.err_entity_duplicated_name));
-            } else {
-                view.showFailToast(context.getString(R.string.err_entity_modify));
-            }
-        } catch (Exception e) {
-            topicDetailModel.trackChangingEntityNameFail(-1);
-            view.showFailToast(context.getString(R.string.err_entity_modify));
-        } finally {
-            view.dismissProgressWheel();
-        }
+                        if (errorCode == JandiConstants.NetworkError.DUPLICATED_NAME) {
+                            view.showFailToast(context.getString(R.string.err_entity_duplicated_name));
+                        } else {
+                            view.showFailToast(context.getString(R.string.err_entity_modify));
+                        }
+                    } else {
+                        topicDetailModel.trackChangingEntityNameFail(-1);
+                        view.showFailToast(context.getString(R.string.err_entity_modify));
+                    }
+                });
     }
 
-    @Background
     void updateTopicPushSubscribe(long teamId, long entityId, boolean pushOn, boolean showGlobalPushAlert) {
         if (!showGlobalPushAlert) {
             view.showProgressWheel();
         }
 
-        try {
-            topicDetailModel.updatePushStatus(teamId, entityId, pushOn);
-            TopicRepository.getInstance().updatePushSubscribe(entityId, pushOn);
-            TeamInfoLoader.getInstance().refresh();
-            view.dismissProgressWheel();
-        } catch (RetrofitException e) {
-            e.printStackTrace();
+        Observable.just(new Object())
+                .concatMap(it -> {
+                    try {
+                        topicDetailModel.updatePushStatus(teamId, entityId, pushOn);
+                        return Observable.just(it);
+                    } catch (RetrofitException e) {
+                        return Observable.error(e);
+                    }
 
-            view.dismissProgressWheel();
+                })
+                .doOnNext(it -> {
+                    TopicRepository.getInstance().updatePushSubscribe(entityId, pushOn);
+                    TeamInfoLoader.getInstance().refresh();
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
+                    view.dismissProgressWheel();
 
-            if (e.getStatusCode() >= 500) {
-                view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            if (!showGlobalPushAlert) {
-                view.dismissProgressWheel();
-            }
-
-        }
+                }, t -> {
+                    view.dismissProgressWheel();
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        if (e.getStatusCode() >= 500) {
+                            view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
+                        }
+                    }
+                });
     }
 
-    @Background
     @Override
     public void onAutoJoin(long entityId, boolean autoJoin) {
 
         if (!topicDetailModel.isOwner(entityId) && !topicDetailModel.isTeamOwner()) {
             // 수정권한 없음
-            onInit(JandiApplication.getContext(), entityId);
+            onInit(entityId);
             return;
         }
 
         if (topicDetailModel.isPrivateTopic(entityId)) {
             // private topic == true 이면 그외의 값은 의미 없음
-            onInit(JandiApplication.getContext(), entityId);
+            onInit(entityId);
             view.showFailToast(JandiApplication.getContext().getString(R.string.jandi_auto_join_cannot_be_private_topic));
             return;
         }
 
         if (topicDetailModel.isDefaultTopic(entityId)) {
             // 기본 토픽  == true 의미 없음..
-            onInit(JandiApplication.getContext(), entityId);
+            onInit(entityId);
             view.showFailToast(JandiApplication.getContext().getString(R.string.jandi_auto_join_cannot_be_default_topic));
             return;
         }
 
         view.showProgressWheel();
-        try {
-            topicDetailModel.updateAutoJoin(entityId, autoJoin);
-            view.dismissProgressWheel();
-            TopicRepository.getInstance().updateAutoJoin(entityId, autoJoin);
-            TeamInfoLoader.getInstance().refresh();
-            onInit(JandiApplication.getContext(), entityId);
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-            view.dismissProgressWheel();
 
-            if (e.getStatusCode() >= 500) {
-                view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
-            }
+        Observable.just(Pair.create(entityId, autoJoin))
+                .concatMap(pair -> {
+                    try {
+                        topicDetailModel.updateAutoJoin(pair.first, pair.second);
+                        return Observable.just(pair);
+                    } catch (RetrofitException e) {
+                        return Observable.error(e);
+                    }
+                })
+                .doOnNext(it -> {
+                    TopicRepository.getInstance().updateAutoJoin(it.first, it.second);
+                    TeamInfoLoader.getInstance().refresh();
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
+                    view.dismissProgressWheel();
+                    onInit(it.first);
+                }, t -> {
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        view.dismissProgressWheel();
 
-        }
+                        if (e.getStatusCode() >= 500) {
+                            view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
+                        }
+                    }
+                });
+
     }
 
     @Override

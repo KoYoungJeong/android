@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
 import android.text.TextUtils;
-import android.util.Pair;
 import android.util.Log;
+import android.util.Pair;
 
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
@@ -747,7 +748,11 @@ public class MessageListV2Presenter {
         if (isTopic) {
             TopicRoom topic = TeamInfoLoader.getInstance().getTopic(entityId);
             int topicMemberCount = topic.getMemberCount();
-            int teamMemberCount = TeamInfoLoader.getInstance().getUserList().size() - 1;
+            int teamMemberCount = Observable.from(TeamInfoLoader.getInstance().getUserList())
+                    .filter(User::isEnabled)
+                    .count()
+                    .toBlocking()
+                    .firstOrDefault(1) - 1;
 
             if (teamMemberCount <= 0) {
                 view.insertTeamMemberEmptyLayout();
@@ -863,7 +868,7 @@ public class MessageListV2Presenter {
         try {
             messageListModel.deletePollMessage(room.getTeamId(), pollId);
 
-            MessageRepository.getRepository().deleteLinkByMessageId(messageId);
+            MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
             view.dismissProgressWheel();
 
             int position = adapterModel.indexByMessageId(messageId);
@@ -880,10 +885,18 @@ public class MessageListV2Presenter {
         }
     }
 
-    @Background
     public void onDeleteDummyMessageAction(long localId) {
-        messageListModel.deleteDummyMessageAtDatabase(localId);
-        view.refreshMessages();
+        Observable.just(localId)
+                .doOnNext(it -> {
+                    messageListModel.deleteDummyMessageAtDatabase(it);
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
+                    int position = adapterModel.getDummyMessagePositionByLocalId(it);
+                    adapterModel.remove(position);
+                    view.refreshMessages();
+                });
     }
 
     @Background
@@ -896,7 +909,7 @@ public class MessageListV2Presenter {
                     || messageType == MessageItem.TYPE_STICKER_COMMNET) {
                 messageListModel.deleteSticker(messageId, messageType);
             }
-            MessageRepository.getRepository().deleteLinkByMessageId(messageId);
+            MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
 
             view.dismissProgressWheel();
 

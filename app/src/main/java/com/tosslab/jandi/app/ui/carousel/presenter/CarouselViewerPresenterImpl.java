@@ -173,9 +173,4 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                 fileInfo.getFileType());
     }
 
-    @Override
-    public void onFileDatail() {
-        view.moveToFileDatail();
-    }
-
 }

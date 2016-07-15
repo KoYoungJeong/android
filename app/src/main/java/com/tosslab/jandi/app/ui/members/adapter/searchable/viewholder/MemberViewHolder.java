@@ -271,10 +271,12 @@ public class MemberViewHolder<T> extends BaseViewHolder<T> {
         if (!item.isBot()) {
             ViewGroup.LayoutParams layoutParams = ivProfile.getLayoutParams();
             layoutParams.height = ivProfile.getResources().getDimensionPixelSize(R.dimen.jandi_entity_item_icon);
+            ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             ivProfile.setLayoutParams(layoutParams);
             if (!item.isInactive()) {
                 ImageUtil.loadProfileImage(ivProfile, item.getPhotoUrl(), R.drawable.profile_img);
             } else {
+                ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_43);
             }
         } else {

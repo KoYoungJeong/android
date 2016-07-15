@@ -59,9 +59,6 @@ public class MessageRepositoryTest {
     @Test
     public void testUpsertMessages() throws Exception {
         List<ResMessages.Link> messages = getMessages();
-        for (ResMessages.Link message : messages) {
-            message.roomId = ROOM_ID;
-        }
         boolean success = MessageRepository.getRepository().upsertMessages(messages);
 
         assertTrue(success);
@@ -72,9 +69,6 @@ public class MessageRepositoryTest {
     public void testGetMessages() throws Exception {
 
         List<ResMessages.Link> messages = getMessages();
-        for (ResMessages.Link message : messages) {
-            message.roomId = ROOM_ID;
-        }
 
         long beforeTime = System.currentTimeMillis();
 
@@ -106,9 +100,6 @@ public class MessageRepositoryTest {
     @Test
     public void testDeleteMessage() throws Exception {
         List<ResMessages.Link> messages = getMessages();
-        for (ResMessages.Link message : messages) {
-            message.roomId = ROOM_ID;
-        }
         MessageRepository.getRepository().upsertMessages(messages);
 
         MessageRepository.getRepository().deleteMessageOfMessageId(messages.get(3).messageId);

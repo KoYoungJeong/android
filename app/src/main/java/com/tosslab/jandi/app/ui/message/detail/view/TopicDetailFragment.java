@@ -1,9 +1,11 @@
 package com.tosslab.jandi.app.ui.message.detail.view;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -12,7 +14,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -31,10 +35,11 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
+import com.tosslab.jandi.app.ui.message.detail.dagger.DaggerTopicDetailComponent;
+import com.tosslab.jandi.app.ui.message.detail.dagger.TopicDetailModule;
 import com.tosslab.jandi.app.ui.message.detail.edit.TopicDescriptionEditActivity;
 import com.tosslab.jandi.app.ui.message.detail.edit.TopicDescriptionEditActivity_;
 import com.tosslab.jandi.app.ui.message.detail.presenter.TopicDetailPresenter;
-import com.tosslab.jandi.app.ui.message.detail.presenter.TopicDetailPresenterImpl;
 import com.tosslab.jandi.app.ui.settings.main.SettingsActivity;
 import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -42,83 +47,102 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.OnActivityResult;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
+import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
-@EFragment(R.layout.fragment_topic_detail)
 public class TopicDetailFragment extends Fragment implements TopicDetailPresenter.View {
 
-    @FragmentArg
-    long entityId;
-    @FragmentArg
-    long teamId;
-
-    @Bean(TopicDetailPresenterImpl.class)
+    private static final String EXTRA_ENTITY_ID = "entityId";
+    @Inject
     TopicDetailPresenter topicDetailPresenter;
-
-    @ViewById(R.id.tv_topic_detail_title)
+    @Bind(R.id.tv_topic_detail_title)
     TextView tvTitle;
-    @ViewById(R.id.tv_topic_detail_description)
+    @Bind(R.id.tv_topic_detail_description)
     TextView tvDescription;
-
-    @ViewById(R.id.vg_topic_detail_member_count)
+    @Bind(R.id.vg_topic_detail_member_count)
     View vgMemberCount;
-    @ViewById(R.id.tv_topic_detail_member_count)
+    @Bind(R.id.tv_topic_detail_member_count)
     TextView tvMemberCount;
-
-    @ViewById(R.id.vg_topic_detail_invite)
+    @Bind(R.id.vg_topic_detail_invite)
     View vgInvite;
-
-    @ViewById(R.id.vg_topic_detail_delete)
+    @Bind(R.id.vg_topic_detail_delete)
     View vgDelete;
-    @ViewById(R.id.vg_topic_detail_leave)
+    @Bind(R.id.vg_topic_detail_leave)
     View vgLeave;
-    @ViewById(R.id.vg_topic_detail_assign_topic_owner)
+    @Bind(R.id.vg_topic_detail_assign_topic_owner)
     View vgAssignTopicOwner;
-    @ViewById(R.id.view_topic_detail_leve_to_delete)
+    @Bind(R.id.view_topic_detail_leve_to_delete)
     View viewDividerDelete;
-    @ViewById(R.id.vg_topic_detail_default_message)
+    @Bind(R.id.vg_topic_detail_default_message)
     View vgDefaultMessage;
-
-    @ViewById(R.id.vg_topic_detail_description)
+    @Bind(R.id.vg_topic_detail_description)
     ViewGroup vgDescription;
-
-    @ViewById(R.id.iv_topic_detail_starred)
+    @Bind(R.id.iv_topic_detail_starred)
     View ivStarred;
-    @ViewById(R.id.switch_topic_detail_set_push)
+    @Bind(R.id.switch_topic_detail_set_push)
     SwitchCompat switchSetPush;
-    @ViewById(R.id.switch_topic_detail_set_auto_join)
+    @Bind(R.id.switch_topic_detail_set_auto_join)
     SwitchCompat switchAutoJoin;
-    @ViewById(R.id.vg_topic_detail_set_auto_join_text)
+    @Bind(R.id.tv_topic_detail_set_auto_join)
+    TextView tvAutoJoinStatus;
+    @Bind(R.id.vg_topic_detail_set_auto_join_text)
     ViewGroup vgAutoJoinText;
-    @ViewById(R.id.tv_topic_detail_set_push)
+    @Bind(R.id.tv_topic_detail_set_push)
     TextView tvSetPush;
-
-
+    private long entityId;
+    private long teamId;
     private ProgressWheel progressWheel;
     private AlertDialog globalPushDialog;
 
-    @AfterInject
-    void initObject() {
-        topicDetailPresenter.setView(this);
+    public static Fragment createFragment(Context context, long entityId) {
+        Bundle bundle = new Bundle();
+        bundle.putLong(EXTRA_ENTITY_ID, entityId);
+        return Fragment.instantiate(context, TopicDetailFragment.class.getName(), bundle);
     }
 
-    @OnActivityResult(MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER)
-    @AfterViews
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER) {
+            initViews();
+        } else if (requestCode == TopicDescriptionEditActivity.REQUEST_EDIT) {
+            onDescriptionEditResult(resultCode);
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        DaggerTopicDetailComponent.builder()
+                .topicDetailModule(new TopicDetailModule(this))
+                .build()
+                .inject(this);
+
+        initArgument();
+
+        initViews();
+
+    }
+
+    private void initArgument() {
+        Bundle bundle = getArguments();
+
+        if (bundle != null) {
+            entityId = bundle.getLong(EXTRA_ENTITY_ID, -1);
+        }
+
+        teamId = TeamInfoLoader.getInstance().getTeamId();
+
+    }
+
     void initViews() {
         setUpActionbar();
 
-        topicDetailPresenter.onInit(getActivity(), entityId);
+        topicDetailPresenter.onInit(entityId);
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.TopicDescription);
     }
@@ -153,6 +177,14 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         EventBus.getDefault().register(this);
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_topic_detail, container, false);
+        ButterKnife.bind(this, view);
+        return view;
+    }
+
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
@@ -160,10 +192,10 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     public void onEventMainThread(InvitationSuccessEvent event) {
-        topicDetailPresenter.onInit(getActivity(), entityId);
+        topicDetailPresenter.onInit(entityId);
     }
 
-    public void onEvent(TopicLeaveEvent event) {
+    public void onEventMainThread(TopicLeaveEvent event) {
         leaveTopic();
     }
 
@@ -175,14 +207,14 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     public void onEventMainThread(TopicInfoUpdateEvent event) {
-        topicDetailPresenter.onInit(getActivity(), entityId);
+        topicDetailPresenter.onInit(entityId);
     }
 
     public void onEventMainThread(RetrieveTopicListEvent event) {
         if (TeamInfoLoader.getInstance().isTopic(entityId)) {
             return;
         }
-        topicDetailPresenter.onInit(getActivity(), entityId);
+        topicDetailPresenter.onInit(entityId);
     }
 
     public void onEventMainThread(TopicDeleteEvent event) {
@@ -191,7 +223,6 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void leaveTopic() {
         FragmentActivity activity = getActivity();
@@ -206,18 +237,18 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         topicDetailPresenter.deleteTopic(getActivity(), entityId);
     }
 
-    @Click(R.id.vg_topic_detail_name)
+    @OnClick(R.id.vg_topic_detail_name)
     void onTopicNameClick() {
         topicDetailPresenter.onChangeTopicName(entityId);
     }
 
-    @Click(R.id.vg_topic_detail_description)
+    @OnClick(R.id.vg_topic_detail_description)
     void onTopicDescriptionClick() {
         topicDetailPresenter.onTopicDescriptionMove(entityId);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TopicDescription);
     }
 
-    @Click(R.id.vg_topic_detail_member_count)
+    @OnClick(R.id.vg_topic_detail_member_count)
     void onTopicParticipantsClick() {
         MembersListActivity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -228,13 +259,13 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Participants);
     }
 
-    @Click(R.id.vg_topic_detail_set_auto_join)
+    @OnClick(R.id.vg_topic_detail_set_auto_join)
     void onAutoJoinClick() {
         topicDetailPresenter.onAutoJoin(entityId, !switchAutoJoin.isChecked());
     }
 
     // Topic Push
-    @Click(R.id.vg_topic_detail_set_push)
+    @OnClick(R.id.vg_topic_detail_set_push)
     void onPushClick() {
         boolean checked = !switchSetPush.isChecked();
 
@@ -250,67 +281,69 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setTopicPushSwitch(boolean isPushOn) {
         switchSetPush.setChecked(isPushOn);
     }
 
-    @OptionsItem(R.id.action_add_member)
-    @Click(R.id.vg_topic_detail_invite)
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_add_member) {
+            onTopicInviteClick();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @OnClick(R.id.vg_topic_detail_invite)
     void onTopicInviteClick() {
         topicDetailPresenter.onTopicInvite(getActivity(), entityId);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.InviteTeamMembers);
     }
 
-    @Click(R.id.vg_topic_detail_starred)
+    @OnClick(R.id.vg_topic_detail_starred)
     void onTopicStarClick() {
-        topicDetailPresenter.onTopicStar(getActivity(), entityId);
+        topicDetailPresenter.onTopicStar(entityId);
     }
 
-    @Click(R.id.vg_topic_detail_assign_topic_owner)
+    @OnClick(R.id.vg_topic_detail_assign_topic_owner)
     void onAssignTopicOwnerClick() {
         topicDetailPresenter.onAssignTopicOwner(entityId);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Leave);
     }
 
-    @Click(R.id.vg_topic_detail_leave)
+    @OnClick(R.id.vg_topic_detail_leave)
     void onTopicLeaveClick() {
         topicDetailPresenter.onTopicLeave(getActivity(), entityId);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Leave);
     }
 
-    @Click(R.id.vg_topic_detail_delete)
+    @OnClick(R.id.vg_topic_detail_delete)
     void onTopicDeleteClick() {
         topicDetailPresenter.onTopicDelete(entityId);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Delete);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setTopicName(String topicName) {
         tvTitle.setText(topicName);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setTopicDescription(String topicDescription) {
         tvDescription.setText(topicDescription);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setStarred(boolean isStarred) {
         ivStarred.setSelected(isStarred);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setTopicMemberCount(int topicMemberCount) {
         tvMemberCount.setText(String.valueOf(topicMemberCount));
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setLeaveVisible(boolean owner, boolean defaultTopic) {
         if (defaultTopic) {
@@ -334,22 +367,32 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setTopicAutoJoin(boolean autoJoin, boolean owner, boolean defaultTopic, boolean privateTopic) {
         if (privateTopic) {
             vgAutoJoinText.setEnabled(false);
             switchAutoJoin.setChecked(false);
+            switchAutoJoin.setVisibility(View.GONE);
+            tvAutoJoinStatus.setVisibility(View.VISIBLE);
+            tvAutoJoinStatus.setText(R.string.jandi_auto_join_off);
         } else if (defaultTopic) {
-            switchAutoJoin.setChecked(true);
             vgAutoJoinText.setEnabled(false);
+            switchAutoJoin.setChecked(true);
+            switchAutoJoin.setVisibility(View.GONE);
+            tvAutoJoinStatus.setVisibility(View.VISIBLE);
+            tvAutoJoinStatus.setText(R.string.jandi_auto_join_on);
         } else if (owner) {
             switchAutoJoin.setChecked(autoJoin);
             vgAutoJoinText.setEnabled(true);
+            switchAutoJoin.setVisibility(View.VISIBLE);
+            tvAutoJoinStatus.setVisibility(View.GONE);
         } else {
             switchAutoJoin.setChecked(autoJoin);
             vgAutoJoinText.setEnabled(false);
+            switchAutoJoin.setVisibility(View.GONE);
+            tvAutoJoinStatus.setVisibility(View.VISIBLE);
         }
+        tvAutoJoinStatus.setText(autoJoin ? R.string.jandi_auto_join_on : R.string.jandi_auto_join_off);
     }
 
     @Override
@@ -384,7 +427,6 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         getActivity().startActivities(new Intent[]{mainSettingIntent, pushSettingIntent});
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setAssignTopicOwnerVisible(boolean owner) {
         vgAssignTopicOwner.setVisibility(owner ? View.VISIBLE : View.GONE);
@@ -414,13 +456,11 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
                 .startForResult(MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showSuccessToast(String message) {
         ColoredToast.show(message);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showFailToast(String message) {
         ColoredToast.showWarning(message);
@@ -432,7 +472,6 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         newFragment.show(getFragmentManager(), "dialog");
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showProgressWheel() {
         if (progressWheel == null) {
@@ -446,7 +485,6 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         progressWheel.show();
     }
 
-    @UiThread(delay = 200L)
     @Override
     public void dismissProgressWheel() {
         if (progressWheel != null && progressWheel.isShowing()) {
@@ -463,7 +501,6 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TopicName);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showNeedToAssignTopicOwnerDialog(String topicName) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
@@ -474,13 +511,12 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         builder.create().show();
     }
 
-    @OnActivityResult(TopicDescriptionEditActivity.REQUEST_EDIT)
     void onDescriptionEditResult(int resultCode) {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
 
-        topicDetailPresenter.onInit(getActivity(), entityId);
+        topicDetailPresenter.onInit(entityId);
     }
 
     @Override

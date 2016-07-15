@@ -54,6 +54,7 @@ import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.SwipeExitLayout;
 
@@ -253,8 +254,9 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             tvProfileEmail.setVisibility(View.VISIBLE);
         }
 
-        if (!isJandiBot(member)) {
-
+        if (isJandiBot(member)) {
+            tvProfilePhone.setVisibility(View.GONE);
+        } else {
             String userPhoneNumber = ((User) member).getPhoneNumber();
             tvProfilePhone.setText(userPhoneNumber);
             if (TextUtils.isEmpty(userPhoneNumber)) {
@@ -353,7 +355,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 .placeHolder(placeHolder, ImageView.ScaleType.FIT_XY)
                 .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
                 .transformation(new BlurTransformation(getApplicationContext(), 10))
-                .uri(Uri.parse(profileImageUrlLarge))
+                .uri(Uri.parse(ImageUtil.getLargeProfileUril(profileImageUrlLarge)))
                 .into(ivProfileImageLarge);
     }
 

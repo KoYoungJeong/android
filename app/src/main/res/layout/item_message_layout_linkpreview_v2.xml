@@ -6,7 +6,7 @@
     <ImageView
         android:id="@+id/iv_linkpreview_thumb"
         android:layout_width="match_parent"
-        android:layout_height="120dp"/>
+        android:layout_height="120dp" />
 
     <View
         android:id="@+id/iv_message_photo_cover"
@@ -23,45 +23,65 @@
         android:layout_alignLeft="@id/iv_linkpreview_thumb"
         android:layout_below="@+id/iv_linkpreview_thumb"
         android:background="@drawable/bg_round_bottom_white_for_message"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:paddingBottom="8dp"
         android:paddingLeft="9dp"
         android:paddingRight="9dp"
         android:paddingTop="7dp">
 
-        <TextView
-            android:id="@+id/tv_linkpreview_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:lineSpacingExtra="2dp"
-            android:maxLines="2"
-            android:text="Rock Formation Image, Galapagos Islands - National bla blaa bla bla bla blab albalblablblbla"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"
-            android:textStyle="bold"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/tv_linkpreview_domain"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:text="National Geographic"
-            android:textColor="@color/jandi_text_light"
-            android:textSize="11sp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="9dp"
+                android:layout_marginTop="2dp"
+                android:src="@drawable/link_icon" />
 
-        <TextView
-            android:id="@+id/tv_linkpreview_description"
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="9dp"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:text="Sunlight paints a rock formation in the world"
-            android:textColor="@android:color/black"
-            android:textSize="11sp"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_linkpreview_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:lineSpacingExtra="2dp"
+                android:maxLines="2"
+                android:text="Rock Formation Image, Galapagos Islands - National bla blaa bla bla bla blab albalblablblbla"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_linkpreview_domain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="National Geographic"
+                android:textColor="@color/jandi_text_light"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/tv_linkpreview_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="9dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="Sunlight paints a rock formation in the world"
+                android:textColor="@android:color/black"
+                android:textSize="11sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -70,6 +90,6 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_alignTop="@+id/vg_snippet_summary"
-        android:background="@color/jandi_comment_divider"/>
+        android:background="@color/jandi_comment_divider" />
 
 </RelativeLayout>

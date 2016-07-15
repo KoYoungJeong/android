@@ -23,8 +23,8 @@ import android.widget.TextView;
 import com.baidu.android.pushservice.PushSettings;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.messages.MentionToMeEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
+import com.tosslab.jandi.app.events.poll.RefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.poll.Poll;
@@ -41,7 +41,6 @@ import com.tosslab.jandi.app.ui.maintab.mypage.presenter.MyPagePresenter;
 import com.tosslab.jandi.app.ui.maintab.mypage.view.MyPageView;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
-import com.tosslab.jandi.app.ui.poll.detail.dto.PollDetail;
 import com.tosslab.jandi.app.ui.poll.list.PollListActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
@@ -59,7 +58,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.spannable.OwnerSpannable;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -252,16 +250,18 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
 
     }
 
-    public void onEvent(MentionToMeEvent event) {
-        Date latestCreatedAt = adapter.getItem(0) != null
-                ? adapter.getItem(0).getCreatedAt() : null;
-        presenter.onNewMentionComing(event.getTeamId(), latestCreatedAt);
-    }
-
     public void onEvent(SocketPollEvent event) {
         Poll poll = event.getPoll();
         if (poll == null
                 || poll.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
+            return;
+        }
+
+        presenter.onInitializePollBadge();
+    }
+
+    public void onEvent(RequestRefreshPollBadgeCountEvent event) {
+        if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
 
@@ -482,7 +482,7 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
 
     @Override
     public void setPollBadgeCount(int pollCount) {
-        EventBus.getDefault().post(new RequestRefreshPollBadgeCountEvent(pollCount));
+        EventBus.getDefault().post(new RefreshPollBadgeCountEvent(pollCount));
 
         if (isFinishing()) {
             return;
@@ -518,7 +518,6 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
     }
 
     private class MentionMessageMoreRequestHandler implements MyPageAdapter.OnLoadMoreCallback {
-
         private boolean shouldRequestMore = true;
 
         public void setShouldRequestMore(boolean shouldRequestMore) {
@@ -533,4 +532,5 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
             presenter.loadMoreMentions(messageId);
         }
     }
+
 }

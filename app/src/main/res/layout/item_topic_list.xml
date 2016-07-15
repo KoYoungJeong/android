@@ -1,17 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?><!-- NOTE: should use FrameLayout or RelativeLayout for parent of the "@id/container" view (for Android 2.3 compatibility) -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rl_topic_item_container"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/rl_topic_item_container"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/jandi_entity_item_title_margin_left"
+    android:background="@drawable/bg_topic_selector"
     android:clickable="true"
-    android:focusable="true"
-    android:orientation="horizontal">
+    android:focusable="true">
 
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?android:attr/selectableItemBackground">
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/iv_shadow_underline"
@@ -19,12 +18,6 @@
             android:layout_height="4dp"
             android:layout_alignParentTop="true"
             android:background="@drawable/folder_shadow" />
-
-        <View
-            android:id="@+id/v_entity_listitem_selector"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_topic_selector" />
 
         <ImageView
             android:id="@+id/iv_entity_listitem_icon"
@@ -142,9 +135,9 @@
 
     <View
         android:id="@+id/v_topic_item_animator"
-        android:background="@color/transparent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@color/transparent" />
 
 
 </RelativeLayout>

@@ -47,7 +47,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
                     android:gravity="center"
                     android:text="@string/jandi_poll_empty_1"
                     android:textColor="@color/jandi_text"

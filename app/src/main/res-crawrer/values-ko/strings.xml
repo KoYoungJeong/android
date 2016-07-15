@@ -111,6 +111,8 @@
 	<string name="jandi_auto_join_cannot_be_default_topic">"기본토픽에서는 자동초대를 해제할 수 없습니다."</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"자동 초대는 공개 토픽 에서만 사용 가능합니다"</string>
 	<string name="jandi_auto_join_explain">"새로 팀에 참여하는 모든 멤버를 이 토픽에 초대합니다."</string>
+	<string name="jandi_auto_join_off">"꺼짐"</string>
+	<string name="jandi_auto_join_on">"켜짐"</string>
 	<string name="jandi_auto_join_title">"자동 초대"</string>
 	<string name="jandi_auto_join_title_wild">"자동 초대*"</string>
 	<string name="jandi_back">"뒤로"</string>
@@ -217,8 +219,7 @@
 	<string name="jandi_explain_global_push_off">"앱의 알림 설정이 꺼져 있습니다. 더보기 > 설정에서 알림을 켜야 알림을 받을 수 있습니다."</string>
 	<string name="jandi_explain_invite">"메세지 검색이 가능한 업무용 메신저 잔디는 
 팀원 모두와 함께 사용해야 그 진가가 발휘됩니다.
-지금 바로 멤버들을 초대하세요.
-"</string>
+지금 바로 멤버들을 초대하세요."</string>
 	<string name="jandi_explain_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 	<string name="jandi_export">"내보내기"</string>
 	<string name="jandi_export_to_app">"다음 앱으로 파일 내보내기"</string>
@@ -423,9 +424,9 @@
 	<string name="jandi_poll_finished_without_participants">"투표가 완료되었습니다. 참여자가 없었습니다."</string>
 	<string name="jandi_poll_finishedat">"종료 시각"</string>
 	<string name="jandi_poll_is_anonymous">"이 투표는 익명투표입니다."</string>
-	<string name="jandi_poll_multiple">"복수선택"</string>
-	<string name="jandi_poll_multiple_available">"중복 투표 가능"</string>
-	<string name="jandi_poll_participants_ing">"명 참여중"</string>
+	<string name="jandi_poll_multiple">"복수 선택"</string>
+	<string name="jandi_poll_multiple_available">"복수 선택 가능"</string>
+	<string name="jandi_poll_participants_ing">"명 참여"</string>
 	<string name="jandi_poll_voted">"투표함"</string>
 	<string name="jandi_pp">"개인정보 취급방침"</string>
 	<string name="jandi_preview_message_contents">"메시지 내용 미리보기"</string>

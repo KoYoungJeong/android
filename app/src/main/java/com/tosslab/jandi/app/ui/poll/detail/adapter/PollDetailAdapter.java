@@ -1,21 +1,21 @@
 package com.tosslab.jandi.app.ui.poll.detail.adapter;
 
 import android.graphics.Color;
-import android.support.annotation.NonNull;
 import android.util.Pair;
 import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.files.FileCommentClickEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
-import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.comment.CommentViewHolder;
-import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.comment.StickerViewHolder;
+import com.tosslab.jandi.app.ui.comment.CommentViewHolder;
+import com.tosslab.jandi.app.ui.comment.OnCommentClickListener;
+import com.tosslab.jandi.app.ui.comment.OnCommentLongClickListener;
+import com.tosslab.jandi.app.ui.comment.StickerCommentViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.model.PollDetailDataModel;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.view.PollDetailDataView;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.DividerViewHolder;
@@ -27,12 +27,10 @@ import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollSharedInViewH
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollVoteViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.ProfileViewHolder;
 import com.tosslab.jandi.app.utils.UiUtils;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 /**
@@ -51,6 +49,12 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
     public static final int VIEW_TYPE_DIVIDER = 7;
     public static final int VIEW_TYPE_POLL_DELETED = 8;
 
+    private OnCommentClickListener onCommentClickListener;
+    private OnCommentLongClickListener onCommentLongClickListener;
+    private PollInfoViewHolder.OnPollParticipantsClickListener onPollParticipantsClickListener;
+    private PollItemViewHolder.OnPollItemParticipantsClickListener onPollItemParticipantsClickListener;
+    private PollVoteViewHolder.OnPollVoteClickListener onPollVoteClickListener;
+
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
@@ -58,16 +62,16 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
                 return ProfileViewHolder.newInstance(parent);
 
             case VIEW_TYPE_POLL_INFO:
-                return PollInfoViewHolder.newInstance(parent);
+                return PollInfoViewHolder.newInstance(parent, onPollParticipantsClickListener);
 
             case VIEW_TYPE_POLL_DELETED:
                 return PollDeletedInfoViewHolder.newInstance(parent);
 
             case VIEW_TYPE_POLL_ITEM:
-                return PollItemViewHolder.newInstance(parent);
+                return PollItemViewHolder.newInstance(parent, onPollItemParticipantsClickListener);
 
             case VIEW_TYPE_POLL_ITEM_VOTE:
-                return PollVoteViewHolder.newInstance(parent);
+                return PollVoteViewHolder.newInstance(parent, onPollVoteClickListener);
 
             case VIEW_TYPE_POLL_SHARED_IN:
                 return PollSharedInViewHolder.newInstance(parent);
@@ -76,30 +80,11 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
                 return DividerViewHolder.newInstance(parent);
 
             case VIEW_TYPE_COMMENT:
-                return CommentViewHolder.newInstance(parent);
-
+                return CommentViewHolder.newInstance(parent, onCommentClickListener, onCommentLongClickListener);
             case VIEW_TYPE_STICKER:
-                return StickerViewHolder.newInstance(parent);
+                return StickerCommentViewHolder.newInstance(parent, onCommentClickListener, onCommentLongClickListener);
         }
         return null;
-    }
-
-    @Override
-    public void onBindViewHolder(BaseViewHolder holder, int position) {
-        super.onBindViewHolder(holder, position);
-
-        int itemViewType = getItemViewType(position);
-        if (itemViewType == VIEW_TYPE_COMMENT || itemViewType == VIEW_TYPE_STICKER) {
-            final ResMessages.OriginalMessage item = getItem(position);
-            holder.itemView.setOnClickListener(v -> {
-                EventBus.getDefault().post(new FileCommentClickEvent(item));
-            });
-
-            holder.itemView.setOnLongClickListener(v -> {
-                EventBus.getDefault().post(new FileCommentClickEvent(item, true /* isLongClick */));
-                return true;
-            });
-        }
     }
 
     @Override
@@ -288,6 +273,19 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
         return poll;
     }
 
+    @Override
+    public ResMessages.Link getPollCommentById(long id) {
+        for (Row row : getRows()) {
+            if (row.getItem() instanceof ResMessages.Link) {
+                return (ResMessages.Link) row.getItem();
+            }
+        }
+
+        ResMessages.Link link = new ResMessages.Link();
+        link.id = -1;
+        return link;
+    }
+
     public Row getPollCommentDividerRow() {
         int dividerColor = JandiApplication.getContext()
                 .getResources().getColor(R.color.jandi_file_search_item_divider);
@@ -310,5 +308,28 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
             }
         }
         return false;
+    }
+
+    public void setOnCommentClickListener(OnCommentClickListener onCommentClickListener) {
+        this.onCommentClickListener = onCommentClickListener;
+    }
+
+    public void setOnCommentLongClickListener(OnCommentLongClickListener onCommentLongClickListener) {
+        this.onCommentLongClickListener = onCommentLongClickListener;
+    }
+
+    public void setOnPollParticipantsClickListener(
+            PollInfoViewHolder.OnPollParticipantsClickListener onPollParticipantsClickListener) {
+        this.onPollParticipantsClickListener = onPollParticipantsClickListener;
+    }
+
+    public void setOnPollItemParticipantsClickListener(
+            PollItemViewHolder.OnPollItemParticipantsClickListener onPollItemParticipantsClickListener) {
+        this.onPollItemParticipantsClickListener = onPollItemParticipantsClickListener;
+    }
+
+    public void setOnPollVoteClickListener(
+            PollVoteViewHolder.OnPollVoteClickListener onPollVoteClickListener) {
+        this.onPollVoteClickListener = onPollVoteClickListener;
     }
 }
