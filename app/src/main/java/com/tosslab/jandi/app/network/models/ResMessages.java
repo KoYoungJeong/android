@@ -445,12 +445,7 @@ public class ResMessages {
         public String toString() {
             return "PollContent{" +
                     "_id=" + _id +
-                    ", pollMessage=" + pollMessage +
                     ", body='" + body + '\'' +
-                    ", contentBuilder=" + contentBuilder +
-                    ", connectType='" + connectType + '\'' +
-                    ", connectColor='" + connectColor + '\'' +
-                    ", connectInfo=" + connectInfo +
                     '}';
         }
     }
