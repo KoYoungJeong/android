@@ -423,7 +423,7 @@
 	<string name="jandi_poll_is_anonymous">"此问卷为不记名投票"</string>
 	<string name="jandi_poll_multiple">"可复选"</string>
 	<string name="jandi_poll_multiple_available">"可复选"</string>
-	<string name="jandi_poll_participants_ing">"成员"</string>
+	<string name="jandi_poll_participants_ing">"投票人"</string>
 	<string name="jandi_poll_voted">"已投"</string>
 	<string name="jandi_pp">"隐私权条款"</string>
 	<string name="jandi_preview_message_contents">"预览信息内容"</string>

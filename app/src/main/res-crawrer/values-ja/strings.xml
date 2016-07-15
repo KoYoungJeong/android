@@ -425,7 +425,7 @@
 	<string name="jandi_poll_is_anonymous">"この投票は匿名投票です。"</string>
 	<string name="jandi_poll_multiple">"複数選択"</string>
 	<string name="jandi_poll_multiple_available">"複数選択可能"</string>
-	<string name="jandi_poll_participants_ing">"メンバー"</string>
+	<string name="jandi_poll_participants_ing">"参加者"</string>
 	<string name="jandi_poll_voted">"投票完了"</string>
 	<string name="jandi_pp">"プライバシーポリシー"</string>
 	<string name="jandi_preview_message_contents">"メッセージプレビュー"</string>

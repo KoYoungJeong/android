@@ -424,7 +424,7 @@
 	<string name="jandi_poll_is_anonymous">"此問卷為不記名投票"</string>
 	<string name="jandi_poll_multiple">"可複選"</string>
 	<string name="jandi_poll_multiple_available">"可複選"</string>
-	<string name="jandi_poll_participants_ing">"成員"</string>
+	<string name="jandi_poll_participants_ing">"投票人"</string>
 	<string name="jandi_poll_voted">"已投"</string>
 	<string name="jandi_pp">"隱私權條款"</string>
 	<string name="jandi_preview_message_contents">"預覽訊息內容"</string>
