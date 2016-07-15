@@ -110,7 +110,6 @@ import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -146,8 +145,8 @@ public class JandiSocketServiceModel {
     private final Lazy<EventsApi> eventsApi;
     private Lazy<StartApi> startApi;
 
-    private PublishSubject<SocketRoomMarkerEvent> markerPublishSubject;
-    private Subscription markerSubscribe;
+    private PublishSubject<SocketRoomMarkerEvent> accountRefreshSubject;
+    private Subscription accountRefreshSubscribe;
     private Map<Class<? extends EventHistoryInfo>, Command> messageEventActorMapper;
 
     private PublishSubject<Object> eventPublisher;
@@ -196,38 +195,18 @@ public class JandiSocketServiceModel {
     }
 
     public void startMarkerObserver() {
-        markerPublishSubject = PublishSubject.create();
-        markerSubscribe = markerPublishSubject.throttleWithTimeout(500, TimeUnit.MILLISECONDS)
-                .onBackpressureBuffer()
-                .filter(event -> {
-                    long markingUserId = event.getMarker().getMemberId();
-                    return Observable.from(AccountRepository.getRepository().getAccountTeams())
-                            .takeFirst(userTeam -> userTeam.getMemberId() == markingUserId)
-                            .map(userTeam1 -> true)
-                            .toBlocking()
-                            .firstOrDefault(false);
-                })
+        accountRefreshSubject = PublishSubject.create();
+        accountRefreshSubscribe = accountRefreshSubject.onBackpressureBuffer()
+                .throttleWithTimeout(500, TimeUnit.MILLISECONDS)
                 .subscribe(event -> {
 
                     try {
-                        if (event.getTeamId() == TeamInfoLoader.getInstance().getTeamId()) {
-                            // 같은 팀의 내 마커가 갱신된 경우
-                            postEvent(new RetrieveTopicListEvent());
-                        } else {
-                            // 다른 팀의 내 마커가 갱신된 경우
-                            ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
-                            AccountUtil.removeDuplicatedTeams(resAccountInfo);
-                            AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+                        ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+                        AccountUtil.removeDuplicatedTeams(resAccountInfo);
+                        AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
-                            Observable.from(resAccountInfo.getMemberships())
-                                    .map(ResAccountInfo.UserTeam::getUnread)
-                                    .reduce((prev, current) -> prev + current)
-                                    .subscribe(totalUnreadCount -> {
-                                        BadgeUtils.setBadge(context, totalUnreadCount);
-                                    });
-
-                            postEvent(new MessageOfOtherTeamEvent());
-                        }
+                        postEvent(new MessageOfOtherTeamEvent());
+                        postEvent(new RetrieveTopicListEvent());
 
                     } catch (RetrofitException e) {
                         LogUtil.d(TAG, e.getMessage());
@@ -566,9 +545,15 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             postEvent(new RoomMarkerEvent(event.getRoom().getId()));
-            if (markerPublishSubject != null && !markerSubscribe.isUnsubscribed()) {
-                markerPublishSubject.onNext(event);
-            }
+            final long markeredMemberId = memberId;
+            // 내 마커가 갱신된 경우 뱃지 갱신하도록 함
+            Observable.from(AccountRepository.getRepository().getAccountTeams())
+                    .takeFirst(userTeam -> userTeam.getMemberId() == markeredMemberId)
+                    .subscribe(it -> {
+                        if (accountRefreshSubject != null && !accountRefreshSubscribe.isUnsubscribed()) {
+                            accountRefreshSubject.onNext(new SocketRoomMarkerEvent());
+                        }
+                    });
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
         }
@@ -676,8 +661,8 @@ public class JandiSocketServiceModel {
     }
 
     public void stopMarkerObserver() {
-        if (markerSubscribe != null && !markerSubscribe.isUnsubscribed()) {
-            markerSubscribe.unsubscribe();
+        if (accountRefreshSubscribe != null && !accountRefreshSubscribe.isUnsubscribed()) {
+            accountRefreshSubscribe.unsubscribe();
         }
     }
 
@@ -905,24 +890,38 @@ public class JandiSocketServiceModel {
 
     public void onMessageCreated(Object object) {
         try {
-            SocketMessageCreatedEvent event = getObject(object, SocketMessageCreatedEvent.class);
-            JandiPreference.setSocketConnectedLastTime(event.getTs());
-
+            SocketMessageCreatedEvent event = getObject(object, SocketMessageCreatedEvent.class, true, false);
             ResMessages.Link linkMessage = event.getData().getLinkMessage();
-            MessageRepository.getRepository().upsertMessage(linkMessage);
-            if (linkMessage.fromEntity == TeamInfoLoader.getInstance().getMyId()) {
-                SendMessageRepository.getRepository().deleteCompletedMessages(Arrays.asList(linkMessage.messageId));
+            if (event.getTeamId() == TeamInfoLoader.getInstance().getTeamId()) {
+                JandiPreference.setSocketConnectedLastTime(event.getTs());
+
+                MessageRepository.getRepository().upsertMessage(linkMessage);
+                if (linkMessage.fromEntity == TeamInfoLoader.getInstance().getMyId()) {
+                    SendMessageRepository.getRepository().deleteCompletedMessages(Arrays.asList(linkMessage.messageId));
+                }
+                final long tempLinkId = linkMessage.id;
+                Observable.from(linkMessage.toEntity)
+                        .distinct()
+                        .subscribe(roomId -> {
+                            MessageRepository.getRepository().updateDirty(roomId, tempLinkId);
+                        });
+
+                doAfterMessageCreated(linkMessage);
+
+                postEvent(event);
             }
-            final long tempLinkId = linkMessage.id;
-            Observable.from(linkMessage.toEntity)
-                    .distinct()
-                    .subscribe(roomId -> {
-                        MessageRepository.getRepository().updateDirty(roomId, tempLinkId);
-                    });
 
-            doAfterMessageCreated(linkMessage);
-
-            postEvent(event);
+            if (linkMessage.message != null) {
+                final long markeredMemberId = linkMessage.message.writerId;
+                // 내가 아닌 사람이 메세지를 쓴 경우 뱃지가 갱신되도록 함
+                Observable.from(AccountRepository.getRepository().getAccountTeams())
+                        .takeFirst(userTeam -> userTeam.getMemberId() != markeredMemberId)
+                        .subscribe(it -> {
+                            if (accountRefreshSubject != null && !accountRefreshSubscribe.isUnsubscribed()) {
+                                accountRefreshSubject.onNext(new SocketRoomMarkerEvent());
+                            }
+                        });
+            }
 
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
@@ -1269,6 +1268,12 @@ public class JandiSocketServiceModel {
                 .filter(it -> messageEventActorMapper.containsKey(it.getClass()))
                 .toSortedList((lhs, rhs) -> ((Long) (lhs.getTs() - rhs.getTs())).intValue())
                 .subscribe(eventInfos -> {
+
+                    if (!eventInfos.isEmpty()) {
+                        if (accountRefreshSubject != null && !accountRefreshSubscribe.isUnsubscribed()) {
+                            accountRefreshSubject.onNext(new SocketRoomMarkerEvent());
+                        }
+                    }
 
                     boolean handleMessageCreated = eventInfos.size() <= 60;
                     if (handleMessageCreated) {
