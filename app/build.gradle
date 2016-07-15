@@ -8,156 +8,19 @@ apply from: 'valid.gradle'       // Gradle Propertie Valid Check
 apply from: 'scripts/resources/strings/string-resource-crawler.gradle'
 apply from: 'scripts/resources/images/image-resource-crawler.gradle'
 apply from: 'apk-name-changer.gradle'
+apply from: 'app-dependencies.gradle'
+apply from: 'ci-tasks.gradle'
 
 configurations {
     apt
 }
 
-apply plugin: 'checkstyle'
-apply plugin: 'pmd'
-
-task pmd(type: Pmd) {
-
-    source 'src/main'
-    include '**/*.java'
-//    exclude('**/*Test.java')
-
-    ruleSetFiles = files('../pmd.xml')
-    ignoreFailures = true
-
-}
-
-task checkstyles(type: Checkstyle) {
-
-    configFile file('../checkstyle.xml')
-    source('src/main')
-    include '**/*.java'
-//    exclude('**/*Test.java')
-    classpath = files()
-
-
-    showViolations = true
-    ignoreFailures = true
-
-}
 
 task resourceRefresh
 resourceRefresh.dependsOn(stringResourceRefresh, imageResourceRefresh)
 
 checkstyle {
     toolVersion = "6.2"
-}
-
-dependencies {
-
-    repositories {
-        jcenter()
-        maven {
-            url 'https://maven.fabric.io/public'
-        }
-
-        maven {
-            url 'http://nx.jandi.io:8081/nexus/content/repositories/thirdparty/'
-        }
-
-    }
-
-    compile rootProject.ext.dependecies.libraries.sprinklrAndroid
-    compile rootProject.ext.dependecies.libraries.photoView
-    compile rootProject.ext.dependecies.libraries.imageZoomCrop
-
-//    compile project(':sprinkler-android')
-//    compile project(':photoview-expand')
-
-    apt rootProject.ext.dependecies.libraries.androidAnnotationApt
-    compile rootProject.ext.dependecies.libraries.androidAnnotation
-    compile rootProject.ext.dependecies.libraries.butterknife
-
-    apt rootProject.ext.dependecies.libraries.dagger2Apt
-    compile rootProject.ext.dependecies.libraries.dagger2
-    provided rootProject.ext.dependecies.libraries.jsr250
-
-    compile rootProject.ext.dependecies.libraries.multidex
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-
-    // Google
-    compile rootProject.ext.dependecies.libraries.googleAnalytics
-    compile rootProject.ext.dependecies.libraries.gcm
-    compile rootProject.ext.dependecies.libraries.support_appcompat
-    compile rootProject.ext.dependecies.libraries.support_v4
-    compile rootProject.ext.dependecies.libraries.support_v13
-    compile rootProject.ext.dependecies.libraries.support_recyclerview
-    compile rootProject.ext.dependecies.libraries.support_cardview
-    compile rootProject.ext.dependecies.libraries.support_annotation
-    compile rootProject.ext.dependecies.libraries.support_design
-
-    // UI
-    compile rootProject.ext.dependecies.libraries.supertoast
-    compile rootProject.ext.dependecies.libraries.recyclerview_stickyheader
-    compile rootProject.ext.dependecies.libraries.android_crop
-
-    // BadgeCount
-    compile rootProject.ext.dependecies.libraries.shortcutbadger
-    // Boilerplate
-    compile rootProject.ext.dependecies.libraries.eventbus
-    // Network
-    compile(rootProject.ext.dependecies.libraries.socketio) {
-        exclude group: 'org.json', module: 'json'
-    }
-
-    // Cache
-    compile rootProject.ext.dependecies.libraries.ion
-    // Image
-    compile rootProject.ext.dependecies.libraries.glide_okhttp
-    compile rootProject.ext.dependecies.libraries.glide_transformation
-
-    // Sliqte ORM
-    compile rootProject.ext.dependecies.libraries.ormlite
-
-    // Analytics & report
-    compile rootProject.ext.dependecies.libraries.parse
-    // RxJava
-    compile rootProject.ext.dependecies.libraries.rxandroid
-    compile rootProject.ext.dependecies.libraries.rxjava
-
-    // facebook SDK
-    compile rootProject.ext.dependecies.libraries.facebook
-
-    // Force usage of support annotations in the test app, since it is internally used by the runner module.
-    androidTestCompile rootProject.ext.dependecies.libraries.testrunner
-    androidTestCompile rootProject.ext.dependecies.libraries.testrule
-    androidTestCompile rootProject.ext.dependecies.libraries.espresso_core
-    androidTestCompile rootProject.ext.dependecies.libraries.espresso_intent
-    androidTestCompile rootProject.ext.dependecies.libraries.dexmaker_mockito
-    androidTestCompile rootProject.ext.dependecies.libraries.dexmaker_dx
-    androidTestCompile rootProject.ext.dependecies.libraries.awaitility
-    androidTestCompile rootProject.ext.dependecies.libraries.assertj_android
-    androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_support
-    androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_appcompat
-    androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_recyclerview
-    androidTestApt rootProject.ext.dependecies.libraries.dagger2Apt
-
-    compile(rootProject.ext.dependecies.libraries.crashlytics) {
-        transitive = true;
-    }
-
-    // Calendar View
-    compile rootProject.ext.dependecies.libraries.material_calendarview
-
-    // Joda time
-    compile rootProject.ext.dependecies.libraries.joda_time
-
-    // newrelic
-    compile rootProject.ext.dependecies.libraries.newrelic
-
-    // Retrofit
-    compile rootProject.ext.dependecies.libraries.retrofit2
-    compile rootProject.ext.dependecies.libraries.okhttp3
-    compile rootProject.ext.dependecies.libraries.okhttp3_ws
-    compile rootProject.ext.dependecies.libraries.jackson
-    debugCompile rootProject.ext.dependecies.libraries.okhttp3_logging
-
-    debugCompile rootProject.ext.dependecies.libraries.stetho_okhttp3
 }
 
 android {
@@ -309,3 +172,5 @@ apt {
 retrolambda {
     javaVersion JavaVersion.VERSION_1_7
 }
+
+apply plugin: 'com.getkeepsafe.dexcount'

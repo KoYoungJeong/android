@@ -1,0 +1,27 @@
+apply plugin: 'checkstyle'
+apply plugin: 'pmd'
+
+task pmd(type: Pmd) {
+
+    source 'src/main'
+    include '**/*.java'
+//    exclude('**/*Test.java')
+
+    ruleSetFiles = files('../pmd.xml')
+    ignoreFailures = true
+
+}
+
+task checkstyles(type: Checkstyle) {
+
+    configFile file('../checkstyle.xml')
+    source('src/main')
+    include '**/*.java'
+//    exclude('**/*Test.java')
+    classpath = files()
+
+
+    showViolations = true
+    ignoreFailures = true
+
+}

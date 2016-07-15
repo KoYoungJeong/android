@@ -1,44 +1,15 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 ext {
-    rxAndroidVersion = "1.2.0"
-    rxJavaVersion = "1.1.5"
-    supportLibVersion = "23.4.0"
-    playServiceVersion = "8.3.0"
-    dexmakerVersion = "1.4"
-    retrofitVersion = "2.0.0"
-    okhttpVersion = "3.2.0"
-    socketIoVersion = "0.7.+"
-    androidAnnotationsVersion = "3.3.2"
-    butterKnifeVersion = "7.0.1"
-    dagger2Version = "2.0.2"
-    assertJAndroidVersion = "1.1.1"
-    testRunnerVersion = "0.5"
-    espressoVersion = "2.2.2"
-    awaitilityVersion = "1.7.+"
     compileSdkVersion = 23
     buildToolsVersion = "23.0.3"
     minSdkVersion = 14
     targetSdkVersion = 23
-    androidMavenGradlePlugin = "1.4"
-    jacksonDataBindVersion = "2.7.2"
 }
+
 buildscript {
     apply from: 'dependencies.gradle'
-    repositories {
-        jcenter()
-        // aarLinkSource
-        maven { url 'https://maven.fabric.io/public' }
-    }
-    dependencies {
-        classpath rootProject.ext.dependecies.buildscripts.android
-        classpath rootProject.ext.dependecies.buildscripts.fabric
-        classpath rootProject.ext.dependecies.buildscripts.android_apt
-        classpath rootProject.ext.dependecies.buildscripts.google_services
-        classpath rootProject.ext.dependecies.buildscripts.retrolambda
-
-    }
-
 }
+
 allprojects {
     repositories {
         jcenter()
