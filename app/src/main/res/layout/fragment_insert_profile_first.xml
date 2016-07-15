@@ -10,25 +10,28 @@
         android:id="@+id/vg_insert_profile_required"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tv_welcome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="36dp"
+            android:layout_marginBottom="19dp"
             android:gravity="center_horizontal"
             android:text="@string/jandi_profile_welcome"
             android:textColor="@color/jandi_profile_text"
-            android:textSize="25sp" />
+            android:textSize="25sp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_profile_introduce"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="19dp"
             android:gravity="center_horizontal"
             android:lineSpacingExtra="4dip"
-            android:text="@string/jandi_profile_main_introduce" />
+            android:text="@string/jandi_profile_main_introduce"
+            android:textColor="@color/dark_gray" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -39,7 +42,7 @@
             <ImageView
                 android:id="@+id/iv_profile_picture"
                 android:layout_width="80dp"
-                android:layout_height="80dp"/>
+                android:layout_height="80dp" />
 
             <ImageView
                 android:id="@+id/iv_edit_profile_picture"
@@ -57,26 +60,40 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/tv_name_length"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="45dp"
-            android:gravity="right"
-            android:paddingRight="15dp"
-            android:textColor="@color/jandi_text_light"
-            android:textSize="12sp" />
+            android:layout_marginTop="45dp">
 
-        <TextView
-            android:id="@+id/tv_name"
-            android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/profile_text_input_bg"
-            android:gravity="center"
-            android:singleLine="true"
-            android:textColor="@color/jandi_profile_text"
-            android:textSize="14sp" />
+            <TextView
+                android:id="@+id/tv_name_length"
+                android:layout_width="53dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/profile_text_input2_bg_right"
+                android:gravity="center"
+                android:text="20/20"
+                android:textColor="@color/jandi_border_gray"
+                android:textSize="12dp" />
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_toLeftOf="@id/tv_name_length"
+                android:background="@drawable/profile_text_input2_bg_left"
+                android:gravity="center"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:maxLength="21"
+                android:maxLines="1"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:textColor="@color/dark_gray"
+                android:textSize="14dp" />
+        </RelativeLayout>
 
     </LinearLayout>
 
