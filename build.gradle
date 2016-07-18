@@ -7,10 +7,10 @@ ext {
 }
 
 buildscript {
-    apply from: 'dependencies.gradle'
-    apply from: 'classpath-dependencies.gradle'
+    apply from: 'dependencies-variable.gradle'
+    apply from: 'dependencies-classpath.gradle'
 }
-apply from: 'app-dependencies.gradle'
+apply from: 'dependencies-app.gradle'
 
 allprojects {
     repositories {
