@@ -91,24 +91,3 @@ ext.dependecies = [
                 dexcount_gradle     : 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.5.5'
         ]
 ]
-
-def jandiClasspaths() {
-    rootProject.buildscript.repositories {
-        jcenter()
-        // aarLinkSource
-        maven { url 'https://maven.fabric.io/public' }
-    }
-
-    rootProject.buildscript.dependencies {
-        classpath rootProject.ext.dependecies.buildscripts.android
-        classpath rootProject.ext.dependecies.buildscripts.fabric
-        classpath rootProject.ext.dependecies.buildscripts.android_apt
-        classpath rootProject.ext.dependecies.buildscripts.google_services
-        classpath rootProject.ext.dependecies.buildscripts.retrolambda
-        classpath rootProject.ext.dependecies.buildscripts.dexcount_gradle
-    }
-
-}
-
-jandiClasspaths()
-

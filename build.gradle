@@ -8,10 +8,13 @@ ext {
 
 buildscript {
     apply from: 'dependencies.gradle'
+    apply from: 'classpath-dependencies.gradle'
 }
+apply from: 'app-dependencies.gradle'
 
 allprojects {
     repositories {
         jcenter()
     }
+
 }

@@ -8,7 +8,6 @@ apply from: 'valid.gradle'       // Gradle Propertie Valid Check
 apply from: 'scripts/resources/strings/string-resource-crawler.gradle'
 apply from: 'scripts/resources/images/image-resource-crawler.gradle'
 apply from: 'apk-name-changer.gradle'
-apply from: 'app-dependencies.gradle'
 apply from: 'ci-tasks.gradle'
 
 configurations {
