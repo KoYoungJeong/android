@@ -5,12 +5,16 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,6 +72,9 @@ public class InsertProfileFirstPageFragment extends Fragment
     @Inject
     InsertProfileFirstPagePresenter presenter;
 
+    @Bind(R.id.tv_welcome)
+    TextView tvWelcome;
+
     @Bind(R.id.iv_profile_picture)
     ImageView ivProfilePicture;
 
@@ -108,6 +115,11 @@ public class InsertProfileFirstPageFragment extends Fragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         presenter.requestProfile();
+        Bundle bundle = getArguments();
+        String pageMode = bundle.getString(InsertProfileFirstPageFragment.MODE);
+        if (TextUtils.equals(pageMode, MODE_TEAM_CREATE)) {
+            tvWelcome.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -121,6 +133,7 @@ public class InsertProfileFirstPageFragment extends Fragment
         if (savedInstanceState != null) {
             photoFile = (File) savedInstanceState.getSerializable(EXTRA_NEW_PHOTO_FILE);
         }
+
     }
 
     @Override
@@ -354,7 +367,11 @@ public class InsertProfileFirstPageFragment extends Fragment
     @Override
     public void setTeamName(String teamName) {
         String intro = getResources().getString(R.string.jandi_profile_main_introduce, teamName);
-        tvProfileIntro.setText(intro);
+        SpannableString spannable = new SpannableString(intro);
+        int startIndex = intro.lastIndexOf(teamName);
+        spannable.setSpan(new StyleSpan(Typeface.BOLD),
+                startIndex, startIndex + teamName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        tvProfileIntro.setText(spannable);
     }
 
     @Override

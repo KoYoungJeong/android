@@ -112,8 +112,14 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
 
     @Override
     public void showTeamNameLengthError() {
-        etInsertTeamName.setBackgroundResource(R.drawable.profile_text_input2_bg_error_left);
-        tvTeamNameLength.setBackgroundResource(R.drawable.profile_text_input2_bg_error_right);
+
+        if (tvTeamNameLength.getVisibility() == View.VISIBLE) {
+            etInsertTeamName.setBackgroundResource(R.drawable.profile_text_input2_bg_error_left);
+            tvTeamNameLength.setBackgroundResource(R.drawable.profile_text_input2_bg_error_right);
+        } else {
+            etInsertTeamName.setBackgroundResource(R.drawable.profile_text_input_bg_error);
+        }
+
         tvTeamNameInsertError.setVisibility(View.VISIBLE);
         tvTeamNameInsertError.setText(R.string.jandi_team_create_name_length_invalid);
     }

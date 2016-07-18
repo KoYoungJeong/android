@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.ResPollParticipants;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.poll.participants.model.PollParticipantsModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -46,7 +47,7 @@ public class PollParticipantsPresenterImpl implements PollParticipantsPresenter 
             return;
         }
 
-        model.getParticipantsObservable(pollId, selectedSequence)
+        getParticipantsObservable(pollId, selectedSequence)
                 .concatMap(resPollParticipants ->
                         Observable.from(resPollParticipants.getMemberIds())
                                 .map(id -> TeamInfoLoader.getInstance().getUser(id))
@@ -90,6 +91,14 @@ public class PollParticipantsPresenterImpl implements PollParticipantsPresenter 
                     }
                 });
 
+    }
+
+    private Observable<ResPollParticipants> getParticipantsObservable(long pollId, int selectedSequence) {
+        if (selectedSequence >= 0) {
+            return model.getParticipantsObservable(pollId, selectedSequence);
+        } else {
+            return model.getAllParticipantsObservable(pollId);
+        }
     }
 
 }

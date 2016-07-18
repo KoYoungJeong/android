@@ -69,6 +69,7 @@ public class InsertTeamInfoModel {
         }
     }
 
+
     public boolean isValidDomainCharacters(String domainName) {
         return domainName.matches("[a-zA-Z1-9\\-]+");
     }
@@ -95,6 +96,7 @@ public class InsertTeamInfoModel {
         AccountUtil.removeDuplicatedTeams(resAccountInfo);
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
+        TeamInfoLoader.getInstance().refresh();
     }
 
     public void trackCreateTeamSuccess(long teamId) {
@@ -123,6 +125,5 @@ public class InsertTeamInfoModel {
         InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
         JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
         MessageRepository.getRepository().deleteAllLink();
-        TeamInfoLoader.getInstance().refresh();
     }
 }

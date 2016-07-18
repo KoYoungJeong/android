@@ -259,7 +259,8 @@ public class InsertProfileSecondPageFragment extends Fragment
 
         // 상태 메세지
         String strStatus = (me.getStatusMessage());
-        if (!TextUtils.isEmpty(strStatus)) {
+        if (!TextUtils.isEmpty(strStatus)
+                && pageMode.equals(InsertProfileFirstPageFragment.MODE_INSERT_PROFILE)) {
             etStatusMessage.setText(strStatus);
         }
     }
