@@ -97,7 +97,7 @@
 	<string name="jandi_are_you_sure_disable_external_link">"若移除共享連結，存取至該檔案的權限將被撤銷。你確定要移除共享連結？"</string>
 	<string name="jandi_ask_assign_topic_owner">"你確定將議題管理權限轉移至此成員？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你確定將此成員剔除議題？"</string>
-	<string name="jandi_ask_poll_delete">"確定要刪除此次投票？"</string>
+	<string name="jandi_ask_poll_delete">"確定要刪除此次投票？\n請注意留言的部分不會被刪除。"</string>
 	<string name="jandi_ask_poll_finish">"你確定結束此投票？"</string>
 	<string name="jandi_ask_to_leave_if_private_topic_owner">"欲離開此議題，請先將議題管理權限轉移至其他成員"</string>
 	<string name="jandi_ask_to_leave_if_topic_owner">"你可於離開議題前轉移管理權限"</string>
@@ -248,7 +248,8 @@
 	<string name="jandi_file_search_user">"按成員篩選搜尋結果"</string>
 	<string name="jandi_file_size_large_error">"無法上傳大於300MB的檔案"</string>
 	<string name="jandi_file_upload_finish">"檔案已成功上傳"</string>
-	<string name="jandi_file_upload_go_topic">"點擊進入JANDI瀏覽"</string>
+	<string name="jandi_file_upload_go_topic">"
+點擊進入JANDI瀏覽"</string>
 	<string name="jandi_file_upload_state">"上傳檔案中 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"檔案上傳成功"</string>
 	<string name="jandi_file_uploading">"上傳"</string>
@@ -413,7 +414,8 @@
 	<string name="jandi_poll">"問卷調查"</string>
 	<string name="jandi_poll_add_item">"添加選項"</string>
 	<string name="jandi_poll_anonymous">"不記名"</string>
-	<string name="jandi_poll_create">"建立"</string>
+	<string name="jandi_poll_create">"建立新的投票"</string>
+	<string name="jandi_poll_deleted">"投票已經刪除"</string>
 	<string name="jandi_poll_empty_1">"無進行中的問卷"</string>
 	<string name="jandi_poll_empty_2">"\n點擊[+]建立新問卷"</string>
 	<string name="jandi_poll_finished_with_most">"問卷已完成，得票最高的是 \"%s\""</string>
@@ -422,7 +424,7 @@
 	<string name="jandi_poll_is_anonymous">"此問卷為不記名投票"</string>
 	<string name="jandi_poll_multiple">"可複選"</string>
 	<string name="jandi_poll_multiple_available">"可複選"</string>
-	<string name="jandi_poll_participants_ing">"成員"</string>
+	<string name="jandi_poll_participants_ing">"投票人"</string>
 	<string name="jandi_poll_voted">"已投"</string>
 	<string name="jandi_pp">"隱私權條款"</string>
 	<string name="jandi_preview_message_contents">"預覽訊息內容"</string>

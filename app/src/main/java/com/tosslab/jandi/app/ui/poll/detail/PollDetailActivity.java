@@ -870,7 +870,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
 
     @Override
     public void showPollDeleteSuccessToast() {
-        ColoredToast.show(getString(R.string.jandi_delete_succeed, "zz"));
+        ColoredToast.show(getString(R.string.jandi_poll_deleted));
     }
 
     @Override

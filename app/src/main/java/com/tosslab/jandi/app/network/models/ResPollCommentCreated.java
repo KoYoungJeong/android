@@ -37,4 +37,13 @@ public class ResPollCommentCreated {
     public void setLinkComment(ResMessages.Link linkComment) {
         this.linkComment = linkComment;
     }
+
+    @Override
+    public String toString() {
+        return "ResPollCommentCreated{" +
+                "poll=" + poll +
+                ", linkSticker=" + linkSticker +
+                ", linkComment=" + linkComment +
+                '}';
+    }
 }
