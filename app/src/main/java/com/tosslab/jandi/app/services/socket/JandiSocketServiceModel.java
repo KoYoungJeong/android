@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.services.socket;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tosslab.jandi.app.JandiApplication;
@@ -24,6 +25,9 @@ import com.tosslab.jandi.app.events.messages.AnnouncementUpdatedEvent;
 import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
+import com.tosslab.jandi.app.events.socket.EventUpdateFinish;
+import com.tosslab.jandi.app.events.socket.EventUpdateInProgress;
+import com.tosslab.jandi.app.events.socket.EventUpdateStart;
 import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamJoinEvent;
@@ -119,6 +123,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -891,28 +896,28 @@ public class JandiSocketServiceModel {
     public void onMessageCreated(Object object) {
         try {
             SocketMessageCreatedEvent event = getObject(object, SocketMessageCreatedEvent.class, true, false);
-            ResMessages.Link linkMessage = event.getData().getLinkMessage();
+            ResMessages.Link link = event.getData().getLinkMessage();
             if (event.getTeamId() == TeamInfoLoader.getInstance().getTeamId()) {
                 JandiPreference.setSocketConnectedLastTime(event.getTs());
 
-                MessageRepository.getRepository().upsertMessage(linkMessage);
-                if (linkMessage.fromEntity == TeamInfoLoader.getInstance().getMyId()) {
-                    SendMessageRepository.getRepository().deleteCompletedMessages(Arrays.asList(linkMessage.messageId));
+                MessageRepository.getRepository().upsertMessage(link);
+                if (link.fromEntity == TeamInfoLoader.getInstance().getMyId()) {
+                    SendMessageRepository.getRepository().deleteCompletedMessages(Arrays.asList(link.id));
                 }
-                final long tempLinkId = linkMessage.id;
-                Observable.from(linkMessage.toEntity)
+                final long tempLinkId = link.id;
+                Observable.from(link.toEntity)
                         .distinct()
                         .subscribe(roomId -> {
                             MessageRepository.getRepository().updateDirty(roomId, tempLinkId);
                         });
 
-                doAfterMessageCreated(linkMessage);
+                doAfterMessageCreated(link);
 
                 postEvent(event);
             }
 
-            if (linkMessage.message != null) {
-                final long markeredMemberId = linkMessage.message.writerId;
+            if (link.message != null) {
+                final long markeredMemberId = link.message.writerId;
                 // 내가 아닌 사람이 메세지를 쓴 경우 뱃지가 갱신되도록 함
                 Observable.from(AccountRepository.getRepository().getAccountTeams())
                         .takeFirst(userTeam -> userTeam.getMemberId() != markeredMemberId)
@@ -933,15 +938,16 @@ public class JandiSocketServiceModel {
             // 시스템 메세지인 경우..
             return;
         }
-        for (Long roomId : linkMessage.toEntity) {
+        List<Long> toEntity = linkMessage.toEntity;
+        for (int i = 0, toEntitySize = toEntity.size(); i < toEntitySize; i++) {
+            long roomId = toEntity.get(i);
 
             boolean isTopic = TeamInfoLoader.getInstance().isTopic(roomId);
             boolean isMyMessage = TeamInfoLoader.getInstance().getMyId() == linkMessage.message.writerId;
             if (isTopic) {
-                Topic topic = TopicRepository.getInstance().getTopic(roomId);
                 TopicRepository.getInstance().updateLastLinkId(roomId, linkMessage.id);
                 if (!isMyMessage) {
-                    TopicRepository.getInstance().updateUnreadCount(roomId, topic.getUnreadCount() + 1);
+                    TopicRepository.getInstance().incrementUnreadCount(roomId);
                 }
             } else if (TeamInfoLoader.getInstance().isChat(roomId)) {
 
@@ -962,11 +968,12 @@ public class JandiSocketServiceModel {
 
                 ChatRepository.getInstance().updateLastMessage(roomId, linkMessage.messageId, text, "created");
                 ChatRepository.getInstance().updateLastLinkId(roomId, linkMessage.id);
-                ChatRepository.getInstance().updateChatOpened(roomId, true);
+                if (!TeamInfoLoader.getInstance().getChat(roomId).isJoined()) {
+                    ChatRepository.getInstance().updateChatOpened(roomId, true);
+                }
 
                 if (!isMyMessage) {
-                    Chat chat = ChatRepository.getInstance().getChat(roomId);
-                    ChatRepository.getInstance().updateUnreadCount(roomId, chat.getUnreadCount() + 1);
+                    ChatRepository.getInstance().incrementUnreadCount(roomId);
                 }
             }
         }
@@ -1264,10 +1271,15 @@ public class JandiSocketServiceModel {
         updateBatchMapper = new HashMap<>();
 
         long socketConnectedLastTime = JandiPreference.getSocketConnectedLastTime();
+        EventBus.getDefault().post(new EventUpdateStart());
         getEventHistory(socketConnectedLastTime)
                 .filter(it -> messageEventActorMapper.containsKey(it.getClass()))
                 .toSortedList((lhs, rhs) -> ((Long) (lhs.getTs() - rhs.getTs())).intValue())
+                .filter(it -> !it.isEmpty())
                 .subscribe(eventInfos -> {
+                    EventBus eventBus = EventBus.getDefault();
+                    int eventSize = eventInfos.size();
+                    eventBus.post(new EventUpdateInProgress(0, eventSize));
 
                     if (!eventInfos.isEmpty()) {
                         if (accountRefreshSubject != null && !accountRefreshSubscribe.isUnsubscribed()) {
@@ -1275,52 +1287,69 @@ public class JandiSocketServiceModel {
                         }
                     }
 
-                    boolean handleMessageCreated = eventInfos.size() <= 60;
+                    boolean handleMessageCreated = eventSize <= 60;
                     if (handleMessageCreated) {
-                        for (EventHistoryInfo eventInfo : eventInfos) {
+                        EventHistoryInfo eventInfo;
+                        for (int index = 0; index < eventSize; index++) {
+                            eventInfo = eventInfos.get(index);
+                            eventBus.post(new EventUpdateInProgress(index + 1, eventSize));
                             Command command = messageEventActorMapper.get(eventInfo.getClass());
                             if (command != null) {
                                 command.command(eventInfo);
                             }
                         }
+                        eventBus.post(new EventUpdateFinish());
                     } else {
 
-                        for (EventHistoryInfo eventInfo : eventInfos) {
+                        boolean successRefresh = false;
+                        try {
+                            InitialInfo initializeInfo = startApi.get().getInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
+                            InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+                            TeamInfoLoader.getInstance().refresh();
+                            JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
+                            successRefresh = true;
+                            postEvent(new RetrieveTopicListEvent());
+                            postEvent(new ChatListRefreshEvent());
+                            postEvent(new TeamInfoChangeEvent());
+                        } catch (RetrofitException e) {
+                            successRefresh = false;
+                        }
+                        Log.d(TAG, "first: " + new Date().toString());
+                        int messageCreateEventCount = 0;
+
+                        updateBatchMapper.put("message_created", new ArrayList<>());
+                        updateBatchMapper.put("etc", new ArrayList<>());
+
+                        EventHistoryInfo eventInfo;
+                        for (int idx = 0, eventInfosSize = eventInfos.size(); idx < eventInfosSize; idx++) {
+                            eventInfo = eventInfos.get(idx);
                             String eventName;
-                            if (eventInfo.getClass() == SocketMessageCreatedEvent.class) {
+                            if (eventInfo instanceof SocketMessageCreatedEvent) {
                                 SocketMessageCreatedEvent event = (SocketMessageCreatedEvent) eventInfo;
                                 doAfterMessageCreated(event.getData().getLinkMessage());
                                 eventName = "message_created";
+                                messageCreateEventCount++;
                             } else {
                                 eventName = "etc";
                             }
 
-                            if (!updateBatchMapper.containsKey(eventName)) {
-                                updateBatchMapper.put(eventName, new ArrayList<>());
-                            }
                             updateBatchMapper.get(eventName).add(eventInfo);
+                            eventBus.post(new EventUpdateInProgress(messageCreateEventCount, eventSize));
                         }
 
-                        bulkInsertMessage(updateBatchMapper);
+                        Log.d(TAG, "second: " + new Date().toString());
+
+                        bulkInsertMessage(updateBatchMapper.get("message_created"));
+
+                        Log.d(TAG, "third: " + new Date().toString());
 
                         List<EventHistoryInfo> etc = updateBatchMapper.get("etc");
-                        if (etc != null) {
+                        if (etc != null && !etc.isEmpty()) {
 
-                            boolean successRefresh = false;
-                            try {
-                                InitialInfo initializeInfo = startApi.get().getInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
-                                InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
-                                TeamInfoLoader.getInstance().refresh();
-                                JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
-                                successRefresh = true;
-                                postEvent(new RetrieveTopicListEvent());
-                                postEvent(new ChatListRefreshEvent());
-                                postEvent(new TeamInfoChangeEvent());
-                            } catch (RetrofitException e) {
-                                successRefresh = false;
-                            }
-
-                            for (EventHistoryInfo eventHistoryInfo : etc) {
+                            EventHistoryInfo eventHistoryInfo;
+                            for (int idx = 0, etcSize = etc.size(); idx < etcSize; idx++) {
+                                eventHistoryInfo = etc.get(idx);
+                                eventBus.post(new EventUpdateInProgress(messageCreateEventCount + idx + 1, eventSize));
                                 if (successRefresh) {
                                     proccessMessageEventIfTooMuch(eventHistoryInfo);
                                 } else {
@@ -1332,13 +1361,19 @@ public class JandiSocketServiceModel {
                             }
                         }
                     }
+                    Log.d(TAG, "forth: " + new Date().toString());
 
-                }, Throwable::printStackTrace);
+                }, (throwable) -> {
+                    EventBus.getDefault().post(new EventUpdateFinish());
+                    throwable.printStackTrace();
+                }, () -> {
+                    EventBus.getDefault().post(new EventUpdateFinish());
+                });
 
     }
 
-    private void bulkInsertMessage(Map<String, List<EventHistoryInfo>> updateBatchMapper) {
-        List<EventHistoryInfo> eventHistoryInfos = updateBatchMapper.get("message_created");
+    private void bulkInsertMessage(List<EventHistoryInfo> messageCreateEvents) {
+        List<EventHistoryInfo> eventHistoryInfos = messageCreateEvents;
 
         if (eventHistoryInfos != null) {
             // Message 넣기

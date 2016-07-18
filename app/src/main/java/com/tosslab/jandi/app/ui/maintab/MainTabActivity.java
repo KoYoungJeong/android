@@ -29,6 +29,9 @@ import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
+import com.tosslab.jandi.app.events.socket.EventUpdateFinish;
+import com.tosslab.jandi.app.events.socket.EventUpdateInProgress;
+import com.tosslab.jandi.app.events.socket.EventUpdateStart;
 import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
@@ -131,7 +134,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @SystemService
     LayoutInflater layoutInflater;
 
-
     @ViewById(R.id.vg_main_offline)
     View vgOffline;
 
@@ -154,6 +156,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     long selectedEntity = -1;
     @Inject
     TeamsPresenter teamsPresenter;
+
+    @ViewById(R.id.vg_main_synchronize)
+    View vgSynchronize;
+
+    @ViewById(R.id.tv_synchronize)
+    TextView tvSynchronize;
 
     private OfflineLayer offlineLayer;
     private ProgressWheel progressWheel;
@@ -650,6 +658,32 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         }
         teamsPresenter.reInitializeTeams();
 
+    }
+
+    public void onEventMainThread(EventUpdateStart event) {
+        if (vgSynchronize != null && tvSynchronize != null) {
+            vgSynchronize.setVisibility(View.VISIBLE);
+            tvSynchronize.setText(R.string.jandi_syncing_message);
+        }
+    }
+
+    public void onEventMainThread(EventUpdateInProgress event) {
+        if (vgSynchronize != null && tvSynchronize != null) {
+            if (vgSynchronize.getVisibility() != View.VISIBLE) {
+                vgSynchronize.setVisibility(View.VISIBLE);
+            }
+            int percent = (event.getProgress() * 100) / event.getMax();
+            String syncMsg = JandiApplication.getContext().getString(R.string.jandi_syncing_message);
+            tvSynchronize.setText(String.format(syncMsg + "...(%d%%)", percent));
+        }
+    }
+
+    public void onEventMainThread(EventUpdateFinish event) {
+        if (vgSynchronize != null && tvSynchronize != null) {
+            if (vgSynchronize.getVisibility() != View.GONE) {
+                vgSynchronize.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void trackScreenView(int position) {

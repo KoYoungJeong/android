@@ -17,7 +17,7 @@ public interface MessageListAdapterModel {
 
     int indexByMessageId(long messageId);
 
-    int indexOfDummyMessageId(long messageId);
+    int indexOfDummyLinkId(long linkId);
 
     int getLastIndexByMessageId(long messageId);
 
@@ -44,4 +44,10 @@ public interface MessageListAdapterModel {
     void updateCachedType(int indexOfUnsharedFile);
 
     void modifyStarredStateByPosition(int index, boolean starred);
+
+    void changeToDirty(long linkId);
+
+    boolean isDirty(long linkId);
+
+    void removeDirty(long linkId);
 }

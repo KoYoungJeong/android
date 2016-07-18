@@ -13,6 +13,8 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.messages.ReqStickerMessage;
+import com.tosslab.jandi.app.network.models.messages.ReqTextMessage;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
@@ -195,24 +197,30 @@ public class MessageListV2Presenter {
                 .observeOn(Schedulers.io())
                 .doOnNext(container -> {
                     SendingMessage data = container.getData();
-                    long messageId;
-                    if (data.getStickerInfo() != null) {
-                        messageId = messageListModel.sendStickerMessage(room.getTeamId(), room.getEntityId(),
-                                data.getStickerInfo(), data.getLocalId());
+                    long linkId;
+                    StickerInfo stickerInfo = data.getStickerInfo();
+                    if (stickerInfo != null) {
+                        linkId = messageListModel.sendMessage(data.getLocalId(), room.getTeamId(), room.getRoomId(),
+                                new ReqStickerMessage(stickerInfo.getStickerId(), stickerInfo.getStickerGroupId()));
                     } else {
                         List<MentionObject> mentions = data.getMentions();
-                        messageId = messageListModel.sendMessage(data.getLocalId(), data.getMessage(), mentions);
+                        linkId = messageListModel.sendMessage(data.getLocalId(), room.getTeamId(), room.getRoomId(),
+                                new ReqTextMessage(data.getMessage(), mentions));
                     }
+
+                    adapterModel.changeToDirty(linkId);
 
                     int position = adapterModel.getDummyMessagePositionByLocalId(data.getLocalId());
                     if (position >= 0) {
-                        adapterModel.getItem(position).messageId = messageId;
+                        adapterModel.getItem(position).id = linkId;
                     }
 
-                    if (messageId > 0) {
+                    if (linkId > 0) {
                         if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
                             // 소켓이 안 붙어 있으면 임의로 갱신 요청
                             addNewMessageQueue(true);
+                        } else {
+                            addNewMessageOfLocalQueue();
                         }
                     }
                 })
@@ -227,7 +235,12 @@ public class MessageListV2Presenter {
                 .observeOn(Schedulers.io())
                 .filter(container -> view != null || adapterModel != null)
                 .map(container -> {
-                    ResMessages.Link item = adapterModel.getItem(adapterModel.getCount() - 1 - adapterModel.getDummyMessageCount());
+                    ResMessages.Link item = null;
+                    int index = 1;
+                    do {
+                        int position = adapterModel.getCount() - adapterModel.getDummyMessageCount() - index++;
+                        item = adapterModel.getItem(position);
+                    } while (adapterModel.isDirty(item.id));
 
                     long minId = -1;
                     if (item != null) {
@@ -638,9 +651,17 @@ public class MessageListV2Presenter {
             if (link.message instanceof ResMessages.StickerMessage
                     || link.message instanceof ResMessages.TextMessage) {
                 if (TeamInfoLoader.getInstance().getMyId() == link.fromEntity) {
-                    int idxOfMessageId = adapterModel.indexOfDummyMessageId(link.messageId);
+                    int idxOfMessageId = adapterModel.indexOfDummyLinkId(link.id);
                     if (idxOfMessageId >= 0) {
+                        // 더미 삭제
                         adapterModel.remove(idxOfMessageId);
+                    } else if (adapterModel.isDirty(link.id)) {
+                        // 소켓으로 받지 않은 데이터에 대해 dirty 처리
+                        int position = adapterModel.indexOfLinkId(link.id);
+                        if (position >= 0) {
+                            adapterModel.remove(position);
+                            adapterModel.removeDirty(link.id);
+                        }
                     }
                 }
             }
