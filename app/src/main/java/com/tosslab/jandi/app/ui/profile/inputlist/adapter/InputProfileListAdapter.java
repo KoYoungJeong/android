@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.profile.inputlist.adapter;
 
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -21,17 +22,16 @@ import java.util.List;
  */
 public class InputProfileListAdapter extends RecyclerView.Adapter {
 
-    private List<String> datas = new ArrayList<>();
+    // first : value , second : is new value
+    private List<Pair<String, Boolean>> datas = new ArrayList<>();
 
     private String keyword = "";
-
-    private boolean hasResults = false;
 
     private OnItemClickListener onItemClickListener;
 
     private String mode = InputProfileListActivity.EXTRA_JOB_TITLE_MODE;
 
-    public void setDatas(List<String> datas) {
+    public void setDatas(List<Pair<String, Boolean>> datas) {
         this.datas = datas;
     }
 
@@ -53,7 +53,7 @@ public class InputProfileListAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
-        String data = datas.get(position);
+        String data = datas.get(position).first;
 
         if (data == null || data.equals("")) {
             viewHolder.getTvName().setText("");
@@ -67,7 +67,7 @@ public class InputProfileListAdapter extends RecyclerView.Adapter {
             viewHolder.getTvNewAdd().setText(R.string.jandi_new_department);
         }
 
-        if (hasResults) {
+        if (!datas.get(position).second) {
             SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder(data);
             if (keyword != null && keyword.length() > 0) {
                 messageStringBuilder.setSpan(
@@ -81,9 +81,9 @@ public class InputProfileListAdapter extends RecyclerView.Adapter {
                     JandiApplication.getContext().getResources().getColor(R.color.dark_gray));
             viewHolder.getTvNewAdd().setVisibility(View.GONE);
             viewHolder.contentView.setOnClickListener(
-                    v -> onItemClickListener.onItemClick(datas.get(position)));
+                    v -> onItemClickListener.onItemClick(datas.get(position).first));
         } else {
-            viewHolder.getTvName().setText(datas.get(position));
+            viewHolder.getTvName().setText(datas.get(position).first);
             viewHolder.getTvName().setTextColor(0xFF00A2E2);
             viewHolder.getTvNewAdd().setVisibility(View.VISIBLE);
         }
@@ -98,13 +98,7 @@ public class InputProfileListAdapter extends RecyclerView.Adapter {
         this.onItemClickListener = onItemClickListener;
     }
 
-    public void hasDataRefresh() {
-        hasResults = true;
-        notifyDataSetChanged();
-    }
-
-    public void hasNoDataRefresh() {
-        hasResults = false;
+    public void dataRefresh() {
         notifyDataSetChanged();
     }
 

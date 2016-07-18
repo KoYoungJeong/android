@@ -74,8 +74,9 @@ public class StarMentionedMessageObject {
                 "teamId=" + teamId +
                 ", linkId=" + linkId +
                 ", createdAt=" + createdAt +
-                ", room=" + room.toString() +
-                ", message=" + message.toString() +
+                ", starredId=" + starredId +
+                ", room=" + room +
+                ", message=" + message +
                 '}';
     }
 

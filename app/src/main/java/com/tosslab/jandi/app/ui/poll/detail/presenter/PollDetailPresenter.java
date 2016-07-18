@@ -29,8 +29,6 @@ public interface PollDetailPresenter {
 
     void onSendCommentWithSticker(long pollId, long stickerGroupId, String stickerId, String message, List<MentionObject> mentions);
 
-    void onPollDataChanged(Poll poll);
-
     void joinAndMove(TopicRoom topic);
 
     void onChangeCommentStarredState(long messageId, boolean starred);

@@ -86,6 +86,7 @@ public class MentionMessage {
         this.linkId = link.id;
         this.messageId = link.messageId;
         this.writerId = link.message.writerId;
+        this.feedbackType = link.feedbackType;
 
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage message = (ResMessages.TextMessage) link.message;
@@ -103,6 +104,10 @@ public class MentionMessage {
             this.feedbackId = message.feedbackId;
             if (link.feedback instanceof ResMessages.FileMessage) {
                 this.feedbackTitle = ((ResMessages.FileMessage) link.feedback).content.title;
+            } else if (link.feedback instanceof ResMessages.PollMessage) {
+                ResMessages.PollMessage pollMessage = (ResMessages.PollMessage) link.feedback;
+                this.feedbackTitle = pollMessage.content.body;
+                this.pollId = pollMessage.pollId;
             }
 
             this.messageCreatedAt = message.createTime;

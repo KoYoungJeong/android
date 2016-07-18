@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
+import com.tosslab.jandi.app.network.models.ResStarredMessage;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 
 import java.util.List;
@@ -67,7 +68,7 @@ public class MessageApi extends ApiTemplate<MessageApi.Api> {
         return call(() -> getApi().getStarredMessages(teamId, starredId, count, type));
     }
 
-    public StarMentionedMessageObject registStarredMessage(long teamId, long messageId, ReqNull reqNull) throws RetrofitException {
+    public ResStarredMessage registStarredMessage(long teamId, long messageId, ReqNull reqNull) throws RetrofitException {
         return call(() -> getApi().registStarredMessage(teamId, messageId, reqNull));
     }
 
@@ -119,7 +120,7 @@ public class MessageApi extends ApiTemplate<MessageApi.Api> {
 
         @POST("teams/{teamId}/messages/{messageId}/starred")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<StarMentionedMessageObject> registStarredMessage(@Path("teamId") long teamId, @Path("messageId") long messageId, @Body ReqNull reqNull);
+        Call<ResStarredMessage> registStarredMessage(@Path("teamId") long teamId, @Path("messageId") long messageId, @Body ReqNull reqNull);
 
         @DELETE("teams/{teamId}/messages/{messageId}/starred")
         Call<ResCommon> unregistStarredMessage(@Path("teamId") long teamId, @Path("messageId") long messageId);

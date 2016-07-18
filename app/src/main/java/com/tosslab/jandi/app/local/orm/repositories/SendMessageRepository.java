@@ -255,4 +255,20 @@ public class SendMessageRepository extends LockExecutorTemplate {
 
         });
     }
+
+    public int deleteAllMessages() {
+        return execute(() -> {
+            try {
+                Dao<SendMessage, ?> dao = getHelper().getDao(SendMessage.class);
+                return dao.deleteBuilder()
+                        .delete();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return 0;
+
+        });
+
+    }
 }
