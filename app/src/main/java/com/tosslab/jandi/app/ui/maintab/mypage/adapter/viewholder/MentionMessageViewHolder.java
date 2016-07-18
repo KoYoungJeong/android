@@ -72,8 +72,8 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
 
     private void bindContent(MentionMessage mentionMessage) {
         if ("comment".equals(mentionMessage.getContentType())) {
-            tvTopicName.setText(mentionMessage.getFeedbackTitle());
             tvTopicName.setEllipsize(TextUtils.TruncateAt.MIDDLE);
+            tvTopicName.setText(mentionMessage.getFeedbackTitle());
             if ("poll".equals(mentionMessage.getFeedbackType())) {
                 ivContentIcon.setImageResource(R.drawable.icon_message_poll);
             } else {

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +31,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.Observable;
+import rx.functions.Func1;
 
 /**
  * Created by tee on 16. 7. 5..
@@ -105,7 +107,7 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
     }
 
     private void setDepartmentList(String keyword) {
-        final List<String> datas = new ArrayList<>();
+        final List<Pair<String, Boolean>> datas = new ArrayList<>();
         TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
         List<User> users = teamInfoLoader.getUserList();
 
@@ -114,15 +116,16 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
                     .map((user) -> user.getDivision())
                     .filter(department -> !TextUtils.isEmpty(department))
                     .distinct()
-                    .toSortedList((lhs, rhs) -> {
-                        return StringCompareUtil.compare(lhs, rhs);
+                    .map((Func1<String, Pair<String, Boolean>>) string -> new Pair(string, false))
+                    .toSortedList((leftPair, rightPair) -> {
+                        return StringCompareUtil.compare(leftPair.first, rightPair.first);
                     })
-                    .subscribe(strings -> {
-                        datas.addAll(strings);
+                    .subscribe(pairs -> {
+                        datas.addAll(pairs);
                     });
             adapter.setDatas(datas);
             adapter.setKeyword(keyword);
-            adapter.hasDataRefresh();
+            adapter.dataRefresh();
             return;
         }
 
@@ -135,42 +138,47 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
                 })
                 .map((user) -> user.getDivision())
                 .distinct()
-                .toSortedList((lhs, rhs) -> {
-                    return StringCompareUtil.compare(lhs, rhs);
+                .map((Func1<String, Pair<String, Boolean>>) string -> new Pair(string, false))
+                .toSortedList((leftPair, rightPair) -> {
+                    return StringCompareUtil.compare(leftPair.first, rightPair.first);
                 })
-                .subscribe(strings -> {
-                    datas.addAll(strings);
+                .subscribe(pairs -> {
+                    datas.addAll(pairs);
                 });
         if (datas.size() > 0) {
+            if (!datas.contains(new Pair(keyword, false))) {
+                datas.add(new Pair(keyword, true));
+            }
             adapter.setDatas(datas);
             adapter.setKeyword(keyword);
-            adapter.hasDataRefresh();
         } else {
-            datas.add(keyword);
+            datas.add(new Pair(keyword, true));
             adapter.setDatas(datas);
-            adapter.hasNoDataRefresh();
         }
+        adapter.dataRefresh();
     }
 
 
     private void setJobTitleList(String keyword) {
-        final List<String> datas = new ArrayList<>();
+        final List<Pair<String, Boolean>> datas = new ArrayList<>();
         TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
         List<User> users = teamInfoLoader.getUserList();
+
         if (TextUtils.isEmpty(keyword)) {
             Observable.from(users)
                     .map((user) -> user.getPosition())
                     .filter(jobTitle -> !TextUtils.isEmpty(jobTitle))
                     .distinct()
-                    .toSortedList((lhs, rhs) -> {
-                        return StringCompareUtil.compare(lhs, rhs);
+                    .map((Func1<String, Pair<String, Boolean>>) string -> new Pair(string, false))
+                    .toSortedList((leftPair, rightPair) -> {
+                        return StringCompareUtil.compare(leftPair.first, rightPair.first);
                     })
-                    .subscribe(strings -> {
-                        datas.addAll(strings);
+                    .subscribe(pairs -> {
+                        datas.addAll(pairs);
                     });
             adapter.setDatas(datas);
             adapter.setKeyword(keyword);
-            adapter.hasDataRefresh();
+            adapter.dataRefresh();
             return;
         }
 
@@ -183,21 +191,24 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
                 })
                 .map((user) -> user.getPosition())
                 .distinct()
-                .toSortedList((lhs, rhs) -> {
-                    return StringCompareUtil.compare(lhs, rhs);
+                .map((Func1<String, Pair<String, Boolean>>) string -> new Pair(string, false))
+                .toSortedList((leftPair, rightPair) -> {
+                    return StringCompareUtil.compare(leftPair.first, rightPair.first);
                 })
-                .subscribe(strings -> {
-                    datas.addAll(strings);
+                .subscribe(pairs -> {
+                    datas.addAll(pairs);
                 });
         if (datas.size() > 0) {
+            if (!datas.contains(new Pair(keyword, false))) {
+                datas.add(new Pair(keyword, true));
+            }
             adapter.setDatas(datas);
             adapter.setKeyword(keyword);
-            adapter.hasDataRefresh();
         } else {
-            datas.add(keyword);
+            datas.add(new Pair(keyword, true));
             adapter.setDatas(datas);
-            adapter.hasNoDataRefresh();
         }
+        adapter.dataRefresh();
     }
 
     public void setOnTextChangeListener() {
