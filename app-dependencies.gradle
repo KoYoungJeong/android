@@ -3,115 +3,121 @@ rootProject.allprojects { project ->
 
         project.afterEvaluate {
 
-            project.repositories.add(project.getRepositories().jcenter())
-            project.repositories.add(project.getRepositories().maven {
-                url 'https://maven.fabric.io/public'
-            })
+            repositories {
+                jcenter()
+                maven {
+                    url 'https://maven.fabric.io/public'
+                }
+                maven {
+                    url 'http://nx.jandi.io:8081/nexus/content/repositories/thirdparty/'
+                }
+            }
 
-            project.repositories.add(project.getRepositories().maven {
-                url 'http://nx.jandi.io:8081/nexus/content/repositories/thirdparty/'
-            })
+            dependencies {
 
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.sprinklrAndroid)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.photoView)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.imageZoomCrop)
 
-//    project.dependencies.add('compile', project(':sprinkler-android'))
-//    project.dependencies.add('compile', project(':photoview-expand'))
+                compile rootProject.ext.dependecies.libraries.sprinklrAndroid
+                compile rootProject.ext.dependecies.libraries.photoView
+                compile rootProject.ext.dependecies.libraries.imageZoomCrop
 
-            project.dependencies.add('retrolambdaConfig', rootProject.ext.dependecies.libraries.retrolambda)
-            project.dependencies.add('apt', rootProject.ext.dependecies.libraries.androidAnnotationApt)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.androidAnnotation)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.butterknife)
+//    compile project(':sprinkler-android'))
+//    compile project(':photoview-expand'))
 
-            project.dependencies.add('apt', rootProject.ext.dependecies.libraries.dagger2Apt)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.dagger2)
-            project.dependencies.add('provided', rootProject.ext.dependecies.libraries.jsr250)
+                retrolambdaConfig rootProject.ext.dependecies.libraries.retrolambda
+                apt rootProject.ext.dependecies.libraries.androidAnnotationApt
+                compile rootProject.ext.dependecies.libraries.androidAnnotation
+                compile rootProject.ext.dependecies.libraries.butterknife
 
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.dart)
-            project.dependencies.add('provided', rootProject.ext.dependecies.libraries.dart_processor)
+                apt rootProject.ext.dependecies.libraries.dagger2Apt
+                compile rootProject.ext.dependecies.libraries.dagger2
+                provided rootProject.ext.dependecies.libraries.jsr250
 
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.multidex)
-            project.dependencies.add('compile', fileTree(dir: 'libs', include: ['*.jar']))
+                compile rootProject.ext.dependecies.libraries.dart
+                provided rootProject.ext.dependecies.libraries.dart_processor
 
-            // Google
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.googleAnalytics)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.gcm)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.support_appcompat)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.support_v4)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.support_v13)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.support_recyclerview)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.support_cardview)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.support_annotation)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.support_design)
+                compile rootProject.ext.dependecies.libraries.multidex
+                compile fileTree(dir: 'libs', include: ['*.jar'])
 
-            // UI
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.supertoast)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.recyclerview_stickyheader)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.android_crop)
+                // Google
+                compile rootProject.ext.dependecies.libraries.googleAnalytics
+                compile rootProject.ext.dependecies.libraries.gcm
+                compile rootProject.ext.dependecies.libraries.support_appcompat
+                compile rootProject.ext.dependecies.libraries.support_v4
+                compile rootProject.ext.dependecies.libraries.support_v13
+                compile rootProject.ext.dependecies.libraries.support_recyclerview
+                compile rootProject.ext.dependecies.libraries.support_cardview
+                compile rootProject.ext.dependecies.libraries.support_annotation
+                compile rootProject.ext.dependecies.libraries.support_design
 
-            // BadgeCount
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.shortcutbadger)
-            // Boilerplate
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.eventbus)
-            // Network
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.socketio, {
-                exclude group: 'org.json', module: 'json'
-            })
+                // UI
+                compile rootProject.ext.dependecies.libraries.supertoast
+                compile rootProject.ext.dependecies.libraries.recyclerview_stickyheader
+                compile rootProject.ext.dependecies.libraries.android_crop
 
-            // Cache
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.ion)
-            // Image
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.glide_okhttp)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.glide_transformation)
+                // BadgeCount
+                compile rootProject.ext.dependecies.libraries.shortcutbadger
+                // Boilerplate
+                compile rootProject.ext.dependecies.libraries.eventbus
+                // Network
+                compile(rootProject.ext.dependecies.libraries.socketio) {
+                    exclude group: 'org.json', module: 'json'
+                }
 
-            // Sliqte ORM
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.ormlite)
+                // Cache
+                compile rootProject.ext.dependecies.libraries.ion
+                // Image
+                compile rootProject.ext.dependecies.libraries.glide_okhttp
+                compile rootProject.ext.dependecies.libraries.glide_transformation
 
-            // Analytics & report
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.parse)
-            // RxJava
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.rxandroid)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.rxjava)
+                // Sliqte ORM
+                compile rootProject.ext.dependecies.libraries.ormlite
 
-            // facebook SDK
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.facebook)
+                // Analytics & report
+                compile rootProject.ext.dependecies.libraries.parse
+                // RxJava
+                compile rootProject.ext.dependecies.libraries.rxandroid
+                compile rootProject.ext.dependecies.libraries.rxjava
 
-            // Force usage of support annotations in the test app, since it is internally used by the runner module.
-            project.dependencies.add('androidTestCompile', rootProject.ext.dependecies.libraries.testrunner)
-            project.dependencies.add('androidTestCompile', rootProject.ext.dependecies.libraries.testrule)
-            project.dependencies.add('androidTestCompile', rootProject.ext.dependecies.libraries.espresso_core)
-            project.dependencies.add('androidTestCompile', rootProject.ext.dependecies.libraries.espresso_intent)
-            project.dependencies.add('androidTestCompile', rootProject.ext.dependecies.libraries.dexmaker_mockito)
-            project.dependencies.add('androidTestCompile', rootProject.ext.dependecies.libraries.dexmaker_dx)
-            project.dependencies.add('androidTestCompile', rootProject.ext.dependecies.libraries.awaitility)
-            project.dependencies.add('androidTestCompile', rootProject.ext.dependecies.libraries.assertj_android)
-            project.dependencies.add('androidTestCompile', rootProject.ext.dependecies.libraries.assertj_android_support)
-            project.dependencies.add('androidTestCompile', rootProject.ext.dependecies.libraries.assertj_android_appcompat)
-            project.dependencies.add('androidTestCompile', rootProject.ext.dependecies.libraries.assertj_android_recyclerview)
-            project.dependencies.add('androidTestApt', rootProject.ext.dependecies.libraries.dagger2Apt)
+                // facebook SDK
+                compile rootProject.ext.dependecies.libraries.facebook
 
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.crashlytics, {
-                transitive = true;
-            })
+                compile(rootProject.ext.dependecies.libraries.crashlytics) {
+                    transitive = true;
+                }
 
-            // Calendar View
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.material_calendarview)
+                // Calendar View
+                compile rootProject.ext.dependecies.libraries.material_calendarview
 
-            // Joda time
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.joda_time)
+                // Joda time
+                compile rootProject.ext.dependecies.libraries.joda_time
 
-            // newrelic
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.newrelic)
+                // newrelic
+                compile rootProject.ext.dependecies.libraries.newrelic
 
-            // Retrofit
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.retrofit2)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.okhttp3)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.okhttp3_ws)
-            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.jackson)
-            project.dependencies.add('debugCompile', rootProject.ext.dependecies.libraries.okhttp3_logging)
+                // Retrofit
+                compile rootProject.ext.dependecies.libraries.retrofit2
+                compile rootProject.ext.dependecies.libraries.okhttp3
+                compile rootProject.ext.dependecies.libraries.okhttp3_ws
+                compile rootProject.ext.dependecies.libraries.jackson
+                debugCompile rootProject.ext.dependecies.libraries.okhttp3_logging
 
-            project.dependencies.add('debugCompile', rootProject.ext.dependecies.libraries.stetho_okhttp3)
+                debugCompile rootProject.ext.dependecies.libraries.stetho_okhttp3
+
+                // Force usage of support annotations in the test app, since it is internally used by the runner module.
+                androidTestCompile rootProject.ext.dependecies.libraries.testrunner
+                androidTestCompile rootProject.ext.dependecies.libraries.testrule
+                androidTestCompile rootProject.ext.dependecies.libraries.espresso_core
+                androidTestCompile rootProject.ext.dependecies.libraries.espresso_intent
+                androidTestCompile rootProject.ext.dependecies.libraries.dexmaker_mockito
+                androidTestCompile rootProject.ext.dependecies.libraries.dexmaker_dx
+                androidTestCompile rootProject.ext.dependecies.libraries.awaitility
+                androidTestCompile rootProject.ext.dependecies.libraries.assertj_android
+                androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_support
+                androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_appcompat
+                androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_recyclerview
+                androidTestApt rootProject.ext.dependecies.libraries.dagger2Apt
+
+            }
         }
     }
 }
