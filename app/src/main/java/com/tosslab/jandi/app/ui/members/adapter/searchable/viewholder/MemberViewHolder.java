@@ -250,7 +250,6 @@ public class MemberViewHolder<T> extends BaseViewHolder<T> {
         tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
 
         if (item.isOwner()) {
-            tvOwnerBadge.setVisibility(View.VISIBLE);
             Paint ownerBadgePaint = tvOwnerBadge.getPaint();
             int ownerPadding = (int) UiUtils.getPixelFromDp(14);
             int ownerMargin = (int) UiUtils.getPixelFromDp(16);
@@ -271,7 +270,6 @@ public class MemberViewHolder<T> extends BaseViewHolder<T> {
         if (!item.isBot()) {
             ViewGroup.LayoutParams layoutParams = ivProfile.getLayoutParams();
             layoutParams.height = ivProfile.getResources().getDimensionPixelSize(R.dimen.jandi_entity_item_icon);
-            ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             ivProfile.setLayoutParams(layoutParams);
             if (!item.isInactive()) {
                 ImageUtil.loadProfileImage(ivProfile, item.getPhotoUrl(), R.drawable.profile_img);
@@ -285,6 +283,7 @@ public class MemberViewHolder<T> extends BaseViewHolder<T> {
                     TypedValue.applyDimension(
                             TypedValue.COMPLEX_UNIT_DIP, 54f, displayMetrics));
             ivProfile.setLayoutParams(layoutParams);
+            ivProfile.setScaleType(ImageView.ScaleType.FIT_CENTER);
             ImageLoader.loadFromResources(ivProfile, R.drawable.bot_43x54);
         }
     }
