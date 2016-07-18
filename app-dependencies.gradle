@@ -19,6 +19,7 @@ rootProject.allprojects { project ->
 //    project.dependencies.add('compile', project(':sprinkler-android'))
 //    project.dependencies.add('compile', project(':photoview-expand'))
 
+            project.dependencies.add('retrolambdaConfig', rootProject.ext.dependecies.libraries.retrolambda)
             project.dependencies.add('apt', rootProject.ext.dependecies.libraries.androidAnnotationApt)
             project.dependencies.add('compile', rootProject.ext.dependecies.libraries.androidAnnotation)
             project.dependencies.add('compile', rootProject.ext.dependecies.libraries.butterknife)
@@ -26,6 +27,9 @@ rootProject.allprojects { project ->
             project.dependencies.add('apt', rootProject.ext.dependecies.libraries.dagger2Apt)
             project.dependencies.add('compile', rootProject.ext.dependecies.libraries.dagger2)
             project.dependencies.add('provided', rootProject.ext.dependecies.libraries.jsr250)
+
+            project.dependencies.add('compile', rootProject.ext.dependecies.libraries.dart)
+            project.dependencies.add('provided', rootProject.ext.dependecies.libraries.dart_processor)
 
             project.dependencies.add('compile', rootProject.ext.dependecies.libraries.multidex)
             project.dependencies.add('compile', fileTree(dir: 'libs', include: ['*.jar']))
