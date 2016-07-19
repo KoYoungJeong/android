@@ -248,8 +248,7 @@
 	<string name="jandi_file_search_user">"按成員篩選搜尋結果"</string>
 	<string name="jandi_file_size_large_error">"無法上傳大於300MB的檔案"</string>
 	<string name="jandi_file_upload_finish">"檔案已成功上傳"</string>
-	<string name="jandi_file_upload_go_topic">"
-點擊進入JANDI瀏覽"</string>
+	<string name="jandi_file_upload_go_topic">"點擊進入JANDI瀏覽"</string>
 	<string name="jandi_file_upload_state">"上傳檔案中 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"檔案上傳成功"</string>
 	<string name="jandi_file_uploading">"上傳"</string>
@@ -378,7 +377,7 @@
 	<string name="jandi_name_in_jandi">"帳號名稱"</string>
 	<string name="jandi_need_to_assign_topic_owner">"你為此議題的管理員，請於離開議題前，先將管理權限轉移給其他成員"</string>
 	<string name="jandi_new_department">"新部門"</string>
-	<string name="jandi_new_job_title">"添加職稱"</string>
+	<string name="jandi_new_job_title">"新職稱"</string>
 	<string name="jandi_new_team_name">"新團隊名稱"</string>
 	<string name="jandi_next">"下一步"</string>
 	<string name="jandi_no_invite_email">"請提供您想邀請的團隊成員的電子郵件地址"</string>
@@ -558,6 +557,7 @@
 	<string name="jandi_success_update_account_profile">"帳號已經成功更新"</string>
 	<string name="jandi_success_web_token">"登入成功"</string>
 	<string name="jandi_switch_team">"更換團隊"</string>
+	<string name="jandi_syncing_message">"訊息同步中"</string>
 	<string name="jandi_tab_chat">"對話"</string>
 	<string name="jandi_tab_direct_message">"私訊"</string>
 	<string name="jandi_tab_file">"檔案"</string>

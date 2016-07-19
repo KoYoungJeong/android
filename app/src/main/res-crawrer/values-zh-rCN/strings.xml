@@ -377,7 +377,7 @@
 	<string name="jandi_name_in_jandi">"账号名称"</string>
 	<string name="jandi_need_to_assign_topic_owner">"你为此议题的管理员，请于离开议题前，先将管理权限转移给其他成员"</string>
 	<string name="jandi_new_department">"新部门"</string>
-	<string name="jandi_new_job_title">"添加职称"</string>
+	<string name="jandi_new_job_title">"新职称"</string>
 	<string name="jandi_new_team_name">"新团队名称"</string>
 	<string name="jandi_next">"下一步"</string>
 	<string name="jandi_no_invite_email">"请提供您想邀请的团队成员的电子邮件地址"</string>
@@ -557,6 +557,7 @@
 	<string name="jandi_success_update_account_profile">"帐号已经成功更新"</string>
 	<string name="jandi_success_web_token">"登录成功"</string>
 	<string name="jandi_switch_team">"更换团队"</string>
+	<string name="jandi_syncing_message">"信息同步中"</string>
 	<string name="jandi_tab_chat">"对话"</string>
 	<string name="jandi_tab_direct_message">"私信"</string>
 	<string name="jandi_tab_file">"文件"</string>

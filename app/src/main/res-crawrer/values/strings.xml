@@ -293,8 +293,8 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_input_user_name">"Enter your name"</string>
 	<string name="jandi_insert_new_department">"(New department)"</string>
 	<string name="jandi_insert_new_job_title">"(New job title)"</string>
-	<string name="jandi_insert_team_domain">"Choose the address you will use to sign in to JANDI."</string>
-	<string name="jandi_insert_team_name">"Name your team after the group that will be using JANDI together."</string>
+	<string name="jandi_insert_team_domain">"Set up your Team Domain"</string>
+	<string name="jandi_insert_team_name">"Set up your Team Name"</string>
 	<string name="jandi_invitation">"Invite"</string>
 	<string name="jandi_invitation_help">"Invite other team members to JANDI!"</string>
 	<string name="jandi_invitation_succeed">"Invitation has been sent"</string>
@@ -375,10 +375,9 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_mypage">"My Page"</string>
 	<string name="jandi_name">"Name"</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
-	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic.
-"</string>
+	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic."</string>
 	<string name="jandi_new_department">"New Department"</string>
-	<string name="jandi_new_job_title">"Add Job Title"</string>
+	<string name="jandi_new_job_title">"New Job Title"</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>
 	<string name="jandi_next">"Next"</string>
 	<string name="jandi_no_invite_email">"Provide the email addresses of the team members you want to invite"</string>
@@ -558,6 +557,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_success_update_account_profile">"Account has bean updated successfully"</string>
 	<string name="jandi_success_web_token">"Sign-in was successful"</string>
 	<string name="jandi_switch_team">"Switch Teams"</string>
+	<string name="jandi_syncing_message">"Syncing Messages"</string>
 	<string name="jandi_tab_chat">"Chats"</string>
 	<string name="jandi_tab_direct_message">"Direct Messages"</string>
 	<string name="jandi_tab_file">"Files"</string>
