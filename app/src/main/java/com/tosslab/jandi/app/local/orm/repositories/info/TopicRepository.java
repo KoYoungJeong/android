@@ -189,6 +189,22 @@ public class TopicRepository extends LockExecutorTemplate {
         });
     }
 
+    public boolean incrementUnreadCount(long topicId) {
+        return execute(() -> {
+            try {
+                Dao<Topic, ?> dao = getHelper().getDao(Topic.class);
+                UpdateBuilder<Topic, ?> topicUpdateBuilder = dao.updateBuilder();
+                topicUpdateBuilder.updateColumnExpression("unreadCount", "unreadCount + 1")
+                        .where()
+                        .eq("id", topicId);
+                return topicUpdateBuilder.update() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+    }
+
     public boolean updateLastLinkId(long topicId, long lastLinkId) {
         return execute(() -> {
 

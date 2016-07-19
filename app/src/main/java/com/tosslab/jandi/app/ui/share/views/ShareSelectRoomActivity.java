@@ -45,7 +45,6 @@ import java.util.Set;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
-import rx.functions.Func0;
 
 
 @EActivity(R.layout.layout_room_selector)
@@ -158,6 +157,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
                     expandRoomDatas.add(folderData);
                     List<TopicRoom> rooms = topicFolder1.getRooms();
                     Observable.from(rooms)
+                            .filter(TopicRoom::isJoined)
                             .map(topicRoom -> {
                                 ExpandRoomData roomData = new ExpandRoomData();
                                 roomData.setName(topicRoom.getName());
@@ -200,6 +200,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
         List<ExpandRoomData> userRoomDatas =
                 Observable.from(teamInfoLoader.getUserList())
                         .filter(User::isEnabled)
+                        .filter(user -> user.getId() != teamInfoLoader.getMyId())
                         .map(user -> {
                             ExpandRoomData expandRoomData = new ExpandRoomData();
                             expandRoomData.setEntityId(user.getId());
@@ -208,7 +209,18 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
                             expandRoomData.setProfileUrl(user.getPhotoUrl());
                             return expandRoomData;
                         })
-                        .collect((Func0<ArrayList<ExpandRoomData>>) ArrayList::new, ArrayList::add)
+                        .toSortedList((lhs, rhs) -> {
+                            if (TeamInfoLoader.getInstance().isJandiBot(lhs.getEntityId())) {
+                                return -1;
+                            } else if (TeamInfoLoader.getInstance().isJandiBot(rhs.getEntityId())) {
+                                return 1;
+                            }
+                            String lhsName = lhs.getName();
+                            String rhsName = rhs.getName();
+
+                            return StringCompareUtil.compare(lhsName, rhsName);
+                        })
+//                        .collect((Func0<ArrayList<ExpandRoomData>>) ArrayList::new, ArrayList::add)
                         .toBlocking()
                         .first();
 

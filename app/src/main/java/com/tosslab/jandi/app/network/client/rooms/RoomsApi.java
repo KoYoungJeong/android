@@ -8,12 +8,17 @@ import com.tosslab.jandi.app.network.models.ReqMember;
 import com.tosslab.jandi.app.network.models.ReqOwner;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.messages.ReqMessage;
 import com.tosslab.jandi.app.network.models.start.Topic;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
+import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
@@ -38,6 +43,10 @@ public class RoomsApi extends ApiTemplate<RoomsApi.Api> {
         return call(() -> getApi().assignToTopicOwner(teamId, topicId, owner));
     }
 
+    public List<ResMessages.Link> sendMessage(long teamId, long roomId, ReqMessage reqMessage) throws RetrofitException {
+        return call(() -> getApi().sendMessage(teamId, roomId, reqMessage));
+    }
+
 
     interface Api {
 
@@ -49,6 +58,11 @@ public class RoomsApi extends ApiTemplate<RoomsApi.Api> {
         @PUT("teams/{teamId}/rooms/{roomId}/subscribe")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResCommon> updateTopicPushSubscribe(@Path("teamId") long teamId, @Path("roomId") long topicId, @Body ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe);
+
+        @POST("teams/{teamId}/rooms/{roomId}/messages")
+        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+        Call<List<ResMessages.Link>> sendMessage(@Path("teamId") long teamId, @Path("roomId") long roomId,
+                                                 @Body ReqMessage reqMessage);
 
         @PUT("teams/{teamId}/topics/{topicId}/kickout")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)

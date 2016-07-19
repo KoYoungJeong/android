@@ -563,6 +563,7 @@
 	<string name="jandi_success_update_account_profile">"계정 정보가 성공적으로 수정되었습니다"</string>
 	<string name="jandi_success_web_token">"로그인 되었습니다."</string>
 	<string name="jandi_switch_team">"팀 이동하기"</string>
+	<string name="jandi_syncing_message">"메시지를 동기화하고 있습니다."</string>
 	<string name="jandi_tab_chat">"채팅"</string>
 	<string name="jandi_tab_direct_message">"1:1"</string>
 	<string name="jandi_tab_file">"파일"</string>
