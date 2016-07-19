@@ -1334,7 +1334,7 @@ public class JandiSocketServiceModel {
                             String eventName;
                             if (eventInfo instanceof SocketMessageCreatedEvent) {
                                 SocketMessageCreatedEvent event = (SocketMessageCreatedEvent) eventInfo;
-                                doAfterMessageCreated(event.getData().getLinkMessage());
+//                                doAfterMessageCreated(event.getData().getLinkMessage());
                                 eventName = "message_created";
                                 messageCreateEventCount++;
                             } else {
@@ -1346,7 +1346,8 @@ public class JandiSocketServiceModel {
                         }
 
                         try {
-                            InitialInfo initializeInfo = startApi.get().getInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
+                            long teamId = TeamInfoLoader.getInstance().getTeamId();
+                            InitialInfo initializeInfo = startApi.get().getInitializeInfo(teamId);
                             InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
                             TeamInfoLoader.getInstance().refresh();
                             refreshPollList(teamId);

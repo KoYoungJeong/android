@@ -293,8 +293,8 @@
 	<string name="jandi_input_user_name">"検索するメンバーの名前を入力"</string>
 	<string name="jandi_insert_new_department">"(新しい部署)"</string>
 	<string name="jandi_insert_new_job_title">"(新しい役職）"</string>
-	<string name="jandi_insert_team_domain">"チームドメインを入力してください。"</string>
-	<string name="jandi_insert_team_name">"チーム名を入力してください。"</string>
+	<string name="jandi_insert_team_domain">"チームドメインを入力"</string>
+	<string name="jandi_insert_team_name">"チーム名を入力"</string>
 	<string name="jandi_invitation">"招待"</string>
 	<string name="jandi_invitation_help">"あなたのチームメンバーをJANDIに招待しましょう！"</string>
 	<string name="jandi_invitation_succeed">"招待しました"</string>
@@ -559,6 +559,7 @@
 	<string name="jandi_success_update_account_profile">"アカウント情報が更新されました"</string>
 	<string name="jandi_success_web_token">"ログインしました。"</string>
 	<string name="jandi_switch_team">"チーム切替"</string>
+	<string name="jandi_syncing_message">"メッセージ同期中"</string>
 	<string name="jandi_tab_chat">"チャット"</string>
 	<string name="jandi_tab_direct_message">"ダイレクトメッセージ"</string>
 	<string name="jandi_tab_file">"ファイル"</string>
