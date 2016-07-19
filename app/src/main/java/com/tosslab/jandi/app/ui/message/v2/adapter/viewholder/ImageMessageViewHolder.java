@@ -176,7 +176,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             ivFileImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             ImageLoader.loadFromResources(ivFileImage, mimeTypeIconImage);
         } else {
-            String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
+            String fileSize = FileUtil.formatFileSize(fileContent.size);
             tvFileSize.setText(fileSize);
 
             String localFilePath = ImageUtil.getLocalFilePath(fileMessage.id);

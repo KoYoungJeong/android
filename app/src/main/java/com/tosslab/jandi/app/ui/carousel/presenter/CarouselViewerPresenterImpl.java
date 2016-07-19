@@ -76,7 +76,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
                 view.movePosition(startLinkPosition);
 
-                view.setActionbarTitle(carouselFirstFileInfo.getFileName(), FileUtil.fileSizeCalculation(
+                view.setActionbarTitle(carouselFirstFileInfo.getFileName(), FileUtil.formatFileSize(
                         carouselFirstFileInfo.getSize()), carouselFirstFileInfo.getExt());
                 view.setFileWriterName(carouselFirstFileInfo.getFileWriter());
                 view.setFileCreateTime(carouselFirstFileInfo.getFileCreateTime());

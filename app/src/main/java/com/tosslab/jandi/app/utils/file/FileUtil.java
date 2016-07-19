@@ -6,16 +6,14 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiApplication;
 
 import java.io.File;
-import java.text.DecimalFormat;
 
-/**
- * Created by Bill MinWook Heo on 15. 6. 24..
- */
 public class FileUtil {
 
-    /**
-     * @return /sdcard/DOWNLOAD/
-     */
+    private static final double BYTE_UNIT = 1024;
+    private static final String[] FILE_SIZE_UNIT = {"Byte", "KB", "MB", "GB"};
+    private static final String[] FILE_SIZE_FORMAT = {"####", "####", "####.#", "####.#"};
+
+
     public static String getDownloadPath() {
         String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_DOWNLOADS;
         File dir = new File(dirPath);
@@ -43,20 +41,21 @@ public class FileUtil {
         return childDir;
     }
 
-    public static String fileSizeCalculation(long fileSize) {
-        String retFormat = "0";
-        long size = fileSize;
-        String[] s = {"bytes", "KB", "MB", "GB", "TB", "PB"};
-
-        if (fileSize != 0) {
-            int idx = (int) Math.floor(Math.log(size) / Math.log(1024));
-            DecimalFormat df = new DecimalFormat("#,###");
-            double ret = ((size / Math.pow(1024, Math.floor(idx))));
-            retFormat = df.format(ret) + " " + s[idx];
-        } else {
-            retFormat += " " + s[0];
+    public static String formatFileSize(long fileSize) {
+        double tempSize = fileSize;
+        int divideCount = 0;
+        while (tempSize >= BYTE_UNIT && divideCount < FILE_SIZE_FORMAT.length - 1) {
+            tempSize = tempSize / BYTE_UNIT;
+            divideCount++;
         }
-        return retFormat;
+
+//        return new DecimalFormat(FILE_SIZE_FORMAT[divideCount]).format(tempSize) + " " + FILE_SIZE_UNIT[divideCount];
+
+        if (divideCount <= 1) {
+            return String.format("%d %s", (long) tempSize, FILE_SIZE_UNIT[divideCount]);
+        } else {
+            return String.format("%.1f %s", tempSize, FILE_SIZE_UNIT[divideCount]);
+        }
     }
 
     public static String getDownloadFileName(String fileName, String ext) {
