@@ -1302,19 +1302,6 @@ public class JandiSocketServiceModel {
                     } else {
 
                         boolean successRefresh = false;
-                        try {
-                            InitialInfo initializeInfo = startApi.get().getInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
-                            InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
-                            TeamInfoLoader.getInstance().refresh();
-                            JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
-                            successRefresh = true;
-                            postEvent(new RetrieveTopicListEvent());
-                            postEvent(new ChatListRefreshEvent());
-                            postEvent(new TeamInfoChangeEvent());
-                        } catch (RetrofitException e) {
-                            successRefresh = false;
-                        }
-                        Log.d(TAG, "first: " + new Date().toString());
                         int messageCreateEventCount = 0;
 
                         updateBatchMapper.put("message_created", new ArrayList<>());
@@ -1337,11 +1324,21 @@ public class JandiSocketServiceModel {
                             eventBus.post(new EventUpdateInProgress(messageCreateEventCount, eventSize));
                         }
 
-                        Log.d(TAG, "second: " + new Date().toString());
+                        try {
+                            InitialInfo initializeInfo = startApi.get().getInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
+                            InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+                            TeamInfoLoader.getInstance().refresh();
+                            JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
+                            successRefresh = true;
+                            postEvent(new RetrieveTopicListEvent());
+                            postEvent(new ChatListRefreshEvent());
+                            postEvent(new TeamInfoChangeEvent());
+                        } catch (RetrofitException e) {
+                            successRefresh = false;
+                        }
+
 
                         bulkInsertMessage(updateBatchMapper.get("message_created"));
-
-                        Log.d(TAG, "third: " + new Date().toString());
 
                         List<EventHistoryInfo> etc = updateBatchMapper.get("etc");
                         if (etc != null && !etc.isEmpty()) {
@@ -1361,7 +1358,6 @@ public class JandiSocketServiceModel {
                             }
                         }
                     }
-                    Log.d(TAG, "forth: " + new Date().toString());
 
                 }, (throwable) -> {
                     EventBus.getDefault().post(new EventUpdateFinish());
