@@ -158,13 +158,13 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
                         moveIntroActivity();
                     }
 
-                });
+                }, t -> moveIntroActivity());
 
         // 팀 정보가 없다면
         share.filter(it -> !it)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(it -> moveIntroActivity());
+                .subscribe(it -> moveIntroActivity(), t -> moveIntroActivity());
 
     }
 
