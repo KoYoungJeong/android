@@ -36,10 +36,10 @@ import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqNull;
-import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.messages.ReqMessage;
 import com.tosslab.jandi.app.network.models.dynamicl10n.FormatParam;
 import com.tosslab.jandi.app.network.models.dynamicl10n.PollFinished;
 import com.tosslab.jandi.app.network.models.start.Marker;
@@ -52,7 +52,6 @@ import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
-import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.poll.util.PollUtil;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -186,23 +185,24 @@ public class MessageListModel {
         messageManipulator.setRoomId(roomId);
     }
 
-    public long sendMessage(long localId, String message, List<MentionObject> mentions) {
+    public long sendMessage(long localId, long teamId, long roomId, ReqMessage reqMessage) {
 
-        SendingMessage sendingMessage = new SendingMessage(localId, new ReqSendMessageV3(message, mentions));
         try {
-            ResCommon resCommon = messageManipulator.sendMessage(sendingMessage.getMessage(), sendingMessage.getMentions());
+            List<ResMessages.Link> links = roomsApi.get().sendMessage(teamId, roomId, reqMessage);
+            ResMessages.Link link = links.get(0);
+            MessageRepository.getRepository().upsertMessage(link);
 
             SendMessageRepository.getRepository().updateSendMessageStatus(
-                    sendingMessage.getLocalId(), resCommon.id, SendMessage.Status.COMPLETE);
+                    localId, link.id, SendMessage.Status.COMPLETE);
 
             trackMessagePostSuccess();
 
-            EventBus.getDefault().post(new SendCompleteEvent(sendingMessage.getLocalId(), resCommon.id));
-            return resCommon.id;
+            EventBus.getDefault().post(new SendCompleteEvent(localId, link.id));
+            return link.id;
         } catch (RetrofitException e) {
             SendMessageRepository.getRepository().updateSendMessageStatus(
-                    sendingMessage.getLocalId(), SendMessage.Status.FAIL);
-            EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
+                    localId, SendMessage.Status.FAIL);
+            EventBus.getDefault().post(new SendFailEvent(localId));
 
             int errorCode = e.getStatusCode();
             trackMessagePostFail(errorCode);
@@ -210,8 +210,8 @@ public class MessageListModel {
         } catch (Exception e) {
 
             SendMessageRepository.getRepository().updateSendMessageStatus(
-                    sendingMessage.getLocalId(), SendMessage.Status.FAIL);
-            EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
+                    localId, SendMessage.Status.FAIL);
+            EventBus.getDefault().post(new SendFailEvent(localId));
 
             trackMessagePostFail(-1);
             return -1;
@@ -365,8 +365,10 @@ public class MessageListModel {
 
         ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), teamId, entityId, type, "", new ArrayList<>());
 
+
         try {
             ResCommon resCommon = stickerApi.get().sendSticker(reqSendSticker);
+//            MessageRepository.getRepository().upsertMessage(resCommon);
 
             SendMessageRepository.getRepository()
                     .updateSendMessageStatus(localId, resCommon.id, SendMessage.Status.COMPLETE);

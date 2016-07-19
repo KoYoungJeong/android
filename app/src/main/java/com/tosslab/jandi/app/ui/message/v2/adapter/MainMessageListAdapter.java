@@ -27,8 +27,10 @@ import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -47,6 +49,8 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     MainMessageListAdapter.OnItemClickListener onItemClickListener;
     MainMessageListAdapter.OnItemLongClickListener onItemLongClickListener;
     List<ResMessages.Link> links;
+    // 소켓으로 데이터를 받지 않은 경우에 저장하기 위한 정보
+    private Set<Long> dirties;
     private Room room;
     private MessagePointer messagePointer;
 
@@ -58,6 +62,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         this.room = room;
         oldMoreState = MoreState.Idle;
         links = new ArrayList<>();
+        dirties = new HashSet<>();
         setHasStableIds(true);
         itemTypes = new WeakHashMap<>();
 
@@ -293,12 +298,12 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     }
 
     @Override
-    public int indexOfDummyMessageId(long messageId) {
+    public int indexOfDummyLinkId(long linkId) {
         int count = getItemCount();
         for (int idx = count - 1; idx >= 0; idx--) {
             ResMessages.Link item = getItem(idx);
             if (item instanceof DummyMessageLink) {
-                if (item.messageId == messageId) { return idx; }
+                if (item.id == linkId) { return idx; }
             } else {
                 return -1;
             }
@@ -482,6 +487,36 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     @Override
     public void modifyStarredStateByPosition(int position, boolean isStarred) {
         getItem(position).message.isStarred = isStarred;
+    }
+
+    @Override
+    public void changeToDirty(long linkId) {
+        lock.lock();
+        try {
+            dirties.add(linkId);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public boolean isDirty(long linkId) {
+        lock.lock();
+        try {
+            return dirties.contains(linkId);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void removeDirty(long linkId) {
+        lock.lock();
+        try {
+            dirties.remove(linkId);
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
