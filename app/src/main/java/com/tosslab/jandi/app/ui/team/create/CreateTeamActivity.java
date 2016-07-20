@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.team.create;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -32,38 +31,30 @@ public class CreateTeamActivity extends BaseAppCompatActivity
     @Bind(value = {R.id.iv_page_icon_first, R.id.iv_page_icon_second, R.id.iv_page_icon_third, R.id.iv_page_icon_forth})
     ImageView[] ivPageIndicator;
 
-    private NonSwipeableViewPager viewPager;
+    @Bind(R.id.viewPager)
+    NonSwipeableViewPager viewPager;
     private CreateTeamPagerAdapter adapter;
-    private Drawable pageNationNomal;
-    private Drawable pageNationFocus;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_team);
         ButterKnife.bind(this);
-        viewPager = (NonSwipeableViewPager) findViewById(R.id.viewPager);
         viewPager.setOffscreenPageLimit(4);
         adapter = new CreateTeamPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(this);
         viewPager.setCurrentItem(0);
-        pageNationNomal = getResources().getDrawable(R.drawable.pagenation_normal);
-        pageNationFocus = getResources().getDrawable(R.drawable.pagenation_focus);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
+        onPageSelected(0);
     }
 
     @Override
     public void onPageSelected(int position) {
         for (int idx = 0; idx < ivPageIndicator.length; idx++) {
             if (position == idx) {
-                ivPageIndicator[idx].setImageDrawable(pageNationFocus);
+                ivPageIndicator[idx].setSelected(true);
             } else {
-                ivPageIndicator[idx].setImageDrawable(pageNationNomal);
+                ivPageIndicator[idx].setSelected(false);
             }
         }
         final InputMethodManager imm = (InputMethodManager) getSystemService(
@@ -110,6 +101,8 @@ public class CreateTeamActivity extends BaseAppCompatActivity
 
     @Override
     public void onBackPressed() {
-        return;
+        if (viewPager != null && viewPager.getCurrentItem() == 0) {
+            super.onBackPressed();
+        }
     }
 }
