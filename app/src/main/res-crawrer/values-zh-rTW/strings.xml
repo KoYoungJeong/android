@@ -296,6 +296,7 @@
 	<string name="jandi_insert_team_domain">"請輸入團隊網域"</string>
 	<string name="jandi_insert_team_name">"請輸入團隊名稱"</string>
 	<string name="jandi_invitation">"邀請"</string>
+	<string name="jandi_invitation_for_admin">"你的團隊設定未允許非成員進入團隊，欲更改設定，請進入團隊設定 > 邀請設定"</string>
 	<string name="jandi_invitation_help">"邀請其他團隊成員加入JANDI"</string>
 	<string name="jandi_invitation_succeed">"邀請成功"</string>
 	<string name="jandi_invite_app_not_installed">"JANDI應用程式尚未安裝於你的行動裝置，所以我們暫時將邀請連結複製到剪貼簿。"</string>
@@ -459,6 +460,7 @@
 	<string name="jandi_question_team_create">"您的團隊還未使用JANDI嗎？"</string>
 	<string name="jandi_r_u_sure_cancel_invitation">"你確定取消邀請？"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"你確認要刪除這個電子郵件地址？"</string>
+	<string name="jandi_reject_to_invitation_of_admin">"僅限於團隊管理員可取消邀請，請聯絡團隊管理員"</string>
 	<string name="jandi_reorder_from_long_press">"拖拉資料夾更改排列順序"</string>
 	<string name="jandi_resend_invitation">"重新寄發邀請"</string>
 	<string name="jandi_retry">"請再試一次"</string>

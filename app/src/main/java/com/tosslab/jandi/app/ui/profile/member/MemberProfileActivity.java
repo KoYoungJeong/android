@@ -543,7 +543,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                     .create()
                     .show();
         } else if (teamOwner) {
-            // TODO show why you cannot reject invitation
+            ColoredToast.showError(R.string.jandi_reject_to_invitation_of_admin);
         }
     }
 

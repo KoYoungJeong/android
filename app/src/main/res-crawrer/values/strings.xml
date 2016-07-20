@@ -296,6 +296,7 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_insert_team_domain">"Set up your Team Domain"</string>
 	<string name="jandi_insert_team_name">"Set up your Team Name"</string>
 	<string name="jandi_invitation">"Invite"</string>
+	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. To change this setting, go to Team Settings > Invitation Settings."</string>
 	<string name="jandi_invitation_help">"Invite other team members to JANDI!"</string>
 	<string name="jandi_invitation_succeed">"Invitation has been sent"</string>
 	<string name="jandi_invite_app_not_installed">"The app is not installed on your device. The invitation link has been copied to the clipboard instead."</string>
@@ -421,8 +422,8 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_poll_finished_without_participants">"The poll has just been ended. There was no participant."</string>
 	<string name="jandi_poll_finishedat">"<![CDATA[End Date & Time]]>"</string>
 	<string name="jandi_poll_is_anonymous">"This poll is an anonymous poll."</string>
-	<string name="jandi_poll_multiple">"Multiple Choices"</string>
-	<string name="jandi_poll_multiple_available">"Multiple choice available"</string>
+	<string name="jandi_poll_multiple">"Multiple Answers"</string>
+	<string name="jandi_poll_multiple_available">"Multiple Answers"</string>
 	<string name="jandi_poll_participants_ing">"Participants"</string>
 	<string name="jandi_poll_voted">"Voted"</string>
 	<string name="jandi_pp">"Privacy Policy"</string>
@@ -459,6 +460,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_question_team_create">"Don't have a team on JANDI yet?"</string>
 	<string name="jandi_r_u_sure_cancel_invitation">"Are you sure you want cancel the invitation?"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"Are you sure you want to delete this email address?"</string>
+	<string name="jandi_reject_to_invitation_of_admin">"Currently only the team admin can cancel the invitation. Please contact the team administrator for more information."</string>
 	<string name="jandi_reorder_from_long_press">"Drag and drop folders to rearrange the order"</string>
 	<string name="jandi_resend_invitation">"Resend Invitation"</string>
 	<string name="jandi_retry">"Please try again"</string>

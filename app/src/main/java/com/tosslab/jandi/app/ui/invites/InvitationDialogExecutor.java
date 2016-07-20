@@ -77,7 +77,7 @@ public class InvitationDialogExecutor {
 
             AvailableState availableState;
             if (teamOwner) {
-                // TODO Toast {you're team owner}
+                ColoredToast.showGray(R.string.jandi_invitation_for_admin);
                 availableState = AvailableState.AVAIL;
             } else {
                 availableState = availableState(invitationStatus, invitationUrl);
