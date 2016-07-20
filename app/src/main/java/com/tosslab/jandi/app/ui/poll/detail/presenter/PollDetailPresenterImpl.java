@@ -206,9 +206,8 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                             .property(PropertyKey.ResponseSuccess, true)
                             .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
                             .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
-                            .property(PropertyKey.TopicId, resDeletePoll.getLinkMessage().fromEntity)
+                            .property(PropertyKey.TopicId, poll.getTopicId())
                             .property(PropertyKey.PollId, pollId)
-                            .property(PropertyKey.PollItemId, seqs)
                             .build());
                 }, t -> {
                     pollDetailView.dismissProgress();
@@ -229,7 +228,6 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                                 .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
                                 .property(PropertyKey.TopicId, poll.getTopicId())
                                 .property(PropertyKey.PollId, pollId)
-                                .property(PropertyKey.PollItemId, seqs)
                                 .build());
                     }
                 });
@@ -292,7 +290,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                             .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                             .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                             .property(PropertyKey.ResponseSuccess, true)
-                            .property(PropertyKey.PollId, pollId)
+                            .property(PropertyKey.MessageId, resPollCommentCreated.getLinkComment().id)
                             .build());
 
                 }, throwable -> {
@@ -305,7 +303,6 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                                 .property(PropertyKey.ResponseSuccess, false)
                                 .property(PropertyKey.ErrorCode, e.getStatusCode())
-                                .property(PropertyKey.PollId, pollId)
                                 .build());
                     }
                 });
@@ -325,7 +322,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                             .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                             .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                             .property(PropertyKey.ResponseSuccess, true)
-                            .property(PropertyKey.PollId, pollId)
+                            .property(PropertyKey.MessageId, resPollCommentCreated.getLinkComment().id)
                             .build());
                 }, throwable -> {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
@@ -337,7 +334,6 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                                 .property(PropertyKey.ResponseSuccess, false)
                                 .property(PropertyKey.ErrorCode, e.getStatusCode())
-                                .property(PropertyKey.PollId, pollId)
                                 .build());
                     }
 
@@ -373,40 +369,49 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
     public void onChangeCommentStarredState(long messageId, boolean starred) {
         if (starred) {
 
-            pollDetailModel.getCommentStarredObservable(messageId)
-                    .map(starMentionedMessageObject -> {
-                        MessageRepository.getRepository().updateStarred(messageId, true);
-                        return starMentionedMessageObject;
-                    })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(o -> {
-                        pollDetailDataModel.modifyCommentStarredState(messageId, true);
-                        pollDetailView.notifyDataSetChanged();
+            starComment(messageId);
 
-                        pollDetailView.showCommentStarredSuccessToast();
-                        EventBus.getDefault().post(new StarredInfoChangeEvent());
-                    }, e -> {
-                        LogUtil.e(TAG, Log.getStackTraceString(e));
-                    });
         } else {
 
-            pollDetailModel.getCommentUnStarredObservable(messageId)
-                    .map(resCommon -> {
-                        MessageRepository.getRepository().updateStarred(messageId, false);
-                        return resCommon;
-                    })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(o -> {
-                        pollDetailDataModel.modifyCommentStarredState(messageId, false);
-                        pollDetailView.notifyDataSetChanged();
-                        pollDetailView.showCommentUnStarredSuccessToast();
-                        EventBus.getDefault().post(new StarredInfoChangeEvent());
-                    }, e -> {
-                        LogUtil.e(TAG, Log.getStackTraceString(e));
-                    });
+            unStarComment(messageId);
         }
+    }
+
+    void unStarComment(long messageId) {
+        pollDetailModel.getCommentUnStarredObservable(messageId)
+                .map(resCommon -> {
+                    MessageRepository.getRepository().updateStarred(messageId, false);
+                    return resCommon;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(o -> {
+                    pollDetailDataModel.modifyCommentStarredState(messageId, false);
+                    pollDetailView.notifyDataSetChanged();
+                    pollDetailView.showCommentUnStarredSuccessToast();
+                    EventBus.getDefault().post(new StarredInfoChangeEvent());
+                }, e -> {
+                    LogUtil.e(TAG, Log.getStackTraceString(e));
+                });
+    }
+
+    void starComment(long messageId) {
+        pollDetailModel.getCommentStarredObservable(messageId)
+                .map(starMentionedMessageObject -> {
+                    MessageRepository.getRepository().updateStarred(messageId, true);
+                    return starMentionedMessageObject;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(o -> {
+                    pollDetailDataModel.modifyCommentStarredState(messageId, true);
+                    pollDetailView.notifyDataSetChanged();
+
+                    pollDetailView.showCommentStarredSuccessToast();
+                    EventBus.getDefault().post(new StarredInfoChangeEvent());
+                }, e -> {
+                    LogUtil.e(TAG, Log.getStackTraceString(e));
+                });
     }
 
     @Override
@@ -426,7 +431,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
 
         pollDetailView.notifyDataSetChanged();
 
-        Action1<Throwable> error = e -> {
+        Action1<Throwable> errorAction = e -> {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
             pollDetailView.showCommentDeleteErrorToast();
@@ -444,40 +449,52 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, e1.getStatusCode())
-                        .property(PropertyKey.PollCommentId, messageId)
+                        .property(PropertyKey.MessageId, messageId)
                         .build());
             }
         };
 
         if (messageType == MessageItem.TYPE_STICKER_COMMNET) {
-            pollDetailModel.getStickerCommentDeleteObservable(messageId, messageType)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(o -> {
-                        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                                .event(Event.PollCommentDeleted)
-                                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                                .property(PropertyKey.ResponseSuccess, true)
-                                .property(PropertyKey.PollCommentId, messageId)
-                                .build());
 
-                    }, error);
+            deleteStickerComment(messageType, messageId, errorAction);
+
         } else {
-            pollDetailModel.getCommentDeleteObservable(messageId, feedbackId)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(o -> {
-                        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                                .event(Event.PollCommentDeleted)
-                                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                                .property(PropertyKey.ResponseSuccess, true)
-                                .property(PropertyKey.PollCommentId, messageId)
-                                .build());
-                    }, error);
+
+            deleteComment(messageId, feedbackId, errorAction);
+
         }
 
+    }
+
+    void deleteComment(long messageId, long feedbackId, Action1<Throwable> errorAction) {
+        pollDetailModel.getCommentDeleteObservable(messageId, feedbackId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(o -> {
+                    AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                            .event(Event.PollCommentDeleted)
+                            .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                            .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                            .property(PropertyKey.ResponseSuccess, true)
+                            .property(PropertyKey.MessageId, messageId)
+                            .build());
+                }, errorAction);
+    }
+
+    void deleteStickerComment(int messageType, long messageId, Action1<Throwable> errorAction) {
+        pollDetailModel.getStickerCommentDeleteObservable(messageId, messageType)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(o -> {
+                    AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                            .event(Event.PollCommentDeleted)
+                            .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                            .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                            .property(PropertyKey.ResponseSuccess, true)
+                            .property(PropertyKey.MessageId, messageId)
+                            .build());
+
+                }, errorAction);
     }
 
     @Override
@@ -499,16 +516,24 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     pollDetailView.showPollDeleteSuccessToast();
                     pollDetailView.finish();
 
-                    AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                    FutureTrack.Builder trackBuilder = new FutureTrack.Builder()
                             .event(Event.PollDeleted)
                             .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                             .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                             .property(PropertyKey.ResponseSuccess, true)
                             .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
-                            .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
-                            .property(PropertyKey.TopicId, resDeletePoll.getLinkMessage().fromEntity)
-                            .property(PropertyKey.PollId, pollId)
-                            .build());
+                            .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId());
+
+                    Poll poll = resDeletePoll.getLinkMessage().poll;
+                    long topicId = poll != null ? poll.getTopicId() : -1;
+
+                    if (topicId > 0) {
+                        trackBuilder.property(PropertyKey.TopicId, topicId);
+                    }
+
+                    trackBuilder.property(PropertyKey.PollId, pollId);
+
+                    AnalyticsUtil.trackSprinkler(trackBuilder.build());
                 }, e -> {
                     pollDetailView.dismissProgress();
 
@@ -571,9 +596,9 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                             .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                             .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                             .property(PropertyKey.ResponseSuccess, true)
-                            .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getMyId())
-                            .property(PropertyKey.TopicId, resDeletePoll.getLinkMessage().fromEntity)
+                            .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
                             .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
+                            .property(PropertyKey.TopicId, poll.getTopicId())
                             .property(PropertyKey.PollId, pollId)
                             .build());
                 }, e -> {
@@ -590,7 +615,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                                 .property(PropertyKey.ResponseSuccess, false)
                                 .property(PropertyKey.ErrorCode, e1.getStatusCode())
-                                .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getMyId())
+                                .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
                                 .property(PropertyKey.TopicId, poll.getTopicId())
                                 .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
                                 .property(PropertyKey.PollId, pollId)
