@@ -140,7 +140,7 @@
                 android:gravity="center"
                 android:hint="@string/jandi_insert_team_domain"
                 android:imeOptions="actionDone"
-                android:inputType="text"
+                android:inputType="textWebEmailAddress"
                 android:maxLines="1"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
