@@ -21,28 +21,28 @@
                 android:id="@+id/iv_page_icon_first"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/pagenation_focus" />
+                android:src="@drawable/btn_indicator_team_create" />
 
             <ImageView
                 android:id="@+id/iv_page_icon_second"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:src="@drawable/pagenation_normal" />
+                android:src="@drawable/btn_indicator_team_create" />
 
             <ImageView
                 android:id="@+id/iv_page_icon_third"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:src="@drawable/pagenation_normal" />
+                android:src="@drawable/btn_indicator_team_create" />
 
             <ImageView
                 android:id="@+id/iv_page_icon_forth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:src="@drawable/pagenation_normal" />
+                android:src="@drawable/btn_indicator_team_create" />
         </LinearLayout>
 
     </LinearLayout>
