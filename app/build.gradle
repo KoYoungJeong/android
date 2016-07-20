@@ -62,7 +62,7 @@ dependencies {
 
     }
 
-    compile 'com.tosslab.jandi.lib:sprinkler-android:1.4'
+    compile 'com.tosslab.jandi.lib:sprinkler-android:1.3'
     compile 'com.tosslab.jandi.lib:photoview-expand:1.1'
     compile 'com.tosslab.jandi.lib:android-image-zoom-crop:1.1'
 
