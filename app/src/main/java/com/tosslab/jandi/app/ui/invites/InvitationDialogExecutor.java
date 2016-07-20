@@ -4,12 +4,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.AlertUtil;
@@ -18,7 +17,6 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
@@ -53,12 +51,15 @@ public class InvitationDialogExecutor {
     private int from;
     private ProgressWheel progressWheel;
 
+    public static boolean canBeInviation(String invitationStatus, String invitationUrl) {
+        return availableState(invitationStatus, invitationUrl) == AvailableState.AVAIL;
+    }
+
     @AfterInject
     void initObject() {
         DaggerApiClientComponent.create().inject(this);
     }
 
-    @Background
     public void execute() {
 
         if (!NetworkCheckUtil.isConnected()) {
@@ -66,43 +67,42 @@ public class InvitationDialogExecutor {
             return;
         }
 
-        showProgressWheel();
 
         try {
-            ResTeamDetailInfo.InviteTeam inviteTeam = getTeamInfo(TeamInfoLoader.getInstance().getTeamId());
-            AvailableState availableState = availableState(inviteTeam);
+            TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
+            boolean teamOwner = teamInfoLoader.getUser(teamInfoLoader.getMyId()).isTeamOwner();
+            String teamName = teamInfoLoader.getTeamName();
+            String invitationStatus = teamInfoLoader.getInvitationStatus();
+            String invitationUrl = teamInfoLoader.getInvitationUrl();
+
+            AvailableState availableState;
+            if (teamOwner) {
+                // TODO Toast {you're team owner}
+                availableState = AvailableState.AVAIL;
+            } else {
+                availableState = availableState(invitationStatus, invitationUrl);
+            }
             switch (availableState) {
                 case AVAIL:
                     InvitationDialogFragment invitationDialog =
-                            InvitationDialogFragment.newInstance(inviteTeam.getName(), inviteTeam.getInvitationUrl(), from);
+                            InvitationDialogFragment.newInstance(teamName, invitationUrl, from);
                     invitationDialog.show(activity.getSupportFragmentManager(), "invitationsDialog");
                     break;
                 case UNDEFINE:
-                    showErrorToast(activity.getResources().getString(R.string.err_entity_invite));
+                    showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_entity_invite));
                     break;
                 case DISABLE:
-                    showTextDialog(activity.getResources().getString(R.string.jandi_invite_disabled, getOwnerName()));
+                    showTextDialog(JandiApplication.getContext().getResources().getString(R.string.jandi_invite_disabled, getOwnerName()));
                     break;
             }
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-            showErrorToast(activity.getResources().getString(R.string.err_network));
         } catch (Exception e) {
             e.printStackTrace();
-            showErrorToast(activity.getResources().getString(R.string.err_entity_invite));
+            showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_entity_invite));
         }
 
-        dismissProgressWheel();
     }
 
-    private ResTeamDetailInfo.InviteTeam getTeamInfo(long teamId) throws RetrofitException {
-        return teamApi.get().getTeamInfo(teamId);
-    }
-
-
-    private AvailableState availableState(ResTeamDetailInfo.InviteTeam inviteTeam) {
-        String invitationUrl = inviteTeam.getInvitationUrl();
-        String invitationStatus = inviteTeam.getInvitationStatus();
+    private static AvailableState availableState(String invitationStatus, String invitationUrl) {
         if (!TextUtils.isEmpty(invitationUrl) && invitationUrl.contains("undefined")) {
             return AvailableState.UNDEFINE;
         }
