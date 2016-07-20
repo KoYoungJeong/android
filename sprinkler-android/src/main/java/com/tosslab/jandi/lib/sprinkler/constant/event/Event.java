@@ -163,8 +163,7 @@ public enum Event {
                     PropertyKey.TeamId,
                     PropertyKey.MemberId,
                     PropertyKey.TopicId,
-                    PropertyKey.PollId,
-                    PropertyKey.PollItemId}),
+                    PropertyKey.PollId}),
 
     PollMemberOfVoted(EventCategory.PollEvent,
             "e64",
@@ -177,13 +176,13 @@ public enum Event {
             "e65",
             new PropertyKey[]{PropertyKey.ResponseSuccess,
                     PropertyKey.ErrorCode,
-                    PropertyKey.PollCommentId}),
+                    PropertyKey.MessageId}),
 
     PollCommentDeleted(EventCategory.PollEvent,
             "e66",
             new PropertyKey[]{PropertyKey.ResponseSuccess,
                     PropertyKey.ErrorCode,
-                    PropertyKey.PollCommentId}),
+                    PropertyKey.MessageId}),
     // Button Touch Event
     ButtonTouch(EventCategory.ButtonTouchEvent,
             "",
