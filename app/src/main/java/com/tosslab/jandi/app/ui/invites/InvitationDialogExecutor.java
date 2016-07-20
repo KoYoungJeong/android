@@ -14,7 +14,6 @@ import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -62,12 +61,6 @@ public class InvitationDialogExecutor {
 
     public void execute() {
 
-        if (!NetworkCheckUtil.isConnected()) {
-            showCheckNetworkDialog();
-            return;
-        }
-
-
         try {
             TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
             boolean teamOwner = teamInfoLoader.getUser(teamInfoLoader.getMyId()).isTeamOwner();
@@ -75,12 +68,10 @@ public class InvitationDialogExecutor {
             String invitationStatus = teamInfoLoader.getInvitationStatus();
             String invitationUrl = teamInfoLoader.getInvitationUrl();
 
-            AvailableState availableState;
-            if (teamOwner) {
-                ColoredToast.showGray(R.string.jandi_invitation_for_admin);
+            AvailableState availableState = availableState(invitationStatus, invitationUrl);
+            if (teamOwner && availableState != AvailableState.AVAIL) {
                 availableState = AvailableState.AVAIL;
-            } else {
-                availableState = availableState(invitationStatus, invitationUrl);
+                ColoredToast.showGray(R.string.jandi_invitation_for_admin);
             }
             switch (availableState) {
                 case AVAIL:

@@ -542,7 +542,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                     })
                     .create()
                     .show();
-        } else if (teamOwner) {
+        } else if (!teamOwner) {
             ColoredToast.showError(R.string.jandi_reject_to_invitation_of_admin);
         }
     }
