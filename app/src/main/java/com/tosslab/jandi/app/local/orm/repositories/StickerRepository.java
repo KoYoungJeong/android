@@ -76,7 +76,8 @@ public class StickerRepository extends LockExecutorTemplate {
                 String[] dingoList = assetManager.list("stickers/default/dingo");
                 addStickerConetentIfNeed(dao, dingoList, DEFAULT_GROUP_ID_DINGO);
 
-                // TODO add Mallow dog
+                String[] mallowList = assetManager.list("stickers/default/mallow");
+                addStickerConetentIfNeed(dao, mallowList, DEFAULT_GROUP_ID_MALLOW_DOG);
 
             } catch (SQLException e) {
                 e.printStackTrace();

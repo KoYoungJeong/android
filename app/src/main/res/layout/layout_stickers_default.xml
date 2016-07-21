@@ -85,9 +85,9 @@
             <ImageView
                 android:id="@+id/btn_sticker_group_default_dingo"
                 style="@style/JandiSticker.Group"
-                android:src="@drawable/btn_sticker_group_dingo" />
+                android:src="@drawable/btn_sticker_group_mallow" />
 
-             <ImageView
+            <ImageView
                 android:id="@+id/btn_sticker_group_default_mallow_dog"
                 style="@style/JandiSticker.Group"
                 android:src="@drawable/btn_sticker_group_dingo" />
