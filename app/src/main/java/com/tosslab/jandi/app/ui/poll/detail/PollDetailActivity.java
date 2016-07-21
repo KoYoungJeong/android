@@ -383,7 +383,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
 
-        getSupportActionBar().setTitle("투표");
+        getSupportActionBar().setTitle(R.string.jandi_poll);
     }
 
     private void initCommentEditText() {
