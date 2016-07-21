@@ -32,10 +32,10 @@ import java.util.Locale;
 public class StickerViewModel {
 
     public static final int STICKER_GROUP_RECENT = 0;
-    public static final int STICKER_GROUP_DINGO = 1;
-    public static final int STICKER_GROUP_DAY = 2;
-    public static final int STICKER_GROUP_MOZZI = 3;
-
+    public static final int STICKER_GROUP_MALLOW = 1;
+    public static final int STICKER_GROUP_DINGO = 2;
+    public static final int STICKER_GROUP_DAY = 3;
+    public static final int STICKER_GROUP_MOZZI = 4;
 
     public static final int TYPE_MESSAGE = 11;
     public static final int TYPE_TOPIC = 12;
@@ -113,6 +113,9 @@ public class StickerViewModel {
             case STICKER_GROUP_MOZZI:
                 stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_MOZZI);
                 break;
+            case STICKER_GROUP_MALLOW:
+                stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_MALLOW_DOG);
+                break;
             default:
                 stickers = new ArrayList<>();
                 break;
@@ -153,15 +156,16 @@ public class StickerViewModel {
                     lastClickedTime = System.currentTimeMillis();
                 });
         vgStickerItems.setAdapter(adapter);
+        vgStickerItems.setCurrentItem(adapter.getActualCount() * StickerViewPagerAdapter.PAGE_MULTIPLE / 2);
         viewPagerIndicator.setCurrentPosition(0);
-        viewPagerIndicator.setIndicatorCount(adapter.getCount());
+        viewPagerIndicator.setIndicatorCount(adapter.getActualCount());
         viewPagerIndicator.invalidate();
 
         vgStickerItems.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 if (viewPagerIndicator != null) {
-                    viewPagerIndicator.setCurrentPosition(position);
+                    viewPagerIndicator.setCurrentPosition(adapter.getAcualPosition(position, adapter.getActualCount()));
                 }
             }
         });
