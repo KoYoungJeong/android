@@ -22,12 +22,12 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResPollCommentCreated;
 import com.tosslab.jandi.app.network.models.ResPollComments;
 import com.tosslab.jandi.app.network.models.ResPollDetail;
+import com.tosslab.jandi.app.network.models.ResStarredMessage;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
-import com.tosslab.jandi.app.ui.poll.detail.dto.PollDetail;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -58,8 +58,8 @@ public class PollDetailModel {
         messageManipulator = MessageManipulator_.getInstance_(JandiApplication.getContext());
     }
 
-    public Observable<PollDetail> getPollDetailObservable(long pollId, final PollDetail pollDetail) {
-        return Observable.<PollDetail>create(subscriber -> {
+    public Observable<ResPollDetail> getPollDetailObservable(long pollId) {
+        return Observable.<ResPollDetail>create(subscriber -> {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
             if (teamId <= 0l) {
                 subscriber.onError(new NullPointerException("has not selected team."));
@@ -67,8 +67,7 @@ public class PollDetailModel {
             } else {
                 try {
                     ResPollDetail resPollDetail = pollApi.get().getPollDetail(teamId, pollId);
-                    pollDetail.setPoll(resPollDetail.getPoll());
-                    subscriber.onNext(pollDetail);
+                    subscriber.onNext(resPollDetail);
                 } catch (RetrofitException e) {
                     subscriber.onError(e);
                 }
@@ -97,8 +96,8 @@ public class PollDetailModel {
         });
     }
 
-    public Observable<PollDetail> getPollCommentsObservable(long pollId, PollDetail pollDetail) {
-        return Observable.<PollDetail>create(subscriber -> {
+    public Observable<ResPollComments> getPollCommentsObservable(long pollId) {
+        return Observable.<ResPollComments>create(subscriber -> {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
 
             if (teamId <= 0l) {
@@ -107,8 +106,7 @@ public class PollDetailModel {
             } else {
                 try {
                     ResPollComments resPollComments = pollApi.get().getPollComments(teamId, pollId);
-                    pollDetail.setPollComments(resPollComments.getComments());
-                    subscriber.onNext(pollDetail);
+                    subscriber.onNext(resPollComments);
                 } catch (RetrofitException e) {
                     subscriber.onError(e);
                 }
@@ -129,9 +127,9 @@ public class PollDetailModel {
             } else {
                 try {
                     ReqSendPollComment reqSendComment = new ReqSendPollComment(comment, mentions);
-                    ResPollCommentCreated pollDetail =
+                    ResPollCommentCreated resPollCommentCreated =
                             pollApi.get().sendPollComment(teamId, pollId, reqSendComment);
-                    subscriber.onNext(pollDetail);
+                    subscriber.onNext(resPollCommentCreated);
                 } catch (RetrofitException e) {
                     subscriber.onError(e);
                 }
@@ -192,9 +190,9 @@ public class PollDetailModel {
         TeamInfoLoader.getInstance().refresh();
     }
 
-    public Observable<StarMentionedMessageObject> getCommentStarredObservable(long messageId) {
+    public Observable<ResStarredMessage> getCommentStarredObservable(long messageId) {
 
-        return Observable.<StarMentionedMessageObject>create(subscriber -> {
+        return Observable.<ResStarredMessage>create(subscriber -> {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
 
             if (teamId <= 0l) {
@@ -202,9 +200,9 @@ public class PollDetailModel {
                 subscriber.onCompleted();
             } else {
                 try {
-                    StarMentionedMessageObject resCommon =
+                    ResStarredMessage resStarredMessage =
                             messageApi.get().registStarredMessage(teamId, messageId, new ReqNull());
-                    subscriber.onNext(resCommon);
+                    subscriber.onNext(resStarredMessage);
                 } catch (RetrofitException e) {
                     subscriber.onError(e);
                 }

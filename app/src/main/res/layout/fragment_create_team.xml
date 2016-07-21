@@ -15,10 +15,10 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="36dp"
-            android:color="@color/dark_gray"
+            android:layout_marginTop="29dp"
             android:gravity="center_horizontal"
             android:text="@string/jandi_profile_welcome"
+            android:textColor="@color/dark_gray"
             android:textSize="25dp" />
 
         <TextView
@@ -37,6 +37,7 @@
             android:layout_marginTop="50dp"
             android:gravity="center_horizontal"
             android:text="@string/jandi_team_name"
+            android:textColor="@color/dark_gray"
             android:textSize="14dp" />
 
         <RelativeLayout
@@ -54,7 +55,7 @@
                 android:gravity="center"
                 android:text="20/20"
                 android:textColor="@color/jandi_border_gray"
-                android:textSize="14dp"
+                android:textSize="12dp"
                 android:visibility="gone" />
 
             <EditText
@@ -70,6 +71,7 @@
                 android:gravity="center"
                 android:hint="@string/jandi_insert_team_name"
                 android:imeOptions="actionNext"
+                android:inputType="text"
                 android:maxLength="21"
                 android:maxLines="1"
                 android:paddingLeft="15dp"
@@ -94,6 +96,7 @@
             android:layout_marginTop="24dp"
             android:gravity="center_horizontal"
             android:text="@string/jandi_team_domain"
+            android:textColor="@color/dark_gray"
             android:textSize="14dp" />
 
         <TextView
@@ -103,7 +106,8 @@
             android:gravity="center_horizontal"
             android:lineSpacingExtra="3dp"
             android:text="@string/jandi_team_create_domain_info"
-            android:textColor="@color/jandi_border_gray" />
+            android:textColor="@color/jandi_border_gray"
+            android:textSize="12dp" />
 
 
         <RelativeLayout
@@ -136,6 +140,7 @@
                 android:gravity="center"
                 android:hint="@string/jandi_insert_team_domain"
                 android:imeOptions="actionDone"
+                android:inputType="textUri"
                 android:maxLines="1"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"

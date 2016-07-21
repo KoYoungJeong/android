@@ -23,6 +23,25 @@ public class PollParticipantsModel {
         pollApi = api;
     }
 
+    public Observable<ResPollParticipants> getAllParticipantsObservable(long pollId) {
+        return Observable.<ResPollParticipants>create(subscriber -> {
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
+
+            if (teamId <= 0l) {
+                subscriber.onError(new NullPointerException("has not selected team."));
+                subscriber.onCompleted();
+            } else {
+                try {
+                    ResPollParticipants pollParticipants = pollApi.get().getAllPollParticipants(teamId, pollId);
+                    subscriber.onNext(pollParticipants);
+                } catch (RetrofitException e) {
+                    subscriber.onError(e);
+                }
+                subscriber.onCompleted();
+            }
+        });
+    }
+
     public Observable<ResPollParticipants> getParticipantsObservable(long pollId, int selectedSequence) {
         return Observable.<ResPollParticipants>create(subscriber -> {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
@@ -32,12 +51,7 @@ public class PollParticipantsModel {
                 subscriber.onCompleted();
             } else {
                 try {
-                    ResPollParticipants pollParticipants;
-                    if (selectedSequence >= 0) {
-                        pollParticipants = pollApi.get().getPollParticipants(teamId, pollId, selectedSequence);
-                    } else {
-                        pollParticipants = pollApi.get().getAllPollParticipants(teamId, pollId);
-                    }
+                    ResPollParticipants pollParticipants= pollApi.get().getPollParticipants(teamId, pollId, selectedSequence);
                     subscriber.onNext(pollParticipants);
                 } catch (RetrofitException e) {
                     subscriber.onError(e);

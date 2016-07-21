@@ -60,10 +60,10 @@ public class CommonStarMentionViewHolder extends RecyclerView.ViewHolder {
         ivProfile.setLayoutParams(layoutParams);
 
         if (!isJandiBot) {
-            Uri uri = Uri.parse(starMentionVO.getWriterPictureUrl());
             if (!isBot) {
-                ImageUtil.loadProfileImage(ivProfile, uri, R.drawable.profile_img);
+                ImageUtil.loadProfileImage(ivProfile, starMentionVO.getWriterPictureUrl(), R.drawable.profile_img);
             } else {
+                Uri uri = Uri.parse(ImageUtil.getLargeProfileUril(starMentionVO.getWriterPictureUrl()));
                 ImageLoader.newInstance()
                         .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
                         .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)

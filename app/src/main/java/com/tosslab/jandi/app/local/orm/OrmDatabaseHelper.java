@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.local.orm.domain.ReadyComment;
 import com.tosslab.jandi.app.local.orm.domain.ReadyCommentForPoll;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.RecentSticker;
+import com.tosslab.jandi.app.local.orm.domain.RoomLinkRelation;
 import com.tosslab.jandi.app.local.orm.domain.SelectedTeam;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.domain.UploadedFileInfo;
@@ -68,7 +69,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_MESSAGE_DIRTY = 14;
     private static final int DATABASE_VERSION_CONNECT_INFO_IMAGE = 15;
     private static final int DATABASE_VERSION_START_API = 16;
-    private static final int DATABASE_VERSION_POLL = 17;
+    private static final int DATABASE_VERSION_START_API_ROOM_MESSAGE_RELATION = 17;
+    private static final int DATABASE_VERSION_POLL = 18;
     private static final int DATABASE_VERSION = DATABASE_VERSION_POLL;
     public OrmLiteSqliteOpenHelper helper;
 
@@ -119,6 +121,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, ResMessages.CommentStickerMessage.class);
             createTable(connectionSource, ResMessages.CommentStickerMessage.class);
             createTable(connectionSource, ResMessages.CommentMessage.class);
+
+            createTable(connectionSource, RoomLinkRelation.class);
 
             createTable(connectionSource, MentionObject.class);
 
@@ -276,6 +280,11 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, Human.Profile.class);
                         createTable(connectionSource, Bot.class);
                     }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_START_API_ROOM_MESSAGE_RELATION, () -> {
+                        createTable(connectionSource, RoomLinkRelation.class);
+                        dropTable(connectionSource, ResMessages.Link.class);
+                        createTable(connectionSource, ResMessages.Link.class);
+                    }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_POLL, () -> {
                         dropTable(connectionSource, ResMessages.Link.class);
                         dropTable(connectionSource, ResMessages.TextMessage.class);
@@ -356,6 +365,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(getConnectionSource(), ResMessages.CommentStickerMessage.class);
         clearTable(getConnectionSource(), ResMessages.CommentMessage.class);
 
+        clearTable(getConnectionSource(), RoomLinkRelation.class);
 
         clearTable(getConnectionSource(), ResRoomInfo.class);
         clearTable(getConnectionSource(), ResRoomInfo.MarkerInfo.class);

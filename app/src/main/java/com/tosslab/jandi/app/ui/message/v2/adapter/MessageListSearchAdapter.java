@@ -238,7 +238,7 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
             nextLink = getItem(position + 1);
         }
 
-        return BodyViewFactory.getContentType(previousLink, currentLink, nextLink);
+        return BodyViewFactory.getContentType(previousLink, currentLink, nextLink, roomId);
     }
 
     public ResMessages.Link getItem(int position) {

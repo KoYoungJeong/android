@@ -19,7 +19,7 @@
         android:layout_below="@id/tv_poll_detail_info_subject"
         android:layout_marginTop="10dp"
         android:textColor="@drawable/text_color_poll_detail_info_duedate"
-        android:textSize="12sp"
+        android:textSize="12dp"
         android:textStyle="bold"/>
 
     <LinearLayout

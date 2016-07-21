@@ -63,22 +63,26 @@ public class ChatRepository extends LockExecutorTemplate {
 
             try {
                 Dao<Chat, Long> dao = getDao(Chat.class);
-                Dao<Chat.LastMessage, Object> lastMessageDao = getDao(Chat.LastMessage.class);
+                Chat chat = dao.queryForId(roomId);
+
+                Dao<Chat.LastMessage, Long> lastMessageDao = getDao(Chat.LastMessage.class);
+
+                if (chat.getLastMessage() != null) {
+                    long oldLastMessageId = chat.getLastMessage().getId();
+                    lastMessageDao.deleteById(oldLastMessageId);
+                }
+
                 Chat.LastMessage lastMessage = new Chat.LastMessage();
                 lastMessage.setId(lastMessageId);
                 lastMessage.setText(text);
                 lastMessage.setStatus(status);
 
-                if (lastMessageId <= 0) {
-                    UpdateBuilder<Chat, Long> chatUpdateBuilder = dao.updateBuilder();
-                    chatUpdateBuilder.updateColumnValue("lastMessage_id", lastMessageId)
-                            .where()
-                            .eq("id", roomId);
-                    chatUpdateBuilder.update();
-                    lastMessageDao.create(lastMessage);
-                } else {
-                    lastMessageDao.update(lastMessage);
-                }
+                UpdateBuilder<Chat, Long> chatUpdateBuilder = dao.updateBuilder();
+                chatUpdateBuilder.updateColumnValue("lastMessage_id", lastMessageId)
+                        .where()
+                        .eq("id", roomId);
+                chatUpdateBuilder.update();
+                lastMessageDao.create(lastMessage);
 
                 return true;
 
@@ -112,6 +116,23 @@ public class ChatRepository extends LockExecutorTemplate {
                 Dao<Chat, Long> dao = getDao(Chat.class);
                 UpdateBuilder<Chat, Long> updateBuilder = dao.updateBuilder();
                 updateBuilder.updateColumnValue("unreadCount", unreadCount)
+                        .where()
+                        .eq("id", chatId);
+                return updateBuilder.update() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        });
+    }
+
+    public boolean incrementUnreadCount(long chatId) {
+        return execute(() -> {
+            try {
+                Dao<Chat, Long> dao = getDao(Chat.class);
+                UpdateBuilder<Chat, Long> updateBuilder = dao.updateBuilder();
+                updateBuilder.updateColumnExpression("unreadCount", "unreadCount + 1")
                         .where()
                         .eq("id", chatId);
                 return updateBuilder.update() > 0;

@@ -39,7 +39,7 @@ public class TeamPresenterImpl implements TeamPresenter {
         teamView.showProgress();
 
         teamModel.getTeamObservable()
-                .subscribeOn(Schedulers.trampoline())
+                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(team -> {
                     teamView.hideProgress();

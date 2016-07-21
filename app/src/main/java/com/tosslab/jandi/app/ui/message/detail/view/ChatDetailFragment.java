@@ -1,65 +1,105 @@
 package com.tosslab.jandi.app.ui.message.detail.view;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
+import com.tosslab.jandi.app.ui.message.detail.dagger.DaggerTopicDetailComponent;
 import com.tosslab.jandi.app.ui.message.detail.model.LeaveViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.TopicDetailModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
+import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 
-@EFragment(R.layout.fragment_chat_detail)
 public class ChatDetailFragment extends Fragment {
 
-    @FragmentArg
+    private static final String EXTRA_ENTITY_ID = "entityId";
     long entityId;
 
-    @ViewById(R.id.iv_chat_detail_starred)
+    @Bind(R.id.iv_chat_detail_starred)
     View ivStarred;
 
-    @Bean
     EntityClientManager entityClientManager;
 
-    @Bean
+    @Inject
     LeaveViewModel leaveViewModel;
 
-    @Bean
+    @Inject
     TopicDetailModel topicDetailModel;
 
-    @ViewById(R.id.vg_chat_detail_starred)
+    @Bind(R.id.vg_chat_detail_starred)
     View vgStarred;
 
-    @AfterViews
+    public static Fragment createFragment(Context context, long entityId) {
+        Bundle bundle = new Bundle();
+        bundle.putLong(EXTRA_ENTITY_ID, entityId);
+        return Fragment.instantiate(context, ChatDetailFragment.class.getName(), bundle);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_chat_detail, container, false);
+        ButterKnife.bind(this, view);
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        DaggerTopicDetailComponent.builder()
+                .build()
+                .inject(this);
+
+        entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
+        initArgument();
+
+        initViews();
+    }
+
+    private void initArgument() {
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            entityId = bundle.getLong(EXTRA_ENTITY_ID);
+        }
+
+    }
+
     void initViews() {
         setUpActionbar();
         boolean isStarred = TeamInfoLoader.getInstance().isStarredUser(entityId);
@@ -119,56 +159,68 @@ public class ChatDetailFragment extends Fragment {
         }
     }
 
-    @Background
-    @Click(R.id.vg_chat_detail_starred)
+    @OnClick(R.id.vg_chat_detail_starred)
     void onChatStarClick() {
-        boolean isStarred = TeamInfoLoader.getInstance().isStarredUser(entityId);
 
-        try {
+        Observable<Boolean> starredUser = Observable.just(TeamInfoLoader.getInstance().isStarredUser(entityId))
+                .share();
 
-            if (isStarred) {
-                entityClientManager.disableFavorite(entityId);
-
-                topicDetailModel.trackTopicUnStarSuccess(entityId);
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.Off);
-
-            } else {
-                entityClientManager.enableFavorite(entityId);
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.On);
-
-                topicDetailModel.trackTopicStarSuccess(entityId);
-                showSuccessToast(getString(R.string.jandi_message_starred));
-            }
-
+        Action1<Boolean> successAction = isStarred -> {
             HumanRepository.getInstance().updateStarred(entityId, !isStarred);
             TeamInfoLoader.getInstance().refresh();
 
             setStarred(!isStarred);
+        };
+        starredUser.filter(it -> it)
+                .doOnNext(isStarred -> {
+                    try {
+                        entityClientManager.disableFavorite(entityId);
+                        topicDetailModel.trackTopicUnStarSuccess(entityId);
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.Off);
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                    }
 
-        } catch (RetrofitException e) {
-            int errorCode = e.getStatusCode();
-            if (isStarred) {
-                topicDetailModel.trackTopicUnStarFail(errorCode);
-            } else {
-                topicDetailModel.trackTopicStarFail(errorCode);
-            }
-        }
+
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(successAction, Throwable::printStackTrace);
+
+        starredUser.filter(it -> !it)
+                .doOnNext(isStarred -> {
+                    try {
+                        entityClientManager.enableFavorite(entityId);
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.On);
+
+                        topicDetailModel.trackTopicStarSuccess(entityId);
+                        showSuccessToast(getString(R.string.jandi_message_starred));
+                    } catch (RetrofitException e) {
+                        int errorCode = e.getStatusCode();
+                        if (TeamInfoLoader.getInstance().isStarredUser(entityId)) {
+                            topicDetailModel.trackTopicUnStarFail(errorCode);
+                        } else {
+                            topicDetailModel.trackTopicStarFail(errorCode);
+                        }
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(successAction);
+
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void setStarred(boolean isStarred) {
         ivStarred.setSelected(isStarred);
     }
 
-    @UiThread
     void showSuccessToast(String message) {
         ColoredToast.show(message);
     }
 
-    @Click(R.id.vg_chat_detail_leave)
+    @OnClick(R.id.vg_chat_detail_leave)
     void onChatLeaveClick() {
-        leaveViewModel.initData(getActivity(), entityId);
-        leaveViewModel.leave();
+        leaveViewModel.leave(entityId);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.Leave);
     }
 

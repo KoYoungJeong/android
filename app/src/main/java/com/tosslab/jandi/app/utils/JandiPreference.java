@@ -53,6 +53,7 @@ public class JandiPreference {
     private static final String PREF_SOCKET_RECONNECT_DELAY = "socket_reconnect_delay";
     private static final String PREF_LAST_SELECTED_TAB = "last_selected_tab";
     private static final String PREF_VERSION_CODE_STAMP = "version_code_stamp";
+    private static final String PREF_EMAIL_AUTH_SEND_TIME = "email_auth_send_time";
 
 
     public static boolean isAleadyShowCoachMarkTopic(Context context) {
@@ -369,7 +370,7 @@ public class JandiPreference {
     public static boolean isPutVersionCodeStamp() {
         // 버전 154 이하 사용자의 링크를 초기화 하기 위함
         return getSharedPreferences()
-                .getInt(PREF_VERSION_CODE_STAMP, 159) >= com.tosslab.jandi.app.BuildConfig.VERSION_CODE;
+                .getInt(PREF_VERSION_CODE_STAMP, 174) >= com.tosslab.jandi.app.BuildConfig.VERSION_CODE;
     }
 
     public static void putVersionCodeStamp() {
@@ -377,6 +378,18 @@ public class JandiPreference {
                 .edit()
                 .putInt(PREF_VERSION_CODE_STAMP, com.tosslab.jandi.app.BuildConfig.VERSION_CODE)
                 .apply();
+    }
+
+    public static void setEmailAuthSendTime() {
+        getSharedPreferences()
+                .edit()
+                .putLong(PREF_EMAIL_AUTH_SEND_TIME, System.currentTimeMillis())
+                .apply();
+    }
+
+    public static long getEmailAuthSendTime() {
+        return getSharedPreferences()
+                .getLong(PREF_EMAIL_AUTH_SEND_TIME, -1);
     }
 
 }

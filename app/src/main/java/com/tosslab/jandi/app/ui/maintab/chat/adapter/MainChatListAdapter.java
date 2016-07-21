@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -112,8 +111,8 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         if (item.getRoomId() == selectedEntity && animStatus == AnimStatus.READY) {
             animStatus = AnimStatus.IN_ANIM;
-            Integer colorFrom = context.getResources().getColor(R.color.transparent);
-            Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_1f);
+            int colorFrom = context.getResources().getColor(R.color.transparent);
+            int colorTo = context.getResources().getColor(R.color.jandi_accent_color_1f);
             final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
             colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
             colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
@@ -145,7 +144,7 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         if (!isJandiBot) {
             if (!item.isInactive()) {
-                ImageUtil.loadProfileImage(ivIcon, Uri.parse(item.getPhoto()), R.drawable.profile_img);
+                ImageUtil.loadProfileImage(ivIcon, item.getPhoto(), R.drawable.profile_img);
             } else {
                 ivIcon.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_43);

@@ -80,6 +80,9 @@ import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
+import com.tosslab.jandi.app.events.socket.EventUpdateFinish;
+import com.tosslab.jandi.app.events.socket.EventUpdateInProgress;
+import com.tosslab.jandi.app.events.socket.EventUpdateStart;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl;
@@ -304,6 +307,13 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     ImageView ivMemberStatusAlert;
     @ViewById(R.id.tv_messages_member_status_alert)
     TextView tvMemberStatusAlert;
+
+    @ViewById(R.id.vg_main_synchronize)
+    View vgSynchronize;
+
+    @ViewById(R.id.tv_synchronize)
+    TextView tvSynchronize;
+
 
     private OfflineLayer offlineLayer;
 
@@ -966,11 +976,10 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         User user = TeamInfoLoader.getInstance().getUser(item.message.writerId);
         tvPreviewUserName.setText(user.getName());
 
-        String url = ImageUtil.getImageFileUrl(user.getPhotoUrl());
-        Uri uri = Uri.parse(url);
         if (!TeamInfoLoader.getInstance().isBot(user.getId())) {
-            ImageUtil.loadProfileImage(ivPreviewProfile, uri, R.drawable.profile_img);
+            ImageUtil.loadProfileImage(ivPreviewProfile, user.getPhotoUrl(), R.drawable.profile_img);
         } else {
+            Uri uri = Uri.parse(user.getPhotoUrl());
             ImageLoader.newInstance()
                     .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
                     .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
@@ -1346,13 +1355,14 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     public void onEvent(SocketMessageCreatedEvent event) {
         if (event.getData() != null
                 && event.getData().getLinkMessage() != null
-                && event.getData().getLinkMessage().roomId != room.getRoomId()) {
-            return;
+                && event.getData().getLinkMessage().toEntity != null
+                && !event.getData().getLinkMessage().toEntity.isEmpty()
+                && event.getData().getLinkMessage().toEntity.contains(room.getRoomId())) {
+            if (messageListPresenter != null) {
+                messageListPresenter.addNewMessageOfLocalQueue();
+            }
         }
 
-        if (messageListPresenter != null) {
-            messageListPresenter.addNewMessageOfLocalQueue();
-        }
     }
 
     public void onEvent(TopicInfoUpdateEvent event) {
@@ -1462,9 +1472,40 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     public void onEventMainThread(TopicKickedoutEvent event) {
         if (room.getRoomId() == event.getRoomId()) {
             finish();
-            CharSequence topicName = ((AppCompatActivity) getActivity()).getSupportActionBar().getTitle();
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            CharSequence topicName = null;
+            if (actionBar != null) {
+                topicName = actionBar.getTitle();
+            }
             String msg = JandiApplication.getContext().getString(R.string.jandi_kicked_message, topicName);
             showToast(msg, true /* isError */);
+        }
+    }
+
+
+    public void onEventMainThread(EventUpdateStart event) {
+        if (vgSynchronize != null && tvSynchronize != null) {
+            vgSynchronize.setVisibility(View.VISIBLE);
+            tvSynchronize.setText(R.string.jandi_syncing_message);
+        }
+    }
+
+    public void onEventMainThread(EventUpdateInProgress event) {
+        if (vgSynchronize != null && tvSynchronize != null) {
+            if (vgSynchronize.getVisibility() != View.VISIBLE) {
+                vgSynchronize.setVisibility(View.VISIBLE);
+            }
+            int percent = (event.getProgress() * 100) / event.getMax();
+            String syncMsg = JandiApplication.getContext().getString(R.string.jandi_syncing_message);
+            tvSynchronize.setText(String.format(syncMsg + "...(%d\\%)", percent));
+        }
+    }
+
+    public void onEventMainThread(EventUpdateFinish event) {
+        if (vgSynchronize != null && tvSynchronize != null) {
+            if (vgSynchronize.getVisibility() != View.GONE) {
+                vgSynchronize.setVisibility(View.GONE);
+            }
         }
     }
 

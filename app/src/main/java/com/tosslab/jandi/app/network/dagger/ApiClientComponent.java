@@ -13,8 +13,6 @@ import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.EntityMenuDialogModel
 import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.model.TopicFolderSettingModel;
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
-import com.tosslab.jandi.app.ui.message.detail.model.LeaveViewModel;
-import com.tosslab.jandi.app.ui.message.detail.model.TopicDetailModel;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.profile.defaultimage.model.ProfileImageSelectorModel;
@@ -47,8 +45,6 @@ public interface ApiClientComponent {
 
     void inject(EntityMenuDialogModel entityMenuDialogModel);
 
-    void inject(LeaveViewModel leaveViewModel);
-
     void inject(MessageSearchManager messageSearchManager);
 
     void inject(MessageListModel messageListModel);
@@ -71,5 +67,4 @@ public interface ApiClientComponent {
 
     void inject(AnnouncementModel announcementModel);
 
-    void inject(TopicDetailModel topicDetailModel);
 }

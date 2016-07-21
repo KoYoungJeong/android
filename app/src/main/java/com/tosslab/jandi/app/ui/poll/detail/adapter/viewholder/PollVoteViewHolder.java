@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.RequestVotePollEvent;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 
@@ -21,16 +20,19 @@ import de.greenrobot.event.EventBus;
 public class PollVoteViewHolder extends BaseViewHolder<Poll> {
 
     private TextView tvPollItemVote;
+    private OnPollVoteClickListener onPollVoteClickListener;
 
-    private PollVoteViewHolder(View itemView) {
+    private PollVoteViewHolder(View itemView, OnPollVoteClickListener onPollVoteClickListener) {
         super(itemView);
+        this.onPollVoteClickListener = onPollVoteClickListener;
         tvPollItemVote = (TextView) itemView.findViewById(R.id.tv_poll_detail_item_vote);
     }
 
-    public static PollVoteViewHolder newInstance(ViewGroup parent) {
+    public static PollVoteViewHolder newInstance(ViewGroup parent,
+                                                 OnPollVoteClickListener onPollVoteClickListener) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.item_poll_detail_item_vote, parent, false);
-        return new PollVoteViewHolder(itemView);
+        return new PollVoteViewHolder(itemView, onPollVoteClickListener);
     }
 
     @Override
@@ -46,7 +48,11 @@ public class PollVoteViewHolder extends BaseViewHolder<Poll> {
         tvPollItemVote.setText(vote);
 
         itemView.setOnClickListener(v ->
-                EventBus.getDefault().post(RequestVotePollEvent.create(poll.getId(), votedItemSeqs)));
+                onPollVoteClickListener.onPollVote(poll.getId(), votedItemSeqs));
+    }
+
+    public interface OnPollVoteClickListener {
+        void onPollVote(long pollId, Collection<Integer> votedItemSeqs);
     }
 
 }

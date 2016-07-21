@@ -285,6 +285,7 @@
     <color name="rgb_fafafa">#FFFAFAFA</color>
     <color name="rgb_00abe8">#FF00ABE8</color>
     <color name="rgb_dd2c00">#FFDD2C00</color>
+    <color name="rgb_b3b3b3">#FFB3B3B3</color>
     <color name="rgb_cccccc">#FFCCCCCC</color>
     <color name="rgb_11456b">#FF11456B</color>
 
@@ -311,7 +312,10 @@
 
     <color name="jandi_error_red">#ff5b49</color>
 
+    <!-- Poll -->
     <color name="jandi_horizontal_progress_background">#fff0f0f0</color>
     <color name="jandi_horizontal_progress_selected">#ffdbdbdb</color>
     <color name="jandi_horizontal_progress_voted">#ffcaeefd</color>
+
+    <color name="jandi_poll_create_button_normal">@color/rgb_b3b3b3</color>
 </resources>

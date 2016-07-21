@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
+import com.tosslab.jandi.app.local.orm.domain.RoomLinkRelation;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
@@ -23,16 +24,122 @@ public class MessageRepository extends LockExecutorTemplate {
         return repository;
     }
 
+    public boolean updateDirty(long roomId, long startLinkId, long endLinkId) {
+        return execute(() -> {
+            try {
+                Dao<RoomLinkRelation, Object> dao = getDao(RoomLinkRelation.class);
+                UpdateBuilder<RoomLinkRelation, Object> updateBuilder = dao.updateBuilder();
+                updateBuilder.updateColumnValue("dirty", false);
+                updateBuilder.where()
+                        .eq("roomId", roomId)
+                        .and()
+                        .le("linkId", endLinkId)
+                        .and()
+                        .ge("linkId", startLinkId);
+                updateBuilder.update();
+                return true;
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+
+        });
+    }
+
+    public boolean isDirty(long roomId, long linkId) {
+        return execute(() -> {
+
+            try {
+                Dao<RoomLinkRelation, Object> dao = getDao(RoomLinkRelation.class);
+                return dao.queryBuilder()
+                        .where()
+                        .eq("roomId", roomId)
+                        .and()
+                        .eq("linkId", linkId)
+                        .and()
+                        .eq("dirty", true)
+                        .countOf() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return true;
+        });
+    }
+
+    public boolean updateDirty(long roomId, long linkId) {
+        return execute(() -> {
+            try {
+                Dao<RoomLinkRelation, Object> dao = getDao(RoomLinkRelation.class);
+                UpdateBuilder<RoomLinkRelation, Object> updateBuilder = dao.updateBuilder();
+                updateBuilder.updateColumnValue("dirty", false);
+                updateBuilder.where()
+                        .eq("roomId", roomId)
+                        .and()
+                        .eq("linkId", linkId);
+                updateBuilder.update();
+                return true;
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+
+        });
+    }
+
+    public boolean updateDirty(List<RoomLinkRelation> relations) {
+        return execute(() -> {
+            try {
+                Dao<RoomLinkRelation, Object> dao = getDao(RoomLinkRelation.class);
+                dao.callBatchTasks(() -> {
+                    for (RoomLinkRelation relation : relations) {
+                        dao.update(relation);
+                    }
+                    return null;
+                });
+                return true;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return false;
+
+        });
+    }
+
     public boolean upsertMessages(List<ResMessages.Link> messages) {
         return execute(() -> {
             try {
 
                 Dao<ResMessages.Link, ?> dao = getHelper().getDao(ResMessages.Link.class);
 
+                List<RoomLinkRelation> relations = new ArrayList<>();
+                for (ResMessages.Link link : messages) {
+                    if (link.toEntity != null && link.toEntity.size() > 0) {
+                        int size = link.toEntity.size();
+                        for (int idx = 0; idx < size; idx++) {
+                            RoomLinkRelation relation = new RoomLinkRelation();
+                            relation.setRoomId(link.toEntity.get(idx));
+                            relation.setLinkId(link.id);
+                            relations.add(relation);
+                        }
+                    }
+                }
+
                 // 내부에서 트랜잭션 commit 컨트롤을 함
                 dao.callBatchTasks(() -> {
                     for (ResMessages.Link message : messages) {
                         dao.createOrUpdate(message);
+                    }
+                    return null;
+                });
+
+                Dao<RoomLinkRelation, String> relationDao = getDao(RoomLinkRelation.class);
+                relationDao.callBatchTasks(() -> {
+                    for (RoomLinkRelation relation : relations) {
+                        relationDao.createIfNotExists(relation);
                     }
                     return null;
                 });
@@ -48,11 +155,25 @@ public class MessageRepository extends LockExecutorTemplate {
         });
     }
 
-    public boolean upsertMessage(ResMessages.Link message) {
+    public boolean upsertMessage(ResMessages.Link link) {
         return execute(() -> {
             try {
                 Dao<ResMessages.Link, ?> dao = getHelper().getDao(ResMessages.Link.class);
-                dao.createOrUpdate(message);
+                dao.createOrUpdate(link);
+
+                if (link.toEntity != null && link.toEntity.size() > 0) {
+                    Dao<RoomLinkRelation, String> relationDao = getDao(RoomLinkRelation.class);
+                    RoomLinkRelation relation;
+                    int size = link.toEntity.size();
+                    for (int idx = 0; idx < size; idx++) {
+                        relation = new RoomLinkRelation();
+                        relation.setRoomId(link.toEntity.get(idx));
+                        relation.setLinkId(link.id);
+                        relationDao.createIfNotExists(relation);
+                    }
+
+                }
+
                 return true;
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -72,6 +193,25 @@ public class MessageRepository extends LockExecutorTemplate {
 
             try {
                 Dao<ResMessages.Link, ?> linkDao = getHelper().getDao(ResMessages.Link.class);
+
+                Dao<RoomLinkRelation, Object> dao = getDao(RoomLinkRelation.class);
+                DeleteBuilder<RoomLinkRelation, Object> relationDeleteBuilder = dao.deleteBuilder();
+
+                /*
+                DELETE FROM room_link_relation
+                WHERE linkId in (
+                        SELECT id FROM message_link WHERE messageId = {messageId}
+                    )
+                 */
+                QueryBuilder<ResMessages.Link, ?> linkQueryBuilder = linkDao.queryBuilder();
+                linkQueryBuilder.selectColumns("id")
+                        .where()
+                        .eq("messageId", messageId);
+
+                relationDeleteBuilder.where()
+                        .in("linkId", linkQueryBuilder);
+                relationDeleteBuilder.delete();
+
                 DeleteBuilder<ResMessages.Link, ?> deleteBuilder = linkDao.deleteBuilder();
                 deleteBuilder
                         .where()
@@ -88,18 +228,14 @@ public class MessageRepository extends LockExecutorTemplate {
 
     }
 
-    public List<ResMessages.Link> getMessages(int roomId) {
+    public List<ResMessages.Link> getMessages(long roomId) {
 
         return execute(() -> {
             try {
-                long teamId = AccountRepository.getRepository().getSelectedTeamId();
-                return getHelper().getDao(ResMessages.Link.class)
-                        .queryBuilder()
+                return getHelper().getDao(ResMessages.Link.class).queryBuilder()
                         .orderBy("time", false)
                         .where()
-                        .eq("teamId", teamId)
-                        .and()
-                        .eq("roomId", roomId)
+                        .in("id", inQueryBuildOfRoomRelation(roomId))
                         .query();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -110,18 +246,23 @@ public class MessageRepository extends LockExecutorTemplate {
         });
     }
 
+    private QueryBuilder<RoomLinkRelation, String> inQueryBuildOfRoomRelation(long roomId) throws SQLException {
+        Dao<RoomLinkRelation, String> relationDao = getDao(RoomLinkRelation.class);
+        QueryBuilder<RoomLinkRelation, String> queryBuilder = relationDao.queryBuilder();
+        queryBuilder.selectColumns("linkId").where().eq("roomId", roomId);
+        return queryBuilder;
+    }
+
+
     public ResMessages.Link getLastMessage(long roomId) {
         return execute(() -> {
             ResMessages.Link link = null;
             try {
-                long teamId = AccountRepository.getRepository().getSelectedTeamId();
                 link = getHelper().getDao(ResMessages.Link.class)
                         .queryBuilder()
                         .orderBy("time", false)
                         .where()
-                        .eq("teamId", teamId)
-                        .and()
-                        .eq("roomId", roomId)
+                        .in("id", inQueryBuildOfRoomRelation(roomId))
                         .queryForFirst();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -136,18 +277,24 @@ public class MessageRepository extends LockExecutorTemplate {
         });
     }
 
+
     public List<ResMessages.Link> getOldMessages(long roomId, long lastLinkId, int count) {
         return execute(() -> {
             try {
-                long teamId = AccountRepository.getRepository().getSelectedTeamId();
+                Dao<RoomLinkRelation, String> relationDao = getDao(RoomLinkRelation.class);
+                QueryBuilder<RoomLinkRelation, String> queryBuilder = relationDao.queryBuilder();
+                queryBuilder.selectColumns("linkId")
+                        .where()
+                        .eq("roomId", roomId)
+                        .and()
+                        .eq("dirty", false);
+
                 return getHelper().getDao(ResMessages.Link.class)
                         .queryBuilder()
                         .limit(count)
                         .orderBy("time", false)
                         .where()
-                        .eq("teamId", teamId)
-                        .and()
-                        .eq("roomId", roomId)
+                        .in("id", queryBuilder)
                         .and()
                         .lt("id", lastLinkId > 0 ? lastLinkId : Integer.MAX_VALUE)
                         .query();
@@ -254,24 +401,6 @@ public class MessageRepository extends LockExecutorTemplate {
         });
     }
 
-    public int deleteLinkByMessageId(long messageId) {
-        return execute(() -> {
-            try {
-                Dao<ResMessages.Link, ?> dao = getHelper().getDao(ResMessages.Link.class);
-
-                DeleteBuilder<ResMessages.Link, ?> deleteBuilder = dao.deleteBuilder();
-                deleteBuilder.where().eq("messageId", messageId);
-
-                return deleteBuilder.delete();
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return 0;
-
-        });
-    }
-
     public ResMessages.FileMessage getFileMessage(long fileId) {
         return execute(() -> {
             try {
@@ -309,84 +438,13 @@ public class MessageRepository extends LockExecutorTemplate {
         });
     }
 
-    public List<ResMessages.CommentMessage> getCommentMessages(long fileId) {
-        return execute(() -> {
-            try {
-                Dao<ResMessages.CommentMessage, ?> dao = getHelper().getDao(ResMessages.CommentMessage.class);
-                return dao.queryBuilder()
-                        .where()
-                        .eq("feedbackId", fileId)
-                        .query();
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return new ArrayList<ResMessages.CommentMessage>();
-
-        });
-    }
-
-    public List<ResMessages.CommentStickerMessage> getStickerCommentMessages(long fileId) {
-        return execute(() -> {
-            try {
-                Dao<ResMessages.CommentStickerMessage, ?> dao =
-                        getHelper().getDao(ResMessages.CommentStickerMessage.class);
-                return dao.queryBuilder()
-                        .where()
-                        .eq("feedbackId", fileId)
-                        .query();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return new ArrayList<ResMessages.CommentStickerMessage>();
-
-        });
-    }
-
-    /**
-     * Only For Test!!!
-     *
-     * @return
-     */
-    public List<ResMessages.TextMessage> getTextMessages() {
-        return execute(() -> {
-            try {
-                Dao<ResMessages.TextMessage, ?> dao = getHelper().getDao(ResMessages.TextMessage.class);
-
-                return dao.queryForAll();
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return new ArrayList<ResMessages.TextMessage>();
-
-        });
-    }
-
-    public int clearLinks(long teamId, long roomId) {
-        return execute(() -> {
-            try {
-                Dao<ResMessages.Link, ?> dao = getHelper().getDao(ResMessages.Link.class);
-                DeleteBuilder<ResMessages.Link, ?> deleteBuilder = dao.deleteBuilder();
-                deleteBuilder.where()
-                        .eq("teamId", teamId)
-                        .and()
-                        .eq("roomId", roomId);
-                return deleteBuilder.delete();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return 0;
-
-        });
-    }
-
     public int deleteAllLink() {
         return execute(() -> {
             Dao<ResMessages.Link, ?> dao;
             try {
                 dao = getHelper().getDao(ResMessages.Link.class);
                 DeleteBuilder<ResMessages.Link, ?> deleteBuilder = dao.deleteBuilder();
+                getDao(RoomLinkRelation.class).deleteBuilder().delete();
                 return deleteBuilder.delete();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -400,14 +458,11 @@ public class MessageRepository extends LockExecutorTemplate {
     public int getMessagesCount(long roomId, long startLinkId) {
         return execute(() -> {
             try {
-                long teamId = AccountRepository.getRepository().getSelectedTeamId();
                 return (Long.valueOf(getHelper().getDao(ResMessages.Link.class)
                         .queryBuilder()
                         .orderBy("time", true)
                         .where()
-                        .eq("teamId", teamId)
-                        .and()
-                        .eq("roomId", roomId)
+                        .in("id", inQueryBuildOfRoomRelation(roomId))
                         .and()
                         .ge("id", startLinkId)
                         .countOf())).intValue();
@@ -421,32 +476,14 @@ public class MessageRepository extends LockExecutorTemplate {
         });
     }
 
-    public int getMessagesCount(long roomId, long startLinkId, long endLinkId) {
-        return execute(() -> {
-            try {
-                long teamId = AccountRepository.getRepository().getSelectedTeamId();
-                return (Long.valueOf(getHelper().getDao(ResMessages.Link.class)
-                        .queryBuilder()
-                        .orderBy("time", true)
-                        .where()
-                        .eq("teamId", teamId)
-                        .and()
-                        .eq("roomId", roomId)
-                        .and()
-                        .gt("id", startLinkId)
-                        .and()
-                        .le("id", endLinkId)
-                        .countOf())).intValue();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-
-            return 0;
-
-        });
-    }
-
+    /**
+     * dirtyflag 가 필요 없는 경우
+     *
+     * @param roomId
+     * @param firstCursorLinkId
+     * @param toCursorLinkId
+     * @return
+     */
     public List<ResMessages.Link> getMessages(long roomId, long firstCursorLinkId, long toCursorLinkId) {
         return execute(() -> {
             try {
@@ -457,7 +494,7 @@ public class MessageRepository extends LockExecutorTemplate {
                         .where()
                         .eq("teamId", teamId)
                         .and()
-                        .eq("roomId", roomId)
+                        .in("id", inQueryBuildOfRoomRelation(roomId))
                         .and()
                         .ge("id", firstCursorLinkId)
                         .and()
@@ -471,26 +508,4 @@ public class MessageRepository extends LockExecutorTemplate {
         });
     }
 
-    public boolean hasLinkOfMessageId(long messageId) {
-        return execute(() -> {
-            if (messageId <= 0) {
-                return false;
-            }
-
-            try {
-                Dao<ResMessages.Link, ?> linkDao = getHelper().getDao(ResMessages.Link.class);
-                QueryBuilder<ResMessages.Link, ?> queryBuilder = linkDao.queryBuilder();
-                return queryBuilder
-                        .where()
-                        .eq("messageId", messageId)
-                        .countOf() > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-
-            return false;
-
-        });
-    }
 }

@@ -4,9 +4,11 @@ import android.util.Log;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResConfig;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -39,6 +41,7 @@ public class IntroActivityPresenter {
 
         if (!JandiPreference.isPutVersionCodeStamp()) {
             MessageRepository.getRepository().deleteAllLink();
+            SendMessageRepository.getRepository().deleteAllMessages();
             JandiPreference.putVersionCodeStamp();
         }
 
@@ -182,6 +185,8 @@ public class IntroActivityPresenter {
                             model.refreshEntityInfo();
                         }
                     }
+
+                    TeamInfoLoader.getInstance();
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
@@ -209,8 +214,6 @@ public class IntroActivityPresenter {
         void showMaintenanceDialog();
 
         void showUpdateDialog();
-
-        void finishOnUiThread();
 
     }
 

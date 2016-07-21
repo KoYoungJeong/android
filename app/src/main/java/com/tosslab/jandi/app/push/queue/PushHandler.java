@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.push.queue;
 import android.content.Context;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.events.messages.MentionToMeEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.local.orm.repositories.PushHistoryRepository;
 import com.tosslab.jandi.app.push.queue.dagger.DaggerPushHandlerComponent;
@@ -59,14 +58,10 @@ public class PushHandler {
 
 
     void notifyPush(Context context, BaseMessagePushInfo messagePushInfo) {
-        long teamId = messagePushInfo.getTeamId();
 
         boolean isMentionMessageToMe =
                 jandiPushReceiverModel.isMentionToMe(messagePushInfo.getMentioned());
         showNotification(context, messagePushInfo, isMentionMessageToMe);
-        if (isMentionMessageToMe) {
-            EventBus.getDefault().post(new MentionToMeEvent(teamId));
-        }
 
         postEvent(messagePushInfo.getRoomId(), messagePushInfo.getRoomType());
     }

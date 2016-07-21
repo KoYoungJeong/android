@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.poll.detail.presenter;
 
-import com.tosslab.jandi.app.events.poll.RequestShowPollParticipantsEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.poll.Poll;
@@ -30,8 +29,6 @@ public interface PollDetailPresenter {
 
     void onSendCommentWithSticker(long pollId, long stickerGroupId, String stickerId, String message, List<MentionObject> mentions);
 
-    void onPollDataChanged(Poll poll);
-
     void joinAndMove(TopicRoom topic);
 
     void onChangeCommentStarredState(long messageId, boolean starred);
@@ -42,11 +39,13 @@ public interface PollDetailPresenter {
 
     void onPollFinishAction(long pollId);
 
-    void onRequestShowPollParticipantsAction(RequestShowPollParticipantsEvent event);
-
     void onTopicDeleted(long topicId);
 
     void clearAllEventQueue();
+
+    void onRequestShowPollParticipants(Poll poll);
+
+    void onRequestShowPollItemParticipants(Poll poll, Poll.Item item);
 
     interface View {
         void showProgress();
@@ -82,11 +81,11 @@ public interface PollDetailPresenter {
 
         void showEmptyParticipantsToast();
 
-        void showAllParticipants(long pollId);
+        void showPollParticipants(long pollId);
 
         void showPollIsAnonymousToast();
 
-        void showParticipants(long pollId, Poll.Item item);
+        void showPollItemParticipants(long pollId, Poll.Item item);
 
         void showPollDeleteSuccessToast();
     }

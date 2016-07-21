@@ -23,7 +23,6 @@ import android.widget.TextView;
 import com.baidu.android.pushservice.PushSettings;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.messages.MentionToMeEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.poll.RefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
@@ -59,7 +58,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.spannable.OwnerSpannable;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -250,12 +248,6 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
                     adapter.notifyDataSetChanged();
                 });
 
-    }
-
-    public void onEvent(MentionToMeEvent event) {
-        Date latestCreatedAt = adapter.getItem(0) != null
-                ? adapter.getItem(0).getCreatedAt() : null;
-        presenter.onNewMentionComing(event.getTeamId(), latestCreatedAt);
     }
 
     public void onEvent(SocketPollEvent event) {
@@ -526,7 +518,6 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
     }
 
     private class MentionMessageMoreRequestHandler implements MyPageAdapter.OnLoadMoreCallback {
-
         private boolean shouldRequestMore = true;
 
         public void setShouldRequestMore(boolean shouldRequestMore) {
@@ -541,4 +532,5 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
             presenter.loadMoreMentions(messageId);
         }
     }
+
 }

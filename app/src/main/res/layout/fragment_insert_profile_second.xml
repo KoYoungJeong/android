@@ -24,6 +24,7 @@
                 android:gravity="center_horizontal"
                 android:lineSpacingExtra="4dp"
                 android:text="@string/jandi_profile_extra_introduce"
+                android:textColor="@color/dark_gray"
                 android:textSize="14sp" />
 
             <TextView
@@ -39,8 +40,8 @@
                 android:textColor="@color/jandi_profile_text"
                 android:textSize="14sp" />
 
-            <EditText
-                android:id="@+id/et_department"
+            <TextView
+                android:id="@+id/tv_department"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:layout_marginTop="26dp"
@@ -54,8 +55,8 @@
                 android:textColor="@color/jandi_profile_text"
                 android:textSize="14sp" />
 
-            <EditText
-                android:id="@+id/et_positon"
+            <TextView
+                android:id="@+id/tv_positon"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:layout_marginTop="26dp"
@@ -97,6 +98,7 @@
                 android:inputType="textMultiLine"
                 android:maxLength="60"
                 android:maxLines="3"
+                android:padding="8dp"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
                 android:textColor="@color/jandi_profile_text"

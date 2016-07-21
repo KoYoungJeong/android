@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.ui.profile.insert.presenter;
 
 import com.jayway.awaitility.Awaitility;
-import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
+import com.tosslab.jandi.app.ui.profile.insert.dagger.InsertProfileSecondPageModule;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -9,17 +9,21 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import javax.inject.Inject;
+
+import dagger.Component;
 import setup.BaseInitUtil;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 
 /**
  * Created by tee on 16. 3. 17..
  */
-public class SetProfileSecondPagePresenterTest {
-    private InsertProfileSecondPagePresenterImpl presenter;
+public class InsertProfileSecondPagePresenterTest {
+    @Inject
+    InsertProfileSecondPagePresenter presenter;
     private InsertProfileSecondPagePresenterImpl.View mockView;
-    private ModifyProfileModel mockModel;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -34,10 +38,11 @@ public class SetProfileSecondPagePresenterTest {
     @Before
     public void setUp() throws Exception {
         mockView = mock(InsertProfileSecondPagePresenterImpl.View.class);
-        mockModel = mock(ModifyProfileModel.class);
-        presenter = new InsertProfileSecondPagePresenterImpl(mockModel, mockView);
+        DaggerInsertProfileSecondPagePresenterTest_TestComponent.builder()
+                .insertProfileSecondPageModule(new InsertProfileSecondPageModule(mockView))
+                .build()
+                .inject(this);
     }
-
 
     @Test
     public void testOnRequestProfile() {
@@ -46,7 +51,7 @@ public class SetProfileSecondPagePresenterTest {
         Mockito.doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
-        }).when(mockView).dismissProgressWheel();
+        }).when(mockView).displayProfileInfos(any());
 
         // when
         presenter.requestProfile();
@@ -54,9 +59,7 @@ public class SetProfileSecondPagePresenterTest {
         Awaitility.await().until(() -> finish[0]);
 
         // then
-        Mockito.verify(mockView).showProgressWheel();
         Mockito.verify(mockView).displayProfileInfos(Mockito.anyObject());
-        Mockito.verify(mockView).dismissProgressWheel();
     }
 
     @Test
@@ -84,6 +87,11 @@ public class SetProfileSecondPagePresenterTest {
         Awaitility.await().until(() -> finish[0]);
 
         Mockito.verify(mockView).updateProfileSucceed();
+    }
+
+    @Component(modules = InsertProfileSecondPageModule.class)
+    interface TestComponent {
+        void inject(InsertProfileSecondPagePresenterTest test);
     }
 
 }

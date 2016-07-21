@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.message.detail.model;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 
@@ -40,7 +39,7 @@ public class TopicDetailModelTest {
 
     @Before
     public void setUp() throws Exception {
-        topicDetailModel = TopicDetailModel_.getInstance_(JandiApplication.getContext());
+        topicDetailModel = new TopicDetailModel(null);
     }
 
     @Test

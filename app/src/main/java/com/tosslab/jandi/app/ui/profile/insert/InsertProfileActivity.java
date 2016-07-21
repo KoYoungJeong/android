@@ -40,11 +40,6 @@ public class InsertProfileActivity extends BaseAppCompatActivity
         pageNationNomal = getResources().getDrawable(R.drawable.pagenation_normal);
         pageNationFocus = getResources().getDrawable(R.drawable.pagenation_focus);
         ButterKnife.bind(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         setUpView();
     }
 

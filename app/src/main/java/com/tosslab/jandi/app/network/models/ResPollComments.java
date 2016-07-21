@@ -33,4 +33,12 @@ public class ResPollComments {
     public static ResPollComments empty() {
         return new ResPollComments();
     }
+
+    @Override
+    public String toString() {
+        return "ResPollComments{" +
+                "commentCount=" + commentCount +
+                ", comments=" + comments +
+                '}';
+    }
 }

@@ -54,14 +54,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/imageview_icon_download" />
 
-        <ImageView
-            android:id="@+id/iv_file_datail_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/imageview_icon_detailview" />
-
     </LinearLayout>
-
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_carousel"

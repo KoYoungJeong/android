@@ -248,14 +248,12 @@ public class MainTopicModel {
                 });
     }
 
-    public int getUnreadCount() {
+    public Observable<Integer> getUnreadCount() {
 
         return Observable.from(TeamInfoLoader.getInstance().getTopicList())
                 .filter(TopicRoom::isJoined)
                 .map(TopicRoom::getUnreadCount)
-                .scan((unreadCount1, unreadCount2) -> unreadCount1 + unreadCount2)
-                .toBlocking()
-                .firstOrDefault(0);
+                .scan((unreadCount1, unreadCount2) -> unreadCount1 + unreadCount2);
 
     }
 

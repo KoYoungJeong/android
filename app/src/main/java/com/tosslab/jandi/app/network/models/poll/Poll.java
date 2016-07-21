@@ -209,7 +209,7 @@ public class Poll {
         return isMine;
     }
 
-    public void setMine(boolean mine) {
+    public void setIsMine(boolean mine) {
         isMine = mine;
     }
 
