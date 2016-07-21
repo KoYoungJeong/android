@@ -44,30 +44,35 @@ public class PollRepository extends LockExecutorTemplate {
     }
 
     public boolean upsertPollStatus(long topicId, String status) {
-        if (topicId <= 0
-                || TextUtils.isEmpty(status)
-                || !(status.equals("created"))
-                || !(status.equals("finished"))
-                || !(status.equals("deleted"))) {
+        if (topicId <= 0 || TextUtils.isEmpty(status)) {
             return false;
         }
 
-        return execute(() -> {
-            try {
-                Dao<Poll, ?> dao = getHelper().getDao(Poll.class);
-                UpdateBuilder<Poll, ?> pollUpdateBuilder = dao.updateBuilder();
-                pollUpdateBuilder.updateColumnValue("status", status);
+        if (status.equals("created")
+                || status.equals("finished")
+                || status.equals("deleted")) {
 
-                pollUpdateBuilder.where()
-                        .eq("topicId", topicId);
+            return execute(() -> {
+                try {
+                    Dao<Poll, ?> dao = getHelper().getDao(Poll.class);
+                    UpdateBuilder<Poll, ?> pollUpdateBuilder = dao.updateBuilder();
+                    pollUpdateBuilder.updateColumnValue("status", status);
 
-                pollUpdateBuilder.update();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+                    pollUpdateBuilder.where()
+                            .eq("topicId", topicId);
 
-            return false;
-        });
+                    pollUpdateBuilder.update();
+
+                    return true;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                return false;
+            });
+        }
+
+        return false;
     }
 
     public boolean upsertPollVoteStatus(Poll poll) {
@@ -162,6 +167,22 @@ public class PollRepository extends LockExecutorTemplate {
             Poll poll = new Poll();
             poll.setId(-1);
             return poll;
+        });
+    }
+
+    public int clear(long teamId) {
+        return execute(() -> {
+            try {
+                Dao<Poll, ?> dao = getHelper().getDao(Poll.class);
+                DeleteBuilder<Poll, ?> deleteBuilder = dao.deleteBuilder();
+                deleteBuilder.where().eq("teamId", teamId);
+                return deleteBuilder.delete();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return 0;
+
         });
     }
 }
