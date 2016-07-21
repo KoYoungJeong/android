@@ -10,7 +10,6 @@ import com.baidu.android.pushservice.message.PublicMsg;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tosslab.jandi.app.push.receiver.JandiPushIntentService;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Map;
 
@@ -21,7 +20,6 @@ public class BaiduPushReceiver extends PushServiceReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        LogUtil.i(TAG, "onReceive");
         if (TextUtils.equals(intent.getAction(), "com.baidu.android.pushservice.action.notification.SHOW")) {
             String pushServicePackageName = intent.getStringExtra("pushService_package_name");
             String serviceName = intent.getStringExtra("service_name");
@@ -47,13 +45,12 @@ public class BaiduPushReceiver extends PushServiceReceiver {
     }
 
     private void sendNotificationService(Context context, PublicMsg publicMsg) {
-        LogUtil.d(TAG, "sendNotificationService");
         String customContent = publicMsg.mCustomContent;
         if (!TextUtils.isEmpty(customContent)) {
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 Map<String, String> map =
-                        objectMapper.readValue(customContent, new TypeReference<Map<String, String>>(){});
+                        objectMapper.readValue(customContent, new TypeReference<Map<String, String>>() {});
                 if (map != null && map.containsKey(KEY_PUSH_CONTENT)) {
                     String content = map.get(KEY_PUSH_CONTENT);
                     JandiPushIntentService.startService(context, content);

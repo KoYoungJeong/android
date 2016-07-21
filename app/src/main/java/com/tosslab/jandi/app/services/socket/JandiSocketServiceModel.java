@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.services.socket;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tosslab.jandi.app.JandiApplication;
@@ -37,8 +36,8 @@ import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.local.orm.domain.RoomLinkRelation;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
-import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
+import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.BotRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
@@ -245,7 +244,7 @@ public class JandiSocketServiceModel {
         messageEventActorMapper.put(SocketConnectBotCreatedEvent.class, this::onConnectBotCreated);
         messageEventActorMapper.put(SocketConnectBotDeletedEvent.class, this::onConnectBotDeleted);
         messageEventActorMapper.put(SocketConnectBotUpdatedEvent.class, this::onConnectBotUpdated);
-        messageEventActorMapper.put(SocketTopicLeftEvent.class, this::onTeamLeft);
+        messageEventActorMapper.put(SocketTopicLeftEvent.class, this::onTopicLeft);
         messageEventActorMapper.put(SocketTopicDeletedEvent.class, this::onTopicDeleted);
         messageEventActorMapper.put(SocketTopicCreatedEvent.class, this::onTopicCreated);
         messageEventActorMapper.put(SocketTopicInvitedEvent.class, this::onTopicInvited);
@@ -494,8 +493,12 @@ public class JandiSocketServiceModel {
             TopicRepository.getInstance().removeMember(data.getTopicId(), data.getMemberId());
             RoomMarkerRepository.getInstance().deleteMarker(data.getTopicId(), data.getMemberId());
             JandiPreference.setSocketConnectedLastTime(event.getTs());
+
+            PollRepository.getInstance().upsertPollStatus(data.getTopicId(), "deleted");
+
             postEvent(new TopicDeleteEvent(event.getTeamId(), data.getTopicId()));
             postEvent(new RetrieveTopicListEvent());
+            postEvent(new RequestRefreshPollBadgeCountEvent(event.getTeamId()));
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
         }
@@ -840,6 +843,7 @@ public class JandiSocketServiceModel {
                             InitialInfoRepository.getInstance().removeInitialInfo(data.getTeamId());
                             JandiPreference.setSocketConnectedLastTime(-1);
 
+                            PollRepository.getInstance().clear(data.getTeamId());
                             TeamInfoLoader instance = TeamInfoLoader.getInstance();
                             instance = null;
                         });
@@ -879,6 +883,8 @@ public class JandiSocketServiceModel {
                             InitialInfoRepository.getInstance().removeInitialInfo(teamId);
                             JandiPreference.setSocketConnectedLastTime(-1);
 
+                            PollRepository.getInstance().clear(teamId);
+
                             TeamInfoLoader instance = TeamInfoLoader.getInstance();
                             instance = null;
                         });
@@ -903,9 +909,11 @@ public class JandiSocketServiceModel {
             RoomMarkerRepository.getInstance().deleteMarker(data.getRoomId(), TeamInfoLoader.getInstance().getMyId());
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
+            PollRepository.getInstance().upsertPollStatus(data.getRoomId(), "deleted");
 
             postEvent(new TopicKickedoutEvent(data.getRoomId(), data.getTeamId()));
             postEvent(new RetrieveTopicListEvent());
+            postEvent(new RequestRefreshPollBadgeCountEvent(event.getTeamId()));
 
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
@@ -1291,19 +1299,15 @@ public class JandiSocketServiceModel {
 
     public void updateEventHistory() {
 
-        Map<String, List<EventHistoryInfo>> updateBatchMapper;
-        updateBatchMapper = new HashMap<>();
-
         long socketConnectedLastTime = JandiPreference.getSocketConnectedLastTime();
-        EventBus.getDefault().post(new EventUpdateStart());
         getEventHistory(socketConnectedLastTime)
                 .filter(it -> messageEventActorMapper.containsKey(it.getClass()))
                 .toSortedList((lhs, rhs) -> ((Long) (lhs.getTs() - rhs.getTs())).intValue())
                 .filter(it -> !it.isEmpty())
+                .doOnSubscribe(() -> EventBus.getDefault().post(new EventUpdateStart()))
                 .subscribe(eventInfos -> {
                     EventBus eventBus = EventBus.getDefault();
                     int eventSize = eventInfos.size();
-                    eventBus.post(new EventUpdateInProgress(0, eventSize));
 
                     if (!eventInfos.isEmpty()) {
                         if (accountRefreshSubject != null && !accountRefreshSubscribe.isUnsubscribed()) {
@@ -1316,37 +1320,35 @@ public class JandiSocketServiceModel {
                         EventHistoryInfo eventInfo;
                         for (int index = 0; index < eventSize; index++) {
                             eventInfo = eventInfos.get(index);
-                            eventBus.post(new EventUpdateInProgress(index + 1, eventSize));
                             Command command = messageEventActorMapper.get(eventInfo.getClass());
                             if (command != null) {
                                 command.command(eventInfo);
                             }
+                            eventBus.post(new EventUpdateInProgress(index, eventSize));
                         }
-                        eventBus.post(new EventUpdateFinish());
                     } else {
 
                         boolean successRefresh = false;
                         int messageCreateEventCount = 0;
 
-                        updateBatchMapper.put("message_created", new ArrayList<>());
-                        updateBatchMapper.put("etc", new ArrayList<>());
+                        List<EventHistoryInfo> messageCreates = new ArrayList<>();
+                        List<EventHistoryInfo> etcEvents = new ArrayList<>();
 
                         EventHistoryInfo eventInfo;
                         for (int idx = 0, eventInfosSize = eventInfos.size(); idx < eventInfosSize; idx++) {
                             eventInfo = eventInfos.get(idx);
-                            String eventName;
                             if (eventInfo instanceof SocketMessageCreatedEvent) {
-                                SocketMessageCreatedEvent event = (SocketMessageCreatedEvent) eventInfo;
-//                                doAfterMessageCreated(event.getData().getLinkMessage());
-                                eventName = "message_created";
+                                messageCreates.add(eventInfo);
                                 messageCreateEventCount++;
                             } else {
-                                eventName = "etc";
+                                etcEvents.add(eventInfo);
                             }
 
-                            updateBatchMapper.get(eventName).add(eventInfo);
                             eventBus.post(new EventUpdateInProgress(messageCreateEventCount, eventSize));
                         }
+
+
+                        bulkInsertMessage(messageCreates);
 
                         try {
                             long teamId = TeamInfoLoader.getInstance().getTeamId();
@@ -1364,16 +1366,11 @@ public class JandiSocketServiceModel {
                             successRefresh = false;
                         }
 
-
-                        bulkInsertMessage(updateBatchMapper.get("message_created"));
-
-                        List<EventHistoryInfo> etc = updateBatchMapper.get("etc");
-                        if (etc != null && !etc.isEmpty()) {
+                        if (!etcEvents.isEmpty()) {
 
                             EventHistoryInfo eventHistoryInfo;
-                            for (int idx = 0, etcSize = etc.size(); idx < etcSize; idx++) {
-                                eventHistoryInfo = etc.get(idx);
-                                eventBus.post(new EventUpdateInProgress(messageCreateEventCount + idx + 1, eventSize));
+                            for (int idx = 0, etcSize = etcEvents.size(); idx < etcSize; idx++) {
+                                eventHistoryInfo = etcEvents.get(idx);
                                 if (successRefresh) {
                                     proccessMessageEventIfTooMuch(eventHistoryInfo);
                                 } else {
@@ -1382,6 +1379,7 @@ public class JandiSocketServiceModel {
                                         command.command(eventHistoryInfo);
                                     }
                                 }
+                                eventBus.post(new EventUpdateInProgress(messageCreateEventCount + idx + 1, eventSize));
                             }
                         }
                     }
@@ -1396,15 +1394,14 @@ public class JandiSocketServiceModel {
     }
 
     private void bulkInsertMessage(List<EventHistoryInfo> messageCreateEvents) {
-        List<EventHistoryInfo> eventHistoryInfos = messageCreateEvents;
 
-        if (eventHistoryInfos != null) {
+        if (messageCreateEvents != null) {
             // Message 넣기
             List<ResMessages.Link> links = new ArrayList<>();
             List<RoomLinkRelation> relations = new ArrayList<>();
             List<Long> linkMessageIds = new ArrayList<>();
             ResMessages.Link linkMessage;
-            for (EventHistoryInfo eventHistoryInfo : eventHistoryInfos) {
+            for (EventHistoryInfo eventHistoryInfo : messageCreateEvents) {
                 linkMessage = ((SocketMessageCreatedEvent) eventHistoryInfo).getData().getLinkMessage();
                 links.add(linkMessage);
 
@@ -1430,7 +1427,7 @@ public class JandiSocketServiceModel {
             MessageRepository.getRepository().updateDirty(relations);
             SendMessageRepository.getRepository().deleteCompletedMessages(linkMessageIds);
 
-            for (EventHistoryInfo eventHistoryInfo : eventHistoryInfos) {
+            for (EventHistoryInfo eventHistoryInfo : messageCreateEvents) {
                 postEvent(eventHistoryInfo);
             }
 
@@ -1588,6 +1585,7 @@ public class JandiSocketServiceModel {
 
             }
         })
+                .doOnNext(it -> LogUtil.d(TAG, "Sorted start : " + new Date().toString()))
                 .concatMap(resEventHistory -> Observable.from(resEventHistory.getRecords()))
                 .filter(SocketEventVersionModel::validVersion);
     }
