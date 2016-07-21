@@ -161,13 +161,11 @@ public class JandiSocketServiceModel {
     private final Lazy<LoginApi> loginApi;
     private final Lazy<EventsApi> eventsApi;
     private final Lazy<PollApi> pollApi;
+    PublishSubject<Object> eventPublisher;
     private Lazy<StartApi> startApi;
-
     private PublishSubject<SocketRoomMarkerEvent> accountRefreshSubject;
     private Subscription accountRefreshSubscribe;
     private Map<Class<? extends EventHistoryInfo>, Command> messageEventActorMapper;
-
-    PublishSubject<Object> eventPublisher;
     private Subscription eventSubscribe;
 
     @Inject
@@ -1191,11 +1189,16 @@ public class JandiSocketServiceModel {
         try {
             SocketTopicDeletedEvent event = getObject(object, SocketTopicDeletedEvent.class);
             long topicId = event.getData().getTopicId();
+
             TopicRepository.getInstance().deleteTopic(topicId);
             RoomMarkerRepository.getInstance().deleteMarkers(topicId);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
+
+            PollRepository.getInstance().upsertPollStatus(topicId, "deleted");
+
             postEvent(new TopicDeleteEvent(event.getTeamId(), topicId));
             postEvent(new RetrieveTopicListEvent());
+            postEvent(new RequestRefreshPollBadgeCountEvent(event.getTeamId()));
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
         }

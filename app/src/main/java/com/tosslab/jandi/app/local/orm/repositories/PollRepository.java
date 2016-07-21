@@ -35,9 +35,37 @@ public class PollRepository extends LockExecutorTemplate {
             try {
                 Dao<Poll, ?> dao = getHelper().getDao(Poll.class);
                 dao.createOrUpdate(poll);
+                return true;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            return false;
+        });
+    }
+
+    public boolean upsertPollStatus(long topicId, String status) {
+        if (topicId <= 0
+                || TextUtils.isEmpty(status)
+                || !(status.equals("created"))
+                || !(status.equals("finished"))
+                || !(status.equals("deleted"))) {
+            return false;
+        }
+
+        return execute(() -> {
+            try {
+                Dao<Poll, ?> dao = getHelper().getDao(Poll.class);
+                UpdateBuilder<Poll, ?> pollUpdateBuilder = dao.updateBuilder();
+                pollUpdateBuilder.updateColumnValue("status", status);
+
+                pollUpdateBuilder.where()
+                        .eq("topicId", topicId);
+
+                pollUpdateBuilder.update();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
             return false;
         });
     }
