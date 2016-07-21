@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -35,6 +36,10 @@ public class TopicDetailModel {
     public TopicDetailModel(Lazy<RoomsApi> roomsApi) {
         this.roomsApi = roomsApi;
         this.entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());;
+    }
+
+    public TopicRoom getTopic(long entityId) {
+        return TeamInfoLoader.getInstance().getTopic(entityId);
     }
 
     public String getTopicName(long entityId) {

@@ -76,7 +76,6 @@ public class JandiPushIntentService extends IntentService {
         }
 
         BaseMessagePushInfo messagePushInfo = (BaseMessagePushInfo) basePushInfo;
-        LogUtil.i(TAG, messagePushInfo.toString());
         // writerId 가 본인 ID 면 작성자가 본인인 노티이기 때문에 무시한다.
         if (isMyEntityId(messagePushInfo.getWriterId())) {
             return;

@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.services.socket.to;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
@@ -12,7 +10,7 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@JsonDeserialize(using = JsonDeserializer.None.class)
+
 @Version(2)
 public class SocketAnnouncementUpdatedEvent implements EventHistoryInfo {
     private String event;

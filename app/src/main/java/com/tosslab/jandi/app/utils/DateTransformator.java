@@ -69,7 +69,7 @@ public class DateTransformator {
 
     @Nullable
     public static String getRemainingDays(Date date) {
-        if (new Date().compareTo(date) >= 0) {
+        if (date == null || new Date().compareTo(date) >= 0) {
             return "";
         }
 
