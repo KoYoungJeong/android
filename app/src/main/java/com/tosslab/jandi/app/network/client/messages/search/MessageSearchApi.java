@@ -40,7 +40,7 @@ public class MessageSearchApi extends ApiTemplate<MessageSearchApi.Api> {
 
     interface Api {
 
-        // Message Search
+        // Message ReqSearch
         @GET("teams/{teamId}/search/messages")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResMessageSearch> searchMessages(@Path("teamId") long teamId, @Query("q") String query, @Query("page") int page,

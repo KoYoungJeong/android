@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.network.client.sticker.StickerApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.client.teams.folder.FolderApi;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
+import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
 import com.tosslab.jandi.app.network.client.validation.ValidationApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 
@@ -198,4 +199,10 @@ public class ApiClientModule {
     PollApi providePollApi(RetrofitBuilder retrofitBuilder) {
         return new PollApi(retrofitBuilder);
     }
+
+    @Provides
+    SearchApi provideSearchApi(RetrofitBuilder retrofitBuilder) {
+        return new SearchApi(retrofitBuilder);
+    }
+
 }

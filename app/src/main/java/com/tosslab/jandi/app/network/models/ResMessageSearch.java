@@ -85,6 +85,7 @@ public class ResMessageSearch {
         }
     }
 
+    // Todo 삭제 예정
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class SearchRecord {

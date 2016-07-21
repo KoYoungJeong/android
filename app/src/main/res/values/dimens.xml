@@ -87,7 +87,7 @@
     <dimen name="jandi_file_detail_comment_name_margin_right">6dp</dimen>
     <dimen name="jandi_file_detail_comment_message_margin_top">12dp</dimen>
 
-    <!-- File Search -->
+    <!-- File ReqSearch -->
     <dimen name="jandi_file_search_tab_height">50dp</dimen>
     <dimen name="jandi_file_search_tab_text">14sp</dimen>
     <dimen name="jandi_file_search_tab_icon_members_width">18dp</dimen>
