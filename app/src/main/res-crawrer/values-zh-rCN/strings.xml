@@ -296,6 +296,7 @@
 	<string name="jandi_insert_team_domain">"请输入团队网域"</string>
 	<string name="jandi_insert_team_name">"请输入团队名称"</string>
 	<string name="jandi_invitation">"邀请"</string>
+	<string name="jandi_invitation_for_admin">"你的团队设定未允许非成员进入团队，欲更改设定，请进入团队设定 > 邀请设定"</string>
 	<string name="jandi_invitation_help">"邀请其他团队成员加入JANDI"</string>
 	<string name="jandi_invitation_succeed">"邀请成功"</string>
 	<string name="jandi_invite_app_not_installed">"JANDI应用程序尚未安装于你的行动装置，所以我们暂时将邀请链接复制到剪贴簿。"</string>
@@ -459,6 +460,7 @@
 	<string name="jandi_question_team_create">"您的团队还未使用JANDI吗？"</string>
 	<string name="jandi_r_u_sure_cancel_invitation">"你确定取消邀请？"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"你确认要删除这个电子邮件地址？"</string>
+	<string name="jandi_reject_to_invitation_of_admin">"仅限于团队管理员可取消邀请，请联络团队管理员"</string>
 	<string name="jandi_reorder_from_long_press">"长按并且拖拉资料夹更改排列顺序"</string>
 	<string name="jandi_resend_invitation">"重新寄发邀请"</string>
 	<string name="jandi_retry">"请再试一次"</string>

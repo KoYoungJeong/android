@@ -88,8 +88,8 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     public void moveToMainActivity() {
         Intent intent = MainTabActivity_.intent(IntroActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        | Intent.FLAG_ACTIVITY_NEW_TASK
-                        | Intent.FLAG_ACTIVITY_CLEAR_TASK).get();
+                        | Intent.FLAG_ACTIVITY_NEW_TASK).get();
+
         startActivity(intent);
         finish();
     }
