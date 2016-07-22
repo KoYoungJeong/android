@@ -18,8 +18,6 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
-import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
-import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -36,14 +34,12 @@ import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqNull;
-import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.network.models.messages.ReqMessage;
 import com.tosslab.jandi.app.network.models.dynamicl10n.FormatParam;
 import com.tosslab.jandi.app.network.models.dynamicl10n.PollFinished;
+import com.tosslab.jandi.app.network.models.messages.ReqMessage;
 import com.tosslab.jandi.app.network.models.start.Marker;
-import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -81,9 +77,7 @@ import java.util.concurrent.ExecutionException;
 import javax.inject.Inject;
 
 import dagger.Lazy;
-import de.greenrobot.event.EventBus;
 import rx.Observable;
-import rx.functions.Func0;
 
 @EBean
 public class MessageListModel {
@@ -197,12 +191,10 @@ public class MessageListModel {
 
             trackMessagePostSuccess();
 
-            EventBus.getDefault().post(new SendCompleteEvent(localId, link.id));
             return link.id;
         } catch (RetrofitException e) {
             SendMessageRepository.getRepository().updateSendMessageStatus(
                     localId, SendMessage.Status.FAIL);
-            EventBus.getDefault().post(new SendFailEvent(localId));
 
             int errorCode = e.getStatusCode();
             trackMessagePostFail(errorCode);
@@ -211,7 +203,6 @@ public class MessageListModel {
 
             SendMessageRepository.getRepository().updateSendMessageStatus(
                     localId, SendMessage.Status.FAIL);
-            EventBus.getDefault().post(new SendFailEvent(localId));
 
             trackMessagePostFail(-1);
             return -1;
@@ -350,45 +341,13 @@ public class MessageListModel {
         return messageManipulator.getBeforeMarkerMessage(linkId, MessageManipulator.MAX_OF_MESSAGES);
     }
 
-    public ResMessages getAfterMarkerMessage(long linkId, int count) throws RetrofitException {
+    public ResMessages getAfterMessage(long linkId, int count) throws RetrofitException {
         return messageManipulator.getAfterMarkerMessage(linkId, count);
     }
 
     public void upsertMyMarker(long roomId, long lastLinkId) {
         long myId = TeamInfoLoader.getInstance().getMyId();
         RoomMarkerRepository.getInstance().upsertRoomMarker(roomId, myId, lastLinkId);
-    }
-
-    public long sendStickerMessage(long teamId, long entityId, StickerInfo stickerInfo, long localId) {
-
-        String type = null;
-
-        ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), teamId, entityId, type, "", new ArrayList<>());
-
-
-        try {
-            ResCommon resCommon = stickerApi.get().sendSticker(reqSendSticker);
-//            MessageRepository.getRepository().upsertMessage(resCommon);
-
-            SendMessageRepository.getRepository()
-                    .updateSendMessageStatus(localId, resCommon.id, SendMessage.Status.COMPLETE);
-
-            trackMessagePostSuccess();
-            EventBus.getDefault().post(new SendCompleteEvent(localId, resCommon.id));
-
-            return resCommon.id;
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-
-            SendMessageRepository.getRepository()
-                    .updateSendMessageStatus(localId, SendMessage.Status.FAIL);
-            EventBus.getDefault().post(new SendFailEvent(localId));
-
-            int errorCode = e.getStatusCode();
-            trackMessagePostFail(errorCode);
-            return -1;
-        }
-
     }
 
     private void trackMessagePostSuccess() {
@@ -493,23 +452,7 @@ public class MessageListModel {
     }
 
     public void upsertMessages(long roomId, List<ResMessages.Link> messages) {
-        Observable.from(messages)
-                .doOnNext(link -> {
-                    // 삭제된 파일/코멘트/메세지만 처리
-                    if (TextUtils.equals(link.status, "archived")) {
-                        if (!(link.message instanceof ResMessages.FileMessage)) {
-                            MessageRepository.getRepository().deleteMessageOfMessageId(link.messageId);
-                        } else {
-                            MessageRepository.getRepository()
-                                    .upsertFileMessage((ResMessages.FileMessage) link.message);
-                        }
-                    }
-                })
-                .filter(link -> {
-                    // 이벤트와 삭제된 메세지는 처리 됐으므로..
-                    return !TextUtils.equals(link.status, "archived");
-                })
-                .collect((Func0<List<ResMessages.Link>>) ArrayList::new, List::add)
+        Observable.just(messages)
                 .subscribe(links -> {
 
                     List<Long> messageIds = new ArrayList<>();

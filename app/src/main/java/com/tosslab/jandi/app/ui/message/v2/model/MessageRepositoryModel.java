@@ -110,7 +110,7 @@ public class MessageRepositoryModel {
                 }
                 dummyMessageLink.message.writerId = TeamInfoLoader.getInstance().getMyId();
                 dummyMessageLink.message.createTime = new Date();
-                dummyMessageLink.messageId = sendMessage.getMessageId();
+                dummyMessageLink.id = sendMessage.getMessageId();
 
                 dummyLinks.add(dummyMessageLink);
             }
@@ -122,6 +122,38 @@ public class MessageRepositoryModel {
         }
 
         return oldMessages;
+    }
+
+    public List<ResMessages.Link> getAfterMessages(long startLinkId) {
+        List<ResMessages.Link> messages = new ArrayList<>();
+
+
+        boolean hasMore = true;
+
+        ResMessages afterMarkerMessage;
+        long linkId = startLinkId;
+        while (hasMore) {
+            try {
+                afterMarkerMessage = messageManipulator.getAfterMarkerMessage(linkId, MessageManipulator.MAX_OF_MESSAGES);
+            } catch (RetrofitException retrofitError) {
+                return messages;
+            }
+
+            if (afterMarkerMessage != null
+                    && afterMarkerMessage.records != null
+                    && !afterMarkerMessage.records.isEmpty()) {
+                messages.addAll(afterMarkerMessage.records);
+                long lastLinkId = afterMarkerMessage.records.get(afterMarkerMessage.records.size() - 1).id;
+
+                hasMore = lastLinkId < afterMarkerMessage.lastLinkId;
+                linkId = lastLinkId;
+            } else {
+                hasMore = false;
+            }
+        }
+
+
+        return messages;
     }
 
 }
