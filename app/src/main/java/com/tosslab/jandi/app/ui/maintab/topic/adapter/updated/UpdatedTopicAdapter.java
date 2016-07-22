@@ -226,6 +226,11 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return -1;
     }
 
+    public void stopAnimation() {
+        if (colorAnimator != null) {
+            colorAnimator.cancel();
+        }
+    }
 
     private enum AnimStatus {
         READY, IN_ANIM, FINISH, IDLE
