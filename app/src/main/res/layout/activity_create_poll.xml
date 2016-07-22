@@ -89,7 +89,7 @@
                     android:id="@+id/btn_create_poll_duedate"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="70"
+                    android:layout_weight="65"
                     android:background="@drawable/bg_poll_create_edittext"
                     android:orientation="horizontal">
 
@@ -98,9 +98,9 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="2016년 7월"
+                        android:text="2016년 04월 27일"
                         android:textColor="@color/jandi_text"
-                        android:textSize="16sp"/>
+                        android:textSize="16dp"/>
 
                     <View
                         android:layout_width="10dp"
@@ -115,7 +115,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="16dp"
-                    android:layout_weight="30"
+                    android:layout_weight="35"
                     android:background="@drawable/bg_poll_create_edittext"
                     android:orientation="horizontal">
 
@@ -126,7 +126,7 @@
                         android:layout_weight="1"
                         android:text="3시"
                         android:textColor="@color/jandi_text"
-                        android:textSize="16sp"/>
+                        android:textSize="16dp"/>
 
                     <View
                         android:layout_width="10dp"
