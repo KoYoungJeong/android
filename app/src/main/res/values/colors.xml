@@ -157,7 +157,7 @@
     <color name="jandi_file_detail_bg">#FFFFFF</color>
     <color name="jand_detail_page_date">#999999</color>
     <color name="jandi_file_detail_comment_text">#333333</color>
-    <color name="jandi_file_detail_comments_bg">#F6F6F6</color>
+    <color name="jandi_file_detail_comments_bg">@color/rgb_f6f6f6</color>
     <color name="jandi_file_detail_type_text">#999999</color>
     <color name="jandi_file_detail_share_text">@color/jandi_primary_color</color>
     <color name="jandi_file_detail_tab_to_view_bg">#FFD5D5D5</color>
@@ -280,6 +280,7 @@
     <color name="rgb_00abe8">#FF00ABE8</color>
     <color name="rgb_dd2c00">#FFDD2C00</color>
     <color name="rgb_b3b3b3">#FFB3B3B3</color>
+    <color name="rgb_f6f6f6">#FFF6F6F6</color>
 
     <color name="jandi_web_button_retry_background_selected">#FFE0E0E0</color>
     <color name="jandi_web_button_retry_background">#FFFFFFFF</color>
