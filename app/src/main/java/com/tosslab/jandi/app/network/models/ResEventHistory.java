@@ -15,6 +15,8 @@ public class ResEventHistory {
     private long lastTs;
     private List<EventHistoryInfo> records;
 
+
+
     public int getSize() {
         return size;
     }

@@ -6,7 +6,6 @@ import com.baidu.android.pushservice.PushMessageReceiver;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.push.PushTokenRegister;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.List;
 
@@ -44,7 +43,6 @@ public class BaiduRegistrationReceiver extends PushMessageReceiver {
 
         if (errorCode == 0) {
             // channelId = push key
-            LogUtil.i(TAG, "channelId = " + channelId);
             PushTokenRepository.getInstance().upsertPushToken(new PushToken("baidu", channelId));
             PushTokenRegister.getInstance().updateToken();
         }
@@ -53,8 +51,6 @@ public class BaiduRegistrationReceiver extends PushMessageReceiver {
     @Override
     public void onMessage(Context context, String message,
                           String customContentString) {
-        LogUtil.d(TAG, "onMessageDeleted");
-
     }
 
     @Override

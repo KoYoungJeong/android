@@ -293,9 +293,10 @@
 	<string name="jandi_input_user_name">"検索するメンバーの名前を入力"</string>
 	<string name="jandi_insert_new_department">"(新しい部署)"</string>
 	<string name="jandi_insert_new_job_title">"(新しい役職）"</string>
-	<string name="jandi_insert_team_domain">"チームドメインを入力してください。"</string>
-	<string name="jandi_insert_team_name">"チーム名を入力してください。"</string>
+	<string name="jandi_insert_team_domain">"チームドメインを入力"</string>
+	<string name="jandi_insert_team_name">"チーム名を入力"</string>
 	<string name="jandi_invitation">"招待"</string>
+	<string name="jandi_invitation_for_admin">"現在の設定では、チーム管理者のみメンバーを招待することができます。"</string>
 	<string name="jandi_invitation_help">"あなたのチームメンバーをJANDIに招待しましょう！"</string>
 	<string name="jandi_invitation_succeed">"招待しました"</string>
 	<string name="jandi_invite_app_not_installed">"このアプリはインストールされていません。招待リンクをクリップボードにコピーしました"</string>
@@ -461,6 +462,7 @@
 	<string name="jandi_question_team_create">"JANDIにチームを作成していない方はこちら"</string>
 	<string name="jandi_r_u_sure_cancel_invitation">"本当に招待をキャンセルしますか?"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"プライマリアドレスは削除できません"</string>
+	<string name="jandi_reject_to_invitation_of_admin">"管理者のみ招待を取り消すことができます。詳しくは管理者に問い合わせください。"</string>
 	<string name="jandi_reorder_from_long_press">"フォルダを長押しして順番が調整できます。"</string>
 	<string name="jandi_resend_invitation">"招待メールを再発信"</string>
 	<string name="jandi_retry">"もう一度試す"</string>
@@ -559,6 +561,7 @@
 	<string name="jandi_success_update_account_profile">"アカウント情報が更新されました"</string>
 	<string name="jandi_success_web_token">"ログインしました。"</string>
 	<string name="jandi_switch_team">"チーム切替"</string>
+	<string name="jandi_syncing_message">"メッセージ同期中"</string>
 	<string name="jandi_tab_chat">"チャット"</string>
 	<string name="jandi_tab_direct_message">"ダイレクトメッセージ"</string>
 	<string name="jandi_tab_file">"ファイル"</string>
