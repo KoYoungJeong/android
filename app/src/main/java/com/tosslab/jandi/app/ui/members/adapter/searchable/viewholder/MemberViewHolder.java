@@ -33,7 +33,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tee on 16. 7. 12..
  */
-public class MemberViewHolder<T> extends BaseViewHolder<T> {
+public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
 
     @Bind(R.id.iv_profile)
     ImageView ivProfile;
@@ -70,15 +70,21 @@ public class MemberViewHolder<T> extends BaseViewHolder<T> {
     private boolean isSelectMode = false;
     private boolean isProfileImageClickable = false;
 
-    public MemberViewHolder(View itemView) {
+    protected MemberViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
     }
 
-    public static MemberViewHolder newInstance(ViewGroup parent) {
+    public static MemberViewHolder createForUser(ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.item_entity_body_two_line, parent, false);
-        return new MemberViewHolder(itemView);
+        return new UserViewHolder(itemView);
+    }
+
+    public static MemberViewHolder createForChatChooseItem(ViewGroup parent) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View itemView = inflater.inflate(R.layout.item_entity_body_two_line, parent, false);
+        return new ChatChooseItemViewHolder(itemView);
     }
 
     public void setKickMode(boolean kickMode) {
@@ -101,32 +107,12 @@ public class MemberViewHolder<T> extends BaseViewHolder<T> {
         ivUserKick.setOnClickListener(onKickClickListener);
     }
 
-    @Override
-    public void onBindView(T t) {
-        if (t instanceof ChatChooseItem) {
-            bindView((ChatChooseItem) t);
-        } else if (t instanceof User) {
-            User userItem = (User) t;
-            ChatChooseItem item = new ChatChooseItem();
-            item.name(userItem.getName());
-            item.email(userItem.getEmail());
-            item.inactive(userItem.isInactive());
-            item.isBot(userItem.isBot());
-            item.photoUrl(userItem.getPhotoUrl());
-            item.jobTitle(userItem.getPosition());
-            item.department(userItem.getDivision());
-            item.enabled(userItem.isEnabled());
-            item.owner(userItem.isTeamOwner());
-            bindView(item);
-        }
-    }
-
-    private void bindView(ChatChooseItem item) {
+    protected void bindView(ChatChooseItem item) {
         setProfileImage(item);
 
         measureContentWidth(item);
 
-        insertContents(item);
+        setUserInfo(item);
 
         long myId = TeamInfoLoader.getInstance().getMyId();
 
@@ -156,7 +142,7 @@ public class MemberViewHolder<T> extends BaseViewHolder<T> {
         }
     }
 
-    private void insertContents(ChatChooseItem item) {
+    private void setUserInfo(ChatChooseItem item) {
         if (!item.isInactive()) {
             setName(item.getName(), item.isEnabled());
         } else {
@@ -304,4 +290,27 @@ public class MemberViewHolder<T> extends BaseViewHolder<T> {
         }
     }
 
+    private static class ChatChooseItemViewHolder extends MemberViewHolder<ChatChooseItem> {
+
+        ChatChooseItemViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        public void onBindView(ChatChooseItem item) {
+            bindView(item);
+        }
+    }
+
+    private static class UserViewHolder extends MemberViewHolder<User> {
+
+        UserViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        public void onBindView(User item) {
+            bindView(ChatChooseItem.create(item));
+        }
+    }
 }

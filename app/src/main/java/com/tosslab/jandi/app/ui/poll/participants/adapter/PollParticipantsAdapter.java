@@ -26,7 +26,7 @@ public class PollParticipantsAdapter extends MultiItemRecyclerAdapter {
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_MEMBER) {
-            return MemberViewHolder.newInstance(parent);
+            return MemberViewHolder.createForUser(parent);
         } else if (viewType == VIEW_TYPE_TITLE) {
             return PollOptionTitleViewHolder.newInstance(parent);
         }

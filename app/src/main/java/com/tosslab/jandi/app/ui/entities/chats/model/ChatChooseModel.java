@@ -105,23 +105,7 @@ public class ChatChooseModel {
                 .filter(user -> user.getId() != myId)
                 .filter(user -> !TeamInfoLoader.getInstance().isJandiBot(user.getId()))
                 .filter(user -> !TextUtils.isEmpty(user.getName()) && user.getName().toLowerCase().contains(name.toLowerCase()))
-                .map(user -> {
-                    ChatChooseItem chatChooseItem = new ChatChooseItem();
-
-                    chatChooseItem.entityId(user.getId())
-                            .statusMessage(user.getStatusMessage())
-                            .name(user.getName())
-                            .starred(TeamInfoLoader.getInstance().isStarredUser(user.getId()))
-                            .enabled(user.isEnabled())
-                            .inactive(user.isInactive())
-                            .department(user.getDivision())
-                            .jobTitle(user.getPosition())
-                            .email(user.getEmail())
-                            .owner(user.isTeamOwner())
-                            .photoUrl(user.getPhotoUrl());
-
-                    return chatChooseItem;
-                })
+                .map(ChatChooseItem::create)
                 .mergeWith(Observable.create(subscriber -> {
                     // 잔디봇이 포함되어 있고 잔디봇의 이름이 포함되어 있는 경우 추가한다
                     if (hasJandiBot()) {
@@ -172,23 +156,7 @@ public class ChatChooseModel {
                 .filter(user -> user.getId() != myId)
                 .filter(user -> !TeamInfoLoader.getInstance().isJandiBot(user.getId()))
                 .filter(User::isEnabled)
-                .map(user -> {
-                    ChatChooseItem chatChooseItem = new ChatChooseItem();
-
-                    chatChooseItem.entityId(user.getId())
-                            .statusMessage(user.getStatusMessage())
-                            .name(user.getName())
-                            .starred(TeamInfoLoader.getInstance().isStarredUser(user.getId()))
-                            .enabled(true)
-                            .inactive(user.isInactive())
-                            .department(user.getDivision())
-                            .jobTitle(user.getPosition())
-                            .email(user.getEmail())
-                            .owner(user.isTeamOwner())
-                            .photoUrl(user.getPhotoUrl());
-
-                    return chatChooseItem;
-                })
+                .map(ChatChooseItem::create)
                 .mergeWith(Observable.create(subscriber -> {
                     if (hasJandiBot()) {
                         subscriber.onNext(getJandiBot());
@@ -213,7 +181,7 @@ public class ChatChooseModel {
                 .name(bot.getName())
                 .owner(false)
                 .photoUrl(bot.getPhotoUrl())
-                .starred(TeamInfoLoader.getInstance().isStarredUser(bot.getId()));
+                .starred(bot.isStarred());
     }
 
     private boolean hasJandiBot() {

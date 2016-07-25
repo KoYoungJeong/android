@@ -77,7 +77,7 @@ public class ChatChooseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         if (viewType == TYPE_NORMAL) {
-            return MemberViewHolder.newInstance(parent);
+            return MemberViewHolder.createForChatChooseItem(parent);
         } else if (viewType == TYPE_QUERY_EMPTY) {
             return EmptySearchedMemberViewHolder.newInstance(parent);
         } else {

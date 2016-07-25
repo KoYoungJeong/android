@@ -40,7 +40,7 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return MemberViewHolder.newInstance(parent);
+        return MemberViewHolder.createForChatChooseItem(parent);
     }
 
     @Override

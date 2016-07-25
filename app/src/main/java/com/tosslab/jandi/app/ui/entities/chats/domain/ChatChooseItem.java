@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.entities.chats.domain;
 
+import com.tosslab.jandi.app.team.member.User;
+
 /**
  * Created by Steve SeongUg Jung on 15. 1. 14..
  */
@@ -17,6 +19,23 @@ public class ChatChooseItem {
     private boolean isInactive;
     private boolean isChooseItem = false;
     private boolean isOwner = false;
+
+    public ChatChooseItem() {
+    }
+
+    public static ChatChooseItem create(User user) {
+        return new ChatChooseItem().entityId(user.getId())
+                .statusMessage(user.getStatusMessage())
+                .photoUrl(user.getPhotoUrl())
+                .starred(user.isStarred())
+                .enabled(user.isEnabled())
+                .inactive(user.isInactive())
+                .email(user.getEmail())
+                .department(user.getDivision())
+                .jobTitle(user.getPosition())
+                .owner(user.isTeamOwner())
+                .name(user.getName());
+    }
 
     public ChatChooseItem name(String name) {
         this.name = name;
