@@ -276,7 +276,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
                     AnalyticsValue.Action.Resend);
             JandiPreference.setEmailAuthSendTime();
         } else {
-            ColoredToast.show(R.string.jandi_mail_sending);
+            ColoredToast.showGray(R.string.jandi_mail_sending);
         }
     }
 

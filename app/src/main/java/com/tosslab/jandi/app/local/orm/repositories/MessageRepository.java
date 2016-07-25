@@ -47,6 +47,27 @@ public class MessageRepository extends LockExecutorTemplate {
         });
     }
 
+    public boolean isDirty(long roomId, long linkId) {
+        return execute(() -> {
+
+            try {
+                Dao<RoomLinkRelation, Object> dao = getDao(RoomLinkRelation.class);
+                return dao.queryBuilder()
+                        .where()
+                        .eq("roomId", roomId)
+                        .and()
+                        .eq("linkId", linkId)
+                        .and()
+                        .eq("dirty", true)
+                        .countOf() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return true;
+        });
+    }
+
     public boolean updateDirty(long roomId, long linkId) {
         return execute(() -> {
             try {

@@ -297,6 +297,7 @@
 	<string name="jandi_insert_team_domain">"팀 도메인을 입력해 주세요"</string>
 	<string name="jandi_insert_team_name">"팀 이름을 입력해 주세요"</string>
 	<string name="jandi_invitation">"팀으로 초대"</string>
+	<string name="jandi_invitation_for_admin">"현재 관리자만 새로운 멤버 초대가 가능하도록 설정되어 있습니다."</string>
 	<string name="jandi_invitation_help">"또 다른 팀원을 초대할 수 있습니다."</string>
 	<string name="jandi_invitation_succeed">"팀원으로 초대했습니다."</string>
 	<string name="jandi_invite_app_not_installed">"해당 앱이 설치되어 있지 않습니다. 초대 링크는 클립보드에 복사되었으므로 다른 곳에서 사용하실 수 있습니다."</string>
@@ -464,6 +465,7 @@
 	<string name="jandi_question_team_create">"아직 잔디 사용자가 아니세요?"</string>
 	<string name="jandi_r_u_sure_cancel_invitation">"정말로 초대를 취소할까요?"</string>
 	<string name="jandi_r_u_sure_to_delete_email">"정말 이 이메일 주소를 삭제하시겠습니까?"</string>
+	<string name="jandi_reject_to_invitation_of_admin">"관리자만 초대 취소가 가능합니다. 자세한 사항은 관리자에게 문의해주세요."</string>
 	<string name="jandi_reorder_from_long_press">"폴더를 길게 눌러 순서를 조정할 수 있습니다."</string>
 	<string name="jandi_resend_invitation">"초대메일 재전송"</string>
 	<string name="jandi_retry">"다시 시도"</string>
@@ -563,6 +565,7 @@
 	<string name="jandi_success_update_account_profile">"계정 정보가 성공적으로 수정되었습니다"</string>
 	<string name="jandi_success_web_token">"로그인 되었습니다."</string>
 	<string name="jandi_switch_team">"팀 이동하기"</string>
+	<string name="jandi_syncing_message">"메시지를 동기화하고 있습니다."</string>
 	<string name="jandi_tab_chat">"채팅"</string>
 	<string name="jandi_tab_direct_message">"1:1"</string>
 	<string name="jandi_tab_file">"파일"</string>

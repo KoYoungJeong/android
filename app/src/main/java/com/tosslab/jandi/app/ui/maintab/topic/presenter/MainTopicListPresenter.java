@@ -103,8 +103,6 @@ public class MainTopicListPresenter {
         AnalyticsValue.Action action = item.isPublic() ? AnalyticsValue.Action.ChoosePublicTopic : AnalyticsValue.Action.ChoosePrivateTopic;
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, action);
 
-        mainTopicModel.resetBadge(item.getEntityId());
-
         long teamId = TeamInfoLoader.getInstance().getTeamId();
 
         getUnreadCount(Observable.from(topicAdapter.getAllTopicItemData()))

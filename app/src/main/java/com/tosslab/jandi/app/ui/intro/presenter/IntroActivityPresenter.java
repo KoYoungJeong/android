@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResConfig;
@@ -24,7 +25,7 @@ import rx.schedulers.Schedulers;
 
 public class IntroActivityPresenter {
 
-    private static final long MAX_DELAY_MS = 500l;
+    private static final long MAX_DELAY_MS = 100;
     private static final int DAYS_30 = 30;
 
     IntroActivityModel model;
@@ -40,8 +41,10 @@ public class IntroActivityPresenter {
 
         if (!JandiPreference.isPutVersionCodeStamp()) {
             MessageRepository.getRepository().deleteAllLink();
+            SendMessageRepository.getRepository().deleteAllMessages();
             JandiPreference.putVersionCodeStamp();
         }
+
 
         if (!model.isNetworkConnected()) {
             // 네트워크 연결 상태 아니면 로그인 여부만 확인하고 넘어감
@@ -83,7 +86,7 @@ public class IntroActivityPresenter {
                 .filter(it -> it)
                 .doOnNext(it -> this.clearLinkRepositoryIfFirstTime())
                 .subscribe(it -> {
-                    moveNextActivityWithRefresh(startForInvite);
+                    moveNextActivityWithAccountRefresh(startForInvite);
                 }, t -> {
                     LogUtil.e(Log.getStackTraceString(t));
 
@@ -107,14 +110,14 @@ public class IntroActivityPresenter {
                     errorShare.filter(e -> !(e instanceof RetrofitException))
                             .subscribe(it -> {
                                 model.trackSignInFailAndFlush(-1);
-                                moveNextActivityWithRefresh(startForInvite);
+                                moveNextActivityWithAccountRefresh(startForInvite);
                             });
 
                 });
 
     }
 
-    private void moveNextActivityWithRefresh(boolean startForInvite) {
+    private void moveNextActivityWithAccountRefresh(boolean startForInvite) {
 
         Observable<Boolean> loginObservable = Observable.just(!model.isNeedLogin())
                 .share();

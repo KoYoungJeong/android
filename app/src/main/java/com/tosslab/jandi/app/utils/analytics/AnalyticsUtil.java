@@ -100,8 +100,13 @@ public class AnalyticsUtil {
     }
 
     public static void trackSprinkler(FutureTrack futureTrack) {
-        Sprinkler.with(JandiApplication.getContext())
+        Sprinkler sprinkler = Sprinkler.with(JandiApplication.getContext())
                 .track(futureTrack);
+
+        if (Sprinkler.IS_DEBUG_MODE) {
+            sprinkler.flush();
+        }
+
     }
 
     public static void flushSprinkler() {

@@ -80,16 +80,18 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     @Override
     public void moveTeamSelectActivity() {
         Intent intent = AccountHomeActivity.getActivity(IntroActivity.this, false);
-        startActivityWithAnimationAndFinish(intent);
+        startActivity(intent);
+        finish();
     }
 
     @Override
     public void moveToMainActivity() {
         Intent intent = MainTabActivity_.intent(IntroActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        | Intent.FLAG_ACTIVITY_NEW_TASK
-                        | Intent.FLAG_ACTIVITY_CLEAR_TASK).get();
-        startActivityWithAnimationAndFinish(intent);
+                        | Intent.FLAG_ACTIVITY_NEW_TASK).get();
+
+        startActivity(intent);
+        finish();
     }
 
     @Override

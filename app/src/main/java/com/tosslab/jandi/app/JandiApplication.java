@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.baidu.android.pushservice.PushSettings;
 import com.crashlytics.android.Crashlytics;
@@ -275,14 +276,12 @@ public class JandiApplication extends MultiDexApplication {
             try {
                 new PlatformApi(RetrofitBuilder.getInstance()).updatePlatformStatus(req);
             } catch (RetrofitException e) {
+                LogUtil.e("PlatformApi", Log.getStackTraceString(e));
             }
         }, () -> LogUtil.i("PlatformApi", "Success(updatePlatformStatus)"));
     }
 
     private void trackApplicationActive() {
-        if (BuildConfig.DEBUG) {
-            return;
-        }
         Sprinkler sprinkler = Sprinkler.with(this);
         if (sprinkler.isFlushRetrieverStopped()) {
             AnalyticsUtil.trackSprinkler(sprinkler.getDefaultTrack());
