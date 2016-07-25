@@ -35,11 +35,44 @@ public class PollRepository extends LockExecutorTemplate {
             try {
                 Dao<Poll, ?> dao = getHelper().getDao(Poll.class);
                 dao.createOrUpdate(poll);
+                return true;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
             return false;
         });
+    }
+
+    public boolean upsertPollStatus(long topicId, String status) {
+        if (topicId <= 0 || TextUtils.isEmpty(status)) {
+            return false;
+        }
+
+        if (status.equals("created")
+                || status.equals("finished")
+                || status.equals("deleted")) {
+
+            return execute(() -> {
+                try {
+                    Dao<Poll, ?> dao = getHelper().getDao(Poll.class);
+                    UpdateBuilder<Poll, ?> pollUpdateBuilder = dao.updateBuilder();
+                    pollUpdateBuilder.updateColumnValue("status", status);
+
+                    pollUpdateBuilder.where()
+                            .eq("topicId", topicId);
+
+                    pollUpdateBuilder.update();
+
+                    return true;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                return false;
+            });
+        }
+
+        return false;
     }
 
     public boolean upsertPollVoteStatus(Poll poll) {
@@ -134,6 +167,22 @@ public class PollRepository extends LockExecutorTemplate {
             Poll poll = new Poll();
             poll.setId(-1);
             return poll;
+        });
+    }
+
+    public int clear(long teamId) {
+        return execute(() -> {
+            try {
+                Dao<Poll, ?> dao = getHelper().getDao(Poll.class);
+                DeleteBuilder<Poll, ?> deleteBuilder = dao.deleteBuilder();
+                deleteBuilder.where().eq("teamId", teamId);
+                return deleteBuilder.delete();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return 0;
+
         });
     }
 }

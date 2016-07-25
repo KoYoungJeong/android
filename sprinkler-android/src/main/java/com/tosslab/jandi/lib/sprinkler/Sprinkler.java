@@ -1,15 +1,13 @@
 package com.tosslab.jandi.lib.sprinkler;
 
 import android.app.Application;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.IdentifierKey;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.SprinklerService;
 import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
@@ -21,14 +19,11 @@ import java.util.Date;
  */
 public class Sprinkler {
     public static final String TAG = Logger.makeTag(Sprinkler.class);
-
+    public static final String PREFERENCES_NAME = "sprinkler_preferences";
+    private static final Object sTrackLock = new Object();
     public static boolean IS_DEBUG_MODE = true;
     public static boolean IS_FOR_DEV = true;
-    public static final String PREFERENCES_NAME = "sprinkler_preferences";
-
     private static Sprinkler sInstance;
-    private static final Object sTrackLock = new Object();
-
     private Context context;
     private FlushRetriever flushRetriever;
     private DefaultProperties defaultProperties;
@@ -79,6 +74,7 @@ public class Sprinkler {
             track.setTime(new Date().getTime());
 
             Logger.d(TAG, "track");
+            Logger.i(TAG, track.toString());
             Intent intent = new Intent(context, SprinklerService.class);
             intent.putExtra(SprinklerService.KEY_TYPE, SprinklerService.TYPE_TRACK);
             intent.putExtra(SprinklerService.KEY_TRACK, track);

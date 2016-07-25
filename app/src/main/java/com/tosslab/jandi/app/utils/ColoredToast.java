@@ -40,6 +40,15 @@ public class ColoredToast {
         superToast.show();
     }
 
+    public static void showGray(int strResId) {
+        SuperToast superToast = new SuperToast(JandiApplication.getContext());
+        superToast.setText(JandiApplication.getContext().getString(strResId));
+        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
+        superToast.setBackground(R.drawable.bg_color_toast_gray);
+        superToast.setTextColor(Color.WHITE);
+        superToast.show();
+    }
+
     public static void showLong(String message) {
         SuperToast superToast = new SuperToast(JandiApplication.getContext());
         superToast.setText(message);
