@@ -55,8 +55,7 @@ import com.tosslab.jandi.app.ui.maintab.file.dagger.DaggerFileListComponent;
 import com.tosslab.jandi.app.ui.maintab.file.dagger.FileListModule;
 import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenter;
 import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenterImpl;
-import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
-import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
+import com.tosslab.jandi.app.ui.search.main.view.FileSearchActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -84,7 +83,7 @@ import de.greenrobot.event.EventBus;
  * Created by tee on 16. 6. 28..
  */
 public class FileListFragment extends Fragment implements FileListPresenterImpl.View,
-        SearchActivity.SearchSelectView, ListScroller {
+        FileSearchActivity.SearchSelectView, ListScroller {
 
     public static final String KEY_COMMENT_COUNT = "comment_count";
     public static final String KEY_FILE_ID = "file_id";
@@ -126,12 +125,12 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     private long entityId = -1;
 
     private SearchedFilesAdapterView searchedFilesAdapterView;
-    private SearchActivity.OnSearchItemSelect onSearchItemSelect;
-    private SearchActivity.OnSearchText onSearchText;
+    private FileSearchActivity.OnSearchItemSelect onSearchItemSelect;
+    private FileSearchActivity.OnSearchText onSearchText;
     private boolean isSearchLayoutFirst = true;
     private boolean isForeground;
 
-    public void setOnSearchItemSelect(SearchActivity.OnSearchItemSelect onSearchItemSelect) {
+    public void setOnSearchItemSelect(FileSearchActivity.OnSearchItemSelect onSearchItemSelect) {
         this.onSearchItemSelect = onSearchItemSelect;
     }
 
@@ -230,7 +229,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     }
 
     private void setListView() {
-        if (getActivity() instanceof SearchActivity) {
+        if (getActivity() instanceof FileSearchActivity) {
             AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                     .event(Event.ScreenView)
                     .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
@@ -261,7 +260,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
                 action = AnalyticsValue.Action.ChooseFilteredFile;
             }
 
-            if (getActivity() instanceof SearchActivity) {
+            if (getActivity() instanceof FileSearchActivity) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, action);
             } else {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, action);
@@ -362,9 +361,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_main_search) {
-            SearchActivity_.intent(getActivity())
-                    .isFromFiles(true)
-                    .start();
+            FileSearchActivity.start(getActivity(), -1);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -385,7 +382,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     }
 
     private boolean isInSearchActivity() {
-        return getActivity() instanceof SearchActivity;
+        return getActivity() instanceof FileSearchActivity;
     }
 
     public void initSearchLayoutIfFirst() {
@@ -506,7 +503,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     }
 
     @Override
-    public void setOnSearchText(SearchActivity.OnSearchText onSearchText) {
+    public void setOnSearchText(FileSearchActivity.OnSearchText onSearchText) {
         this.onSearchText = onSearchText;
     }
 

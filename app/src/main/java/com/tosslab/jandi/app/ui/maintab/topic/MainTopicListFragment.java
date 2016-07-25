@@ -47,7 +47,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.TopicFolderSettin
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.TopicFolderSettingActivity_;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
-import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
+import com.tosslab.jandi.app.ui.search.main.view.FileSearchActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
@@ -259,8 +259,7 @@ public class MainTopicListFragment extends Fragment
 
     @OptionsItem(R.id.action_main_search)
     void onSearchOptionSelect() {
-        SearchActivity_.intent(getActivity())
-                .start();
+        FileSearchActivity.start(getActivity(), -1);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.Search);
     }

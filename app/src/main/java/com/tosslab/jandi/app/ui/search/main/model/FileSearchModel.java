@@ -1,27 +1,17 @@
 package com.tosslab.jandi.app.ui.search.main.model;
 
-import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.database.search.JandiSearchDatabaseManager;
 import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
 
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
-
 import java.util.List;
 
-/**
- * Created by Steve SeongUg Jung on 15. 3. 10..
- */
-@EBean
-public class SearchModel {
-
-    @RootContext
-    Context context;
+public class FileSearchModel {
 
     public List<SearchKeyword> searchOldQuery(String text) {
-        return JandiSearchDatabaseManager.getInstance(context).searchKeywords(0, text);
+        return JandiSearchDatabaseManager.getInstance(JandiApplication.getContext()).searchKeywords(0, text);
     }
 
     public long upsertQuery(int type, String text) {
@@ -29,7 +19,7 @@ public class SearchModel {
             return -1;
         }
 
-        return JandiSearchDatabaseManager.getInstance(context)
+        return JandiSearchDatabaseManager.getInstance(JandiApplication.getContext())
                 .upsertSearchKeyword(new SearchKeyword(type, text));
     }
 }

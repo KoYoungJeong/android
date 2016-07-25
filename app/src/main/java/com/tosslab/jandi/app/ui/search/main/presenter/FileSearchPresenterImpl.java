@@ -1,34 +1,31 @@
 package com.tosslab.jandi.app.ui.search.main.presenter;
 
-import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.ui.search.main.model.SearchModel;
+import com.tosslab.jandi.app.ui.search.main.model.FileSearchModel;
 import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
-
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.PublishSubject;
 
-/**
- * Created by Steve SeongUg Jung on 15. 3. 10..
- */
-@EBean
-public class SearchPresenterImpl implements SearchPresenter {
+public class FileSearchPresenterImpl implements FileSearchPresenter {
 
-    @Bean
-    SearchModel searchModel;
-
+    FileSearchModel fileSearchModel;
     View view;
     private PublishSubject<String> objectPublishSubject;
 
-    @AfterInject
+    @Inject
+    public FileSearchPresenterImpl(FileSearchPresenter.View view) {
+        this.view = view;
+        fileSearchModel = new FileSearchModel();
+        initObject();
+    }
+
     void initObject() {
         objectPublishSubject = PublishSubject.create();
         objectPublishSubject
@@ -37,14 +34,8 @@ public class SearchPresenterImpl implements SearchPresenter {
                 .subscribe(this::onSearchText);
     }
 
-    @Override
-    public void setView(View view) {
-        this.view = view;
-    }
-
-    @VisibleForTesting
     void onSearchText(String text) {
-        List<SearchKeyword> searchKeywords = searchModel.searchOldQuery(text);
+        List<SearchKeyword> searchKeywords = fileSearchModel.searchOldQuery(text);
         view.setOldQueries(searchKeywords);
     }
 
@@ -74,7 +65,7 @@ public class SearchPresenterImpl implements SearchPresenter {
     public void onVoiceSearchResult(List<String> voiceSearchResults) {
         if (voiceSearchResults != null && !voiceSearchResults.isEmpty()) {
             String searchText = voiceSearchResults.get(0);
-            searchModel.upsertQuery(0, searchText);
+            fileSearchModel.upsertQuery(0, searchText);
             view.setSearchText(searchText);
             view.sendNewQuery(searchText);
         } else {
@@ -86,6 +77,6 @@ public class SearchPresenterImpl implements SearchPresenter {
     public void onSearchAction(String text) {
         view.dismissDropDown();
         view.hideSoftInput();
-        searchModel.upsertQuery(0, text);
+        fileSearchModel.upsertQuery(0, text);
     }
 }

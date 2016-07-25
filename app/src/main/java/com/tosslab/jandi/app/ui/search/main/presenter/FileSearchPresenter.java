@@ -4,12 +4,7 @@ import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
 
 import java.util.List;
 
-/**
- * Created by Steve SeongUg Jung on 15. 3. 10..
- */
-public interface SearchPresenter {
-
-    void setView(View view);
+public interface FileSearchPresenter {
 
     void onSearchTextChange(String s);
 

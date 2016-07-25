@@ -4,7 +4,6 @@ import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
 
 import org.junit.Before;
@@ -19,20 +18,20 @@ import static org.junit.Assert.assertTrue;
  * Created by tonyjs on 15. 11. 26..
  */
 @RunWith(AndroidJUnit4.class)
-public class SearchModelTest {
+public class FileSearchModelTest {
 
-    SearchModel searchModel;
+    FileSearchModel fileSearchModel;
 
     @Before
     public void setup() throws Exception {
-        searchModel = SearchModel_.getInstance_(JandiApplication.getContext());
+        fileSearchModel = new FileSearchModel();
     }
 
     @Test
     public void testSearchOldQuery() throws Exception {
-        searchModel.upsertQuery(0, null);
+        fileSearchModel.upsertQuery(0, null);
 
-        List<SearchKeyword> searchKeywords = searchModel.searchOldQuery(null);
+        List<SearchKeyword> searchKeywords = fileSearchModel.searchOldQuery(null);
 
         assertTrue(searchKeywords.isEmpty());
     }
@@ -41,11 +40,11 @@ public class SearchModelTest {
     public void testUpsertQuery() throws Exception {
         String query = "r";
 
-        searchModel.upsertQuery(0, query);
+        fileSearchModel.upsertQuery(0, query);
         // 중복된 경우 테스트
-        searchModel.upsertQuery(0, query);
+        fileSearchModel.upsertQuery(0, query);
 
-        List<SearchKeyword> searchKeywords = searchModel.searchOldQuery(query);
+        List<SearchKeyword> searchKeywords = fileSearchModel.searchOldQuery(query);
 
         Log.d("Test", searchKeywords.toString());
 
