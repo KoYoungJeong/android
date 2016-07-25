@@ -36,7 +36,7 @@ rootProject.allprojects { project ->
                 provided rootProject.ext.dependecies.libraries.dart_processor
 
                 compile rootProject.ext.dependecies.libraries.multidex
-                compile fileTree(dir: 'libs', include: ['*.jar'])
+                compile fileTree(dir: 'app/libs', include: ['*.jar'])
 
                 // Google
                 compile rootProject.ext.dependecies.libraries.googleAnalytics

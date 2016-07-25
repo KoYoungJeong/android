@@ -71,7 +71,7 @@ ext.dependecies = [
                 // newrelic
                 newrelic                    : 'com.newrelic.agent.android:android-agent:4.273.4',
 
-                retrolambda                 : 'net.orfjackal.retrolambda:retrolambda:+',
+                retrolambda                 : 'net.orfjackal.retrolambda:retrolambda:2.3.0',
 
                 testrunner                  : 'com.android.support.test:runner:0.5',
                 testrule                    : 'com.android.support.test:rules:0.5',

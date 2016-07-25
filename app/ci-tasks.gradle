@@ -1,6 +1,3 @@
-apply plugin: 'checkstyle'
-apply plugin: 'pmd'
-
 task pmd(type: Pmd) {
 
     source 'src/main'
