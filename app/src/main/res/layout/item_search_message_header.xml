@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="96dp"
+    android:background="#fffafafa"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+
+        <LinearLayout
+            android:id="@+id/vg_room_selection_button"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="3.5dp"
+            android:layout_marginTop="9dp"
+            android:layout_weight="1"
+            android:background="@color/jandi_border_gray">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="1dp"
+                android:background="@color/jandi_material_grey_50"
+                android:clickable="true"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/tv_room_selection_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="All Rooms"
+                    android:textColor="@color/jandi_text_light"
+                    android:textSize="12dp" />
+
+                <ImageView
+                    android:id="@+id/iv_room_selection_button_collapse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:src="@drawable/filter_collepse" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/vg_member_selection_button"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="3.5dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="9dp"
+            android:layout_weight="1"
+            android:background="@color/jandi_border_gray">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="1dp"
+                android:background="@color/jandi_material_grey_50"
+                android:clickable="true"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/tv_member_selection_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="All Members"
+                    android:textColor="@color/jandi_text_light"
+                    android:textSize="12dp" />
+
+                <ImageView
+                    android:id="@+id/iv_member_selection_button_collapse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:src="@drawable/filter_collepse" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center">
+
+        <ProgressBar
+            android:id="@+id/progress_loading"
+            android:layout_width="@dimen/jandi_progress_size"
+            android:layout_height="@dimen/jandi_progress_size"
+            android:layout_marginLeft="19dp"
+            android:layout_marginRight="8dp"
+            android:indeterminateDrawable="@drawable/progress_animation"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_search_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:text="123개의 메세지 검색 결과가 있습니다."
+            android:textColor="@color/jandi_text_light"
+            android:textSize="14dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

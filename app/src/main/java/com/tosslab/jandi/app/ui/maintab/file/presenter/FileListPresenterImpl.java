@@ -65,7 +65,7 @@ public class FileListPresenterImpl implements FileListPresenter {
                 })
                 .subscribe(o -> {
                     view.onSearchHeaderReset();
-                }, throwable -> LogUtil.d("Search Fail : " + throwable.getMessage()));
+                }, throwable -> LogUtil.d("ReqSearch Fail : " + throwable.getMessage()));
 
         previousLoadSubject = PublishSubject.create();
         previousLoadSubject

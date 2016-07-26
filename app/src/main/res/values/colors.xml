@@ -163,7 +163,7 @@
     <color name="jandi_file_detail_tab_to_view_bg">#FFD5D5D5</color>
     <color name="jandi_message_input_border">#999999</color>
 
-    <!--File Search-->
+    <!--File ReqSearch-->
     <color name="jandi_file_search_tab_bg_active">#313131</color>
     <color name="jandi_file_search_tab_bg_inactive">#505050</color>
     <color name="jandi_file_search_item_divider">#DDDDDD</color>
@@ -223,7 +223,7 @@
     <color name="account_home_team_text">@color/jandi_team_selector_text_black</color>
     <color name="account_home_help_dialog_text">#FF404040</color>
 
-    <!-- Message Search -->
+    <!-- Message ReqSearch -->
 
     <color name="jandi_message_search_item_topic_txt_color">#FF404040</color>
     <color name="jandi_message_search_item_topic_txt_color_sub">#FF9A9A9A</color>
@@ -267,7 +267,7 @@
     <color name="message_controller_popup_text_color">#FF212121</color>
     <color name="message_controller_popup_background">#FF212121</color>
 
-    <color name="jandi_settings_background">#FFFAFAFA</color>
+    <color name="jandi_material_grey_50">#FFFAFAFA</color>
 
     <color name="jandi_grey_black">#FF191B1E</color>
     <color name="jandi_grey_black_pressed">#FF101113</color>
