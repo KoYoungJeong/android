@@ -13,7 +13,7 @@
         android:paddingRight="8dp">
 
         <AutoCompleteTextView
-            android:id="@+id/et_member_search"
+            android:id="@+id/et_member_filter"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="11dp"
@@ -22,7 +22,10 @@
             android:gravity="center_vertical"
             android:hint="멤버 이름, 부서 검색"
             android:imeOptions="actionSearch|flagNoExtractUi"
-            android:inputType="text"/>
+            android:inputType="text"
+            android:textColor="@color/jandi_text"
+            android:textColorHint="@color/jandi_text_medium"
+            android:textSize="18dp"/>
 
     </android.support.v7.widget.Toolbar>
 
@@ -32,5 +35,14 @@
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar_member_filter"
         android:scrollbars="vertical"/>
+
+    <ProgressBar
+        android:id="@+id/progress_member_filter"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerInParent="true"
+        android:indeterminate="true"
+        android:indeterminateDrawable="@drawable/progress_refresh_animation"
+        android:visibility="gone"/>
 
 </RelativeLayout>

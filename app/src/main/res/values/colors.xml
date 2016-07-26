@@ -96,7 +96,7 @@
     <color name="jandi_tab_indicator">#a3d7c3</color>
     <color name="jandi_tab_underline">#e5e5e5</color>
     <color name="jandi_entities_divider">#E5E5E5</color>
-    <color name="jandi_entities_bg">#f0f0f0</color>
+    <color name="jandi_entities_bg">@color/rgb_f0f0f0</color>
     <color name="jandi_more_bg">#FFF2F2F2</color>
     <color name="jandi_more_bottom_bg">#FFF4F4F4</color>
     <color name="jandi_list_item_background_pressed">#FFDCDCDC</color>
@@ -108,7 +108,7 @@
     <color name="jandi_owner_badge_text">#FF808080</color>
     <color name="jandi_team_invite_ignore">#FFB0B0B0</color>
     <!-- Message List -->
-    <color name="jandi_messages_input_hint">#FFD9D9D9</color>
+    <color name="jandi_messages_input_hint">@color/rgb_d9d9d9</color>
     <color name="jandi_messages_date_divider">@color/jandi_accent_color</color>
     <color name="jandi_messages_name">@color/jandi_text</color>
     <color name="jandi_messages_date">@color/jandi_text_light</color>
@@ -122,9 +122,9 @@
     <color name="jandi_linkpreview_thumb_background">#FFF4F4F4</color>
     <color name="jandi_messages_file_writer">#000000</color>
     <color name="jandi_messages_file_content">#353535</color>
-    <color name="jandi_messages_image_background">#FFF0F0F0</color>
+    <color name="jandi_messages_image_background">@color/rgb_f0f0f0</color>
     <color name="jandi_messages_image_bg">#FFA4AFBC</color>
-    <color name="jandi_messages_image_view_bg">#FFF0F0F0</color>
+    <color name="jandi_messages_image_view_bg">@color/rgb_f0f0f0</color>
     <color name="jandi_messages_big_size_image_view_bg">#FFC5E1D6</color>
     <color name="jandi_messages_50_black_file_size">#80000000</color>
     <color name="jandi_messages_blue_background">#FFF0F9FC</color>
@@ -147,7 +147,7 @@
     <color name="jandi_pannel_rm_text">@color/jandi_primary_color</color>
 
     <!-- profile -->
-    <color name="jandi_profile_bg">#f0f0f0</color>
+    <color name="jandi_profile_bg">@color/rgb_f0f0f0</color>
     <color name="jandi_profile_edited_text">#f3a71e</color>
     <color name="jandi_member_profile_user_name">#FF1A1A1A</color>
     <color name="jandi_member_profile_img_overlay">#7F000000</color>
@@ -237,10 +237,11 @@
     <color name="jandi_sticker_view_selector">#FFDDE4E9</color>
 
     <color name="jandi_line_gray">#FFCCCCCC</color>
+    <color name="jandi_search_divider">@color/rgb_d9d9d9</color>
 
     <color name="jandi_file_upload_divider">#B5B5B5</color>
 
-    <color name="jandi_topic_is_public_divider">#FFF0F0F0</color>
+    <color name="jandi_topic_is_public_divider">@color/rgb_f0f0f0</color>
 
     <color name="jandi_carousel_file_size_ext_create_time">#FFCCCCCC</color>
     <color name="jandi_carousel_transparent_45">#45000000</color>
@@ -250,6 +251,8 @@
     <color name="jandi_comment_divider">#FFE9E9E9</color>
 
     <color name="jandi_create_topic">#FF00ABE8</color>
+
+    <color name="jandi_selected_member">@color/rgb_f0f0f0</color>
 
     <!-- coach mark -->
     <color name="jandi_coach_mark_text">#FF19c1ff</color>
@@ -278,8 +281,10 @@
     <color name="rgb_00abe8_30">#4C00ABE8</color>
     <color name="rgb_0081b8">#FF0081B8</color>
     <color name="rgb_00abe8">#FF00ABE8</color>
+    <color name="rgb_d9d9d9">#FFD9D9D9</color>
     <color name="rgb_dd2c00">#FFDD2C00</color>
     <color name="rgb_b3b3b3">#FFB3B3B3</color>
+    <color name="rgb_f0f0f0">#FFF0F0F0</color>
     <color name="rgb_f6f6f6">#FFF6F6F6</color>
 
     <color name="jandi_web_button_retry_background_selected">#FFE0E0E0</color>
@@ -297,7 +302,7 @@
     <color name="jandi_chat_list_default_background">#ffe1e6eb</color>
     <color name="jandi_chat_list_default_background_1f">#1fe1e6eb</color>
 
-    <color name="jandi_press_gray">#fff0f0f0</color>
+    <color name="jandi_press_gray">@color/rgb_f0f0f0</color>
 
     <color name="jandi_54_opacity_black">#8A000000</color>
 
@@ -306,9 +311,10 @@
     <color name="jandi_error_red">#ff5b49</color>
 
     <!-- Poll -->
-    <color name="jandi_horizontal_progress_background">#fff0f0f0</color>
+    <color name="jandi_horizontal_progress_background">@color/rgb_f0f0f0</color>
     <color name="jandi_horizontal_progress_selected">#ffdbdbdb</color>
     <color name="jandi_horizontal_progress_voted">#ffcaeefd</color>
 
     <color name="jandi_poll_create_button_normal">@color/rgb_b3b3b3</color>
+
 </resources>
