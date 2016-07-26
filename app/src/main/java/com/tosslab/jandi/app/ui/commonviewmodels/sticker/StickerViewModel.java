@@ -220,7 +220,7 @@ public class StickerViewModel {
         if (recentStickers != null && !recentStickers.isEmpty()) {
             return STICKER_GROUP_RECENT;
         }
-        return STICKER_GROUP_DINGO;
+        return STICKER_GROUP_MALLOW;
     }
 
     public void setOnStickerClick(OnStickerClick onStickerClick) {
