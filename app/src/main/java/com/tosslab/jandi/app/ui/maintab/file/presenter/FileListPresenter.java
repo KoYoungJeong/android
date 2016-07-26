@@ -9,8 +9,6 @@ import com.tosslab.jandi.app.ui.maintab.file.adapter.SearchedFilesAdapterModel;
 public interface FileListPresenter {
     void setSearchedFilesAdapterModel(SearchedFilesAdapterModel adapterModel);
 
-    void initSearchQuery();
-
     void setListNoMoreLoad();
 
     void setListReadyLoadMore();
@@ -27,7 +25,7 @@ public interface FileListPresenter {
 
     void onFileTypeSelection(String query, String searchText);
 
-    void onMemberSelection(String userId, String searchText);
+    void onMemberSelection(long userId, String searchText);
 
     void onEntitySelection(long sharedEntityId, String searchText);
 
@@ -37,9 +35,11 @@ public interface FileListPresenter {
 
     void onNetworkConnection();
 
-    void doKeywordSearch(String s);
+    void onNewQuery(String s);
 
-    void onRefreshFileInfo(int fileId, int commentCount);
+    void onRefreshFileInfo(long fileId, int commentCount);
+
+    void onDestory();
 
     interface View {
         void clearListView();
@@ -63,5 +63,6 @@ public interface FileListPresenter {
         void onSearchHeaderReset();
 
         void justRefresh();
+
     }
 }

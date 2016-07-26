@@ -176,6 +176,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
+        fileListPresenter.onDestory();
         super.onDestroy();
     }
 
@@ -196,15 +197,12 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
         setHasOptionsMenu(true);
 
-        fileListPresenter.initSearchQuery();
-
         resetFilterLayoutPosition();
 
         if (isInSearchActivity() && isSearchLayoutFirst) {
             initSearchLayoutIfFirst();
         }
 
-        fileListPresenter.doSearchAll();
     }
 
     @OnClick(R.id.ly_file_list_where)
@@ -246,7 +244,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         SearchedFilesAdapter searchedFilesAdapter = new SearchedFilesAdapter();
         lvSearchFiles.setAdapter(searchedFilesAdapter);
         searchedFilesAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
-            moveToFileDetailActivity((searchedFilesAdapter.getItem(position).id));
+            moveToFileDetailActivity((searchedFilesAdapter.getItem(position).getFile().getId()));
 
             if (onSearchItemSelect != null) {
                 onSearchItemSelect.onSearchItemSelect();
@@ -499,7 +497,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
     @Override
     public void onNewQuery(String query) {
-        fileListPresenter.doKeywordSearch(query);
+        fileListPresenter.onNewQuery(query);
     }
 
     @Override
@@ -558,7 +556,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
             return;
         }
 
-        int fileId = intent.getIntExtra(KEY_FILE_ID, -1);
+        long fileId = intent.getLongExtra(KEY_FILE_ID, -1);
         int commentCount = intent.getIntExtra(KEY_COMMENT_COUNT, -1);
         if (fileId <= 0 || commentCount < 0) {
             return;

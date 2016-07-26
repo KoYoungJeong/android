@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.network.models.search;
 
+import android.text.TextUtils;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,13 +19,13 @@ public class ReqSearch {
     private long roomId = -1;
 
     // 검색 타입 all, message, file, poll
-    private String type = null;
+    private String type = "all";
 
     // 컨텐츠의 접근 혹은 공유 범위 accessible, joined, notShared
-    private String accessType = null;
+    private String accessType = "joined";
 
     // 파일 타입
-    private String fileType = null;
+    private String fileType = "all";
 
     // 검색 키워드 - default 없음
     private String keyword = null;
@@ -41,7 +43,7 @@ public class ReqSearch {
     private Date endAt = null;
 
     // 정렬 순서
-    private int order = -1;
+    private String order = "desc";
 
     public long getWriterId() {
         return writerId;
@@ -123,11 +125,11 @@ public class ReqSearch {
         this.endAt = endAt;
     }
 
-    public int getOrder() {
+    public String getOrder() {
         return order;
     }
 
-    private void setOrder(int order) {
+    private void setOrder(String order) {
         this.order = order;
     }
 
@@ -135,11 +137,11 @@ public class ReqSearch {
 
         Map<String, String> map = new HashMap<>();
 
-        if (writerId != -1) {
+        if (writerId > 0) {
             map.put("writerId", String.valueOf(writerId));
         }
 
-        if (roomId != -1) {
+        if (roomId > 0) {
             map.put("roomId", String.valueOf(roomId));
         }
 
@@ -147,23 +149,23 @@ public class ReqSearch {
             map.put("type", type);
         }
 
-        if (accessType != null) {
+        if (!TextUtils.isEmpty(accessType)) {
             map.put("accessType", accessType);
         }
 
-        if (fileType != null) {
+        if (!TextUtils.isEmpty(fileType)) {
             map.put("fileType", fileType);
         }
 
-        if (keyword != null) {
+        if (!TextUtils.isEmpty(keyword)) {
             map.put("keyword", keyword);
         }
 
-        if (page != -1) {
+        if (page > 0) {
             map.put("page", String.valueOf(page));
         }
 
-        if (count != -1) {
+        if (count > 0) {
             map.put("count", String.valueOf(count));
         }
 
@@ -175,8 +177,8 @@ public class ReqSearch {
             map.put("endAt", endAt.toString());
         }
 
-        if (order != -1) {
-            map.put("order", String.valueOf(order));
+        if (!TextUtils.isEmpty(order)) {
+            map.put("order", order);
         }
 
         return map;
@@ -236,7 +238,7 @@ public class ReqSearch {
             return this;
         }
 
-        public Builder setOrder(int order) {
+        public Builder setOrder(String order) {
             reqSearch.setOrder(order);
             return this;
         }

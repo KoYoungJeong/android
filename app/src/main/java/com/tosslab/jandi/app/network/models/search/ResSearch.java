@@ -102,7 +102,7 @@ public class ResSearch {
         private long writerId;
         private String contentType;
         private String text;
-        private Date createAt;
+        private Date createdAt;
         private String feedbackType;
         private List<MentionObject> mentions;
         private File file;
@@ -156,14 +156,6 @@ public class ResSearch {
             this.text = text;
         }
 
-        public Date getCreateAt() {
-            return createAt;
-        }
-
-        public void setCreateAt(Date createAt) {
-            this.createAt = createAt;
-        }
-
         public String getFeedbackType() {
             return feedbackType;
         }
@@ -194,6 +186,14 @@ public class ResSearch {
 
         public void setPoll(Poll poll) {
             this.poll = poll;
+        }
+
+        public Date getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(Date createdAt) {
+            this.createdAt = createdAt;
         }
     }
 

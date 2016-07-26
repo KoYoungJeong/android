@@ -3,13 +3,13 @@ package com.tosslab.jandi.app.ui.maintab.file.model;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.local.database.file.JandiFileDatabaseManager;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
+import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.network.models.search.ReqSearch;
+import com.tosslab.jandi.app.network.models.search.ResSearch;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -23,60 +23,25 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import dagger.Lazy;
 
 public class FileListModel {
 
-    Lazy<FileApi> fileApi;
+    Lazy<SearchApi> searchApi;
 
-    public FileListModel(Lazy<FileApi> fileApi) {
-        this.fileApi = fileApi;
+    @Inject
+    public FileListModel(Lazy<SearchApi> searchApi) {
+        this.searchApi = searchApi;
     }
 
-    public ResSearchFile searchFileList(ReqSearchFile reqSearchFile) throws RetrofitException {
-        return fileApi.get().searchFile(reqSearchFile);
-    }
-
-    public boolean isAllTypeFirstSearch(ReqSearchFile reqSearchFile) {
-        return reqSearchFile.startMessageId == -1 &&
-                reqSearchFile.sharedEntityId == -1 &&
-                TextUtils.equals(reqSearchFile.fileType, "all") &&
-                TextUtils.equals(reqSearchFile.writerId, "all") &&
-                TextUtils.isEmpty(reqSearchFile.keyword);
-    }
-
-    public void saveOriginFirstItems(long teamId, ResSearchFile fileMessages) {
-        JandiFileDatabaseManager.getInstance(JandiApplication.getContext()).upsertFiles(teamId, fileMessages);
-    }
-
-    public List<ResMessages.OriginalMessage> descSortByCreateTime(List<ResMessages.OriginalMessage> links) {
-        List<ResMessages.OriginalMessage> ret = new ArrayList<ResMessages.OriginalMessage>(links);
-
-        Comparator<ResMessages.OriginalMessage> sort = (link, link2) -> {
-            if (link.createTime.getTime() > link2.createTime.getTime())
-                return -1;
-            else if (link.createTime.getTime() == link2.createTime.getTime())
-                return 0;
-            else
-                return 1;
-        };
-        Collections.sort(ret, sort);
-        return ret;
-    }
-
-    public boolean isDefaultSearchQuery(ReqSearchFile searchFile) {
-        return searchFile.sharedEntityId == -1 &&
-                searchFile.startMessageId == -1 &&
-                TextUtils.isEmpty(searchFile.keyword) &&
-                TextUtils.equals(searchFile.fileType, "all") &&
-                TextUtils.equals(searchFile.writerId, "all");
-    }
-
-    public boolean isDefaultSearchQueryIgnoreMessageId(ReqSearchFile searchFile) {
-        return searchFile.sharedEntityId == -1 &&
-                TextUtils.isEmpty(searchFile.keyword) &&
-                TextUtils.equals(searchFile.fileType, "all") &&
-                TextUtils.equals(searchFile.writerId, "all");
+    public boolean isDefaultSearchQuery(long page, long roomId, long writerId, String keyword, String fileType) {
+        return page == 1 &&
+                roomId == -1 &&
+                writerId == -1 &&
+                TextUtils.isEmpty(keyword) &&
+                TextUtils.equals(fileType, "all");
     }
 
     public void trackFileKeywordSearchSuccess(String keyword) {
@@ -106,7 +71,10 @@ public class FileListModel {
     }
 
     public long getSelectedTeamId() {
-        return AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
+        return TeamInfoLoader.getInstance().getTeamId();
     }
 
+    public ResSearch getResults(ReqSearch it) throws RetrofitException {
+        return searchApi.get().getSearch(getSelectedTeamId(), it);
+    }
 }

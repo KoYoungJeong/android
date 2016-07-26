@@ -69,7 +69,7 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
 
     public static void start(Context context, long entityId) {
         Intent intent = new Intent(context, FileSearchActivity.class);
-        intent.putExtra("entityId", entityId);
+        intent.putExtra(FileListFragment.PARAM_ENTITY_ID, entityId);
         context.startActivity(intent);
     }
 
@@ -99,6 +99,10 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
         searchMinY = -(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 64,
                 resources.getDisplayMetrics());
+
+        if (getIntent() != null) {
+            entityId = getIntent().getLongExtra(FileListFragment.PARAM_ENTITY_ID, -1);
+        }
 
         addFragments();
         initSearchSelectView();
