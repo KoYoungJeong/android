@@ -64,7 +64,6 @@ import com.tosslab.jandi.app.ui.maintab.teams.presenter.TeamsPresenter;
 import com.tosslab.jandi.app.ui.maintab.teams.view.TeamsView;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
-import com.tosslab.jandi.app.ui.search.filter.member.MemberFilterActivity;
 import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -306,8 +305,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
         mainTapStrip.setOnTabClickListener(index -> {
             listScrollHandler.onTabClick(index);
-
-            MemberFilterActivity.startForResult(MainTabActivity.this, 11538729, 1);
         });
     }
 
