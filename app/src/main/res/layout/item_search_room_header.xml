@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <android.support.v7.widget.AppCompatCheckBox
-        android:id="@+id/cb_unjoin_user"
+        android:id="@+id/cb_unjoin_topic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"

@@ -102,7 +102,7 @@ public class ResSearch {
         private long writerId;
         private String contentType;
         private String text;
-        private Date createAt;
+        private Date createdAt;
         private String feedbackType;
         private List<MentionObject> mentions;
         private File file;
@@ -157,11 +157,11 @@ public class ResSearch {
         }
 
         public Date getCreateAt() {
-            return createAt;
+            return createdAt;
         }
 
         public void setCreateAt(Date createAt) {
-            this.createAt = createAt;
+            this.createdAt = createAt;
         }
 
         public String getFeedbackType() {

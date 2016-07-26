@@ -369,7 +369,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_modify_channel">"Rename Public Topic"</string>
 	<string name="jandi_modify_private_group">"Rename Private Topic"</string>
 	<string name="jandi_modify_profile_image">"Profile Photo"</string>
-	<string name="jandi_move_entity_after_share">"File has been shared successfully. Do you want to jump to that conversation now?"</string>
+	<string name="jandi_move_entity_after_share">"File has been shared successfully. Do you want to move to that conversation now?"</string>
 	<string name="jandi_msg_network_offline">"Network is not connected"</string>
 	<string name="jandi_msg_network_offline_warn">"It seems you are not connected to the Internet."</string>
 	<string name="jandi_my_files">"<b>My Files</b>"</string>

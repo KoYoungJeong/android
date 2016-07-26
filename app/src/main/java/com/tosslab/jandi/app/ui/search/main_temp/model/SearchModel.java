@@ -8,9 +8,11 @@ import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.ui.search.main_temp.object.SearchTopicRoomData;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -30,28 +32,60 @@ public class SearchModel {
     public SearchModel() {
     }
 
-    public ResSearch search(long teamId, ReqSearch reqSearch) throws RetrofitException {
-        return searchApi.get().getSearch(teamId, reqSearch);
+    public ResSearch searchMessages(long teamId, long writerId, long roomId, String keyword) throws RetrofitException {
+        ReqSearch.Builder reqSearchBuilder = new ReqSearch.Builder();
+
+        reqSearchBuilder.setType("message");
+
+        if (writerId != -1) {
+            reqSearchBuilder.setWriterId(writerId);
+        }
+
+        if (roomId != -1) {
+            reqSearchBuilder.setRoomId(roomId);
+        }
+
+        reqSearchBuilder.setKeyword(keyword);
+
+        return searchApi.get().getSearch(teamId, reqSearchBuilder.build());
     }
 
-    public List<com.tosslab.jandi.app.ui.maintab.topic.domain.Topic> getSearchedTopics(String keyword, boolean isPaticipate) {
-
+    public List<SearchTopicRoomData> getSearchedTopics(String keyword, boolean isShowUnjoinedTopic) {
         long teamId = TeamInfoLoader.getInstance().getTeamId();
 
-        List<com.tosslab.jandi.app.ui.maintab.topic.domain.Topic> topics = new ArrayList<>();
+        List<SearchTopicRoomData> topics = new ArrayList<>();
 
         InitialInfo initialInfo = InitialInfoRepository.getInstance().getInitialInfo(teamId);
-        List<Topic> initialInfoTopics = (ArrayList) initialInfo.getTopics();
+        Collection<Topic> initialInfoTopics = initialInfo.getTopics();
         Observable.from(initialInfoTopics)
+                .map(topicRoom -> new SearchTopicRoomData.Builder()
+                        .setTopicId(topicRoom.getId())
+                        .setTitle(topicRoom.getName())
+                        .setMemberCnt(topicRoom.getMembers().size())
+                        .setIsPublic(topicRoom.getType().equals("channel"))
+                        .setIsJoined(topicRoom.isJoined())
+                        .setIsStarred(topicRoom.isStarred())
+                        .setDescription(topicRoom.getDescription())
+                        .build())
                 .filter(topic -> {
-                    if (isPaticipate) {
+                    if (!isShowUnjoinedTopic) {
                         return topic.isJoined() == true;
                     } else {
                         return true;
                     }
                 })
-                .filter(topic -> topic.getName().toLowerCase().contains(keyword.toLowerCase()))
-                .toSortedList((lhs, rhs) -> StringCompareUtil.compare(lhs.getName(), rhs.getName()))
+                .filter(topic -> topic.getTitle().toLowerCase().contains(keyword.toLowerCase()))
+                .toSortedList((lhs, rhs) -> {
+                    if (lhs.isStarred() && rhs.isStarred()) {
+                        return StringCompareUtil.compare(lhs.getTitle(), rhs.getTitle());
+                    } else if (lhs.isStarred()) {
+                        return -1;
+                    } else if (rhs.isStarred()) {
+                        return 1;
+                    } else {
+                        return StringCompareUtil.compare(lhs.getTitle(), rhs.getTitle());
+                    }
+                })
                 .collect(() -> topics, List::addAll)
                 .subscribe();
 

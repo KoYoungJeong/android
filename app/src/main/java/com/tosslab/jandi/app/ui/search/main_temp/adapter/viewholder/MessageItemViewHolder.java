@@ -6,13 +6,14 @@ import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
+import com.tosslab.jandi.app.ui.search.main_temp.object.SearchData;
 
 import butterknife.ButterKnife;
 
 /**
  * Created by tee on 16. 7. 21..
  */
-public class MessageItemViewHolder extends BaseViewHolder {
+public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
 
     public MessageItemViewHolder(View itemView) {
         super(itemView);
@@ -26,7 +27,6 @@ public class MessageItemViewHolder extends BaseViewHolder {
     }
 
     @Override
-    public void onBindView(Object o) {
-
+    public void onBindView(SearchData o) {
     }
 }

@@ -2,12 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="96dp"
-    android:background="#fffafafa"
+
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp">
+        android:layout_height="48dp"
+        android:background="#fffafafa">
 
         <LinearLayout
             android:id="@+id/vg_room_selection_button"
@@ -87,6 +88,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:background="@color/white"
         android:gravity="center">
 
         <ProgressBar
