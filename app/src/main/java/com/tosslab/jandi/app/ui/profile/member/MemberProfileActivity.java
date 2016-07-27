@@ -40,6 +40,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -528,15 +529,22 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     private void showRejectInvitationAlert() {
 
-        new AlertDialog.Builder(MemberProfileActivity.this)
-                .setMessage(R.string.jandi_r_u_sure_cancel_invitation)
-                .setNegativeButton(R.string.jandi_cancel, null)
-                .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UserProfile, AnalyticsValue.Action.CancelInvitation);
-                    requestRejectUser();
-                })
-                .create()
-                .show();
+        String invitationStatus = TeamInfoLoader.getInstance().getInvitationStatus();
+        String invitationUrl = TeamInfoLoader.getInstance().getInvitationUrl();
+        boolean teamOwner = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId()).isTeamOwner();
+        if (InvitationDialogExecutor.canBeInviation(invitationStatus, invitationUrl) || teamOwner) {
+            new AlertDialog.Builder(MemberProfileActivity.this)
+                    .setMessage(R.string.jandi_r_u_sure_cancel_invitation)
+                    .setNegativeButton(R.string.jandi_cancel, null)
+                    .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UserProfile, AnalyticsValue.Action.CancelInvitation);
+                        requestRejectUser();
+                    })
+                    .create()
+                    .show();
+        } else if (!teamOwner) {
+            ColoredToast.showError(R.string.jandi_reject_to_invitation_of_admin);
+        }
     }
 
     @Background

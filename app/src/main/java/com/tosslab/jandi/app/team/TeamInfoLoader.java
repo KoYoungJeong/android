@@ -535,6 +535,18 @@ public class TeamInfoLoader {
         return execute(() -> chatRooms.get(roomId));
     }
 
+    public String getInvitationUrl() {
+        return execute(() -> {
+            return team.getInvitationUrl();
+        });
+    }
+
+    public String getInvitationStatus() {
+        return execute(() -> {
+            return team.getInvitationStatus();
+        });
+    }
+
 
     interface Call0<T> {
         T execute();
