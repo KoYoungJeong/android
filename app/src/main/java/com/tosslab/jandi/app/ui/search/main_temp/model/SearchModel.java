@@ -32,7 +32,7 @@ public class SearchModel {
     public SearchModel() {
     }
 
-    public ResSearch searchMessages(long teamId, long writerId, long roomId, String keyword) throws RetrofitException {
+    public ResSearch searchMessages(long teamId, long writerId, long roomId, String keyword, int page) throws RetrofitException {
         ReqSearch.Builder reqSearchBuilder = new ReqSearch.Builder();
 
         reqSearchBuilder.setType("message");
@@ -44,6 +44,8 @@ public class SearchModel {
         if (roomId != -1) {
             reqSearchBuilder.setRoomId(roomId);
         }
+
+        reqSearchBuilder.setPage(page);
 
         reqSearchBuilder.setKeyword(keyword);
 

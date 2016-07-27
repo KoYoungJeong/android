@@ -28,10 +28,10 @@ public class ReqSearch {
     // 검색 키워드 - default 없음
     private String keyword = null;
 
-    // 페이지
+    // 페이지 - default 1
     private int page = -1;
 
-    // 결과 수
+    // 결과 수 - default 20
     private int count = -1;
 
     // 검색 대상의 시작 시간

@@ -115,7 +115,6 @@ public class SearchActivity extends BaseAppCompatActivity
         isShowUnjoinTopic = isChecked;
         searchPresenter.sendSearchQueryOnlyTopicRoom(
                 tvSearchKeyword.getText().toString(), isShowUnjoinTopic);
-        refreshAll();
     }
 
 }

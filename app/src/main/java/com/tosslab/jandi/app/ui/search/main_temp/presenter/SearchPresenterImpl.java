@@ -30,11 +30,8 @@ public class SearchPresenterImpl implements SearchPresenter {
     }
 
     public void sendSearchQuery(String keyword, boolean isShowUnjoinedTopic) {
-
         List<SearchTopicRoomData> topicRoomDatas = searchModel.getSearchedTopics(keyword, isShowUnjoinedTopic);
         searchAdapterDataModel.setSearchTopicRoomDatas(topicRoomDatas);
-
-
         view.refreshAll();
     }
 
