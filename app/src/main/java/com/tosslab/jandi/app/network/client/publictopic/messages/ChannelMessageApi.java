@@ -47,7 +47,7 @@ public class ChannelMessageApi extends ApiTemplate<ChannelMessageApi.Api> {
 
     public ResMessages getPublicTopicUpdatedMessagesForMarker(long teamId, long channelId,
                                                               long currentLinkId, int count) throws RetrofitException {
-        return call(() -> getApi().getPublicTopicUpdatedMessagesForMarker(channelId, teamId, currentLinkId));
+        return call(() -> getApi().getPublicTopicUpdatedMessagesForMarker(channelId, teamId, currentLinkId, count));
     }
 
 

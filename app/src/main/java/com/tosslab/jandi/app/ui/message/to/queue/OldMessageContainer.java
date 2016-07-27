@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.ui.message.to.MessageState;
 public class OldMessageContainer implements MessageContainer<MessageState> {
 
     private final MessageState messageState;
-    private boolean cacheMode;
     public OldMessageContainer(MessageState messageState) {
         this.messageState = messageState;
     }
@@ -23,11 +22,4 @@ public class OldMessageContainer implements MessageContainer<MessageState> {
         return messageState;
     }
 
-    public boolean isCacheMode() {
-        return cacheMode;
-    }
-
-    public void setCacheMode(boolean cacheMode) {
-        this.cacheMode = cacheMode;
-    }
 }

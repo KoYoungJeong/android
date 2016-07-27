@@ -487,13 +487,10 @@ public class MessageRepository extends LockExecutorTemplate {
     public List<ResMessages.Link> getMessages(long roomId, long firstCursorLinkId, long toCursorLinkId) {
         return execute(() -> {
             try {
-                long teamId = AccountRepository.getRepository().getSelectedTeamId();
                 return getHelper().getDao(ResMessages.Link.class)
                         .queryBuilder()
                         .orderBy("time", true)
                         .where()
-                        .eq("teamId", teamId)
-                        .and()
                         .in("id", inQueryBuildOfRoomRelation(roomId))
                         .and()
                         .ge("id", firstCursorLinkId)
@@ -508,4 +505,17 @@ public class MessageRepository extends LockExecutorTemplate {
         });
     }
 
+    public ResMessages.Link getMessage(long linkId) {
+        return execute(() -> {
+
+            try {
+                Dao<ResMessages.Link, Long> dao = getDao(ResMessages.Link.class);
+                return dao.queryForId(linkId);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return new ResMessages.Link();
+        });
+    }
 }
