@@ -88,7 +88,7 @@ public class MembersModel {
                 .filter(user -> !TeamInfoLoader.getInstance().isJandiBot(user.getId()))
                 .map(ChatChooseItem::create)
                 .filter(ChatChooseItem::isEnabled)
-                .subscribe(chatChooseItems::add, Throwable::printStackTrace)
+                .subscribe(chatChooseItems::add, Throwable::printStackTrace);
 
         if (TeamInfoLoader.getInstance().hasJandiBot()) {
             User jandiBot = TeamInfoLoader.getInstance().getJandiBot();
