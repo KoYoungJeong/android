@@ -26,9 +26,6 @@ import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
-import com.tosslab.jandi.app.events.socket.EventUpdateFinish;
-import com.tosslab.jandi.app.events.socket.EventUpdateInProgress;
-import com.tosslab.jandi.app.events.socket.EventUpdateStart;
 import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamJoinEvent;
@@ -148,6 +145,10 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.PublishSubject;
+
+//import com.tosslab.jandi.app.events.socket.EventUpdateFinish;
+//import com.tosslab.jandi.app.events.socket.EventUpdateInProgress;
+//import com.tosslab.jandi.app.events.socket.EventUpdateStart;
 
 public class JandiSocketServiceModel {
     public static final String TAG = JandiSocketServiceModel.class.getSimpleName();
@@ -1292,9 +1293,9 @@ public class JandiSocketServiceModel {
                 .filter(it -> messageEventActorMapper.containsKey(it.getClass()))
                 .toSortedList((lhs, rhs) -> ((Long) (lhs.getTs() - rhs.getTs())).intValue())
                 .filter(it -> !it.isEmpty())
-                .doOnSubscribe(() -> EventBus.getDefault().post(new EventUpdateStart()))
+//                .doOnSubscribe(() -> EventBus.getDefault().post(new EventUpdateStart()))
                 .subscribe(eventInfos -> {
-                    EventBus eventBus = EventBus.getDefault();
+//                    EventBus eventBus = EventBus.getDefault();
                     int eventSize = eventInfos.size();
 
                     if (!eventInfos.isEmpty()) {
@@ -1317,7 +1318,7 @@ public class JandiSocketServiceModel {
                             etcEvents.add(eventInfo);
                         }
 
-                        eventBus.post(new EventUpdateInProgress(messageCreateEventCount, eventSize));
+//                        eventBus.post(new EventUpdateInProgress(messageCreateEventCount, eventSize));
                     }
 
                     deleteCompledtedMessages(messageCreates);
@@ -1335,7 +1336,7 @@ public class JandiSocketServiceModel {
                                     command.command(eventInfo);
                                 }
                             }
-                            eventBus.post(new EventUpdateInProgress(index, eventSize));
+//                            eventBus.post(new EventUpdateInProgress(index, eventSize));
                         }
                     } else {
 
@@ -1370,16 +1371,16 @@ public class JandiSocketServiceModel {
                                         command.command(eventHistoryInfo);
                                     }
                                 }
-                                eventBus.post(new EventUpdateInProgress(messageCreateEventCount + idx + 1, eventSize));
+//                                eventBus.post(new EventUpdateInProgress(messageCreateEventCount + idx + 1, eventSize));
                             }
                         }
                     }
 
                 }, (throwable) -> {
-                    EventBus.getDefault().post(new EventUpdateFinish());
+//                    EventBus.getDefault().post(new EventUpdateFinish());
                     throwable.printStackTrace();
                 }, () -> {
-                    EventBus.getDefault().post(new EventUpdateFinish());
+//                    EventBus.getDefault().post(new EventUpdateFinish());
                 });
 
     }
