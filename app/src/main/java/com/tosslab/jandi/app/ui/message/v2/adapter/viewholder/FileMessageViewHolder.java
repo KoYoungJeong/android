@@ -194,7 +194,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
                 String name = TeamInfoLoader.getInstance().getMemberName(fileMessage.writerId);
                 tvFileUploaderName.setText(name);
                 ResMessages.FileContent fileContent = ((ResMessages.FileMessage) link.message).content;
-                String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
+                String fileSize = FileUtil.formatFileSize(fileContent.size);
                 tvCommonFileSize.setText(fileSize);
                 vFileIconBorder.setVisibility(View.VISIBLE);
 

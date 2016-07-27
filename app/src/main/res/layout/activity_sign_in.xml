@@ -85,7 +85,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
-                android:text="@string/common_signin_button_text"
+                android:text="@string/jandi_sign_in_block"
                 android:textColor="@color/white"
                 android:textSize="14sp"/>
 

@@ -228,7 +228,7 @@ public class FileStickerCommentViewHolder extends BaseCommentViewHolder {
         if (link.feedback instanceof ResMessages.FileMessage) {
             ResMessages.FileMessage feedbackFileMessage = ((ResMessages.FileMessage) link.feedback);
             ResMessages.FileContent fileContent = feedbackFileMessage.content;
-            String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
+            String fileSize = FileUtil.formatFileSize(fileContent.size);
             tvCommonFileSize.setText(fileSize);
 
             boolean isSharedFile = false;
