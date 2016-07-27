@@ -55,7 +55,7 @@ public class MessageViewHolder extends BaseMessageViewHolder {
             vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
 
             tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
-            vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+            vDisableLineThrough = rootView.findViewById(R.id.iv_name_line_through);
         } else {
             if (hasTopMargin) {
                 topMargin = (int) UiUtils.getPixelFromDp(12f);

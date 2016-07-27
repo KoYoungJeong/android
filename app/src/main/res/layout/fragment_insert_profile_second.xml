@@ -119,7 +119,7 @@
             android:visibility="gone">
 
             <ImageView
-                android:id='@+id/iv_profile_check'
+                android:id="@+id/iv_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"

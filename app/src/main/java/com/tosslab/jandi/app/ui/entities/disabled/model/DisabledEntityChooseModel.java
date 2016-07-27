@@ -20,13 +20,7 @@ public class DisabledEntityChooseModel {
         Observable.from(TeamInfoLoader.getInstance().getUserList())
                 .filter(user -> user.getId() != myId)
                 .filter(user -> !user.isEnabled())
-                .map(user -> new ChatChooseItem()
-                        .entityId(user.getId())
-                        .statusMessage(user.getStatusMessage())
-                        .name(user.getName())
-                        .starred(TeamInfoLoader.getInstance().isStarredUser(user.getId()))
-                        .enabled(false)
-                        .photoUrl(user.getPhotoUrl()))
+                .map(ChatChooseItem::create)
                 .toSortedList((lhs, rhs) -> {
                     return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                 })

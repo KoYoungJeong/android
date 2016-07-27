@@ -100,7 +100,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     void initObject() {
         int ownerType = (type == TYPE_MEMBERS_LIST_TOPIC || type == TYPE_ASSIGN_TOPIC_OWNER)
                 ? ModdableMemberListAdapter.OWNER_TYPE_TOPIC : ModdableMemberListAdapter.OWNER_TYPE_TEAM;
-        topicModdableMemberListAdapter = new ModdableMemberListAdapter(getBaseContext(), ownerType);
+        topicModdableMemberListAdapter = new ModdableMemberListAdapter(ownerType);
         if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
             topicModdableMemberListAdapter.setCheckMode();
         } else if (type == TYPE_ASSIGN_TOPIC_OWNER) {

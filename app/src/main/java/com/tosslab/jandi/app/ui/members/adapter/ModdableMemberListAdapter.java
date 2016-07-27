@@ -1,45 +1,27 @@
 package com.tosslab.jandi.app.ui.members.adapter;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+import com.tosslab.jandi.app.ui.members.adapter.searchable.viewholder.MemberViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
-
 public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
     public static final int OWNER_TYPE_TEAM = 0;
     public static final int OWNER_TYPE_TOPIC = 1;
-    private Context context;
+
     private List<ChatChooseItem> memberChooseItems;
     private boolean isCheckMode = false;
-    private boolean kickMode;
+    private boolean isKickMode;
     private int ownerType = OWNER_TYPE_TEAM;
     private OnKickClickListener onKickClickListener;
     private OnMemberClickListener onMemberClickListener;
 
-    public ModdableMemberListAdapter(Context context, int ownerType) {
-        this.context = context;
+    public ModdableMemberListAdapter(int ownerType) {
         this.ownerType = ownerType;
         memberChooseItems = new ArrayList<>();
     }
@@ -58,29 +40,42 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        if (isCheckMode) {
-            View itemView = inflater.inflate(R.layout.item_entity_body_one_line, parent, false);
-            return new MemberChoiceViewHolder(itemView);
-        } else {
-            View itemView = inflater.inflate(R.layout.item_entity_body_two_line, parent, false);
-            return new MemberViewHolder(itemView);
-        }
+        return MemberViewHolder.createForChatChooseItem(parent);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final ChatChooseItem item = getItem(position);
-        if (isCheckMode) {
-            ((MemberChoiceViewHolder) holder).bindView(item);
+
+        MemberViewHolder viewHolder = (MemberViewHolder) holder;
+
+        if (ownerType == OWNER_TYPE_TEAM) {
+            viewHolder.setIsTeamMemberList(true);
         } else {
-            long myId = TeamInfoLoader.getInstance().getMyId();
-            ((MemberViewHolder) holder).bindView(item, ownerType, kickMode, myId, v -> {
+            viewHolder.setIsTeamMemberList(false);
+        }
+
+        if (isKickMode) {
+            viewHolder.setKickMode(true);
+            viewHolder.setSelectMode(false);
+            viewHolder.setKickClickListener(v -> {
                 if (onKickClickListener != null) {
                     onKickClickListener.onKickClick(ModdableMemberListAdapter.this, holder, position);
                 }
             });
+        } else if (isCheckMode) {
+            viewHolder.setSelectMode(true);
+            viewHolder.setProfileImageClickable(true);
+            viewHolder.setKickMode(false);
+            viewHolder.setKickClickListener(null);
+        } else {
+            viewHolder.setSelectMode(false);
+            viewHolder.setProfileImageClickable(false);
+            viewHolder.setKickMode(false);
+            viewHolder.setKickClickListener(null);
         }
+
+        viewHolder.onBindView(item);
 
         if (onMemberClickListener != null) {
             holder.itemView.setOnClickListener((v) -> onMemberClickListener.onMemberClick(item));
@@ -120,7 +115,7 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     public void setKickMode(boolean kickMode) {
-        this.kickMode = kickMode;
+        this.isKickMode = kickMode;
     }
 
     public void setOnKickClickListener(OnKickClickListener onKickClickListener) {
@@ -139,134 +134,4 @@ public class ModdableMemberListAdapter extends RecyclerView.Adapter<RecyclerView
         void onKickClick(RecyclerView.Adapter adapter, RecyclerView.ViewHolder viewHolder, int position);
     }
 
-    static class MemberChoiceViewHolder extends RecyclerView.ViewHolder {
-        private ImageView ivIcon;
-        private ImageView ivFavorite;
-        private TextView tvName;
-        private View vDisableLineThrough;
-        private View vDisableCover;
-        private CheckBox cbChoose;
-        private TextView tvOwnerBadge;
-
-        public MemberChoiceViewHolder(View itemView) {
-            super(itemView);
-            tvName = (TextView) itemView.findViewById(R.id.tv_entity_listitem_name);
-            ivIcon = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_icon);
-            ivFavorite = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_fav);
-            vDisableLineThrough = itemView.findViewById(R.id.iv_entity_listitem_line_through);
-            vDisableCover = itemView.findViewById(R.id.v_entity_listitem_warning);
-            cbChoose = (CheckBox) itemView.findViewById(R.id.cb_user);
-            tvOwnerBadge = (TextView) itemView.findViewById(R.id.tv_owner_badge);
-        }
-
-        public void bindView(final ChatChooseItem item) {
-            tvName.setText(item.getName());
-
-            Resources resources = tvOwnerBadge.getResources();
-            tvOwnerBadge.setText(resources.getString(R.string.jandi_team_owner));
-            tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
-
-            tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
-
-            ivFavorite.setVisibility(View.GONE);
-
-            vDisableLineThrough.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
-            vDisableCover.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
-
-            if (!item.isInactive()) {
-                ImageUtil.loadProfileImage(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
-            } else {
-                ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_43);
-            }
-
-            cbChoose.setChecked(item.isChooseItem());
-            itemView.setOnClickListener(v -> {
-                boolean isChecked = cbChoose.isChecked();
-                cbChoose.setChecked(!isChecked);
-                item.setIsChooseItem(!isChecked);
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.SelectMember);
-            });
-
-            ivIcon.setOnClickListener(v ->
-                    EventBus.getDefault().post(new ShowProfileEvent(item.getEntityId())));
-
-        }
-    }
-
-    static class MemberViewHolder extends RecyclerView.ViewHolder {
-        private ImageView ivIcon;
-        private ImageView ivFavorite;
-        private TextView tvName;
-        private TextView tvAdditional;
-        private View vDisableLineThrough;
-        private View vDisableCover;
-        private View ivKick;
-        private TextView tvOwnerBadge;
-
-        public MemberViewHolder(View itemView) {
-            super(itemView);
-            tvName = (TextView) itemView.findViewById(R.id.tv_entity_listitem_name);
-            tvAdditional = (TextView) itemView.findViewById(R.id.tv_entity_listitem_user_count);
-            ivIcon = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_icon);
-            ivFavorite = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_fav);
-            vDisableLineThrough = itemView.findViewById(R.id.iv_entity_listitem_line_through);
-            vDisableCover = itemView.findViewById(R.id.v_entity_listitem_warning);
-            ivKick = itemView.findViewById(R.id.iv_entity_listitem_user_kick);
-            tvOwnerBadge = (TextView) itemView.findViewById(R.id.tv_owner_badge);
-        }
-
-        public void bindView(ChatChooseItem item, int ownerType, boolean kickMode, long myId,
-                             View.OnClickListener onKickClickListener) {
-            if (!item.isInactive()) {
-                tvName.setText(item.getName());
-            } else {
-                tvName.setText(item.getEmail());
-            }
-
-            Resources resources = tvOwnerBadge.getResources();
-            tvOwnerBadge.setText(ownerType == ModdableMemberListAdapter.OWNER_TYPE_TEAM
-                    ? resources.getString(R.string.jandi_team_owner)
-                    : resources.getString(R.string.jandi_topic_owner));
-
-            tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
-
-            tvAdditional.setVisibility(!TextUtils.isEmpty(item.getStatusMessage()) ? View.VISIBLE : View.GONE);
-            tvAdditional.setText(item.getStatusMessage());
-
-            ivFavorite.setVisibility(View.GONE);
-
-            vDisableLineThrough.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
-            vDisableCover.setVisibility(item.isEnabled() ? View.GONE : View.VISIBLE);
-
-            if (kickMode && item.getEntityId() != myId && !item.isBot()) {
-                ivKick.setVisibility(View.VISIBLE);
-                ivKick.setOnClickListener(onKickClickListener);
-            } else {
-                ivKick.setVisibility(View.GONE);
-                ivKick.setOnClickListener(null);
-            }
-
-            if (!item.isBot()) {
-                ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
-                layoutParams.height = ivIcon.getResources().getDimensionPixelSize(R.dimen.jandi_entity_item_icon);
-                ivIcon.setLayoutParams(layoutParams);
-                if (!item.isInactive()) {
-                    ImageUtil.loadProfileImage(ivIcon, item.getPhotoUrl(), R.drawable.profile_img);
-                } else {
-                    ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_43);
-                }
-            } else {
-                ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
-                DisplayMetrics displayMetrics = ivIcon.getResources().getDisplayMetrics();
-                layoutParams.height = Math.round(
-                        TypedValue.applyDimension(
-                                TypedValue.COMPLEX_UNIT_DIP, 54f, displayMetrics));
-                ivIcon.setLayoutParams(layoutParams);
-                ImageLoader.loadFromResources(ivIcon, R.drawable.bot_43x54);
-            }
-
-            itemView.setOnClickListener(v ->
-                    EventBus.getDefault().post(new ShowProfileEvent(item.getEntityId())));
-        }
-    }
 }
