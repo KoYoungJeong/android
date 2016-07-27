@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
@@ -19,6 +20,7 @@ import org.androidannotations.annotations.Extra;
 public class MessageListV2Activity extends BaseAppCompatActivity {
 
     public static final String TAG_LIST = "list";
+    public static final String KEY_ENTITY_ID = "entityId";
     @Extra
     int entityType;
     @Extra
@@ -121,6 +123,14 @@ public class MessageListV2Activity extends BaseAppCompatActivity {
     @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
         return false;
+    }
+
+    @Override
+    public void finish() {
+        Intent data = new Intent();
+        data.putExtra(KEY_ENTITY_ID, entityId);
+        setResult(RESULT_OK, data);
+        super.finish();
     }
 
     public interface OnBackPressedListener {
