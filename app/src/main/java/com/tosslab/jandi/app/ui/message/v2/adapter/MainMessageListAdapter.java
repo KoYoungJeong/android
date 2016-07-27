@@ -1,8 +1,5 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter;
 
-import android.animation.Animator;
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -11,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.poll.Poll;
@@ -23,14 +19,11 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.TypeUtil;
 import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
 import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -41,16 +34,12 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         implements MessageListHeaderAdapter.MessageItemDate, MessageListAdapterView, MessageListAdapterModel {
 
     Context context;
-    long lastMarker = -1;
     AnimState markerAnimState = AnimState.Idle;
-    boolean moreFromNew;
     MoreState oldMoreState;
-    MoreState newMoreState;
     MainMessageListAdapter.OnItemClickListener onItemClickListener;
     MainMessageListAdapter.OnItemLongClickListener onItemLongClickListener;
     List<ResMessages.Link> links;
     // 소켓으로 데이터를 받지 않은 경우에 저장하기 위한 정보
-    private Set<Long> dirties;
     private Room room;
     private MessagePointer messagePointer;
 
@@ -62,7 +51,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         this.room = room;
         oldMoreState = MoreState.Idle;
         links = new ArrayList<>();
-        dirties = new HashSet<>();
         setHasStableIds(true);
         itemTypes = new WeakHashMap<>();
 
@@ -94,28 +82,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
             e.printStackTrace();
         }
 
-        if (item.id == lastMarker) {
-            if (markerAnimState == MainMessageListAdapter.AnimState.Idle) {
-                final View view = viewHolder.itemView;
-                Integer colorFrom = context.getResources().getColor(R.color.jandi_chat_list_default_background_1f);
-                Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_1f);
-                final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-                colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
-                colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
-                colorAnimation.setRepeatCount(1);
-                colorAnimation.addUpdateListener(animator -> view.setBackgroundColor((Integer) animator.getAnimatedValue()));
-
-                colorAnimation.addListener(new SimpleEndAnimatorListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        markerAnimState = MainMessageListAdapter.AnimState.End;
-                    }
-                });
-                colorAnimation.start();
-                markerAnimState = MainMessageListAdapter.AnimState.Loading;
-            }
-        }
-
         if (position > 0 && position < getItemCount() - 1 - getDummyMessageCount()) {
             bodyViewHolder.setLastReadViewVisible(item.id, messagePointer.getLastReadLinkId());
         } else {
@@ -126,11 +92,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
             oldMoreState = MainMessageListAdapter.MoreState.Loading;
             EventBus.getDefault().post(new RefreshOldMessageEvent());
         }
-        /*else if (moreFromNew && position == getItemCount() - 1
-                && newMoreState == MainMessageListAdapter.MoreState.Idle) {
-            newMoreState = MainMessageListAdapter.MoreState.Loading;
-            EventBus.getDefault().post(new RefreshNewMessageEvent());
-        }*/
 
         bodyViewHolder.setOnItemClickListener(v -> {
             if (onItemClickListener != null) {
@@ -393,25 +354,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         return -1;
     }
 
-    public void setMarker(long lastMarker) {
-        this.lastMarker = lastMarker;
-    }
-
-    @Override
-    public void setMoreFromNew(boolean moreFromNew) {
-        this.moreFromNew = moreFromNew;
-    }
-
-    @Override
-    public void setNewLoadingComplete() {
-        newMoreState = MoreState.Idle;
-    }
-
-    @Override
-    public void setNewNoMoreLoading() {
-        newMoreState = MoreState.Nope;
-    }
-
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
@@ -485,38 +427,30 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     }
 
     @Override
+    public void add(int position, ResMessages.Link dummyMessage) {
+        lock.lock();
+        try {
+            links.add(position, dummyMessage);
+            int itemCount = getItemCount();
+            if (position > 1) {
+                itemTypes.remove(getItem(position - 1));
+                getItemViewType(itemCount - 1);
+            }
+            getItemViewType(position);
+
+            if (position < itemCount - 1) {
+                itemTypes.remove(getItem(position + 1));
+                getItemViewType(position + 1);
+            }
+        } finally {
+            lock.unlock();
+        }
+
+    }
+
+    @Override
     public void modifyStarredStateByPosition(int position, boolean isStarred) {
         getItem(position).message.isStarred = isStarred;
-    }
-
-    @Override
-    public void changeToDirty(long linkId) {
-        lock.lock();
-        try {
-            dirties.add(linkId);
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    @Override
-    public boolean isDirty(long linkId) {
-        lock.lock();
-        try {
-            return dirties.contains(linkId);
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    @Override
-    public void removeDirty(long linkId) {
-        lock.lock();
-        try {
-            dirties.remove(linkId);
-        } finally {
-            lock.unlock();
-        }
     }
 
     @Override

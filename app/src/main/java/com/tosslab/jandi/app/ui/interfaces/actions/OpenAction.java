@@ -3,29 +3,44 @@ package com.tosslab.jandi.app.ui.interfaces.actions;
 import android.app.Activity;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.account.devices.DeviceApi;
+import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.ReqAccessToken;
+import com.tosslab.jandi.app.network.models.ReqSubscribeToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 
+import java.util.UUID;
+
 import javax.inject.Inject;
 
 import dagger.Lazy;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 28..
@@ -39,6 +54,10 @@ public class OpenAction implements Action {
     ProgressWheel progressWheel;
     @Inject
     Lazy<AccountApi> accountApi;
+    @Inject
+    Lazy<LoginApi> loginApi;
+    @Inject
+    Lazy<DeviceApi> deviceApi;
 
     @AfterInject
     void initObject() {
@@ -75,32 +94,133 @@ public class OpenAction implements Action {
         return access_token;
     }
 
-    @Background
-    void checkSession(String access_token, String refresh_token) {
+    void checkSession(final String accessToken, final String refreshToken) {
+        ResAccessToken originToken = TokenUtil.getTokenObject();
+        if (originToken == null || TextUtils.isEmpty(originToken.getAccessToken())) {
+            ResAccessToken resAccessToken = new ResAccessToken();
+            resAccessToken.setAccessToken(accessToken);
+            resAccessToken.setRefreshToken(refreshToken);
+            TokenUtil.saveTokenInfoByRefresh(resAccessToken);
 
-        ResAccessToken accessToken = new ResAccessToken();
-        accessToken.setAccessToken(access_token);
-        accessToken.setRefreshToken(refresh_token);
-        accessToken.setTokenType("bearer");
+            signIn(refreshToken);
 
-        try {
+        } else {
 
-            SignOutUtil.removeSignData();
+            deleteOriginalTokenAndSignIn(accessToken, refreshToken);
 
-            TokenUtil.saveTokenInfoByRefresh(accessToken);
-            ResAccountInfo accountInfo = accountApi.get().getAccountInfo();
-
-            AccountUtil.removeDuplicatedTeams(accountInfo);
-            AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
-
-            successAccessToken(accountInfo);
-        } catch (Exception e) {
-            TokenUtil.clearTokenInfo();
-            AccountRepository.getRepository().clearAccountData();
-            failAccessToken();
         }
-        startIntroActivity();
 
+    }
+
+    private void signIn(String refreshToken) {
+        Observable.just(refreshToken)
+                .subscribeOn(Schedulers.io())
+                .concatMap(token -> {
+                    ReqAccessToken newAccessToken = ReqAccessToken.createRefreshReqToken(token);
+                    try {
+                        ResAccessToken resAccessToken = loginApi.get().getAccessToken(newAccessToken);
+                        TokenUtil.saveTokenInfoByRefresh(resAccessToken);
+                        return Observable.just(resAccessToken);
+                    } catch (RetrofitException e) {
+                        LogUtil.e(Log.getStackTraceString(e));
+                        return Observable.error(e);
+                    }
+                })
+                .concatMap(resAccessToken -> {
+                    try {
+                        ResAccountInfo accountInfo = accountApi.get().getAccountInfo();
+
+                        ReqSubscribeToken subscibeToken = new ReqSubscribeToken(true);
+                        deviceApi.get().updateSubscribe(resAccessToken.getDeviceId(), subscibeToken);
+
+                        return Observable.just(accountInfo);
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                        return Observable.error(e);
+                    }
+                })
+                .doOnNext(resAccountInfo -> {
+                    AccountUtil.removeDuplicatedTeams(resAccountInfo);
+                    AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::successAccessToken,
+                        e -> {
+                            TokenUtil.clearTokenInfo();
+                            AccountRepository.getRepository().clearAccountData();
+                            failAccessToken();
+                        }, this::startIntroActivity);
+
+    }
+
+    private void deleteOriginalTokenAndSignIn(String accessToken, String refreshToken) {
+        // deviceId 가 없는 경우에 대한 방어코드, deviceId 가 비어 있는 경우 400 error 가 떨어짐.
+        // UUID RFC4122 규격 맞춘 아무 값이나 필요
+        final String deviceIdOrigin = TextUtils.isEmpty(TokenUtil.getTokenObject().getDeviceId())
+                ? UUID.randomUUID().toString()
+                : TokenUtil.getTokenObject().getDeviceId();
+
+        Observable.just(deviceIdOrigin)
+                .subscribeOn(Schedulers.io())
+                .concatMap(deviceId -> {
+                    try {
+                        ResCommon resCommon =
+                                loginApi.get().deleteToken(TokenUtil.getRefreshToken(), deviceId);
+                        return Observable.just(resCommon);
+                    } catch (RetrofitException e) {
+                        LogUtil.e(Log.getStackTraceString(e));
+                        return Observable.error(e);
+                    }
+                })
+                .onErrorReturn(throwable -> new ResCommon())
+                .doOnNext(o -> {
+                    SignOutUtil.removeSignData();
+                    BadgeUtils.clearBadge(JandiApplication.getContext());
+                    JandiSocketService.stopService(JandiApplication.getContext());
+                })
+                .concatMap(o -> {
+                    ResAccessToken resAccessTokenTemp = new ResAccessToken();
+                    resAccessTokenTemp.setAccessToken(accessToken);
+                    resAccessTokenTemp.setRefreshToken(refreshToken);
+                    TokenUtil.saveTokenInfoByRefresh(resAccessTokenTemp);
+
+                    ReqAccessToken newAccessToken = ReqAccessToken.createRefreshReqToken(refreshToken);
+                    try {
+                        ResAccessToken resAccessToken = loginApi.get().getAccessToken(newAccessToken);
+                        TokenUtil.saveTokenInfoByRefresh(resAccessToken);
+                        return Observable.just(resAccessToken);
+                    } catch (RetrofitException e) {
+                        LogUtil.e(Log.getStackTraceString(e));
+                        return Observable.error(e);
+                    }
+                })
+                .concatMap(resAccessToken -> {
+                    try {
+                        ResAccountInfo accountInfo = accountApi.get().getAccountInfo();
+
+                        ReqSubscribeToken subscibeToken = new ReqSubscribeToken(true);
+                        deviceApi.get().updateSubscribe(resAccessToken.getDeviceId(), subscibeToken);
+
+                        return Observable.just(accountInfo);
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                        return Observable.error(e);
+                    }
+                })
+                .doOnNext(resAccountInfo -> {
+                    AccountUtil.removeDuplicatedTeams(resAccountInfo);
+                    AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::successAccessToken,
+                        e -> {
+                            TokenUtil.clearTokenInfo();
+                            AccountRepository.getRepository().clearAccountData();
+                            failAccessToken();
+                        }, () -> {
+                            JandiApplication.updatePlatformStatus(true);
+                            startIntroActivity();
+                        });
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -130,7 +250,6 @@ public class OpenAction implements Action {
         ColoredToast.show(activity.getString(R.string.jandi_success_web_token));
     }
 
-    @UiThread
     void startIntroActivity() {
         dismissProgress();
         IntroActivity.startActivity(activity, true);

@@ -31,18 +31,6 @@ public class FormatConverter {
             "application/vnd.ms-excel.sheet.macroEnabled.12"
     };
 
-    public static String formatFileSize(long byteSize) {
-
-        if (byteSize > MB) {
-            float f = (float) byteSize / MB;
-            return String.format("%.2f MB", f);
-        } else if (byteSize > KB) {
-            return (byteSize / KB) + " KB";
-        } else {
-            return byteSize + " bytes";
-        }
-    }
-
     public static boolean isInvalidEmailString(String targetString) {
         return !targetString.matches(LinkifyUtil.REG_EX_EMAIL);
     }

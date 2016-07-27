@@ -332,7 +332,7 @@ public class FileListPresenterImpl implements FileListPresenter {
     }
 
     @Override
-    public void onRefreshFileInfo(int fileId, int commentCount) {
+    public void onRefreshFileInfo(long fileId, int commentCount) {
         int position = searchedFilesAdapterModel.findPositionByFileId(fileId);
         if (position < 0) {
             return;

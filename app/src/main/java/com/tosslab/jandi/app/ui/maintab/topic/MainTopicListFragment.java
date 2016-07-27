@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.topic;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,7 +22,6 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
-import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
@@ -46,6 +46,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.views.create.TopicCreateActivity_;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.TopicFolderSettingActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.TopicFolderSettingActivity_;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -108,7 +109,6 @@ public class MainTopicListFragment extends Fragment
     private LinearLayoutManager layoutManager;
     private ExpandableTopicAdapter expandableTopicAdapter;
     private RecyclerViewExpandableItemManager expandableItemManager;
-
 
     private ProgressWheel progressWheel;
     private FloatingActionMenu floatingActionMenu;
@@ -182,6 +182,7 @@ public class MainTopicListFragment extends Fragment
     private void initUpdatedTopicAdapter() {
         updatedTopicAdapter = new UpdatedTopicAdapter(getActivity());
         updatedTopicAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
+            updatedTopicAdapter.stopAnimation();
             Topic item = ((UpdatedTopicAdapter) adapter).getItem(position);
             mainTopicListPresenter.onUpdatedTopicClick(item);
             updatedTopicAdapter.notifyDataSetChanged();
@@ -392,7 +393,14 @@ public class MainTopicListFragment extends Fragment
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == MOVE_MESSAGE_ACTIVITY) {
+        if (requestCode == MOVE_MESSAGE_ACTIVITY
+                && resultCode == Activity.RESULT_OK
+                && (data != null && data.hasExtra(MessageListV2Activity.KEY_ENTITY_ID))) {
+            long selectedEntity = data.getLongExtra(MessageListV2Activity.KEY_ENTITY_ID, -2);
+            if (selectedEntity <= -2) {
+                return;
+            }
+
             setSelectedItem(selectedEntity);
             if (isCurrentFolder()) {
                 expandableTopicAdapter.startAnimation();
@@ -554,10 +562,6 @@ public class MainTopicListFragment extends Fragment
         } else {
             mainTopicListPresenter.onRefreshUpdatedTopicList();
         }
-    }
-
-    public void onEvent(MainSelectTopicEvent event) {
-        selectedEntity = event.getSelectedEntity();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

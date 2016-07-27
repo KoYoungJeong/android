@@ -21,8 +21,8 @@ import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.filedetail.widget.LinkedEllipsizeTextView;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.views.spannable.EntitySpannable;
@@ -137,8 +137,8 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
         if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
             tvFileInfo.setText(fileMessage.content.ext);
         } else {
-            String fileSize = FormatConverter.formatFileSize(content.size);
-            tvFileInfo.setText(String.format("%s, %s", fileSize, content.ext));
+            String fileSize = FileUtil.formatFileSize(content.size);
+            tvFileInfo.setText(fileSize);
         }
 
         bindFileContent(fileMessage);

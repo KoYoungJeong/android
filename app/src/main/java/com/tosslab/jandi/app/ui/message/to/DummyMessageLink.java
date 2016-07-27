@@ -13,7 +13,6 @@ import java.util.List;
 public class DummyMessageLink extends ResMessages.Link {
 
     private final long localId;
-    private String status;
     private List<MentionObject> mentions;
 
     public DummyMessageLink(long localId, String message, String status, List<MentionObject> mentions) {

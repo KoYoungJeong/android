@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.github.dcendents:android-maven-gradle-plugin:${rootProject.ext.androidMavenGradlePlugin}"
+        classpath rootProject.ext.dependecies.buildscripts.android_maven_gradle
     }
 }
 
@@ -45,7 +45,7 @@ android {
 }
 
 dependencies {
-    compile "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
+    compile rootProject.ext.dependecies.libraries.support_v4
 }
 
 install {

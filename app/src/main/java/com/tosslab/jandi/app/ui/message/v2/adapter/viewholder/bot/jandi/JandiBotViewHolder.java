@@ -56,8 +56,8 @@ public class JandiBotViewHolder implements BodyViewHolder {
         vgUserName = (ViewGroup) rootView.findViewById(R.id.vg_message_profile_user_name);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
-        vDisableCover = rootView.findViewById(R.id.v_entity_listitem_warning);
-        vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+        vDisableCover = rootView.findViewById(R.id.v_name_warning);
+        vDisableLineThrough = rootView.findViewById(R.id.iv_name_line_through);
         vMargin = rootView.findViewById(R.id.v_margin);
         tvMessageTime = (TextView) rootView.findViewById(R.id.tv_message_time);
         tvMessageBadge = (TextView) rootView.findViewById(R.id.tv_message_badge);

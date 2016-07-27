@@ -561,7 +561,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
             return;
         }
 
-        int fileId = intent.getIntExtra(KEY_FILE_ID, -1);
+        long fileId = intent.getLongExtra(KEY_FILE_ID, -1);
         int commentCount = intent.getIntExtra(KEY_COMMENT_COUNT, -1);
         if (fileId <= 0 || commentCount < 0) {
             return;

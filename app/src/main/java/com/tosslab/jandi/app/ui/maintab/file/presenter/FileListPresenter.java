@@ -39,7 +39,7 @@ public interface FileListPresenter {
 
     void doKeywordSearch(String s);
 
-    void onRefreshFileInfo(int fileId, int commentCount);
+    void onRefreshFileInfo(long fileId, int commentCount);
 
     interface View {
         void clearListView();

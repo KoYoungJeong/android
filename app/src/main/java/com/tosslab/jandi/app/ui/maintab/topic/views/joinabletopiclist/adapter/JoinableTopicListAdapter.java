@@ -117,9 +117,9 @@ public class JoinableTopicListAdapter extends RecyclerView.Adapter<JoinableTopic
 
         @Bind(R.id.tv_entity_listitem_description)
         TextView tvDescription;
-        @Bind(R.id.tv_entity_listitem_name)
+        @Bind(R.id.tv_user_name)
         TextView tvName;
-        @Bind(R.id.tv_entity_listitem_user_count)
+        @Bind(R.id.tv_user_department)
         TextView tvMemberCount;
 
         public TopicViewHolder(View itemView) {
