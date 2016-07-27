@@ -78,7 +78,7 @@ public class InsertProfileFirstPageFragment extends Fragment
     @Bind(R.id.iv_profile_picture)
     ImageView ivProfilePicture;
 
-    @Bind(R.id.tv_user_name)
+    @Bind(R.id.tv_name)
     TextView tvName;
 
     @Bind(R.id.tv_name_length)
@@ -99,7 +99,6 @@ public class InsertProfileFirstPageFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_insert_profile_first, container, false);
-        ButterKnife.bind(this, view);
         return view;
     }
 
@@ -114,6 +113,7 @@ public class InsertProfileFirstPageFragment extends Fragment
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
         presenter.requestProfile();
         Bundle bundle = getArguments();
         String pageMode = bundle.getString(InsertProfileFirstPageFragment.MODE);
@@ -164,7 +164,7 @@ public class InsertProfileFirstPageFragment extends Fragment
 
     }
 
-    @OnClick(R.id.tv_user_name)
+    @OnClick(R.id.tv_name)
     void onClickInputName(View view) {
         if (NetworkCheckUtil.isConnected()) {
             launchEditDialog(
