@@ -193,12 +193,17 @@ public class JandiSocketServiceModel {
                 .filter(objects1 -> objects1 != null && objects1.size() > 0)
                 .map(LinkedHashSet::new)
                 .subscribe(objects -> {
-                    TeamInfoLoader.getInstance().refresh();
-                    EventBus eventBus = EventBus.getDefault();
-                    for (Object object : objects) {
-                        if (eventBus.hasSubscriberForEvent(object.getClass())) {
-                            eventBus.post(object);
+
+                    try {
+                        TeamInfoLoader.getInstance().refresh();
+                        EventBus eventBus = EventBus.getDefault();
+                        for (Object object : objects) {
+                            if (eventBus.hasSubscriberForEvent(object.getClass())) {
+                                eventBus.post(object);
+                            }
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 });
     }

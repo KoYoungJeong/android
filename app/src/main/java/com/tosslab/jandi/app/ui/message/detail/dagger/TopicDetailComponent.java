@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.message.detail.dagger;
 
-import com.tosslab.jandi.app.ui.message.detail.view.ChatDetailFragment;
 import com.tosslab.jandi.app.ui.message.detail.view.TopicDetailFragment;
 
 import dagger.Component;
@@ -9,5 +8,4 @@ import dagger.Component;
 public interface TopicDetailComponent {
     void inject(TopicDetailFragment fragment);
 
-    void inject(ChatDetailFragment fragment);
 }
