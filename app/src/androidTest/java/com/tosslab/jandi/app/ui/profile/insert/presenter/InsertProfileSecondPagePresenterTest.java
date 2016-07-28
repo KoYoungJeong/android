@@ -67,6 +67,12 @@ public class InsertProfileSecondPagePresenterTest {
 
     @Test
     public void testChooseEmail() {
+
+        final boolean[] finish = new boolean[1];
+        doAnswer(mock -> {
+            finish[0] = true;
+            return mock;
+        }).when(mockView).showEmailChooseDialog(anyObject(), anyString());
         presenter.chooseEmail("dummy");
         verify(mockView).showEmailChooseDialog(anyObject(), anyString());
     }

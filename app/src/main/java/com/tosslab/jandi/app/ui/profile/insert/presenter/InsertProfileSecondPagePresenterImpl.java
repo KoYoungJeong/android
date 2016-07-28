@@ -55,13 +55,8 @@ public class InsertProfileSecondPagePresenterImpl implements InsertProfileSecond
 
     @Override
     public void chooseEmail(String email) {
-        Observable.create(new Observable.OnSubscribe<String[]>() {
-            @Override
-            public void call(Subscriber<? super String[]> subscriber) {
-                String[] accountEmails = modifyProfileModel.getAccountEmails();
-                subscriber.onNext(accountEmails);
-            }
-        }).subscribeOn(Schedulers.io())
+        Observable.defer(() -> Observable.just(modifyProfileModel.getAccountEmails()))
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(accountEmails -> view.showEmailChooseDialog(accountEmails, email))
                 .subscribe();
