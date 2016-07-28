@@ -10,7 +10,7 @@ import java.io.File;
 public class FileUtil {
 
     private static final double BYTE_UNIT = 1024;
-    private static final String[] FILE_SIZE_UNIT = {"Byte", "KB", "MB", "GB"};
+    private static final String[] FILE_SIZE_UNIT = {"Bytes", "KB", "MB", "GB"};
     private static final String[] FILE_SIZE_FORMAT = {"####", "####", "####.#", "####.#"};
 
 
