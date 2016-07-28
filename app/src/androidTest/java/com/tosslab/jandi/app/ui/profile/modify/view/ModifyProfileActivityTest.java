@@ -1,13 +1,15 @@
 package com.tosslab.jandi.app.ui.profile.modify.view;
 
 import android.app.Fragment;
-import android.support.test.rule.ActivityTestRule;
+import android.support.test.espresso.intent.matcher.IntentMatchers;
+import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.ui.profile.inputlist.InputProfileListActivity;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -21,6 +23,7 @@ import setup.BaseInitUtil;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.intent.Intents.intending;
 import static android.support.test.espresso.matcher.RootMatchers.isDialog;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -34,7 +37,7 @@ import static org.junit.Assert.fail;
 public class ModifyProfileActivityTest {
 
     @Rule
-    public ActivityTestRule<ModifyProfileActivity> rule = new ActivityTestRule<>(ModifyProfileActivity.class, false, false);
+    public IntentsTestRule<ModifyProfileActivity> rule = new IntentsTestRule<ModifyProfileActivity>(ModifyProfileActivity.class, false, false);
     private ModifyProfileActivity activity;
 
     @BeforeClass
@@ -85,19 +88,18 @@ public class ModifyProfileActivityTest {
     @Test
     public void testEditDivision() throws Throwable {
         rule.runOnUiThread(() -> activity.editDivision());
-        onView(withText(R.string.jandi_profile_division))
-                .inRoot(isDialog())
-                .check(matches(isDisplayed()));
-        pressBack();
+
+        intending(IntentMatchers.hasComponent(InputProfileListActivity.class.getName()));
+        intending(IntentMatchers.hasExtra(InputProfileListActivity.EXTRA_INPUT_MODE, InputProfileListActivity.EXTRA_DEPARTMENT_MODE));
     }
 
     @Test
     public void testEditPosition() throws Throwable {
         rule.runOnUiThread(() -> activity.editPosition());
-        onView(withText(R.string.jandi_profile_position))
-                .inRoot(isDialog())
-                .check(matches(isDisplayed()));
-        pressBack();
+
+        intending(IntentMatchers.hasComponent(InputProfileListActivity.class.getName()));
+        intending(IntentMatchers.hasExtra(InputProfileListActivity.EXTRA_INPUT_MODE, InputProfileListActivity.EXTRA_JOB_TITLE_MODE));
+
     }
 
     @Test

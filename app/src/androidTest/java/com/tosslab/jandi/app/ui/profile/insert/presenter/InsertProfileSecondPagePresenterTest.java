@@ -1,21 +1,24 @@
 package com.tosslab.jandi.app.ui.profile.insert.presenter;
 
-import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.ui.profile.insert.dagger.InsertProfileSecondPageModule;
 
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import javax.inject.Inject;
 
 import dagger.Component;
 import setup.BaseInitUtil;
 
+import static com.jayway.awaitility.Awaitility.await;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.anyObject;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by tee on 16. 3. 17..
@@ -48,7 +51,7 @@ public class InsertProfileSecondPagePresenterTest {
     public void testOnRequestProfile() {
         // given
         final boolean[] finish = {false};
-        Mockito.doAnswer(invocationOnMock -> {
+        doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
         }).when(mockView).displayProfileInfos(any());
@@ -56,37 +59,43 @@ public class InsertProfileSecondPagePresenterTest {
         // when
         presenter.requestProfile();
 
-        Awaitility.await().until(() -> finish[0]);
+        await().until(() -> finish[0]);
 
         // then
-        Mockito.verify(mockView).displayProfileInfos(Mockito.anyObject());
+        verify(mockView).displayProfileInfos(anyObject());
     }
 
     @Test
     public void testChooseEmail() {
         presenter.chooseEmail("dummy");
-        Mockito.verify(mockView).showEmailChooseDialog(Mockito.anyObject(), Mockito.anyString());
+        verify(mockView).showEmailChooseDialog(anyObject(), anyString());
     }
 
     @Test
     public void testSetEmail() {
+        final boolean[] finish = new boolean[1];
+        doAnswer(mock -> {
+            finish[0] = true;
+            return mock;
+        }).when(mockView).setEmail(anyObject(), anyString());
         presenter.setEmail("dummy");
-        Mockito.verify(mockView).setEmail(Mockito.anyObject(), Mockito.anyString());
+        await().until(() -> finish[0]);
+        verify(mockView).setEmail(anyObject(), anyString());
     }
 
     @Test
     public void testUploadExtraInfo() {
         final boolean[] finish = {false};
-        Mockito.doAnswer(invocationOnMock -> {
+        doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
         }).when(mockView).dismissProgressWheel();
 
         presenter.uploadExtraInfo("dummy", "dummy", "dummy", "dummy");
 
-        Awaitility.await().until(() -> finish[0]);
+        await().until(() -> finish[0]);
 
-        Mockito.verify(mockView).updateProfileSucceed();
+        verify(mockView).updateProfileSucceed();
     }
 
     @Component(modules = InsertProfileSecondPageModule.class)
