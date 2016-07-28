@@ -644,7 +644,7 @@
         <!-- Download Service -->
         <service android:name=".services.download.DownloadService" />
 
-        <service android:name="com.tosslab.jandi.lib.sprinkler.io.SprinklerService" />
+        <service android:name="com.tosslab.jandi.lib.sprinkler.service.SprinklerService" />
 
         <!-- Process start Intent Service -->
         <service android:name=".dummy.JandiProcessStartService" />

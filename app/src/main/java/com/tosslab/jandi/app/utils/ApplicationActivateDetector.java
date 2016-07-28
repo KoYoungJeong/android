@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.lib.sprinkler.Logger;
+import com.tosslab.jandi.lib.sprinkler.util.Logger;
 
 import java.util.ArrayList;
 import java.util.List;

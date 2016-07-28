@@ -1,6 +1,4 @@
-package com.tosslab.jandi.lib.sprinkler.io;
-
-import com.tosslab.jandi.lib.sprinkler.Logger;
+package com.tosslab.jandi.lib.sprinkler.io.flush;
 
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;

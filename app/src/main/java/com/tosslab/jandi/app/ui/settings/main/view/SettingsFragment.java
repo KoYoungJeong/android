@@ -31,9 +31,9 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.views.settings.SettingsBodyView;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.Arrays;
 
@@ -255,7 +255,7 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
 
     private void trackSignOut() {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.SignOut)
+                .event(SprinklerEvents.SignOut)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .build());

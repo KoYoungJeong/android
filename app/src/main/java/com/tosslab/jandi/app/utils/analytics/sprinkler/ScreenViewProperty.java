@@ -1,4 +1,4 @@
-package com.tosslab.jandi.lib.sprinkler.constant.property;
+package com.tosslab.jandi.app.utils.analytics.sprinkler;
 
 /**
  * Created by tonyjs on 15. 7. 22..

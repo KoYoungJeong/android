@@ -1,6 +1,9 @@
-package com.tosslab.jandi.lib.sprinkler.io;
+package com.tosslab.jandi.lib.sprinkler.io.flush;
 
 import android.support.test.runner.AndroidJUnit4;
+
+import com.tosslab.jandi.lib.sprinkler.io.domain.flush.RequestBody;
+import com.tosslab.jandi.lib.sprinkler.io.domain.flush.ResponseBody;
 
 import org.junit.Before;
 import org.junit.Test;

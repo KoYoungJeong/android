@@ -1,4 +1,4 @@
-package com.tosslab.jandi.lib.sprinkler;
+package com.tosslab.jandi.lib.sprinkler.constant;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -12,12 +12,14 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+
 import java.util.UUID;
 
 /**
  * Created by tonyjs on 15. 7. 22..
  */
-class DefaultProperties {
+public class DefaultProperties {
     private static final String PLATFORM = "android";
 
     private static final String KEY_DEVICE_ID = "device_id";

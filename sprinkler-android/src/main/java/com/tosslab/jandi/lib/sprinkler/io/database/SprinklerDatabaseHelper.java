@@ -1,4 +1,4 @@
-package com.tosslab.jandi.lib.sprinkler.io;
+package com.tosslab.jandi.lib.sprinkler.io.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,15 +9,15 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.lib.sprinkler.Logger;
+import com.tosslab.jandi.lib.sprinkler.util.Logger;
 
 /**
  * Created by tonyjs on 15. 7. 21..
  */
-final class SprinklerDatabaseHelper extends SQLiteOpenHelper {
+public final class SprinklerDatabaseHelper extends SQLiteOpenHelper {
     public static final String TAG = Logger.makeTag(SprinklerDatabaseHelper.class);
 
-    interface TableColumns {
+    public interface TableColumns {
         String _ID = "_id";
         String EVENT = "ev";
         String IDENTIFIERS = "id";

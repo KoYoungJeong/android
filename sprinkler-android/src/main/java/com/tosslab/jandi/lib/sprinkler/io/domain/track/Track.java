@@ -1,4 +1,4 @@
-package com.tosslab.jandi.lib.sprinkler.io.model;
+package com.tosslab.jandi.lib.sprinkler.io.domain.track;
 
 import java.util.Map;
 

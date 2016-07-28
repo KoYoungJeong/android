@@ -20,9 +20,6 @@ rootProject.allprojects { project ->
                 compile rootProject.ext.dependecies.libraries.photoView
                 compile rootProject.ext.dependecies.libraries.imageZoomCrop
 
-//    compile project(':sprinkler-android'))
-//    compile project(':photoview-expand'))
-
                 retrolambdaConfig rootProject.ext.dependecies.libraries.retrolambda
                 apt rootProject.ext.dependecies.libraries.androidAnnotationApt
                 compile rootProject.ext.dependecies.libraries.androidAnnotation

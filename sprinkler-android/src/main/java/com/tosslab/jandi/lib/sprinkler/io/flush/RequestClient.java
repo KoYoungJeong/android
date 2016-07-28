@@ -1,4 +1,7 @@
-package com.tosslab.jandi.lib.sprinkler.io;
+package com.tosslab.jandi.lib.sprinkler.io.flush;
+
+import com.tosslab.jandi.lib.sprinkler.io.domain.flush.RequestBody;
+import com.tosslab.jandi.lib.sprinkler.io.domain.flush.ResponseBody;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

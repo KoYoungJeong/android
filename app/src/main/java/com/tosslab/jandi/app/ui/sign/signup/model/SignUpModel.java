@@ -9,9 +9,9 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.PasswordChecker;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import dagger.Lazy;
 
@@ -30,7 +30,7 @@ public class SignUpModel {
 
     public void trackSendEmailSuccess(String email) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.SendAccountVerificationMail)
+                .event(SprinklerEvents.SendAccountVerificationMail)
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.Email, email)
                 .build());
@@ -38,7 +38,7 @@ public class SignUpModel {
 
     public void trackSendEmailFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.SendAccountVerificationMail)
+                .event(SprinklerEvents.SendAccountVerificationMail)
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)
                 .build());

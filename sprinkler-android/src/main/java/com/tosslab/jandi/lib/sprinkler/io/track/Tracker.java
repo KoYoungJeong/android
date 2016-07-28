@@ -1,10 +1,11 @@
-package com.tosslab.jandi.lib.sprinkler.io;
+package com.tosslab.jandi.lib.sprinkler.io.track;
 
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.lib.sprinkler.Logger;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.lib.sprinkler.io.database.SprinklerDatabaseHelper;
+import com.tosslab.jandi.lib.sprinkler.util.Logger;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.json.JSONObject;
 
@@ -14,7 +15,7 @@ import java.util.Map;
 /**
  * Created by tonyjs on 15. 7. 23..
  */
-final class Tracker {
+public final class Tracker {
     public static final String TAG = Logger.makeTag(Tracker.class);
 
     private SprinklerDatabaseHelper databaseHelper;

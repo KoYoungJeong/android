@@ -22,11 +22,11 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.Collection;
 
@@ -116,7 +116,7 @@ public class IntroActivityModel {
 
     public void trackAutoSignInSuccessAndFlush(boolean hasTeamSelected) {
         FutureTrack.Builder builder = new FutureTrack.Builder()
-                .event(Event.SignIn)
+                .event(SprinklerEvents.SignIn)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.AutoSignIn, true);
@@ -131,7 +131,7 @@ public class IntroActivityModel {
 
     public void trackSignInFailAndFlush(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.SignIn)
+                .event(SprinklerEvents.SignIn)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, false)

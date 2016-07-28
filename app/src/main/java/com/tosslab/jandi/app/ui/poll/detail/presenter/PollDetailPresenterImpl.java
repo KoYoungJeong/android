@@ -20,11 +20,11 @@ import com.tosslab.jandi.app.ui.poll.detail.adapter.model.PollDetailDataModel;
 import com.tosslab.jandi.app.ui.poll.detail.model.PollDetailModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.Collection;
 import java.util.List;
@@ -200,7 +200,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     pollDetailView.initPollDetailExtras(poll);
 
                     AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                            .event(Event.PollVoted)
+                            .event(SprinklerEvents.PollVoted)
                             .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                             .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                             .property(PropertyKey.ResponseSuccess, true)
@@ -219,7 +219,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                         RetrofitException e = (RetrofitException) t;
                         Poll poll = pollDetailDataModel.getPoll();
                         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                                .event(Event.PollVoted)
+                                .event(SprinklerEvents.PollVoted)
                                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                                 .property(PropertyKey.ResponseSuccess, false)
@@ -286,11 +286,11 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(resPollCommentCreated -> {
                     AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                            .event(Event.PollCommentCreated)
+                            .event(SprinklerEvents.PollCommentCreated)
                             .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                             .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                             .property(PropertyKey.ResponseSuccess, true)
-                            .property(PropertyKey.MessageId, resPollCommentCreated.getLinkComment().id)
+                            .property(PropertyKey.MessageId, resPollCommentCreated.getLinkComment().message.id)
                             .build());
 
                 }, throwable -> {
@@ -298,7 +298,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     if (throwable instanceof RetrofitException) {
                         RetrofitException e = (RetrofitException) throwable;
                         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                                .event(Event.PollCommentCreated)
+                                .event(SprinklerEvents.PollCommentCreated)
                                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                                 .property(PropertyKey.ResponseSuccess, false)
@@ -318,18 +318,18 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(resPollCommentCreated -> {
                     AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                            .event(Event.PollCommentCreated)
+                            .event(SprinklerEvents.PollCommentCreated)
                             .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                             .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                             .property(PropertyKey.ResponseSuccess, true)
-                            .property(PropertyKey.MessageId, resPollCommentCreated.getLinkComment().id)
+                            .property(PropertyKey.MessageId, resPollCommentCreated.getLinkComment().message.id)
                             .build());
                 }, throwable -> {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
                     if (throwable instanceof RetrofitException) {
                         RetrofitException e = (RetrofitException) throwable;
                         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                                .event(Event.PollCommentCreated)
+                                .event(SprinklerEvents.PollCommentCreated)
                                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                                 .property(PropertyKey.ResponseSuccess, false)
@@ -444,7 +444,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
             if (e instanceof RetrofitException) {
                 RetrofitException e1 = (RetrofitException) e;
                 AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                        .event(Event.PollCommentDeleted)
+                        .event(SprinklerEvents.PollCommentDeleted)
                         .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                         .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, false)
@@ -472,7 +472,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                            .event(Event.PollCommentDeleted)
+                            .event(SprinklerEvents.PollCommentDeleted)
                             .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                             .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                             .property(PropertyKey.ResponseSuccess, true)
@@ -487,7 +487,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                            .event(Event.PollCommentDeleted)
+                            .event(SprinklerEvents.PollCommentDeleted)
                             .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                             .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                             .property(PropertyKey.ResponseSuccess, true)
@@ -517,7 +517,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     pollDetailView.finish();
 
                     FutureTrack.Builder trackBuilder = new FutureTrack.Builder()
-                            .event(Event.PollDeleted)
+                            .event(SprinklerEvents.PollDeleted)
                             .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                             .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                             .property(PropertyKey.ResponseSuccess, true)
@@ -545,7 +545,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     if (e instanceof RetrofitException) {
                         RetrofitException e1 = (RetrofitException) e;
                         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                                .event(Event.PollDeleted)
+                                .event(SprinklerEvents.PollDeleted)
                                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                                 .property(PropertyKey.ResponseSuccess, false)
@@ -592,7 +592,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     pollDetailView.initPollDetailExtras(poll);
 
                     AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                            .event(Event.PollFinished)
+                            .event(SprinklerEvents.PollFinished)
                             .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                             .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                             .property(PropertyKey.ResponseSuccess, true)
@@ -610,7 +610,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                         RetrofitException e1 = (RetrofitException) e;
                         Poll poll = pollDetailDataModel.getPoll();
                         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                                .event(Event.PollFinished)
+                                .event(SprinklerEvents.PollFinished)
                                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                                 .property(PropertyKey.ResponseSuccess, false)

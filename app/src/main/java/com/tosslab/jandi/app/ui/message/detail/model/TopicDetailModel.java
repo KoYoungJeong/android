@@ -15,9 +15,9 @@ import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.List;
 
@@ -91,7 +91,7 @@ public class TopicDetailModel {
 
     public void trackTopicDeleteSuccess(long entityId) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.TopicDelete)
+                .event(SprinklerEvents.TopicDelete)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, true)
@@ -101,7 +101,7 @@ public class TopicDetailModel {
 
     public void trackTopicDeleteFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.TopicDelete)
+                .event(SprinklerEvents.TopicDelete)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, false)
@@ -128,7 +128,7 @@ public class TopicDetailModel {
 
     public void trackChangingEntityName(Context context, long entityId, int entityType) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.TopicNameChange)
+                .event(SprinklerEvents.TopicNameChange)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, true)
@@ -139,7 +139,7 @@ public class TopicDetailModel {
 
     public void trackChangingEntityNameFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.TopicNameChange)
+                .event(SprinklerEvents.TopicNameChange)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, false)
@@ -150,7 +150,7 @@ public class TopicDetailModel {
 
     public void trackTopicStarSuccess(long topicId) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.TopicStar)
+                .event(SprinklerEvents.TopicStar)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, true)
@@ -160,7 +160,7 @@ public class TopicDetailModel {
 
     public void trackTopicUnStarSuccess(long topicId) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.TopicUnStar)
+                .event(SprinklerEvents.TopicUnStar)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, true)
@@ -171,7 +171,7 @@ public class TopicDetailModel {
 
     public void trackTopicStarFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.TopicStar)
+                .event(SprinklerEvents.TopicStar)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, false)
@@ -181,7 +181,7 @@ public class TopicDetailModel {
 
     public void trackTopicUnStarFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.TopicUnStar)
+                .event(SprinklerEvents.TopicUnStar)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, false)

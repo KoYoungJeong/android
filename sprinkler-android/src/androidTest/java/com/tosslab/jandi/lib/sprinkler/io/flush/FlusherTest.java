@@ -1,11 +1,13 @@
-package com.tosslab.jandi.lib.sprinkler.io;
+package com.tosslab.jandi.lib.sprinkler.io.flush;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Pair;
 
 import com.google.gson.Gson;
-import com.tosslab.jandi.lib.sprinkler.io.model.Track;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.Track;
+import com.tosslab.jandi.lib.sprinkler.io.domain.flush.ResponseBody;
+import com.tosslab.jandi.lib.sprinkler.io.track.Tracker;
 
 import org.junit.Before;
 import org.junit.Test;
