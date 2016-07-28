@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.invites;
 
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -11,6 +12,7 @@ import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.ui.invites.email.InviteByEmailActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -54,6 +56,16 @@ public class InvitationDialogExecutor {
         return availableState(invitationStatus, invitationUrl) == AvailableState.AVAIL;
     }
 
+    private static AvailableState availableState(String invitationStatus, String invitationUrl) {
+        if (!TextUtils.isEmpty(invitationUrl) && invitationUrl.contains("undefined")) {
+            return AvailableState.UNDEFINE;
+        }
+        if (TextUtils.isEmpty(invitationStatus) || TextUtils.equals(invitationStatus, "disabled")) {
+            return AvailableState.DISABLE;
+        }
+        return AvailableState.AVAIL;
+    }
+
     @AfterInject
     void initObject() {
         DaggerApiClientComponent.create().inject(this);
@@ -69,10 +81,6 @@ public class InvitationDialogExecutor {
             String invitationUrl = teamInfoLoader.getInvitationUrl();
 
             AvailableState availableState = availableState(invitationStatus, invitationUrl);
-            if (teamOwner && availableState != AvailableState.AVAIL) {
-                availableState = AvailableState.AVAIL;
-                ColoredToast.showGray(R.string.jandi_invitation_for_admin);
-            }
             switch (availableState) {
                 case AVAIL:
                     InvitationDialogFragment invitationDialog =
@@ -80,27 +88,29 @@ public class InvitationDialogExecutor {
                     invitationDialog.show(activity.getSupportFragmentManager(), "invitationsDialog");
                     break;
                 case UNDEFINE:
-                    showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_entity_invite));
+                    if (!teamOwner) {
+                        showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_entity_invite));
+                    }
                     break;
                 case DISABLE:
-                    showTextDialog(JandiApplication.getContext().getResources().getString(R.string.jandi_invite_disabled, getOwnerName()));
+                    if (!teamOwner) {
+                        showTextDialog(JandiApplication.getContext().getResources().getString(R.string.jandi_invite_disabled, getOwnerName()));
+                    }
                     break;
+            }
+
+            if (teamOwner && availableState != AvailableState.AVAIL) {
+                ColoredToast.showGray(R.string.jandi_invitation_for_admin);
+
+                Intent intent = new Intent(activity, InviteByEmailActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                activity.startActivity(intent);
             }
         } catch (Exception e) {
             e.printStackTrace();
             showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_entity_invite));
         }
 
-    }
-
-    private static AvailableState availableState(String invitationStatus, String invitationUrl) {
-        if (!TextUtils.isEmpty(invitationUrl) && invitationUrl.contains("undefined")) {
-            return AvailableState.UNDEFINE;
-        }
-        if (TextUtils.isEmpty(invitationStatus) || TextUtils.equals(invitationStatus, "disabled")) {
-            return AvailableState.DISABLE;
-        }
-        return AvailableState.AVAIL;
     }
 
     @UiThread
