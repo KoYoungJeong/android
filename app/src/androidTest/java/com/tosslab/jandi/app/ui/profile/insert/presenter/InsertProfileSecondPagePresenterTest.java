@@ -74,6 +74,7 @@ public class InsertProfileSecondPagePresenterTest {
             return mock;
         }).when(mockView).showEmailChooseDialog(anyObject(), anyString());
         presenter.chooseEmail("dummy");
+        await().until(() -> finish[0]);
         verify(mockView).showEmailChooseDialog(anyObject(), anyString());
     }
 
