@@ -136,10 +136,12 @@ public class MessageListV2Presenter {
 
                     return messageObservable;
                 })
-                .subscribe(messageContainer -> {}, throwable -> {
+                .subscribe(messageContainer -> {
+                }, throwable -> {
                     LogUtil.e("Message Publish Fail!!");
                     throwable.printStackTrace();
-                }, () -> {});
+                }, () -> {
+                });
 
         markerRequestQueue = PublishSubject.create();
         markerRequestQueue.onBackpressureBuffer()
@@ -435,12 +437,15 @@ public class MessageListV2Presenter {
             LogUtil.e(TAG, "announcementModel == null || room == null || view == null");
             return;
         }
-
-        Topic.Announcement announcement = TeamInfoLoader.getInstance().getTopic(room.getRoomId())
-                .getAnnouncement();
         view.dismissProgressWheel();
-        if (announcement != null) {
-            view.setAnnouncement(announcement);
+
+        TopicRoom topic = TeamInfoLoader.getInstance().getTopic(room.getRoomId());
+        if (topic != null) {
+
+            Topic.Announcement announcement = topic.getAnnouncement();
+            if (announcement != null) {
+                view.setAnnouncement(announcement);
+            }
         }
     }
 
@@ -926,7 +931,8 @@ public class MessageListV2Presenter {
                     }
                     view.refreshMessages();
                     EventBus.getDefault().post(new StarredInfoChangeEvent());
-                }, t -> {});
+                }, t -> {
+                });
     }
 
     @Background
@@ -951,7 +957,8 @@ public class MessageListV2Presenter {
                     }
                     view.refreshMessages();
                     EventBus.getDefault().post(new StarredInfoChangeEvent());
-                }, t -> {});
+                }, t -> {
+                });
 
     }
 

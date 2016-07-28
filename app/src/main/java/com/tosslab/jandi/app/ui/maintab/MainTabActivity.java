@@ -249,6 +249,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         vpMainTab.setOverScrollMode(ViewPager.OVER_SCROLL_NEVER);
         vpMainTab.setOffscreenPageLimit(4);
         vpMainTab.setAdapter(mainTabPagerAdapter);
+        mainTabPagerAdapter.onPageSelected(0);
+
     }
 
     private void initMainTabStrip() {
@@ -295,7 +297,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                         setFABMenuVisibility(false);
                         break;
                 }
-
+                mainTabPagerAdapter.onPageSelected(position);
                 listScrollHandler.setCurrentIndex(position);
                 JandiPreference.setLastSelectedTab(position);
             }
