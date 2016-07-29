@@ -987,9 +987,7 @@ public class JandiSocketServiceModel {
 
                 ChatRepository.getInstance().updateLastMessage(roomId, linkMessage.messageId, text, "created");
                 ChatRepository.getInstance().updateLastLinkId(roomId, linkMessage.id);
-                if (!TeamInfoLoader.getInstance().getChat(roomId).isJoined()) {
-                    ChatRepository.getInstance().updateChatOpened(roomId, true);
-                }
+                ChatRepository.getInstance().updateChatOpened(roomId, true);
 
                 if (!isMyMessage) {
                     ChatRepository.getInstance().incrementUnreadCount(roomId);
