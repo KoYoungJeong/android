@@ -1303,9 +1303,7 @@ public class JandiSocketServiceModel {
                     EventHistoryInfo eventHistoryInfo = its.get(its.size() - 1);
                     JandiPreference.setSocketConnectedLastTime(eventHistoryInfo.getTs());
                 })
-//                .doOnSubscribe(() -> EventBus.getDefault().post(new EventUpdateStart()))
                 .subscribe(eventInfos -> {
-//                    EventBus eventBus = EventBus.getDefault();
                     int eventSize = eventInfos.size();
 
                     if (!eventInfos.isEmpty()) {
@@ -1326,7 +1324,6 @@ public class JandiSocketServiceModel {
                             etcEvents.add(eventInfo);
                         }
 
-//                        eventBus.post(new EventUpdateInProgress(messageCreateEventCount, eventSize));
                     }
 
                     deleteCompledtedMessages(messageCreates);
@@ -1344,7 +1341,6 @@ public class JandiSocketServiceModel {
                                     command.command(eventInfo);
                                 }
                             }
-//                            eventBus.post(new EventUpdateInProgress(index, eventSize));
                         }
                     } else {
 
@@ -1353,17 +1349,11 @@ public class JandiSocketServiceModel {
                             for (int idx = 0, etcSize = etcEvents.size(); idx < etcSize; idx++) {
                                 eventHistoryInfo = etcEvents.get(idx);
                                 proccessMessageEventIfTooMuch(eventHistoryInfo);
-//                                eventBus.post(new EventUpdateInProgress(messageCreateEventCount + idx + 1, eventSize));
                             }
                         }
                     }
 
-                }, (throwable) -> {
-//                    EventBus.getDefault().post(new EventUpdateFinish());
-                    throwable.printStackTrace();
-                }, () -> {
-//                    EventBus.getDefault().post(new EventUpdateFinish());
-                });
+                }, Throwable::printStackTrace);
 
     }
 

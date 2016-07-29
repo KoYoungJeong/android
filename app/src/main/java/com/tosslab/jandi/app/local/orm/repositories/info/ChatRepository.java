@@ -153,7 +153,9 @@ public class ChatRepository extends LockExecutorTemplate {
                 UpdateBuilder<Chat, Object> updateBuilder = dao.updateBuilder();
                 updateBuilder.updateColumnValue("lastLinkId", linkId)
                         .where()
-                        .eq("id", roomId);
+                        .eq("id", roomId)
+                        .and()
+                        .lt("lastLinkId", linkId);
                 return updateBuilder.update() > 0;
             } catch (SQLException e) {
                 e.printStackTrace();
