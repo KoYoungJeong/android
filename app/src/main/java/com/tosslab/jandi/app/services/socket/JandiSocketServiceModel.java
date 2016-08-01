@@ -1304,7 +1304,6 @@ public class JandiSocketServiceModel {
                     JandiPreference.setSocketConnectedLastTime(eventHistoryInfo.getTs());
                 })
                 .subscribe(eventInfos -> {
-                    int eventSize = eventInfos.size();
 
                     if (!eventInfos.isEmpty()) {
                         if (accountRefreshSubject != null && !accountRefreshSubscribe.isUnsubscribed()) {
@@ -1328,28 +1327,11 @@ public class JandiSocketServiceModel {
 
                     deleteCompledtedMessages(messageCreates);
 
-                    boolean handleMessageCreated = eventSize <= 60;
-                    if (handleMessageCreated) {
-                        Command command;
-                        for (int index = 0; index < eventSize; index++) {
-                            eventInfo = eventInfos.get(index);
-                            if (eventInfo instanceof SocketMessageCreatedEvent) {
-                                doAfterMessageCreated(((SocketMessageCreatedEvent) eventInfo).getData().getLinkMessage());
-                            } else {
-                                command = messageEventActorMapper.get(eventInfo.getClass());
-                                if (command != null) {
-                                    command.command(eventInfo);
-                                }
-                            }
-                        }
-                    } else {
-
-                        if (!etcEvents.isEmpty()) {
-                            EventHistoryInfo eventHistoryInfo;
-                            for (int idx = 0, etcSize = etcEvents.size(); idx < etcSize; idx++) {
-                                eventHistoryInfo = etcEvents.get(idx);
-                                proccessMessageEventIfTooMuch(eventHistoryInfo);
-                            }
+                    if (!etcEvents.isEmpty()) {
+                        EventHistoryInfo eventHistoryInfo;
+                        for (int idx = 0, etcSize = etcEvents.size(); idx < etcSize; idx++) {
+                            eventHistoryInfo = etcEvents.get(idx);
+                            proccessMessageEventIfTooMuch(eventHistoryInfo);
                         }
                     }
 
@@ -1362,6 +1344,7 @@ public class JandiSocketServiceModel {
             long ts = socketConnectedLastTime;
 
             if (System.currentTimeMillis() - ts > 1000 * 60 * 60 * 24 * 7) {
+                InitialInfoRepository.getInstance().clear();
                 restartJandi();
                 return Observable.empty();
             }
@@ -1369,6 +1352,18 @@ public class JandiSocketServiceModel {
             long userId = TeamInfoLoader.getInstance().getMyId();
             ResEventHistory eventHistory;
             try {
+                long teamId = TeamInfoLoader.getInstance().getTeamId();
+                InitialInfo initializeInfo = startApi.get().getInitializeInfo(teamId);
+                InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+                TeamInfoLoader.getInstance().refresh();
+                JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
+                postEvent(new RetrieveTopicListEvent());
+                postEvent(new ChatListRefreshEvent());
+                postEvent(new TeamInfoChangeEvent());
+
+                refreshPollList(teamId);
+                postEvent(new RequestRefreshPollBadgeCountEvent(teamId));
+
                 eventHistory = eventsApi.get().getEventHistory(ts, userId, 1);
 
                 int total = eventHistory.getTotal();
@@ -1376,23 +1371,14 @@ public class JandiSocketServiceModel {
                 if (total > 10000) {
                     restartJandi();
                     return Observable.empty();
-                } else if (total > 60) {
-                    long teamId = TeamInfoLoader.getInstance().getTeamId();
-                    InitialInfo initializeInfo = startApi.get().getInitializeInfo(teamId);
-                    InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
-                    TeamInfoLoader.getInstance().refresh();
-                    refreshPollList(teamId);
-                    JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
-                    postEvent(new RetrieveTopicListEvent());
-                    postEvent(new ChatListRefreshEvent());
-                    postEvent(new TeamInfoChangeEvent());
-                    postEvent(new RequestRefreshPollBadgeCountEvent(teamId));
                 }
+
                 eventHistory = eventsApi.get().getEventHistory(ts, userId);
                 return Observable.just(eventHistory);
 
             } catch (RetrofitException e) {
                 e.printStackTrace();
+                InitialInfoRepository.getInstance().clear();
                 restartJandi();
                 return Observable.empty();
             }
@@ -1538,8 +1524,7 @@ public class JandiSocketServiceModel {
         }
     }
 
-    protected void restartJandi() {
-        InitialInfoRepository.getInstance().clear();
+    void restartJandi() {
         MessageRepository.getRepository().deleteAllLink();
         JandiPreference.setSocketConnectedLastTime(-1);
         IntroActivity.startActivity(context, false);

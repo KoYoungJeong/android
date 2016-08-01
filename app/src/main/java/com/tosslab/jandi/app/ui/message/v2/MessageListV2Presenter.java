@@ -145,7 +145,7 @@ public class MessageListV2Presenter {
 
         markerRequestQueue = PublishSubject.create();
         markerRequestQueue.onBackpressureBuffer()
-                .throttleLast(700, TimeUnit.MILLISECONDS)
+                .throttleLast(200, TimeUnit.MILLISECONDS)
                 .observeOn(Schedulers.io())
                 .filter(o1 -> isViewResumed
                         && room != null

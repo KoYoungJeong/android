@@ -170,6 +170,7 @@ public class IntroActivityPresenter {
         hasTeamObservable.filter(it -> it)
                 .observeOn(Schedulers.io())
                 .doOnNext(it -> PushUtil.registPush())
+                .doOnNext(it -> view.startSocketService())
                 .doOnNext(it -> {
                     if (NetworkCheckUtil.isConnected()) {
 
@@ -216,6 +217,7 @@ public class IntroActivityPresenter {
 
         void showUpdateDialog();
 
+        void startSocketService();
     }
 
 }
