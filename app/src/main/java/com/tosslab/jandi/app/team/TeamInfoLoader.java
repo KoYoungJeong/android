@@ -107,6 +107,13 @@ public class TeamInfoLoader {
         });
     }
 
+    public void refresh(InitialInfo info) {
+        execute(() -> {
+            TeamInfoLoader.this.initialInfo = info;
+            setUp();
+        });
+    }
+
     public void refresh(long teamId) {
         execute(() -> {
             initialInfo = InitialInfoRepository.getInstance().getInitialInfo(teamId);

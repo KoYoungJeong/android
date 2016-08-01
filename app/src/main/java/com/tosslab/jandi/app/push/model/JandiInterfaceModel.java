@@ -30,6 +30,7 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 
 public class JandiInterfaceModel {
@@ -99,8 +100,12 @@ public class JandiInterfaceModel {
         try {
             long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             InitialInfo initializeInfo = startApi.get().getInitializeInfo(selectedTeamId);
-            InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
-            TeamInfoLoader.getInstance().refresh();
+            TeamInfoLoader.getInstance().refresh(initializeInfo);
+            Observable.just(initializeInfo)
+                    .observeOn(Schedulers.io())
+                    .subscribe(o -> {
+                        InitialInfoRepository.getInstance().upsertInitialInfo(o);
+                    });
             refreshPollList(selectedTeamId);
             JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
             return true;

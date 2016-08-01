@@ -154,6 +154,13 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    @Override
+    public void onViewRecycled(RecyclerView.ViewHolder holder) {
+        if (colorAnimator != null) {
+            colorAnimator.cancel();
+        }
+    }
+
     public void setOnRecyclerItemClickListener(OnRecyclerItemClickListener onRecyclerItemClickListener) {
         this.onRecyclerItemClickListener = onRecyclerItemClickListener;
     }
@@ -174,8 +181,8 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Context context = targetView.getContext();
 
         animStatus = AnimStatus.IN_ANIM;
-        Integer colorFrom = Color.TRANSPARENT;
-        Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_1f);
+        int colorFrom = Color.TRANSPARENT;
+        int colorTo = context.getResources().getColor(R.color.jandi_accent_color_1f);
 
         colorAnimator = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
         colorAnimator.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));

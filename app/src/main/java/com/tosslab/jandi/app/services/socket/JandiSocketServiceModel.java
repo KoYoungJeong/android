@@ -142,6 +142,7 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 //import com.tosslab.jandi.app.events.socket.EventUpdateFinish;
@@ -286,20 +287,21 @@ public class JandiSocketServiceModel {
     }
 
     public void onTeamNameUpdated(Object object) {
-        try {
-            SocketTeamNameUpdatedEvent event = getObject(object, SocketTeamNameUpdatedEvent.class);
-            SocketTeamNameUpdatedEvent.Team team = event.getTeam();
-            long teamId = team.getId();
-            String name = team.getName();
-
-            AccountRepository.getRepository().updateTeamName(teamId, name);
-            TeamRepository.getInstance().updateTeamName(teamId, name);
-            JandiPreference.setSocketConnectedLastTime(event.getTs());
-
-            postEvent(new TeamInfoChangeEvent());
-        } catch (Exception e) {
-            LogUtil.d(TAG, e.getMessage());
-        }
+        // do nothing
+//        try {
+//            SocketTeamNameUpdatedEvent event = getObject(object, SocketTeamNameUpdatedEvent.class);
+//            SocketTeamNameUpdatedEvent.Team team = event.getTeam();
+//            long teamId = team.getId();
+//            String name = team.getName();
+//
+//            AccountRepository.getRepository().updateTeamName(teamId, name);
+//            TeamRepository.getInstance().updateTeamName(teamId, name);
+//            JandiPreference.setSocketConnectedLastTime(event.getTs());
+//
+//            postEvent(new TeamInfoChangeEvent());
+//        } catch (Exception e) {
+//            LogUtil.d(TAG, e.getMessage());
+//        }
 
 
     }
@@ -1243,20 +1245,21 @@ public class JandiSocketServiceModel {
     }
 
     public void onTeamDomainUpdated(Object object) {
-        try {
-            SocketTeamDomainUpdatedEvent event = getObject(object, SocketTeamDomainUpdatedEvent.class);
-            SocketTeamDomainUpdatedEvent.Team team = event.getTeam();
-            long teamId = team.getId();
-            String domain = team.getDomain();
-
-            AccountRepository.getRepository().updateTeamDomain(teamId, domain);
-            TeamRepository.getInstance().updateTeamDomain(teamId, domain);
-            JandiPreference.setSocketConnectedLastTime(event.getTs());
-
-            postEvent(new TeamInfoChangeEvent());
-        } catch (Exception e) {
-            LogUtil.d(TAG, e.getMessage());
-        }
+        // do nothing
+//        try {
+//            SocketTeamDomainUpdatedEvent event = getObject(object, SocketTeamDomainUpdatedEvent.class);
+//            SocketTeamDomainUpdatedEvent.Team team = event.getTeam();
+//            long teamId = team.getId();
+//            String domain = team.getDomain();
+//
+//            AccountRepository.getRepository().updateTeamDomain(teamId, domain);
+//            TeamRepository.getInstance().updateTeamDomain(teamId, domain);
+//            JandiPreference.setSocketConnectedLastTime(event.getTs());
+//
+//            postEvent(new TeamInfoChangeEvent());
+//        } catch (Exception e) {
+//            LogUtil.d(TAG, e.getMessage());
+//        }
 
     }
 
@@ -1278,9 +1281,11 @@ public class JandiSocketServiceModel {
 
     public void onTeamUpdated(Object object) {
         try {
-            SocketTeamUpdatedEvent event = getObject(object, SocketTeamUpdatedEvent.class);
-            TeamRepository.getInstance().updateTeam(event.getData().getTeam());
-            JandiPreference.setSocketConnectedLastTime(event.getTs());
+            SocketTeamUpdatedEvent event = getObject(object, SocketTeamUpdatedEvent.class, true, false);
+            if (event.getData().getTeam().getId() == TeamInfoLoader.getInstance().getTeamId()) {
+                TeamRepository.getInstance().updateTeam(event.getData().getTeam());
+                JandiPreference.setSocketConnectedLastTime(event.getTs());
+            }
             postEvent(new TeamInfoChangeEvent());
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
@@ -1354,15 +1359,18 @@ public class JandiSocketServiceModel {
             try {
                 long teamId = TeamInfoLoader.getInstance().getTeamId();
                 InitialInfo initializeInfo = startApi.get().getInitializeInfo(teamId);
-                InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
-                TeamInfoLoader.getInstance().refresh();
+                TeamInfoLoader.getInstance().refresh(initializeInfo);
+                Observable.just(initializeInfo)
+                        .observeOn(Schedulers.newThread())
+                        .subscribe(o -> {
+                            InitialInfoRepository.getInstance().upsertInitialInfo(o);
+                        });
                 JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
-                postEvent(new RetrieveTopicListEvent());
-                postEvent(new ChatListRefreshEvent());
-                postEvent(new TeamInfoChangeEvent());
+                EventBus.getDefault().post(new RetrieveTopicListEvent());
+                EventBus.getDefault().post(new ChatListRefreshEvent());
 
                 refreshPollList(teamId);
-                postEvent(new RequestRefreshPollBadgeCountEvent(teamId));
+                EventBus.getDefault().post(new RequestRefreshPollBadgeCountEvent(teamId));
 
                 eventHistory = eventsApi.get().getEventHistory(ts, userId, 1);
 
