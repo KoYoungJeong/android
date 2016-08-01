@@ -14,9 +14,6 @@ import com.tosslab.jandi.app.ui.maintab.topic.MainTopicListFragment_;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 import com.tosslab.jandi.app.views.TabView;
 
-/**
- * Created by justinygchoi on 2014. 8. 11..
- */
 public class MainTabPagerAdapter extends FragmentPagerAdapter
         implements PagerSlidingTabStrip.ViewTabProvider {
 
@@ -34,7 +31,7 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
         super(fm);
         this.tabViews = tabs;
         this.selectedEntity = selectedEntity;
-        fragments = new Fragment[mTabs.length];
+        fragments = new Fragment[tabViews.length];
 
         initFragments(fragments);
     }
@@ -125,11 +122,6 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
 
     public void setSelectedEntity(int selectedEntity) {
         this.selectedEntity = selectedEntity;
-    }
-
-    public void updateMyPageBadge(int badgeCount) {
-        TextView tvMyPage = (TextView) getBadgeView(TAB_MYPAGE);
-        updateBadgeText(badgeCount, tvMyPage, TAB_MYPAGE);
     }
 
     public void onPageSelected(int position) {
