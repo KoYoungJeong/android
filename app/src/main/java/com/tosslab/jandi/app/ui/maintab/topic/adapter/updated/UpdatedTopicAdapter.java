@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -149,8 +150,16 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
 
         boolean isSelectedEntity = item.getEntityId() == selectedEntity;
+        Log.d("UpdateTopicAdapter", "onBindViewHolder: " + updatedHolder.toString());
         if (isSelectedEntity && animStatus == AnimStatus.READY) {
             animateForSelectedEntity(updatedHolder.vAnimator);
+        }
+    }
+
+    @Override
+    public void onViewRecycled(RecyclerView.ViewHolder holder) {
+        if (colorAnimator != null) {
+            colorAnimator.cancel();
         }
     }
 
@@ -174,8 +183,8 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Context context = targetView.getContext();
 
         animStatus = AnimStatus.IN_ANIM;
-        Integer colorFrom = Color.TRANSPARENT;
-        Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_1f);
+        int colorFrom = Color.TRANSPARENT;
+        int colorTo = context.getResources().getColor(R.color.jandi_accent_color_1f);
 
         colorAnimator = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
         colorAnimator.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
