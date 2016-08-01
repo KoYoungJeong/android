@@ -1,113 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/jandi_entity_item_title_margin_left"
-    android:orientation="horizontal">
-
-    <ImageView
-        android:id="@+id/iv_entity_listitem_icon"
-        android:layout_width="@dimen/jandi_entity_item_icon"
-        android:layout_height="@dimen/jandi_entity_item_icon"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="17dp" />
-
-    <ImageView
-        android:id="@+id/iv_entity_listitem_fav"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/iv_entity_listitem_icon"
-        android:layout_alignRight="@+id/iv_entity_listitem_icon"
-        android:layout_marginBottom="-2dp"
-        android:layout_marginRight="-2dp"
-        android:src="@drawable/icon_team_member_star" />
+    android:layout_height="75dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/iv_entity_listitem_user_kick"
-        android:layout_toRightOf="@+id/iv_entity_listitem_icon"
-        android:orientation="vertical">
+        android:layout_height="@dimen/jandi_entity_item_title_margin_left"
+        android:orientation="horizontal">
 
-        <com.tosslab.jandi.app.views.FixedLinearLayout
-            android:id="@+id/vg_entity_listitem_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingRight="18dp">
+        <RelativeLayout
+            android:id="@+id/vg_profile"
+            android:layout_width="75dp"
+            android:layout_height="75dp">
 
-            <RelativeLayout
+            <ImageView
+                android:id="@+id/iv_profile"
+                android:layout_width="@dimen/jandi_entity_item_icon"
+                android:layout_height="@dimen/jandi_entity_item_icon"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="17dp" />
+
+            <ImageView
+                android:id="@+id/iv_favorite"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/iv_profile"
+                android:layout_alignRight="@+id/iv_profile"
+                android:layout_marginBottom="-2dp"
+                android:layout_marginRight="-2dp"
+                android:src="@drawable/icon_team_member_star" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/vg_content"
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:id="@+id/vg_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_user_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="Topic Namefewqfewqfqwefewqf"
+                        android:textColor="@color/jandi_text"
+                        android:textSize="@dimen/jandi_text_size_large"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/iv_name_line_through"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/tv_user_name"
+                        android:layout_alignLeft="@+id/tv_user_name"
+                        android:layout_alignRight="@+id/tv_user_name"
+                        android:layout_alignTop="@+id/tv_user_name"
+                        android:src="@drawable/line_black" />
+
+                </RelativeLayout>
+
 
                 <TextView
-                    android:id="@+id/tv_entity_listitem_name"
+                    android:id="@+id/tv_job_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
+                    android:layout_gravity="center_vertical"
                     android:singleLine="true"
-                    android:text="Topic Name"
-                    android:textColor="@color/jandi_text"
-                    android:textSize="@dimen/jandi_text_size_large"
-                    android:textStyle="bold" />
+                    android:text="fewfq fefwpefewfweffweqfewfr423142134"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="12dp" />
+            </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/iv_entity_listitem_line_through"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/tv_entity_listitem_name"
-                    android:layout_alignLeft="@+id/tv_entity_listitem_name"
-                    android:layout_alignRight="@+id/tv_entity_listitem_name"
-                    android:layout_alignTop="@+id/tv_entity_listitem_name"
-                    android:src="@drawable/line_black" />
-            </RelativeLayout>
+            <TextView
+                android:id="@+id/tv_user_department"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/vg_entity_listitem_name"
+                android:layout_alignWithParentIfMissing="true"
+                android:layout_below="@+id/vg_entity_listitem_name"
+                android:layout_marginTop="7dp"
+                android:singleLine="true"
+                android:text="So Good"
+                android:textColor="@color/jandi_text_light"
+                android:textSize="12dp"
+                android:visibility="visible" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/vg_owner_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:visibility="visible">
 
             <TextView
                 android:id="@+id/tv_owner_badge"
                 android:layout_width="wrap_content"
-                android:layout_height="17dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="7dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
                 android:background="@drawable/admin_bg"
-                android:gravity="center"
-                android:textSize="11sp"
-                android:visibility="gone" />
-        </com.tosslab.jandi.app.views.FixedLinearLayout>
+                android:text="@string/jandi_topic_owner"
+                android:textSize="11dp" />
 
-        <TextView
-            android:id="@+id/tv_entity_listitem_user_count"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/vg_entity_listitem_name"
-            android:layout_alignWithParentIfMissing="true"
-            android:layout_below="@+id/vg_entity_listitem_name"
-            android:layout_marginRight="56dp"
-            android:layout_marginTop="7dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="So Good"
-            android:textColor="@color/jandi_text_light"
-            android:textSize="@dimen/jandi_text_size_small" />
+        </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/vg_user_kick"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/iv_user_kick"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="9dp"
+                android:layout_marginRight="9dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/kick_member" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/vg_user_selected"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:visibility="visible">
+
+            <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/cb_user_selected"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="9dp"
+                android:layout_marginRight="9dp"
+                android:clickable="false" />
+
+        </LinearLayout>
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/iv_entity_listitem_user_kick"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="16dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/kick_member" />
-
     <View
-        android:id="@+id/v_entity_listitem_warning"
+        android:id="@+id/v_name_warning"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#66ffffff"
-        android:visibility="gone" />
+        android:background="@color/jandi_transparent_white_40p"
+        android:visibility="visible" />
 
 </RelativeLayout>
+
+

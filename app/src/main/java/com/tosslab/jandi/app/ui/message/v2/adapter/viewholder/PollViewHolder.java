@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.ui.poll.util.PollBinder;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
  * Created by tonyjs on 16. 6. 15..
@@ -42,7 +41,7 @@ public class PollViewHolder extends BaseMessageViewHolder {
             ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
             vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
             tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
-            vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+            vDisableLineThrough = rootView.findViewById(R.id.iv_name_line_through);
         }
 
         vPollIcon = (ImageView) rootView.findViewById(R.id.v_message_poll_icon);

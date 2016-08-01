@@ -8,9 +8,12 @@ import com.tosslab.jandi.app.ui.invites.email.model.bean.EmailVO;
 import com.tosslab.jandi.app.ui.invites.email.view.InviteByEmailView;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.UUID;
+
+import setup.BaseInitUtil;
 
 import static com.jayway.awaitility.Awaitility.await;
 import static org.mockito.Matchers.anyInt;
@@ -22,15 +25,17 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * Created by tonyjs on 16. 4. 5..
- */
 public class InviteByEmailPresenterImplTest {
 
     private InviteByEmailPresenterImpl inviteByEmailPresenter;
     private InviteByEmailModel inviteByEmailModel;
     private InviteByEmailView view;
     private InvitedEmailDataModel invitedEmailDataModel;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
 
     @Before
     public void setUp() throws Exception {

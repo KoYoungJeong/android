@@ -173,6 +173,11 @@ public class JandiPreference {
         isAleadyShowCoachMarkDirectMessageList(context);
 
         setFirstLogin(context);
+
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .clear()
+                .commit();
     }
 
     public static void setFirstLogin(Context context) {

@@ -51,7 +51,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
             ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
             vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
             tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
-            vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+            vDisableLineThrough = rootView.findViewById(R.id.iv_name_line_through);
         }
 
         ivFileImage = (ImageView) rootView.findViewById(R.id.iv_message_common_file);
@@ -194,7 +194,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
                 String name = TeamInfoLoader.getInstance().getMemberName(fileMessage.writerId);
                 tvFileUploaderName.setText(name);
                 ResMessages.FileContent fileContent = ((ResMessages.FileMessage) link.message).content;
-                String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
+                String fileSize = FileUtil.formatFileSize(fileContent.size);
                 tvCommonFileSize.setText(fileSize);
                 vFileIconBorder.setVisibility(View.VISIBLE);
 

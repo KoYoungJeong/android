@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.maintab.topic.model;
 
 import android.support.v4.util.Pair;
 
-import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.teams.folder.FolderApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
@@ -212,11 +211,6 @@ public class MainTopicModel {
         return topicFolderData;
     }
 
-    public void resetBadge(long entityId) {
-        TopicRepository.getInstance().updateUnreadCount(entityId, 0);
-        TeamInfoLoader.getInstance().refresh();
-    }
-
     public Observable<List<Topic>> getUpdatedTopicList() {
 
         return Observable.from(TeamInfoLoader.getInstance().getTopicList())
@@ -228,7 +222,7 @@ public class MainTopicModel {
                         .entityId(topicRoom.getId())
                         .memberCount(topicRoom.getMemberCount())
                         .unreadCount(topicRoom.getUnreadCount())
-                        .isPublic(true)
+                        .isPublic(topicRoom.isPublicTopic())
                         .description(topicRoom.getDescription())
                         .creatorId(topicRoom.getCreatorId())
                         .markerLinkId(topicRoom.getReadLinkId())

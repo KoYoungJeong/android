@@ -263,7 +263,7 @@ public class JandiApplication extends MultiDexApplication {
         return mTrackers.get(trackerId);
     }
 
-    private void updatePlatformStatus(boolean active) {
+    public static void updatePlatformStatus(boolean active) {
         LogUtil.i("PlatformApi", "updatePlatformStatus - " + active);
 
         String accessToken = TokenUtil.getAccessToken();

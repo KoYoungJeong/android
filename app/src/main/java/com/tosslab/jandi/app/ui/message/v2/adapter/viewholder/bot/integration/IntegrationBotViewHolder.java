@@ -64,7 +64,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
         if (hasBotProfile) {
             ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
             tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
-            vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+            vDisableLineThrough = rootView.findViewById(R.id.iv_name_line_through);
         }
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
         tvMessageTime = (TextView) rootView.findViewById(R.id.tv_message_time);

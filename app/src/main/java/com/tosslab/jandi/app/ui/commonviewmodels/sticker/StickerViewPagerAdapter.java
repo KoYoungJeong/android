@@ -26,6 +26,7 @@ class StickerViewPagerAdapter extends PagerAdapter {
 
     public static final int STICKER_MAX_VIEW_PORTAIT = 8;
     public static final int STICKER_MAX_VIEW_LANDSCAPE = 6;
+    public static final int PAGE_MULTIPLE = 30;
     private final Context context;
     private final StickerViewModel.OnStickerClick onStickerClick;
     private List<ResMessages.StickerContent> stickers;
@@ -44,7 +45,18 @@ class StickerViewPagerAdapter extends PagerAdapter {
         if (stickers == null) {
             return 0;
         }
+        return getActualCount() * PAGE_MULTIPLE;
+    }
+
+    public int getActualCount() {
+        if (stickers == null) {
+            return 0;
+        }
         return ((stickers.size() - 1) / stickerMax) + 1;
+    }
+
+    public int getAcualPosition(int position, int actualCount) {
+        return position % actualCount;
     }
 
     @Override
@@ -55,7 +67,9 @@ class StickerViewPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
 
-        View view = getStickerItemLayout(position, Math.min(stickerMax, stickers.size() - (position * stickerMax)), stickerMax);
+        int actualPosition = getAcualPosition(position, getActualCount());
+
+        View view = getStickerItemLayout(actualPosition, Math.min(stickerMax, stickers.size() - (actualPosition * stickerMax)), stickerMax);
         container.addView(view);
         return view;
     }
@@ -152,6 +166,20 @@ class StickerViewPagerAdapter extends PagerAdapter {
         }
 
         return linearLayout;
+    }
+
+    private Drawable getStickerBackground(Context context) {
+        int selectableItemBackground = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                ? android.R.attr.selectableItemBackgroundBorderless
+                : android.R.attr.selectableItemBackground;
+        int[] attrs = new int[]{selectableItemBackground};
+
+        TypedArray ta = context.obtainStyledAttributes(attrs);
+
+        Drawable drawable = ta.getDrawable(0 /* index */);
+
+        ta.recycle();
+        return drawable;
     }
 
 }

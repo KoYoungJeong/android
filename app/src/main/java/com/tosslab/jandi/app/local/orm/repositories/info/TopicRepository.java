@@ -213,7 +213,9 @@ public class TopicRepository extends LockExecutorTemplate {
                 UpdateBuilder<Topic, ?> topicUpdateBuilder = dao.updateBuilder();
                 topicUpdateBuilder.updateColumnValue("lastLinkId", lastLinkId)
                         .where()
-                        .eq("id", topicId);
+                        .eq("id", topicId)
+                        .and()
+                        .lt("lastLinkId", lastLinkId);
                 return topicUpdateBuilder.update() > 0;
             } catch (SQLException e) {
                 e.printStackTrace();

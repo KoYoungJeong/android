@@ -27,10 +27,6 @@ public interface MessageListAdapterModel {
 
     int getDummyMessagePositionByLocalId(long localId);
 
-    void setMoreFromNew(boolean moreFromNew);
-
-    void setNewLoadingComplete();
-
     int getCount();
 
     int getDummyMessageCount();
@@ -39,17 +35,12 @@ public interface MessageListAdapterModel {
 
     void add(ResMessages.Link dummyMessage);
 
-    void setNewNoMoreLoading();
-
     void updateCachedType(int indexOfUnsharedFile);
+
+    void add(int position, ResMessages.Link dummyMessage);
 
     void modifyStarredStateByPosition(int index, boolean starred);
 
     List<Integer> getIndexListByPollId(long pollId);
 
-    void changeToDirty(long linkId);
-
-    boolean isDirty(long linkId);
-
-    void removeDirty(long linkId);
 }

@@ -226,6 +226,11 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return -1;
     }
 
+    public void stopAnimation() {
+        if (colorAnimator != null) {
+            colorAnimator.cancel();
+        }
+    }
 
     private enum AnimStatus {
         READY, IN_ANIM, FINISH, IDLE
@@ -239,7 +244,7 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         ImageView ivTopicIcon;
         @Bind(R.id.vg_entity_listitem_name)
         FixedLinearLayout vgTopicName;
-        @Bind(R.id.tv_entity_listitem_name)
+        @Bind(R.id.tv_user_name)
         TextView tvTopicName;
         @Bind(R.id.tv_entity_listitem_additional)
         TextView tvTopicUserCnt;
