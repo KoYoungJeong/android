@@ -532,8 +532,11 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEvent(RetrieveTopicListEvent event) {
-        mainTopicListPresenter.refreshList();
-        mainTopicListPresenter.onRefreshUpdatedTopicList();
+        if (isCurrentFolder()) {
+            mainTopicListPresenter.refreshList();
+        } else {
+            mainTopicListPresenter.onRefreshUpdatedTopicList();
+        }
     }
 
     public void onEvent(TopicFolderRefreshEvent event) {

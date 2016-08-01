@@ -580,7 +580,10 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         if (event.isConnected()) {
             offlineLayer.dismissOfflineView();
 
-            teamsPresenter.onInitializeTeams();
+            if (teamsAdapter == null
+                    || teamsAdapter.getItemCount() <= 0) {
+                teamsPresenter.onInitializeTeams();
+            }
         } else {
             offlineLayer.showOfflineView();
             ColoredToast.showGray(JandiApplication.getContext().getString(R

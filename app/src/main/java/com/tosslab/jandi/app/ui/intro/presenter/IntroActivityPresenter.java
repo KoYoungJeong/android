@@ -124,20 +124,8 @@ public class IntroActivityPresenter {
 
         // 로그인이 완료된 경우
         loginObservable.filter(it -> it)
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
                     moveNextActivity(startForInvite);
-                });
-
-        // 로그인이 완료된 경우 서버에서 별도로 account 정보 받아오기
-        loginObservable.filter(it -> it)
-                .observeOn(Schedulers.io())
-                .subscribe(it -> {
-                    try {
-                        model.refreshAccountInfo();
-                    } catch (RetrofitException e) {
-                        e.printStackTrace();
-                    }
                 });
 
         // 로그인이 안 된 경우
@@ -166,11 +154,16 @@ public class IntroActivityPresenter {
         Observable<Boolean> hasTeamObservable = Observable.just(model.hasSelectedTeam() && !startForInvite)
                 .share();
 
-        // 팀 정보가 있는 경우
         hasTeamObservable.filter(it -> it)
                 .observeOn(Schedulers.io())
+                .subscribe(it -> {
+                    view.startSocketService();
+                }, t -> { });
+
+        // 팀 정보가 있는 경우
+        hasTeamObservable.filter(it -> it)
                 .doOnNext(it -> PushUtil.registPush())
-                .doOnNext(it -> view.startSocketService())
+                .observeOn(Schedulers.io())
                 .doOnNext(it -> {
                     if (NetworkCheckUtil.isConnected()) {
 
@@ -194,7 +187,8 @@ public class IntroActivityPresenter {
                 .subscribe(it -> {
                     model.trackAutoSignInSuccessAndFlush(true);
                     view.moveToMainActivity();
-                }, t -> {});
+                }, t -> {
+                });
 
         // 팀 정보가 없거나 초대에 의해 시작한 경우
         hasTeamObservable.filter(it -> !it)
