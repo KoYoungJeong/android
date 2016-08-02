@@ -147,7 +147,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
                 ActionBar actionBar = getSupportActionBar();
                 if (actionBar != null) {
                     actionBar.setTitle(fileInfo.getFileName());
-                    actionBar.setSubtitle(FileUtil.fileSizeCalculation(fileInfo.getSize())
+                    actionBar.setSubtitle(FileUtil.formatFileSize(fileInfo.getSize())
                             + ", " + fileInfo.getExt());
                 }
 

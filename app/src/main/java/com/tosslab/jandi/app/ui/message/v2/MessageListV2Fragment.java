@@ -45,10 +45,8 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
-import com.tosslab.jandi.app.events.poll.RequestCreatePollEvent;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
-import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
@@ -70,15 +68,14 @@ import com.tosslab.jandi.app.events.messages.DummyRetryEvent;
 import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
-import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
-import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
-import com.tosslab.jandi.app.events.messages.SendFailEvent;
+import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
+import com.tosslab.jandi.app.events.poll.RequestCreatePollEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.socket.EventUpdateFinish;
 import com.tosslab.jandi.app.events.socket.EventUpdateInProgress;
@@ -974,22 +971,25 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
 
         User user = TeamInfoLoader.getInstance().getUser(item.message.writerId);
-        tvPreviewUserName.setText(user.getName());
+        if (user != null) {
 
-        if (!TeamInfoLoader.getInstance().isBot(user.getId())) {
-            ImageUtil.loadProfileImage(ivPreviewProfile, user.getPhotoUrl(), R.drawable.profile_img);
-        } else {
-            Uri uri = Uri.parse(user.getPhotoUrl());
-            ImageLoader.newInstance()
-                    .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
-                    .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
-                    .transformation(new JandiProfileTransform(ivPreviewProfile.getContext(),
-                            TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
-                            TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
-                            Color.WHITE))
-                    .uri(uri)
-                    .into(ivPreviewProfile);
+            tvPreviewUserName.setText(user.getName());
 
+            if (!TeamInfoLoader.getInstance().isBot(user.getId())) {
+                ImageUtil.loadProfileImage(ivPreviewProfile, user.getPhotoUrl(), R.drawable.profile_img);
+            } else {
+                Uri uri = Uri.parse(user.getPhotoUrl());
+                ImageLoader.newInstance()
+                        .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
+                        .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                        .transformation(new JandiProfileTransform(ivPreviewProfile.getContext(),
+                                TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
+                                TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
+                                Color.WHITE))
+                        .uri(uri)
+                        .into(ivPreviewProfile);
+
+            }
         }
 
         String message;
@@ -1359,6 +1359,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 && !event.getData().getLinkMessage().toEntity.isEmpty()
                 && event.getData().getLinkMessage().toEntity.contains(room.getRoomId())) {
             if (messageListPresenter != null) {
+                messageListPresenter.saveMessageFromSocket(event.getData().getLinkMessage());
                 messageListPresenter.addNewMessageOfLocalQueue();
             }
         }
@@ -1383,7 +1384,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
 
         if (room.getRoomId() > 0) {
-            messageListPresenter.addOldMessageQueue(true);
+            messageListPresenter.addOldMessageQueue();
         }
     }
 
@@ -1641,13 +1642,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         fileUploadController.startUpload(getActivity(), title, entityId, filePath, comment);
     }
 
-    public void onEvent(ConfirmDeleteTopicEvent event) {
-        if (!isForeground) {
-            return;
-        }
-        messageListPresenter.onDeleteTopicAction();
-    }
-
     public void onEvent(FileUploadFinishEvent event) {
         refreshMessages();
     }
@@ -1716,19 +1710,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 .entityId(entityId)
                 .type(MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC)
                 .start();
-    }
-
-    public void onEvent(SendCompleteEvent event) {
-        if (!isForeground) {
-            return;
-        }
-    }
-
-    public void onEvent(SendFailEvent event) {
-        if (!isForeground) {
-            return;
-        }
-        refreshMessages();
     }
 
     public void onEvent(RequestFileUploadEvent event) {

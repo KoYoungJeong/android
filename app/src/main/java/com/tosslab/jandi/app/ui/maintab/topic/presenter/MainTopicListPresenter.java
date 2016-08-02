@@ -76,7 +76,6 @@ public class MainTopicListPresenter {
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, action);
 
         item.setUnreadCount(0);
-        mainTopicModel.resetBadge(item.getEntityId());
 
         long teamId = TeamInfoLoader.getInstance().getTeamId();
         mainTopicModel.getUnreadCount()

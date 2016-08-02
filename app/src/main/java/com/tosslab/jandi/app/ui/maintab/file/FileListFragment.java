@@ -48,6 +48,7 @@ import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
+import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.file.adapter.SearchedFilesAdapter;
 import com.tosslab.jandi.app.ui.maintab.file.adapter.SearchedFilesAdapterView;
 import com.tosslab.jandi.app.ui.maintab.file.controller.SearchSelectorViewController;
@@ -84,7 +85,7 @@ import de.greenrobot.event.EventBus;
  * Created by tee on 16. 6. 28..
  */
 public class FileListFragment extends Fragment implements FileListPresenterImpl.View,
-        SearchActivity.SearchSelectView, ListScroller {
+        SearchActivity.SearchSelectView, ListScroller, MainTabPagerAdapter.OnItemFocused {
 
     public static final String KEY_COMMENT_COUNT = "comment_count";
     public static final String KEY_FILE_ID = "file_id";
@@ -130,6 +131,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     private SearchActivity.OnSearchText onSearchText;
     private boolean isSearchLayoutFirst = true;
     private boolean isForeground;
+    private boolean focused = true; // maintab 에서 현재 화면인지 체크하기 위함
 
     public void setOnSearchItemSelect(SearchActivity.OnSearchItemSelect onSearchItemSelect) {
         this.onSearchItemSelect = onSearchItemSelect;
@@ -312,7 +314,9 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
     @Override
     public void showWarningToast(String message) {
-        ColoredToast.showWarning(message);
+        if (focused) {
+            ColoredToast.showWarning(message);
+        }
     }
 
     @Override
@@ -331,7 +335,9 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     @Override
     public void searchFailed(int errMessageRes) {
         FragmentActivity activity = getActivity();
-        if (activity != null && !(activity.isFinishing())) {
+        if (activity != null
+                && !(activity.isFinishing())
+                && focused) {
             ColoredToast.showError(activity.getString(errMessageRes));
         }
     }
@@ -561,7 +567,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
             return;
         }
 
-        int fileId = intent.getIntExtra(KEY_FILE_ID, -1);
+        long fileId = intent.getLongExtra(KEY_FILE_ID, -1);
         int commentCount = intent.getIntExtra(KEY_COMMENT_COUNT, -1);
         if (fileId <= 0 || commentCount < 0) {
             return;
@@ -667,4 +673,8 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         fileListPresenter.doSearchAll();
     }
 
+    @Override
+    public void onItemFocused(boolean focused) {
+        this.focused = focused;
+    }
 }

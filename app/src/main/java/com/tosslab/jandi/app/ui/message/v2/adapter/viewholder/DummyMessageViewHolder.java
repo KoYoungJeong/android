@@ -17,8 +17,11 @@ import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
+import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+
+import rx.android.schedulers.AndroidSchedulers;
 
 public class DummyMessageViewHolder implements BodyViewHolder {
     private ImageView ivProfile;
@@ -29,10 +32,13 @@ public class DummyMessageViewHolder implements BodyViewHolder {
 
     private boolean hasBottomMargin = false;
     private boolean hasProfile = false;
+    private boolean hasOnlyBadge = false;
     private View vBottomMargin;
+    private View vgUnreadAndTime;
+    private TextView tvUnreadCount;
+    private TextView tvTime;
 
-    private DummyMessageViewHolder() {
-    }
+    private DummyMessageViewHolder() { }
 
     @Override
     public void initView(View rootView) {
@@ -43,8 +49,12 @@ public class DummyMessageViewHolder implements BodyViewHolder {
         ivStatus = (ImageView) rootView.findViewById(R.id.iv_dummy_send_status);
         vBottomMargin = rootView.findViewById(R.id.v_margin);
 
+        vgUnreadAndTime = rootView.findViewById(R.id.vg_badge_time);
+        tvUnreadCount = (TextView) rootView.findViewById(R.id.tv_message_badge);
+        tvTime = (TextView) rootView.findViewById(R.id.tv_message_time);
+
         int topMargin = (int) UiUtils.getPixelFromDp(5f);
-        if(!hasProfile) {
+        if (!hasProfile) {
             topMargin = (int) UiUtils.getPixelFromDp(6f);
         }
 
@@ -90,13 +100,14 @@ public class DummyMessageViewHolder implements BodyViewHolder {
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
 
+        setSendingStatus(teamId, roomId, dummyMessageLink);
+
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
             builder.append(textMessage.content.body);
             ivSticker.setVisibility(View.GONE);
             tvMessage.setVisibility(View.VISIBLE);
 
-            setTextSendingStatus(dummyMessageLink);
 
             long myId = TeamInfoLoader.getInstance().getMyId();
             MentionAnalysisInfo mentionAnalysisInfo =
@@ -117,38 +128,66 @@ public class DummyMessageViewHolder implements BodyViewHolder {
 
             ResMessages.StickerContent content = stickerMessage.content;
 
-            setStickerSendingStatus(dummyMessageLink);
-
             StickerManager.getInstance().loadStickerDefaultOption(ivSticker, content.groupId, content.stickerId);
         }
 
     }
 
-    private void setStickerSendingStatus(DummyMessageLink dummyMessageLink) {
-        SendMessage.Status status = SendMessage.Status.valueOf(dummyMessageLink.getStatus());
+    private void setSendingStatus(long teamId, long roomId, DummyMessageLink link) {
+        SendMessage.Status status = SendMessage.Status.valueOf(link.getStatus());
         switch (status) {
             case COMPLETE:
-            case SENDING:
-                ivStatus.setImageResource(R.drawable.icon_message_sending);
+                ivStatus.setVisibility(View.GONE);
+                vgUnreadAndTime.setVisibility(View.VISIBLE);
+                if (hasOnlyBadge) {
+                    tvTime.setVisibility(View.GONE);
+                } else {
+                    tvTime.setVisibility(View.VISIBLE);
+                }
+                tvTime.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
+                setUnreadCount(teamId, roomId, link);
                 break;
+            case SENDING: {
+                ivStatus.setVisibility(View.VISIBLE);
+                ivStatus.setImageResource(R.drawable.icon_message_sending);
+                vgUnreadAndTime.setVisibility(View.GONE);
+                break;
+            }
             case FAIL:
+                ivStatus.setVisibility(View.VISIBLE);
                 ivStatus.setImageResource(R.drawable.icon_message_failure);
+                vgUnreadAndTime.setVisibility(View.GONE);
                 break;
         }
     }
 
-    private void setTextSendingStatus(DummyMessageLink dummyMessageLink) {
-        SendMessage.Status status = SendMessage.Status.valueOf(dummyMessageLink.getStatus());
-        switch (status) {
-            case COMPLETE:
-            case SENDING: {
-                ivStatus.setImageResource(R.drawable.icon_message_sending);
-                break;
-            }
-            case FAIL:
-                ivStatus.setImageResource(R.drawable.icon_message_failure);
-                break;
+    private void setUnreadCount(long teamId, long roomId, final ResMessages.Link link) {
+        tvUnreadCount.setTag(link);
+        UnreadCountUtil.getUnreadCount(teamId, roomId,
+                link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(unreadCount -> {
+                    ResMessages.Link linkFromTag = getLinkFromTag(tvUnreadCount);
+                    if (linkFromTag != null && linkFromTag.id != link.id) {
+                        return;
+                    }
+
+                    if (unreadCount > 0) {
+                        tvUnreadCount.setText(String.valueOf(unreadCount));
+                        tvUnreadCount.setVisibility(View.VISIBLE);
+                    } else {
+                        tvUnreadCount.setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    private ResMessages.Link getLinkFromTag(View view) {
+        if (view == null || view.getTag() == null
+                || !view.getTag().getClass().isAssignableFrom(ResMessages.Link.class)) {
+            return null;
         }
+
+        return ((ResMessages.Link) view.getTag());
     }
 
     @Override
@@ -187,12 +226,17 @@ public class DummyMessageViewHolder implements BodyViewHolder {
         }
     }
 
+    public void setHasOnlyBadge(boolean hasOnlyBadge) {
+        this.hasOnlyBadge = hasOnlyBadge;
+    }
+
     public static class Builder extends BaseViewHolderBuilder {
 
         public DummyMessageViewHolder build() {
             DummyMessageViewHolder dummyViewHolder = new DummyMessageViewHolder();
             dummyViewHolder.setHasProfile(hasProfile);
             dummyViewHolder.setHasBottomMargin(hasBottomMargin);
+            dummyViewHolder.setHasOnlyBadge(hasOnlyBadge);
             return dummyViewHolder;
         }
     }

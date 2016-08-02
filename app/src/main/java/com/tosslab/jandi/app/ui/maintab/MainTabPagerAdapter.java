@@ -27,16 +27,30 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
     public static final int TAB_MYPAGE = 4;
 
     View[] mTabs;
+    Fragment[] fragments;
     private long selectedEntity;
 
     public MainTabPagerAdapter(FragmentManager fm, View[] tabs, long selectedEntity) {
         super(fm);
         mTabs = tabs;
         this.selectedEntity = selectedEntity;
+        fragments = new Fragment[mTabs.length];
+
+        initFragments(fragments);
+    }
+
+    private void initFragments(Fragment[] fragments) {
+        for (int idx = 0; idx < fragments.length; idx++) {
+            fragments[idx] = createFragment(idx);
+        }
     }
 
     @Override
     public Fragment getItem(int position) {
+        return fragments[position];
+    }
+
+    private Fragment createFragment(int position) {
         switch (position) {
             case TAB_TOPIC:
                 return MainTopicListFragment_
@@ -128,5 +142,20 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
     public void updateMyPageBadge(int badgeCount) {
         TextView tvMyPage = (TextView) getBadgeView(TAB_MYPAGE);
         updateBadgeText(badgeCount, tvMyPage, TAB_MYPAGE);
+    }
+
+    public void onPageSelected(int position) {
+
+        for (int idx = 0; idx < fragments.length; idx++) {
+
+            if (fragments[idx] instanceof OnItemFocused) {
+                ((OnItemFocused) fragments[idx]).onItemFocused(idx == position);
+            }
+        }
+
+    }
+
+    public interface OnItemFocused {
+        void onItemFocused(boolean focused);
     }
 }
