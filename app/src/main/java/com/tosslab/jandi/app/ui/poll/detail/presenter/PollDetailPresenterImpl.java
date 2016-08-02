@@ -290,7 +290,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                             .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                             .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                             .property(PropertyKey.ResponseSuccess, true)
-                            .property(PropertyKey.MessageId, resPollCommentCreated.getLinkComment().id)
+                            .property(PropertyKey.MessageId, resPollCommentCreated.getLinkComment().messageId)
                             .build());
 
                 }, throwable -> {
@@ -322,7 +322,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                             .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                             .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                             .property(PropertyKey.ResponseSuccess, true)
-                            .property(PropertyKey.MessageId, resPollCommentCreated.getLinkComment().id)
+                            .property(PropertyKey.MessageId, resPollCommentCreated.getLinkComment().messageId)
                             .build());
                 }, throwable -> {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));

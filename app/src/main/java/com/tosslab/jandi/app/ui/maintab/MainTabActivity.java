@@ -40,21 +40,18 @@ import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
-import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.main.ConfigApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
-import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.push.PushInterfaceActivity;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
-import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -209,8 +206,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
         // Bind the tabs to the ViewPager
         initMainTabStrip();
-        updateTopicBadge();
-        updateChatBadge();
 
         showCoachMarkIfNeed();
 
@@ -312,36 +307,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         mainTapStrip.setOnTabClickListener(index -> {
             listScrollHandler.onTabClick(index);
         });
-    }
-
-    private void updateChatBadge() {
-
-        Observable.from(TeamInfoLoader.getInstance().getDirectMessageRooms())
-                .map(DirectMessageRoom::getUnreadCount)
-                .scan((lhs, rhs) -> lhs + rhs)
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(count -> {
-                    mainTabPagerAdapter.updateChatBadge(count);
-                });
-
-    }
-
-    private void updateTopicBadge() {
-
-        Observable.defer(() -> {
-            long teamId = AccountRepository.getRepository().getSelectedTeamId();
-            return Observable.from(TopicRepository.getInstance().getTopics(teamId));
-        })
-                .filter(Topic::isJoined)
-                .map(Topic::getUnreadCount)
-                .scan((count1, count2) -> count1 + count2)
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(count -> {
-                    mainTabPagerAdapter.updateTopicBadge(count);
-                });
-
     }
 
     private void showCoachMarkIfNeed() {
