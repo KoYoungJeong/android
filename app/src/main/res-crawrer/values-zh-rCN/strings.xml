@@ -291,8 +291,8 @@
 	<string name="jandi_input_search_keyword">"按照关键词搜索您的信息"</string>
 	<string name="jandi_input_topic_name">"请输入议题群组名称"</string>
 	<string name="jandi_input_user_name">"输入您的名字"</string>
-	<string name="jandi_insert_new_department">"(新部门)"</string>
-	<string name="jandi_insert_new_job_title">"(新职称)"</string>
+	<string name="jandi_insert_new_department">"新部门"</string>
+	<string name="jandi_insert_new_job_title">"新职称"</string>
 	<string name="jandi_insert_team_domain">"请输入团队网域"</string>
 	<string name="jandi_insert_team_name">"请输入团队名称"</string>
 	<string name="jandi_invitation">"邀请"</string>
@@ -369,7 +369,7 @@
 	<string name="jandi_modify_channel">"重新命名议题"</string>
 	<string name="jandi_modify_private_group">"重新命名私人议题"</string>
 	<string name="jandi_modify_profile_image">"简介照片"</string>
-	<string name="jandi_move_entity_after_share">"文件已成功被分享。您想要现在跳转到那对话中吗？"</string>
+	<string name="jandi_move_entity_after_share">"档案已成功被分享。您想要现在跳转到那对话中吗？"</string>
 	<string name="jandi_msg_network_offline">"联机中断。"</string>
 	<string name="jandi_msg_network_offline_warn">"目前为无网络状态JANDI会于连上网络后，"</string>
 	<string name="jandi_my_files">"<b>我的文件</b>"</string>

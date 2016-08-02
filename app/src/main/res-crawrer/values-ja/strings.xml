@@ -291,8 +291,8 @@
 	<string name="jandi_input_search_keyword">"キーワードで検索"</string>
 	<string name="jandi_input_topic_name">"トピック名を入力してください"</string>
 	<string name="jandi_input_user_name">"検索するメンバーの名前を入力"</string>
-	<string name="jandi_insert_new_department">"(新しい部署)"</string>
-	<string name="jandi_insert_new_job_title">"(新しい役職）"</string>
+	<string name="jandi_insert_new_department">"新しい部署"</string>
+	<string name="jandi_insert_new_job_title">"新しい役職"</string>
 	<string name="jandi_insert_team_domain">"チームドメインを入力"</string>
 	<string name="jandi_insert_team_name">"チーム名を入力"</string>
 	<string name="jandi_invitation">"招待"</string>
@@ -370,7 +370,7 @@
 	<string name="jandi_modify_channel">"トピックの名称を変更"</string>
 	<string name="jandi_modify_private_group">"グループを編集"</string>
 	<string name="jandi_modify_profile_image">"プロフィール写真を編集"</string>
-	<string name="jandi_move_entity_after_share">"ファイルが共有されました。ファイルについてコメントしますか？"</string>
+	<string name="jandi_move_entity_after_share">"ファイルが共有されました。ファイルが共有されたトークルームに移動しますか？"</string>
 	<string name="jandi_msg_network_offline">"インターネット接続が切断されました。"</string>
 	<string name="jandi_msg_network_offline_warn">"現在ネットワークに接続されていません。"</string>
 	<string name="jandi_my_files">"<b>自分</b>"</string>

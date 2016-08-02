@@ -1346,9 +1346,8 @@ public class JandiSocketServiceModel {
 
     private Observable<EventHistoryInfo> checkEventHistory(long socketConnectedLastTime) {
         return Observable.defer(() -> {
-            long ts = socketConnectedLastTime;
 
-            if (System.currentTimeMillis() - ts > 1000 * 60 * 60 * 24 * 7) {
+            if (System.currentTimeMillis() - socketConnectedLastTime > 1000 * 60 * 60 * 24 * 7) {
                 InitialInfoRepository.getInstance().clear();
                 restartJandi();
                 return Observable.empty();
@@ -1372,7 +1371,7 @@ public class JandiSocketServiceModel {
                 refreshPollList(teamId);
                 EventBus.getDefault().post(new RequestRefreshPollBadgeCountEvent(teamId));
 
-                eventHistory = eventsApi.get().getEventHistory(ts, userId, 1);
+                eventHistory = eventsApi.get().getEventHistory(socketConnectedLastTime, userId, 1);
 
                 int total = eventHistory.getTotal();
 
@@ -1381,7 +1380,7 @@ public class JandiSocketServiceModel {
                     return Observable.empty();
                 }
 
-                eventHistory = eventsApi.get().getEventHistory(ts, userId);
+                eventHistory = eventsApi.get().getEventHistory(socketConnectedLastTime, userId);
                 return Observable.just(eventHistory);
 
             } catch (RetrofitException e) {
