@@ -31,7 +31,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
-import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
+import com.tosslab.jandi.app.ui.search.main_temp.SearchActivity;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -290,8 +290,12 @@ public class MainChatListFragment extends Fragment
 
     @OptionsItem(R.id.action_main_search)
     void onSearchOptionSelect() {
-        SearchActivity_.intent(getActivity())
-                .start();
+//        SearchActivity_.intent(getActivity())
+//                .start();
+
+        Intent intent = new Intent(getContext(), SearchActivity.class);
+        startActivity(intent);
+
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.Search);
 
     }

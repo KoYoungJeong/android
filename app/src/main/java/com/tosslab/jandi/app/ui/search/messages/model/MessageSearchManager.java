@@ -37,6 +37,7 @@ public class MessageSearchManager {
         int perPage = reqMessageSearchQeury.getPerPage();
         long writerId = reqMessageSearchQeury.getWriterId();
         long entityId = reqMessageSearchQeury.getEntityId();
+
         switch (searchType) {
 
             case 0x11:  // condition with writer & entity
