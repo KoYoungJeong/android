@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.search.main_temp.object;
 
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.search.ResSearch;
 
 import java.util.Date;
 import java.util.List;
@@ -14,10 +15,11 @@ public class SearchMessageData extends SearchData {
     private long linkId;
     private long messageId;
     private long writerId;
-    private String contentType;
     private String text;
     private Date createdAt;
     private String feedbackType;
+    private ResSearch.Poll poll;
+    private ResSearch.File file;
     private List<MentionObject> mentions;
 
     private SearchMessageData() {
@@ -39,10 +41,6 @@ public class SearchMessageData extends SearchData {
         return writerId;
     }
 
-    public String getContentType() {
-        return contentType;
-    }
-
     public String getText() {
         return text;
     }
@@ -59,12 +57,21 @@ public class SearchMessageData extends SearchData {
         return mentions;
     }
 
+    public ResSearch.Poll getPoll() {
+        return poll;
+    }
+
+    public ResSearch.File getFile() {
+        return file;
+    }
+
     public static class Builder {
 
         private SearchMessageData searchMessageData;
 
         public Builder() {
             searchMessageData = new SearchMessageData();
+            searchMessageData.setType(SearchData.ITEM_TYPE_MESSAGE_ITEM);
         }
 
         public Builder setRoomId(long roomId) {
@@ -87,11 +94,6 @@ public class SearchMessageData extends SearchData {
             return this;
         }
 
-        public Builder setContentType(String contentType) {
-            searchMessageData.contentType = contentType;
-            return this;
-        }
-
         public Builder setText(String text) {
             searchMessageData.text = text;
             return this;
@@ -109,6 +111,16 @@ public class SearchMessageData extends SearchData {
 
         public Builder setMentions(List<MentionObject> mentions) {
             searchMessageData.mentions = mentions;
+            return this;
+        }
+
+        public Builder setPoll(ResSearch.Poll poll) {
+            searchMessageData.poll = poll;
+            return this;
+        }
+
+        public Builder setFile(ResSearch.File file) {
+            searchMessageData.file = file;
             return this;
         }
 

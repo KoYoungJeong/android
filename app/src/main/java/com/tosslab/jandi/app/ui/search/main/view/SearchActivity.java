@@ -25,7 +25,6 @@ import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenter;
 import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenterImpl;
 import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment;
 import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment_;
-import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -296,10 +295,10 @@ public class SearchActivity extends BaseAppCompatActivity implements SearchPrese
     }
 
     @Override
-    public void setOldQueries(List<SearchKeyword> searchKeywords) {
+    public void setOldQueries(List<String> searchKeywords) {
         searchQueryAdapter.clear();
 
-        for (SearchKeyword searchKeyword : searchKeywords) {
+        for (String searchKeyword : searchKeywords) {
             searchQueryAdapter.add(searchKeyword);
         }
         searchQueryAdapter.notifyDataSetChanged();

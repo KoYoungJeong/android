@@ -29,7 +29,7 @@ public class SearchApi extends ApiTemplate<SearchApi.Api> {
     }
 
     interface Api {
-        @GET("teams/{teamId}/searchMessages")
+        @GET("teams/{teamId}/search")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResSearch> getSearchResults(@Path("teamId") long teamId,
                                          @QueryMap Map<String, String> querys);

@@ -4,21 +4,28 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
+import android.widget.ProgressBar;
 
 import com.eowise.recyclerview.stickyheaders.DrawOrder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.search.main.adapter.SearchQueryAdapter;
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.SearchAdapter;
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.SearchAdapterViewModel;
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.SearchStickyHeaderAdapter;
-import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.RoomHeaderViewHolder;
 import com.tosslab.jandi.app.ui.search.main_temp.dagger.DaggerSearchComponent;
 import com.tosslab.jandi.app.ui.search.main_temp.dagger.SearchModule;
 import com.tosslab.jandi.app.ui.search.main_temp.presenter.SearchPresenter;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 import javax.inject.Inject;
 
@@ -30,7 +37,7 @@ import butterknife.ButterKnife;
  */
 
 public class SearchActivity extends BaseAppCompatActivity
-        implements SearchPresenter.View, RoomHeaderViewHolder.OnCheckChangeListener {
+        implements SearchPresenter.View, SearchAdapter.OnRequestMoreMessage {
 
     @Bind(R.id.lv_search_result)
     RecyclerView lvSearchResult;
@@ -38,15 +45,19 @@ public class SearchActivity extends BaseAppCompatActivity
     @Bind(R.id.tv_search_keyword)
     AutoCompleteTextView tvSearchKeyword;
 
+    @Bind(R.id.progress_more_loading_message)
+    ProgressBar progressMoreLoadingMessage;
+
     @Inject
     SearchPresenter searchPresenter;
 
     private boolean isRoomItemFold = false;
     private boolean isMessageItemFold = false;
 
-    private boolean isShowUnjoinTopic = false;
-
     private SearchAdapterViewModel searchAdapterViewModel;
+
+    private boolean flagFirstSearch = true;
+    private SearchQueryAdapter searchQueryAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,15 +71,82 @@ public class SearchActivity extends BaseAppCompatActivity
 
         setAdapter();
 
+        searchPresenter.sendSearchHistory();
+
         tvSearchKeyword.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                if (flagFirstSearch) {
+                    setStickyHeaderAdapter();
+                    removeHistoryListeners();
+                    flagFirstSearch = false;
+                }
                 searchPresenter.sendSearchQuery(
-                        tvSearchKeyword.getText().toString(), isShowUnjoinTopic);
+                        tvSearchKeyword.getText().toString());
                 return true;
             }
             return false;
         });
+
+        initDropdownOldQuery();
+
+        setHistoryListeners();
     }
+
+    private void setHistoryListeners() {
+        searchAdapterViewModel.setOnDeleteAllHistory(() -> {
+            searchPresenter.onDeleteaAllHistoryItem();
+        });
+
+        searchAdapterViewModel.setOnSelectHistoryListener(keyword -> {
+            tvSearchKeyword.setText(keyword);
+            tvSearchKeyword.setSelection(keyword.length());
+            tvSearchKeyword.dismissDropDown();
+        });
+
+        searchAdapterViewModel.setOnDeleteHistoryListener(keyword -> {
+            searchPresenter.onDeleteaHistoryItemByKeyword(keyword);
+        });
+    }
+
+    private void removeHistoryListeners() {
+        searchAdapterViewModel.setOnDeleteAllHistory(null);
+
+        searchAdapterViewModel.setOnSelectHistoryListener(null);
+
+        searchAdapterViewModel.setOnDeleteHistoryListener(null);
+    }
+
+
+    private void initDropdownOldQuery() {
+        searchQueryAdapter = new SearchQueryAdapter(SearchActivity.this);
+        tvSearchKeyword.setAdapter(searchQueryAdapter);
+
+        tvSearchKeyword.setOnItemClickListener((parent, view, position, id) -> {
+            String searchedQuery = searchQueryAdapter.getItem(position).toString();
+            tvSearchKeyword.setText(searchedQuery);
+            tvSearchKeyword.setSelection(searchedQuery.length());
+        });
+
+        tvSearchKeyword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                searchQueryAdapter.clear();
+                searchQueryAdapter.addAll(searchPresenter.getOldQueryList(s.toString()));
+                searchQueryAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
 
     private void setAdapter() {
         SearchAdapter adapter = new SearchAdapter();
@@ -77,8 +155,16 @@ public class SearchActivity extends BaseAppCompatActivity
         lvSearchResult.setLayoutManager(new LinearLayoutManager(this));
         lvSearchResult.setItemAnimator(null);
 
-        SearchStickyHeaderAdapter searchStickyHeaderAdapter = new SearchStickyHeaderAdapter(adapter);
+        searchAdapterViewModel = adapter;
+        searchPresenter.setSearchAdapterDataModel(adapter);
+        searchAdapterViewModel.setOnCheckChangeListener(isChecked -> onCheckUnjoinTopic(isChecked));
 
+        searchAdapterViewModel.setOnRequestMoreMessage(this);
+    }
+
+    private void setStickyHeaderAdapter() {
+        SearchAdapter adapter = (SearchAdapter) searchAdapterViewModel;
+        SearchStickyHeaderAdapter searchStickyHeaderAdapter = new SearchStickyHeaderAdapter(adapter);
         StickyHeadersItemDecoration stickyHeadersItemDecoration = new StickyHeadersBuilder()
                 .setAdapter(adapter)
                 .setRecyclerView(lvSearchResult)
@@ -90,7 +176,7 @@ public class SearchActivity extends BaseAppCompatActivity
                         isMessageItemFold = !isMessageItemFold;
                         searchStickyHeaderAdapter.setMessageItemFold(isMessageItemFold);
                         adapter.onClickHeader(headerId, isMessageItemFold);
-                    } else {
+                    } else if (headerId == 2) {
                         isRoomItemFold = !isRoomItemFold;
                         searchStickyHeaderAdapter.setRoomItemFold(isRoomItemFold);
                         adapter.onClickHeader(headerId, isRoomItemFold);
@@ -99,22 +185,48 @@ public class SearchActivity extends BaseAppCompatActivity
                 .build();
 
         lvSearchResult.addItemDecoration(stickyHeadersItemDecoration);
-
-        searchAdapterViewModel = adapter;
-        searchPresenter.setSearchAdapterDataModel(adapter);
-        searchAdapterViewModel.setOnCheckChangeListener(this);
     }
 
     @Override
-    public void refreshAll() {
-        searchAdapterViewModel.refreshAll();
+    public void refreshSearchedAll() {
+        searchAdapterViewModel.refreshSearchedAll();
     }
 
     @Override
+    public void refreshHistory() {
+        searchAdapterViewModel.refreshHistory();
+    }
+
     public void onCheckUnjoinTopic(boolean isChecked) {
-        isShowUnjoinTopic = isChecked;
-        searchPresenter.sendSearchQueryOnlyTopicRoom(
-                tvSearchKeyword.getText().toString(), isShowUnjoinTopic);
+        searchPresenter.setChangeIsShowUnjoinedTopic(isChecked);
+    }
+
+    @Override
+    public void showMoreProgressBar() {
+        progressMoreLoadingMessage.setVisibility(View.VISIBLE);
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_in_bottom);
+        progressMoreLoadingMessage.setAnimation(animation);
+        animation.startNow();
+    }
+
+    @Override
+    public void dismissMoreProgressBar() {
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_out_to_bottom);
+
+        animation.setAnimationListener(new SimpleEndAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                progressMoreLoadingMessage.setVisibility(View.GONE);
+            }
+        });
+
+        progressMoreLoadingMessage.setAnimation(animation);
+        animation.startNow();
+    }
+
+    @Override
+    public void onRequestMoreMessage() {
+        searchPresenter.sendMoreResults();
     }
 
 }

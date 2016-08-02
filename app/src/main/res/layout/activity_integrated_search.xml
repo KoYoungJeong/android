@@ -54,6 +54,19 @@
         android:id="@+id/lv_search_result"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/layout_search_bar" />
+        android:layout_below="@id/layout_search_bar"
+        android:background="@color/white" />
+
+    <ProgressBar
+        android:id="@+id/progress_more_loading_message"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:indeterminate="true"
+        android:indeterminateDrawable="@drawable/progress_refresh_animation"
+        android:visibility="gone" />
+
 
 </RelativeLayout>

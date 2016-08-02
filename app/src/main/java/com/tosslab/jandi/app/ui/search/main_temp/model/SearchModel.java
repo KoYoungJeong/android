@@ -1,5 +1,9 @@
 package com.tosslab.jandi.app.ui.search.main_temp.model;
 
+import android.text.TextUtils;
+
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.local.database.search.JandiSearchDatabaseManager;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -32,24 +36,9 @@ public class SearchModel {
     public SearchModel() {
     }
 
-    public ResSearch searchMessages(long teamId, long writerId, long roomId, String keyword, int page) throws RetrofitException {
-        ReqSearch.Builder reqSearchBuilder = new ReqSearch.Builder();
-
-        reqSearchBuilder.setType("message");
-
-        if (writerId != -1) {
-            reqSearchBuilder.setWriterId(writerId);
-        }
-
-        if (roomId != -1) {
-            reqSearchBuilder.setRoomId(roomId);
-        }
-
-        reqSearchBuilder.setPage(page);
-
-        reqSearchBuilder.setKeyword(keyword);
-
-        return searchApi.get().getSearch(teamId, reqSearchBuilder.build());
+    public ResSearch searchMessages(ReqSearch reqSearch) throws RetrofitException {
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        return searchApi.get().getSearch(teamId, reqSearch);
     }
 
     public List<SearchTopicRoomData> getSearchedTopics(String keyword, boolean isShowUnjoinedTopic) {
@@ -92,6 +81,35 @@ public class SearchModel {
                 .subscribe();
 
         return topics;
+    }
+
+    public long upsertSearchQuery(String text) {
+        if (TextUtils.isEmpty(text)) {
+            return -1;
+        }
+
+        return JandiSearchDatabaseManager.getInstance(JandiApplication.getContext())
+                .upsertSearchKeyword(text);
+    }
+
+    public List<String> getHistory() {
+        return JandiSearchDatabaseManager.getInstance(JandiApplication.getContext())
+                .getSearchAllHistory();
+    }
+
+    public List<String> searchOldQuery(String text) {
+        return JandiSearchDatabaseManager.getInstance(JandiApplication.getContext())
+                .getSearchKeywords(text);
+    }
+
+    public void removeHistoryItemByKeyword(String keyword) {
+        JandiSearchDatabaseManager.getInstance(JandiApplication.getContext())
+                .removeItemByKeyword(keyword);
+    }
+
+    public void removeHistoryAllItems() {
+        JandiSearchDatabaseManager.getInstance(JandiApplication.getContext())
+                .removeAllItems();
     }
 
 }

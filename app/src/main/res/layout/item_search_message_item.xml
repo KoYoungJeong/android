@@ -38,7 +38,7 @@
                     android:layout_centerVertical="true"
                     android:text="오후 01:23"
                     android:textColor="@color/dark_gray"
-                    android:textSize="16dp" />
+                    android:textSize="14dp" />
 
                 <TextView
                     android:id="@+id/tv_user_name"
@@ -46,6 +46,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="16dp"
                     android:layout_toLeftOf="@id/tv_time"
+                    android:singleLine="true"
                     android:text="Tee"
                     android:textColor="@color/dark_gray"
                     android:textSize="16dp"
@@ -75,6 +76,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
+                    android:singleLine="true"
                     android:text="Design_team_HQ"
                     android:textColor="@color/jandi_text_light"
                     android:textSize="12dp"
@@ -89,23 +91,27 @@
                     android:ellipsize="end"
                     android:text="|"
                     android:textSize="12dp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
                 <ImageView
                     android:id="@+id/iv_shared_item_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/account_icon_upload" />
+                    android:src="@drawable/account_icon_upload"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/tv_shared_item_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
+                    android:singleLine="true"
                     android:text="몇 글짜까지 들어감.jpg"
                     android:textColor="@color/jandi_text_light"
                     android:textSize="12dp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -118,6 +124,5 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#ffd9d9d9" />
-
 
 </LinearLayout>
