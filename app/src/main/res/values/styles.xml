@@ -399,6 +399,21 @@
         <item name="android:paddingRight">16dp</item>
     </style>
 
+    <style name="JandiMemberProfile.Profile" parent="JandiMemberProfile">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">72dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="gap">4dp</item>
+        <item name="textColorContent">@color/jandi_text_medium</item>
+        <item name="textColorTitle">@color/jandi_member_profile_user_name</item>
+        <item name="textContentSingleline">true</item>
+        <item name="textSizeContent">@dimen/jandi_text_size_medium</item>
+        <item name="textSizeTitle">@dimen/jandi_text_size_large</item>
+    </style>
+
     <style name="JandiMemberProfile.Layout.Sub"
         parent="JandiMemberProfile">
         <item name="android:layout_width">match_parent</item>

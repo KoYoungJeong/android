@@ -204,8 +204,10 @@
 	<string name="jandi_empty_participants">"无人参与投票"</string>
 	<string name="jandi_empty_subject">"问卷名称为必填字段"</string>
 	<string name="jandi_enable_external_link">"建立共享链接"</string>
+	<string name="jandi_enter_name">"请输入您的名字"</string>
 	<string name="jandi_enter_new_passcode">"输入新密码"</string>
 	<string name="jandi_enter_passcode">"输入您的密码"</string>
+	<string name="jandi_enter_phone_number">"请输入您的电话号码"</string>
 	<string name="jandi_entity_create_entity_name">"名字"</string>
 	<string name="jandi_entity_joined_topic">"我的议题"</string>
 	<string name="jandi_entity_unjoined_topic">"其他议题"</string>

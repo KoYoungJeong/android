@@ -204,8 +204,10 @@
 	<string name="jandi_empty_participants">"참여자가 없습니다."</string>
 	<string name="jandi_empty_subject">"질문을 입력해야 합니다."</string>
 	<string name="jandi_enable_external_link">"외부 공유용 링크 생성"</string>
+	<string name="jandi_enter_name">"이름을 입력해주세요."</string>
 	<string name="jandi_enter_new_passcode">"변경할 비밀번호를 입력해주세요."</string>
 	<string name="jandi_enter_passcode">"비밀번호 입력"</string>
+	<string name="jandi_enter_phone_number">"전화번호를 입력하세요"</string>
 	<string name="jandi_entity_create_entity_name">"사용자 성함"</string>
 	<string name="jandi_entity_joined_topic">"참여한 토픽"</string>
 	<string name="jandi_entity_unjoined_topic">"참여하지 않은 토픽"</string>

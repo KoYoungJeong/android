@@ -37,6 +37,8 @@
     <color name="jandi_black_de">#de000000</color>
     <color name="jandi_black_e6">#e6000000</color>
 
+    <color name="jandi_d1d1d1">#FFD1D1D1</color>
+
 
     <color name="jandi_badge_point_color">#FFFF5B49</color>
     <color name="jandi_disabled_user_background">#CCEB6016</color>
@@ -219,7 +221,7 @@
 
     <color name="backgournd_photo_actionbar">#222222</color>
 
-    <color name="account_home_divide_line">#FFD1D1D1</color>
+    <color name="account_home_divide_line">@color/jandi_d1d1d1</color>
     <color name="account_home_help_dialog_background">#FF31C08A</color>
     <color name="account_home_team_text">@color/jandi_team_selector_text_black</color>
     <color name="account_home_help_dialog_text">#FF404040</color>

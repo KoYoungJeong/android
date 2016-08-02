@@ -21,7 +21,6 @@ import javax.inject.Inject;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 
@@ -112,9 +111,10 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
     }
 
     @Override
-    public void onEditEmailClick(String email) {
+    public void onEditEmailClick() {
+        User savedProfile = modifyProfileModel.getSavedProfile();
         String[] accountEmails = modifyProfileModel.getAccountEmails();
-        view.showEmailChooseDialog(accountEmails, email);
+        view.showEmailChooseDialog(accountEmails, savedProfile.getEmail());
     }
 
     @Override

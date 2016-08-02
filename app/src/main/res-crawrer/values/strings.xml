@@ -204,8 +204,10 @@
 	<string name="jandi_empty_participants">"There were no participants."</string>
 	<string name="jandi_empty_subject">"Title field is required."</string>
 	<string name="jandi_enable_external_link">"Create public link"</string>
+	<string name="jandi_enter_name">"Please enter your name"</string>
 	<string name="jandi_enter_new_passcode">"Enter New Passcode "</string>
 	<string name="jandi_enter_passcode">"Enter your password"</string>
+	<string name="jandi_enter_phone_number">"Please enter your phone number"</string>
 	<string name="jandi_entity_create_entity_name">"Name"</string>
 	<string name="jandi_entity_joined_topic">"My Topics"</string>
 	<string name="jandi_entity_unjoined_topic">"Other Topics"</string>
@@ -296,7 +298,8 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_insert_team_domain">"Set up your Team Domain"</string>
 	<string name="jandi_insert_team_name">"Set up your Team Name"</string>
 	<string name="jandi_invitation">"Invite"</string>
-	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. To change this setting, go to Team Settings > Invitation Settings."</string>
+	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. 
+To change this setting, go to Team Settings > Invitation Settings."</string>
 	<string name="jandi_invitation_help">"Invite other team members to JANDI!"</string>
 	<string name="jandi_invitation_succeed">"Invitation has been sent"</string>
 	<string name="jandi_invite_app_not_installed">"The app is not installed on your device. The invitation link has been copied to the clipboard instead."</string>
