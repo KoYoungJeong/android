@@ -18,6 +18,9 @@ ext.dependecies = [
                 dart                        : 'com.f2prateek.dart:dart:2.0.+',
                 dart_processor              : 'com.f2prateek.dart:dart-processor:2.0.+',
 
+                henson                      : 'com.f2prateek.dart:henson:2.0.+',
+                henson_processor            : 'com.f2prateek.dart:henson-processor:2.0.+',
+
                 googleAnalytics             : 'com.google.android.gms:play-services-analytics:8.3.0',
                 gcm                         : 'com.google.android.gms:play-services-gcm:8.3.0',
 
