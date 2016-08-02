@@ -299,6 +299,10 @@ public class FileStickerCommentViewHolder extends BaseCommentViewHolder {
                                 serverUrl, fileType);
                     }
                 } else {
+                    if (content.size <= 0) {
+                        needFileSize = false;
+                        needFileUploaderDivider = false;
+                    }
                     tvMessageCommonFileName.setText(content.title);
                     tvMessageCommonFileName.setTextColor(resources.getColor(R.color.dark_gray));
                     tvFileUploaderName.setTextColor(resources.getColor(R.color.dark_gray));

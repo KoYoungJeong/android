@@ -203,8 +203,13 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
                                 fileMessage.content.serverUrl, fileMessage.content.icon);
                 ivFileImage.setImageResource(mimeTypeIconImage);
                 tvCommonFileSize.setVisibility(View.VISIBLE);
-                tvFileInfoDivider.setVisibility(View.VISIBLE);
-                tvFileUploaderName.setVisibility(View.VISIBLE);
+                if (fileContent.size > 0) {
+                    tvFileInfoDivider.setVisibility(View.VISIBLE);
+                    tvFileUploaderName.setVisibility(View.VISIBLE);
+                } else {
+                    tvFileInfoDivider.setVisibility(View.GONE);
+                    tvFileUploaderName.setVisibility(View.GONE);
+                }
 
                 tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text));
             }
