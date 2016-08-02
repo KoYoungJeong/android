@@ -37,6 +37,8 @@ import com.tosslab.jandi.app.ui.profile.modify.dagger.DaggerModifyProfileCompone
 import com.tosslab.jandi.app.ui.profile.modify.dagger.ModifyProfileModule;
 import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenter;
 import com.tosslab.jandi.app.ui.profile.modify.property.dept.DeptPositionActivity;
+import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.view.Henson;
+import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.view.NameStatusActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -178,33 +180,35 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     @OnClick(R.id.profile_user_status_message)
     void editStatusMessage() {
         // 닉네임
-        launchEditDialog(
-                EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS,
-                tvProfileStatusMessage.getContent()
-        );
+        startActivity(Henson.with(ModifyProfileActivity.this)
+                .gotoNameStatusActivity()
+                .type(NameStatusActivity.EXTRA_TYPE_STATUS)
+                .build());
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Status);
     }
 
     @OnClick(R.id.profile_user_realname)
     void editName() {
-        if (NetworkCheckUtil.isConnected()) {
-            launchEditDialog(
-                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME,
-                    tvProfileRealName.getContent()
-            );
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Name);
-        }
+        startActivity(Henson.with(ModifyProfileActivity.this)
+                .gotoNameStatusActivity()
+                .type(NameStatusActivity.EXTRA_TYPE_NAME)
+                .build());
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Name);
     }
 
     @OnClick(R.id.profile_user_phone_number)
     void editPhoneNumber() {
         // 핸드폰 번호
-        launchEditDialog(
-                EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE,
-                tvProfileUserPhone.getContent()
-        );
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Mobile);
+        if (NetworkCheckUtil.isConnected()) {
+
+            launchEditDialog(
+                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE,
+                    tvProfileUserPhone.getContent()
+            );
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Mobile);
+        }
     }
 
     @OnClick(R.id.profile_user_division)

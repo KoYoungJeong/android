@@ -4,6 +4,8 @@ package com.tosslab.jandi.app.ui.profile.modify.property.namestatus.view;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +20,7 @@ import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.dagger.DaggerNameStatusComponent;
 import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.dagger.NameStatusModule;
 import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.presenter.NameStatusPresenter;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import javax.inject.Inject;
 
@@ -26,21 +29,24 @@ import butterknife.ButterKnife;
 import butterknife.OnTextChanged;
 
 public class StatusChangeFragment extends Fragment implements NameStatusPresenter.View {
-    public static final int STATUS_MAX_LENGTH = 30;
+    public static final int STATUS_MAX_LENGTH = 60;
 
-    @Bind(R.id.et_name_change)
+    @Bind(R.id.et_status_change)
     EditText etStatus;
 
-    @Bind(R.id.tv_name_change_count)
+    @Bind(R.id.tv_status_change_count)
     TextView tvCount;
 
+    @Bind(R.id.toolbar_status_change)
+    Toolbar toolbar;
     @Inject
     NameStatusPresenter presenter;
+    private ProgressWheel progressWheel;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_status_change, container);
+        View view = inflater.inflate(R.layout.fragment_status_change, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -52,6 +58,15 @@ public class StatusChangeFragment extends Fragment implements NameStatusPresente
                 .nameStatusModule(new NameStatusModule(this))
                 .build()
                 .inject(this);
+
+        presenter.onInitUserInfo();
+
+        setUpToolbar();
+        setHasOptionsMenu(true);
+    }
+
+    private void setUpToolbar() {
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
     }
 
     @Override
@@ -75,8 +90,27 @@ public class StatusChangeFragment extends Fragment implements NameStatusPresente
         return super.onOptionsItemSelected(item);
     }
 
-    private void updateStatus() {
+    void updateStatus() {
+        showProgress();
         presenter.updateStatus(etStatus.getText().toString());
+    }
+
+    private void showProgress() {
+        if (progressWheel == null) {
+            progressWheel = new ProgressWheel(getActivity());
+        } else if (progressWheel.isShowing()) {
+            return;
+        }
+
+        progressWheel.show();
+
+    }
+
+    @Override
+    public void dismissProgress() {
+        if (progressWheel != null && !progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
     }
 
     @Override
@@ -91,7 +125,7 @@ public class StatusChangeFragment extends Fragment implements NameStatusPresente
     }
 
     @OnTextChanged(value = R.id.et_status_change, callback = OnTextChanged.Callback.TEXT_CHANGED)
-    void onNameTextChanged(CharSequence text) {
+    void onStatusTextChanged(CharSequence text) {
         presenter.onTextChange(text.toString());
     }
 
@@ -109,6 +143,7 @@ public class StatusChangeFragment extends Fragment implements NameStatusPresente
 
     @Override
     public void successUpdate() {
+        dismissProgress();
         getActivity().finish();
 
     }

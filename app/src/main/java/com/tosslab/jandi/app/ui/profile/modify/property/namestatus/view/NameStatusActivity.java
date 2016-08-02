@@ -6,11 +6,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import com.f2prateek.dart.Dart;
-import com.f2prateek.dart.HensonNavigable;
 import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 
-@HensonNavigable
 public class NameStatusActivity extends BaseAppCompatActivity {
 
     public static final int EXTRA_TYPE_NAME = 1;
@@ -34,7 +32,7 @@ public class NameStatusActivity extends BaseAppCompatActivity {
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(android.R.id.content, fragment)
+                .replace(android.R.id.content, fragment, fragment.getClass().getName())
                 .commit();
     }
 }

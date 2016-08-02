@@ -4,6 +4,8 @@ package com.tosslab.jandi.app.ui.profile.modify.property.namestatus.view;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +20,7 @@ import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.dagger.DaggerNameStatusComponent;
 import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.dagger.NameStatusModule;
 import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.presenter.NameStatusPresenter;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import javax.inject.Inject;
 
@@ -34,13 +37,16 @@ public class NameChangeFragment extends Fragment implements NameStatusPresenter.
     @Bind(R.id.tv_name_change_count)
     TextView tvCount;
 
+    @Bind(R.id.toolbar_name_change)
+    Toolbar toolbar;
     @Inject
     NameStatusPresenter presenter;
+    private ProgressWheel progressWheel;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_name_change, container);
+        View view = inflater.inflate(R.layout.fragment_name_change, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -53,6 +59,16 @@ public class NameChangeFragment extends Fragment implements NameStatusPresenter.
                 .nameStatusModule(new NameStatusModule(this))
                 .build()
                 .inject(this);
+
+        presenter.onInitUserInfo();
+
+        setUpActionbar();
+        setHasOptionsMenu(true);
+
+    }
+
+    private void setUpActionbar() {
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
     }
 
 
@@ -88,8 +104,27 @@ public class NameChangeFragment extends Fragment implements NameStatusPresenter.
         }
     }
 
-    private void updateName() {
+    void updateName() {
+        showProgress();
         presenter.updateName(etName.getText().toString());
+    }
+
+    private void showProgress() {
+        if (progressWheel == null) {
+            progressWheel = new ProgressWheel(getActivity());
+        } else if (progressWheel.isShowing()) {
+            return;
+        }
+
+        progressWheel.show();
+
+    }
+
+    @Override
+    public void dismissProgress() {
+        if (progressWheel != null && !progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
     }
 
     @OnTextChanged(value = R.id.et_name_change, callback = OnTextChanged.Callback.TEXT_CHANGED)
@@ -111,6 +146,7 @@ public class NameChangeFragment extends Fragment implements NameStatusPresenter.
 
     @Override
     public void successUpdate() {
+        dismissProgress();
         getActivity().finish();
     }
 

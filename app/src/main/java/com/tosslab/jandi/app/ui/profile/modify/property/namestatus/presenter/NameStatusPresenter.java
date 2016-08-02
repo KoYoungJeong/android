@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.profile.modify.property.namestatus.presenter;
 
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Pair;
 
@@ -16,6 +17,7 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import rx.Observable;
+import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
@@ -25,8 +27,8 @@ public class NameStatusPresenter {
 
     private final View view;
     Lazy<ProfileApi> profileApi;
-    private BehaviorSubject<String> nameSubject;
-    private CompositeSubscription subscription;
+    BehaviorSubject<String> nameSubject;
+    CompositeSubscription subscription;
 
 
     @Inject
@@ -54,7 +56,56 @@ public class NameStatusPresenter {
     }
 
     public void updateName(String newName) {
-        Observable.defer(() -> {
+        deferUpdateName(newName)
+                .doOnNext(pair -> {
+                    if (pair.first) {
+                        HumanRepository.getInstance().updateHuman(pair.second);
+                        TeamInfoLoader.getInstance().refresh();
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(updateFinish());
+
+    }
+
+    public void updateStatus(String newStatus) {
+        deferUpdateStatus(newStatus)
+                .doOnNext(pair -> {
+                    if (pair.first) {
+                        HumanRepository.getInstance().updateHuman(pair.second);
+                        TeamInfoLoader.getInstance().refresh();
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(updateFinish());
+
+    }
+
+    @NonNull
+    protected Observer<Pair<Boolean, Human>> updateFinish() {
+        return new Observer<Pair<Boolean, Human>>() {
+            @Override
+            public void onCompleted() {
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                view.dismissProgress();
+
+            }
+
+            @Override
+            public void onNext(Pair<Boolean, Human> booleanHumanPair) {
+                view.successUpdate();
+            }
+        };
+    }
+
+
+    private Observable<Pair<Boolean, Human>> deferUpdateName(String newName) {
+        return Observable.defer(() -> {
 
             long myId = TeamInfoLoader.getInstance().getMyId();
             long teamId = TeamInfoLoader.getInstance().getTeamId();
@@ -71,21 +122,12 @@ public class NameStatusPresenter {
             } catch (RetrofitException e) {
                 return Observable.error(e);
             }
-        }).doOnNext(pair -> {
-            if (pair.first) {
-                HumanRepository.getInstance().updateHuman(pair.second);
-                TeamInfoLoader.getInstance().refresh();
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(human -> {
-                    view.successUpdate();
-                }, t -> {});
-
+        });
     }
 
-    public void updateStatus(String newStatus) {
-        Observable.defer(() -> {
+    @NonNull
+    private Observable<Pair<Boolean, Human>> deferUpdateStatus(String newStatus) {
+        return Observable.defer(() -> {
 
             long myId = TeamInfoLoader.getInstance().getMyId();
             long teamId = TeamInfoLoader.getInstance().getTeamId();
@@ -102,27 +144,21 @@ public class NameStatusPresenter {
             } catch (RetrofitException e) {
                 return Observable.error(e);
             }
-        }).doOnNext(pair -> {
-            if (pair.first) {
-                HumanRepository.getInstance().updateHuman(pair.second);
-                TeamInfoLoader.getInstance().refresh();
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(human -> {
-                    view.successUpdate();
-                }, t -> {});
-
+        });
     }
 
     public void onInitUserInfo() {
         Observable.defer(() -> {
             User user = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
             return Observable.just(user);
-        }).subscribe(user -> view.setUser(user));
+        }).subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(user -> view.setUser(user));
     }
 
     public interface View {
+        void dismissProgress();
+
         void setTextCount(int count);
 
         void successUpdate();

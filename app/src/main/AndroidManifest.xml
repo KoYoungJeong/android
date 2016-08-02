@@ -68,6 +68,12 @@
         </activity>
 
         <activity
+            android:name=".ui.profile.modify.property.namestatus.view.NameStatusActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
+        <activity
             android:name=".services.upload.UploadNotificationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleInstance"

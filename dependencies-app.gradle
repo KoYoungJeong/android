@@ -35,6 +35,9 @@ rootProject.allprojects { project ->
                 compile rootProject.ext.dependecies.libraries.dart
                 provided rootProject.ext.dependecies.libraries.dart_processor
 
+                compile rootProject.ext.dependecies.libraries.henson
+                provided rootProject.ext.dependecies.libraries.henson_processor
+
                 compile rootProject.ext.dependecies.libraries.multidex
                 compile fileTree(dir: 'app/libs', include: ['*.jar'])
 
@@ -109,6 +112,7 @@ rootProject.allprojects { project ->
                 androidTestCompile rootProject.ext.dependecies.libraries.espresso_core
                 androidTestCompile rootProject.ext.dependecies.libraries.espresso_intent
                 androidTestCompile rootProject.ext.dependecies.libraries.dexmaker_mockito
+                androidTestCompile rootProject.ext.dependecies.libraries.mockito
                 androidTestCompile rootProject.ext.dependecies.libraries.dexmaker_dx
                 androidTestCompile rootProject.ext.dependecies.libraries.awaitility
                 androidTestCompile rootProject.ext.dependecies.libraries.assertj_android

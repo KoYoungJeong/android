@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.modify.property.dept.DeptPositionActivity;
+import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.view.NameStatusActivity;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -61,10 +62,8 @@ public class ModifyProfileActivityTest {
     @Test
     public void testEditStatusMessage() throws Throwable {
         rule.runOnUiThread(() -> activity.editStatusMessage());
-        onView(withText(R.string.jandi_profile_status_message))
-                .inRoot(isDialog())
-                .check(matches(isDisplayed()));
-        pressBack();
+        intending(IntentMatchers.hasComponent(NameStatusActivity.class.getName()));
+        intending(IntentMatchers.hasExtra("type", NameStatusActivity.EXTRA_TYPE_STATUS));
     }
 
     @Test
@@ -79,10 +78,8 @@ public class ModifyProfileActivityTest {
     @Test
     public void testEditName() throws Throwable {
         rule.runOnUiThread(() -> activity.editName());
-        onView(withText(R.string.jandi_title_name))
-                .inRoot(isDialog())
-                .check(matches(isDisplayed()));
-        pressBack();
+        intending(IntentMatchers.hasComponent(NameStatusActivity.class.getName()));
+        intending(IntentMatchers.hasExtra("type", NameStatusActivity.EXTRA_TYPE_NAME));
     }
 
     @Test
