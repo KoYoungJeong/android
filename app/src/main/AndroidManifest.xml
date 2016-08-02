@@ -578,7 +578,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.profile.inputlist.InputProfileListActivity"
+            android:name=".ui.profile.modify.property.dept.DeptPositionActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
 

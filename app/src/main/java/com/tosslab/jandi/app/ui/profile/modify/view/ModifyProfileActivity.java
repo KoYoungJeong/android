@@ -33,10 +33,10 @@ import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.profile.inputlist.InputProfileListActivity;
 import com.tosslab.jandi.app.ui.profile.modify.dagger.DaggerModifyProfileComponent;
 import com.tosslab.jandi.app.ui.profile.modify.dagger.ModifyProfileModule;
 import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenter;
+import com.tosslab.jandi.app.ui.profile.modify.property.dept.DeptPositionActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -175,67 +175,58 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         super.finish();
     }
 
-    /**
-     * *********************************************************
-     * 프로필 수정
-     * **********************************************************
-     */
     @OnClick(R.id.profile_user_status_message)
-    void editStatusMessage(View view) {
+    void editStatusMessage() {
         // 닉네임
-        if (NetworkCheckUtil.isConnected()) {
-            launchEditDialog(
-                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS,
-                    ((TextView) view)
-            );
+        launchEditDialog(
+                EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS,
+                tvProfileStatusMessage.getContent()
+        );
 
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Status);
-        }
-    }
-
-    @OnClick(R.id.profile_user_phone_number)
-    void editPhoneNumber(View view) {
-        // 핸드폰 번호
-        if (NetworkCheckUtil.isConnected()) {
-            launchEditDialog(
-                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE,
-                    ((TextView) view)
-            );
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Mobile);
-        }
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Status);
     }
 
     @OnClick(R.id.profile_user_realname)
-    void editName(View view) {
+    void editName() {
         if (NetworkCheckUtil.isConnected()) {
             launchEditDialog(
                     EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME,
-                    ((TextView) view)
+                    tvProfileRealName.getContent()
             );
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Name);
         }
     }
 
+    @OnClick(R.id.profile_user_phone_number)
+    void editPhoneNumber() {
+        // 핸드폰 번호
+        launchEditDialog(
+                EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE,
+                tvProfileUserPhone.getContent()
+        );
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Mobile);
+    }
+
     @OnClick(R.id.profile_user_division)
     void editDivision() {
         // 부서
-        Intent intent = new Intent(this, InputProfileListActivity.class);
-        intent.putExtra(InputProfileListActivity.EXTRA_INPUT_MODE,
-                InputProfileListActivity.EXTRA_DEPARTMENT_MODE);
+        Intent intent = new Intent(this, DeptPositionActivity.class);
+        intent.putExtra(DeptPositionActivity.EXTRA_INPUT_MODE,
+                DeptPositionActivity.EXTRA_DEPARTMENT_MODE);
         startActivityForResult(intent, REQUEST_GET_DEPARTMENT);
     }
 
     @OnClick(R.id.profile_user_position)
     void editPosition() {
         // 직책
-        Intent intent = new Intent(this, InputProfileListActivity.class);
-        intent.putExtra(InputProfileListActivity.EXTRA_INPUT_MODE,
-                InputProfileListActivity.EXTRA_JOB_TITLE_MODE);
+        Intent intent = new Intent(this, DeptPositionActivity.class);
+        intent.putExtra(DeptPositionActivity.EXTRA_INPUT_MODE,
+                DeptPositionActivity.EXTRA_JOB_TITLE_MODE);
         startActivityForResult(intent, REQUEST_GET_JOB_TITLE);
     }
 
     @OnClick(R.id.profile_user_email)
-    void editEmail(View view) {
+    void editEmail() {
         if (NetworkCheckUtil.isConnected()) {
             modifyProfilePresenter.onEditEmailClick();
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Email);
@@ -368,7 +359,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     private void onGetJobTitle(int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            String jobTitle = data.getStringExtra(InputProfileListActivity.RESULT_EXTRA);
+            String jobTitle = data.getStringExtra(DeptPositionActivity.RESULT_EXTRA);
             tvProfileUserPosition.setTextContent(jobTitle);
             ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
             reqUpdateProfile.position = jobTitle;
@@ -378,7 +369,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     private void onGetDepartmentResult(int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            String department = data.getStringExtra(InputProfileListActivity.RESULT_EXTRA);
+            String department = data.getStringExtra(DeptPositionActivity.RESULT_EXTRA);
             tvProfileUserDivision.setTextContent(department);
             ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
             reqUpdateProfile.department = department;
@@ -501,11 +492,10 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         }
     }
 
-    public void launchEditDialog(int dialogActionType, TextView textView) {
-        String currentText = textView.getText().toString();
+    public void launchEditDialog(int dialogActionType, String text) {
         // 현재 Text가 미지정 된 경우 빈칸으로 바꿔서 입력 받는다.
         DialogFragment newFragment = EditTextDialogFragment.newInstance(
-                dialogActionType, currentText);
+                dialogActionType, text);
         newFragment.show(getFragmentManager(), "dialog");
     }
 

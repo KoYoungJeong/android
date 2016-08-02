@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_name_change"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:visibility="visible"
+        app:navigationIcon="@drawable/actionbar_icon_back"
+        app:title="@string/jandi_name"/>
+
+    <EditText
+        android:id="@+id/et_name_change"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/toolbar_name_change"
+        android:layout_marginLeft="16dp"
+        android:layout_toLeftOf="@+id/tv_name_change_count"
+        android:maxLength="30"
+        android:maxLines="1"
+        android:minHeight="56dp"
+        android:scrollHorizontally="true"
+        android:scrollbars="horizontal"
+        android:textColor="@color/jandi_text"
+        android:textSize="@dimen/jandi_text_size_large"/>
+
+    <TextView
+        android:id="@+id/tv_name_change_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/et_name_change"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/et_name_change"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="16dp"
+        android:gravity="center"
+        android:text="15/30"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/et_name_change"
+        android:background="@color/jandi_e5e5e5"/>
+
+</RelativeLayout>

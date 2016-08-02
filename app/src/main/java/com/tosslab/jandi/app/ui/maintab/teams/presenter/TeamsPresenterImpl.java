@@ -2,11 +2,13 @@ package com.tosslab.jandi.app.ui.maintab.teams.presenter;
 
 import android.util.Log;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.ui.maintab.teams.model.TeamsModel;
 import com.tosslab.jandi.app.ui.maintab.teams.view.TeamsView;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
@@ -61,6 +63,17 @@ public class TeamsPresenterImpl implements TeamsPresenter {
                 .concatMap(model::getPendingTeamsObservable)
                 .concatMap(model::getSortedTeamListObservable)
                 .concatMap(model::getCheckSelectedTeamObservable)
+                .doOnNext(pair -> {
+                    List<Team> teams = pair.second;
+                    Observable.from(teams)
+                            .filter(team -> team.getStatus() == Team.Status.JOINED)
+                            .map(Team::getUnread)
+                            .reduce((prev, current) -> prev + current)
+                            .subscribe(total -> {
+                                BadgeUtils.setBadge(JandiApplication.getContext(), total);
+                            });
+
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(myTeams -> {
                     long selectedTeamId = myTeams.first;

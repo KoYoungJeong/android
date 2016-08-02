@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.profile.inputlist.adapter;
+package com.tosslab.jandi.app.ui.profile.modify.property.dept.adapter;
 
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.profile.inputlist.InputProfileListActivity;
+import com.tosslab.jandi.app.ui.profile.modify.property.dept.DeptPositionActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Created by tee on 16. 7. 5..
  */
-public class InputProfileListAdapter extends RecyclerView.Adapter {
+public class DeptPositionAdapter extends RecyclerView.Adapter {
 
     // first : value , second : is new value
     private List<Pair<String, Boolean>> datas = new ArrayList<>();
@@ -29,7 +29,7 @@ public class InputProfileListAdapter extends RecyclerView.Adapter {
 
     private OnItemClickListener onItemClickListener;
 
-    private String mode = InputProfileListActivity.EXTRA_JOB_TITLE_MODE;
+    private String mode = DeptPositionActivity.EXTRA_JOB_TITLE_MODE;
 
     public void setDatas(List<Pair<String, Boolean>> datas) {
         this.datas = datas;
@@ -61,9 +61,9 @@ public class InputProfileListAdapter extends RecyclerView.Adapter {
             return;
         }
 
-        if (mode.equals(InputProfileListActivity.EXTRA_JOB_TITLE_MODE)) {
+        if (mode.equals(DeptPositionActivity.EXTRA_JOB_TITLE_MODE)) {
             viewHolder.getTvNewAdd().setText(R.string.jandi_new_job_title);
-        } else if (mode.equals(InputProfileListActivity.EXTRA_DEPARTMENT_MODE)) {
+        } else if (mode.equals(DeptPositionActivity.EXTRA_DEPARTMENT_MODE)) {
             viewHolder.getTvNewAdd().setText(R.string.jandi_new_department);
         }
 

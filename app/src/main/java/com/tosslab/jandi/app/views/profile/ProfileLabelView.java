@@ -119,6 +119,14 @@ public class ProfileLabelView extends LinearLayout {
 
     }
 
+    public String getContent() {
+        return tvContent.getText().toString();
+    }
+
+    public int getContentLength() {
+        return tvContent.length();
+    }
+
     public void setTextTitle(int resId) {
         tvTitle.setText(resId);
     }
