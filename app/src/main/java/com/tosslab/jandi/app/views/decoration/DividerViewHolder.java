@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder;
+package com.tosslab.jandi.app.views.decoration;
 
 import android.graphics.Color;
 import android.view.View;
