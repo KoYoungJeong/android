@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.search.main_temp.adapter;
 
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.HistoryHeaderViewHolder;
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.HistoryItemViewHolder;
+import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.MessageHeaderViewHolder;
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.MessageItemViewHolder;
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.RoomHeaderViewHolder;
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.RoomItemViewHolder;
@@ -33,5 +34,11 @@ public interface SearchAdapterViewModel {
 
     void setOnClickMessageListener(
             MessageItemViewHolder.OnClickMessageListener onClickMessageListener);
+
+    void setOnClickRoomSelectionButtonListener(
+            MessageHeaderViewHolder.OnClickRoomSelectionButtonListener onClickRoomSelectionButtonListener);
+
+    void setOnClickMemberSelectionButtonListener(
+            MessageHeaderViewHolder.OnClickMemberSelectionButtonListener onClickMemberSelectionButtonListener);
 
 }

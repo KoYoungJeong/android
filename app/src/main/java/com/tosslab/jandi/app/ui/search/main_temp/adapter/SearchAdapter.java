@@ -53,6 +53,8 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     private HistoryItemViewHolder.OnSelectHistoryListener onSelectHistoryListener;
     private RoomItemViewHolder.OnClickTopicListener onClickTopicListener;
     private MessageItemViewHolder.OnClickMessageListener onClickMessageListener;
+    private MessageHeaderViewHolder.OnClickRoomSelectionButtonListener onClickRoomSelectionButtonListener;
+    private MessageHeaderViewHolder.OnClickMemberSelectionButtonListener onClickMemberSelectionButtonListener;
 
     @Override
     public void setSearchTopicRoomDatas(List<SearchTopicRoomData> searchTopicRoomDatas) {
@@ -371,6 +373,18 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     @Override
     public void setOnClickMessageListener(MessageItemViewHolder.OnClickMessageListener onClickMessageListener) {
         this.onClickMessageListener = onClickMessageListener;
+    }
+
+    @Override
+    public void setOnClickRoomSelectionButtonListener(
+            MessageHeaderViewHolder.OnClickRoomSelectionButtonListener onClickRoomSelectionButtonListener) {
+        this.onClickRoomSelectionButtonListener = onClickRoomSelectionButtonListener;
+    }
+
+    @Override
+    public void setOnClickMemberSelectionButtonListener(
+            MessageHeaderViewHolder.OnClickMemberSelectionButtonListener onClickMemberSelectionButtonListener) {
+        this.onClickMemberSelectionButtonListener = onClickMemberSelectionButtonListener;
     }
 
     public enum MoreState {

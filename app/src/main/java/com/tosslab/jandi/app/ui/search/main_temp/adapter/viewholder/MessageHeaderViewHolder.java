@@ -55,6 +55,9 @@ public class MessageHeaderViewHolder extends BaseViewHolder<SearchData> {
     @Bind(R.id.iv_member_selection_button)
     ImageView ivMemberSelectionButton;
 
+    private OnClickRoomSelectionButtonListener onClickRoomSelectionButtonListener;
+    private OnClickMemberSelectionButtonListener onClickMemberSelectionButtonListener;
+
     public MessageHeaderViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
@@ -84,6 +87,14 @@ public class MessageHeaderViewHolder extends BaseViewHolder<SearchData> {
             tvSearchMessage.setText(
                     searchMessageHeaderData.getSearchedMessageCount() + "개의 메세지 검색 결과가 있습니다.");
         }
+
+        vgRoomSelectionButton.setOnClickListener(v -> {
+
+        });
+
+        vgMemberSelectionButton.setOnClickListener(v -> {
+
+        });
 
         setRoomButtonColor();
         setMemberButtonColor();
@@ -121,6 +132,24 @@ public class MessageHeaderViewHolder extends BaseViewHolder<SearchData> {
                     JandiApplication.getContext().getResources()
                             .getDrawable(R.drawable.filter_collepse_on));
         }
+    }
+
+    public void setOnClickRoomSelectionButtonListener(
+            OnClickRoomSelectionButtonListener onClickRoomSelectionButtonListener) {
+        this.onClickRoomSelectionButtonListener = onClickRoomSelectionButtonListener;
+    }
+
+    public void setOnClickMemberSelectionButtonListener(
+            OnClickMemberSelectionButtonListener onClickMemberSelectionButtonListener) {
+        this.onClickMemberSelectionButtonListener = onClickMemberSelectionButtonListener;
+    }
+
+    public interface OnClickRoomSelectionButtonListener{
+        void onClickRoomSelection();
+    }
+
+    public interface OnClickMemberSelectionButtonListener{
+        void onClickMemberSelection();
     }
 
 }
