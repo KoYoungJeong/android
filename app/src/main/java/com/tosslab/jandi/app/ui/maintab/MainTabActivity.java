@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -78,6 +79,7 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.MaxHeightRecyclerView;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
+import com.tosslab.jandi.app.views.TabView;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
 import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
@@ -117,6 +119,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @Extra
     int tabIndex = -1;
 
+    @ViewById(R.id.layout_search_bar)
+    Toolbar toolbar;
     @ViewById(R.id.vg_fab_menu)
     FloatingActionMenu floatingActionMenu;
     @Bean
@@ -233,12 +237,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     private void initMainTabViewPager() {
-        View[] tabViews = new View[5];
-        tabViews[0] = layoutInflater.inflate(R.layout.tab_topic, null);
-        tabViews[1] = layoutInflater.inflate(R.layout.tab_chat, null);
-        tabViews[2] = layoutInflater.inflate(R.layout.tab_file, null);
-        tabViews[3] = layoutInflater.inflate(R.layout.tab_team, null);
-        tabViews[4] = layoutInflater.inflate(R.layout.tab_mypage, null);
+        TabView[] tabViews = new TabView[5];
+        tabViews[0] = (TabView) getLayoutInflater().inflate(R.layout.tab_topic, null);
+        tabViews[1] = (TabView) getLayoutInflater().inflate(R.layout.tab_chat, null);
+        tabViews[2] = (TabView) getLayoutInflater().inflate(R.layout.tab_file, null);
+        tabViews[3] = (TabView) getLayoutInflater().inflate(R.layout.tab_team, null);
+        tabViews[4] = (TabView) getLayoutInflater().inflate(R.layout.tab_mypage, null);
         mainTabPagerAdapter =
                 new MainTabPagerAdapter(getSupportFragmentManager(), tabViews, selectedEntity);
         vpMainTab.setOverScrollMode(ViewPager.OVER_SCROLL_NEVER);
@@ -351,7 +355,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     private void setupActionBar(String teamName) {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();

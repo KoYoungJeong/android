@@ -52,4 +52,9 @@
         <attr name="textContentSingleline" format="boolean"/>
     </declare-styleable>
 
+    <declare-styleable name="TabView">
+        <attr name="tabTitle" format="string" />
+        <attr name="tabIcon" format="reference" />
+    </declare-styleable>
+
 </resources>
