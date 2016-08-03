@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.UiUtils;
 
 import java.util.List;
 
@@ -139,7 +140,7 @@ class StickerViewPagerAdapter extends PagerAdapter {
 
             View view = new View(context);
             view.setLayoutParams(imageViewLayoutParams);
-            view.setBackgroundDrawable(getStickerBackground(context));
+            view.setBackgroundDrawable(UiUtils.getRippleEffectBackgroundDrawable());
 
             wrapper.addView(view);
 
