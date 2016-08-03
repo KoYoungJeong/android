@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 
 public class TopicInfoDialog extends DialogFragment {
 
@@ -26,14 +26,14 @@ public class TopicInfoDialog extends DialogFragment {
     private OnJoinClickListener onJoinClickListener;
     private OnDismissListener onDismissListener;
 
-    public static TopicInfoDialog instantiate(Topic topic) {
+    public static TopicInfoDialog instantiate(TopicRoom topic) {
         TopicInfoDialog fragment = new TopicInfoDialog();
         Bundle args = new Bundle();
 
         args.putString(ARGS_NAME, topic.getName());
         args.putString(ARGS_DESCRIPTION, topic.getDescription());
         args.putLong(ARGS_CREATOR_ID, topic.getCreatorId());
-        args.putLong(ARGS_ENTITY_ID, topic.getEntityId());
+        args.putLong(ARGS_ENTITY_ID, topic.getId());
         args.putInt(ARGS_MEMBER_COUNT, topic.getMemberCount());
 
         fragment.setArguments(args);

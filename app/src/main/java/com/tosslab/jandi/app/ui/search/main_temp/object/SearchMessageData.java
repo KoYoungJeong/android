@@ -20,6 +20,7 @@ public class SearchMessageData extends SearchData {
     private String feedbackType;
     private ResSearch.Poll poll;
     private ResSearch.File file;
+    private String[] tokens;
     private List<MentionObject> mentions;
 
     private SearchMessageData() {
@@ -55,6 +56,10 @@ public class SearchMessageData extends SearchData {
 
     public List<MentionObject> getMentions() {
         return mentions;
+    }
+
+    public String[] getTokens() {
+        return tokens;
     }
 
     public ResSearch.Poll getPoll() {
@@ -123,6 +128,12 @@ public class SearchMessageData extends SearchData {
             searchMessageData.file = file;
             return this;
         }
+
+        public Builder setTokens(String[] tokens) {
+            searchMessageData.tokens = tokens;
+            return this;
+        }
+
 
         public SearchMessageData build() {
             return searchMessageData;

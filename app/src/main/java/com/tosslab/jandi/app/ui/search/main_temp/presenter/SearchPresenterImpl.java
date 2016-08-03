@@ -2,9 +2,11 @@ package com.tosslab.jandi.app.ui.search.main_temp.presenter;
 
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.search.ReqSearch;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.SearchAdapter;
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.SearchAdapterDataModel;
 import com.tosslab.jandi.app.ui.search.main_temp.model.SearchModel;
@@ -22,7 +24,6 @@ import javax.inject.Inject;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
 import rx.subscriptions.CompositeSubscription;
@@ -96,22 +97,22 @@ public class SearchPresenterImpl implements SearchPresenter {
                             view.refreshSearchedAll();
                         })
                         .observeOn(Schedulers.io())
-                        .map((Func1<ReqSearch, List<? extends ResSearch.SearchRecord>>) it -> {
+                        .map(it -> {
                             try {
                                 ResSearch results = searchModel.searchMessages(it);
                                 hasMoreSearchResult = results.hasMore();
                                 searchedMessageHeaderDataBuilder.setHasMore(hasMoreSearchResult);
                                 searchedMessageHeaderDataBuilder.setShowSearchedResultMessage(true);
                                 searchedMessageHeaderDataBuilder.setSearchedMessageCount(results.getTotalCount());
-                                return results.getRecords();
+                                return results;
                             } catch (RetrofitException e) {
                                 e.printStackTrace();
                             }
-                            return new ArrayList<>();
+                            return new ResSearch();
                         })
                         .map(searchRecords -> {
                             List<SearchMessageData> searchMessageDatas = new ArrayList<>();
-                            for (ResSearch.SearchRecord searchRecord : searchRecords) {
+                            for (ResSearch.SearchRecord searchRecord : searchRecords.getRecords()) {
                                 SearchMessageData searchMessageData = new SearchMessageData.Builder()
                                         .setRoomId(searchRecord.getRoomId())
                                         .setWriterId(searchRecord.getWriterId())
@@ -122,6 +123,7 @@ public class SearchPresenterImpl implements SearchPresenter {
                                         .setText(searchRecord.getText())
                                         .setFile(searchRecord.getFile())
                                         .setPoll(searchRecord.getPoll())
+                                        .setTokens(searchRecords.getTokens())
                                         .build();
                                 searchMessageDatas.add(searchMessageData);
                             }
@@ -246,10 +248,38 @@ public class SearchPresenterImpl implements SearchPresenter {
         return searchModel.searchOldQuery(keyword);
     }
 
-    public void sendTopicRoomSearchQuery(String keyword, boolean isShowUnjoinedTopic) {
-        List<SearchTopicRoomData> topicRoomDatas = searchModel.getSearchedTopics(keyword, isShowUnjoinedTopic);
-        searchAdapterDataModel.setSearchTopicRoomDatas(topicRoomDatas);
-        view.refreshSearchedAll();
+    @Override
+    public void onLaunchTopicRoom(long topicId, boolean isJoined) {
+        TopicRoom topicRoom = searchModel.getTopicRoomById(topicId);
+        if (isJoined) {
+            int type = topicRoom.isPublicTopic() ?
+                    JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
+            view.moveToMessageActivity(topicId, type);
+        } else {
+            view.showTopicInfoDialog(topicRoom);
+        }
+    }
+
+    @Override
+    public void onJoinTopic(long topicId, int topicType) {
+        Observable.create(subscriber -> {
+            try {
+                searchModel.joinTopic(topicId);
+                subscriber.onNext(topicId);
+            } catch (RetrofitException e) {
+                e.printStackTrace();
+                subscriber.onError(e);
+            }
+            subscriber.onCompleted();
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(o -> view.moveToMessageActivity(topicId, topicType))
+                .subscribe(o -> {
+                        }, e -> {
+                            e.printStackTrace();
+                        }
+                );
     }
 
 }

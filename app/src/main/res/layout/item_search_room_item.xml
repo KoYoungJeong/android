@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="75dp"
-    android:background="@color/white"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
     android:orientation="vertical">
 
     <LinearLayout
@@ -28,9 +29,10 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="16dp"
                 android:src="@drawable/icon_information"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
             <LinearLayout
+                android:id="@+id/vg_topic_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginRight="16dp"

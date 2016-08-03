@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder;
 
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,10 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.search.main_temp.object.SearchData;
 import com.tosslab.jandi.app.ui.search.main_temp.object.SearchTopicRoomData;
+import com.tosslab.jandi.app.views.spannable.HighlightSpannable;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -40,6 +46,7 @@ public class RoomItemViewHolder extends BaseViewHolder<SearchData> {
     @Bind(R.id.v_half_divider)
     View vHalfDivider;
 
+    private OnClickTopicListener onClickTopicListener;
 
     public RoomItemViewHolder(View itemView) {
         super(itemView);
@@ -70,7 +77,6 @@ public class RoomItemViewHolder extends BaseViewHolder<SearchData> {
             }
         }
 
-        tvRoomName.setText(searchTopicRoomData.getTitle());
         tvMemberCnt.setText("(" + searchTopicRoomData.getMemberCnt() + ")");
 
         if (!searchTopicRoomData.getDescription().isEmpty()) {
@@ -79,5 +85,39 @@ public class RoomItemViewHolder extends BaseViewHolder<SearchData> {
         } else {
             tvRoomDescription.setVisibility(View.GONE);
         }
+
+        SpannableStringBuilder ssb = new SpannableStringBuilder(searchTopicRoomData.getTitle());
+
+        Pattern compile = Pattern.compile(searchTopicRoomData.getKeyword(), Pattern.CASE_INSENSITIVE);
+        Matcher matcher = compile.matcher(ssb);
+
+        matcher.find();
+
+        int start = matcher.start();
+        int end = matcher.end();
+
+        ssb.setSpan(new HighlightSpannable(0xfffffad1,
+                tvRoomName.getCurrentTextColor()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        tvRoomName.setText(ssb);
+
+        if (!searchTopicRoomData.isJoined()) {
+            ivInfo.setVisibility(View.VISIBLE);
+        } else {
+            ivInfo.setVisibility(View.GONE);
+        }
+
+        itemView.setOnClickListener(v ->
+                onClickTopicListener.onClickJoinedTopic(searchTopicRoomData.getTopicId(),
+                        searchTopicRoomData.isJoined()));
     }
+
+    public void setOnClickTopicListener(OnClickTopicListener onClickJoinedTopic) {
+        this.onClickTopicListener = onClickJoinedTopic;
+    }
+
+    public interface OnClickTopicListener {
+        void onClickJoinedTopic(long topicId, boolean joined);
+    }
+
 }

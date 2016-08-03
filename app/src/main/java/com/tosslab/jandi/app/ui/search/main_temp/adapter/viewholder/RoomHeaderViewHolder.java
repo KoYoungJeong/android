@@ -50,5 +50,4 @@ public class RoomHeaderViewHolder extends BaseViewHolder<SearchData> {
         void onCheckUnjoinTopic(boolean isChecked);
     }
 
-
 }

@@ -291,7 +291,7 @@ public class JandiSocketServiceModel {
 //        try {
 //            SocketTeamNameUpdatedEvent event = getObject(object, SocketTeamNameUpdatedEvent.class);
 //            SocketTeamNameUpdatedEvent.Team team = event.getTeam();
-//            long teamId = team.getId();
+//            long teamId = team.getTopicId();
 //            String name = team.getName();
 //
 //            AccountRepository.getRepository().updateTeamName(teamId, name);
@@ -1249,7 +1249,7 @@ public class JandiSocketServiceModel {
 //        try {
 //            SocketTeamDomainUpdatedEvent event = getObject(object, SocketTeamDomainUpdatedEvent.class);
 //            SocketTeamDomainUpdatedEvent.Team team = event.getTeam();
-//            long teamId = team.getId();
+//            long teamId = team.getTopicId();
 //            String domain = team.getDomain();
 //
 //            AccountRepository.getRepository().updateTeamDomain(teamId, domain);

@@ -61,7 +61,6 @@ public class SearchStickyHeaderViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void onBindView(Object o) {
-
         if (type == TYPE_ROOM) {
             tvStickyTitle.setText("대화방");
             if (count > 0) {

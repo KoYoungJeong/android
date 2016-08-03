@@ -4,19 +4,19 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.database.search.JandiSearchDatabaseManager;
-import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.search.ReqSearch;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
-import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.search.main_temp.object.SearchTopicRoomData;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -42,13 +42,11 @@ public class SearchModel {
     }
 
     public List<SearchTopicRoomData> getSearchedTopics(String keyword, boolean isShowUnjoinedTopic) {
-        long teamId = TeamInfoLoader.getInstance().getTeamId();
 
         List<SearchTopicRoomData> topics = new ArrayList<>();
 
-        InitialInfo initialInfo = InitialInfoRepository.getInstance().getInitialInfo(teamId);
-        Collection<Topic> initialInfoTopics = initialInfo.getTopics();
-        Observable.from(initialInfoTopics)
+        List<TopicRoom> topicList = TeamInfoLoader.getInstance().getTopicList();
+        Observable.from(topicList)
                 .map(topicRoom -> new SearchTopicRoomData.Builder()
                         .setTopicId(topicRoom.getId())
                         .setTitle(topicRoom.getName())
@@ -57,6 +55,8 @@ public class SearchModel {
                         .setIsJoined(topicRoom.isJoined())
                         .setIsStarred(topicRoom.isStarred())
                         .setDescription(topicRoom.getDescription())
+                        .setKeyword(keyword)
+
                         .build())
                 .filter(topic -> {
                     if (!isShowUnjoinedTopic) {
@@ -110,6 +110,18 @@ public class SearchModel {
     public void removeHistoryAllItems() {
         JandiSearchDatabaseManager.getInstance(JandiApplication.getContext())
                 .removeAllItems();
+    }
+
+    public TopicRoom getTopicRoomById(long topicId) {
+        return TeamInfoLoader.getInstance().getTopic(topicId);
+    }
+
+    public void joinTopic(long topicId) throws RetrofitException {
+        EntityClientManager entityClientManager
+                = EntityClientManager_.getInstance_(JandiApplication.getContext());
+        entityClientManager.joinChannel(topicId);
+        TopicRepository.getInstance().updateTopicJoin(topicId, true);
+        TeamInfoLoader.getInstance().refresh();
     }
 
 }

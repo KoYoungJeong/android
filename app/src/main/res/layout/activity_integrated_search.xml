@@ -27,7 +27,7 @@
             android:textSize="18dp" />
 
         <ImageView
-            android:id="@+id/img_search_backkey"
+            android:id="@+id/iv_search_backkey"
             android:layout_width="21dp"
             android:layout_height="21dp"
             android:layout_centerVertical="true"

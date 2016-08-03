@@ -2,7 +2,9 @@ package com.tosslab.jandi.app.ui.search.main_temp.adapter;
 
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.HistoryHeaderViewHolder;
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.HistoryItemViewHolder;
+import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.MessageItemViewHolder;
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.RoomHeaderViewHolder;
+import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.RoomItemViewHolder;
 
 /**
  * Created by tee on 16. 7. 25..
@@ -10,8 +12,6 @@ import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.RoomHeaderVi
 public interface SearchAdapterViewModel {
 
     void refreshSearchedAll();
-
-    void refreshTopicInfos();
 
     void setOnCheckChangeListener(RoomHeaderViewHolder.OnCheckChangeListener onCheckChangeListener);
 
@@ -27,5 +27,11 @@ public interface SearchAdapterViewModel {
 
     void setOnSelectHistoryListener(
             HistoryItemViewHolder.OnSelectHistoryListener onSelectHistoryListener);
+
+    void setOnClickTopicListener(
+            RoomItemViewHolder.OnClickTopicListener onClickTopicListener);
+
+    void setOnClickMessageListener(
+            MessageItemViewHolder.OnClickMessageListener onClickMessageListener);
 
 }

@@ -1,21 +1,33 @@
 package com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder;
 
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
+import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.search.main_temp.object.SearchData;
 import com.tosslab.jandi.app.ui.search.main_temp.object.SearchMessageData;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.views.spannable.HighlightSpannable;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -49,6 +61,8 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
     @Bind(R.id.tv_shared_item_title)
     TextView tvSharedItemTitle;
 
+    private OnClickMessageListener onClickMessageListener;
+
     public MessageItemViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
@@ -76,8 +90,6 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
         tvTime.setText(DateTransformator.getTimeString(searchMessageData.getCreatedAt()));
 
         tvUserName.setText(teamInfoLoader.getMemberName(searchMessageData.getWriterId()));
-
-        tvMessageContent.setText(searchMessageData.getText());
 
         long roomId = searchMessageData.getRoomId();
 
@@ -108,5 +120,74 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
             }
         }
 
+        mesureRoomInfoArea();
+
+        setMentionAndHighlight(searchMessageData);
+
+        if (onClickMessageListener != null) {
+            itemView.setOnClickListener(v -> onClickMessageListener.onClickMessage(searchMessageData));
+        }
     }
+
+    private void setMentionAndHighlight(SearchMessageData searchMessageData) {
+        long myId = TeamInfoLoader.getInstance().getMyId();
+
+        SpannableStringBuilder ssb = new SpannableStringBuilder(searchMessageData.getText());
+
+        MentionAnalysisInfo mentionAnalysisInfo =
+                MentionAnalysisInfo.newBuilder(myId, searchMessageData.getMentions())
+                        .textSizeFromResource(R.dimen.jandi_mention_star_list_item_font_size)
+                        .forMeBackgroundColor(Color.parseColor("#FF01A4E7"))
+                        .forMeTextColor(Color.WHITE)
+                        .build();
+
+        SpannableLookUp.text(ssb)
+                .hyperLink(false)
+                .markdown(false)
+                .mention(mentionAnalysisInfo, false)
+                .lookUp(tvMessageContent.getContext());
+
+        String[] tokens = searchMessageData.getTokens();
+
+        for (String token : tokens) {
+            Pattern compile = Pattern.compile(token, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = compile.matcher(ssb);
+
+            while (matcher.find()) {
+                int start = matcher.start();
+                int end = matcher.end();
+
+                ssb.setSpan(new HighlightSpannable(0xfffffad1,
+                        tvMessageContent.getCurrentTextColor()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }
+
+        tvMessageContent.setText(ssb);
+    }
+
+    private void mesureRoomInfoArea() {
+        int roomNameAreaWidth = itemView.getLayoutParams().width
+                - (int) UiUtils.getPixelFromDp(75) - (int) UiUtils.getPixelFromDp(16);
+
+        int maxRoomNameWidth = (int) (roomNameAreaWidth * 0.4);
+        Paint userNamePaint = tvRoomName.getPaint();
+        int roomNameWidth = (int) userNamePaint.measureText(tvRoomName.getText().toString());
+        LinearLayout.LayoutParams roomNameLP =
+                (LinearLayout.LayoutParams) tvRoomName.getLayoutParams();
+        if (roomNameWidth > maxRoomNameWidth) {
+            roomNameLP.width = maxRoomNameWidth;
+        } else {
+            roomNameLP.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+        }
+        tvRoomName.setLayoutParams(roomNameLP);
+    }
+
+    public void setOnClickMessageListener(OnClickMessageListener onClickMessageListener) {
+        this.onClickMessageListener = onClickMessageListener;
+    }
+
+    public interface OnClickMessageListener {
+        void onClickMessage(SearchMessageData searchMessageData);
+    }
+
 }

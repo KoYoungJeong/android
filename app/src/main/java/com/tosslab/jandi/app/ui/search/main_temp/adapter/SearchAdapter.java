@@ -51,6 +51,8 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     private HistoryHeaderViewHolder.OnDeleteAllHistory onDeleteAllHistory;
     private HistoryItemViewHolder.OnDeleteHistoryListener onDeleteHistoryListener;
     private HistoryItemViewHolder.OnSelectHistoryListener onSelectHistoryListener;
+    private RoomItemViewHolder.OnClickTopicListener onClickTopicListener;
+    private MessageItemViewHolder.OnClickMessageListener onClickMessageListener;
 
     @Override
     public void setSearchTopicRoomDatas(List<SearchTopicRoomData> searchTopicRoomDatas) {
@@ -83,14 +85,14 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
         return searchTopicRoomDatas.size();
     }
 
-    public void makeAllDatas() {
+    private void makeAllDatas() {
         isHistoryMode = false;
         datas.clear();
         makeTopicDatas();
         makeMessageDatas();
     }
 
-    public void makeHistoryDatas() {
+    private void makeHistoryDatas() {
         isHistoryMode = true;
         datas.clear();
 
@@ -173,25 +175,41 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
             case SearchData.ITEM_TYPE_MESSAGE_HEADER:
                 return MessageHeaderViewHolder.newInstance(parent);
             case SearchData.ITEM_TYPE_MESSAGE_ITEM:
-                return MessageItemViewHolder.newInstance(parent);
+                MessageItemViewHolder messageItemViewHolder = MessageItemViewHolder.newInstance(parent);
+                if (onClickMessageListener != null) {
+                    messageItemViewHolder.setOnClickMessageListener(onClickMessageListener);
+                }
+                return messageItemViewHolder;
             case SearchData.ITEM_TYPE_NO_MESSAGE_ITEM:
                 return NoMessageItemViewHolder.newInstance(parent);
             case SearchData.ITEM_TYPE_ROOM_HEADER:
                 RoomHeaderViewHolder roomHeaderViewHolder = RoomHeaderViewHolder.newInstance(parent);
-                roomHeaderViewHolder.setSetOnCheckChangeListener(onCheckChangeListener);
+                if (onCheckChangeListener != null) {
+                    roomHeaderViewHolder.setSetOnCheckChangeListener(onCheckChangeListener);
+                }
                 return roomHeaderViewHolder;
             case SearchData.ITEM_TYPE_ROOM_ITEM:
-                return RoomItemViewHolder.newInstance(parent);
+                RoomItemViewHolder roomItemViewHolder = RoomItemViewHolder.newInstance(parent);
+                if (onClickTopicListener != null) {
+                    roomItemViewHolder.setOnClickTopicListener(onClickTopicListener);
+                }
+                return roomItemViewHolder;
             case SearchData.ITEM_TYPE_NO_ROOM_ITEM:
                 return NoRoomItemViewHolder.newInstance(parent);
             case SearchData.ITEM_TYPE_HISTORY_HEADER:
                 HistoryHeaderViewHolder historyHeaderViewHolder = HistoryHeaderViewHolder.newInstance(parent);
-                historyHeaderViewHolder.setOnDeleteAllHistory(onDeleteAllHistory);
+                if (onDeleteAllHistory != null) {
+                    historyHeaderViewHolder.setOnDeleteAllHistory(onDeleteAllHistory);
+                }
                 return historyHeaderViewHolder;
             case SearchData.ITEM_TYPE_HISTORY_ITEM:
                 HistoryItemViewHolder historyItemViewHolder = HistoryItemViewHolder.newInstance(parent);
-                historyItemViewHolder.setOnSelectHistoryListener(onSelectHistoryListener);
-                historyItemViewHolder.setOnDeleteHistoryListener(onDeleteHistoryListener);
+                if (onSelectHistoryListener != null) {
+                    historyItemViewHolder.setOnSelectHistoryListener(onSelectHistoryListener);
+                }
+                if (onDeleteHistoryListener != null) {
+                    historyItemViewHolder.setOnDeleteHistoryListener(onDeleteHistoryListener);
+                }
                 return historyItemViewHolder;
             case SearchData.ITEM_TYPE_NO_HISTORY_ITEM:
                 return HistoryNoItemViewHolder.newInstance(parent);
@@ -299,11 +317,6 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     }
 
     @Override
-    public void refreshTopicInfos() {
-
-    }
-
-    @Override
     public void setOnCheckChangeListener(RoomHeaderViewHolder.OnCheckChangeListener onCheckChangeListener) {
         this.onCheckChangeListener = onCheckChangeListener;
     }
@@ -348,6 +361,16 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     public void setOnSelectHistoryListener(
             HistoryItemViewHolder.OnSelectHistoryListener onSelectHistoryListener) {
         this.onSelectHistoryListener = onSelectHistoryListener;
+    }
+
+    @Override
+    public void setOnClickTopicListener(RoomItemViewHolder.OnClickTopicListener onClickTopicListener) {
+        this.onClickTopicListener = onClickTopicListener;
+    }
+
+    @Override
+    public void setOnClickMessageListener(MessageItemViewHolder.OnClickMessageListener onClickMessageListener) {
+        this.onClickMessageListener = onClickMessageListener;
     }
 
     public enum MoreState {

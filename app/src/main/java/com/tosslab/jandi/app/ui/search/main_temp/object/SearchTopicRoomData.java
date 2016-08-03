@@ -5,19 +5,20 @@ package com.tosslab.jandi.app.ui.search.main_temp.object;
  */
 public class SearchTopicRoomData extends SearchData {
 
-    private long id;
+    private long topicId;
     private boolean isPublic;
     private String title;
     private long memberCnt;
     private String description;
     private boolean isJoined;
     private boolean isStarred;
+    private String keyword;
 
     private SearchTopicRoomData() {
     }
 
-    public long getId() {
-        return id;
+    public long getTopicId() {
+        return topicId;
     }
 
     public boolean isPublic() {
@@ -44,6 +45,10 @@ public class SearchTopicRoomData extends SearchData {
         return isStarred;
     }
 
+    public String getKeyword() {
+        return keyword;
+    }
+
     public static class Builder {
 
         private SearchTopicRoomData searchTopicRoomData;
@@ -53,7 +58,7 @@ public class SearchTopicRoomData extends SearchData {
         }
 
         public Builder setTopicId(long id) {
-            searchTopicRoomData.id = id;
+            searchTopicRoomData.topicId = id;
             return this;
         }
 
@@ -87,10 +92,14 @@ public class SearchTopicRoomData extends SearchData {
             return this;
         }
 
+        public Builder setKeyword(String keyword) {
+            searchTopicRoomData.keyword = keyword;
+            return this;
+        }
+
         public SearchTopicRoomData build() {
             return searchTopicRoomData;
         }
-
 
     }
 
