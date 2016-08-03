@@ -204,8 +204,10 @@
 	<string name="jandi_empty_participants">"无人参与投票"</string>
 	<string name="jandi_empty_subject">"问卷名称为必填字段"</string>
 	<string name="jandi_enable_external_link">"建立共享链接"</string>
+	<string name="jandi_enter_name">"请输入您的名字"</string>
 	<string name="jandi_enter_new_passcode">"输入新密码"</string>
 	<string name="jandi_enter_passcode">"输入您的密码"</string>
+	<string name="jandi_enter_phone_number">"请输入您的电话号码"</string>
 	<string name="jandi_entity_create_entity_name">"名字"</string>
 	<string name="jandi_entity_joined_topic">"我的议题"</string>
 	<string name="jandi_entity_unjoined_topic">"其他议题"</string>
@@ -354,6 +356,7 @@
 	<string name="jandi_message_invite_entity">"%1$d 用户已被加入"</string>
 	<string name="jandi_message_join_entity">"加入 %1$s"</string>
 	<string name="jandi_message_leave_private_topic">"离开私人议题后，未来希望能够重新加入，必须先取得其它人的邀请。您确定要离开吗？"</string>
+	<string name="jandi_message_leave_private_topic_when_only_you">"一旦离开议题，议题将会自动删除！你确定要离开议题？"</string>
 	<string name="jandi_message_logout">"已登出"</string>
 	<string name="jandi_message_no_member">"不再单打独斗，现在就邀请所有伙伴加入你的团队！"</string>
 	<string name="jandi_message_no_starred">"取消标记"</string>
@@ -414,7 +417,7 @@
 	<string name="jandi_poll">"问卷调查"</string>
 	<string name="jandi_poll_add_item">"添加选项"</string>
 	<string name="jandi_poll_anonymous">"不记名"</string>
-	<string name="jandi_poll_create">"建立新的投票"</string>
+	<string name="jandi_poll_create">"建立"</string>
 	<string name="jandi_poll_deleted">"投票已经删除"</string>
 	<string name="jandi_poll_empty_1">"无进行中的问卷"</string>
 	<string name="jandi_poll_empty_2">"\n点击[+]建立新问卷"</string>
@@ -681,5 +684,4 @@
 	<string name="what_is_member_profile">"请输入与这团队相关联的电子邮箱及简介名字。
 请注意您的团队成员可以查看和使用这团队资料来提到、 搜索或直接联系您。"</string>
 	<string name="what_is_team_domain">"选择团队的网域(URL)供网页登录使用。 域名须为三个以上的字符并包含字母、数字、及连字符(-)。"</string>
-	<string name="로">"回到账号首页"</string>
 </resources>

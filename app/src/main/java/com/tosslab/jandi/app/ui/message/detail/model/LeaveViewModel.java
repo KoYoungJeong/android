@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.chat.ChatApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -49,10 +50,20 @@ public class LeaveViewModel {
     }
 
     public void showPrivateTopicLeaveDialog(Context context, long entityId) {
+
+        int msgId;
+
+        TopicRoom topic = TeamInfoLoader.getInstance().getTopic(entityId);
+        if (topic.getMemberCount() > 1) {
+            msgId = R.string.jandi_message_leave_private_topic;
+        } else {
+            msgId = R.string.jandi_message_leave_private_topic_when_only_you;
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context,
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
-        builder.setTitle(TeamInfoLoader.getInstance().getName(entityId))
-                .setMessage(R.string.jandi_message_leave_private_topic)
+        builder.setTitle(topic.getName())
+                .setMessage(msgId)
                 .setNegativeButton(R.string.jandi_cancel, null)
                 .setPositiveButton(R.string.jandi_action_leave, (dialog, which) -> leaveEntityInBackground(entityId))
                 .create()

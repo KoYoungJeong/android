@@ -204,8 +204,10 @@
 	<string name="jandi_empty_participants">"参加者がいません。"</string>
 	<string name="jandi_empty_subject">"質問を入力してください。"</string>
 	<string name="jandi_enable_external_link">"共有用リンクを作成する"</string>
+	<string name="jandi_enter_name">"名前を入力してください"</string>
 	<string name="jandi_enter_new_passcode">"新しいパスコードを入力 "</string>
 	<string name="jandi_enter_passcode">"パスワードを入力してください"</string>
+	<string name="jandi_enter_phone_number">"電話番号を入力してください"</string>
 	<string name="jandi_entity_create_entity_name">"名前"</string>
 	<string name="jandi_entity_joined_topic">"参加中のトピック"</string>
 	<string name="jandi_entity_unjoined_topic">"未参加のトピック"</string>
@@ -355,6 +357,8 @@
 	<string name="jandi_message_invite_entity">"%1$d メンバーが追加されました"</string>
 	<string name="jandi_message_join_entity">"%1$s が参加しました"</string>
 	<string name="jandi_message_leave_private_topic">"プライベートトピックから退出すると、そのプライベートトピックのメンバーに改めて招待されない限り再び参加することはできません。本当に退出しますか？"</string>
+	<string name="jandi_message_leave_private_topic_when_only_you">"トピックから退出する同時トピックが削除されます。
+本当にトピックから退出しますか？"</string>
 	<string name="jandi_message_logout">"ログアウトしました"</string>
 	<string name="jandi_message_no_member">"このチームには他のメンバーがいません。新しいメンバーを招待してコラボレーションを始めましょう"</string>
 	<string name="jandi_message_no_starred">"お気に入りから削除しました"</string>
@@ -416,7 +420,7 @@
 	<string name="jandi_poll">"投票"</string>
 	<string name="jandi_poll_add_item">"回答を追加する"</string>
 	<string name="jandi_poll_anonymous">"匿名投票"</string>
-	<string name="jandi_poll_create">"新しい投票を作成する"</string>
+	<string name="jandi_poll_create">"作成"</string>
 	<string name="jandi_poll_deleted">"投票を削除しました。"</string>
 	<string name="jandi_poll_empty_1">"実施中の投票がありません。"</string>
 	<string name="jandi_poll_empty_2">"\nトピックで「＋」を押し、投票を作成してください。"</string>
@@ -686,5 +690,4 @@
 チームではこの名前、メールアドレスが表示されます。アカウント情報で登録した名前、メールアドレスと異なっても構いません"</string>
 	<string name="what_is_team_domain">"チームドメインはログイン用URLに使われます。
 具体的には、abc.jandi.comの”abcの部分を指し、<b>3文字以上</b>の英数字とハイフンが利用できます。覚えやすいドメイン名にすることをお勧めします"</string>
-	<string name="로">"ホームに戻る"</string>
 </resources>

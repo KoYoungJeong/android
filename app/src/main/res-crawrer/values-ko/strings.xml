@@ -204,8 +204,10 @@
 	<string name="jandi_empty_participants">"참여자가 없습니다."</string>
 	<string name="jandi_empty_subject">"질문을 입력해야 합니다."</string>
 	<string name="jandi_enable_external_link">"외부 공유용 링크 생성"</string>
+	<string name="jandi_enter_name">"이름을 입력해주세요."</string>
 	<string name="jandi_enter_new_passcode">"변경할 비밀번호를 입력해주세요."</string>
 	<string name="jandi_enter_passcode">"비밀번호 입력"</string>
+	<string name="jandi_enter_phone_number">"전화번호를 입력하세요"</string>
 	<string name="jandi_entity_create_entity_name">"사용자 성함"</string>
 	<string name="jandi_entity_joined_topic">"참여한 토픽"</string>
 	<string name="jandi_entity_unjoined_topic">"참여하지 않은 토픽"</string>
@@ -356,6 +358,7 @@
 	<string name="jandi_message_invite_entity">"%1$d 명의 사용자를 초대했습니다"</string>
 	<string name="jandi_message_join_entity">"%1$s에 참여합니다"</string>
 	<string name="jandi_message_leave_private_topic">"비공개 토픽을 나가시면 초대를 받지 않는한 다시 참여하실 수 없습니다.\n나가시겠습니까?"</string>
+	<string name="jandi_message_leave_private_topic_when_only_you">"혼자있는 비공개 토픽을 나가게 될 경우, 토픽은 삭제됩니다."</string>
 	<string name="jandi_message_logout">"로그아웃 되었습니다"</string>
 	<string name="jandi_message_no_member">"아직 팀에 가입한 멤버가 없습니다. 지금 바로 멤버들을 초대하세요."</string>
 	<string name="jandi_message_no_starred">"즐겨찾기가 해제되었습니다"</string>
@@ -418,7 +421,7 @@
 	<string name="jandi_poll">"투표"</string>
 	<string name="jandi_poll_add_item">"보기추가"</string>
 	<string name="jandi_poll_anonymous">"익명투표"</string>
-	<string name="jandi_poll_create">"새 투표 작성하기"</string>
+	<string name="jandi_poll_create">"만들기"</string>
 	<string name="jandi_poll_deleted">"투표를 삭제했습니다."</string>
 	<string name="jandi_poll_empty_1">"진행중인 투표가 없습니다."</string>
 	<string name="jandi_poll_empty_2">"토픽에서 [+]를 눌러 투표를 만들 수 있습니다."</string>
@@ -689,5 +692,4 @@
 계정 정보와는 다른 내용을 사용할 수 있지만, 이름은 멘션 또는 검색에도 이용되기 때문에 팀원들에게 통용되는 호칭이 좋습니다."</string>
 	<string name="what_is_team_domain">"팀 도메인은 팀에 쉽게 접속하실 수 있도록 잔디가 발급해드리는 고유 웹 주소입니다.
 팀 이름과는 달라도 되지만 기억하기 쉬운 이름이 좋습니다. <b>영어 알파벳 3자 이상</b>으로 숫자 또는 빼기(-) 표시와 함께 구성하시면 됩니다."</string>
-	<string name="로">"잔디 메인으로"</string>
 </resources>
