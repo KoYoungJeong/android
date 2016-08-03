@@ -67,11 +67,19 @@ public class SearchModel {
                 })
                 .filter(topic -> topic.getTitle().toLowerCase().contains(keyword.toLowerCase()))
                 .toSortedList((lhs, rhs) -> {
-                    if (lhs.isStarred() && rhs.isStarred()) {
-                        return StringCompareUtil.compare(lhs.getTitle(), rhs.getTitle());
-                    } else if (lhs.isStarred()) {
+                    if (lhs.isJoined() && rhs.isJoined()) {
+                        if (lhs.isStarred() && rhs.isStarred()) {
+                            return StringCompareUtil.compare(lhs.getTitle(), rhs.getTitle());
+                        } else if (lhs.isStarred()) {
+                            return -1;
+                        } else if (rhs.isStarred()) {
+                            return 1;
+                        } else {
+                            return StringCompareUtil.compare(lhs.getTitle(), rhs.getTitle());
+                        }
+                    } else if (lhs.isJoined()) {
                         return -1;
-                    } else if (rhs.isStarred()) {
+                    } else if (rhs.isJoined()) {
                         return 1;
                     } else {
                         return StringCompareUtil.compare(lhs.getTitle(), rhs.getTitle());

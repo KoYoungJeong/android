@@ -228,8 +228,8 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_file_category_all">"<b>All Files</b>"</string>
 	<string name="jandi_file_category_audio">"Audio"</string>
 	<string name="jandi_file_category_document">"Documents"</string>
-	<string name="jandi_file_category_everyone">"<b>All Members</b>"</string>
-	<string name="jandi_file_category_everywhere">"<b>All Rooms</b>"</string>
+	<string name="jandi_search_category_everyone">"<b>All Members</b>"</string>
+	<string name="jandi_search_category_everywhere">"<b>All Rooms</b>"</string>
 	<string name="jandi_file_category_image">"Images"</string>
 	<string name="jandi_file_category_pdf">"PDFs"</string>
 	<string name="jandi_file_category_presentation">"Presentations"</string>

@@ -338,6 +338,10 @@ public class SearchActivity extends BaseAppCompatActivity
                 String searchText = voiceSearchResults.get(0);
                 tvSearchKeyword.setText(searchText);
                 tvSearchKeyword.setSelection(searchText.length());
+                searchPresenter.sendSearchQuery(
+                        tvSearchKeyword.getText().toString());
+                tvSearchKeyword.dismissDropDown();
+
             }
         }
     }

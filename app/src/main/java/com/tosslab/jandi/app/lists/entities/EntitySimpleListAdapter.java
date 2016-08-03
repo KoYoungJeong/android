@@ -61,7 +61,7 @@ public class EntitySimpleListAdapter extends BaseAdapter {
 
         // dummy entity는 이름이 없다. 지정된 string resource id 만 가져옴.
         if (entity.isDummy()) {
-            holder.textView.setText(R.string.jandi_file_category_everywhere);
+            holder.textView.setText(R.string.jandi_search_category_everywhere);
         } else {
             holder.textView.setText(entity.getName());
         }

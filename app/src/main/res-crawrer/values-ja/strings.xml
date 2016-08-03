@@ -228,8 +228,8 @@
 	<string name="jandi_file_category_all">"<b>全ての種類</b>"</string>
 	<string name="jandi_file_category_audio">"音声"</string>
 	<string name="jandi_file_category_document">"文書"</string>
-	<string name="jandi_file_category_everyone">"<b>全員</b>"</string>
-	<string name="jandi_file_category_everywhere">"<b>全トピック</b>"</string>
+	<string name="jandi_search_category_everyone">"<b>全員</b>"</string>
+	<string name="jandi_search_category_everywhere">"<b>全トピック</b>"</string>
 	<string name="jandi_file_category_image">"画像"</string>
 	<string name="jandi_file_category_pdf">"PDF"</string>
 	<string name="jandi_file_category_presentation">"プレゼンテーション"</string>

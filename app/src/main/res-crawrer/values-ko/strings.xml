@@ -228,8 +228,8 @@
 	<string name="jandi_file_category_all">"<b>모든 타입</b>"</string>
 	<string name="jandi_file_category_audio">"음악"</string>
 	<string name="jandi_file_category_document">"워드/한글"</string>
-	<string name="jandi_file_category_everyone">"<b>모든 팀원</b>"</string>
-	<string name="jandi_file_category_everywhere">"<b>모든 대화방</b>"</string>
+	<string name="jandi_search_category_everyone">"<b>모든 팀원</b>"</string>
+	<string name="jandi_search_category_everywhere">"<b>모든 대화방</b>"</string>
 	<string name="jandi_file_category_image">"Images"</string>
 	<string name="jandi_file_category_pdf">"PDFs"</string>
 	<string name="jandi_file_category_presentation">"파워포인트"</string>

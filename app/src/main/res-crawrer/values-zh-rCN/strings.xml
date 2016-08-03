@@ -228,8 +228,8 @@
 	<string name="jandi_file_category_all">"<b>所有文件</b>"</string>
 	<string name="jandi_file_category_audio">"音频"</string>
 	<string name="jandi_file_category_document">"文件"</string>
-	<string name="jandi_file_category_everyone">"<b>所有成员</b>"</string>
-	<string name="jandi_file_category_everywhere">"<b>所有讨论</b>"</string>
+	<string name="jandi_search_category_everyone">"<b>所有成员</b>"</string>
+	<string name="jandi_search_category_everywhere">"<b>所有讨论</b>"</string>
 	<string name="jandi_file_category_image">"图像"</string>
 	<string name="jandi_file_category_pdf">"PDF"</string>
 	<string name="jandi_file_category_presentation">"简报"</string>
