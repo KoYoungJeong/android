@@ -113,17 +113,6 @@ public class StatusChangeFragment extends Fragment implements NameStatusPresente
         }
     }
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-
-        if (etStatus != null) {
-            MenuItem item = menu.findItem(R.id.action_update_profile);
-            if (item != null) {
-                item.setEnabled(etStatus.length() > 0);
-            }
-        }
-    }
-
     @OnTextChanged(value = R.id.et_status_change, callback = OnTextChanged.Callback.TEXT_CHANGED)
     void onStatusTextChanged(CharSequence text) {
         presenter.onTextChange(text.toString());
@@ -151,5 +140,6 @@ public class StatusChangeFragment extends Fragment implements NameStatusPresente
     @Override
     public void setUser(User user) {
         etStatus.setText(user.getStatusMessage());
+        etStatus.setSelection(etStatus.length());
     }
 }

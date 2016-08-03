@@ -129,6 +129,7 @@ public class NameChangeFragment extends Fragment implements NameStatusPresenter.
 
     @OnTextChanged(value = R.id.et_name_change, callback = OnTextChanged.Callback.TEXT_CHANGED)
     void onNameTextChanged(CharSequence text) {
+        getActivity().invalidateOptionsMenu();
         presenter.onTextChange(text.toString());
     }
 
@@ -153,5 +154,6 @@ public class NameChangeFragment extends Fragment implements NameStatusPresenter.
     @Override
     public void setUser(User user) {
         etName.setText(user.getName());
+        etName.setSelection(etName.length());
     }
 }

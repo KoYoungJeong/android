@@ -18,6 +18,10 @@ import butterknife.ButterKnife;
 
 public class ProfileLabelView extends LinearLayout {
 
+    private static final int DEFAULT_TITLE_COLOR = 0x1a1a1a;
+    private static final int DEFAULT_CONTENT_COLOR = 0x666666;
+
+
     @Bind(R.id.tv_profile_label_title)
     TextView tvTitle;
     @Bind(R.id.tv_profile_label_content)
@@ -38,14 +42,16 @@ public class ProfileLabelView extends LinearLayout {
     }
 
     private void init(Context context, AttributeSet attrs) {
+
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ProfileLabelView);
 
         int textSizeTitle = typedArray.getDimensionPixelSize(R.styleable.ProfileLabelView_textSizeTitle, -1);
-        int textColorTitle = typedArray.getColor(R.styleable.ProfileLabelView_textColorTitle, -1);
+        int textColorTitle = typedArray.getColor(R.styleable.ProfileLabelView_textColorTitle, DEFAULT_TITLE_COLOR);
         String textTitle = typedArray.getString(R.styleable.ProfileLabelView_textTitle);
 
         int textSizeContent = typedArray.getDimensionPixelSize(R.styleable.ProfileLabelView_textSizeContent, -1);
-        int textColorContent = typedArray.getColor(R.styleable.ProfileLabelView_textColorContent, -1);
+
+        int textColorContent = typedArray.getColor(R.styleable.ProfileLabelView_textColorContent, DEFAULT_CONTENT_COLOR);
         String textContent = typedArray.getString(R.styleable.ProfileLabelView_textContent);
 
         int gap = typedArray.getDimensionPixelSize(R.styleable.ProfileLabelView_gap, -1);
@@ -60,13 +66,8 @@ public class ProfileLabelView extends LinearLayout {
             setTextSizeContent(TypedValue.COMPLEX_UNIT_PX, textSizeContent);
         }
 
-        if (textColorTitle > 0) {
-            setTextColorTitle(textColorTitle);
-        }
-
-        if (textColorContent > 0) {
-            setTextColorContent(textColorContent);
-        }
+        setTextColorTitle(textColorTitle);
+        setTextColorContent(textColorContent);
 
         if (gap > 0) {
             setTextGap(gap);
