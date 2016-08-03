@@ -89,9 +89,13 @@ public class IntegrationBotUtil {
                 if (!TextUtils.isEmpty(info.title)) {
                     titleVisible = View.VISIBLE;
                     title.append(info.title);
-                            SpannableLookUp.text(title)
-                                    .hyperLink(false)
-                                    .lookUp(vgConnectInfo.getContext());
+                    SpannableLookUp.text(title)
+                            .hyperLink(false)
+                            .markdown(false)
+                            .webLink(false)
+                            .telLink(false)
+                            .emailLink(false)
+                            .lookUp(vgConnectInfo.getContext());
                     LinkifyUtil.addLinks(tvTitle.getContext(), title);
                 } else {
                     titleVisible = View.GONE;
@@ -101,9 +105,13 @@ public class IntegrationBotUtil {
 
                 if (!TextUtils.isEmpty(info.description)) {
                     description.append(info.description);
-                            SpannableLookUp.text(description)
-                                    .hyperLink(false)
-                                    .lookUp(vgConnectInfo.getContext());
+                    SpannableLookUp.text(description)
+                            .hyperLink(false)
+                            .markdown(false)
+                            .webLink(false)
+                            .telLink(false)
+                            .emailLink(false)
+                            .lookUp(vgConnectInfo.getContext());
                     LinkifyUtil.addLinks(tvDescription.getContext(), description);
 
                     descriptionVisible = View.VISIBLE;
