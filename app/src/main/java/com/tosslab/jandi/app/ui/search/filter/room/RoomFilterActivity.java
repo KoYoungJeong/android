@@ -95,6 +95,8 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        overridePendingTransition(R.anim.slide_in_bottom_with_alpha, 0);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room_filter);
 
@@ -290,5 +292,11 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
         roomFilterPresenter.stopTopicSearchQueue();
         roomFilterPresenter.stopDirectMessageSearchQueue();
         super.onDestroy();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, R.anim.slide_out_to_bottom);
     }
 }

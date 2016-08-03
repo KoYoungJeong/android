@@ -82,6 +82,7 @@ public class MemberFilterActivity extends BaseAppCompatActivity implements Membe
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        overridePendingTransition(R.anim.slide_in_bottom_with_alpha, 0);
         super.onCreate(savedInstanceState);
 
         SearchableMemberFilterAdapter adapter = new SearchableMemberFilterAdapter();
@@ -218,4 +219,9 @@ public class MemberFilterActivity extends BaseAppCompatActivity implements Membe
         super.onDestroy();
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, R.anim.slide_out_to_bottom);
+    }
 }
