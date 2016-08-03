@@ -153,7 +153,7 @@ public class MessageListV2Presenter {
                         && adapterModel != null
                         && adapterModel.getCount() > 0)
                 .map(o -> {
-                    int position = adapterModel.getCount() - 1;
+                    int position = adapterModel.getCount() - adapterModel.getDummyMessageCount() - 1;
                     return adapterModel.getItem(position);
                 })
                 .filter(item -> item.id > messageListModel.getLastReadLinkId(room.getRoomId()))
