@@ -47,7 +47,7 @@ public class MemberFilterActivity extends BaseAppCompatActivity implements Membe
 
     public static final String KEY_SELECTED_MEMBER_ID = "selectedMemberId";
 
-    public static final String KEY_MEMBER_ID = "memberId";
+    public static final String KEY_FILTERED_MEMBER_ID = "memberId";
     public static final long MEMBER_ID_ALL = -2l;
 
     @Inject
@@ -82,6 +82,7 @@ public class MemberFilterActivity extends BaseAppCompatActivity implements Membe
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        overridePendingTransition(R.anim.slide_in_bottom_with_alpha, 0);
         super.onCreate(savedInstanceState);
 
         SearchableMemberFilterAdapter adapter = new SearchableMemberFilterAdapter();
@@ -108,14 +109,14 @@ public class MemberFilterActivity extends BaseAppCompatActivity implements Membe
 
         memberFilterableDataView.setOnAllMemberClickListener(() -> {
             Intent data = new Intent();
-            data.putExtra(KEY_MEMBER_ID, MEMBER_ID_ALL);
+            data.putExtra(KEY_FILTERED_MEMBER_ID, MEMBER_ID_ALL);
             setResult(RESULT_OK, data);
             finish();
         });
 
         memberFilterableDataView.setOnMemberClickListener(member -> {
             Intent data = new Intent();
-            data.putExtra(KEY_MEMBER_ID, member.getId());
+            data.putExtra(KEY_FILTERED_MEMBER_ID, member.getId());
             setResult(RESULT_OK, data);
             finish();
         });
@@ -128,7 +129,7 @@ public class MemberFilterActivity extends BaseAppCompatActivity implements Membe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.search_filter_member, menu);
+        getMenuInflater().inflate(R.menu.search_filter_activity, menu);
         menuDeleteQuery = menu.findItem(R.id.action_close);
         menuVoiceInput = menu.findItem(R.id.action_voice);
         return true;
@@ -178,6 +179,11 @@ public class MemberFilterActivity extends BaseAppCompatActivity implements Membe
         pbMemberFilter.setVisibility(View.GONE);
     }
 
+    @Override
+    public void notifyDataSetChanged() {
+        memberFilterableDataView.notifyDataSetChanged();
+    }
+
     public void startVoiceInput() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -208,8 +214,14 @@ public class MemberFilterActivity extends BaseAppCompatActivity implements Membe
     }
 
     @Override
-    public void notifyDataSetChanged() {
-        memberFilterableDataView.notifyDataSetChanged();
+    protected void onDestroy() {
+        memberFilterPresenter.stopMemberSearchQueue();
+        super.onDestroy();
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, R.anim.slide_out_to_bottom);
+    }
 }

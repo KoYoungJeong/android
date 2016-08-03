@@ -592,6 +592,11 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.search.filter.room.RoomFilterActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+
         <service android:name=".services.socket.JandiSocketService" />
 
         <receiver

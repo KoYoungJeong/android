@@ -35,10 +35,12 @@ public class SearchableMemberFilterAdapter extends MultiItemRecyclerAdapter
     private OnAllMemberClickListener onAllMemberClickListener;
     private long selectedMemberId;
 
+    @Override
     public void setOnMemberClickListener(OnMemberClickListener onMemberClickListener) {
         this.onMemberClickListener = onMemberClickListener;
     }
 
+    @Override
     public void setOnAllMemberClickListener(OnAllMemberClickListener onAllMemberClickListener) {
         this.onAllMemberClickListener = onAllMemberClickListener;
     }
