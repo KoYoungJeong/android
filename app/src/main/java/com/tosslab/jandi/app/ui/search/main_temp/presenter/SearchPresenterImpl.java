@@ -93,6 +93,7 @@ public class SearchPresenterImpl implements SearchPresenter {
                                 setTopicRoomDatas(false);
                                 searchedMessageHeaderDataBuilder.setShowSearchedResultMessage(true);
                                 searchedMessageHeaderDataBuilder.setShowProgress(true);
+                                searchAdapterDataModel.setLoading(true);
                                 searchAdapterDataModel.clearSearchMessageDatas();
                             } else {
                                 view.showMoreProgressBar();
@@ -145,11 +146,13 @@ public class SearchPresenterImpl implements SearchPresenter {
                                         }
                                     } else {
                                         searchedMessageHeaderDataBuilder.setShowSearchedResultMessage(false);
+                                        searchAdapterDataModel.setLoading(false);
                                         searchAdapterDataModel.clearSearchMessageDatas();
                                     }
 
                                     if (pageSubject.getValue() == 1) {
                                         searchedMessageHeaderDataBuilder.setShowProgress(false);
+                                        searchAdapterDataModel.setLoading(false);
                                     } else {
                                         view.dismissMoreProgressBar();
                                         moreState = MoreState.Idle;
@@ -170,6 +173,7 @@ public class SearchPresenterImpl implements SearchPresenter {
                                     searchAdapterDataModel.clearSearchMessageDatas();
                                     if (pageSubject.getValue() == 1) {
                                         searchedMessageHeaderDataBuilder.setShowProgress(false);
+                                        searchAdapterDataModel.setLoading(false);
                                     } else {
                                         view.dismissMoreProgressBar();
                                         moreState = MoreState.Idle;

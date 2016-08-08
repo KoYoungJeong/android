@@ -40,6 +40,8 @@ public class RoomHeaderViewHolder extends BaseViewHolder<SearchData> {
                 onCheckChangeListener.onCheckUnjoinTopic(isChecked);
             }
         });
+
+        itemView.setOnClickListener(v -> cbUnjoinTopic.setChecked(!cbUnjoinTopic.isChecked()));
     }
 
     public void setSetOnCheckChangeListener(OnCheckChangeListener onCheckChangeListener) {

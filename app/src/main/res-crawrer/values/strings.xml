@@ -164,6 +164,7 @@
 	<string name="jandi_coach_mark_topic_message_search">"Message\nsearch"</string>
 	<string name="jandi_coach_mark_topic_setting">"Topic info and settings\n(eg invite,\nleave, rename)"</string>
 	<string name="jandi_coach_mark_upload_file">"Upload files"</string>
+	<string name="jandi_comment_count">"%d Comments"</string>
 	<string name="jandi_commented_on">"<![CDATA[<font color="#999999">Commented on</font> <font color="#000000">%s</font><font color="#999999">'s file"</font>]]>"</string>
 	<string name="jandi_complete_assign_topic_owner">"Topic administrator permissions has been transferred successfully"</string>
 	<string name="jandi_confirm">"OK"</string>
@@ -284,6 +285,7 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_have_an_account_already">"Already have an account?"</string>
 	<string name="jandi_help">"Help"</string>
 	<string name="jandi_hi_apk_store">"Hi Apk Store"</string>
+	<string name="jandi_image_deleted">"This image has been deleted"</string>
 	<string name="jandi_image_too_big">"Image is too big to display."</string>
 	<string name="jandi_incorrect_passcode">"Passcode Does Not Match"</string>
 	<string name="jandi_info">"JANDI Information"</string>
@@ -299,8 +301,7 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_insert_team_domain">"Set up your Team Domain"</string>
 	<string name="jandi_insert_team_name">"Set up your Team Name"</string>
 	<string name="jandi_invitation">"Invite"</string>
-	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. 
-To change this setting, go to Team Settings > Invitation Settings."</string>
+	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. To change this setting, go to Team Settings > Invitation Settings."</string>
 	<string name="jandi_invitation_help">"Invite other team members to JANDI!"</string>
 	<string name="jandi_invitation_succeed">"Invitation has been sent"</string>
 	<string name="jandi_invite_app_not_installed">"The app is not installed on your device. The invitation link has been copied to the clipboard instead."</string>
@@ -424,7 +425,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_poll">"Poll"</string>
 	<string name="jandi_poll_add_item">"Add a Choice"</string>
 	<string name="jandi_poll_anonymous">"Anonymous"</string>
-	<string name="jandi_poll_create">"Create"</string>
+	<string name="jandi_poll_create">"Create a New Poll"</string>
 	<string name="jandi_poll_deleted">"The poll has been deleted."</string>
 	<string name="jandi_poll_empty_1">"There are no on-going polls."</string>
 	<string name="jandi_poll_empty_2">"You can start a poll by tapping [+] button in a topic."</string>
@@ -491,7 +492,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_search_ing">"<![CDATA[Searching <b><font color=#404040>%s</font></b>...]]>"</string>
 	<string name="jandi_search_loading">"Searching…"</string>
 	<string name="jandi_search_no_topic_room">"No matching room for the keyword."</string>
-	<string name="jandi_search_result_count">"You have %s message search result(s)."</string>
+	<string name="jandi_search_result_count">"You have <b>%s</b> message search result(s)."</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%2$d</font></b> matches for <b><font color=#404040>%1$s</font></b>]]>"</string>
 	<string name="jandi_select_character">"Select a JANDI character"</string>
 	<string name="jandi_select_direct_messages">"Select Direct Message"</string>

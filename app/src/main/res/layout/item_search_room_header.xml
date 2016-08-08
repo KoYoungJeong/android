@@ -12,7 +12,8 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="13dp"
-        android:layout_marginRight="13dp" />
+        android:layout_marginRight="13dp"
+        android:button="@drawable/checkbox_selector" />
 
     <TextView
         android:layout_width="match_parent"

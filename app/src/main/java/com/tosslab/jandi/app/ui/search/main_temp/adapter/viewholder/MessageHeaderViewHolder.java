@@ -83,20 +83,20 @@ public class MessageHeaderViewHolder extends BaseViewHolder<SearchData> {
             progressInitLoading.setVisibility(View.VISIBLE);
             tvSearchMessage.setText(
                     JandiApplication.getContext().getString(R.string.jandi_search_loading));
+
         } else {
             progressInitLoading.setVisibility(View.GONE);
             tvSearchMessage.setText(
                     JandiApplication.getContext().getString(R.string.jandi_search_result_count,
                             searchMessageHeaderData.getSearchedMessageCount()));
+
         }
 
-        vgRoomSelectionButton.setOnClickListener(v -> {
-            onClickRoomSelectionButtonListener.onClickRoomSelection();
-        });
+        vgRoomSelectionButton.setOnClickListener(v ->
+                onClickRoomSelectionButtonListener.onClickRoomSelection());
 
-        vgMemberSelectionButton.setOnClickListener(v -> {
-            onClickMemberSelectionButtonListener.onClickMemberSelection();
-        });
+        vgMemberSelectionButton.setOnClickListener(v ->
+                onClickMemberSelectionButtonListener.onClickMemberSelection());
 
         if (!TextUtils.isEmpty(searchMessageHeaderData.getRoomName())) {
             tvRoomSelectionButton.setText(searchMessageHeaderData.getRoomName());

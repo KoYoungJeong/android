@@ -46,6 +46,7 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     private RoomHeaderViewHolder.OnCheckChangeListener onCheckChangeListener;
 
     private boolean isHistoryMode = false;
+    private boolean isLoading = false;
 
     private HistoryHeaderViewHolder.OnDeleteAllHistory onDeleteAllHistory;
     private HistoryItemViewHolder.OnDeleteHistoryListener onDeleteHistoryListener;
@@ -114,9 +115,7 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
 
         if (searchHistoryDatas.size() > 0) {
             Observable.from(searchHistoryDatas)
-                    .map(searchHistoryData ->
-                            datas.add(searchHistoryData)
-                    ).subscribe();
+                    .subscribe(datas::add);
         } else {
             SearchData searchHistoryNoData = new SearchData();
             searchHistoryNoData.setType(SearchData.ITEM_TYPE_NO_HISTORY_ITEM);
@@ -131,14 +130,24 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
             datas.add(searchMessageHeaderData);
         }
         if (searchMessageDatas.size() > 0) {
+            int searchMessageCnt = searchMessageDatas.size();
             Observable.from(searchMessageDatas)
-                    .map(searchMessageData ->
-                            datas.add(searchMessageData)
-                    ).subscribe();
+                    .map(searchMessageData -> {
+                                if (searchMessageDatas.get(searchMessageCnt - 1)
+                                        .equals(searchMessageData)) {
+                                    searchMessageData.setHasHalfLine(false);
+                                } else {
+                                    searchMessageData.setHasHalfLine(true);
+                                }
+                                return searchMessageData;
+                            }
+                    ).subscribe(datas::add);
         } else {
-            SearchData data = new SearchData();
-            data.setType(SearchData.ITEM_TYPE_NO_MESSAGE_ITEM);
-            datas.add(data);
+            if (!isLoading) {
+                SearchData data = new SearchData();
+                data.setType(SearchData.ITEM_TYPE_NO_MESSAGE_ITEM);
+                datas.add(data);
+            }
         }
     }
 
@@ -147,13 +156,19 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
             SearchData headerData = new SearchData();
             headerData.setType(SearchData.ITEM_TYPE_ROOM_HEADER);
             datas.add(headerData);
+            int searchTopicRoomCnt = searchTopicRoomDatas.size();
             Observable.from(searchTopicRoomDatas)
                     .map(searchTopicRoomData -> {
+                                if (searchTopicRoomDatas.get(searchTopicRoomCnt - 1)
+                                        .equals(searchTopicRoomData)) {
+                                    searchTopicRoomData.setHasHalfLine(false);
+                                } else {
+                                    searchTopicRoomData.setHasHalfLine(true);
+                                }
                                 searchTopicRoomData.setType(SearchData.ITEM_TYPE_ROOM_ITEM);
-                                datas.add(searchTopicRoomData);
                                 return searchTopicRoomData;
                             }
-                    ).subscribe();
+                    ).subscribe(datas::add);
         } else {
             SearchData data = new SearchData();
             data.setType(SearchData.ITEM_TYPE_NO_ROOM_ITEM);
@@ -165,7 +180,6 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     public int getItemViewType(int position) {
         return datas.get(position).getType();
     }
-
 
     @Override
     public int getItemCount() {
@@ -427,4 +441,8 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
         holder.onBindView(new Object());
     }
 
+    @Override
+    public void setLoading(boolean loading) {
+        isLoading = loading;
+    }
 }

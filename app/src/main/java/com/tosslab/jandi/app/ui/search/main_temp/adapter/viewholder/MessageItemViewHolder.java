@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -18,12 +19,16 @@ import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.member.WebhookBot;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.search.main_temp.object.SearchData;
 import com.tosslab.jandi.app.ui.search.main_temp.object.SearchMessageData;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
+import com.tosslab.jandi.app.utils.image.transform.TransformConfig;
 import com.tosslab.jandi.app.views.spannable.HighlightSpannable;
 
 import java.util.regex.Matcher;
@@ -61,6 +66,12 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
     @Bind(R.id.tv_shared_item_title)
     TextView tvSharedItemTitle;
 
+    @Bind(R.id.v_full_divider)
+    View vFullDivider;
+
+    @Bind(R.id.v_half_divider)
+    View vHalfDivider;
+
     private OnClickMessageListener onClickMessageListener;
 
     public MessageItemViewHolder(View itemView) {
@@ -79,12 +90,26 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
         SearchMessageData searchMessageData = (SearchMessageData) searchData;
         TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
 
-        User writer = teamInfoLoader.getUser(searchMessageData.getWriterId());
-
-        if (writer != null) {
-            String photoUrl =
-                    teamInfoLoader.getUser(searchMessageData.getWriterId()).getPhotoUrl();
-            ImageUtil.loadProfileImage(ivProfile, photoUrl, R.drawable.profile_img);
+        if (TeamInfoLoader.getInstance().isBot(searchMessageData.getWriterId())) {
+            WebhookBot webhookBot = TeamInfoLoader.getInstance().getBot(searchMessageData.getWriterId());
+            ImageLoader.newInstance()
+                    .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
+                    .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                    .transformation(new JandiProfileTransform(ivProfile.getContext(),
+                            TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
+                            TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
+                            Color.WHITE))
+                    .uri(Uri.parse(webhookBot.getPhotoUrl()))
+                    .into(ivProfile);
+        } else if (TeamInfoLoader.getInstance().isJandiBot(searchMessageData.getWriterId())) {
+            ivProfile.setImageResource(R.drawable.bot_32x40);
+        } else {
+            User writer = teamInfoLoader.getUser(searchMessageData.getWriterId());
+            if (writer != null) {
+                String photoUrl =
+                        teamInfoLoader.getUser(searchMessageData.getWriterId()).getPhotoUrl();
+                ImageUtil.loadProfileImage(ivProfile, photoUrl, R.drawable.profile_img);
+            }
         }
 
         tvTime.setText(DateTransformator.getTimeString(searchMessageData.getCreatedAt()));
@@ -94,7 +119,9 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
         long roomId = searchMessageData.getRoomId();
 
         if (teamInfoLoader.isChat(roomId)) {
-            tvRoomName.setText("1:1");
+            String companionName =
+                    teamInfoLoader.getMemberName(teamInfoLoader.getChat(roomId).getCompanionId());
+            tvRoomName.setText(companionName);
         } else if (teamInfoLoader.isTopic(roomId)) {
             tvRoomName.setText(teamInfoLoader.getTopic(roomId).getName());
         }
@@ -118,6 +145,14 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
                         .getDrawable(R.drawable.account_icon_poll));
                 tvSharedItemTitle.setText(searchMessageData.getPoll().getSubject());
             }
+        }
+
+        if (searchMessageData.hasHalfLine()) {
+            vFullDivider.setVisibility(View.GONE);
+            vHalfDivider.setVisibility(View.VISIBLE);
+        } else {
+            vFullDivider.setVisibility(View.VISIBLE);
+            vHalfDivider.setVisibility(View.GONE);
         }
 
         mesureRoomInfoArea();

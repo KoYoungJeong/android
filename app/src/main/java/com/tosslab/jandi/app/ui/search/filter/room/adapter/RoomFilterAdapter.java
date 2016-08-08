@@ -111,7 +111,7 @@ public class RoomFilterAdapter extends MultiItemRecyclerAdapter
                     if (rows.size() > 0) {
                         int height = (int) UiUtils.getPixelFromDp(1);
                         int color = JandiApplication.getContext()
-                                .getResources().getColor(R.color.rgb_d9d9d9);
+                                .getResources().getColor(R.color.rgb_eeeeee);
 
                         DividerViewHolder.Info dividerInfo =
                                 DividerViewHolder.Info.create(height, color);
@@ -127,7 +127,7 @@ public class RoomFilterAdapter extends MultiItemRecyclerAdapter
                         () -> {
                             int height = (int) UiUtils.getPixelFromDp(1);
                             int color = JandiApplication.getContext()
-                                    .getResources().getColor(R.color.rgb_d9d9d9);
+                                    .getResources().getColor(R.color.rgb_eeeeee);
 
                             DividerViewHolder.Info dividerInfo =
                                     DividerViewHolder.Info.create(height, color);

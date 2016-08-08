@@ -11,7 +11,7 @@
         android:layout_height="24dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="32dp"/>
+        android:layout_marginRight="16dp" />
 
     <TextView
         android:id="@+id/tv_room_filter_topic_name"
@@ -25,7 +25,7 @@
         android:singleLine="true"
         android:text="sdkfjhlkajsf"
         android:textColor="@color/jandi_text_selector"
-        android:textSize="@dimen/jandi_text_size_large"/>
+        android:textSize="@dimen/jandi_text_size_large" />
 
     <ImageView
         android:id="@+id/iv_room_filter_topic_name_line_through"
@@ -36,13 +36,13 @@
         android:layout_alignRight="@+id/tv_room_filter_topic_name"
         android:layout_alignTop="@+id/tv_room_filter_topic_name"
         android:src="@drawable/line_black"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <View
         android:id="@+id/v_room_filter_topic_disabled"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#66ffffff"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </RelativeLayout>

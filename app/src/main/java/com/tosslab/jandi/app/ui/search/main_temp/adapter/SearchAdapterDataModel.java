@@ -24,4 +24,6 @@ public interface SearchAdapterDataModel {
     void setSearchHistoryDatas(List<SearchHistoryData> searchHistoryDatas);
 
     boolean isHistoryMode();
+
+    void setLoading(boolean loading);
 }

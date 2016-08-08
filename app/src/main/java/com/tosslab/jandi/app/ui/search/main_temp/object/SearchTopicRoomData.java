@@ -13,6 +13,7 @@ public class SearchTopicRoomData extends SearchData {
     private boolean isJoined;
     private boolean isStarred;
     private String keyword;
+    private boolean hasHalfLine;
 
     private SearchTopicRoomData() {
     }
@@ -21,32 +22,72 @@ public class SearchTopicRoomData extends SearchData {
         return topicId;
     }
 
+    public void setTopicId(long topicId) {
+        this.topicId = topicId;
+    }
+
     public boolean isPublic() {
         return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 
     public String getTitle() {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public long getMemberCnt() {
         return memberCnt;
+    }
+
+    public void setMemberCnt(long memberCnt) {
+        this.memberCnt = memberCnt;
     }
 
     public String getDescription() {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public boolean isJoined() {
         return isJoined;
+    }
+
+    public void setJoined(boolean joined) {
+        isJoined = joined;
     }
 
     public boolean isStarred() {
         return isStarred;
     }
 
+    public void setStarred(boolean starred) {
+        isStarred = starred;
+    }
+
     public String getKeyword() {
         return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public boolean hasHalfLine() {
+        return hasHalfLine;
+    }
+
+    public void setHasHalfLine(boolean hasHalfLine) {
+        this.hasHalfLine = hasHalfLine;
     }
 
     public static class Builder {
@@ -94,6 +135,11 @@ public class SearchTopicRoomData extends SearchData {
 
         public Builder setKeyword(String keyword) {
             searchTopicRoomData.keyword = keyword;
+            return this;
+        }
+
+        public Builder setHasHalfLine(boolean hasHalfLine) {
+            searchTopicRoomData.hasHalfLine = hasHalfLine;
             return this;
         }
 

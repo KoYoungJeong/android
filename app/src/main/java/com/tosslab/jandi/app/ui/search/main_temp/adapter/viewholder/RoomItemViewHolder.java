@@ -110,6 +110,13 @@ public class RoomItemViewHolder extends BaseViewHolder<SearchData> {
         itemView.setOnClickListener(v ->
                 onClickTopicListener.onClickJoinedTopic(searchTopicRoomData.getTopicId(),
                         searchTopicRoomData.isJoined()));
+        if (searchTopicRoomData.hasHalfLine()) {
+            vFullDivider.setVisibility(View.GONE);
+            vHalfDivider.setVisibility(View.VISIBLE);
+        } else {
+            vFullDivider.setVisibility(View.VISIBLE);
+            vHalfDivider.setVisibility(View.GONE);
+        }
     }
 
     public void setOnClickTopicListener(OnClickTopicListener onClickJoinedTopic) {

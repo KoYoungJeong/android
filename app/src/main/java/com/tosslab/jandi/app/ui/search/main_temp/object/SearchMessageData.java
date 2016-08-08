@@ -21,6 +21,7 @@ public class SearchMessageData extends SearchData {
     private ResSearch.Poll poll;
     private ResSearch.File file;
     private String[] tokens;
+    private boolean hasHalfLine;
     private List<MentionObject> mentions;
 
     private SearchMessageData() {
@@ -30,44 +31,96 @@ public class SearchMessageData extends SearchData {
         return roomId;
     }
 
+    public void setRoomId(long roomId) {
+        this.roomId = roomId;
+    }
+
     public long getLinkId() {
         return linkId;
+    }
+
+    public void setLinkId(long linkId) {
+        this.linkId = linkId;
     }
 
     public long getMessageId() {
         return messageId;
     }
 
+    public void setMessageId(long messageId) {
+        this.messageId = messageId;
+    }
+
     public long getWriterId() {
         return writerId;
+    }
+
+    public void setWriterId(long writerId) {
+        this.writerId = writerId;
     }
 
     public String getText() {
         return text;
     }
 
+    public void setText(String text) {
+        this.text = text;
+    }
+
     public Date getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getFeedbackType() {
         return feedbackType;
     }
 
+    public void setFeedbackType(String feedbackType) {
+        this.feedbackType = feedbackType;
+    }
+
     public List<MentionObject> getMentions() {
         return mentions;
+    }
+
+    public void setMentions(List<MentionObject> mentions) {
+        this.mentions = mentions;
     }
 
     public String[] getTokens() {
         return tokens;
     }
 
+    public void setTokens(String[] tokens) {
+        this.tokens = tokens;
+    }
+
     public ResSearch.Poll getPoll() {
         return poll;
     }
 
+    public void setPoll(ResSearch.Poll poll) {
+        this.poll = poll;
+    }
+
     public ResSearch.File getFile() {
         return file;
+    }
+
+    public void setFile(ResSearch.File file) {
+        this.file = file;
+    }
+
+    public boolean hasHalfLine() {
+        return hasHalfLine;
+    }
+
+    public void setHasHalfLine(boolean hasHalfLine) {
+        this.hasHalfLine = hasHalfLine;
     }
 
     public static class Builder {
@@ -134,6 +187,10 @@ public class SearchMessageData extends SearchData {
             return this;
         }
 
+        public Builder setHasHalfLine(boolean hasHalfLine) {
+            searchMessageData.hasHalfLine = hasHalfLine;
+            return this;
+        }
 
         public SearchMessageData build() {
             return searchMessageData;
