@@ -1,7 +1,8 @@
 package com.tosslab.jandi.app.ui.carousel.model;
 
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.network.client.file.FileApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -9,13 +10,8 @@ import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.EBean;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import dagger.Lazy;
 import rx.Observable;
@@ -23,31 +19,54 @@ import rx.Observable;
 /**
  * Created by Bill MinWook Heo on 15. 6. 23..
  */
-@EBean
 public class CarouselViewerModel {
 
-    @Inject
-    Lazy<FileApi> fileApi;
+    private final Lazy<FileApi> fileApi;
 
-    @AfterInject
-    void initObject() {
-        DaggerApiClientComponent.create().inject(this);
+    public CarouselViewerModel(Lazy<FileApi> fileApi) {
+        this.fileApi = fileApi;
     }
 
-    public List<ResMessages.FileMessage> searchInitFileList(long teamId, long roomId, long messageId)
-            throws RetrofitException {
-        return fileApi.get().searchInitImageFile(teamId, roomId,
-                messageId, 20);
+    public Observable<List<ResMessages.FileMessage>> getImageFileListObservable(
+            long teamId, long roomId, long messageId) {
+        return Observable.create(subscriber -> {
+            try {
+                List<ResMessages.FileMessage> fileMessages = fileApi.get()
+                        .searchInitImageFile(teamId, roomId, messageId, 20);
+                subscriber.onNext(fileMessages);
+            } catch (RetrofitException e) {
+                subscriber.onError(e);
+            }
+            subscriber.onCompleted();
+        });
     }
 
-    public List<ResMessages.FileMessage> searchBeforeFileList(long teamId, long roomId, long fileLinkId, int count) throws RetrofitException {
-        return fileApi.get().searchOldImageFile(teamId, roomId,
-                fileLinkId, count);
+    public Observable<List<ResMessages.FileMessage>> getBeforeImageFileListObservable(
+            long teamId, long roomId, long fileLinkId, int count) {
+        return Observable.create(subscriber -> {
+            try {
+                List<ResMessages.FileMessage> fileMessages = fileApi.get()
+                        .searchOldImageFile(teamId, roomId, fileLinkId, count);
+                subscriber.onNext(fileMessages);
+            } catch (RetrofitException e) {
+                subscriber.onError(e);
+            }
+            subscriber.onCompleted();
+        });
     }
 
-    public List<ResMessages.FileMessage> searchAfterFileList(long teamId, long roomId, long fileLinkId, int count) throws RetrofitException {
-        return fileApi.get().searchNewImageFile(teamId, roomId,
-                fileLinkId, count);
+    public Observable<List<ResMessages.FileMessage>> getAfterImageFileListObservable(
+            long teamId, long roomId, long fileLinkId, int count) {
+        return Observable.create(subscriber -> {
+            try {
+                List<ResMessages.FileMessage> fileMessages = fileApi.get()
+                        .searchNewImageFile(teamId, roomId, fileLinkId, count);
+                subscriber.onNext(fileMessages);
+            } catch (RetrofitException e) {
+                subscriber.onError(e);
+            }
+            subscriber.onCompleted();
+        });
     }
 
     public List<CarouselFileInfo> getImageFileConvert(final long entityId,
@@ -57,7 +76,7 @@ public class CarouselViewerModel {
         Observable.from(fileMessages)
                 .map(fileMessage -> new CarouselFileInfo.Builder()
                         .entityId(entityId)
-                        .fileLinkId(fileMessage.id)
+                        .fileMessageId(fileMessage.id)
                         .fileName(fileMessage.content.name)
                         .fileType(fileMessage.content.type)
                         .fileLinkUrl(ImageUtil.getImageFileUrl(fileMessage.content.fileUrl))
@@ -66,7 +85,13 @@ public class CarouselViewerModel {
                         .ext(fileMessage.content.ext)
                         .size(fileMessage.content.size)
                         .fileCreateTime(DateTransformator.getTimeString(fileMessage.createTime))
-                        .fileWriter(TeamInfoLoader.getInstance().getMemberName(fileMessage.writerId))
+                        .fileWriterId(fileMessage.writerId)
+                        .fileWriterName(TeamInfoLoader.getInstance().getMemberName(fileMessage.writerId))
+                        .fileCommentCount(fileMessage.commentCount)
+                        .isStarred(fileMessage.isStarred)
+                        .isExternalShared(fileMessage.content.externalShared)
+                        .externalCode(fileMessage.content.externalCode)
+                        .sharedEntities(fileMessage.shareEntities)
                         .create()).collect(() -> fileInfos, List::add)
                 .subscribe();
 
@@ -81,12 +106,17 @@ public class CarouselViewerModel {
 
         CarouselFileInfo defaultValue = new CarouselFileInfo.Builder().create();
         CarouselFileInfo startFile = Observable.from(imageFiles)
-                .filter(carouselFileInfo -> carouselFileInfo.getFileLinkId() == fileId)
+                .filter(carouselFileInfo -> carouselFileInfo.getFileMessageId() == fileId)
                 .firstOrDefault(defaultValue)
                 .toBlocking()
                 .first();
 
         return imageFiles.indexOf(startFile);
 
+    }
+
+    public boolean isFileFromGoogleOrDropbox(String serverUrl) {
+        return TextUtils.equals(serverUrl, "google")
+                || TextUtils.equals(serverUrl, "dropbox");
     }
 }

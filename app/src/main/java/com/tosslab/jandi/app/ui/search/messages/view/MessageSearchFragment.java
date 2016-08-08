@@ -265,7 +265,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
         roomSelector.setOnRoomSelectListener(item -> {
             if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
-                EventBus.getDefault().post(new SelectEntityEvent(-1, getString(R.string.jandi_file_category_everywhere)));
+                EventBus.getDefault().post(new SelectEntityEvent(-1, getString(R.string.jandi_search_category_everywhere)));
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.ChooseTopicFilter, AnalyticsValue.Label.AllTopic);
             } else {
                 EventBus.getDefault().post(new SelectEntityEvent(item.getEntityId(), item.getName()));
@@ -297,7 +297,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         UserSelector userSelector = new UserSelectorImpl();
         userSelector.setOnUserSelectListener(item -> {
             if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
-                EventBus.getDefault().post(new SelectMemberEvent(-1, getString(R.string.jandi_file_category_everyone)));
+                EventBus.getDefault().post(new SelectMemberEvent(-1, getString(R.string.jandi_search_category_everyone)));
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.ChooseMemberFilter, AnalyticsValue.Label.AllMember);
             } else {
                 EventBus.getDefault().post(new SelectMemberEvent(item.getEntityId(), item.getName()));

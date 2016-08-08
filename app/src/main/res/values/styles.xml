@@ -473,15 +473,9 @@
 
     <style name="ImageCarousel.Title"
         parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/jandi_text_white</item>
-        <item name="android:textSize">19sp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="ImageCarousel.SubTitle"
-        parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
-        <item name="android:textColor">@color/jandi_carousel_file_size_ext_create_time</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">17sp</item>
     </style>
 
     <style name="JandiTopicDetail"/>

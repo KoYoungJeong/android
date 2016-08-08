@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,9 +42,11 @@ import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl_;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
@@ -62,6 +65,7 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
@@ -249,7 +253,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         SearchedFilesAdapter searchedFilesAdapter = new SearchedFilesAdapter();
         lvSearchFiles.setAdapter(searchedFilesAdapter);
         searchedFilesAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
-            moveToFileDetailActivity((searchedFilesAdapter.getItem(position).id));
+            moveToFileDetailActivity((searchedFilesAdapter.getItem(position)));
 
             if (onSearchItemSelect != null) {
                 onSearchItemSelect.onSearchItemSelect();
@@ -274,12 +278,17 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         fileListPresenter.setSearchedFilesAdapterModel(searchedFilesAdapter);
     }
 
-    private void moveToFileDetailActivity(long fileId) {
-        FileDetailActivity_
-                .intent(this)
-                .fileId(fileId)
-                .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
-        getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+    private void moveToFileDetailActivity(ResMessages.FileMessage fileMessage) {
+        if (fileMessage.content.type.startsWith("image")) {
+            Intent intent = CarouselViewerActivity.getImageViewerIntent(getActivity(), fileMessage);
+            startActivityForResult(intent, JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+        } else {
+            FileDetailActivity_
+                    .intent(this)
+                    .fileId(fileMessage.id)
+                    .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+            getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+        }
     }
 
     @Override

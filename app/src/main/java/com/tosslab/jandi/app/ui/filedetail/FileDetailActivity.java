@@ -62,14 +62,12 @@ import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
-import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 import com.tosslab.jandi.app.ui.filedetail.adapter.FileDetailAdapter;
-import com.tosslab.jandi.app.ui.filedetail.adapter.viewholder.NormalFileViewHolder;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity_;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
@@ -86,7 +84,6 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.views.BackPressCatchEditText;
@@ -729,28 +726,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewFile);
     }
 
-    public void onImageFileClick(long fileMessageId, ResMessages.FileContent content,
+    public void onImageFileClick(long fileMessageId, ResMessages.FileMessage fileMessage,
                                  boolean shouldOpenImmediately) {
         if (roomId > 0) {
-            CarouselViewerActivity_.intent(this)
-                    .mode(CarouselViewerActivity.CAROUSEL_MODE)
-                    .roomId(roomId)
-                    .startLinkId(fileMessageId)
-                    .imageOriginUrl(shouldOpenImmediately ? content.fileUrl : "")
-                    .shouldOpenImmediately(shouldOpenImmediately)
-                    .startForResult(REQUEST_CODE_RETURN_FILE_ID);
+            Intent intent = CarouselViewerActivity.getCarouselViewerIntent(
+                    this, fileMessage.id, roomId);
+            startActivityForResult(intent, JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         } else {
-            String thumbUrl = ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.THUMB);
-            CarouselViewerActivity_.intent(this)
-                    .mode(CarouselViewerActivity.SINGLE_IMAGE_MODE)
-                    .imageExt(content.ext)
-                    .imageOriginUrl(content.fileUrl)
-                    .imageThumbUrl(thumbUrl)
-                    .imageType(content.type)
-                    .imageName(content.name)
-                    .imageSize(content.size)
-                    .shouldOpenImmediately(shouldOpenImmediately)
-                    .start();
+            Intent intent = CarouselViewerActivity.getImageViewerIntent(this, fileMessage);
+            startActivityForResult(intent, REQUEST_CODE_RETURN_FILE_ID);
         }
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewPhoto);

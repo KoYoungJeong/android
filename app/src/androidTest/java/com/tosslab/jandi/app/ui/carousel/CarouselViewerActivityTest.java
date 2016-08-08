@@ -5,16 +5,14 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
-import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
-import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel_;
+import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -41,7 +39,7 @@ import static org.hamcrest.core.Is.is;
 public class CarouselViewerActivityTest {
 
     @Rule
-    public IntentsTestRule<CarouselViewerActivity_> rule = new IntentsTestRule<>(CarouselViewerActivity_.class, false, false);
+    public IntentsTestRule<CarouselViewerActivity> rule = new IntentsTestRule<>(CarouselViewerActivity.class, false, false);
     private long latestFileId;
     private long teamId;
     private long roomId;
@@ -66,7 +64,7 @@ public class CarouselViewerActivityTest {
 
         Intent startIntent = new Intent();
         startIntent.putExtra("roomId", roomId);
-        startIntent.putExtra("startLinkId", latestFileId);
+        startIntent.putExtra("startMessageId", latestFileId);
         rule.launchActivity(startIntent);
         activity = rule.getActivity();
 
@@ -88,9 +86,9 @@ public class CarouselViewerActivityTest {
     }
 
     private List<CarouselFileInfo> getCarousel() throws RetrofitException {
-        CarouselViewerModel_ carouselViewerModel = CarouselViewerModel_.getInstance_(JandiApplication.getContext());
-        List<ResMessages.FileMessage> fileMessages = carouselViewerModel.searchInitFileList(teamId, roomId, latestFileId);
-        return carouselViewerModel.getImageFileConvert(roomId, fileMessages);
+        CarouselViewerModel carouselViewerModel = new CarouselViewerModel(null);
+        carouselViewerModel.getImageFileListObservable(teamId, roomId, latestFileId);
+        return carouselViewerModel.getImageFileConvert(roomId, null);
     }
 
     @Test
@@ -128,14 +126,10 @@ public class CarouselViewerActivityTest {
     @Test
     public void testSetActionbarTitle() throws Throwable {
         String fileName = "1111";
-        String size = "1kb";
-        String xls = "xls";
-        rule.runOnUiThread(() -> activity.setActionbarTitle(fileName, size, xls));
+        rule.runOnUiThread(() -> activity.setFileTitle(fileName));
 
 
         onView(withText(fileName))
-                .check(matches(isDisplayed()));
-        onView(withText(size + ", " + xls))
                 .check(matches(isDisplayed()));
     }
 

@@ -112,12 +112,12 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (from == FROM_ROOM_SELECTOR) {
                 ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 ImageLoader.loadFromResources(ivIcon, R.drawable.icon_search_all_rooms);
-                roomholder.tvName.setText(R.string.jandi_file_category_everywhere);
+                roomholder.tvName.setText(R.string.jandi_search_category_everywhere);
             } else {
                 ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 ImageLoader.loadFromResources(ivIcon, R.drawable.icon_search_all_members);
 
-                roomholder.tvName.setText(R.string.jandi_file_category_everyone);
+                roomholder.tvName.setText(R.string.jandi_search_category_everyone);
             }
 
         } else if (item.isUser()) {

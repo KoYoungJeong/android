@@ -373,7 +373,8 @@ public class ResMessages {
         @Override
         public String toString() {
             return "FileMessage{" +
-                    "shareEntities=" + shareEntities +
+                    super.toString() +
+                    ", shareEntities=" + shareEntities +
                     ", content=" + content +
                     ", commentCount=" + commentCount +
                     '}';

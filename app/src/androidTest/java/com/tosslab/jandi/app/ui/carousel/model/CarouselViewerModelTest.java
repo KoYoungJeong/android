@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.carousel.model;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -20,6 +19,8 @@ import org.junit.runner.RunWith;
 
 import java.util.List;
 
+import rx.Observable;
+import rx.observers.TestSubscriber;
 import setup.BaseInitUtil;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -48,7 +49,7 @@ public class CarouselViewerModelTest {
 
     @Before
     public void setUp() throws Exception {
-        model = CarouselViewerModel_.getInstance_(JandiApplication.getContext());
+        model = new CarouselViewerModel(() -> new FileApi(RetrofitBuilder.getInstance()));
         teamId = AccountRepository.getRepository().getSelectedTeamId();
         roomId = TeamInfoLoader.getInstance().getDefaultTopicId();
         lastImageMessageId = getLatestFileId();
@@ -71,61 +72,119 @@ public class CarouselViewerModelTest {
     @Test
     public void testSearchInitFileList() throws Exception {
         {
-            List<ResMessages.FileMessage> fileMessages = model.searchInitFileList(teamId, roomId, lastImageMessageId);
+            Observable<List<ResMessages.FileMessage>> imageFileListObservable =
+                    model.getImageFileListObservable(teamId, roomId, lastImageMessageId);
+            TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
+            imageFileListObservable.subscribe(testSubscriber);
+
+            testSubscriber.assertNoErrors();
+            testSubscriber.assertCompleted();
+
+            List<ResMessages.FileMessage> fileMessages = testSubscriber.getOnNextEvents().get(0);
             assertThat(fileMessages.size(), is(greaterThan(0)));
         }
 
         {
-            try {
-                model.searchInitFileList(teamId, roomId, -1);
-                fail("성공할리가..");
-            } catch (RetrofitException retrofitError) {
-                System.out.println(retrofitError.getRawBody());
-            }
-            try {
-                model.searchInitFileList(teamId, -1, lastImageMessageId);
-                fail("성공 할 수 없음..");
-            } catch (RetrofitException retrofitError) {
-                System.out.println(retrofitError.getRawBody());
-            }
-            try {
-                model.searchInitFileList(-1, roomId, lastImageMessageId);
-                fail("성공 할 수 없음..");
-            } catch (RetrofitException retrofitError) {
-                System.out.println(retrofitError.getRawBody());
-            }
+            Observable<List<ResMessages.FileMessage>> imageFileListObservable =
+                    model.getImageFileListObservable(teamId, roomId, -1);
+            TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
+            imageFileListObservable.subscribe(testSubscriber);
+
+            testSubscriber.assertNoErrors();
+            testSubscriber.assertCompleted();
+
+            fail("성공할리가..");
+        }
+
+        {
+            Observable<List<ResMessages.FileMessage>> imageFileListObservable =
+                    model.getImageFileListObservable(teamId, -1, lastImageMessageId);
+            TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
+            imageFileListObservable.subscribe(testSubscriber);
+
+            testSubscriber.assertNoErrors();
+            testSubscriber.assertCompleted();
+            fail("성공 할 수 없음..");
+        }
+
+        {
+            Observable<List<ResMessages.FileMessage>> imageFileListObservable =
+                    model.getImageFileListObservable(-1, roomId, lastImageMessageId);
+            TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
+            imageFileListObservable.subscribe(testSubscriber);
+
+            testSubscriber.assertNoErrors();
+            testSubscriber.assertCompleted();
+            fail("성공 할 수 없음..");
         }
     }
 
     @Test
     public void testSearchBeforeFileList() throws Exception {
         {
-            List<ResMessages.FileMessage> fileMessages = model.searchBeforeFileList(teamId, roomId, lastImageMessageId, 1);
-            assertThat(fileMessages.size(), is(equalTo(1)));
+            Observable<List<ResMessages.FileMessage>> imageFileListObservable =
+                    model.getBeforeImageFileListObservable(teamId, roomId, lastImageMessageId, 1);
+
+            TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
+            imageFileListObservable.subscribe(testSubscriber);
+
+            testSubscriber.assertNoErrors();
+            testSubscriber.assertCompleted();
+
+            List<ResMessages.FileMessage> fileMessages = testSubscriber.getOnNextEvents().get(0);
+            assertThat(fileMessages.size(), is(greaterThan(0)));
         }
 
         {
-            try {
-                model.searchBeforeFileList(teamId, roomId, -1, 1);
-                fail("성공할리가..");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                model.searchBeforeFileList(teamId, -1, lastImageMessageId, 1);
-                fail("성공할리가..");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                model.searchBeforeFileList(-1, roomId, lastImageMessageId, 1);
-                fail("성공할리가..");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            Observable<List<ResMessages.FileMessage>> imageFileListObservable =
+                    model.getBeforeImageFileListObservable(teamId, roomId, -1, 1);
+
+            TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
+            imageFileListObservable.subscribe(testSubscriber);
+
+            testSubscriber.assertNoErrors();
+            testSubscriber.assertCompleted();
+
+            fail("성공할리가..");
         }
+
         {
-            List<ResMessages.FileMessage> fileMessages = model.searchBeforeFileList(teamId, roomId, lastImageMessageId, 0);
+            Observable<List<ResMessages.FileMessage>> imageFileListObservable =
+                    model.getBeforeImageFileListObservable(teamId, -1, lastImageMessageId, 1);
+
+            TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
+            imageFileListObservable.subscribe(testSubscriber);
+
+            testSubscriber.assertNoErrors();
+            testSubscriber.assertCompleted();
+
+            fail("성공할리가..");
+        }
+
+        {
+            Observable<List<ResMessages.FileMessage>> imageFileListObservable =
+                    model.getBeforeImageFileListObservable(-1, roomId, lastImageMessageId, 1);
+
+            TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
+            imageFileListObservable.subscribe(testSubscriber);
+
+            testSubscriber.assertNoErrors();
+            testSubscriber.assertCompleted();
+
+            fail("성공할리가..");
+        }
+
+        {
+            Observable<List<ResMessages.FileMessage>> imageFileListObservable =
+                    model.getBeforeImageFileListObservable(teamId, roomId, lastImageMessageId, 0);
+
+            TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
+            imageFileListObservable.subscribe(testSubscriber);
+
+            testSubscriber.assertNoErrors();
+            testSubscriber.assertCompleted();
+
+            List<ResMessages.FileMessage> fileMessages = testSubscriber.getOnNextEvents().get(0);
             assertThat(fileMessages.size(), is(greaterThan(0)));
         }
     }
@@ -133,35 +192,72 @@ public class CarouselViewerModelTest {
     @Test
     public void testSearchAfterFileList() throws Exception {
         {
-            List<ResMessages.FileMessage> fileMessages = model.searchAfterFileList(teamId, roomId, lastImageMessageId, 1);
+            Observable<List<ResMessages.FileMessage>> imageFileListObservable =
+                    model.getAfterImageFileListObservable(teamId, roomId, lastImageMessageId, 1);
+
+            TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
+            imageFileListObservable.subscribe(testSubscriber);
+
+            testSubscriber.assertNoErrors();
+            testSubscriber.assertCompleted();
+
+            List<ResMessages.FileMessage> fileMessages = testSubscriber.getOnNextEvents().get(0);
             assertThat(fileMessages.size(), is(equalTo(0)));
         }
 
         {
-            try {
-                model.searchAfterFileList(teamId, roomId, -1, 1);
-                fail("성공하면 안됨..ㅠㅠ");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                model.searchAfterFileList(teamId, -1, lastImageMessageId, 1);
-                fail("성공하면 안됨..ㅠㅠ");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                model.searchAfterFileList(-1, roomId, lastImageMessageId, 1);
-                fail("성공하면 안됨..ㅠㅠ");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            Observable<List<ResMessages.FileMessage>> imageFileListObservable =
+                    model.getAfterImageFileListObservable(teamId, roomId, -1, 1);
+
+            TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
+            imageFileListObservable.subscribe(testSubscriber);
+
+            testSubscriber.assertNoErrors();
+            testSubscriber.assertCompleted();
+
+            fail("성공하면 안됨..ㅠㅠ");
+        }
+
+        {
+            Observable<List<ResMessages.FileMessage>> imageFileListObservable =
+                    model.getAfterImageFileListObservable(teamId, -1, lastImageMessageId, 1);
+
+            TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
+            imageFileListObservable.subscribe(testSubscriber);
+
+            testSubscriber.assertNoErrors();
+            testSubscriber.assertCompleted();
+
+            fail("성공하면 안됨..ㅠㅠ");
+        }
+
+        {
+            Observable<List<ResMessages.FileMessage>> imageFileListObservable =
+                    model.getAfterImageFileListObservable(-1, roomId, lastImageMessageId, 1);
+
+            TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
+            imageFileListObservable.subscribe(testSubscriber);
+
+            testSubscriber.assertNoErrors();
+            testSubscriber.assertCompleted();
+
+            fail("성공하면 안됨..ㅠㅠ");
         }
     }
 
     @Test
     public void testGetImageFileConvert() throws Exception {
-        List<ResMessages.FileMessage> fileMessages = model.searchInitFileList(teamId, roomId, lastImageMessageId);
+        Observable<List<ResMessages.FileMessage>> imageFileListObservable =
+                model.getImageFileListObservable(teamId, roomId, lastImageMessageId);
+        TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
+        imageFileListObservable.subscribe(testSubscriber);
+
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertCompleted();
+
+        List<ResMessages.FileMessage> fileMessages = testSubscriber.getOnNextEvents().get(0);
+        assertThat(fileMessages.size(), is(greaterThan(0)));
+
         List<CarouselFileInfo> imageFileConvert = model.getImageFileConvert(roomId, fileMessages);
 
         assertThat(imageFileConvert.size(), is(equalTo(fileMessages.size())));
@@ -172,11 +268,11 @@ public class CarouselViewerModelTest {
 
             assertThat(carouselFileInfo.getExt(), is(equalTo(fileMessage.content.ext)));
             assertThat(carouselFileInfo.getEntityId(), is(equalTo(roomId)));
-            assertThat(carouselFileInfo.getFileLinkId(), is(equalTo(fileMessage.id)));
+            assertThat(carouselFileInfo.getFileMessageId(), is(equalTo(fileMessage.id)));
             assertThat(carouselFileInfo.getFileName(), is(equalTo(fileMessage.content.name)));
             assertThat(carouselFileInfo.getFileLinkUrl(), is(equalTo(fileMessage.content.fileUrl)));
             assertThat(carouselFileInfo.getFileType(), is(equalTo(fileMessage.content.type)));
-            assertThat(carouselFileInfo.getFileWriter(), is(equalTo(TeamInfoLoader.getInstance().getMemberName(fileMessage.writerId))));
+            assertThat(carouselFileInfo.getFileWriterName(), is(equalTo(TeamInfoLoader.getInstance().getMemberName(fileMessage.writerId))));
             assertThat(carouselFileInfo.getSize(), is(equalTo(fileMessage.content.size)));
         }
     }
@@ -189,7 +285,17 @@ public class CarouselViewerModelTest {
 
     @Test
     public void testFindLinkPosition() throws Exception {
-        List<ResMessages.FileMessage> fileMessages = model.searchInitFileList(teamId, roomId, lastImageMessageId);
+        Observable<List<ResMessages.FileMessage>> imageFileListObservable =
+                model.getImageFileListObservable(teamId, roomId, lastImageMessageId);
+        TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
+        imageFileListObservable.subscribe(testSubscriber);
+
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertCompleted();
+
+        List<ResMessages.FileMessage> fileMessages = testSubscriber.getOnNextEvents().get(0);
+        assertThat(fileMessages.size(), is(greaterThan(0)));
+
         List<CarouselFileInfo> imageFileConvert = model.getImageFileConvert(roomId, fileMessages);
         int linkPosition = model.findLinkPosition(imageFileConvert, lastImageMessageId);
 

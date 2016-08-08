@@ -76,7 +76,7 @@ public class SearchSelectorViewController {
     private void setSpinnerByWhom() {
         tvFileListWhom.setText(
                 (currentUserNameText == null || currentUserNameText.equals(""))
-                        ? JandiApplication.getContext().getString(R.string.jandi_file_category_everyone)
+                        ? JandiApplication.getContext().getString(R.string.jandi_search_category_everyone)
                         : currentUserNameText
         );
     }
@@ -84,7 +84,7 @@ public class SearchSelectorViewController {
     private void setSpinnerByWhere() {
         tvFileListWhere.setText(
                 (currentEntityNameText == null || currentEntityNameText.equals(""))
-                        ? JandiApplication.getContext().getString(R.string.jandi_file_category_everywhere)
+                        ? JandiApplication.getContext().getString(R.string.jandi_search_category_everywhere)
                         : currentEntityNameText
         );
     }
@@ -170,7 +170,7 @@ public class SearchSelectorViewController {
         userSelector.setOnUserSelectListener(item -> {
 
             if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
-                currentUserNameText = context.getString(R.string.jandi_file_category_everyone);
+                currentUserNameText = context.getString(R.string.jandi_search_category_everyone);
                 tvFileListWhom.setText(currentUserNameText);
                 EventBus.getDefault().post(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
             } else if (item.getEntityId() == TeamInfoLoader.getInstance().getMyId()) {
@@ -239,7 +239,7 @@ public class SearchSelectorViewController {
             long sharedEntityId = CategorizingAsEntity.EVERYWHERE;
             if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
                 // 첫번째는 "Everywhere"인 더미 entity
-                currentEntityNameText = context.getString(R.string.jandi_file_category_everywhere);
+                currentEntityNameText = context.getString(R.string.jandi_search_category_everywhere);
             } else {
                 sharedEntityId = item.getEntityId();
                 currentEntityNameText = item.getName();

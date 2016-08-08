@@ -37,7 +37,7 @@ public class CarouselViewerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
 
         CarouselFileInfo fileInfo = carouselFileInfos.get(position);
-        long fileLinkId = fileInfo.getFileLinkId();
+        long fileLinkId = fileInfo.getFileMessageId();
 
         Fragment fragment;
 
@@ -45,7 +45,6 @@ public class CarouselViewerAdapter extends FragmentStatePagerAdapter {
             fragment = weakHashMap.get(fileLinkId);
         } else {
             fragment = PhotoViewFragment_.builder()
-                    .fromCarousel(true)
                     .imageType(fileInfo.getFileType())
                     .originalUrl(fileInfo.getFileOriginalUrl())
                     .thumbUrl(fileInfo.getFileThumbUrl())
@@ -90,9 +89,21 @@ public class CarouselViewerAdapter extends FragmentStatePagerAdapter {
         return carouselFileInfos.get(position);
     }
 
+    public List<CarouselFileInfo> getFileInfos() {
+        return carouselFileInfos;
+    }
+
     public void setCarouselImageClickListener(CarouselViewerActivity.OnCarouselImageClickListener
                                                       carouselImageClickListener) {
 
         this.carouselImageClickListener = carouselImageClickListener;
+    }
+
+    public void remove(CarouselFileInfo fileInfo) {
+        try {
+            carouselFileInfos.remove(fileInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
