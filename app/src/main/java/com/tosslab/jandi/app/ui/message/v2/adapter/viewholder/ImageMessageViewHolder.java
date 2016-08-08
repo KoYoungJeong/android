@@ -78,7 +78,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
             vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
             tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
-            vDisableLineThrough = rootView.findViewById(R.id.iv_entity_listitem_line_through);
+            vDisableLineThrough = rootView.findViewById(R.id.iv_name_line_through);
         }
 
         vgFileImageWrapper = rootView.findViewById(R.id.vg_message_photo_wrapper);
@@ -175,9 +175,15 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, icon);
             ivFileImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             ImageLoader.loadFromResources(ivFileImage, mimeTypeIconImage);
+            tvFileSize.setVisibility(View.INVISIBLE);
         } else {
-            String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
-            tvFileSize.setText(fileSize);
+            if (fileContent.size > 0) {
+                String fileSize = FileUtil.formatFileSize(fileContent.size);
+                tvFileSize.setText(fileSize);
+                tvFileSize.setVisibility(View.VISIBLE);
+            } else {
+                tvFileSize.setVisibility(View.INVISIBLE);
+            }
 
             String localFilePath = ImageUtil.getLocalFilePath(fileMessage.id);
             boolean isFromLocalFilePath = !TextUtils.isEmpty(localFilePath);

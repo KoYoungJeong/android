@@ -9,8 +9,6 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.database.DatabaseConsts;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
-import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
-import com.tosslab.jandi.app.utils.KoreanChosungUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,25 +43,35 @@ public class JandiSearchDatabaseManager {
         return jandiDatabaseOpenHelper.getReadableDatabase();
     }
 
-    public long upsertSearchKeyword(SearchKeyword searchKeyword) {
-        if (searchKeyword == null || TextUtils.isEmpty(searchKeyword.getKeyword())) {
+    public long removeItemByKeyword(String searchKeyword) {
+        SQLiteDatabase database = getWriteableDatabase();
+        String where = DatabaseConsts.SearchKeyword.type + " = 0 AND " + DatabaseConsts.SearchKeyword.keyword + " = ?";
+        String[] whereArgs = {searchKeyword};
+        return database.delete(DatabaseConsts.Table.search_keyword.name(), where, whereArgs);
+    }
+
+    public long removeAllItems() {
+        SQLiteDatabase database = getWriteableDatabase();
+        return database.delete(DatabaseConsts.Table.search_keyword.name(), null, null);
+    }
+
+    public long upsertSearchKeyword(String searchKeyword) {
+        if (searchKeyword == null || TextUtils.isEmpty(searchKeyword)) {
             return -1;
         }
 
         SQLiteDatabase database = getWriteableDatabase();
 
-        int type = searchKeyword.getType();
-        String keyword = searchKeyword.getKeyword();
+        String[] selectionArgs = {searchKeyword};
+        String selection = DatabaseConsts.SearchKeyword.type + " = 0 AND " + DatabaseConsts.SearchKeyword.keyword + " = ?";
 
-        String[] selectionArgs = {String.valueOf(type), keyword};
-
-        String selection = DatabaseConsts.SearchKeyword.type + " = ? AND " + DatabaseConsts.SearchKeyword.keyword + " = ?";
         String[] selectionColumns = {DatabaseConsts.SearchKeyword._id.name()};
         Cursor cursor = database.query(DatabaseConsts.Table.search_keyword.name(), selectionColumns, selection, selectionArgs, null, null, null);
+
         try {
             if (cursor != null && cursor.getCount() > 0) {
                 cursor.moveToFirst();
-                return cursor.getLong(0);
+                removeItemByKeyword(searchKeyword);
             }
         } finally {
             closeCursor(cursor);
@@ -71,16 +79,38 @@ public class JandiSearchDatabaseManager {
 
         ContentValues values = new ContentValues();
 
-        values.put(DatabaseConsts.SearchKeyword.type.name(), searchKeyword.getType());
-        values.put(DatabaseConsts.SearchKeyword.keyword.name(), searchKeyword.getKeyword());
-        values.put(DatabaseConsts.SearchKeyword.initSound.name(), KoreanChosungUtil.getInitSound(searchKeyword.getKeyword()));
+        values.put(DatabaseConsts.SearchKeyword.type.name(), 0);
+        values.put(DatabaseConsts.SearchKeyword.keyword.name(), searchKeyword);
 
         return database.insert(DatabaseConsts.Table.search_keyword.name(), null, values);
 
     }
 
-    public List<SearchKeyword> searchKeywords(int type, String keyword) {
-        List<SearchKeyword> searchKeywords = new ArrayList<SearchKeyword>();
+    public List<String> getSearchAllHistory() {
+        List<String> searchKeywords = new ArrayList<>();
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor;
+        String tableName = DatabaseConsts.Table.search_keyword.name();
+        cursor = database.query(tableName, null, null, null, null, null, "_id desc");
+
+        if (cursor == null || cursor.getCount() <= 0) {
+            return searchKeywords;
+        }
+
+        int keywordIdx = cursor.getColumnIndex(DatabaseConsts.SearchKeyword.keyword.name());
+
+        String searchedKeyword;
+
+        while (cursor.moveToNext()) {
+            searchedKeyword = cursor.getString(keywordIdx);
+            searchKeywords.add(searchedKeyword);
+        }
+
+        return searchKeywords;
+    }
+
+    public List<String> getSearchKeywords(String keyword) {
+        List<String> searchKeywords = new ArrayList<>();
         if (TextUtils.isEmpty(keyword)) {
             return searchKeywords;
         }
@@ -90,40 +120,19 @@ public class JandiSearchDatabaseManager {
         Cursor cursor;
 
         String tableName = DatabaseConsts.Table.search_keyword.name();
-        if (KoreanChosungUtil.hasHangul(keyword)) {
-
-            String selection = DatabaseConsts.SearchKeyword.keyword + " LIKE ? OR " + DatabaseConsts.SearchKeyword.initSound + " LIKE ?";
-            String[] selectionArgs = {String.format("%s%s%s", "%", KoreanChosungUtil.replaceChosung(keyword, "%"), "%"), String.format("%s%s%s", "%", KoreanChosungUtil.getInitSound(keyword), "%")};
-            cursor = database.query(tableName, null, selection, selectionArgs, null, null, null);
-
-        } else {
-            String selection = DatabaseConsts.SearchKeyword.keyword + " LIKE ?";
-            String[] selectionArgs = {String.format("%s%s%s", "%", keyword, "%")};
-            cursor = database.query(tableName, null, selection, selectionArgs, null, null, null);
-
-        }
+        String selection = DatabaseConsts.SearchKeyword.keyword + " LIKE ?";
+        String[] selectionArgs = {String.format("%s%s%s", "%", keyword, "%")};
+        cursor = database.query(tableName, null, selection, selectionArgs, null, null, null);
 
         if (cursor == null || cursor.getCount() <= 0) {
             return searchKeywords;
         }
 
-        int idIdx = cursor.getColumnIndex(DatabaseConsts.SearchKeyword._id.name());
         int keywordIdx = cursor.getColumnIndex(DatabaseConsts.SearchKeyword.keyword.name());
-        int initSoundIdx = cursor.getColumnIndex(DatabaseConsts.SearchKeyword.initSound.name());
-
-        long id;
-        String searchedKeyword;
-        String initSound;
 
         while (cursor.moveToNext()) {
-
-            id = cursor.getLong(idIdx);
-            searchedKeyword = cursor.getString(keywordIdx);
-            initSound = cursor.getString(initSoundIdx);
-
-            SearchKeyword searchKeyword = new SearchKeyword(id, type, searchedKeyword, initSound);
-
-            searchKeywords.add(searchKeyword);
+            String searchedKeyword = cursor.getString(keywordIdx);
+            searchKeywords.add(searchedKeyword);
         }
 
         closeCursor(cursor);

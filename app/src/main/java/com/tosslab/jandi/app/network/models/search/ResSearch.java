@@ -33,7 +33,7 @@ public class ResSearch {
 
     private List<SearchRecord> records;
 
-    public boolean isHasMore() {
+    public boolean hasMore() {
         return hasMore;
     }
 
@@ -156,7 +156,7 @@ public class ResSearch {
             this.text = text;
         }
 
-        public Date getCreateAt() {
+        public Date getCreatedAt() {
             return createdAt;
         }
 

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="96dp"
-
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
@@ -11,36 +10,43 @@
         android:background="#fffafafa">
 
         <LinearLayout
-            android:id="@+id/vg_room_selection_button"
+            android:id="@+id/vg_room_selection_button_border"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="3.5dp"
             android:layout_marginTop="9dp"
             android:layout_weight="1"
-            android:background="@color/jandi_border_gray">
+            android:background="@color/jandi_border_gray"
+            android:clickable="true">
 
             <LinearLayout
+                android:id="@+id/vg_room_selection_button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="1dp"
                 android:background="@color/jandi_material_grey_50"
                 android:clickable="true"
-                android:gravity="center">
+                android:gravity="center"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
 
                 <TextView
                     android:id="@+id/tv_room_selection_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="All Rooms"
+                    android:layout_marginRight="12dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="@string/jandi_search_all_room"
                     android:textColor="@color/jandi_text_light"
                     android:textSize="12dp" />
 
                 <ImageView
-                    android:id="@+id/iv_room_selection_button_collapse"
+                    android:id="@+id/iv_room_selection_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginLeft="-8dp"
                     android:src="@drawable/filter_collepse" />
 
             </LinearLayout>
@@ -48,36 +54,43 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/vg_member_selection_button"
+            android:id="@+id/vg_member_selection_button_border"
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_marginLeft="3.5dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="9dp"
             android:layout_weight="1"
-            android:background="@color/jandi_border_gray">
+            android:background="@color/jandi_border_gray"
+            android:clickable="true">
 
             <LinearLayout
+                android:id="@+id/vg_member_selection_button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="1dp"
                 android:background="@color/jandi_material_grey_50"
                 android:clickable="true"
-                android:gravity="center">
+                android:gravity="center"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
 
                 <TextView
                     android:id="@+id/tv_member_selection_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="All Members"
+                    android:layout_marginRight="12dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="@string/jandi_search_all_member"
                     android:textColor="@color/jandi_text_light"
                     android:textSize="12dp" />
 
                 <ImageView
-                    android:id="@+id/iv_member_selection_button_collapse"
+                    android:id="@+id/iv_member_selection_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginLeft="-8dp"
                     android:src="@drawable/filter_collepse" />
 
             </LinearLayout>
@@ -86,22 +99,24 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/vg_searched_result_message"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@color/white"
-        android:gravity="center">
+        android:gravity="center"
+        android:visibility="gone">
 
         <ProgressBar
-            android:id="@+id/progress_loading"
+            android:id="@+id/progress_init_loading"
             android:layout_width="@dimen/jandi_progress_size"
             android:layout_height="@dimen/jandi_progress_size"
             android:layout_marginLeft="19dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="-8dp"
             android:indeterminateDrawable="@drawable/progress_animation"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
         <TextView
-            android:id="@+id/tv_search_message"
+            android:id="@+id/tv_searched_result_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"

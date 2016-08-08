@@ -44,7 +44,7 @@ public class SearchPresenterImpl implements SearchPresenter {
 
     @VisibleForTesting
     void onSearchText(String text) {
-        List<SearchKeyword> searchKeywords = searchModel.searchOldQuery(text);
+        List<String> searchKeywords = searchModel.searchOldQuery(text);
         view.setOldQueries(searchKeywords);
     }
 

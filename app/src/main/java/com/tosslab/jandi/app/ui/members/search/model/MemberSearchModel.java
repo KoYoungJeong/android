@@ -28,7 +28,7 @@ public class MemberSearchModel {
     }
 
     public List<User> getSearchedMembers(final String query,
-                                                    List<User> currentMembers) {
+                                         List<User> currentMembers) {
         List<User> searchedMembers = new ArrayList<>();
         if (currentMembers == null || currentMembers.isEmpty()) {
             return searchedMembers;

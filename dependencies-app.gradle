@@ -1,0 +1,128 @@
+rootProject.allprojects { project ->
+    if (project.name == 'app') {
+
+        project.afterEvaluate {
+
+            repositories {
+                jcenter()
+                maven {
+                    url 'https://maven.fabric.io/public'
+                }
+                maven {
+                    url 'http://nx.jandi.io:8081/nexus/content/repositories/thirdparty/'
+                }
+            }
+
+            dependencies {
+
+
+                compile rootProject.ext.dependecies.libraries.sprinklrAndroid
+                compile rootProject.ext.dependecies.libraries.photoView
+                compile rootProject.ext.dependecies.libraries.imageZoomCrop
+
+//    compile project(':sprinkler-android'))
+//    compile project(':photoview-expand'))
+
+                retrolambdaConfig rootProject.ext.dependecies.libraries.retrolambda
+                apt rootProject.ext.dependecies.libraries.androidAnnotationApt
+                compile rootProject.ext.dependecies.libraries.androidAnnotation
+                compile rootProject.ext.dependecies.libraries.butterknife
+
+                apt rootProject.ext.dependecies.libraries.dagger2Apt
+                compile rootProject.ext.dependecies.libraries.dagger2
+                provided rootProject.ext.dependecies.libraries.jsr250
+
+                compile rootProject.ext.dependecies.libraries.dart
+                provided rootProject.ext.dependecies.libraries.dart_processor
+
+                compile rootProject.ext.dependecies.libraries.henson
+                provided rootProject.ext.dependecies.libraries.henson_processor
+
+                compile rootProject.ext.dependecies.libraries.multidex
+                compile fileTree(dir: 'app/libs', include: ['*.jar'])
+
+                // Google
+                compile rootProject.ext.dependecies.libraries.googleAnalytics
+                compile rootProject.ext.dependecies.libraries.gcm
+                compile rootProject.ext.dependecies.libraries.support_appcompat
+                compile rootProject.ext.dependecies.libraries.support_v4
+                compile rootProject.ext.dependecies.libraries.support_v13
+                compile rootProject.ext.dependecies.libraries.support_recyclerview
+                compile rootProject.ext.dependecies.libraries.support_cardview
+                compile rootProject.ext.dependecies.libraries.support_annotation
+                compile rootProject.ext.dependecies.libraries.support_design
+
+                // UI
+                compile rootProject.ext.dependecies.libraries.supertoast
+                compile rootProject.ext.dependecies.libraries.recyclerview_stickyheader
+                compile rootProject.ext.dependecies.libraries.android_crop
+
+                // BadgeCount
+                compile rootProject.ext.dependecies.libraries.shortcutbadger
+                // Boilerplate
+                compile rootProject.ext.dependecies.libraries.eventbus
+                // Network
+                compile(rootProject.ext.dependecies.libraries.socketio) {
+                    exclude group: 'org.json', module: 'json'
+                }
+
+                // Cache
+                compile rootProject.ext.dependecies.libraries.ion
+                // Image
+                compile rootProject.ext.dependecies.libraries.glide_okhttp
+                compile rootProject.ext.dependecies.libraries.glide_transformation
+
+                // Sliqte ORM
+                compile rootProject.ext.dependecies.libraries.ormlite
+
+                // Analytics & report
+                compile rootProject.ext.dependecies.libraries.parse
+                // RxJava
+                compile rootProject.ext.dependecies.libraries.rxandroid
+                compile rootProject.ext.dependecies.libraries.rxjava
+
+                // facebook SDK
+                compile rootProject.ext.dependecies.libraries.facebook
+
+                compile(rootProject.ext.dependecies.libraries.crashlytics) {
+                    transitive = true;
+                }
+
+                // Calendar View
+                compile rootProject.ext.dependecies.libraries.material_calendarview
+
+                // Joda time
+                compile rootProject.ext.dependecies.libraries.joda_time
+
+                // newrelic
+                compile rootProject.ext.dependecies.libraries.newrelic
+
+                // Retrofit
+                compile rootProject.ext.dependecies.libraries.retrofit2
+                compile rootProject.ext.dependecies.libraries.okhttp3
+                compile rootProject.ext.dependecies.libraries.okhttp3_ws
+                compile rootProject.ext.dependecies.libraries.jackson
+                compile rootProject.ext.dependecies.libraries.timehop_stickyheader_recyclerview
+
+                debugCompile rootProject.ext.dependecies.libraries.okhttp3_logging
+
+                debugCompile rootProject.ext.dependecies.libraries.stetho_okhttp3
+
+                // Force usage of support annotations in the test app, since it is internally used by the runner module.
+                androidTestCompile rootProject.ext.dependecies.libraries.testrunner
+                androidTestCompile rootProject.ext.dependecies.libraries.testrule
+                androidTestCompile rootProject.ext.dependecies.libraries.espresso_core
+                androidTestCompile rootProject.ext.dependecies.libraries.espresso_intent
+                androidTestCompile rootProject.ext.dependecies.libraries.dexmaker_mockito
+                androidTestCompile rootProject.ext.dependecies.libraries.dexmaker_dx
+                androidTestCompile rootProject.ext.dependecies.libraries.awaitility
+                androidTestCompile rootProject.ext.dependecies.libraries.assertj_android
+                androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_support
+                androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_appcompat
+                androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_recyclerview
+                androidTestApt rootProject.ext.dependecies.libraries.dagger2Apt
+
+            }
+        }
+    }
+}

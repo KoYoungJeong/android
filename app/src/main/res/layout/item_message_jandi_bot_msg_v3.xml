@@ -43,7 +43,7 @@
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:id="@+id/iv_entity_listitem_line_through"
+                    android:id="@+id/iv_name_line_through"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/tv_message_user_name"
@@ -53,7 +53,7 @@
                     android:src="@drawable/line_gray" />
 
                 <View
-                    android:id="@+id/v_entity_listitem_warning"
+                    android:id="@+id/v_name_warning"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="#99ffffff"

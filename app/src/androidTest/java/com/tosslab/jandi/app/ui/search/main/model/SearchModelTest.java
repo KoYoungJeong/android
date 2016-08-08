@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
+import com.tosslab.jandi.app.local.database.search.JandiSearchDatabaseManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +32,7 @@ public class SearchModelTest {
     public void testSearchOldQuery() throws Exception {
         searchModel.upsertQuery(0, null);
 
-        List<SearchKeyword> searchKeywords = searchModel.searchOldQuery(null);
+        List<String> searchKeywords = searchModel.searchOldQuery(null);
 
         assertTrue(searchKeywords.isEmpty());
     }
@@ -45,13 +45,28 @@ public class SearchModelTest {
         // 중복된 경우 테스트
         searchModel.upsertQuery(0, query);
 
-        List<SearchKeyword> searchKeywords = searchModel.searchOldQuery(query);
+        List<String> searchKeywords = searchModel.searchOldQuery(query);
 
         Log.d("Test", searchKeywords.toString());
 
         assertTrue((!searchKeywords.isEmpty()
                 && searchKeywords.size() == 1
-                && !TextUtils.isEmpty(searchKeywords.get(0).getKeyword())
-                && searchKeywords.get(0).getKeyword().equals(query)));
+                && !TextUtils.isEmpty(searchKeywords.get(0))
+                && searchKeywords.get(0).equals(query)));
     }
+
+    @Test
+    public void testSearchOldAllQuery() throws Exception {
+        searchModel.upsertQuery(0, "abcde");
+        // 중복된 경우 테스트
+        searchModel.upsertQuery(0, "defgh");
+
+        List<String> searchKeywords = JandiSearchDatabaseManager.getInstance(JandiApplication.getContext())
+                .getSearchAllHistory();
+
+        Log.d("text", searchKeywords.toString());
+
+        assertTrue(!searchKeywords.isEmpty());
+    }
+
 }

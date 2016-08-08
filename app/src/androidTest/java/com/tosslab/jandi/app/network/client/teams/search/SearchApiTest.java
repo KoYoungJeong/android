@@ -44,7 +44,7 @@ public class SearchApiTest {
     @Test
     public void testGetSearch() throws Exception {
         ReqSearch reqSearch = new ReqSearch.Builder()
-                .setKeyword("검색")
+                .setKeyword("haha")
                 .build();
 
         ResSearch resSearch = null;

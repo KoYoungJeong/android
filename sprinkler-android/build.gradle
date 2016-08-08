@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.github.dcendents:android-maven-gradle-plugin:${rootProject.ext.androidMavenGradlePlugin}"
+        classpath rootProject.ext.dependecies.buildscripts.android_maven_gradle
     }
 }
 
@@ -49,19 +49,19 @@ dependencies {
         jcenter()
     }
 
-    compile "com.squareup.retrofit2:retrofit:${rootProject.ext.retrofitVersion}"
-    compile "com.squareup.retrofit2:converter-gson:${rootProject.ext.retrofitVersion}"
-    androidTestCompile "com.android.support.test:runner:${rootProject.ext.testRunnerVersion}"
-    androidTestCompile "com.android.support.test:rules:${rootProject.ext.testRunnerVersion}"
-    androidTestCompile "com.android.support.test.espresso:espresso-core:${rootProject.ext.espressoVersion}"
-    androidTestCompile "com.android.support.test.espresso:espresso-intents:${rootProject.ext.espressoVersion}"
-    androidTestCompile "com.crittercism.dexmaker:dexmaker-mockito:${rootProject.ext.dexmakerVersion}"
-    androidTestCompile "com.crittercism.dexmaker:dexmaker-dx:${rootProject.ext.dexmakerVersion}"
-    androidTestCompile "com.jayway.awaitility:awaitility:${rootProject.ext.awaitilityVersion}"
-    androidTestCompile "com.squareup.assertj:assertj-android:${rootProject.ext.assertJAndroidVersion}"
-    androidTestCompile "com.squareup.assertj:assertj-android-support-v4:${rootProject.ext.assertJAndroidVersion}@aar"
-    androidTestCompile "com.squareup.assertj:assertj-android-appcompat-v7:${rootProject.ext.assertJAndroidVersion}@aar"
-    androidTestCompile "com.squareup.assertj:assertj-android-recyclerview-v7:${rootProject.ext.assertJAndroidVersion}@aar"
+    compile rootProject.ext.dependecies.libraries.retrofit2
+    compile rootProject.ext.dependecies.libraries.retrofit2_gson
+    androidTestCompile rootProject.ext.dependecies.libraries.testrunner
+    androidTestCompile rootProject.ext.dependecies.libraries.testrule
+    androidTestCompile rootProject.ext.dependecies.libraries.espresso_core
+    androidTestCompile rootProject.ext.dependecies.libraries.espresso_intent
+    androidTestCompile rootProject.ext.dependecies.libraries.dexmaker_mockito
+    androidTestCompile rootProject.ext.dependecies.libraries.dexmaker_dx
+    androidTestCompile rootProject.ext.dependecies.libraries.awaitility
+    androidTestCompile rootProject.ext.dependecies.libraries.assertj_android
+    androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_support
+    androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_appcompat
+    androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_recyclerview
 
 }
 

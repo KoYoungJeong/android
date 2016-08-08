@@ -19,7 +19,6 @@ public class OfflineLayer {
         this.vgOffline = vgOffline;
     }
 
-    @InterpolatorRes
     public void dismissOfflineView() {
 
         if (vgOffline.getVisibility() != View.VISIBLE) {
@@ -27,7 +26,8 @@ public class OfflineLayer {
         }
 
         if (vgOffline.getAnimation() != null && !vgOffline.getAnimation().hasEnded()) {
-            return;
+            vgOffline.getAnimation().cancel();
+            vgOffline.clearAnimation();
         }
 
         Animation animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f,
@@ -60,7 +60,8 @@ public class OfflineLayer {
 
 
         if (vgOffline.getAnimation() != null && !vgOffline.getAnimation().hasEnded()) {
-            return;
+            vgOffline.getAnimation().cancel();
+            vgOffline.clearAnimation();
         }
 
         vgOffline.setVisibility(View.VISIBLE);

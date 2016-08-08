@@ -9,12 +9,11 @@ import android.widget.Filter;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 12..
  */
-public class SearchQueryAdapter extends ArrayAdapter<SearchKeyword> {
+public class SearchQueryAdapter extends ArrayAdapter<String> {
 
     public SearchQueryAdapter(Context context) {
         super(context, R.layout.item_searched_old_query);
@@ -54,7 +53,7 @@ public class SearchQueryAdapter extends ArrayAdapter<SearchKeyword> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.textView.setText(getItem(position).getKeyword());
+        holder.textView.setText(getItem(position));
 
         return convertView;
     }

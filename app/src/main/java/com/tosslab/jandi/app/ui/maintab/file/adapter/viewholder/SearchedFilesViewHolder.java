@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import butterknife.Bind;
@@ -69,7 +70,12 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
             tvFileOwner.setText("");
         }
 
-        tvFileType.setText(content.ext);
+        if (content.size > 0) {
+            String fileSize = FileUtil.formatFileSize(content.size);
+            tvFileType.setText(String.format("%s, %s", fileSize, content.ext));
+        } else {
+            tvFileType.setText(content.ext);
+        }
 
         String searchedFileDate = DateTransformator.getTimeString(searchedFile.createTime);
         tvDate.setText(searchedFileDate);

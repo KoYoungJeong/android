@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="75dp"
-    android:background="@color/white"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
     android:orientation="vertical">
 
     <LinearLayout
@@ -28,9 +29,10 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="16dp"
                 android:src="@drawable/icon_information"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
             <LinearLayout
+                android:id="@+id/vg_topic_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginRight="16dp"
@@ -80,11 +82,13 @@
                         android:id="@+id/tv_room_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
                         android:ellipsize="end"
                         android:singleLine="true"
                         android:text="잔디의 모바일 안드로이드 디자인 가이드를 공.."
                         android:textColor="@color/dark_gray"
-                        android:visibility="gone" />
+                        android:textSize="12dp"
+                        android:visibility="visible" />
 
                 </LinearLayout>
 
@@ -98,7 +102,7 @@
         android:id="@+id/v_full_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#ffd9d9d9"
+        android:background="#ffeeeeee"
         android:visibility="visible" />
 
     <View
@@ -106,7 +110,7 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_marginLeft="75dp"
-        android:background="#ffd9d9d9"
+        android:background="#ffeeeeee"
         android:visibility="gone" />
 
 </LinearLayout>

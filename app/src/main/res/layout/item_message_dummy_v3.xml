@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -9,7 +10,7 @@
         android:layout_width="@dimen/jandi_messages_profile_size"
         android:layout_height="@dimen/jandi_messages_profile_size"
         android:layout_marginLeft="7dp"
-        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"/>
+        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right" />
 
     <TextView
         android:id="@+id/tv_message_profile_user_name"
@@ -22,21 +23,21 @@
         android:singleLine="true"
         android:textColor="@color/jandi_messages_name"
         android:textSize="@dimen/jandi_messages_user_name"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
-    <RelativeLayout
+    <com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout
         android:id="@+id/vg_dummy_message_content_wrapper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_message_profile_user_name"
         android:layout_marginLeft="@dimen/jandi_messages_content_left_margin"
-        android:layout_marginRight="59dp">
+        app:boundWidth="59dp">
 
         <TextView
             android:id="@+id/tv_dummy_message_content"
-            android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:background="@drawable/bg_message_item_selector_mine"
             android:focusable="false"
             android:gravity="center_vertical"
@@ -48,34 +49,63 @@
             android:paddingTop="7dp"
             android:text="Text"
             android:textColor="@color/dark_gray"
-            android:textSize="@dimen/jandi_messages_content"/>
+            android:textSize="@dimen/jandi_messages_content" />
 
         <ImageView
             android:id="@+id/iv_dummy_message_sticker"
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:layout_below="@+id/tv_dummy_message_content"
-            android:focusable="false"/>
-    </RelativeLayout>
+            android:focusable="false" />
+    </com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout>
 
     <ImageView
         android:id="@+id/iv_dummy_send_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/vg_dummy_message_content_wrapper"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="-55dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="4dp"
         android:layout_toRightOf="@+id/vg_dummy_message_content_wrapper"
-        android:src="@drawable/icon_message_sending"/>
+        android:src="@drawable/icon_message_sending" />
 
-    <!-- status 끝 -->
+    <!-- status 끝 --><!-- badge와 시간 -->
+    <LinearLayout
+        android:id="@+id/vg_badge_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/vg_dummy_message_content_wrapper"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="1dp"
+        android:layout_marginLeft="4dp"
+        android:layout_toRightOf="@+id/iv_dummy_send_status"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_message_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:textColor="#ff00ace9"
+            android:textSize="9sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_message_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-2dp"
+            android:text="오전 11:30"
+            android:textColor="#ff999999"
+            android:textSize="10sp" />
+    </LinearLayout>
 
 
     <View
         android:id="@+id/v_margin"
         android:layout_width="match_parent"
         android:layout_height="25dp"
-        android:layout_below="@+id/vg_dummy_message_content_wrapper"/>
+        android:layout_below="@+id/vg_dummy_message_content_wrapper" />
 
 </RelativeLayout>
 

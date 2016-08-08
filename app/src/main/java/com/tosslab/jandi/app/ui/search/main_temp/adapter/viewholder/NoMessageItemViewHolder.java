@@ -25,6 +25,6 @@ public class NoMessageItemViewHolder extends BaseViewHolder<SearchData> {
 
     @Override
     public void onBindView(SearchData data) {
-
     }
+
 }

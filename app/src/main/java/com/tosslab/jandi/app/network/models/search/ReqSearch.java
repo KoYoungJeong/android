@@ -143,19 +143,19 @@ public class ReqSearch {
             map.put("roomId", String.valueOf(roomId));
         }
 
-        if (type != null) {
+        if (type != null && !type.isEmpty()) {
             map.put("type", type);
         }
 
-        if (accessType != null) {
+        if (accessType != null && !accessType.isEmpty()) {
             map.put("accessType", accessType);
         }
 
-        if (fileType != null) {
+        if (fileType != null && !fileType.isEmpty()) {
             map.put("fileType", fileType);
         }
 
-        if (keyword != null) {
+        if (keyword != null && !keyword.isEmpty()) {
             map.put("keyword", keyword);
         }
 

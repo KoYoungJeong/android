@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="검색어에 해당하는 대화방이 없습니다."
+            android:text="@string/jandi_search_no_topic_room"
             android:textColor="@color/jandi_border_gray"
             android:textSize="14dp" />
 

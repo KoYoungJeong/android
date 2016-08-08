@@ -103,7 +103,7 @@ public class DatabaseConsts {
     }
 
     public enum SearchKeyword {
-        _id, type, keyword, initSound
+        _id, type, keyword, initSound, insertDate
     }
 
     public enum RoomsMarker {

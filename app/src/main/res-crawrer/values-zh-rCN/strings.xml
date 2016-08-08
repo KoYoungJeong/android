@@ -96,6 +96,7 @@
 	<string name="jandi_another_invitation_sent">"新的邀请信已寄出"</string>
 	<string name="jandi_are_you_sure_disable_external_link">"若移除共享链接，访问至该文件的权限将被撤销。 你确定要移除共享链接？"</string>
 	<string name="jandi_ask_assign_topic_owner">"你确定将议题管理权限转移至此成员？"</string>
+	<string name="jandi_ask_delete_all_history">"你确定要清除所有的搜寻纪录？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你确定将此成员剔除议题？"</string>
 	<string name="jandi_ask_poll_delete">"确定要删除此次投票？ \n请注意留言的部分不会被删除。"</string>
 	<string name="jandi_ask_poll_finish">"你确定结束此投票？"</string>
@@ -184,6 +185,7 @@
 	<string name="jandi_date_minutes">"分"</string>
 	<string name="jandi_date_remaining">"剩余时间"</string>
 	<string name="jandi_decide_choose">"选择照片"</string>
+	<string name="jandi_delete_all">"清除纪录"</string>
 	<string name="jandi_delete_succeed">"%s已被删除"</string>
 	<string name="jandi_deleted_file">"已删除文件"</string>
 	<string name="jandi_deleted_message">"(删除的信息)"</string>
@@ -204,8 +206,10 @@
 	<string name="jandi_empty_participants">"无人参与投票"</string>
 	<string name="jandi_empty_subject">"问卷名称为必填字段"</string>
 	<string name="jandi_enable_external_link">"建立共享链接"</string>
+	<string name="jandi_enter_name">"请输入您的名字"</string>
 	<string name="jandi_enter_new_passcode">"输入新密码"</string>
 	<string name="jandi_enter_passcode">"输入您的密码"</string>
+	<string name="jandi_enter_phone_number">"请输入您的电话号码"</string>
 	<string name="jandi_entity_create_entity_name">"名字"</string>
 	<string name="jandi_entity_joined_topic">"我的议题"</string>
 	<string name="jandi_entity_unjoined_topic">"其他议题"</string>
@@ -228,8 +232,6 @@
 	<string name="jandi_file_category_all">"<b>所有文件</b>"</string>
 	<string name="jandi_file_category_audio">"音频"</string>
 	<string name="jandi_file_category_document">"文件"</string>
-	<string name="jandi_file_category_everyone">"<b>所有成员</b>"</string>
-	<string name="jandi_file_category_everywhere">"<b>所有讨论</b>"</string>
 	<string name="jandi_file_category_image">"图像"</string>
 	<string name="jandi_file_category_pdf">"PDF"</string>
 	<string name="jandi_file_category_presentation">"简报"</string>
@@ -255,7 +257,8 @@
 	<string name="jandi_fingerprint_cannot_do_temporary">"指纹解锁暂时无法使用"</string>
 	<string name="jandi_finished">"已完成"</string>
 	<string name="jandi_folder_alread_has_name">"这名称已被使用"</string>
-	<string name="jandi_folder_ask_delete">"你确定要删除此文件夹？"</string>
+	<string name="jandi_folder_ask_delete">"你确定要删除此文件夹？
+即便删除文件夹，议题仍旧保留"</string>
 	<string name="jandi_folder_choose">"选择文件夹"</string>
 	<string name="jandi_folder_delete">"删除文件夹"</string>
 	<string name="jandi_folder_has_been_move_to">"议题已被移至 %s"</string>
@@ -291,8 +294,8 @@
 	<string name="jandi_input_search_keyword">"按照关键词搜索您的信息"</string>
 	<string name="jandi_input_topic_name">"请输入议题群组名称"</string>
 	<string name="jandi_input_user_name">"输入您的名字"</string>
-	<string name="jandi_insert_new_department">"(新部门)"</string>
-	<string name="jandi_insert_new_job_title">"(新职称)"</string>
+	<string name="jandi_insert_new_department">"新部门"</string>
+	<string name="jandi_insert_new_job_title">"新职称"</string>
 	<string name="jandi_insert_team_domain">"请输入团队网域"</string>
 	<string name="jandi_insert_team_name">"请输入团队名称"</string>
 	<string name="jandi_invitation">"邀请"</string>
@@ -323,6 +326,7 @@
 	<string name="jandi_job_title">"职位"</string>
 	<string name="jandi_job_title_list">"所有职称"</string>
 	<string name="jandi_join_topic">"加入"</string>
+	<string name="jandi_joined_room">"已加入的讨论"</string>
 	<string name="jandi_joined_team">"你已加入%1$s，请再次确认团队列表。"</string>
 	<string name="jandi_kicked_message">"你已被移除出%s"</string>
 	<string name="jandi_later">"稍后再说"</string>
@@ -354,6 +358,7 @@
 	<string name="jandi_message_invite_entity">"%1$d 用户已被加入"</string>
 	<string name="jandi_message_join_entity">"加入 %1$s"</string>
 	<string name="jandi_message_leave_private_topic">"离开私人议题后，未来希望能够重新加入，必须先取得其它人的邀请。您确定要离开吗？"</string>
+	<string name="jandi_message_leave_private_topic_when_only_you">"一旦离开议题，议题将会自动删除！你确定要离开议题？"</string>
 	<string name="jandi_message_logout">"已登出"</string>
 	<string name="jandi_message_no_member">"不再单打独斗，现在就邀请所有伙伴加入你的团队！"</string>
 	<string name="jandi_message_no_starred">"取消标记"</string>
@@ -369,7 +374,7 @@
 	<string name="jandi_modify_channel">"重新命名议题"</string>
 	<string name="jandi_modify_private_group">"重新命名私人议题"</string>
 	<string name="jandi_modify_profile_image">"简介照片"</string>
-	<string name="jandi_move_entity_after_share">"文件已成功被分享。您想要现在跳转到那对话中吗？"</string>
+	<string name="jandi_move_entity_after_share">"档案已成功被分享。您想要现在跳转到那对话中吗？"</string>
 	<string name="jandi_msg_network_offline">"联机中断。"</string>
 	<string name="jandi_msg_network_offline_warn">"目前为无网络状态JANDI会于连上网络后，"</string>
 	<string name="jandi_my_files">"<b>我的文件</b>"</string>
@@ -387,6 +392,8 @@
 	<string name="jandi_no_preview_push_mention">"你在此信息中被提及"</string>
 	<string name="jandi_no_preview_push_message">"你收到一则新信息"</string>
 	<string name="jandi_no_recent_stickers">"无最近使用的贴图"</string>
+	<string name="jandi_no_search_history">"没有搜寻纪录"</string>
+	<string name="jandi_no_search_result">"找不到相关的内容"</string>
 	<string name="jandi_no_topic_to_join">"没有可加入的议题"</string>
 	<string name="jandi_normally_topic_messages">"议题信息"</string>
 	<string name="jandi_not_in_topic">"你已离开此议题"</string>
@@ -414,7 +421,7 @@
 	<string name="jandi_poll">"问卷调查"</string>
 	<string name="jandi_poll_add_item">"添加选项"</string>
 	<string name="jandi_poll_anonymous">"不记名"</string>
-	<string name="jandi_poll_create">"建立新的投票"</string>
+	<string name="jandi_poll_create">"建立"</string>
 	<string name="jandi_poll_deleted">"投票已经删除"</string>
 	<string name="jandi_poll_empty_1">"无进行中的问卷"</string>
 	<string name="jandi_poll_empty_2">"\n点击[+]建立新问卷"</string>
@@ -473,7 +480,15 @@
 	<string name="jandi_sdcard_storage">"记忆卡"</string>
 	<string name="jandi_sdcard_storage_mounted">"连接记忆卡"</string>
 	<string name="jandi_sdcard_storage_unmounted">"解除连接记忆卡"</string>
+	<string name="jandi_search_all_member">"所有成员"</string>
+	<string name="jandi_search_all_room">"所有讨论"</string>
+	<string name="jandi_search_category_everyone">"<b>所有成员</b>"</string>
+	<string name="jandi_search_category_everywhere">"<b>所有讨论</b>"</string>
+	<string name="jandi_search_history">"最近搜寻纪录"</string>
 	<string name="jandi_search_ing">"<![CDATA[搜索 <b><font color=#404040>%s</font></b>...]]>"</string>
+	<string name="jandi_search_loading">"搜索中"</string>
+	<string name="jandi_search_no_topic_room">"无相关数据"</string>
+	<string name="jandi_search_result_count">"总共 %s 笔搜寻结果"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>与 <b><font color=#404040>%2$d</font></b>符合]]>"</string>
 	<string name="jandi_select_character">"选择人物"</string>
 	<string name="jandi_select_direct_messages">"选择私信"</string>
@@ -507,6 +522,7 @@
 	<string name="jandi_share_to_jandi">"分享到JANDI"</string>
 	<string name="jandi_shared">"分享过"</string>
 	<string name="jandi_shared_in_room">"曾经分享在哪个议题下"</string>
+	<string name="jandi_show_all_team_topic">"显示所有议题"</string>
 	<string name="jandi_sign_in_block">"<u>登录</u>"</string>
 	<string name="jandi_sign_in_ids_explain">"请选择一个电子邮件地址让我们将全部与JANDI相关的电子邮件寄给您。增加其它电子邮件地址以指定给特定团队。"</string>
 	<string name="jandi_sign_out_message">"您确定您要登出？"</string>
@@ -593,8 +609,11 @@
 	<string name="jandi_title_activity_file_explorer">"文件探索"</string>
 	<string name="jandi_title_cdp_to_be_shared">"请选择在哪里分享"</string>
 	<string name="jandi_title_cdp_to_be_unshared">"请选择在哪里取消分享"</string>
+	<string name="jandi_title_delete">"确定删除"</string>
+	<string name="jandi_title_message">"信息"</string>
 	<string name="jandi_title_name">"名字"</string>
 	<string name="jandi_title_name_required">"名字*"</string>
+	<string name="jandi_title_topic_room">"对话"</string>
 	<string name="jandi_topic_ask_about_deleting">"您确定要删除这个议题？"</string>
 	<string name="jandi_topic_delete">"删除议题"</string>
 	<string name="jandi_topic_description">"议题内容"</string>
@@ -602,6 +621,7 @@
 	<string name="jandi_topic_inside_alone">"此为一人议题，你无法转移权限"</string>
 	<string name="jandi_topic_invitation">"邀请"</string>
 	<string name="jandi_topic_leave">"离开议题"</string>
+	<string name="jandi_topic_message_search">"搜寻议题和信息"</string>
 	<string name="jandi_topic_no_member_1">"此议题目前只有你一人"</string>
 	<string name="jandi_topic_no_member_2">"轻触按钮邀请其他成员加入。"</string>
 	<string name="jandi_topic_notification">"允许议题推播通知"</string>
@@ -681,5 +701,4 @@
 	<string name="what_is_member_profile">"请输入与这团队相关联的电子邮箱及简介名字。
 请注意您的团队成员可以查看和使用这团队资料来提到、 搜索或直接联系您。"</string>
 	<string name="what_is_team_domain">"选择团队的网域(URL)供网页登录使用。 域名须为三个以上的字符并包含字母、数字、及连字符(-)。"</string>
-	<string name="로">"回到账号首页"</string>
 </resources>

@@ -8,156 +8,20 @@ apply from: 'valid.gradle'       // Gradle Propertie Valid Check
 apply from: 'scripts/resources/strings/string-resource-crawler.gradle'
 apply from: 'scripts/resources/images/image-resource-crawler.gradle'
 apply from: 'apk-name-changer.gradle'
+apply plugin: 'checkstyle'
+apply plugin: 'pmd'
+apply from: 'ci-tasks.gradle'
 
 configurations {
     apt
 }
 
-apply plugin: 'checkstyle'
-apply plugin: 'pmd'
-
-task pmd(type: Pmd) {
-
-    source 'src/main'
-    include '**/*.java'
-//    exclude('**/*Test.java')
-
-    ruleSetFiles = files('../pmd.xml')
-    ignoreFailures = true
-
-}
-
-task checkstyles(type: Checkstyle) {
-
-    configFile file('../checkstyle.xml')
-    source('src/main')
-    include '**/*.java'
-//    exclude('**/*Test.java')
-    classpath = files()
-
-
-    showViolations = true
-    ignoreFailures = true
-
-}
 
 task resourceRefresh
 resourceRefresh.dependsOn(stringResourceRefresh, imageResourceRefresh)
 
 checkstyle {
     toolVersion = "6.2"
-}
-
-dependencies {
-
-    repositories {
-        jcenter()
-        maven {
-            url 'https://maven.fabric.io/public'
-        }
-
-        maven {
-            url 'http://nx.jandi.io:8081/nexus/content/repositories/thirdparty/'
-        }
-
-    }
-
-    compile 'com.tosslab.jandi.lib:sprinkler-android:1.4'
-    compile 'com.tosslab.jandi.lib:photoview-expand:1.1'
-    compile 'com.tosslab.jandi.lib:android-image-zoom-crop:1.1'
-
-//    compile project(':sprinkler-android')
-//    compile project(':photoview-expand')
-
-    apt "org.androidannotations:androidannotations:${rootProject.ext.androidAnnotationsVersion}"
-    compile "org.androidannotations:androidannotations-api:${rootProject.ext.androidAnnotationsVersion}"
-    compile "com.jakewharton:butterknife:${rootProject.ext.butterKnifeVersion}"
-
-    apt "com.google.dagger:dagger-compiler:${rootProject.ext.dagger2Version}"
-    compile "com.google.dagger:dagger:${rootProject.ext.dagger2Version}"
-    provided 'javax.annotation:jsr250-api:1.0'
-
-    compile 'com.android.support:multidex:1.0.1'
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-
-    // Google
-    compile "com.google.android.gms:play-services-analytics:${rootProject.ext.playServiceVersion}"
-    compile "com.google.android.gms:play-services-gcm:${rootProject.ext.playServiceVersion}"
-    compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:support-v13:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:cardview-v7:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:support-annotations:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:design:${rootProject.ext.supportLibVersion}"
-
-    // UI
-    compile 'com.github.johnpersano:supertoasts:1.3.4@aar'
-    compile 'com.eowise:recyclerview-stickyheaders:0.5.2@aar'
-    compile 'com.soundcloud.android:android-crop:1.0.0@aar'
-
-    // BadgeCount
-    compile 'me.leolin:ShortcutBadger:1.1.3@aar'
-    // Boilerplate
-    compile 'de.greenrobot:eventbus:2.4.+'
-    // Network
-    compile("io.socket:socket.io-client:${rootProject.ext.socketIoVersion}") {
-        exclude group: 'org.json', module: 'json'
-    }
-
-    // Cache
-    compile 'com.koushikdutta.ion:ion:2.1.+'
-    // Image
-    compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
-    compile 'jp.wasabeef:glide-transformations:2.0.1'
-
-    // Sliqte ORM
-    compile 'com.j256.ormlite:ormlite-android:4.+'
-
-    // Analytics & report
-    compile 'com.parse:parse-android:1.10.0'
-    // RxJava
-    compile "io.reactivex:rxandroid:${rootProject.ext.rxAndroidVersion}"
-    compile "io.reactivex:rxjava:${rootProject.ext.rxJavaVersion}"
-
-    // facebook SDK
-    compile 'com.facebook.android:facebook-android-sdk:4.5.+'
-
-    // Force usage of support annotations in the test app, since it is internally used by the runner module.
-    androidTestCompile "com.android.support.test:runner:${rootProject.ext.testRunnerVersion}"
-    androidTestCompile "com.android.support.test:rules:${rootProject.ext.testRunnerVersion}"
-    androidTestCompile "com.android.support.test.espresso:espresso-core:${rootProject.ext.espressoVersion}"
-    androidTestCompile "com.android.support.test.espresso:espresso-intents:${rootProject.ext.espressoVersion}"
-    androidTestCompile "com.crittercism.dexmaker:dexmaker-mockito:${rootProject.ext.dexmakerVersion}"
-    androidTestCompile "com.crittercism.dexmaker:dexmaker-dx:${rootProject.ext.dexmakerVersion}"
-    androidTestCompile "com.jayway.awaitility:awaitility:${rootProject.ext.awaitilityVersion}"
-    androidTestCompile "com.squareup.assertj:assertj-android:${rootProject.ext.assertJAndroidVersion}"
-    androidTestCompile "com.squareup.assertj:assertj-android-support-v4:${rootProject.ext.assertJAndroidVersion}@aar"
-    androidTestCompile "com.squareup.assertj:assertj-android-appcompat-v7:${rootProject.ext.assertJAndroidVersion}@aar"
-    androidTestCompile "com.squareup.assertj:assertj-android-recyclerview-v7:${rootProject.ext.assertJAndroidVersion}@aar"
-    androidTestApt "com.google.dagger:dagger-compiler:${rootProject.ext.dagger2Version}"
-
-    compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
-        transitive = true;
-    }
-
-    // Calendar View
-    compile 'com.prolificinteractive:material-calendarview:1.4.0'
-
-    // Joda time
-    compile 'net.danlew:android.joda:2.9.4'
-
-    // newrelic
-    compile 'com.newrelic.agent.android:android-agent:4.273.4'
-
-    //Retrofit
-    compile "com.squareup.retrofit2:retrofit:${rootProject.ext.retrofitVersion}"
-    compile "com.squareup.okhttp3:okhttp:${rootProject.ext.okhttpVersion}"
-    compile "com.squareup.okhttp3:okhttp-ws:${rootProject.ext.okhttpVersion}"
-    compile "com.fasterxml.jackson.core:jackson-databind:${rootProject.ext.jacksonDataBindVersion}"
-    debugCompile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
-
-    debugCompile 'com.facebook.stetho:stetho-okhttp3:1.3.1'
 }
 
 android {
@@ -168,8 +32,8 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 185
-        versionName '2.2.0'
+        versionCode 191
+        versionName '2.2.1'
 
         // for Ui Testing
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -282,7 +146,7 @@ android {
 
     configurations.all {
         resolutionStrategy {
-            force "com.android.support:support-annotations:${rootProject.ext.supportLibVersion}"
+            force rootProject.ext.dependecies.libraries.support_annotation
         }
     }
 
@@ -309,3 +173,5 @@ apt {
 retrolambda {
     javaVersion JavaVersion.VERSION_1_7
 }
+
+apply plugin: 'com.getkeepsafe.dexcount'

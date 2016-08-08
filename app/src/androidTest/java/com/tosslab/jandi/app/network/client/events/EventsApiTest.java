@@ -38,7 +38,7 @@ public class EventsApiTest {
     @Test
     public void testGetEventHistory_with_size() throws Exception {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -3);
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
         int size = 10;
         ResEventHistory message = eventsApi.getEventHistory(calendar.getTimeInMillis(), myId, size);
         assertThat(message).isNotNull();
@@ -53,7 +53,7 @@ public class EventsApiTest {
     public void testGetEventHistory_without_size() throws Exception {
 
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -3);
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
         ResEventHistory message = eventsApi.getEventHistory(calendar.getTimeInMillis(), myId, "message");
         assertThat(message).isNotNull();
         assertThat(message.getSize()).isGreaterThanOrEqualTo(0);

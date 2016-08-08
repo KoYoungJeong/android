@@ -10,6 +10,7 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.dagger.DaggerIntroComponent;
@@ -149,6 +150,11 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                     }
                 },
                 false);
+    }
+
+    @Override
+    public void startSocketService() {
+        sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
     }
 
 }

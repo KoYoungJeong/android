@@ -30,4 +30,7 @@ public class TopicFolder {
         return rooms;
     }
 
+    public Folder getFolder() {
+        return folder;
+    }
 }

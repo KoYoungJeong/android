@@ -28,7 +28,9 @@ public class SearchStickyHeaderViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.iv_folder_icon)
     ImageView ivFolderIcon;
 
-    private int type = TYPE_ROOM;
+    View itemView;
+
+    private int type;
 
     private int count = 0;
 
@@ -37,6 +39,7 @@ public class SearchStickyHeaderViewHolder extends RecyclerView.ViewHolder {
     public SearchStickyHeaderViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+        this.itemView = itemView;
     }
 
     public static SearchStickyHeaderViewHolder newInstance(ViewGroup parent) {
@@ -59,15 +62,19 @@ public class SearchStickyHeaderViewHolder extends RecyclerView.ViewHolder {
 
     public void onBindView(Object o) {
         if (type == TYPE_ROOM) {
-            tvStickyTitle.setText("대화방");
+            tvStickyTitle.setText(
+                    JandiApplication.getContext().getString(R.string.jandi_title_topic_room)
+            );
             if (count > 0) {
                 tvStickyCount.setVisibility(View.VISIBLE);
                 tvStickyCount.setText(String.valueOf(count));
             } else {
                 tvStickyCount.setVisibility(View.GONE);
             }
-        } else {
-            tvStickyTitle.setText("메세지");
+        } else if (type == TYPE_MESSAGE) {
+            tvStickyTitle.setText(
+                    JandiApplication.getContext().getString(R.string.jandi_title_message)
+            );
             tvStickyCount.setVisibility(View.GONE);
         }
 
@@ -79,6 +86,5 @@ public class SearchStickyHeaderViewHolder extends RecyclerView.ViewHolder {
                     .getResources().getDrawable(R.drawable.title_collepse));
         }
     }
-
 
 }
