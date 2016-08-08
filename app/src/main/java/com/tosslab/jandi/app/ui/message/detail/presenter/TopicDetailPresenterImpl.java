@@ -166,7 +166,11 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             String topicName = topicDetailModel.getTopicName(entityId);
             view.showNeedToAssignTopicOwnerDialog(topicName);
         } else {
-            leaveViewModel.leave(entityId);
+            if (leaveViewModel.canLeaveRoom(entityId)) {
+                leaveViewModel.leave(entityId);
+            } else {
+                leaveViewModel.showPrivateTopicLeaveDialog(context, entityId);
+            }
         }
     }
 

@@ -235,14 +235,14 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         public ChatViewHolder(View itemView) {
             super(itemView);
             selector = itemView.findViewById(R.id.v_entity_listitem_selector);
-            tvName = (TextView) itemView.findViewById(R.id.tv_entity_listitem_name);
+            tvName = (TextView) itemView.findViewById(R.id.tv_user_name);
             ivIcon = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_icon);
-            ivFavorite = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_fav);
-            tvAdditional = (TextView) itemView.findViewById(R.id.tv_entity_listitem_user_count);
+            ivFavorite = (ImageView) itemView.findViewById(R.id.iv_favorite);
+            tvAdditional = (TextView) itemView.findViewById(R.id.tv_user_department);
             tvBadgeCount = (TextView) itemView.findViewById(R.id.tv_entity_listitem_badge);
-            vDisableLineThrough = itemView.findViewById(R.id.iv_entity_listitem_line_through);
+            vDisableLineThrough = itemView.findViewById(R.id.iv_name_line_through);
             vDisableWarning = itemView.findViewById(R.id.iv_entity_listitem_warning);
-            vDisableCover = itemView.findViewById(R.id.v_entity_listitem_warning);
+            vDisableCover = itemView.findViewById(R.id.v_name_warning);
         }
 
 

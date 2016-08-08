@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 /**
  * Created by Bill MinWook Heo on 15. 6. 24..
  */
@@ -76,8 +75,9 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
                 view.movePosition(startLinkPosition);
 
-                view.setActionbarTitle(carouselFirstFileInfo.getFileName(), FileUtil.fileSizeCalculation(
-                        carouselFirstFileInfo.getSize()), carouselFirstFileInfo.getExt());
+                view.setActionbarTitle(carouselFirstFileInfo.getFileName(),
+                        carouselFirstFileInfo.getSize() > 0 ? FileUtil.formatFileSize(carouselFirstFileInfo.getSize()) : "",
+                        carouselFirstFileInfo.getExt());
                 view.setFileWriterName(carouselFirstFileInfo.getFileWriter());
                 view.setFileCreateTime(carouselFirstFileInfo.getFileCreateTime());
             }

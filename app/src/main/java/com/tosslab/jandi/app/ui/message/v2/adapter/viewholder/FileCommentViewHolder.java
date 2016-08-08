@@ -280,7 +280,8 @@ public class FileCommentViewHolder extends BaseCommentViewHolder {
             ResMessages.FileMessage feedbackFileMessage = (ResMessages.FileMessage) link.feedback;
 
             ResMessages.FileContent fileContent = feedbackFileMessage.content;
-            String fileSize = FileUtil.fileSizeCalculation(fileContent.size);
+
+            String fileSize = FileUtil.formatFileSize(fileContent.size);
             tvCommonFileSize.setText(fileSize);
 
             boolean isSharedFile = false;
@@ -350,6 +351,12 @@ public class FileCommentViewHolder extends BaseCommentViewHolder {
                     }
 
                 } else {
+
+                    if (fileContent.size <= 0) {
+                        needFileSize = false;
+                        needFileUploader = false;
+                    }
+
                     tvMessageCommonFileName.setText(content.title);
                     tvMessageCommonFileName.setTextColor(resources.getColor(R.color.dark_gray));
                     tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text));

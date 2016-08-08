@@ -35,7 +35,7 @@ public class FileSearchPresenterImpl implements FileSearchPresenter {
     }
 
     void onSearchText(String text) {
-        List<SearchKeyword> searchKeywords = fileSearchModel.searchOldQuery(text);
+        List<String> searchKeywords = searchModel.searchOldQuery(text);
         view.setOldQueries(searchKeywords);
     }
 

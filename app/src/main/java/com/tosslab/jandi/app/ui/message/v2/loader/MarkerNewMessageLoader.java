@@ -37,7 +37,7 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
             int itemCount = Math.min(
                     Math.max(MessageManipulator.NUMBER_OF_MESSAGES, view.getItemCount()),
                     MessageManipulator.MAX_OF_MESSAGES);
-            ResMessages newMessage = messageListModel.getAfterMarkerMessage(linkId, itemCount);
+            ResMessages newMessage = messageListModel.getAfterMessage(linkId, itemCount);
 
             boolean isLastLinkId = false;
 

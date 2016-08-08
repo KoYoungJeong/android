@@ -28,11 +28,11 @@ import com.tosslab.jandi.app.ui.members.adapter.searchable.SearchableMemberListA
 import com.tosslab.jandi.app.ui.members.search.component.DaggerMemberSearchComponent;
 import com.tosslab.jandi.app.ui.members.search.module.MemberSearchModule;
 import com.tosslab.jandi.app.ui.members.search.presenter.MemberSearchPresenter;
-import com.tosslab.jandi.app.ui.members.search.view.MemberSearchView;
 import com.tosslab.jandi.app.ui.members.view.MemberSearchableDataView;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
 import javax.inject.Inject;
 
@@ -44,7 +44,7 @@ import butterknife.OnTextChanged;
 /**
  * Created by tonyjs on 16. 4. 7..
  */
-public class MemberSearchActivity extends BaseAppCompatActivity implements MemberSearchView {
+public class MemberSearchActivity extends BaseAppCompatActivity implements MemberSearchPresenter.View {
 
     @Inject
     InputMethodManager inputMethodManager;
@@ -105,6 +105,7 @@ public class MemberSearchActivity extends BaseAppCompatActivity implements Membe
     private void initMemberSearchListView(SearchableMemberListAdapter adapter) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getBaseContext());
         lvMemberSearch.setLayoutManager(layoutManager);
+        lvMemberSearch.addItemDecoration(new SimpleDividerItemDecoration());
         lvMemberSearch.setAdapter(adapter);
 
         memberSearchableDataView.setOnMemberClickListener(member -> {

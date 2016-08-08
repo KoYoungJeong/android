@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.views.create.TopicCreateActivity_;
@@ -143,7 +144,7 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
     }
 
     @Override
-    public void showTopicInfoDialog(final Topic item) {
+    public void showTopicInfoDialog(final TopicRoom item) {
 
         TopicInfoDialog dialog = TopicInfoDialog.instantiate(item);
         dialog.show(getSupportFragmentManager(), "dialog");

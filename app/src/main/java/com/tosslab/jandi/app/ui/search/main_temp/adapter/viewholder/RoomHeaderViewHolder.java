@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
+import com.tosslab.jandi.app.ui.search.main_temp.object.SearchData;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -14,10 +15,12 @@ import butterknife.ButterKnife;
 /**
  * Created by tee on 16. 7. 21..
  */
-public class RoomHeaderViewHolder extends BaseViewHolder {
+public class RoomHeaderViewHolder extends BaseViewHolder<SearchData> {
 
-    @Bind(R.id.cb_unjoin_user)
-    AppCompatCheckBox cbUnjoinUser;
+    @Bind(R.id.cb_unjoin_topic)
+    AppCompatCheckBox cbUnjoinTopic;
+
+    private OnCheckChangeListener onCheckChangeListener;
 
     public RoomHeaderViewHolder(View itemView) {
         super(itemView);
@@ -31,8 +34,20 @@ public class RoomHeaderViewHolder extends BaseViewHolder {
     }
 
     @Override
-    public void onBindView(Object o) {
+    public void onBindView(SearchData searchData) {
+        cbUnjoinTopic.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (onCheckChangeListener != null) {
+                onCheckChangeListener.onCheckUnjoinTopic(isChecked);
+            }
+        });
+    }
 
+    public void setSetOnCheckChangeListener(OnCheckChangeListener onCheckChangeListener) {
+        this.onCheckChangeListener = onCheckChangeListener;
+    }
+
+    public interface OnCheckChangeListener {
+        void onCheckUnjoinTopic(boolean isChecked);
     }
 
 }

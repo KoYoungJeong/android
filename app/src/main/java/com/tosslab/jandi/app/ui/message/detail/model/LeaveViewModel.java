@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.detail.model;
 
+import android.content.Context;
 import android.support.v7.app.AlertDialog;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -33,21 +34,22 @@ public class LeaveViewModel {
 
     @Inject
     public LeaveViewModel(Lazy<ChatApi> chatApi) {
-        this.entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());;
+        this.entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
+        ;
         this.chatApi = chatApi;
     }
 
     public void leave(long entityId) {
-        if (TeamInfoLoader.getInstance().isPublicTopic(entityId)
-                || TeamInfoLoader.getInstance().isUser(entityId)) {
-            leaveEntityInBackground(entityId);
-        } else {
-            showPrivateTopicLeaveDialog(entityId);
-        }
+        leaveEntityInBackground(entityId);
     }
 
-    private void showPrivateTopicLeaveDialog(long entityId) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(JandiApplication.getContext(),
+    public boolean canLeaveRoom(long entityId) {
+        return TeamInfoLoader.getInstance().isPublicTopic(entityId)
+                || TeamInfoLoader.getInstance().isUser(entityId);
+    }
+
+    public void showPrivateTopicLeaveDialog(Context context, long entityId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context,
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(TeamInfoLoader.getInstance().getName(entityId))
                 .setMessage(R.string.jandi_message_leave_private_topic)

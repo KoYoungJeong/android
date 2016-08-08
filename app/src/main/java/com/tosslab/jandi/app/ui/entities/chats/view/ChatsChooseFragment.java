@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
 import javax.inject.Inject;
 
@@ -90,6 +91,7 @@ public class ChatsChooseFragment extends Fragment implements ChatChoosePresenter
         });
 
         lvChatChoose.setLayoutManager(new LinearLayoutManager(getActivity()));
+        lvChatChoose.addItemDecoration(new SimpleDividerItemDecoration());
         lvChatChoose.setAdapter(chatChooseAdapter);
 
         DaggerChatChooseComponent.builder()

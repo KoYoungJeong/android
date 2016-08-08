@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="30dp"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="29dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="16dp"
+        android:gravity="center_vertical"
+        android:text="@string/jandi_search_history"
+        android:textColor="@color/jandi_border_gray"
+        android:textSize="12dp" />
+
+    <TextView
+        android:id="@+id/tv_all_delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="29dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:gravity="center_vertical"
+        android:text="@string/jandi_delete_all"
+        android:textColor="@color/jandi_border_gray"
+        android:textSize="12dp"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="#ffd9d9d9" />
+
+</RelativeLayout>

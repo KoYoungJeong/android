@@ -10,6 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -51,11 +52,8 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
 
     public static final long CAROUSEL_MODE = 0x00;
     public static final long SINGLE_IMAGE_MODE = 0x01;
-
-    private static final int REQ_STORAGE_PERMISSION = 101;
-
     public static final String KEY_FILE_ID = "file_id";
-
+    private static final int REQ_STORAGE_PERMISSION = 101;
     @ViewById(R.id.vp_carousel)
     ViewPager viewPager;
 
@@ -147,8 +145,12 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
                 ActionBar actionBar = getSupportActionBar();
                 if (actionBar != null) {
                     actionBar.setTitle(fileInfo.getFileName());
-                    actionBar.setSubtitle(FileUtil.fileSizeCalculation(fileInfo.getSize())
-                            + ", " + fileInfo.getExt());
+                    if (fileInfo.getSize() > 0) {
+                        actionBar.setSubtitle(FileUtil.formatFileSize(fileInfo.getSize())
+                                + ", " + fileInfo.getExt());
+                    } else {
+                        actionBar.setSubtitle(fileInfo.getExt());
+                    }
                 }
 
                 if (mode == CAROUSEL_MODE) {
@@ -264,7 +266,11 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(fileName);
-            actionBar.setSubtitle(size + ", " + ext);
+            if (!TextUtils.isEmpty(size)) {
+                actionBar.setSubtitle(size + ", " + ext);
+            } else {
+                actionBar.setSubtitle(ext);
+            }
         }
     }
 

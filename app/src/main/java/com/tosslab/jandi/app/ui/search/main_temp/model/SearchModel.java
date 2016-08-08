@@ -1,13 +1,19 @@
 package com.tosslab.jandi.app.ui.search.main_temp.model;
 
-import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import android.text.TextUtils;
+
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.local.database.search.JandiSearchDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.search.ReqSearch;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
-import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.TopicRoom;
+import com.tosslab.jandi.app.ui.search.main_temp.object.SearchTopicRoomData;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import java.util.ArrayList;
@@ -30,32 +36,112 @@ public class SearchModel {
     public SearchModel() {
     }
 
-    public ResSearch search(long teamId, ReqSearch reqSearch) throws RetrofitException {
+    public ResSearch searchMessages(ReqSearch reqSearch) throws RetrofitException {
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
         return searchApi.get().getSearch(teamId, reqSearch);
     }
 
-    public List<com.tosslab.jandi.app.ui.maintab.topic.domain.Topic> getSearchedTopics(String keyword, boolean isPaticipate) {
+    public List<SearchTopicRoomData> getSearchedTopics(String keyword, boolean isShowUnjoinedTopic) {
 
-        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        List<SearchTopicRoomData> topics = new ArrayList<>();
 
-        List<com.tosslab.jandi.app.ui.maintab.topic.domain.Topic> topics = new ArrayList<>();
+        List<TopicRoom> topicList = TeamInfoLoader.getInstance().getTopicList();
+        Observable.from(topicList)
+                .map(topicRoom -> new SearchTopicRoomData.Builder()
+                        .setTopicId(topicRoom.getId())
+                        .setTitle(topicRoom.getName())
+                        .setMemberCnt(topicRoom.getMembers().size())
+                        .setIsPublic(topicRoom.getType().equals("channel"))
+                        .setIsJoined(topicRoom.isJoined())
+                        .setIsStarred(topicRoom.isStarred())
+                        .setDescription(topicRoom.getDescription())
+                        .setKeyword(keyword)
 
-        InitialInfo initialInfo = InitialInfoRepository.getInstance().getInitialInfo(teamId);
-        List<Topic> initialInfoTopics = (ArrayList) initialInfo.getTopics();
-        Observable.from(initialInfoTopics)
+                        .build())
                 .filter(topic -> {
-                    if (isPaticipate) {
+                    if (!isShowUnjoinedTopic) {
                         return topic.isJoined() == true;
                     } else {
                         return true;
                     }
                 })
-                .filter(topic -> topic.getName().toLowerCase().contains(keyword.toLowerCase()))
-                .toSortedList((lhs, rhs) -> StringCompareUtil.compare(lhs.getName(), rhs.getName()))
+                .filter(topic -> topic.getTitle().toLowerCase().contains(keyword.toLowerCase()))
+                .toSortedList((lhs, rhs) -> {
+                    if (lhs.isJoined() && rhs.isJoined()) {
+                        if (lhs.isStarred() && rhs.isStarred()) {
+                            return StringCompareUtil.compare(lhs.getTitle(), rhs.getTitle());
+                        } else if (lhs.isStarred()) {
+                            return -1;
+                        } else if (rhs.isStarred()) {
+                            return 1;
+                        } else {
+                            return StringCompareUtil.compare(lhs.getTitle(), rhs.getTitle());
+                        }
+                    } else if (lhs.isJoined()) {
+                        return -1;
+                    } else if (rhs.isJoined()) {
+                        return 1;
+                    } else {
+                        if (lhs.isStarred() && rhs.isStarred()) {
+                            return StringCompareUtil.compare(lhs.getTitle(), rhs.getTitle());
+                        } else if (lhs.isStarred()) {
+                            return -1;
+                        } else if (rhs.isStarred()) {
+                            return 1;
+                        } else {
+                            return StringCompareUtil.compare(lhs.getTitle(), rhs.getTitle());
+                        }
+                    }
+                })
                 .collect(() -> topics, List::addAll)
                 .subscribe();
 
         return topics;
+    }
+
+    public long upsertSearchQuery(String text) {
+        if (TextUtils.isEmpty(text)) {
+            return -1;
+        }
+
+        return JandiSearchDatabaseManager.getInstance(JandiApplication.getContext())
+                .upsertSearchKeyword(text);
+    }
+
+    public List<String> getHistory() {
+        return JandiSearchDatabaseManager.getInstance(JandiApplication.getContext())
+                .getSearchAllHistory();
+    }
+
+    public List<String> searchOldQuery(String text) {
+        return JandiSearchDatabaseManager.getInstance(JandiApplication.getContext())
+                .getSearchKeywords(text);
+    }
+
+    public void removeHistoryItemByKeyword(String keyword) {
+        JandiSearchDatabaseManager.getInstance(JandiApplication.getContext())
+                .removeItemByKeyword(keyword);
+    }
+
+    public void removeHistoryAllItems() {
+        JandiSearchDatabaseManager.getInstance(JandiApplication.getContext())
+                .removeAllItems();
+    }
+
+    public TopicRoom getTopicRoomById(long topicId) {
+        return TeamInfoLoader.getInstance().getTopic(topicId);
+    }
+
+    public void joinTopic(long topicId) throws RetrofitException {
+        EntityClientManager entityClientManager
+                = EntityClientManager_.getInstance_(JandiApplication.getContext());
+        entityClientManager.joinChannel(topicId);
+        TopicRepository.getInstance().updateTopicJoin(topicId, true);
+        TeamInfoLoader.getInstance().refresh();
+    }
+
+    public String getWriterName(long writerId){
+        return TeamInfoLoader.getInstance().getMemberName(writerId);
     }
 
 }

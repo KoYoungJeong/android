@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.ui.search.main.presenter;
 
-import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
-
 import java.util.List;
 
 public interface FileSearchPresenter {
@@ -16,11 +14,9 @@ public interface FileSearchPresenter {
 
     interface View {
 
-        void setOldQueries(List<SearchKeyword> searchKeywords);
+        void setOldQueries(List<String> searchKeywords);
 
         void startVoiceActivity();
-
-        void setSearchText(String searchText);
 
         void showNoVoiceSearchItem();
 
@@ -31,6 +27,8 @@ public interface FileSearchPresenter {
         void setClearToMicImage();
 
         CharSequence getSearchText();
+
+        void setSearchText(String searchText);
 
         void dismissDropDown();
 

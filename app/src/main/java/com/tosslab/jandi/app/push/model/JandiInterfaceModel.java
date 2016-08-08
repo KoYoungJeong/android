@@ -11,11 +11,9 @@ import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
@@ -32,6 +30,7 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 
 public class JandiInterfaceModel {
@@ -97,12 +96,16 @@ public class JandiInterfaceModel {
         }
     }
 
-    public boolean getEntityInfo() {
+    boolean getEntityInfo() {
         try {
             long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             InitialInfo initializeInfo = startApi.get().getInitializeInfo(selectedTeamId);
-            InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
-            TeamInfoLoader.getInstance().refresh();
+            TeamInfoLoader.getInstance().refresh(initializeInfo);
+            Observable.just(initializeInfo)
+                    .observeOn(Schedulers.io())
+                    .subscribe(o -> {
+                        InitialInfoRepository.getInstance().upsertInitialInfo(o);
+                    });
             refreshPollList(selectedTeamId);
             JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
             return true;

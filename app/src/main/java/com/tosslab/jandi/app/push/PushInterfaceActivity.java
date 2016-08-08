@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.push.dagger.DaggerPushInterfaceComponent;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
+import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
@@ -148,11 +149,16 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
         // 팀 정보가 있다면
         share.filter(it -> it)
                 .map(it -> jandiInterfaceModel.getEntityInfo(roomId, roomType))
+                .doOnNext(it -> {
+                    if (it > 0) {
+                        sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
+                    }
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(pair -> {
-                    if (pair > 0) {
-                        moveMessageListActivity(roomId, pair);
+                .subscribe(entityId -> {
+                    if (entityId > 0) {
+                        moveMessageListActivity(roomId, entityId);
                     } else {
                         // entity 정보가 없으면 인트로로 이동하도록 지정
                         moveIntroActivity();

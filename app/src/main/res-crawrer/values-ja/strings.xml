@@ -96,6 +96,7 @@
 	<string name="jandi_another_invitation_sent">"メールでもう一度招待しました"</string>
 	<string name="jandi_are_you_sure_disable_external_link">"削除すると、リンクをもう使用することができません。本当に削除しますか？"</string>
 	<string name="jandi_ask_assign_topic_owner">"このメンバーにトピック管理者の権限を譲りますか？"</string>
+	<string name="jandi_ask_delete_all_history">"検索履歴を全て消去しますか？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"本当にこのメンバーをトピックから退出させますか？"</string>
 	<string name="jandi_ask_poll_delete">"投票を削除しますか？\ㅜn削除後もコメントは残ります"</string>
 	<string name="jandi_ask_poll_finish">"投票を終了しますか？"</string>
@@ -184,6 +185,7 @@
 	<string name="jandi_date_minutes">"分"</string>
 	<string name="jandi_date_remaining">"残り"</string>
 	<string name="jandi_decide_choose">"写真を選択"</string>
+	<string name="jandi_delete_all">"すべて消去"</string>
 	<string name="jandi_delete_succeed">"%sが削除されました"</string>
 	<string name="jandi_deleted_file">"削除されたファイル"</string>
 	<string name="jandi_deleted_message">"(削除されたメッセージ)"</string>
@@ -204,8 +206,10 @@
 	<string name="jandi_empty_participants">"参加者がいません。"</string>
 	<string name="jandi_empty_subject">"質問を入力してください。"</string>
 	<string name="jandi_enable_external_link">"共有用リンクを作成する"</string>
+	<string name="jandi_enter_name">"名前を入力してください"</string>
 	<string name="jandi_enter_new_passcode">"新しいパスコードを入力 "</string>
 	<string name="jandi_enter_passcode">"パスワードを入力してください"</string>
+	<string name="jandi_enter_phone_number">"電話番号を入力してください"</string>
 	<string name="jandi_entity_create_entity_name">"名前"</string>
 	<string name="jandi_entity_joined_topic">"参加中のトピック"</string>
 	<string name="jandi_entity_unjoined_topic">"未参加のトピック"</string>
@@ -228,8 +232,6 @@
 	<string name="jandi_file_category_all">"<b>全ての種類</b>"</string>
 	<string name="jandi_file_category_audio">"音声"</string>
 	<string name="jandi_file_category_document">"文書"</string>
-	<string name="jandi_file_category_everyone">"<b>全員</b>"</string>
-	<string name="jandi_file_category_everywhere">"<b>全トピック</b>"</string>
 	<string name="jandi_file_category_image">"画像"</string>
 	<string name="jandi_file_category_pdf">"PDF"</string>
 	<string name="jandi_file_category_presentation">"プレゼンテーション"</string>
@@ -255,7 +257,8 @@
 	<string name="jandi_fingerprint_cannot_do_temporary">"しばらく指紋認証が使用できません。"</string>
 	<string name="jandi_finished">"終了"</string>
 	<string name="jandi_folder_alread_has_name">"その名前は既に使用されています"</string>
-	<string name="jandi_folder_ask_delete">"本当にこのフォルダを削除しますか？"</string>
+	<string name="jandi_folder_ask_delete">"本当にこのフォルダを削除しますか？
+(フォルダを削除してもフォルダ内のトピックは消えません。)"</string>
 	<string name="jandi_folder_choose">"フォルダを選択してください"</string>
 	<string name="jandi_folder_delete">"フォルダ削除"</string>
 	<string name="jandi_folder_has_been_move_to">"トピックを%sフォルダに移動しました"</string>
@@ -291,8 +294,8 @@
 	<string name="jandi_input_search_keyword">"キーワードで検索"</string>
 	<string name="jandi_input_topic_name">"トピック名を入力してください"</string>
 	<string name="jandi_input_user_name">"検索するメンバーの名前を入力"</string>
-	<string name="jandi_insert_new_department">"(新しい部署)"</string>
-	<string name="jandi_insert_new_job_title">"(新しい役職）"</string>
+	<string name="jandi_insert_new_department">"新しい部署"</string>
+	<string name="jandi_insert_new_job_title">"新しい役職"</string>
 	<string name="jandi_insert_team_domain">"チームドメインを入力"</string>
 	<string name="jandi_insert_team_name">"チーム名を入力"</string>
 	<string name="jandi_invitation">"招待"</string>
@@ -324,6 +327,7 @@
 	<string name="jandi_job_title">"役職"</string>
 	<string name="jandi_job_title_list">"役職一覧"</string>
 	<string name="jandi_join_topic">"参加"</string>
+	<string name="jandi_joined_room">"参加中のトークルーム"</string>
 	<string name="jandi_joined_team">"すでに%1$sのメンバーです。チームリストを確認してください"</string>
 	<string name="jandi_kicked_message">"%sの管理者によってトピックから退出させられました。"</string>
 	<string name="jandi_later">"後で"</string>
@@ -355,6 +359,8 @@
 	<string name="jandi_message_invite_entity">"%1$d メンバーが追加されました"</string>
 	<string name="jandi_message_join_entity">"%1$s が参加しました"</string>
 	<string name="jandi_message_leave_private_topic">"プライベートトピックから退出すると、そのプライベートトピックのメンバーに改めて招待されない限り再び参加することはできません。本当に退出しますか？"</string>
+	<string name="jandi_message_leave_private_topic_when_only_you">"トピックから退出する同時トピックが削除されます。
+本当にトピックから退出しますか？"</string>
 	<string name="jandi_message_logout">"ログアウトしました"</string>
 	<string name="jandi_message_no_member">"このチームには他のメンバーがいません。新しいメンバーを招待してコラボレーションを始めましょう"</string>
 	<string name="jandi_message_no_starred">"お気に入りから削除しました"</string>
@@ -370,7 +376,7 @@
 	<string name="jandi_modify_channel">"トピックの名称を変更"</string>
 	<string name="jandi_modify_private_group">"グループを編集"</string>
 	<string name="jandi_modify_profile_image">"プロフィール写真を編集"</string>
-	<string name="jandi_move_entity_after_share">"ファイルが共有されました。ファイルについてコメントしますか？"</string>
+	<string name="jandi_move_entity_after_share">"ファイルが共有されました。ファイルが共有されたトークルームに移動しますか？"</string>
 	<string name="jandi_msg_network_offline">"インターネット接続が切断されました。"</string>
 	<string name="jandi_msg_network_offline_warn">"現在ネットワークに接続されていません。"</string>
 	<string name="jandi_my_files">"<b>自分</b>"</string>
@@ -389,6 +395,8 @@
 	<string name="jandi_no_preview_push_mention">"メッセージでメンションされました。"</string>
 	<string name="jandi_no_preview_push_message">"新着メッセージがあります。"</string>
 	<string name="jandi_no_recent_stickers">"最近利用したスタンプがありません"</string>
+	<string name="jandi_no_search_history">"検索履歴がありません。"</string>
+	<string name="jandi_no_search_result">"一致するメッセージがありません。"</string>
 	<string name="jandi_no_topic_to_join">"参加できるトピックがありません"</string>
 	<string name="jandi_normally_topic_messages">"トピックメッセージ"</string>
 	<string name="jandi_not_in_topic">"既にこのトピックから退出したか退出されました。"</string>
@@ -416,7 +424,7 @@
 	<string name="jandi_poll">"投票"</string>
 	<string name="jandi_poll_add_item">"回答を追加する"</string>
 	<string name="jandi_poll_anonymous">"匿名投票"</string>
-	<string name="jandi_poll_create">"新しい投票を作成する"</string>
+	<string name="jandi_poll_create">"作成"</string>
 	<string name="jandi_poll_deleted">"投票を削除しました。"</string>
 	<string name="jandi_poll_empty_1">"実施中の投票がありません。"</string>
 	<string name="jandi_poll_empty_2">"\nトピックで「＋」を押し、投票を作成してください。"</string>
@@ -475,7 +483,15 @@
 	<string name="jandi_sdcard_storage">"SDカード"</string>
 	<string name="jandi_sdcard_storage_mounted">"SDカードをマウントしました"</string>
 	<string name="jandi_sdcard_storage_unmounted">"SDカードのマウントを解除しました"</string>
+	<string name="jandi_search_all_member">"全員"</string>
+	<string name="jandi_search_all_room">"全トピック"</string>
+	<string name="jandi_search_category_everyone">"<b>全員</b>"</string>
+	<string name="jandi_search_category_everywhere">"<b>全トピック</b>"</string>
+	<string name="jandi_search_history">"最近の検索"</string>
 	<string name="jandi_search_ing">"<![CDATA[<b><font color=#404040>%s</font></b>を検索しています]]>"</string>
+	<string name="jandi_search_loading">"検索中です。"</string>
+	<string name="jandi_search_no_topic_room">"検索キーワードに一致するトークルームは見つかりませんでした。"</string>
+	<string name="jandi_search_result_count">"%s件のメッセージ検索結果があります。"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>の検索結果が<b><font color=#404040>%2$d</font></b>件あります]]>"</string>
 	<string name="jandi_select_character">"キャラクターを選択"</string>
 	<string name="jandi_select_direct_messages">"送信相手を選択"</string>
@@ -509,6 +525,7 @@
 	<string name="jandi_share_to_jandi">"JANDIにシェア"</string>
 	<string name="jandi_shared">"共有"</string>
 	<string name="jandi_shared_in_room">"共有範囲"</string>
+	<string name="jandi_show_all_team_topic">"未参加のトークルームも含む"</string>
 	<string name="jandi_sign_in_block">"<u>ログインする</u>"</string>
 	<string name="jandi_sign_in_ids_explain">"JANDIからのメールを受信するメールアドレスを一つ選択してください。メールアドレスを追加しチームごとに使い分けられます"</string>
 	<string name="jandi_sign_out_message">"本当にログアウトしますか？"</string>
@@ -595,8 +612,11 @@
 	<string name="jandi_title_activity_file_explorer">"ファイルを探す"</string>
 	<string name="jandi_title_cdp_to_be_shared">"共有範囲を選択してください"</string>
 	<string name="jandi_title_cdp_to_be_unshared">"非共有とする範囲を選択"</string>
+	<string name="jandi_title_delete">"削除の確認"</string>
+	<string name="jandi_title_message">"メッセージ"</string>
 	<string name="jandi_title_name">"名前"</string>
 	<string name="jandi_title_name_required">"名前*"</string>
+	<string name="jandi_title_topic_room">"トークルーム"</string>
 	<string name="jandi_topic_ask_about_deleting">"本当にこのトピックを削除しますか？"</string>
 	<string name="jandi_topic_delete">"このトピックを削除"</string>
 	<string name="jandi_topic_description">"トピック説明"</string>
@@ -604,6 +624,7 @@
 	<string name="jandi_topic_inside_alone">"このトピックには他のメンバーがいませんので、トピックの管理者が変更できません。"</string>
 	<string name="jandi_topic_invitation">"招待"</string>
 	<string name="jandi_topic_leave">"このトピックから退出"</string>
+	<string name="jandi_topic_message_search">"トークルーム、メッセージ検索"</string>
 	<string name="jandi_topic_no_member_1">"このトピックには他にメンバーがいません。"</string>
 	<string name="jandi_topic_no_member_2">"以下のボタンをタップしてメンバーを招待しましょう"</string>
 	<string name="jandi_topic_notification">"トピックからの通知"</string>
@@ -686,5 +707,4 @@
 チームではこの名前、メールアドレスが表示されます。アカウント情報で登録した名前、メールアドレスと異なっても構いません"</string>
 	<string name="what_is_team_domain">"チームドメインはログイン用URLに使われます。
 具体的には、abc.jandi.comの”abcの部分を指し、<b>3文字以上</b>の英数字とハイフンが利用できます。覚えやすいドメイン名にすることをお勧めします"</string>
-	<string name="로">"ホームに戻る"</string>
 </resources>

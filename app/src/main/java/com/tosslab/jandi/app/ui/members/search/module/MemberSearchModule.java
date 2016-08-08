@@ -8,8 +8,6 @@ import com.tosslab.jandi.app.ui.members.adapter.searchable.SearchableMemberListA
 import com.tosslab.jandi.app.ui.members.model.MemberSearchableDataModel;
 import com.tosslab.jandi.app.ui.members.search.model.MemberSearchModel;
 import com.tosslab.jandi.app.ui.members.search.presenter.MemberSearchPresenter;
-import com.tosslab.jandi.app.ui.members.search.presenter.MemberSearchPresenterImpl;
-import com.tosslab.jandi.app.ui.members.search.view.MemberSearchView;
 import com.tosslab.jandi.app.ui.members.view.MemberSearchableDataView;
 
 import dagger.Module;
@@ -22,15 +20,15 @@ import dagger.Provides;
 public class MemberSearchModule {
 
     private final SearchableMemberListAdapter searchableMemberListAdapter;
-    private final MemberSearchView view;
+    private final MemberSearchPresenter.View view;
 
-    public MemberSearchModule(MemberSearchView view, SearchableMemberListAdapter adapter) {
+    public MemberSearchModule(MemberSearchPresenter.View view, SearchableMemberListAdapter adapter) {
         this.view = view;
         this.searchableMemberListAdapter = adapter;
     }
 
     @Provides
-    public MemberSearchView providesMemberSearchView() {
+    public MemberSearchPresenter.View providesMemberSearchView() {
         return view;
     }
 
@@ -54,11 +52,6 @@ public class MemberSearchModule {
     @Provides
     public MemberSearchModel providesMemberSearchModel() {
         return new MemberSearchModel();
-    }
-
-    @Provides
-    public MemberSearchPresenter providesMemberSearchPresenter(MemberSearchPresenterImpl presenter) {
-        return presenter;
     }
 
 }

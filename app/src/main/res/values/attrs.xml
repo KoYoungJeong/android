@@ -41,4 +41,9 @@
         <attr name="boundWidth" format="dimension" />
     </declare-styleable>
 
+    <declare-styleable name="TabView">
+        <attr name="tabTitle" format="string" />
+        <attr name="tabIcon" format="reference" />
+    </declare-styleable>
+
 </resources>

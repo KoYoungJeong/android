@@ -33,7 +33,7 @@ public class ResSearch {
 
     private List<SearchRecord> records;
 
-    public boolean isHasMore() {
+    public boolean hasMore() {
         return hasMore;
     }
 
@@ -314,4 +314,5 @@ public class ResSearch {
             this.commentCount = commentCount;
         }
     }
+
 }

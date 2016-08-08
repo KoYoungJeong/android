@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/iv_room_filter_topic_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="32dp"/>
+
+    <TextView
+        android:id="@+id/tv_room_filter_topic_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="16dp"
+        android:layout_toRightOf="@+id/iv_room_filter_topic_icon"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="sdkfjhlkajsf"
+        android:textColor="@color/jandi_text_selector"
+        android:textSize="@dimen/jandi_text_size_large"/>
+
+    <ImageView
+        android:id="@+id/iv_room_filter_topic_name_line_through"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tv_room_filter_topic_name"
+        android:layout_alignLeft="@+id/tv_room_filter_topic_name"
+        android:layout_alignRight="@+id/tv_room_filter_topic_name"
+        android:layout_alignTop="@+id/tv_room_filter_topic_name"
+        android:src="@drawable/line_black"
+        android:visibility="gone"/>
+
+    <View
+        android:id="@+id/v_room_filter_topic_disabled"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#66ffffff"
+        android:visibility="gone"/>
+
+</RelativeLayout>

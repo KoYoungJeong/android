@@ -87,7 +87,7 @@ public class FileApi extends ApiTemplate<FileApi.Api> {
                                                                @Query("messageId") long messageId,
                                                                @Query("count") int count);
 
-        @POST("search")
+        @POST("searchMessages")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResSearchFile> searchFile(@Body ReqSearchFile reqSearchFile);
 

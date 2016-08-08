@@ -76,7 +76,6 @@ public class MainTopicListPresenter {
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, action);
 
         item.setUnreadCount(0);
-        mainTopicModel.resetBadge(item.getEntityId());
 
         long teamId = TeamInfoLoader.getInstance().getTeamId();
         mainTopicModel.getUnreadCount()
@@ -135,7 +134,7 @@ public class MainTopicListPresenter {
     }
 
     public Observable<Integer> getUnreadCount(Observable<TopicItemData> joinEntities) {
-        return joinEntities.filter(topicItemData -> topicItemData.getUnreadCount() > 0)
+        return joinEntities
                 .map(TopicItemData::getUnreadCount)
                 .scan((lhs, rhs) -> lhs + rhs);
 
