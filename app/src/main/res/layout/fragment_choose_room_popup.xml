@@ -15,7 +15,7 @@
         android:gravity="left|center_vertical"
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
-        android:text="모든 대화방"
+        android:text="@string/jandi_search_all_room"
         android:textColor="@color/message_controller_popup_text_color"
         android:textSize="@dimen/jandi_text_size_large" />
 
@@ -28,10 +28,11 @@
         android:gravity="left|center_vertical"
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
-        android:text="참여중인 대화방"
+        android:text="@string/jandi_joined_room"
         android:textColor="@color/message_controller_popup_text_color"
         android:textSize="@dimen/jandi_text_size_large" />
 
+    <!-- todo 대화방 선택 l10n 적용 -->
     <TextView
         android:id="@+id/tv_choose_room_Button"
         android:layout_width="match_parent"
