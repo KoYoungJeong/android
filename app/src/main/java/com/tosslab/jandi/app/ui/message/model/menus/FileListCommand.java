@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.search.main.view.FileSearchActivity;
+import com.tosslab.jandi.app.ui.search.file.view.FileSearchActivity;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 

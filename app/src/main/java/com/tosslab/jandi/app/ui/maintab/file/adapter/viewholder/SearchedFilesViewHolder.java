@@ -11,6 +11,8 @@ import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.file.FileUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -64,7 +66,13 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
             tvFileOwner.setText("");
         }
 
-        tvFileType.setText(searchedFile.getText());
+        String fileExtension = FileUtil.getFileExtension(content.getTitle());
+        if (content.getSize() > 0) {
+            String fileSize = FileUtil.formatFileSize(content.getSize());
+            tvFileType.setText(String.format("%s, %s", fileSize, fileExtension));
+        } else {
+            tvFileType.setText(fileExtension);
+        }
 
         String searchedFileDate = DateTransformator.getTimeString(searchedFile.getCreatedAt());
         tvDate.setText(searchedFileDate);
@@ -89,15 +97,14 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
             vLineThrough.setVisibility(View.VISIBLE);
         }
 
-//        String serverUrl = content.serverUrl;
-//        String fileType = content.icon;
-//        String fileUrl = content.fileUrl;
-//        String thumbnailUrl =
-//                ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
-//        ImageUtil.setResourceIconOrLoadImage(
-//                ivFileType, vFileRound,
-//                fileUrl, thumbnailUrl,
-//                serverUrl, fileType);
+        String serverUrl = content.getServerUrl();
+        String fileType = content.getIcon();
+        String fileUrl = content.getFileUrl();
+        String thumbnailUrl = ImageUtil.getLargeProfileUril(fileUrl);
+        ImageUtil.setResourceIconOrLoadImage(
+                ivFileType, vFileRound,
+                fileUrl, thumbnailUrl,
+                serverUrl, fileType);
     }
 
 }

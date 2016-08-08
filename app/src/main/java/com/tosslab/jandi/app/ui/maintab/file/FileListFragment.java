@@ -55,7 +55,7 @@ import com.tosslab.jandi.app.ui.maintab.file.dagger.DaggerFileListComponent;
 import com.tosslab.jandi.app.ui.maintab.file.dagger.FileListModule;
 import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenter;
 import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenterImpl;
-import com.tosslab.jandi.app.ui.search.main.view.FileSearchActivity;
+import com.tosslab.jandi.app.ui.search.file.view.FileSearchActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -83,7 +83,7 @@ import de.greenrobot.event.EventBus;
  * Created by tee on 16. 6. 28..
  */
 public class FileListFragment extends Fragment implements FileListPresenterImpl.View,
-        FileSearchActivity.SearchSelectView, ListScroller {
+        FileSearchActivity.SearchSelectView, ListScroller, MainTabPagerAdapter.OnItemFocused {
 
     public static final String KEY_COMMENT_COUNT = "comment_count";
     public static final String KEY_FILE_ID = "file_id";
@@ -129,6 +129,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     private FileSearchActivity.OnSearchText onSearchText;
     private boolean isSearchLayoutFirst = true;
     private boolean isForeground;
+    private boolean focused = true; // maintab 에서 현재 화면인지 체크하기 위함
 
     public void setOnSearchItemSelect(FileSearchActivity.OnSearchItemSelect onSearchItemSelect) {
         this.onSearchItemSelect = onSearchItemSelect;
@@ -309,7 +310,9 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
     @Override
     public void showWarningToast(String message) {
-        ColoredToast.showWarning(message);
+        if (focused) {
+            ColoredToast.showWarning(message);
+        }
     }
 
     @Override
@@ -328,7 +331,9 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     @Override
     public void searchFailed(int errMessageRes) {
         FragmentActivity activity = getActivity();
-        if (activity != null && !(activity.isFinishing())) {
+        if (activity != null
+                && !(activity.isFinishing())
+                && focused) {
             ColoredToast.showError(activity.getString(errMessageRes));
         }
     }
@@ -662,4 +667,8 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         fileListPresenter.doSearchAll();
     }
 
+    @Override
+    public void onItemFocused(boolean focused) {
+        this.focused = focused;
+    }
 }

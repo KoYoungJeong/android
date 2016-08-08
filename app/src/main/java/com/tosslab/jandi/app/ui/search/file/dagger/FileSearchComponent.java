@@ -1,6 +1,6 @@
-package com.tosslab.jandi.app.ui.search.main.dagger;
+package com.tosslab.jandi.app.ui.search.file.dagger;
 
-import com.tosslab.jandi.app.ui.search.main.view.FileSearchActivity;
+import com.tosslab.jandi.app.ui.search.file.view.FileSearchActivity;
 
 import dagger.Component;
 

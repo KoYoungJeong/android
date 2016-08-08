@@ -214,7 +214,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.search.main.view.FileSearchActivity"
+            android:name=".ui.search.file.view.FileSearchActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_topic_paricipants"
             android:screenOrientation="portrait" />

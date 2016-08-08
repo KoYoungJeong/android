@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.search.main.adapter;
+package com.tosslab.jandi.app.ui.search.file.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
