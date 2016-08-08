@@ -1,7 +1,7 @@
-package com.tosslab.jandi.app.ui.search.main.dagger;
+package com.tosslab.jandi.app.ui.search.file.dagger;
 
-import com.tosslab.jandi.app.ui.search.main.presenter.FileSearchPresenter;
-import com.tosslab.jandi.app.ui.search.main.presenter.FileSearchPresenterImpl;
+import com.tosslab.jandi.app.ui.search.file.presenter.FileSearchPresenter;
+import com.tosslab.jandi.app.ui.search.file.presenter.FileSearchPresenterImpl;
 
 import dagger.Module;
 import dagger.Provides;

@@ -56,7 +56,7 @@ import com.tosslab.jandi.app.ui.maintab.file.dagger.DaggerFileListComponent;
 import com.tosslab.jandi.app.ui.maintab.file.dagger.FileListModule;
 import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenter;
 import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenterImpl;
-import com.tosslab.jandi.app.ui.search.main.view.FileSearchActivity;
+import com.tosslab.jandi.app.ui.search.file.view.FileSearchActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;

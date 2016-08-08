@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.search.main.adapter;
+package com.tosslab.jandi.app.ui.search.file.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;

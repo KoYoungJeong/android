@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.search.main.model;
+package com.tosslab.jandi.app.ui.search.file.model;
 
 import android.text.TextUtils;
 

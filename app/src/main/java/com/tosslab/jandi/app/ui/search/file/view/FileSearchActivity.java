@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.search.main.view;
+package com.tosslab.jandi.app.ui.search.file.view;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -21,10 +21,10 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
-import com.tosslab.jandi.app.ui.search.main.adapter.SearchQueryAdapter;
-import com.tosslab.jandi.app.ui.search.main.dagger.DaggerFileSearchComponent;
-import com.tosslab.jandi.app.ui.search.main.dagger.FileSearchModule;
-import com.tosslab.jandi.app.ui.search.main.presenter.FileSearchPresenter;
+import com.tosslab.jandi.app.ui.search.file.adapter.SearchQueryAdapter;
+import com.tosslab.jandi.app.ui.search.file.dagger.DaggerFileSearchComponent;
+import com.tosslab.jandi.app.ui.search.file.dagger.FileSearchModule;
+import com.tosslab.jandi.app.ui.search.file.presenter.FileSearchPresenter;
 import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
