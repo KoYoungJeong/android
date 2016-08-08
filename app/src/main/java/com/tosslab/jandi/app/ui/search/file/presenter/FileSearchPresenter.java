@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.search.main.presenter;
+package com.tosslab.jandi.app.ui.search.file.presenter;
 
 import java.util.List;
 

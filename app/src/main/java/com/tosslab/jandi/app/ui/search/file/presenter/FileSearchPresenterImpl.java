@@ -1,8 +1,8 @@
-package com.tosslab.jandi.app.ui.search.main.presenter;
+package com.tosslab.jandi.app.ui.search.file.presenter;
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.ui.search.main.model.FileSearchModel;
+import com.tosslab.jandi.app.ui.search.file.model.FileSearchModel;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -19,9 +19,9 @@ public class FileSearchPresenterImpl implements FileSearchPresenter {
     private PublishSubject<String> objectPublishSubject;
 
     @Inject
-    public FileSearchPresenterImpl(FileSearchPresenter.View view) {
+    public FileSearchPresenterImpl(FileSearchPresenter.View view, FileSearchModel fileSearchModel) {
         this.view = view;
-        fileSearchModel = new FileSearchModel();
+        this.fileSearchModel = fileSearchModel;
         initObject();
     }
 
@@ -64,7 +64,7 @@ public class FileSearchPresenterImpl implements FileSearchPresenter {
     public void onVoiceSearchResult(List<String> voiceSearchResults) {
         if (voiceSearchResults != null && !voiceSearchResults.isEmpty()) {
             String searchText = voiceSearchResults.get(0);
-            fileSearchModel.upsertQuery(0, searchText);
+            fileSearchModel.upsertQuery(searchText);
             view.setSearchText(searchText);
             view.sendNewQuery(searchText);
         } else {
@@ -76,6 +76,6 @@ public class FileSearchPresenterImpl implements FileSearchPresenter {
     public void onSearchAction(String text) {
         view.dismissDropDown();
         view.hideSoftInput();
-        fileSearchModel.upsertQuery(0, text);
+        fileSearchModel.upsertQuery(text);
     }
 }

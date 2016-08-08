@@ -1,9 +1,10 @@
-package com.tosslab.jandi.app.ui.search.main.presenter;
+package com.tosslab.jandi.app.ui.search.file.presenter;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.ui.search.main.view.FileSearchActivity;
+import com.tosslab.jandi.app.ui.search.file.model.FileSearchModel;
+import com.tosslab.jandi.app.ui.search.file.view.FileSearchActivity;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -27,14 +28,14 @@ public class FileSearchPresenterImplTest {
     public void setup() throws Exception {
         activity = rule.getActivity();
 
-        presenter = new FileSearchPresenterImpl(activity);
+        presenter = new FileSearchPresenterImpl(activity, new FileSearchModel());
     }
 
     @Test
     public void testOnSearchText() throws Throwable {
         // Given
         String query = "가";
-        presenter.fileSearchModel.upsertQuery(0, query);
+        presenter.fileSearchModel.upsertQuery(query);
         // When
         presenter.onSearchText("가");
 
@@ -45,7 +46,7 @@ public class FileSearchPresenterImplTest {
     @Test
     public void testOnSearchTextChange() throws Throwable {
         String query = "가나다";
-        presenter.fileSearchModel.upsertQuery(0, query);
+        presenter.fileSearchModel.upsertQuery(query);
 
         rule.runOnUiThread(() -> {
             // When

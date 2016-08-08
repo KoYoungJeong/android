@@ -56,7 +56,7 @@ public class SearchModelTest {
             ReqSearch reqSearch = new ReqSearch.Builder()
                     .setKeyword("검색")
                     .build();
-            ResSearch resSearch = searchModel.searchMessages(TeamInfoLoader.getInstance().getTeamId(), -1, -1, "", 1);
+            ResSearch resSearch = searchModel.searchMessages(reqSearch);
             Assert.assertNotNull(resSearch);
         } catch (RetrofitException e) {
             e.printStackTrace();
