@@ -27,7 +27,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 public class CarouselViewerModelTest {
@@ -156,8 +155,6 @@ public class CarouselViewerModelTest {
             imageFileListObservable.subscribe(testSubscriber);
 
             testSubscriber.assertError(testSubscriber.getOnErrorEvents().get(0));
-
-            fail("성공할리가..");
         }
 
         {
@@ -199,8 +196,6 @@ public class CarouselViewerModelTest {
             imageFileListObservable.subscribe(testSubscriber);
 
             testSubscriber.assertError(testSubscriber.getOnErrorEvents().get(0));
-
-            fail("성공하면 안됨..ㅠㅠ");
         }
 
         {
