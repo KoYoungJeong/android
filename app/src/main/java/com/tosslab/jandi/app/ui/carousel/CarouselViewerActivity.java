@@ -282,7 +282,10 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         setFileTitle(fileInfo.getFileName());
         setFileWriterName(fileInfo.getFileWriterName());
         setFileCreateTime(fileInfo.getFileCreateTime());
-        setFileInfo(FileUtil.formatFileSize(fileInfo.getSize()), fileInfo.getExt());
+
+        String fileSize = fileInfo.getSize() > 0 ? FileUtil.formatFileSize(fileInfo.getSize()) : "";
+        setFileInfo(fileSize, fileInfo.getExt());
+
         setFileComments(fileInfo.getFileCommentCount());
         setFilesStarredState(fileInfo.getFileMessageId(), fileInfo.isStarred(), false);
 

@@ -22,12 +22,17 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
 
 /**
  * Created by Bill MinWook Heo on 15. 6. 24..
@@ -104,12 +109,10 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
     @Override
     public void onInitImageSingleFile(CarouselFileInfo singleImageInfo) {
         if (singleImageInfo == null) {
-            LogUtil.e("tony", "singleImageInfo == null");
             return;
         }
 
         List<CarouselFileInfo> imageFiles = Arrays.asList(singleImageInfo);
-        LogUtil.i("tony", "imageFiles - " + imageFiles.toString());
         setImageFiles(imageFiles, singleImageInfo.getFileMessageId());
     }
 
@@ -121,14 +124,10 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                     carouselViewerModel.findLinkPosition(imageFiles, currentFileMessageId);
             if (startLinkPosition >= 0) {
                 CarouselFileInfo carouselFirstFileInfo = imageFiles.get(startLinkPosition);
-                LogUtil.i("tony", carouselFirstFileInfo.toString());
 
                 view.movePosition(startLinkPosition);
 
-                view.setActionbarTitle(carouselFirstFileInfo.getFileName(), FileUtil.formatFileSize(
-                        carouselFirstFileInfo.getSize()), carouselFirstFileInfo.getExt());
-                view.setFileWriterName(carouselFirstFileInfo.getFileWriter());
-                view.setFileCreateTime(carouselFirstFileInfo.getFileCreateTime());
+                view.initCarouselInfo(carouselFirstFileInfo);
             }
         }
     }
