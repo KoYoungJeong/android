@@ -22,6 +22,7 @@
         android:layout_marginLeft="16dp"
         android:layout_toLeftOf="@+id/tv_name_change_count"
         android:background="@null"
+        android:hint="@string/jandi_enter_name"
         android:imeOptions="actionDone"
         android:inputType="text"
         android:maxLength="30"

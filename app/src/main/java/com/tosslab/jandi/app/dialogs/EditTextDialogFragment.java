@@ -209,7 +209,7 @@ public class EditTextDialogFragment extends DialogFragment {
         switch (purpose) {
             case ACTION_MODIFY_PROFILE_PHONE:
                 input.setInputType(InputType.TYPE_CLASS_PHONE);
-                input.setHint(R.string.jandi_profile_phone_number_hint);
+                input.setHint(R.string.jandi_enter_phone_number);
                 break;
             case ACTION_MODIFY_PROFILE_DIVISION:
                 input.setHint(R.string.jandi_profile_division_hint);
