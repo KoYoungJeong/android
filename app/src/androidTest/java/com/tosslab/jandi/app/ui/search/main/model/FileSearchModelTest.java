@@ -4,6 +4,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.database.search.JandiSearchDatabaseManager;
 
 import org.junit.Before;
@@ -29,9 +30,9 @@ public class FileSearchModelTest {
 
     @Test
     public void testSearchOldQuery() throws Exception {
-        fileSearchModel.upsertQuery(0, null);
+        fileSearchModel.upsertQuery(null);
 
-        List<String> searchKeywords = searchModel.searchOldQuery(null);
+        List<String> searchKeywords = fileSearchModel.searchOldQuery(null);
 
         assertTrue(searchKeywords.isEmpty());
     }
@@ -40,11 +41,11 @@ public class FileSearchModelTest {
     public void testUpsertQuery() throws Exception {
         String query = "r";
 
-        fileSearchModel.upsertQuery(0, query);
+        fileSearchModel.upsertQuery(query);
         // 중복된 경우 테스트
-        fileSearchModel.upsertQuery(0, query);
+        fileSearchModel.upsertQuery(query);
 
-        List<String> searchKeywords = searchModel.searchOldQuery(query);
+        List<String> searchKeywords = fileSearchModel.searchOldQuery(query);
 
         Log.d("Test", searchKeywords.toString());
 
@@ -56,9 +57,9 @@ public class FileSearchModelTest {
 
     @Test
     public void testSearchOldAllQuery() throws Exception {
-        searchModel.upsertQuery(0, "abcde");
+        fileSearchModel.upsertQuery("abcde");
         // 중복된 경우 테스트
-        searchModel.upsertQuery(0, "defgh");
+        fileSearchModel.upsertQuery("defgh");
 
         List<String> searchKeywords = JandiSearchDatabaseManager.getInstance(JandiApplication.getContext())
                 .getSearchAllHistory();

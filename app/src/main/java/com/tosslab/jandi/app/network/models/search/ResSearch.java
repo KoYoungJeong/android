@@ -206,7 +206,26 @@ public class ResSearch {
         private long commentCount;
         private long roomId;
         private long size;
+        private String serverUrl;
+        private String fileUrl;
+        private String icon;
         private int sharedCount;
+
+        public String getFileUrl() {
+            return fileUrl;
+        }
+
+        public void setFileUrl(String fileUrl) {
+            this.fileUrl = fileUrl;
+        }
+
+        public String getServerUrl() {
+            return serverUrl;
+        }
+
+        public void setServerUrl(String serverUrl) {
+            this.serverUrl = serverUrl;
+        }
 
         public long getId() {
             return id;
@@ -262,6 +281,14 @@ public class ResSearch {
 
         public void setSharedCount(int sharedCount) {
             this.sharedCount = sharedCount;
+        }
+
+        public String getIcon() {
+            return icon;
+        }
+
+        public void setIcon(String icon) {
+            this.icon = icon;
         }
     }
 

@@ -66,11 +66,12 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
             tvFileOwner.setText("");
         }
 
-        if (content.size > 0) {
-            String fileSize = FileUtil.formatFileSize(content.size);
-            tvFileType.setText(String.format("%s, %s", fileSize, content.ext));
+        String fileExtension = FileUtil.getFileExtension(content.getTitle());
+        if (content.getSize() > 0) {
+            String fileSize = FileUtil.formatFileSize(content.getSize());
+            tvFileType.setText(String.format("%s, %s", fileSize, fileExtension));
         } else {
-            tvFileType.setText(content.ext);
+            tvFileType.setText(fileExtension);
         }
 
         String searchedFileDate = DateTransformator.getTimeString(searchedFile.getCreatedAt());
@@ -96,11 +97,10 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
             vLineThrough.setVisibility(View.VISIBLE);
         }
 
-        String serverUrl = content.serverUrl;
-        String fileType = content.icon;
-        String fileUrl = content.fileUrl;
-        String thumbnailUrl =
-                ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
+        String serverUrl = content.getServerUrl();
+        String fileType = content.getIcon();
+        String fileUrl = content.getFileUrl();
+        String thumbnailUrl = ImageUtil.getLargeProfileUril(fileUrl);
         ImageUtil.setResourceIconOrLoadImage(
                 ivFileType, vFileRound,
                 fileUrl, thumbnailUrl,
