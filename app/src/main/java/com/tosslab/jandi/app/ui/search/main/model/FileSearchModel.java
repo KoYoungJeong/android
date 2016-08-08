@@ -14,8 +14,8 @@ import java.util.List;
 
 public class FileSearchModel {
 
-    public List<SearchKeyword> searchOldQuery(String text) {
-        return JandiSearchDatabaseManager.getInstance(JandiApplication.getContext()).searchKeywords(text);
+    public List<String> searchOldQuery(String text) {
+        return JandiSearchDatabaseManager.getInstance(JandiApplication.getContext()).getSearchKeywords(text);
     }
 
     public long upsertQuery(int type, String text) {
@@ -24,7 +24,7 @@ public class FileSearchModel {
         }
 
         return JandiSearchDatabaseManager.getInstance(JandiApplication.getContext())
-                .upsertSearchKeyword(new SearchKeyword(text));
+                .upsertSearchKeyword(text);
     }
 
 }

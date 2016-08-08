@@ -26,7 +26,6 @@ import com.tosslab.jandi.app.ui.search.main.dagger.DaggerFileSearchComponent;
 import com.tosslab.jandi.app.ui.search.main.dagger.FileSearchModule;
 import com.tosslab.jandi.app.ui.search.main.presenter.FileSearchPresenter;
 import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment;
-import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -212,10 +211,10 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
     }
 
     @Override
-    public void setOldQueries(List<SearchKeyword> searchKeywords) {
+    public void setOldQueries(List<String> searchKeywords) {
         searchQueryAdapter.clear();
 
-        for (SearchKeyword searchKeyword : searchKeywords) {
+        for (String searchKeyword : searchKeywords) {
             searchQueryAdapter.add(searchKeyword);
         }
         searchQueryAdapter.notifyDataSetChanged();

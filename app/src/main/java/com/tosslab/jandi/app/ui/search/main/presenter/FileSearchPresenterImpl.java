@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.search.main.presenter;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.ui.search.main.model.FileSearchModel;
-import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +34,7 @@ public class FileSearchPresenterImpl implements FileSearchPresenter {
     }
 
     void onSearchText(String text) {
-        List<SearchKeyword> searchKeywords = fileSearchModel.searchOldQuery(text);
+        List<String> searchKeywords = fileSearchModel.searchOldQuery(text);
         view.setOldQueries(searchKeywords);
     }
 
