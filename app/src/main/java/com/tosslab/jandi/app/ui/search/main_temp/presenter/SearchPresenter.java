@@ -12,8 +12,6 @@ public interface SearchPresenter {
 
     void sendSearchQuery(String keyword);
 
-    void setSearchAdapterDataModel(SearchAdapterDataModel searchAdapterDataModel);
-
     void setChangeIsShowUnjoinedTopic(boolean isShowUnjoinedTopic);
 
     void sendMoreResults();
@@ -37,6 +35,8 @@ public interface SearchPresenter {
     void onWriterChanged(long writerId);
 
     void onAccessTypeChanged(String accessType);
+
+    void onDestroy();
 
     interface View {
 

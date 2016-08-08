@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
 import rx.subscriptions.CompositeSubscription;
@@ -49,8 +50,11 @@ public class SearchPresenterImpl implements SearchPresenter {
     @Inject
     SearchPresenter.View view;
 
+    @Inject
+    SearchAdapterDataModel searchAdapterDataModel;
+
     private boolean hasMoreSearchResult = false;
-    private SearchAdapterDataModel searchAdapterDataModel;
+
     private SearchMessageHeaderData.Builder
             searchedMessageHeaderDataBuilder = new SearchMessageHeaderData.Builder();
 
@@ -189,18 +193,15 @@ public class SearchPresenterImpl implements SearchPresenter {
 
     @Override
     public void sendSearchHistory() {
-        List<SearchHistoryData> searchHistoryDatas = new ArrayList<>();
-        List<String> searchKeywords = searchModel.getHistory();
-        Observable.from(searchKeywords)
-                .map(searchKeyword ->
-                        searchHistoryDatas.add(
-                                new SearchHistoryData.Builder()
-                                        .setKeyword(searchKeyword)
-                                        .build())
-                ).subscribe();
-
-        searchAdapterDataModel.setSearchHistoryDatas(searchHistoryDatas);
-        view.refreshHistory();
+        Observable.from(searchModel.getHistory())
+                .map(searchKeyword -> new SearchHistoryData.Builder()
+                        .setKeyword(searchKeyword)
+                        .build())
+                .collect((Func0<ArrayList<SearchHistoryData>>) ArrayList::new, List::add)
+                .subscribe(searchHistoryDatas -> {
+                    searchAdapterDataModel.setSearchHistoryDatas(searchHistoryDatas);
+                    view.refreshHistory();
+                });
     }
 
     @Override
@@ -227,10 +228,6 @@ public class SearchPresenterImpl implements SearchPresenter {
             int nextPage = pageSubject.getValue() + 1;
             pageSubject.onNext(nextPage);
         }
-    }
-
-    public void setSearchAdapterDataModel(SearchAdapterDataModel searchAdapterDataModel) {
-        this.searchAdapterDataModel = searchAdapterDataModel;
     }
 
     public void sendSearchQuery(String keyword) {
@@ -365,6 +362,13 @@ public class SearchPresenterImpl implements SearchPresenter {
             roomSubject.onNext(-1l);
             endDateSubject.onNext(new Date());
             accessTypeSubject.onNext(accessType);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (!compositeSubscription.isUnsubscribed()) {
+            compositeSubscription.unsubscribe();
         }
     }
 

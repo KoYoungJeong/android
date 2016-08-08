@@ -271,8 +271,7 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
                     TypedValue.applyDimension(
                             TypedValue.COMPLEX_UNIT_DIP, 54f, displayMetrics));
             ivProfile.setLayoutParams(layoutParams);
-            ivProfile.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            ImageLoader.loadFromResources(ivProfile, R.drawable.bot_43x54);
+            ivProfile.setImageResource(R.drawable.bot_32x40);
         }
     }
 

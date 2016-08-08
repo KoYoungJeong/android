@@ -74,6 +74,7 @@ public class SearchActivity extends BaseAppCompatActivity
     private boolean isRoomItemFold = false;
     private boolean isMessageItemFold = false;
 
+    @Inject
     private SearchAdapterViewModel searchAdapterViewModel;
 
     private boolean flagFirstSearch = true;
@@ -89,13 +90,18 @@ public class SearchActivity extends BaseAppCompatActivity
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_integrated_search);
-        DaggerSearchComponent.builder()
-                .searchModule(new SearchModule(this))
-                .build()
-                .inject(this);
+
         ButterKnife.bind(this);
 
-        setAdapter();
+        SearchAdapter adapter = new SearchAdapter();
+        setListView(adapter);
+
+        DaggerSearchComponent.builder()
+                .searchModule(new SearchModule(this, adapter))
+                .build()
+                .inject(this);
+
+        initAdapterViewModel();
 
         searchPresenter.sendSearchHistory();
 
@@ -160,16 +166,15 @@ public class SearchActivity extends BaseAppCompatActivity
         return false;
     }
 
-    private void setAdapter() {
-        SearchAdapter adapter = new SearchAdapter();
+    private void setListView(SearchAdapter adapter) {
         adapter.setHasStableIds(true);
         lvSearchResult.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         lvSearchResult.setLayoutManager(layoutManager);
         lvSearchResult.setItemAnimator(null);
+    }
 
-        searchAdapterViewModel = adapter;
-        searchPresenter.setSearchAdapterDataModel(adapter);
+    private void initAdapterViewModel() {
         searchAdapterViewModel.setOnCheckChangeListener(isChecked -> onCheckUnjoinTopic(isChecked));
 
         searchAdapterViewModel.setOnClickTopicListener((topicId, isJoined) -> {
@@ -195,6 +200,7 @@ public class SearchActivity extends BaseAppCompatActivity
         });
 
         searchAdapterViewModel.setOnClickRoomSelectionButtonListener(() -> showChooseRoomDialog());
+        LinearLayoutManager layoutManager = (LinearLayoutManager) lvSearchResult.getLayoutManager();
 
         // SCROLL
         lvSearchResult.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -425,4 +431,9 @@ public class SearchActivity extends BaseAppCompatActivity
         chooseRoomDialog.show();
     }
 
+    @Override
+    protected void onDestroy() {
+        searchPresenter.onDestroy();
+        super.onDestroy();
+    }
 }

@@ -1,6 +1,9 @@
 package com.tosslab.jandi.app.ui.search.main_temp.dagger;
 
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
+import com.tosslab.jandi.app.ui.search.main_temp.adapter.SearchAdapter;
+import com.tosslab.jandi.app.ui.search.main_temp.adapter.SearchAdapterDataModel;
+import com.tosslab.jandi.app.ui.search.main_temp.adapter.SearchAdapterViewModel;
 import com.tosslab.jandi.app.ui.search.main_temp.presenter.SearchPresenter;
 import com.tosslab.jandi.app.ui.search.main_temp.presenter.SearchPresenterImpl;
 
@@ -14,9 +17,21 @@ import dagger.Provides;
 @Module(includes = ApiClientModule.class)
 public class SearchModule {
     private SearchPresenter.View view;
+    private SearchAdapter searchAdapter;
 
-    public SearchModule(SearchPresenter.View view) {
+    public SearchModule(SearchPresenter.View view, SearchAdapter adapter) {
         this.view = view;
+        this.searchAdapter = adapter;
+    }
+
+    @Provides
+    public SearchAdapterDataModel providesSearchAdapterDataModel() {
+        return searchAdapter;
+    }
+
+    @Provides
+    public SearchAdapterViewModel providesSearchAdapterViewModel() {
+        return searchAdapter;
     }
 
     @Provides
