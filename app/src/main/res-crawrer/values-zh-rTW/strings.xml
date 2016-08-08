@@ -164,7 +164,7 @@
 	<string name="jandi_coach_mark_topic_message_search">"訊息搜尋"</string>
 	<string name="jandi_coach_mark_topic_setting">"其他議題設定\n(邀請、離開\n、重新命名)"</string>
 	<string name="jandi_coach_mark_upload_file">"上傳檔案"</string>
-	<string name="jandi_comment_count">"留言 %d"</string>
+	<string name="jandi_comment_count">"%d 個留言"</string>
 	<string name="jandi_commented_on">"<![CDATA[<font color="#999999">留言於</font><font color="#000000"><b>%s</b></font><font color="#999999">的檔案</font"]]>"</string>
 	<string name="jandi_complete_assign_topic_owner">"議題管理權限已成功轉移"</string>
 	<string name="jandi_confirm">"確定"</string>

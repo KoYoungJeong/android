@@ -164,7 +164,7 @@
 	<string name="jandi_coach_mark_topic_message_search">"メッセージ\n検索"</string>
 	<string name="jandi_coach_mark_topic_setting">"トピックに招\n待、トピック\n退出などの\n管理メニュー"</string>
 	<string name="jandi_coach_mark_upload_file">"ファイルをアップロードする"</string>
-	<string name="jandi_comment_count">"コメント %d"</string>
+	<string name="jandi_comment_count">"コメント %d件"</string>
 	<string name="jandi_commented_on">"<![CDATA[<font color="#000000"><b>%s</b></font><font color="#999999">さんのファイルにコメントしました</font>]]>"</string>
 	<string name="jandi_complete_assign_topic_owner">"トピックの管理者が更新されました"</string>
 	<string name="jandi_confirm">"確認"</string>
