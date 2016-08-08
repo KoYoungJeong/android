@@ -1,22 +1,19 @@
 package com.tosslab.jandi.app.ui.maintab;
 
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
-import android.widget.TextView;
 
-import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.chat.MainChatListFragment_;
 import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
 import com.tosslab.jandi.app.ui.maintab.mypage.MyPageFragment;
 import com.tosslab.jandi.app.ui.maintab.team.TeamFragment;
 import com.tosslab.jandi.app.ui.maintab.topic.MainTopicListFragment_;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
+import com.tosslab.jandi.app.views.TabView;
 
-/**
- * Created by justinygchoi on 2014. 8. 11..
- */
 public class MainTabPagerAdapter extends FragmentPagerAdapter
         implements PagerSlidingTabStrip.ViewTabProvider {
 
@@ -26,15 +23,15 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
     public static final int TAB_TEAM = 3;
     public static final int TAB_MYPAGE = 4;
 
-    View[] mTabs;
+    private TabView[] tabViews;
     Fragment[] fragments;
     private long selectedEntity;
 
-    public MainTabPagerAdapter(FragmentManager fm, View[] tabs, long selectedEntity) {
+    public MainTabPagerAdapter(FragmentManager fm, TabView[] tabs, long selectedEntity) {
         super(fm);
-        mTabs = tabs;
+        this.tabViews = tabs;
         this.selectedEntity = selectedEntity;
-        fragments = new Fragment[mTabs.length];
+        fragments = new Fragment[tabViews.length];
 
         initFragments(fragments);
     }
@@ -75,73 +72,56 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
 
     @Override
     public int getCount() {
-        return mTabs.length;
+        return tabViews.length;
     }
 
     @Override
     public View getPageView(int position) {
-        return mTabs[position];
+        return tabViews[position];
     }
 
     public void updateTopicBadge(int count) {
-        TextView tvTopicBadge = (TextView) getBadgeView(TAB_TOPIC);
-        updateBadgeText(count, tvTopicBadge, TAB_TOPIC);
+        TabView tvTopicBadge = getBadgeView(TAB_TOPIC);
+        updateBadgeText(count, tvTopicBadge);
 
     }
 
     public void updateChatBadge(int count) {
-        TextView tvChatBadge = (TextView) getBadgeView(TAB_CHAT);
-        updateBadgeText(count, tvChatBadge, TAB_CHAT);
+        TabView tvChatBadge = getBadgeView(TAB_CHAT);
+        updateBadgeText(count, tvChatBadge);
     }
 
-    private void updateBadgeText(int count, TextView tvBadge, int position) {
-        if (tvBadge == null) {
+    public void updateMyPageBadge(int badgeCount) {
+        TabView tvMyPage = getBadgeView(TAB_MYPAGE);
+        updateBadgeText(badgeCount, tvMyPage);
+    }
+
+    private void updateBadgeText(int count, TabView tvTab) {
+        if (tvTab == null) {
             return;
         }
         if (count <= 0) {
-            hideBadge(position);
+            tvTab.hideBadge();
         } else if (count < 1000) {
-            tvBadge.setText((String.valueOf(count)));
-            showBadge(position);
+            tvTab.setBadgeText((String.valueOf(count)));
+            tvTab.showBadge();
         } else {
-            tvBadge.setText(String.valueOf(999));
-            showBadge(position);
+            tvTab.setBadgeText(String.valueOf(999));
+            tvTab.showBadge();
         }
     }
 
-    private void showBadge(int position) {
-        View badge = getBadgeView(position);
-        if (badge != null) {
-            badge.setVisibility(View.VISIBLE);
+    @Nullable
+    private TabView getBadgeView(int position) {
+        if (position == TAB_FILE || position == TAB_TEAM) {
+            return null;
         }
-    }
 
-    private void hideBadge(int position) {
-        View badge = getBadgeView(position);
-        if (badge != null) {
-            badge.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    private View getBadgeView(int position) {
-        View tabView = getPageView(position);
-        if (position == TAB_TOPIC) {
-            return tabView.findViewById(R.id.tab_badge_topic_new);
-        } else if (position == TAB_CHAT) {
-            return tabView.findViewById(R.id.tab_badge_chat_new);
-        } else if (position == TAB_MYPAGE) {
-            return tabView.findViewById(R.id.tab_badge_mypage_new);
-        }
-        return null;
+        return tabViews[position];
     }
 
     public void setSelectedEntity(int selectedEntity) {
         this.selectedEntity = selectedEntity;
-    }
-
-    public void updateMyPageBadge(int badgeCount) {
-        TextView tvMyPage = (TextView) getBadgeView(TAB_MYPAGE);
-        updateBadgeText(badgeCount, tvMyPage, TAB_MYPAGE);
     }
 
     public void onPageSelected(int position) {

@@ -70,8 +70,12 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
             tvFileOwner.setText("");
         }
 
-        String fileSize = FileUtil.formatFileSize(content.size);
-        tvFileType.setText(String.format("%s, %s", fileSize, content.ext));
+        if (content.size > 0) {
+            String fileSize = FileUtil.formatFileSize(content.size);
+            tvFileType.setText(String.format("%s, %s", fileSize, content.ext));
+        } else {
+            tvFileType.setText(content.ext);
+        }
 
         String searchedFileDate = DateTransformator.getTimeString(searchedFile.createTime);
         tvDate.setText(searchedFileDate);

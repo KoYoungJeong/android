@@ -161,6 +161,7 @@ public class JandiSocketServiceModelTest {
 
     }
 
+    @Ignore
     @Test
     public void testOnTeamNameUpdated() throws Exception {
 
@@ -912,6 +913,7 @@ public class JandiSocketServiceModelTest {
         assertThat(accept).isTrue();
     }
 
+    @Ignore
     @Test
     public void testOnTeamDomainUpdated() throws Exception {
         register((TeamInfoChangeEvent e) -> {
