@@ -117,4 +117,6 @@ public interface EventHistoryInfo {
     int getVersion();
 
     long getTeamId();
+
+    String getUnique();
 }

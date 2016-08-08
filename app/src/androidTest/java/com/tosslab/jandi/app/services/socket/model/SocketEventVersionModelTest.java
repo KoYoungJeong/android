@@ -86,6 +86,11 @@ public class SocketEventVersionModelTest {
         public long getTeamId() {
             return 0;
         }
+
+        @Override
+        public String getUnique() {
+            return "";
+        }
     }
 
     static class NoVersion implements EventHistoryInfo {
@@ -113,6 +118,11 @@ public class SocketEventVersionModelTest {
         @Override
         public long getTeamId() {
             return 0;
+        }
+
+        @Override
+        public String getUnique() {
+            return "";
         }
     }
 
@@ -143,10 +153,19 @@ public class SocketEventVersionModelTest {
         public long getTeamId() {
             return 0;
         }
+
+        @Override
+        public String getUnique() {
+            return "";
+        }
     }
 
     @Version(1)
     static class SubVersion extends NoVersion {
+        @Override
+        public String getUnique() {
+            return "";
+        }
     }
 
 }

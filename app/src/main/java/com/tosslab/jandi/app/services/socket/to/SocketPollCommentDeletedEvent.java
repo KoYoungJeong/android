@@ -21,6 +21,7 @@ public class SocketPollCommentDeletedEvent implements EventHistoryInfo {
     private long writer;
     private long teamId;
     private Data data;
+    private String unique;
 
     public long getWriter() {
         return writer;
@@ -46,6 +47,15 @@ public class SocketPollCommentDeletedEvent implements EventHistoryInfo {
 
     public void setTeamId(long teamId) {
         this.teamId = teamId;
+    }
+
+    @Override
+    public String getUnique() {
+        return unique;
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     @Override

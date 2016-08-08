@@ -21,6 +21,7 @@ public class SocketMemberStarredEvent implements EventHistoryInfo {
     private String type;
     private int memberId;
     private Member member;
+    private String unique;
 
 
     @Override
@@ -72,6 +73,15 @@ public class SocketMemberStarredEvent implements EventHistoryInfo {
 
     public void setTeamId(long teamId) {
         this.teamId = teamId;
+    }
+
+    @Override
+    public String getUnique() {
+        return unique;
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     @Override

@@ -15,6 +15,7 @@ public class SocketTopicDeletedEvent implements EventHistoryInfo {
     private long teamId;
     private Data data;
     private long ts;
+    private String unique;
 
     @Override
     public int getVersion() {
@@ -41,6 +42,15 @@ public class SocketTopicDeletedEvent implements EventHistoryInfo {
 
     public void setTeamId(long teamId) {
         this.teamId = teamId;
+    }
+
+    @Override
+    public String getUnique() {
+        return unique;
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     public Data getData() {

@@ -17,6 +17,7 @@ public class SocketTopicFolderItemCreatedEvent implements EventHistoryInfo {
     private long teamId;
 
     private long ts;
+    private String unique;
 
     @Override
     public long getTs() {
@@ -70,6 +71,15 @@ public class SocketTopicFolderItemCreatedEvent implements EventHistoryInfo {
 
     public void setTeamId(long teamId) {
         this.teamId = teamId;
+    }
+
+    @Override
+    public String getUnique() {
+        return unique;
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

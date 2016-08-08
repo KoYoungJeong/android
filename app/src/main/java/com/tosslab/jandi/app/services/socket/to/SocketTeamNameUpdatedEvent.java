@@ -15,6 +15,7 @@ public class SocketTeamNameUpdatedEvent implements EventHistoryInfo {
     private long ts;
     private long teamId;
     private Team team;
+    private String unique;
 
     @Override
     public String getEvent() {
@@ -50,6 +51,15 @@ public class SocketTeamNameUpdatedEvent implements EventHistoryInfo {
 
     public void setTeamId(long teamId) {
         this.teamId = teamId;
+    }
+
+    @Override
+    public String getUnique() {
+        return unique;
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     public Team getTeam() {

@@ -14,6 +14,7 @@ public class UnknownEventHistoryInfo implements EventHistoryInfo {
     private int version;
     private long ts;
     private long teamId;
+    private String unique;
 
     @Override
     public long getTs() {
@@ -47,7 +48,16 @@ public class UnknownEventHistoryInfo implements EventHistoryInfo {
         return teamId;
     }
 
+    @Override
+    public String getUnique() {
+        return unique;
+    }
+
     public void setTeamId(long teamId) {
         this.teamId = teamId;
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 }
