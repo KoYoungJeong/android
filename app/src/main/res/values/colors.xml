@@ -36,6 +36,7 @@
     <color name="jandi_black_b2">#B2000000</color>
     <color name="jandi_black_de">#de000000</color>
     <color name="jandi_black_e6">#e6000000</color>
+    <color name="jandi_color_d9d9d9">#FFd9d9d9</color>
 
 
     <color name="jandi_badge_point_color">#FFFF5B49</color>
@@ -143,6 +144,8 @@
     <color name="jandi_messages_button_bg_active">#1A9B6A</color>
     <color name="jandi_messages_button_fg_active">#FFFFFF</color>
     <color name="jandi_messages_edittext_bg">#FFFFFF</color>
+
+    <color name="jandi_main_topic_order_divider">@color/jandi_color_d9d9d9</color>
 
     <!-- Side Panel -->
     <color name="jandi_pannel_bg_normal">#313131</color>

@@ -8,23 +8,15 @@
         android:id="@+id/rv_main_topic"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/vg_main_topic_order"
         android:background="@color/white"
-        android:clipToPadding="false"
-        android:layout_below="@+id/vg_main_topic_order"/>
+        android:clipToPadding="false" />
 
     <RelativeLayout
         android:id="@+id/vg_main_topic_order"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="@color/white">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="16dp"
-            android:layout_toLeftOf="@+id/vg_main_topic_order_title"
-            android:background="@color/jandi_entities_divider" />
 
         <LinearLayout
             android:id="@+id/vg_main_topic_order_title"
@@ -35,36 +27,29 @@
             android:paddingLeft="12dp"
             android:paddingRight="12dp">
 
+            <ImageView
+                android:id="@+id/iv_main_topic_order"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="3dp"
+                android:duplicateParentState="true"
+                android:src="@drawable/topic_list_folder" />
+
             <TextView
                 android:id="@+id/tv_main_topic_order_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:duplicateParentState="true"
                 android:text="@string/jandi_sort_folder"
                 android:textColor="@color/jandi_text_light"
-                android:textSize="@dimen/jandi_mention_star_list_item_font_size" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:duplicateParentState="true"
-                android:src="@drawable/btn_topic_sort_dropdown_arrow" />
+                android:textSize="@dimen/jandi_text_size_small" />
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="16dp"
-            android:layout_toRightOf="@+id/vg_main_topic_order_title"
-            android:background="@color/jandi_entities_divider" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_alignParentBottom="true"
-            android:background="#FFDFDFDF" />
+            android:background="@color/jandi_main_topic_order_divider" />
     </RelativeLayout>
 
 </RelativeLayout>

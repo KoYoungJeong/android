@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -104,6 +105,9 @@ public class MainTopicListFragment extends Fragment
     MainTopicListPresenter mainTopicListPresenter;
     @ViewById(R.id.rv_main_topic)
     RecyclerView lvMainTopic;
+
+    @ViewById(R.id.iv_main_topic_order)
+    ImageView ivTopicOrder;
 
     @ViewById(R.id.tv_main_topic_order_title)
     TextView tvSortTitle;
@@ -273,11 +277,13 @@ public class MainTopicListFragment extends Fragment
             mainTopicListPresenter.onRefreshUpdatedTopicList();
             lvMainTopic.setAdapter(updatedTopicAdapter);
             tvSortTitle.setText(R.string.jandi_sort_updated);
+            ivTopicOrder.setImageResource(R.drawable.topic_list_recent);
         } else if (!currentFolder && changeToFolder) {
             mainTopicListPresenter.refreshList();
             lvMainTopic.setAdapter(wrappedAdapter);  // requires *wrapped* expandableTopicAdapter
             lvMainTopic.setHasFixedSize(false);
             tvSortTitle.setText(R.string.jandi_sort_folder);
+            ivTopicOrder.setImageResource(R.drawable.topic_list_folder);
         }
     }
 
