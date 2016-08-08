@@ -164,6 +164,7 @@
         android:id="@+id/v_name_warning"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/jandi_transparent_white_40p"
         android:visibility="visible" />
 
 </RelativeLayout>

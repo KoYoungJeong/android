@@ -971,22 +971,25 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
 
         User user = TeamInfoLoader.getInstance().getUser(item.message.writerId);
-        tvPreviewUserName.setText(user.getName());
+        if (user != null) {
 
-        if (!TeamInfoLoader.getInstance().isBot(user.getId())) {
-            ImageUtil.loadProfileImage(ivPreviewProfile, user.getPhotoUrl(), R.drawable.profile_img);
-        } else {
-            Uri uri = Uri.parse(user.getPhotoUrl());
-            ImageLoader.newInstance()
-                    .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
-                    .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
-                    .transformation(new JandiProfileTransform(ivPreviewProfile.getContext(),
-                            TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
-                            TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
-                            Color.WHITE))
-                    .uri(uri)
-                    .into(ivPreviewProfile);
+            tvPreviewUserName.setText(user.getName());
 
+            if (!TeamInfoLoader.getInstance().isBot(user.getId())) {
+                ImageUtil.loadProfileImage(ivPreviewProfile, user.getPhotoUrl(), R.drawable.profile_img);
+            } else {
+                Uri uri = Uri.parse(user.getPhotoUrl());
+                ImageLoader.newInstance()
+                        .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
+                        .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                        .transformation(new JandiProfileTransform(ivPreviewProfile.getContext(),
+                                TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
+                                TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
+                                Color.WHITE))
+                        .uri(uri)
+                        .into(ivPreviewProfile);
+
+            }
         }
 
         String message;

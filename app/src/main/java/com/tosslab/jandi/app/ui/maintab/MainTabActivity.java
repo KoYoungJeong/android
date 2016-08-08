@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -39,21 +40,18 @@ import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
-import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.main.ConfigApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
-import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.push.PushInterfaceActivity;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
-import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -82,6 +80,7 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.MaxHeightRecyclerView;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
+import com.tosslab.jandi.app.views.TabView;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
@@ -120,6 +119,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     @Extra
     int tabIndex = -1;
 
+    @ViewById(R.id.layout_search_bar)
+    Toolbar toolbar;
     @ViewById(R.id.vg_fab_menu)
     FloatingActionMenu floatingActionMenu;
     @Bean
@@ -205,8 +206,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
 
         // Bind the tabs to the ViewPager
         initMainTabStrip();
-        updateTopicBadge();
-        updateChatBadge();
 
         showCoachMarkIfNeed();
 
@@ -238,17 +237,19 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     private void initMainTabViewPager() {
-        View[] tabViews = new View[5];
-        tabViews[0] = layoutInflater.inflate(R.layout.tab_topic, null);
-        tabViews[1] = layoutInflater.inflate(R.layout.tab_chat, null);
-        tabViews[2] = layoutInflater.inflate(R.layout.tab_file, null);
-        tabViews[3] = layoutInflater.inflate(R.layout.tab_team, null);
-        tabViews[4] = layoutInflater.inflate(R.layout.tab_mypage, null);
+        TabView[] tabViews = new TabView[5];
+        tabViews[0] = (TabView) getLayoutInflater().inflate(R.layout.tab_topic, null);
+        tabViews[1] = (TabView) getLayoutInflater().inflate(R.layout.tab_chat, null);
+        tabViews[2] = (TabView) getLayoutInflater().inflate(R.layout.tab_file, null);
+        tabViews[3] = (TabView) getLayoutInflater().inflate(R.layout.tab_team, null);
+        tabViews[4] = (TabView) getLayoutInflater().inflate(R.layout.tab_mypage, null);
         mainTabPagerAdapter =
                 new MainTabPagerAdapter(getSupportFragmentManager(), tabViews, selectedEntity);
         vpMainTab.setOverScrollMode(ViewPager.OVER_SCROLL_NEVER);
         vpMainTab.setOffscreenPageLimit(4);
         vpMainTab.setAdapter(mainTabPagerAdapter);
+        mainTabPagerAdapter.onPageSelected(0);
+
     }
 
     private void initMainTabStrip() {
@@ -295,7 +296,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
                         setFABMenuVisibility(false);
                         break;
                 }
-
+                mainTabPagerAdapter.onPageSelected(position);
                 listScrollHandler.setCurrentIndex(position);
                 JandiPreference.setLastSelectedTab(position);
             }
@@ -306,36 +307,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         mainTapStrip.setOnTabClickListener(index -> {
             listScrollHandler.onTabClick(index);
         });
-    }
-
-    private void updateChatBadge() {
-
-        Observable.from(TeamInfoLoader.getInstance().getDirectMessageRooms())
-                .map(DirectMessageRoom::getUnreadCount)
-                .scan((lhs, rhs) -> lhs + rhs)
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(count -> {
-                    mainTabPagerAdapter.updateChatBadge(count);
-                });
-
-    }
-
-    private void updateTopicBadge() {
-
-        Observable.defer(() -> {
-            long teamId = AccountRepository.getRepository().getSelectedTeamId();
-            return Observable.from(TopicRepository.getInstance().getTopics(teamId));
-        })
-                .filter(Topic::isJoined)
-                .map(Topic::getUnreadCount)
-                .scan((count1, count2) -> count1 + count2)
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(count -> {
-                    mainTabPagerAdapter.updateTopicBadge(count);
-                });
-
     }
 
     private void showCoachMarkIfNeed() {
@@ -384,7 +355,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
     }
 
     private void setupActionBar(String teamName) {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -578,7 +548,15 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         if (event.isConnected()) {
             offlineLayer.dismissOfflineView();
 
-            teamsPresenter.onInitializeTeams();
+            if (teamsAdapter == null
+                    || teamsAdapter.getItemCount() <= 0) {
+                teamsPresenter.onInitializeTeams();
+            }
+
+            // 네트워크가 재연결되면 소켓 서버에 접속하도록 함
+            JandiPreference.setSocketReconnectDelay(0);
+            sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
+
         } else {
             offlineLayer.showOfflineView();
             ColoredToast.showGray(JandiApplication.getContext().getString(R

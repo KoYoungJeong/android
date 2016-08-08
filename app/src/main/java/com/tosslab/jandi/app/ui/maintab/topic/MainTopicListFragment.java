@@ -32,6 +32,7 @@ import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.folder.ExpandableTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.updated.UpdatedTopicAdapter;
@@ -393,23 +394,32 @@ public class MainTopicListFragment extends Fragment
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == MOVE_MESSAGE_ACTIVITY
-                && resultCode == Activity.RESULT_OK
-                && (data != null && data.hasExtra(MessageListV2Activity.KEY_ENTITY_ID))) {
-            long selectedEntity = data.getLongExtra(MessageListV2Activity.KEY_ENTITY_ID, -2);
-            if (selectedEntity <= -2) {
-                return;
+
+        if (requestCode == MOVE_MESSAGE_ACTIVITY) {
+
+            if (resultCode == Activity.RESULT_OK && (data != null && data.hasExtra(MessageListV2Activity.KEY_ENTITY_ID))) {
+                long selectedEntity = data.getLongExtra(MessageListV2Activity.KEY_ENTITY_ID, -2);
+                if (selectedEntity <= -2) {
+                    return;
+                }
+
+                setSelectedItem(selectedEntity);
+                if (isCurrentFolder()) {
+                    mainTopicListPresenter.refreshList();
+                    expandableTopicAdapter.startAnimation();
+                    expandableTopicAdapter.notifyDataSetChanged();
+                } else {
+                    if (TeamInfoLoader.getInstance().isTopic(selectedEntity)) {
+                        int position = updatedTopicAdapter.indexOfEntity(selectedEntity);
+                        updatedTopicAdapter.getItem(position).setUnreadCount(TeamInfoLoader.getInstance().getTopic(selectedEntity).getUnreadCount());
+                    }
+                    updatedTopicAdapter.startAnimation();
+                    updatedTopicAdapter.notifyDataSetChanged();
+                }
             }
 
-            setSelectedItem(selectedEntity);
-            if (isCurrentFolder()) {
-                expandableTopicAdapter.startAnimation();
-                expandableTopicAdapter.notifyDataSetChanged();
-            } else {
-                updatedTopicAdapter.startAnimation();
-                updatedTopicAdapter.notifyDataSetChanged();
-            }
         }
+
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -522,8 +532,11 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEvent(RetrieveTopicListEvent event) {
-        mainTopicListPresenter.refreshList();
-        mainTopicListPresenter.onRefreshUpdatedTopicList();
+        if (isCurrentFolder()) {
+            mainTopicListPresenter.refreshList();
+        } else {
+            mainTopicListPresenter.onRefreshUpdatedTopicList();
+        }
     }
 
     public void onEvent(TopicFolderRefreshEvent event) {

@@ -32,6 +32,9 @@ rootProject.allprojects { project ->
                 compile rootProject.ext.dependecies.libraries.dart
                 provided rootProject.ext.dependecies.libraries.dart_processor
 
+                compile rootProject.ext.dependecies.libraries.henson
+                provided rootProject.ext.dependecies.libraries.henson_processor
+
                 compile rootProject.ext.dependecies.libraries.multidex
                 compile fileTree(dir: 'app/libs', include: ['*.jar'])
 

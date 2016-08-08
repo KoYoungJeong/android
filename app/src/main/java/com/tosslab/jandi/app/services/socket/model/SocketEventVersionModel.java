@@ -22,7 +22,9 @@ public class SocketEventVersionModel {
             annotation = versionMapper.get(klass);
         } else {
             annotation = klass.getAnnotation(Version.class);
-            versionMapper.put(klass, annotation);
+            if (annotation != null) {
+                versionMapper.put(klass, annotation);
+            }
         }
         if (annotation == null) {
             return false;

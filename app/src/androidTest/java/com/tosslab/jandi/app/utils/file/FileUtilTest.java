@@ -13,7 +13,7 @@ public class FileUtilTest {
     @Test
     public void testFileSizeCalculation() throws Exception {
         String fileSizeText = FileUtil.formatFileSize(1023);
-        assertThat(fileSizeText).isEqualTo("1023 Byte");
+        assertThat(fileSizeText).isEqualTo("1023 Bytes");
 
         fileSizeText = FileUtil.formatFileSize(1025);
         assertThat(fileSizeText).isEqualTo("1 KB");

@@ -107,10 +107,19 @@ public class TeamInfoLoader {
         });
     }
 
+    public void refresh(InitialInfo info) {
+        execute(() -> {
+            TeamInfoLoader.this.initialInfo = info;
+            setUp();
+        });
+    }
+
     public void refresh(long teamId) {
         execute(() -> {
             initialInfo = InitialInfoRepository.getInstance().getInitialInfo(teamId);
-            setUp();
+            if (initialInfo != null) {
+                setUp();
+            }
         });
     }
 
@@ -135,7 +144,7 @@ public class TeamInfoLoader {
                     .takeFirst(human -> human.getId() == myId)
                     .map(User::new)
                     .toBlocking()
-                    .first();
+                    .firstOrDefault(new User(null));
         }
     }
 
@@ -253,27 +262,27 @@ public class TeamInfoLoader {
     }
 
     public List<User> getUserList() {
-        return Collections.unmodifiableList(new ArrayList<>(users.values()));
+        return execute(() -> Collections.unmodifiableList(new ArrayList<>(users.values())));
     }
 
     private Observable<Bot> getBotObservable() {
-        return Observable.from(initialInfo.getBots());
+        return execute(() -> Observable.from(initialInfo.getBots()));
     }
 
     private Observable<Folder> getFolderObservable() {
-        return Observable.from(initialInfo.getFolders());
+        return execute(() -> Observable.from(initialInfo.getFolders()));
     }
 
     private Observable<Topic> getTopicObservable() {
-        return Observable.from(initialInfo.getTopics());
+        return execute(() -> Observable.from(initialInfo.getTopics()));
     }
 
     public List<TopicRoom> getTopicList() {
-        return Collections.unmodifiableList(new ArrayList<>(topicRooms.values()));
+        return execute(() -> Collections.unmodifiableList(new ArrayList<>(topicRooms.values())));
     }
 
     private Observable<Chat> getChatObservable() {
-        return Observable.from(initialInfo.getChats());
+        return execute(() -> Observable.from(initialInfo.getChats()));
     }
 
     public long getMyId() {

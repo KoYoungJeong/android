@@ -143,11 +143,13 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     }
 
     private void setUserInfo(ChatChooseItem item) {
+        String name;
         if (!item.isInactive()) {
-            setName(item.getName(), item.isEnabled());
+            name = item.getName();
         } else {
-            setName(item.getEmail(), item.isEnabled());
+            name = item.getEmail();
         }
+        setName(name, item.isEnabled());
 
         String department = item.getDepartment();
         if (TextUtils.isEmpty(department)) {

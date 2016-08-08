@@ -248,8 +248,7 @@
 	<string name="jandi_file_search_user">"按成員篩選搜尋結果"</string>
 	<string name="jandi_file_size_large_error">"無法上傳大於300MB的檔案"</string>
 	<string name="jandi_file_upload_finish">"檔案已成功上傳"</string>
-	<string name="jandi_file_upload_go_topic">"
-點擊進入JANDI瀏覽"</string>
+	<string name="jandi_file_upload_go_topic">"點擊進入JANDI瀏覽"</string>
 	<string name="jandi_file_upload_state">"上傳檔案中 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"檔案上傳成功"</string>
 	<string name="jandi_file_uploading">"上傳"</string>
@@ -292,8 +291,8 @@
 	<string name="jandi_input_search_keyword">"按照關鍵字搜尋您的訊息"</string>
 	<string name="jandi_input_topic_name">"請輸入議題群組名稱"</string>
 	<string name="jandi_input_user_name">"輸入您的名字"</string>
-	<string name="jandi_insert_new_department">"(新部門)"</string>
-	<string name="jandi_insert_new_job_title">"(新職稱)"</string>
+	<string name="jandi_insert_new_department">"新部門"</string>
+	<string name="jandi_insert_new_job_title">"新職稱"</string>
 	<string name="jandi_insert_team_domain">"請輸入團隊網域"</string>
 	<string name="jandi_insert_team_name">"請輸入團隊名稱"</string>
 	<string name="jandi_invitation">"邀請"</string>

@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.intro.model;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -18,7 +17,6 @@ import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
-import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -28,12 +26,11 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
-import java.util.Collection;
-
 import javax.inject.Inject;
 
 import dagger.Lazy;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 public class IntroActivityModel {
 
@@ -65,24 +62,6 @@ public class IntroActivityModel {
         return TextUtils.isEmpty(TokenUtil.getRefreshToken());
     }
 
-    public void refreshAccountInfo() throws RetrofitException {
-
-        ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
-        AccountUtil.removeDuplicatedTeams(resAccountInfo);
-        AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
-
-        Collection<ResAccountInfo.UserTeam> teamList = resAccountInfo.getMemberships();
-        Observable.from(teamList)
-                .map(ResAccountInfo.UserTeam::getUnread)
-                .reduce((prev, current) -> prev + current)
-                .subscribe(total -> {
-                    BadgeUtils.setBadge(JandiApplication.getContext(), total);
-                }, e -> {
-                    LogUtil.e(Log.getStackTraceString(e));
-                });
-
-    }
-
     public boolean refreshEntityInfo() {
         ResAccountInfo.UserTeam selectedTeamInfo =
                 AccountRepository.getRepository().getSelectedTeamInfo();
@@ -92,9 +71,13 @@ public class IntroActivityModel {
         try {
             long selectedTeamId = selectedTeamInfo.getTeamId();
             InitialInfo initialInfo = startApi.get().getInitializeInfo(selectedTeamId);
-            InitialInfoRepository.getInstance().upsertInitialInfo(initialInfo);
+            TeamInfoLoader.getInstance().refresh(initialInfo);
+            Observable.just(initialInfo)
+                    .observeOn(Schedulers.io())
+                    .subscribe(o -> {
+                        InitialInfoRepository.getInstance().upsertInitialInfo(o);
+                    });
             JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
-            TeamInfoLoader.getInstance().refresh();
             return true;
         } catch (RetrofitException e) {
             e.printStackTrace();
@@ -154,4 +137,7 @@ public class IntroActivityModel {
         return MessageRepository.getRepository().deleteAllLink();
     }
 
+    public long getSelectedTeam() {
+        return TeamInfoLoader.getInstance().getTeamId();
+    }
 }

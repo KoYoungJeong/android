@@ -26,7 +26,7 @@ import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
-import com.tosslab.jandi.app.ui.message.detail.dagger.DaggerTopicDetailComponent;
+import com.tosslab.jandi.app.ui.message.detail.dagger.DaggerChatDetailComponent;
 import com.tosslab.jandi.app.ui.message.detail.model.LeaveViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.TopicDetailModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -82,7 +82,7 @@ public class ChatDetailFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        DaggerTopicDetailComponent.builder()
+        DaggerChatDetailComponent.builder()
                 .build()
                 .inject(this);
 
@@ -152,7 +152,7 @@ public class ChatDetailFragment extends Fragment {
         activity.finish();
     }
 
-    public void onEvent(MemberStarredEvent event) {
+    public void onEventMainThread(MemberStarredEvent event) {
         if (event.getId() == entityId) {
             boolean isStarred = TeamInfoLoader.getInstance().isStarredUser(entityId);
             setStarred(isStarred);
@@ -170,6 +170,9 @@ public class ChatDetailFragment extends Fragment {
             TeamInfoLoader.getInstance().refresh();
 
             setStarred(!isStarred);
+            if (!isStarred) {
+                showSuccessToast(getString(R.string.jandi_message_starred));
+            }
         };
         starredUser.filter(it -> it)
                 .doOnNext(isStarred -> {
@@ -194,7 +197,6 @@ public class ChatDetailFragment extends Fragment {
                         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.On);
 
                         topicDetailModel.trackTopicStarSuccess(entityId);
-                        showSuccessToast(getString(R.string.jandi_message_starred));
                     } catch (RetrofitException e) {
                         int errorCode = e.getStatusCode();
                         if (TeamInfoLoader.getInstance().isStarredUser(entityId)) {
@@ -220,7 +222,11 @@ public class ChatDetailFragment extends Fragment {
 
     @OnClick(R.id.vg_chat_detail_leave)
     void onChatLeaveClick() {
-        leaveViewModel.leave(entityId);
+        if (leaveViewModel.canLeaveRoom(entityId)) {
+            leaveViewModel.leave(entityId);
+        } else {
+            leaveViewModel.showPrivateTopicLeaveDialog(getActivity(), entityId);
+        }
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.Leave);
     }
 
