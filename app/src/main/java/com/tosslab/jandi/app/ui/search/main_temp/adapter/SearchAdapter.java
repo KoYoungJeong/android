@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.search.main_temp.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersAdapter;
@@ -251,27 +252,40 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     private void setViewConfiguration(RecyclerView.ViewHolder holder, int position) {
         if (isMessageItemFold) {
             if (getItemViewType(position) == SearchData.ITEM_TYPE_MESSAGE_HEADER) {
+                holder.itemView.setVisibility(View.GONE);
                 holder.itemView.getLayoutParams().height = 0;
             }
 
             if (getItemViewType(position) == SearchData.ITEM_TYPE_MESSAGE_ITEM) {
+                holder.itemView.setVisibility(View.GONE);
                 holder.itemView.getLayoutParams().height = 0;
             }
 
             if (getItemViewType(position) == SearchData.ITEM_TYPE_NO_MESSAGE_ITEM) {
+                holder.itemView.setVisibility(View.GONE);
                 holder.itemView.getLayoutParams().height = 0;
+
             }
         } else {
             if (getItemViewType(position) == SearchData.ITEM_TYPE_MESSAGE_HEADER) {
-                holder.itemView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                holder.itemView.setVisibility(View.VISIBLE);
+                SearchMessageHeaderData searchMessageHeaderData = (SearchMessageHeaderData) datas.get(position);
+                if (searchMessageHeaderData.isShowSearchedResultMessage()) {
+                    holder.itemView.getLayoutParams().height = (int) UiUtils.getPixelFromDp(96);
+                } else {
+                    holder.itemView.getLayoutParams().height = (int) UiUtils.getPixelFromDp(48);
+                }
             }
 
             if (getItemViewType(position) == SearchData.ITEM_TYPE_MESSAGE_ITEM) {
+                holder.itemView.setVisibility(View.VISIBLE);
                 holder.itemView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
             }
 
             if (getItemViewType(position) == SearchData.ITEM_TYPE_NO_MESSAGE_ITEM) {
+                holder.itemView.setVisibility(View.VISIBLE);
                 holder.itemView.getLayoutParams().height = (int) UiUtils.getPixelFromDp(75);
+
             }
         }
 
@@ -287,18 +301,17 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
             if (getItemViewType(position) == SearchData.ITEM_TYPE_NO_ROOM_ITEM) {
                 holder.itemView.getLayoutParams().height = 0;
             }
-
         } else {
             if (getItemViewType(position) == SearchData.ITEM_TYPE_ROOM_HEADER) {
                 holder.itemView.getLayoutParams().height = (int) UiUtils.getPixelFromDp(48);
             }
 
             if (getItemViewType(position) == SearchData.ITEM_TYPE_ROOM_ITEM) {
-                holder.itemView.getLayoutParams().height = (int) UiUtils.getPixelFromDp(75);
+                holder.itemView.setVisibility(View.VISIBLE);
             }
 
             if (getItemViewType(position) == SearchData.ITEM_TYPE_NO_ROOM_ITEM) {
-                holder.itemView.getLayoutParams().height = (int) UiUtils.getPixelFromDp(75);
+                holder.itemView.setVisibility(View.VISIBLE);
             }
         }
     }

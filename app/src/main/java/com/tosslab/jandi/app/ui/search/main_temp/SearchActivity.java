@@ -211,7 +211,6 @@ public class SearchActivity extends BaseAppCompatActivity
                 }
             }
         });
-
     }
 
     private void setStickyHeaderAdapter() {
@@ -220,6 +219,8 @@ public class SearchActivity extends BaseAppCompatActivity
         StickyRecyclerHeadersTouchListener touchListener =
                 new StickyRecyclerHeadersTouchListener(lvSearchResult, decoration);
         touchListener.setOnHeaderClickListener((header, position, headerId) -> {
+            int po = position;
+            View head = header;
             if (headerId == 1) {
                 isMessageItemFold = !isMessageItemFold;
                 adapter.onClickHeader(headerId, isMessageItemFold);
