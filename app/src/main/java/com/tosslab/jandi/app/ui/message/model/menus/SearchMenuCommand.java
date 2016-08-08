@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.ui.search.main_temp.SearchActivity;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -25,9 +24,8 @@ public class SearchMenuCommand implements MenuCommand {
 
     @Override
     public void execute(MenuItem menuItem) {
-        SearchActivity_.intent(context)
-                .entityId(entityId)
-                .start();
+        context.startActivity(new Intent(context, SearchActivity.class));
+
         if (TeamInfoLoader.getInstance().isUser(entityId)) {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Message, AnalyticsValue.Action.Message_Search);
         } else {

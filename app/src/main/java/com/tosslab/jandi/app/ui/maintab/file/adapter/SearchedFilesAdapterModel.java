@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.file.adapter;
 
-import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.search.ResSearch;
 
 import java.util.List;
 
@@ -9,20 +9,20 @@ import java.util.List;
  */
 public interface SearchedFilesAdapterModel {
 
-    public void clearList();
+    void clearList();
 
-    public void add(List<ResMessages.OriginalMessage> files);
+    void add(List<ResSearch.SearchRecord> files);
 
-    public void setNoMoreLoad();
+    void setNoMoreLoad();
 
-    public void setReadyMore();
+    void setReadyMore();
 
-    public ResMessages.FileMessage getItem(int position);
+    ResSearch.SearchRecord getItem(int position);
 
-    public int getItemCount();
+    int getItemCount();
 
-    public int findPositionByFileId(long fileId);
+    int findPositionByFileId(long fileId);
 
-    public void remove(int position);
+    void remove(int position);
 
 }

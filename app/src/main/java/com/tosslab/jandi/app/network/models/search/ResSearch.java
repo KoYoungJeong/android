@@ -156,14 +156,6 @@ public class ResSearch {
             this.text = text;
         }
 
-        public Date getCreatedAt() {
-            return createdAt;
-        }
-
-        public void setCreateAt(Date createAt) {
-            this.createdAt = createAt;
-        }
-
         public String getFeedbackType() {
             return feedbackType;
         }
@@ -194,6 +186,14 @@ public class ResSearch {
 
         public void setPoll(Poll poll) {
             this.poll = poll;
+        }
+
+        public Date getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(Date createdAt) {
+            this.createdAt = createdAt;
         }
     }
 
@@ -314,5 +314,4 @@ public class ResSearch {
             this.commentCount = commentCount;
         }
     }
-
 }

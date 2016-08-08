@@ -3,9 +3,7 @@ package com.tosslab.jandi.app.ui.search.main.presenter;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
-import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
+import com.tosslab.jandi.app.ui.search.main.view.FileSearchActivity;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -18,26 +16,25 @@ import static org.junit.Assert.assertTrue;
  * Created by tonyjs on 15. 11. 26..
  */
 @RunWith(AndroidJUnit4.class)
-public class SearchPresenterImplTest {
+public class FileSearchPresenterImplTest {
 
-    SearchPresenterImpl presenter;
     @Rule
-    public ActivityTestRule<SearchActivity_> rule = new ActivityTestRule<>(SearchActivity_.class);
-    private SearchActivity activity;
+    public ActivityTestRule<FileSearchActivity> rule = new ActivityTestRule<>(FileSearchActivity.class);
+    FileSearchPresenterImpl presenter;
+    private FileSearchActivity activity;
 
     @Before
     public void setup() throws Exception {
         activity = rule.getActivity();
 
-        presenter = SearchPresenterImpl_.getInstance_(JandiApplication.getContext());
-        presenter.setView(activity);
+        presenter = new FileSearchPresenterImpl(activity);
     }
 
     @Test
     public void testOnSearchText() throws Throwable {
         // Given
         String query = "가";
-        presenter.searchModel.upsertQuery(0, query);
+        presenter.fileSearchModel.upsertQuery(0, query);
         // When
         presenter.onSearchText("가");
 
@@ -48,7 +45,7 @@ public class SearchPresenterImplTest {
     @Test
     public void testOnSearchTextChange() throws Throwable {
         String query = "가나다";
-        presenter.searchModel.upsertQuery(0, query);
+        presenter.fileSearchModel.upsertQuery(0, query);
 
         rule.runOnUiThread(() -> {
             // When

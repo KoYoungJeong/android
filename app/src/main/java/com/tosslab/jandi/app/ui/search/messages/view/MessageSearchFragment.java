@@ -27,7 +27,7 @@ import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
-import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
+import com.tosslab.jandi.app.ui.search.main.view.FileSearchActivity;
 import com.tosslab.jandi.app.ui.search.messages.adapter.MessageSearchResultAdapter;
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenter;
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenterImpl;
@@ -66,7 +66,7 @@ import rx.functions.Func0;
  * Created by Steve SeongUg Jung on 15. 3. 10..
  */
 @EFragment(R.layout.fragment_message_search)
-public class MessageSearchFragment extends Fragment implements MessageSearchPresenter.View, SearchActivity.SearchSelectView {
+public class MessageSearchFragment extends Fragment implements MessageSearchPresenter.View, FileSearchActivity.SearchSelectView {
 
     @Bean(MessageSearchPresenterImpl.class)
     MessageSearchPresenter messageSearchPresenter;
@@ -100,8 +100,8 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     private int scropMinY;
     private boolean isFirstLayout = true;
     private boolean isForeground;
-    private SearchActivity.OnSearchItemSelect onSearchItemSelect;
-    private SearchActivity.OnSearchText onSearchText;
+    private FileSearchActivity.OnSearchItemSelect onSearchItemSelect;
+    private FileSearchActivity.OnSearchText onSearchText;
 
     @AfterViews
     void initObject() {
@@ -439,12 +439,12 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     }
 
     @Override
-    public void setOnSearchItemSelect(SearchActivity.OnSearchItemSelect onSearchItemSelect) {
+    public void setOnSearchItemSelect(FileSearchActivity.OnSearchItemSelect onSearchItemSelect) {
         this.onSearchItemSelect = onSearchItemSelect;
     }
 
     @Override
-    public void setOnSearchText(SearchActivity.OnSearchText onSearchText) {
+    public void setOnSearchText(FileSearchActivity.OnSearchText onSearchText) {
         this.onSearchText = onSearchText;
     }
 

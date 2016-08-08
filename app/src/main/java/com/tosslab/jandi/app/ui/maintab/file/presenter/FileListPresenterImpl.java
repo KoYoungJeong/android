@@ -1,23 +1,24 @@
 package com.tosslab.jandi.app.ui.maintab.file.presenter;
 
-import android.util.Pair;
-
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ReqSearchFile;
-import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.network.models.search.ReqSearch;
+import com.tosslab.jandi.app.network.models.search.ResSearch;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.file.adapter.SearchedFilesAdapterModel;
 import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
-import com.tosslab.jandi.app.ui.maintab.file.to.SearchQueryTO;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
+import rx.subjects.BehaviorSubject;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by tee on 16. 6. 28..
@@ -25,22 +26,137 @@ import rx.subjects.PublishSubject;
 
 public class FileListPresenterImpl implements FileListPresenter {
 
+    private static final int DEFAULT_COUNT = 20;
+    private final BehaviorSubject<Integer> pageSubject;
+    private final BehaviorSubject<Long> writerSubject;
+    private final BehaviorSubject<Long> entitySubject;
+    private final BehaviorSubject<String> fileTypeSubject;
+    private final BehaviorSubject<Date> endDateSubject;
+    private final BehaviorSubject<String> keywordSubject;
     private FileListPresenter.View view;
-
     private FileListModel fileListModel;
-
     private long entityId;
     private SearchedFilesAdapterModel searchedFilesAdapterModel;
-    private long selectedTeamId;
-    private PublishSubject<Integer> searchSubject;
-    private SearchQueryTO searchQuery;
-    private PublishSubject<Object> previousLoadSubject;
+    private final CompositeSubscription compositeSubscription;
 
-    public FileListPresenterImpl(long entityId, FileListModel fileListModel, FileListPresenter.View view) {
+    public FileListPresenterImpl(long entityId, FileListModel fileListModel, View view) {
         this.entityId = entityId;
         this.fileListModel = fileListModel;
         this.view = view;
-        selectedTeamId = fileListModel.getSelectedTeamId();
+
+        entitySubject = BehaviorSubject.create(entityId);
+        writerSubject = BehaviorSubject.create(-1L);
+        fileTypeSubject = BehaviorSubject.create("all");
+        endDateSubject = BehaviorSubject.create(new Date());
+        pageSubject = BehaviorSubject.create(1);
+        keywordSubject = BehaviorSubject.create("");
+
+        compositeSubscription = new CompositeSubscription();
+        compositeSubscription.add(
+                Observable.combineLatest(
+                        entitySubject.doOnNext(it -> FileListPresenterImpl.this.entityId = it)
+                                .map(entity -> {
+                                    if (entity > 0) {
+                                        if (TeamInfoLoader.getInstance().isTopic(entity)) {
+                                            return entity;
+                                        } else {
+                                            return TeamInfoLoader.getInstance().getChatId(entity);
+                                        }
+                                    }
+                                    return entity;
+                                }),
+                        writerSubject,
+                        fileTypeSubject,
+                        endDateSubject,
+                        pageSubject,
+                        keywordSubject,
+                        (entity, writerId, fileType, date, page, keyword) -> {
+                            return new ReqSearch.Builder()
+                                    .setRoomId(entity)
+                                    .setWriterId(writerId)
+                                    .setType("file")
+                                    .setFileType(fileType)
+                                    .setEndAt(date)
+                                    .setPage(page)
+                                    .setCount(DEFAULT_COUNT)
+                                    .setKeyword(keyword).build();
+                        })
+                        .onBackpressureBuffer()
+                        .throttleLast(100, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnNext(it -> {
+                            if (it.getPage() > 1) {
+                                view.showMoreProgressBar();
+                            } else {
+                                view.setInitLoadingViewVisible(android.view.View.VISIBLE);
+                            }
+                        })
+                        .observeOn(Schedulers.io())
+                        .map(it -> {
+                            try {
+                                ResSearch results = fileListModel.getResults(it);
+                                return results.getRecords();
+                            } catch (RetrofitException e) {
+                                e.printStackTrace();
+                            }
+                            return new ArrayList<ResSearch.SearchRecord>();
+                        })
+                        .filter(it -> it != null && !it.isEmpty())
+                        .doOnNext(it -> fileListModel.trackFileKeywordSearchSuccess(keywordSubject.getValue()))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(its -> {
+                            searchedFilesAdapterModel.add(its);
+                            view.justRefresh();
+                            afterProccess(its);
+                        }, t -> {
+                            t.printStackTrace();
+                            if (t instanceof RetrofitException) {
+                                RetrofitException e1 = (RetrofitException) t;
+                                int errorCode = e1.getStatusCode();
+                                fileListModel.trackFileKeywordSearchFail(errorCode);
+                                view.searchFailed(R.string.err_file_search);
+                            } else {
+                                fileListModel.trackFileKeywordSearchFail(-1);
+                                view.searchFailed(R.string.err_file_search);
+                            }
+                        }));
+
+
+    }
+
+    private void afterProccess(List<ResSearch.SearchRecord> its) {
+        int totalItemCount = searchedFilesAdapterModel.getItemCount();
+        if (fileListModel.isDefaultSearchQuery(pageSubject.getValue(),
+                entitySubject.getValue(), writerSubject.getValue(),
+                keywordSubject.getValue(), fileTypeSubject.getValue())) {
+
+            if (totalItemCount > 0) {
+                view.setEmptyViewVisible(android.view.View.GONE);
+            } else {
+                view.setEmptyViewVisible(android.view.View.VISIBLE);
+            }
+            view.setSearchEmptryViewVisible(android.view.View.GONE);
+        } else {
+            if (totalItemCount > 0) {
+                view.setSearchEmptryViewVisible(android.view.View.GONE);
+            } else {
+                view.setSearchEmptryViewVisible(android.view.View.VISIBLE);
+            }
+            view.setEmptyViewVisible(android.view.View.GONE);
+        }
+        view.setInitLoadingViewVisible(android.view.View.GONE);
+
+
+        if (its.size() < DEFAULT_COUNT) {
+            view.showWarningToast(JandiApplication.getContext().getString(R.string.warn_no_more_files));
+            setListNoMoreLoad();
+        } else {
+            setListReadyLoadMore();
+        }
+
+        view.dismissMoreProgressBar();
+
     }
 
     @Override
@@ -49,169 +165,10 @@ public class FileListPresenterImpl implements FileListPresenter {
     }
 
     @Override
-    public void initSearchQuery() {
-        searchQuery = new SearchQueryTO();
-        if (entityId >= 0) {
-            searchQuery.setEntityId(entityId);
-        }
-
-        searchSubject = PublishSubject.create();
-        searchSubject.onBackpressureBuffer()
-                .observeOn(Schedulers.io())
-                .concatMap(requestCount -> {
-                    searchQuery.setToFirst();
-                    view.clearListView();
-                    return loadSearchObservable(requestCount);
-                })
-                .subscribe(o -> {
-                    view.onSearchHeaderReset();
-                }, throwable -> LogUtil.d("ReqSearch Fail : " + throwable.getMessage()));
-
-        previousLoadSubject = PublishSubject.create();
-        previousLoadSubject
-                .onBackpressureBuffer()
-                .observeOn(Schedulers.io())
-                .concatMap(o -> FileListPresenterImpl.this.loadPreviousFileObservable())
-                .subscribe(o -> {
-                }, throwable -> LogUtil.d("Load Fail : " + throwable.getMessage()));
-    }
-
-    private Observable<Object> loadSearchObservable(int requestCount) {
-
-        if (!NetworkCheckUtil.isConnected()) {
-            return Observable.empty();
-        }
-
-        return Observable.just(1)
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(i -> {
-                    view.setInitLoadingViewVisible(android.view.View.VISIBLE);
-                    view.setEmptyViewVisible(android.view.View.GONE);
-                    view.setSearchEmptryViewVisible(android.view.View.GONE);
-                })
-                .observeOn(Schedulers.io())
-                .map(i -> {
-                    ReqSearchFile reqSearchFile = searchQuery.getRequestQuery();
-                    reqSearchFile.teamId = selectedTeamId;
-                    if (requestCount > ReqSearchFile.MAX) {
-                        reqSearchFile.listCount = requestCount;
-                    }
-                    return reqSearchFile;
-                })
-                .concatMap(reqSearchFile -> {
-                    try {
-                        ResSearchFile resSearchFile = fileListModel.searchFileList(reqSearchFile);
-                        String keyword = reqSearchFile.keyword;
-                        fileListModel.trackFileKeywordSearchSuccess(keyword);
-                        return Observable.just(Pair.create(reqSearchFile, resSearchFile));
-                    } catch (RetrofitException e) {
-                        e.printStackTrace();
-                        return Observable.error(e);
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(pair -> {
-                    if (pair.second.fileCount < pair.first.listCount) {
-                        searchedFilesAdapterModel.setNoMoreLoad();
-                    } else {
-                        searchedFilesAdapterModel.setReadyMore();
-                    }
-                    updateAdapterModel(pair.second);
-                    view.setInitLoadingViewVisible(android.view.View.GONE);
-                    if (fileListModel.isDefaultSearchQuery(searchQuery.getRequestQuery())) {
-                        if (pair.second.fileCount > 0) {
-                            view.setEmptyViewVisible(android.view.View.GONE);
-                        } else {
-                            view.setEmptyViewVisible(android.view.View.VISIBLE);
-                        }
-                        view.setSearchEmptryViewVisible(android.view.View.GONE);
-                    } else {
-                        if (pair.second.fileCount > 0) {
-                            view.setSearchEmptryViewVisible(android.view.View.GONE);
-                        } else {
-                            view.setSearchEmptryViewVisible(android.view.View.VISIBLE);
-                        }
-                        view.setEmptyViewVisible(android.view.View.GONE);
-                    }
-                    view.searchSucceed(pair.second);
-                    if (fileListModel.isAllTypeFirstSearch(pair.first)) {
-                        fileListModel.saveOriginFirstItems(selectedTeamId, pair.second);
-                    }
-                }).doOnError(e -> {
-                    if (e instanceof RetrofitException) {
-                        RetrofitException e1 = (RetrofitException) e;
-                        int errorCode = e1.getStatusCode();
-                        fileListModel.trackFileKeywordSearchFail(errorCode);
-                        e.printStackTrace();
-                        LogUtil.e("fail to get searched files.", e);
-                        view.searchFailed(R.string.err_file_search);
-                    } else {
-                        e.printStackTrace();
-                        fileListModel.trackFileKeywordSearchFail(-1);
-                        view.searchFailed(R.string.err_file_search);
-                    }
-                }).map(pair -> new Object());
-    }
-
-    @Override
     public void getPreviousFile() {
-        previousLoadSubject.onNext(new Object());
+        pageSubject.onNext(pageSubject.getValue() + 1);
     }
 
-    public Observable<Object> loadPreviousFileObservable() {
-        if (!NetworkCheckUtil.isConnected()) {
-            return Observable.empty();
-        }
-
-        return Observable.defer(() -> {
-            ReqSearchFile reqSearchFile = searchQuery.getRequestQuery();
-            reqSearchFile.teamId = selectedTeamId;
-            return Observable.just(reqSearchFile);
-        })
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(it -> view.showMoreProgressBar())
-                .observeOn(Schedulers.io())
-                .concatMap(reqSearchFile -> {
-                    try {
-                        ResSearchFile resSearchFile = fileListModel.searchFileList(reqSearchFile);
-                        return Observable.just(resSearchFile);
-                    } catch (Exception e) {
-                        return Observable.error(e);
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(resSearchFile -> {
-                    if (resSearchFile.fileCount > 0) {
-                        searchQuery.setNext(resSearchFile.firstIdOfReceivedList);
-                        searchedFilesAdapterModel.add(fileListModel.descSortByCreateTime(resSearchFile.files));
-                        view.justRefresh();
-                    }
-                    if (resSearchFile.fileCount < ReqSearchFile.MAX) {
-                        view.showWarningToast(JandiApplication.getContext().getString(R.string.warn_no_more_files));
-                        setListNoMoreLoad();
-                    } else {
-                        setListReadyLoadMore();
-                    }
-                    view.dismissMoreProgressBar();
-                }).doOnError(e -> {
-                    if (e instanceof RetrofitException) {
-                        e.printStackTrace();
-                        LogUtil.e("fail to get searched files.", e);
-                        view.searchFailed(R.string.err_file_search);
-                    } else {
-                        e.printStackTrace();
-                        view.searchFailed(R.string.err_file_search);
-                    }
-                }).map(i -> new Object());
-
-    }
-
-    private void updateAdapterModel(ResSearchFile resSearchFile) {
-        if (resSearchFile.fileCount > 0) {
-            searchedFilesAdapterModel.add(fileListModel.descSortByCreateTime(resSearchFile.files));
-            searchQuery.setNext(resSearchFile.firstIdOfReceivedList);
-        }
-    }
 
     @Override
     public void setListNoMoreLoad() {
@@ -225,20 +182,23 @@ public class FileListPresenterImpl implements FileListPresenter {
 
     @Override
     public long getSearchedEntityId() {
-        return searchQuery.getEntityId();
+        return entityId;
     }
 
     @Override
     public boolean isDefaultSeachQuery() {
-        return searchQuery.getEntityId() == ReqSearchFile.ALL_ENTITIES
-                && searchQuery.getSearchFileType().equals("all")
-                && searchQuery.getSearchUser().equals("all");
+        return fileListModel.isDefaultSearchQuery(pageSubject.getValue(),
+                entitySubject.getValue(), writerSubject.getValue(),
+                keywordSubject.getValue(), fileTypeSubject.getValue());
     }
 
     @Override
     public void doSearchAll() {
-        view.clearListView();
-        searchSubject.onNext(-1);
+        searchedFilesAdapterModel.clearList();
+        view.justRefresh();
+        entitySubject.onNext(-1L);
+        pageSubject.onNext(1);
+        endDateSubject.onNext(new Date());
     }
 
     @Override
@@ -246,8 +206,10 @@ public class FileListPresenterImpl implements FileListPresenter {
         if (teamId != fileListModel.getSelectedTeamId()) {
             return;
         }
-        int itemCount = searchedFilesAdapterModel.getItemCount();
-        searchSubject.onNext(itemCount);
+        searchedFilesAdapterModel.clearList();
+        view.justRefresh();
+        pageSubject.onNext(1);
+        endDateSubject.onNext(new Date());
     }
 
     @Override
@@ -264,32 +226,29 @@ public class FileListPresenterImpl implements FileListPresenter {
 
     @Override
     public void onFileTypeSelection(String query, String searchText) {
-        searchQuery.setFileType(query);
-        if (searchText != null) {
-            searchQuery.setKeyword(searchText);
-        }
-        view.clearListView();
-        searchSubject.onNext(-1);
+        searchedFilesAdapterModel.clearList();
+        view.justRefresh();
+        fileTypeSubject.onNext(query);
+        pageSubject.onNext(1);
+        endDateSubject.onNext(new Date());
     }
 
     @Override
-    public void onMemberSelection(String userId, String searchText) {
-        searchQuery.setWriter(userId);
-        if (searchText != null) {
-            searchQuery.setKeyword(searchText);
-        }
-        view.clearListView();
-        searchSubject.onNext(-1);
+    public void onMemberSelection(long userId, String searchText) {
+        searchedFilesAdapterModel.clearList();
+        view.justRefresh();
+        writerSubject.onNext(userId);
+        pageSubject.onNext(1);
+        endDateSubject.onNext(new Date());
     }
 
     @Override
     public void onEntitySelection(long sharedEntityId, String searchText) {
-        searchQuery.setEntityId(sharedEntityId);
-        if (searchText != null) {
-            searchQuery.setKeyword(searchText);
-        }
-        view.clearListView();
-        searchSubject.onNext(-1);
+        searchedFilesAdapterModel.clearList();
+        view.justRefresh();
+        entitySubject.onNext(sharedEntityId);
+        pageSubject.onNext(1);
+        endDateSubject.onNext(new Date());
     }
 
     @Override
@@ -299,29 +258,36 @@ public class FileListPresenterImpl implements FileListPresenter {
         }
         // 토픽이 삭제되거나 나간 경우 해당 토픽의 파일 접근 여부를 알 수 없으므로
         // 리로드하도록 처리함
-        int itemCount = searchedFilesAdapterModel.getItemCount();
-        searchSubject.onNext(itemCount);
+        searchedFilesAdapterModel.clearList();
+        view.justRefresh();
+        pageSubject.onNext(1);
+        endDateSubject.onNext(new Date());
     }
 
     @Override
     public void onNetworkConnection() {
         if (searchedFilesAdapterModel.getItemCount() <= 0) {
-            searchSubject.onNext(-1);
+            pageSubject.onNext(1);
+            endDateSubject.onNext(new Date());
         }
     }
 
     @Override
-    public void doKeywordSearch(String s) {
-        searchQuery.setKeyword(s);
+    public void onNewQuery(String s) {
+        searchedFilesAdapterModel.clearList();
         view.justRefresh();
-        searchSubject.onNext(-1);
+        keywordSubject.onNext(s);
+        pageSubject.onNext(1);
+        endDateSubject.onNext(new Date());
     }
 
     private void removeItem(int position) {
         searchedFilesAdapterModel.remove(position);
         view.justRefresh();
         if (searchedFilesAdapterModel.getItemCount() <= 0) {
-            if (fileListModel.isDefaultSearchQueryIgnoreMessageId(searchQuery.getRequestQuery())) {
+            if (fileListModel.isDefaultSearchQuery(pageSubject.getValue(),
+                    entitySubject.getValue(), writerSubject.getValue(),
+                    keywordSubject.getValue(), fileTypeSubject.getValue())) {
                 view.setEmptyViewVisible(android.view.View.VISIBLE);
                 view.setSearchEmptryViewVisible(android.view.View.GONE);
             } else {
@@ -338,11 +304,17 @@ public class FileListPresenterImpl implements FileListPresenter {
             return;
         }
 
-        ResMessages.FileMessage item = searchedFilesAdapterModel.getItem(position);
+        ResSearch.SearchRecord item = searchedFilesAdapterModel.getItem(position);
         if (item != null) {
-            item.commentCount = commentCount;
+            item.getFile().setCommentCount(commentCount);
             view.justRefresh();
         }
     }
 
+    @Override
+    public void onDestory() {
+        if (!compositeSubscription.isUnsubscribed()) {
+            compositeSubscription.unsubscribe();
+        }
+    }
 }

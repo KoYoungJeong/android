@@ -290,11 +290,7 @@ public class MainChatListFragment extends Fragment
 
     @OptionsItem(R.id.action_main_search)
     void onSearchOptionSelect() {
-//        SearchActivity_.intent(getActivity())
-//                .start();
-
-        Intent intent = new Intent(getContext(), SearchActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(getActivity(), SearchActivity.class));
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.Search);
 

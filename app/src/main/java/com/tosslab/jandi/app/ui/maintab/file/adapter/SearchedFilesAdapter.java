@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.ui.maintab.file.adapter.viewholder.SearchedFilesViewHolder;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
@@ -20,7 +21,7 @@ import de.greenrobot.event.EventBus;
 public class SearchedFilesAdapter extends RecyclerView.Adapter
         implements SearchedFilesAdapterModel, SearchedFilesAdapterView {
 
-    List<ResMessages.FileMessage> searchedFiles;
+    List<ResSearch.SearchRecord> searchedFiles;
 
     MoreState moreState = MoreState.Idle;
 
@@ -51,10 +52,8 @@ public class SearchedFilesAdapter extends RecyclerView.Adapter
     }
 
     @Override
-    public void add(List<ResMessages.OriginalMessage> files) {
-        for (ResMessages.OriginalMessage message : files) {
-            searchedFiles.add((ResMessages.FileMessage) message);
-        }
+    public void add(List<ResSearch.SearchRecord> files) {
+        searchedFiles.addAll(files);
     }
 
     @Override
@@ -71,7 +70,7 @@ public class SearchedFilesAdapter extends RecyclerView.Adapter
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View convertView = LayoutInflater.
                 from(JandiApplication.getContext()).inflate(R.layout.item_searched_file, parent, false);
-        return new SearchedFilesViewHolder(convertView, parent.getContext());
+        return new SearchedFilesViewHolder(convertView);
     }
 
     @Override
@@ -94,7 +93,7 @@ public class SearchedFilesAdapter extends RecyclerView.Adapter
     }
 
     @Override
-    public ResMessages.FileMessage getItem(int position) {
+    public ResSearch.SearchRecord getItem(int position) {
         return searchedFiles.get(position);
     }
 
@@ -107,7 +106,7 @@ public class SearchedFilesAdapter extends RecyclerView.Adapter
     public int findPositionByFileId(long fileId) {
         int itemCount = getItemCount();
         for (int idx = 0; idx < itemCount; ++idx) {
-            if (getItem(idx).id == fileId) {
+            if (getItem(idx).getLinkId() == fileId) {
                 return idx;
             }
         }

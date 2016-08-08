@@ -48,7 +48,6 @@ import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
-import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.file.adapter.SearchedFilesAdapter;
 import com.tosslab.jandi.app.ui.maintab.file.adapter.SearchedFilesAdapterView;
 import com.tosslab.jandi.app.ui.maintab.file.controller.SearchSelectorViewController;
@@ -56,8 +55,7 @@ import com.tosslab.jandi.app.ui.maintab.file.dagger.DaggerFileListComponent;
 import com.tosslab.jandi.app.ui.maintab.file.dagger.FileListModule;
 import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenter;
 import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenterImpl;
-import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
-import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
+import com.tosslab.jandi.app.ui.search.main.view.FileSearchActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -85,7 +83,7 @@ import de.greenrobot.event.EventBus;
  * Created by tee on 16. 6. 28..
  */
 public class FileListFragment extends Fragment implements FileListPresenterImpl.View,
-        SearchActivity.SearchSelectView, ListScroller, MainTabPagerAdapter.OnItemFocused {
+        FileSearchActivity.SearchSelectView, ListScroller {
 
     public static final String KEY_COMMENT_COUNT = "comment_count";
     public static final String KEY_FILE_ID = "file_id";
@@ -127,13 +125,12 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     private long entityId = -1;
 
     private SearchedFilesAdapterView searchedFilesAdapterView;
-    private SearchActivity.OnSearchItemSelect onSearchItemSelect;
-    private SearchActivity.OnSearchText onSearchText;
+    private FileSearchActivity.OnSearchItemSelect onSearchItemSelect;
+    private FileSearchActivity.OnSearchText onSearchText;
     private boolean isSearchLayoutFirst = true;
     private boolean isForeground;
-    private boolean focused = true; // maintab 에서 현재 화면인지 체크하기 위함
 
-    public void setOnSearchItemSelect(SearchActivity.OnSearchItemSelect onSearchItemSelect) {
+    public void setOnSearchItemSelect(FileSearchActivity.OnSearchItemSelect onSearchItemSelect) {
         this.onSearchItemSelect = onSearchItemSelect;
     }
 
@@ -179,6 +176,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
+        fileListPresenter.onDestory();
         super.onDestroy();
     }
 
@@ -199,15 +197,12 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
         setHasOptionsMenu(true);
 
-        fileListPresenter.initSearchQuery();
-
         resetFilterLayoutPosition();
 
         if (isInSearchActivity() && isSearchLayoutFirst) {
             initSearchLayoutIfFirst();
         }
 
-        fileListPresenter.doSearchAll();
     }
 
     @OnClick(R.id.ly_file_list_where)
@@ -232,7 +227,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     }
 
     private void setListView() {
-        if (getActivity() instanceof SearchActivity) {
+        if (getActivity() instanceof FileSearchActivity) {
             AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                     .event(Event.ScreenView)
                     .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
@@ -249,7 +244,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         SearchedFilesAdapter searchedFilesAdapter = new SearchedFilesAdapter();
         lvSearchFiles.setAdapter(searchedFilesAdapter);
         searchedFilesAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
-            moveToFileDetailActivity((searchedFilesAdapter.getItem(position).id));
+            moveToFileDetailActivity((searchedFilesAdapter.getItem(position).getFile().getId()));
 
             if (onSearchItemSelect != null) {
                 onSearchItemSelect.onSearchItemSelect();
@@ -263,7 +258,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
                 action = AnalyticsValue.Action.ChooseFilteredFile;
             }
 
-            if (getActivity() instanceof SearchActivity) {
+            if (getActivity() instanceof FileSearchActivity) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, action);
             } else {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, action);
@@ -314,9 +309,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
     @Override
     public void showWarningToast(String message) {
-        if (focused) {
-            ColoredToast.showWarning(message);
-        }
+        ColoredToast.showWarning(message);
     }
 
     @Override
@@ -335,9 +328,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     @Override
     public void searchFailed(int errMessageRes) {
         FragmentActivity activity = getActivity();
-        if (activity != null
-                && !(activity.isFinishing())
-                && focused) {
+        if (activity != null && !(activity.isFinishing())) {
             ColoredToast.showError(activity.getString(errMessageRes));
         }
     }
@@ -368,9 +359,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_main_search) {
-            SearchActivity_.intent(getActivity())
-                    .isFromFiles(true)
-                    .start();
+            FileSearchActivity.start(getActivity(), -1);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -391,7 +380,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     }
 
     private boolean isInSearchActivity() {
-        return getActivity() instanceof SearchActivity;
+        return getActivity() instanceof FileSearchActivity;
     }
 
     public void initSearchLayoutIfFirst() {
@@ -508,11 +497,11 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
     @Override
     public void onNewQuery(String query) {
-        fileListPresenter.doKeywordSearch(query);
+        fileListPresenter.onNewQuery(query);
     }
 
     @Override
-    public void setOnSearchText(SearchActivity.OnSearchText onSearchText) {
+    public void setOnSearchText(FileSearchActivity.OnSearchText onSearchText) {
         this.onSearchText = onSearchText;
     }
 
@@ -673,8 +662,4 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         fileListPresenter.doSearchAll();
     }
 
-    @Override
-    public void onItemFocused(boolean focused) {
-        this.focused = focused;
-    }
 }
