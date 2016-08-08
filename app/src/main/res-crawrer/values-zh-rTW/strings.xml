@@ -96,6 +96,7 @@
 	<string name="jandi_another_invitation_sent">"新的邀請信已寄出"</string>
 	<string name="jandi_are_you_sure_disable_external_link">"若移除共享連結，存取至該檔案的權限將被撤銷。你確定要移除共享連結？"</string>
 	<string name="jandi_ask_assign_topic_owner">"你確定將議題管理權限轉移至此成員？"</string>
+	<string name="jandi_ask_delete_all_history">"你確定要清除所有的搜尋紀錄？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你確定將此成員剔除議題？"</string>
 	<string name="jandi_ask_poll_delete">"確定要刪除此次投票？\n請注意留言的部分不會被刪除。"</string>
 	<string name="jandi_ask_poll_finish">"你確定結束此投票？"</string>
@@ -184,6 +185,7 @@
 	<string name="jandi_date_minutes">"分"</string>
 	<string name="jandi_date_remaining">"剩餘時間"</string>
 	<string name="jandi_decide_choose">"選擇照片"</string>
+	<string name="jandi_delete_all">"清除紀錄"</string>
 	<string name="jandi_delete_succeed">"%s已被刪除"</string>
 	<string name="jandi_deleted_file">"已刪除檔案"</string>
 	<string name="jandi_deleted_message">"(刪除的訊息)"</string>
@@ -204,8 +206,10 @@
 	<string name="jandi_empty_participants">"無人參與投票"</string>
 	<string name="jandi_empty_subject">"問卷名稱為必填欄位"</string>
 	<string name="jandi_enable_external_link">"建立共享連結"</string>
+	<string name="jandi_enter_name">"請輸入您的名字"</string>
 	<string name="jandi_enter_new_passcode">"輸入新密碼"</string>
 	<string name="jandi_enter_passcode">"輸入您的密碼"</string>
+	<string name="jandi_enter_phone_number">"請輸入您的電話號碼"</string>
 	<string name="jandi_entity_create_entity_name">"名字"</string>
 	<string name="jandi_entity_joined_topic">"我的議題"</string>
 	<string name="jandi_entity_unjoined_topic">"其他議題"</string>
@@ -228,8 +232,6 @@
 	<string name="jandi_file_category_all">"<b>所有檔案</b>"</string>
 	<string name="jandi_file_category_audio">"音頻"</string>
 	<string name="jandi_file_category_document">"文件"</string>
-	<string name="jandi_search_category_everyone">"<b>所有成員</b>"</string>
-	<string name="jandi_search_category_everywhere">"<b>所有討論</b>"</string>
 	<string name="jandi_file_category_image">"圖像"</string>
 	<string name="jandi_file_category_pdf">"PDF"</string>
 	<string name="jandi_file_category_presentation">"簡報"</string>
@@ -248,14 +250,16 @@
 	<string name="jandi_file_search_user">"按成員篩選搜尋結果"</string>
 	<string name="jandi_file_size_large_error">"無法上傳大於300MB的檔案"</string>
 	<string name="jandi_file_upload_finish">"檔案已成功上傳"</string>
-	<string name="jandi_file_upload_go_topic">"點擊進入JANDI瀏覽"</string>
+	<string name="jandi_file_upload_go_topic">"
+點擊進入JANDI瀏覽"</string>
 	<string name="jandi_file_upload_state">"上傳檔案中 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"檔案上傳成功"</string>
 	<string name="jandi_file_uploading">"上傳"</string>
 	<string name="jandi_fingerprint_cannot_do_temporary">"指紋解鎖暫時無法使用"</string>
 	<string name="jandi_finished">"已完成"</string>
 	<string name="jandi_folder_alread_has_name">"這名稱已被使用"</string>
-	<string name="jandi_folder_ask_delete">"你確定要刪除此資料夾？"</string>
+	<string name="jandi_folder_ask_delete">"你確定要刪除此資料夾？
+即便刪除資料夾，議題仍舊保留"</string>
 	<string name="jandi_folder_choose">"選擇資料夾"</string>
 	<string name="jandi_folder_delete">"刪除資料夾"</string>
 	<string name="jandi_folder_has_been_move_to">"議題已被移至%s"</string>
@@ -323,6 +327,7 @@
 	<string name="jandi_job_title">"職位"</string>
 	<string name="jandi_job_title_list">"所有職稱"</string>
 	<string name="jandi_join_topic">"加入"</string>
+	<string name="jandi_joined_room">"已加入的討論"</string>
 	<string name="jandi_joined_team">"你已加入%1$s，請再次確認團隊列表。"</string>
 	<string name="jandi_kicked_message">"你已被移除出%s"</string>
 	<string name="jandi_later">"稍後再說"</string>
@@ -354,6 +359,7 @@
 	<string name="jandi_message_invite_entity">"%1$d 使用者已被加入"</string>
 	<string name="jandi_message_join_entity">"加入 %1$s"</string>
 	<string name="jandi_message_leave_private_topic">"離開私人議題後，未來希望能夠重新加入，必須先取得其它人的邀請。您確定要離開嗎？"</string>
+	<string name="jandi_message_leave_private_topic_when_only_you">"一旦離開議題，議題將會自動刪除！你確定要離開議題？"</string>
 	<string name="jandi_message_logout">"已登出"</string>
 	<string name="jandi_message_no_member">"不再單打獨鬥，現在就邀請所有夥伴加入你的團隊！"</string>
 	<string name="jandi_message_no_starred">"取消標記"</string>
@@ -387,6 +393,8 @@
 	<string name="jandi_no_preview_push_mention">"你在此訊息中被提及"</string>
 	<string name="jandi_no_preview_push_message">"你收到一則新訊息"</string>
 	<string name="jandi_no_recent_stickers">"無最近使用的貼圖"</string>
+	<string name="jandi_no_search_history">"沒有搜尋紀錄"</string>
+	<string name="jandi_no_search_result">"找不到相關的內容"</string>
 	<string name="jandi_no_topic_to_join">"沒有可加入的議題"</string>
 	<string name="jandi_normally_topic_messages">"議題訊息"</string>
 	<string name="jandi_not_in_topic">"你已離開此議題"</string>
@@ -414,7 +422,7 @@
 	<string name="jandi_poll">"問卷調查"</string>
 	<string name="jandi_poll_add_item">"添加選項"</string>
 	<string name="jandi_poll_anonymous">"不記名"</string>
-	<string name="jandi_poll_create">"建立新的投票"</string>
+	<string name="jandi_poll_create">"建立"</string>
 	<string name="jandi_poll_deleted">"投票已經刪除"</string>
 	<string name="jandi_poll_empty_1">"無進行中的問卷"</string>
 	<string name="jandi_poll_empty_2">"\n點擊[+]建立新問卷"</string>
@@ -473,7 +481,15 @@
 	<string name="jandi_sdcard_storage">"記憶卡"</string>
 	<string name="jandi_sdcard_storage_mounted">"連接記憶卡"</string>
 	<string name="jandi_sdcard_storage_unmounted">"解除連接記憶卡"</string>
+	<string name="jandi_search_all_member">"所有成員"</string>
+	<string name="jandi_search_all_room">"所有討論"</string>
+	<string name="jandi_search_category_everyone">"<b>所有成員</b>"</string>
+	<string name="jandi_search_category_everywhere">"<b>所有討論</b>"</string>
+	<string name="jandi_search_history">"最近搜尋紀錄"</string>
 	<string name="jandi_search_ing">"<![CDATA[搜尋 <b><font color=#404040>%s</font></b>...]]>"</string>
+	<string name="jandi_search_loading">"搜尋中"</string>
+	<string name="jandi_search_no_topic_room">"無相關資料"</string>
+	<string name="jandi_search_result_count">"總共 %s 筆搜尋結果"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>與 <b><font color=#404040>%2$d</font></b>符合]]>"</string>
 	<string name="jandi_select_character">"選擇人物"</string>
 	<string name="jandi_select_direct_messages">"選擇私訊"</string>
@@ -507,6 +523,7 @@
 	<string name="jandi_share_to_jandi">"分享到JANDI"</string>
 	<string name="jandi_shared">"分享過"</string>
 	<string name="jandi_shared_in_room">"曾經分享在哪個議題下"</string>
+	<string name="jandi_show_all_team_topic">"顯示所有議題"</string>
 	<string name="jandi_sign_in_block">"<u>登入</u>"</string>
 	<string name="jandi_sign_in_ids_explain">"請選擇一個電子郵件地址讓我們將全部與JANDI相關的電子郵件寄給您。增加其它電子郵件地址以指定給特定團隊。"</string>
 	<string name="jandi_sign_out_message">"您確定您要登出？"</string>
@@ -593,8 +610,11 @@
 	<string name="jandi_title_activity_file_explorer">"檔案探索"</string>
 	<string name="jandi_title_cdp_to_be_shared">"請選擇在哪裏分享"</string>
 	<string name="jandi_title_cdp_to_be_unshared">"請選擇在哪裏取消分享"</string>
+	<string name="jandi_title_delete">"確定刪除"</string>
+	<string name="jandi_title_message">"訊息"</string>
 	<string name="jandi_title_name">"名字"</string>
 	<string name="jandi_title_name_required">"名字*"</string>
+	<string name="jandi_title_topic_room">"對話"</string>
 	<string name="jandi_topic_ask_about_deleting">"您確定要刪除這個議題？"</string>
 	<string name="jandi_topic_delete">"刪除議題"</string>
 	<string name="jandi_topic_description">"議題內容"</string>
@@ -602,6 +622,7 @@
 	<string name="jandi_topic_inside_alone">"此為一人議題，你無法轉移權限"</string>
 	<string name="jandi_topic_invitation">"邀請"</string>
 	<string name="jandi_topic_leave">"離開議題"</string>
+	<string name="jandi_topic_message_search">"搜尋議題和訊息"</string>
 	<string name="jandi_topic_no_member_1">"此議題目前只有你一人"</string>
 	<string name="jandi_topic_no_member_2">"輕觸按鈕邀請其他成員加入。"</string>
 	<string name="jandi_topic_notification">"允許議題推播通知"</string>
@@ -681,5 +702,4 @@
 	<string name="what_is_member_profile">"請輸入與這團隊相關聯的電子郵箱及簡介名字。
 請注意您的團隊成員可以查看和使用這資料來提到、 搜尋或直接聯係您。"</string>
 	<string name="what_is_team_domain">"選擇團隊的網域(URL)供網頁登錄使用。網域名稱須為三個以上的字元並包含字母、數字、及連字符(-)。"</string>
-	<string name="로">"回到帳號首頁"</string>
 </resources>

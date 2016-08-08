@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.search.main_temp.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
+import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersAdapter;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.HistoryHeaderViewHolder;
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.HistoryItemViewHolder;
@@ -13,6 +14,7 @@ import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.NoMessageIte
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.NoRoomItemViewHolder;
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.RoomHeaderViewHolder;
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.RoomItemViewHolder;
+import com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder.SearchStickyHeaderViewHolder;
 import com.tosslab.jandi.app.ui.search.main_temp.object.SearchData;
 import com.tosslab.jandi.app.ui.search.main_temp.object.SearchHistoryData;
 import com.tosslab.jandi.app.ui.search.main_temp.object.SearchMessageData;
@@ -29,25 +31,22 @@ import rx.Observable;
  * Created by tee on 16. 7. 21..
  */
 public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
-        implements SearchAdapterDataModel, SearchAdapterViewModel {
+        implements SearchAdapterDataModel, SearchAdapterViewModel, StickyRecyclerHeadersAdapter<SearchStickyHeaderViewHolder> {
 
     private boolean isMessageItemFold = false;
     private boolean isRoomItemFold = false;
 
     private List<SearchTopicRoomData> searchTopicRoomDatas = new ArrayList<>();
     private List<SearchMessageData> searchMessageDatas = new ArrayList<>();
-    private SearchMessageHeaderData searchMessageHeaderData = null;
+    private SearchMessageHeaderData searchMessageHeaderData = new SearchMessageHeaderData();
     private List<SearchHistoryData> searchHistoryDatas = new ArrayList<>();
 
     private List<SearchData> datas = new ArrayList<>();
 
     private RoomHeaderViewHolder.OnCheckChangeListener onCheckChangeListener;
 
-    private MoreState moreState = MoreState.Idle;
-
-    private OnRequestMoreMessage onRequestMoreMessage;
-
     private boolean isHistoryMode = false;
+
     private HistoryHeaderViewHolder.OnDeleteAllHistory onDeleteAllHistory;
     private HistoryItemViewHolder.OnDeleteHistoryListener onDeleteHistoryListener;
     private HistoryItemViewHolder.OnSelectHistoryListener onSelectHistoryListener;
@@ -104,6 +103,8 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
                         .setShowProgress(false)
                         .setShowSearchedResultMessage(false)
                         .setType(SearchData.ITEM_TYPE_MESSAGE_HEADER_FOR_HISTORY)
+                        .setRoomName(searchMessageHeaderData.getRoomName())
+                        .setMemberName(searchMessageHeaderData.getMemberName())
                         .build();
         datas.add(searchMessageHeaderDataForHistory);
 
@@ -175,9 +176,21 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     public BaseViewHolder<SearchData> onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case SearchData.ITEM_TYPE_MESSAGE_HEADER:
-                return MessageHeaderViewHolder.newInstance(parent);
+            case SearchData.ITEM_TYPE_MESSAGE_HEADER_FOR_HISTORY:
+                MessageHeaderViewHolder messageHeaderViewHolder =
+                        MessageHeaderViewHolder.newInstance(parent);
+                if (onClickMemberSelectionButtonListener != null) {
+                    messageHeaderViewHolder.setOnClickMemberSelectionButtonListener(
+                            onClickMemberSelectionButtonListener);
+                }
+                if (onClickRoomSelectionButtonListener != null) {
+                    messageHeaderViewHolder.setOnClickRoomSelectionButtonListener(
+                            onClickRoomSelectionButtonListener);
+                }
+                return messageHeaderViewHolder;
             case SearchData.ITEM_TYPE_MESSAGE_ITEM:
-                MessageItemViewHolder messageItemViewHolder = MessageItemViewHolder.newInstance(parent);
+                MessageItemViewHolder messageItemViewHolder =
+                        MessageItemViewHolder.newInstance(parent);
                 if (onClickMessageListener != null) {
                     messageItemViewHolder.setOnClickMessageListener(onClickMessageListener);
                 }
@@ -185,13 +198,15 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
             case SearchData.ITEM_TYPE_NO_MESSAGE_ITEM:
                 return NoMessageItemViewHolder.newInstance(parent);
             case SearchData.ITEM_TYPE_ROOM_HEADER:
-                RoomHeaderViewHolder roomHeaderViewHolder = RoomHeaderViewHolder.newInstance(parent);
+                RoomHeaderViewHolder roomHeaderViewHolder =
+                        RoomHeaderViewHolder.newInstance(parent);
                 if (onCheckChangeListener != null) {
                     roomHeaderViewHolder.setSetOnCheckChangeListener(onCheckChangeListener);
                 }
                 return roomHeaderViewHolder;
             case SearchData.ITEM_TYPE_ROOM_ITEM:
-                RoomItemViewHolder roomItemViewHolder = RoomItemViewHolder.newInstance(parent);
+                RoomItemViewHolder roomItemViewHolder =
+                        RoomItemViewHolder.newInstance(parent);
                 if (onClickTopicListener != null) {
                     roomItemViewHolder.setOnClickTopicListener(onClickTopicListener);
                 }
@@ -199,13 +214,15 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
             case SearchData.ITEM_TYPE_NO_ROOM_ITEM:
                 return NoRoomItemViewHolder.newInstance(parent);
             case SearchData.ITEM_TYPE_HISTORY_HEADER:
-                HistoryHeaderViewHolder historyHeaderViewHolder = HistoryHeaderViewHolder.newInstance(parent);
+                HistoryHeaderViewHolder historyHeaderViewHolder =
+                        HistoryHeaderViewHolder.newInstance(parent);
                 if (onDeleteAllHistory != null) {
                     historyHeaderViewHolder.setOnDeleteAllHistory(onDeleteAllHistory);
                 }
                 return historyHeaderViewHolder;
             case SearchData.ITEM_TYPE_HISTORY_ITEM:
-                HistoryItemViewHolder historyItemViewHolder = HistoryItemViewHolder.newInstance(parent);
+                HistoryItemViewHolder historyItemViewHolder =
+                        HistoryItemViewHolder.newInstance(parent);
                 if (onSelectHistoryListener != null) {
                     historyItemViewHolder.setOnSelectHistoryListener(onSelectHistoryListener);
                 }
@@ -215,8 +232,6 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
                 return historyItemViewHolder;
             case SearchData.ITEM_TYPE_NO_HISTORY_ITEM:
                 return HistoryNoItemViewHolder.newInstance(parent);
-            case SearchData.ITEM_TYPE_MESSAGE_HEADER_FOR_HISTORY:
-                return MessageHeaderViewHolder.newInstance(parent);
         }
         return RoomHeaderViewHolder.newInstance(parent);
     }
@@ -231,15 +246,6 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     public void onBindViewHolder(BaseViewHolder holder, int position) {
         setViewConfiguration(holder, position);
         holder.onBindView(datas.get(position));
-
-        // message scroll
-        if (!isHistoryMode
-                && position > getItemCount() - 3
-                && moreState == MoreState.Idle
-                && searchMessageHeaderData.hasMore()) {
-            moreState = MoreState.Loading;
-            onRequestMoreMessage.onRequestMoreMessage();
-        }
     }
 
     private void setViewConfiguration(RecyclerView.ViewHolder holder, int position) {
@@ -303,7 +309,7 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
         } else {
             isRoomItemFold = isFold;
         }
-        notifyItemRangeChanged(0, getItemCount());
+        notifyDataSetChanged();
     }
 
     @Override
@@ -324,27 +330,8 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     }
 
     @Override
-    public void clearSearchTopicRoomDatas() {
-        searchTopicRoomDatas.clear();
-    }
-
-    @Override
     public void clearSearchMessageDatas() {
         searchMessageDatas.clear();
-    }
-
-    @Override
-    public MoreState getMoreState() {
-        return moreState;
-    }
-
-    @Override
-    public void setMoreState(MoreState moreState) {
-        this.moreState = moreState;
-    }
-
-    public void setOnRequestMoreMessage(OnRequestMoreMessage onRequestMoreMessage) {
-        this.onRequestMoreMessage = onRequestMoreMessage;
     }
 
     @Override
@@ -387,12 +374,51 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
         this.onClickMemberSelectionButtonListener = onClickMemberSelectionButtonListener;
     }
 
-    public enum MoreState {
-        Idle, Loading
+    @Override
+    public boolean isHistoryMode() {
+        return isHistoryMode;
     }
 
-    public interface OnRequestMoreMessage {
-        void onRequestMoreMessage();
+    @Override
+    public long getHeaderId(int position) {
+        int itemType = getItemViewType(position);
+        switch (itemType) {
+            case SearchData.ITEM_TYPE_MESSAGE_HEADER:
+            case SearchData.ITEM_TYPE_MESSAGE_ITEM:
+            case SearchData.ITEM_TYPE_NO_MESSAGE_ITEM:
+                return 1;
+            case SearchData.ITEM_TYPE_ROOM_HEADER:
+            case SearchData.ITEM_TYPE_ROOM_ITEM:
+            case SearchData.ITEM_TYPE_NO_ROOM_ITEM:
+                return 2;
+        }
+        return -1;
+    }
+
+    @Override
+    public SearchStickyHeaderViewHolder onCreateHeaderViewHolder(ViewGroup parent) {
+        return SearchStickyHeaderViewHolder.newInstance(parent);
+    }
+
+    @Override
+    public void onBindHeaderViewHolder(SearchStickyHeaderViewHolder holder, int position) {
+        int itemType = getItemViewType(position);
+        switch (itemType) {
+            case SearchData.ITEM_TYPE_MESSAGE_HEADER:
+            case SearchData.ITEM_TYPE_MESSAGE_ITEM:
+            case SearchData.ITEM_TYPE_NO_MESSAGE_ITEM:
+                holder.setType(SearchStickyHeaderViewHolder.TYPE_MESSAGE);
+                holder.setFoldIcon(isMessageItemFold);
+                break;
+            case SearchData.ITEM_TYPE_ROOM_HEADER:
+            case SearchData.ITEM_TYPE_ROOM_ITEM:
+            case SearchData.ITEM_TYPE_NO_ROOM_ITEM:
+                holder.setType(SearchStickyHeaderViewHolder.TYPE_ROOM);
+                holder.setCount(getSearchTopicCnt());
+                holder.setFoldIcon(isRoomItemFold);
+                break;
+        }
+        holder.onBindView(new Object());
     }
 
 }

@@ -55,7 +55,7 @@ public class RoomFilterAdapter extends MultiItemRecyclerAdapter
             case VIEW_TYPE_TOPIC:
                 return TopicRoomViewHolder.newInstance(parent);
             case VIEW_TYPE_USER:
-                return MemberViewHolder.newInstance(parent);
+                return MemberViewHolder.createForUser(parent);
         }
         return null;
     }

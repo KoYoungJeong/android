@@ -2,12 +2,14 @@ package com.tosslab.jandi.app.ui.search.main_temp.presenter;
 
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.search.ReqSearch;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
-import com.tosslab.jandi.app.ui.search.main_temp.adapter.SearchAdapter;
 import com.tosslab.jandi.app.ui.search.main_temp.adapter.SearchAdapterDataModel;
 import com.tosslab.jandi.app.ui.search.main_temp.model.SearchModel;
 import com.tosslab.jandi.app.ui.search.main_temp.object.SearchHistoryData;
@@ -52,10 +54,12 @@ public class SearchPresenterImpl implements SearchPresenter {
     private SearchMessageHeaderData.Builder
             searchedMessageHeaderDataBuilder = new SearchMessageHeaderData.Builder();
 
+    private MoreState moreState = MoreState.Idle;
+
     @Inject
     public SearchPresenterImpl() {
-        writerSubject = BehaviorSubject.create(-1L);
-        roomSubject = BehaviorSubject.create(-1L);
+        writerSubject = BehaviorSubject.create(-1l);
+        roomSubject = BehaviorSubject.create(-1l);
         accessTypeSubject = BehaviorSubject.create("");
         pageSubject = BehaviorSubject.create(1);
         endDateSubject = BehaviorSubject.create(new Date());
@@ -148,7 +152,7 @@ public class SearchPresenterImpl implements SearchPresenter {
                                         searchedMessageHeaderDataBuilder.setShowProgress(false);
                                     } else {
                                         view.dismissMoreProgressBar();
-                                        searchAdapterDataModel.setMoreState(SearchAdapter.MoreState.Idle);
+                                        moreState = MoreState.Idle;
                                     }
 
                                     searchAdapterDataModel.setMessageHeaderData(
@@ -168,7 +172,7 @@ public class SearchPresenterImpl implements SearchPresenter {
                                         searchedMessageHeaderDataBuilder.setShowProgress(false);
                                     } else {
                                         view.dismissMoreProgressBar();
-                                        searchAdapterDataModel.setMoreState(SearchAdapter.MoreState.Idle);
+                                        moreState = MoreState.Idle;
                                     }
                                     searchAdapterDataModel.setMessageHeaderData(
                                             searchedMessageHeaderDataBuilder.build());
@@ -214,7 +218,8 @@ public class SearchPresenterImpl implements SearchPresenter {
 
     @Override
     public void sendMoreResults() {
-        if (hasMoreSearchResult) {
+        if (hasMoreSearchResult && moreState == MoreState.Idle) {
+            moreState = MoreState.Loading;
             int nextPage = pageSubject.getValue() + 1;
             pageSubject.onNext(nextPage);
         }
@@ -228,6 +233,7 @@ public class SearchPresenterImpl implements SearchPresenter {
         keywordSubject.onNext(keyword);
         pageSubject.onNext(1);
         endDateSubject.onNext(new Date());
+        hasMoreSearchResult = false;
         upsertKeywordHistory(keyword);
     }
 
@@ -280,6 +286,86 @@ public class SearchPresenterImpl implements SearchPresenter {
                             e.printStackTrace();
                         }
                 );
+    }
+
+    @Override
+    public void onRoomChanged(long roomId, boolean isDirectMessageRoom) {
+        String roomName = "";
+
+        if (isDirectMessageRoom) {
+            long companionId = TeamInfoLoader.getInstance().getChat(roomId).getCompanionId();
+            roomName = TeamInfoLoader.getInstance().getMemberName(companionId);
+        } else {
+            roomName = TeamInfoLoader.getInstance().getTopic(roomId).getName();
+        }
+
+        if (!TextUtils.isEmpty(roomName)) {
+            searchedMessageHeaderDataBuilder.setRoomName(roomName);
+        }
+
+        if (roomSubject.getValue() != roomId) {
+            roomSubject.onNext(roomId);
+            pageSubject.onNext(1);
+            endDateSubject.onNext(new Date());
+            hasMoreSearchResult = false;
+        }
+
+        if (searchAdapterDataModel.isHistoryMode()) {
+            searchAdapterDataModel.setMessageHeaderData(searchedMessageHeaderDataBuilder.build());
+            view.refreshHistory();
+        }
+    }
+
+    @Override
+    public void onWriterChanged(long writerId) {
+        String writerName = searchModel.getWriterName(writerId);
+        if (!TextUtils.isEmpty(writerName)) {
+            searchedMessageHeaderDataBuilder.setMemberName(writerName);
+        } else {
+            searchedMessageHeaderDataBuilder.setMemberName(
+                    JandiApplication.getContext().getString(R.string.jandi_search_all_member));
+        }
+
+        if (writerSubject.getValue() != writerId) {
+            writerSubject.onNext(writerId);
+            pageSubject.onNext(1);
+            endDateSubject.onNext(new Date());
+            hasMoreSearchResult = false;
+        }
+
+        if (searchAdapterDataModel.isHistoryMode()) {
+            searchAdapterDataModel.setMessageHeaderData(searchedMessageHeaderDataBuilder.build());
+            view.refreshHistory();
+        }
+    }
+
+    @Override
+    public void onAccessTypeChanged(String accessType) {
+        if (TextUtils.equals(accessType, "accessible")) {
+            searchedMessageHeaderDataBuilder.setRoomName(
+                    JandiApplication.getContext().getString(R.string.jandi_search_all_room)
+            );
+        } else if (TextUtils.equals(accessType, "joined")) {
+            searchedMessageHeaderDataBuilder.setRoomName(
+                    JandiApplication.getContext().getString(R.string.jandi_joined_room)
+            );
+        }
+
+        if (searchAdapterDataModel.isHistoryMode()) {
+            searchAdapterDataModel.setMessageHeaderData(searchedMessageHeaderDataBuilder.build());
+            view.refreshHistory();
+        }
+
+        if (!TextUtils.equals(accessTypeSubject.getValue(), accessType)) {
+            pageSubject.onNext(1);
+            roomSubject.onNext(-1l);
+            endDateSubject.onNext(new Date());
+            accessTypeSubject.onNext(accessType);
+        }
+    }
+
+    public enum MoreState {
+        Idle, Loading
     }
 
 }

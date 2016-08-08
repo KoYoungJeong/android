@@ -1,15 +1,11 @@
 package com.tosslab.jandi.app.ui.search.filter.member;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
-
-import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-
-import android.app.Activity;
-import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -23,6 +19,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.search.filter.member.adapter.SearchableMemberFilterAdapter;
 import com.tosslab.jandi.app.ui.search.filter.member.adapter.view.MemberFilterableDataView;
 import com.tosslab.jandi.app.ui.search.filter.member.component.DaggerMemberFilterComponent;
@@ -48,7 +46,8 @@ public class MemberFilterActivity extends BaseAppCompatActivity implements Membe
     public static final String KEY_SELECTED_MEMBER_ID = "selectedMemberId";
 
     public static final String KEY_FILTERED_MEMBER_ID = "memberId";
-    public static final long MEMBER_ID_ALL = -2l;
+
+    public static final long MEMBER_ID_ALL = -1l;
 
     @Inject
     InputMethodManager inputMethodManager;

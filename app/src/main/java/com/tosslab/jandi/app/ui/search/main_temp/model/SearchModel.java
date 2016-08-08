@@ -82,7 +82,15 @@ public class SearchModel {
                     } else if (rhs.isJoined()) {
                         return 1;
                     } else {
-                        return StringCompareUtil.compare(lhs.getTitle(), rhs.getTitle());
+                        if (lhs.isStarred() && rhs.isStarred()) {
+                            return StringCompareUtil.compare(lhs.getTitle(), rhs.getTitle());
+                        } else if (lhs.isStarred()) {
+                            return -1;
+                        } else if (rhs.isStarred()) {
+                            return 1;
+                        } else {
+                            return StringCompareUtil.compare(lhs.getTitle(), rhs.getTitle());
+                        }
                     }
                 })
                 .collect(() -> topics, List::addAll)
@@ -130,6 +138,10 @@ public class SearchModel {
         entityClientManager.joinChannel(topicId);
         TopicRepository.getInstance().updateTopicJoin(topicId, true);
         TeamInfoLoader.getInstance().refresh();
+    }
+
+    public String getWriterName(long writerId){
+        return TeamInfoLoader.getInstance().getMemberName(writerId);
     }
 
 }

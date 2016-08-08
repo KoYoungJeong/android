@@ -15,17 +15,13 @@ public interface SearchAdapterDataModel {
 
     void setSearchMessageDatas(List<SearchMessageData> searchMessageDatas);
 
-    void clearSearchTopicRoomDatas();
-
     void clearSearchMessageDatas();
 
     void setMessageHeaderData(SearchMessageHeaderData searchMessageHeaderData);
 
-    SearchAdapter.MoreState getMoreState();
-
-    void setMoreState(SearchAdapter.MoreState moreState);
-
     void addSearchMessageDatas(List<SearchMessageData> searchMessageDatas);
 
     void setSearchHistoryDatas(List<SearchHistoryData> searchHistoryDatas);
+
+    boolean isHistoryMode();
 }

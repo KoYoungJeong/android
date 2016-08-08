@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="메세지 검색 결과가 없습니다."
+            android:text="@string/jandi_no_search_result"
             android:textColor="@color/jandi_border_gray"
             android:textSize="14dp" />
 

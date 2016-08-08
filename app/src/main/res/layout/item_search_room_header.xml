@@ -19,7 +19,7 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="16dp"
         android:gravity="center_vertical"
-        android:text="참여하지 않은 대화방 포함"
+        android:text="@string/jandi_show_all_team_topic"
         android:textColor="@color/jandi_text_light"
         android:textSize="16dp" />
 

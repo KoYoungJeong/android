@@ -81,20 +81,30 @@ public class MessageHeaderViewHolder extends BaseViewHolder<SearchData> {
 
         if (searchMessageHeaderData.isShowProgress()) {
             progressInitLoading.setVisibility(View.VISIBLE);
-            tvSearchMessage.setText("검색 중 입니다.");
+            tvSearchMessage.setText(
+                    JandiApplication.getContext().getString(R.string.jandi_search_loading));
         } else {
             progressInitLoading.setVisibility(View.GONE);
             tvSearchMessage.setText(
-                    searchMessageHeaderData.getSearchedMessageCount() + "개의 메세지 검색 결과가 있습니다.");
+                    JandiApplication.getContext().getString(R.string.jandi_search_result_count,
+                            searchMessageHeaderData.getSearchedMessageCount()));
         }
 
         vgRoomSelectionButton.setOnClickListener(v -> {
-
+            onClickRoomSelectionButtonListener.onClickRoomSelection();
         });
 
         vgMemberSelectionButton.setOnClickListener(v -> {
-
+            onClickMemberSelectionButtonListener.onClickMemberSelection();
         });
+
+        if (!TextUtils.isEmpty(searchMessageHeaderData.getRoomName())) {
+            tvRoomSelectionButton.setText(searchMessageHeaderData.getRoomName());
+        }
+
+        if (!TextUtils.isEmpty(searchMessageHeaderData.getMemberName())) {
+            tvMemberSelectionButton.setText(searchMessageHeaderData.getMemberName());
+        }
 
         setRoomButtonColor();
         setMemberButtonColor();
@@ -144,11 +154,11 @@ public class MessageHeaderViewHolder extends BaseViewHolder<SearchData> {
         this.onClickMemberSelectionButtonListener = onClickMemberSelectionButtonListener;
     }
 
-    public interface OnClickRoomSelectionButtonListener{
+    public interface OnClickRoomSelectionButtonListener {
         void onClickRoomSelection();
     }
 
-    public interface OnClickMemberSelectionButtonListener{
+    public interface OnClickMemberSelectionButtonListener {
         void onClickMemberSelection();
     }
 

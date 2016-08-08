@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="최근 검색한 내역이 없습니다."
+        android:text="@string/jandi_no_search_history"
         android:textColor="@color/jandi_border_gray"
         android:textSize="14dp" />
 

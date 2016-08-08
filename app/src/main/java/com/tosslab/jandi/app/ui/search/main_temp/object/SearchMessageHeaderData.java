@@ -9,6 +9,8 @@ public class SearchMessageHeaderData extends SearchData {
     private boolean isShowSearchedResultMessage = true;
     private int searchedMessageCount = 0;
     private boolean hasMore = false;
+    private String roomName = "";
+    private String memberName = "";
 
     public boolean isShowProgress() {
         return isShowProgress;
@@ -24,6 +26,14 @@ public class SearchMessageHeaderData extends SearchData {
 
     public boolean hasMore() {
         return hasMore;
+    }
+
+    public String getRoomName() {
+        return roomName;
+    }
+
+    public String getMemberName() {
+        return memberName;
     }
 
     public static class Builder {
@@ -55,6 +65,16 @@ public class SearchMessageHeaderData extends SearchData {
 
         public Builder setType(int type) {
             searchMessageHeaderData.type = type;
+            return this;
+        }
+
+        public Builder setRoomName(String roomName) {
+            searchMessageHeaderData.roomName = roomName;
+            return this;
+        }
+
+        public Builder setMemberName(String memberName) {
+            searchMessageHeaderData.memberName = memberName;
             return this;
         }
 

@@ -184,7 +184,7 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
         roomFilterView.showProgress();
 
         Observable.from(roomFilterModel.getTopicRoomsWithFolder())
-                .toSortedList(((folder, folder2) -> folder2.getSeq() - folder.getSeq()))
+                .toSortedList(((folder, folder2) -> folder.getSeq() - folder2.getSeq()))
                 .onErrorReturn(throwable -> {
                     LogUtil.e(Log.getStackTraceString(throwable));
                     return new ArrayList<>();

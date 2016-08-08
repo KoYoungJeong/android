@@ -32,6 +32,12 @@ public interface SearchPresenter {
 
     void onJoinTopic(long topicId, int topicType);
 
+    void onRoomChanged(long roomId, boolean isDirectMessageRoom);
+
+    void onWriterChanged(long writerId);
+
+    void onAccessTypeChanged(String accessType);
+
     interface View {
 
         void refreshSearchedAll();

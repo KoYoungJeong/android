@@ -82,11 +82,13 @@
                         android:id="@+id/tv_room_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
                         android:ellipsize="end"
                         android:singleLine="true"
                         android:text="잔디의 모바일 안드로이드 디자인 가이드를 공.."
                         android:textColor="@color/dark_gray"
-                        android:visibility="gone" />
+                        android:textSize="12dp"
+                        android:visibility="visible" />
 
                 </LinearLayout>
 
@@ -100,7 +102,7 @@
         android:id="@+id/v_full_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#ffd9d9d9"
+        android:background="#ffeeeeee"
         android:visibility="visible" />
 
     <View
@@ -108,7 +110,7 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_marginLeft="75dp"
-        android:background="#ffd9d9d9"
+        android:background="#ffeeeeee"
         android:visibility="gone" />
 
 </LinearLayout>

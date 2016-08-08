@@ -62,7 +62,9 @@ public class SearchStickyHeaderViewHolder extends RecyclerView.ViewHolder {
 
     public void onBindView(Object o) {
         if (type == TYPE_ROOM) {
-            tvStickyTitle.setText("대화방");
+            tvStickyTitle.setText(
+                    JandiApplication.getContext().getString(R.string.jandi_title_topic_room)
+            );
             if (count > 0) {
                 tvStickyCount.setVisibility(View.VISIBLE);
                 tvStickyCount.setText(String.valueOf(count));
@@ -70,7 +72,9 @@ public class SearchStickyHeaderViewHolder extends RecyclerView.ViewHolder {
                 tvStickyCount.setVisibility(View.GONE);
             }
         } else if (type == TYPE_MESSAGE) {
-            tvStickyTitle.setText("메세지");
+            tvStickyTitle.setText(
+                    JandiApplication.getContext().getString(R.string.jandi_title_message)
+            );
             tvStickyCount.setVisibility(View.GONE);
         }
 

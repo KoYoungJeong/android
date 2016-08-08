@@ -39,7 +39,7 @@
                     android:layout_centerVertical="true"
                     android:text="오후 01:23"
                     android:textColor="@color/jandi_border_gray"
-                    android:textSize="14dp" />
+                    android:textSize="13dp" />
 
                 <TextView
                     android:id="@+id/tv_user_name"
@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="9dp"
                 android:ellipsize="end"
-                android:lineSpacingExtra="1dp"
+                android:lineSpacingExtra="2dp"
                 android:maxLines="2"
                 android:text="HQ had a discussion around this topic and understood the needs.the needs. the needs the needs. the needs "
                 android:textColor="@color/dark_gray"
@@ -121,10 +121,9 @@
 
     </LinearLayout>
 
-
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#ffd9d9d9" />
+        android:background="#ffeeeeee" />
 
 </LinearLayout>
