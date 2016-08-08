@@ -71,12 +71,11 @@ public class SearchActivity extends BaseAppCompatActivity
     @Inject
     SearchPresenter searchPresenter;
 
+    @Inject
+    SearchAdapterViewModel searchAdapterViewModel;
+
     private boolean isRoomItemFold = false;
     private boolean isMessageItemFold = false;
-
-    @Inject
-    private SearchAdapterViewModel searchAdapterViewModel;
-
     private boolean flagFirstSearch = true;
     private SearchQueryAdapter searchQueryAdapter;
     private AlertDialog deleteConfirmDialog;
@@ -89,11 +88,13 @@ public class SearchActivity extends BaseAppCompatActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_integrated_search);
 
         ButterKnife.bind(this);
 
         SearchAdapter adapter = new SearchAdapter();
+
         setListView(adapter);
 
         DaggerSearchComponent.builder()
@@ -436,4 +437,5 @@ public class SearchActivity extends BaseAppCompatActivity
         searchPresenter.onDestroy();
         super.onDestroy();
     }
+
 }
