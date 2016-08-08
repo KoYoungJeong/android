@@ -72,7 +72,10 @@ public class CarouselViewerModel {
     public List<CarouselFileInfo> getImageFileConvert(final long entityId,
                                                       List<ResMessages.FileMessage> fileMessages) {
         List<CarouselFileInfo> fileInfos = new ArrayList<CarouselFileInfo>();
-
+        if (fileMessages == null || fileMessages.size() <= 0) {
+            return fileInfos;
+        }
+        
         Observable.from(fileMessages)
                 .map(fileMessage -> new CarouselFileInfo.Builder()
                         .entityId(entityId)

@@ -53,4 +53,9 @@ public class CarouselViewerModule {
         return new CarouselViewerPresenterImpl(carouselViewerModel, fileDetailModel, carouselView);
     }
 
+    @Provides
+    public CarouselViewerPresenter.View providesCarouselViewerView() {
+        return carouselView;
+    }
+
 }

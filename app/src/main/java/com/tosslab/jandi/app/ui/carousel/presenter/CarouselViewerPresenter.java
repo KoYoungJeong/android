@@ -48,6 +48,14 @@ public interface CarouselViewerPresenter {
 
     void onImageFileDeleted(List<CarouselFileInfo> fileInfos, long deletedFileMessageId);
 
+    void setIsFirst(boolean isFirst);
+
+    boolean isFirst();
+
+    void setIsLast(boolean isLast);
+
+    boolean isLast();
+
     interface View {
 
         void initCarouselInfo(CarouselFileInfo fileInfo);

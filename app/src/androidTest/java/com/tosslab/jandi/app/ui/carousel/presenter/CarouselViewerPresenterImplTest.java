@@ -40,6 +40,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.anyList;
@@ -47,6 +48,7 @@ import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(AndroidJUnit4.class)
 public class CarouselViewerPresenterImplTest {
@@ -54,10 +56,13 @@ public class CarouselViewerPresenterImplTest {
     @Inject
     CarouselViewerPresenter presenter;
 
-    private CarouselViewerPresenter.View mockView;
+    @Inject
+    CarouselViewerPresenter.View mockView;
+
     private long teamId;
     private long roomId;
     private long lastImageMessageId;
+    private long firstImageMessageId;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -79,6 +84,7 @@ public class CarouselViewerPresenterImplTest {
         teamId = AccountRepository.getRepository().getSelectedTeamId();
         roomId = TeamInfoLoader.getInstance().getDefaultTopicId();
         lastImageMessageId = getLatestFileId();
+        firstImageMessageId = getFirstFileId();
     }
 
     private int getLatestFileId() throws RetrofitException {
@@ -94,6 +100,19 @@ public class CarouselViewerPresenterImplTest {
         return new FileApi(RetrofitBuilder.getInstance()).searchFile(reqSearchFile).firstIdOfReceivedList;
     }
 
+    private int getFirstFileId() throws RetrofitException {
+        ReqSearchFile reqSearchFile = new ReqSearchFile();
+        reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
+        reqSearchFile.fileType = "image";
+        reqSearchFile.writerId = "all";
+        reqSearchFile.keyword = "";
+        reqSearchFile.listCount = 2;
+        reqSearchFile.sharedEntityId = roomId;
+        reqSearchFile.startMessageId = -1;
+        reqSearchFile.teamId = teamId;
+        return new FileApi(RetrofitBuilder.getInstance()).searchFile(reqSearchFile).firstIdOfReceivedList;
+    }
+
     @Test
     public void testOnInitImageFiles() throws Exception {
 
@@ -101,7 +120,7 @@ public class CarouselViewerPresenterImplTest {
         doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
-        }).when(mockView).setFileCreateTime(anyString());
+        }).when(mockView).addFileInfos(anyList());
 
         presenter.onInitImageFiles(roomId, lastImageMessageId);
 
@@ -109,9 +128,7 @@ public class CarouselViewerPresenterImplTest {
 
         verify(mockView).addFileInfos(anyList());
         verify(mockView).movePosition(anyInt());
-        verify(mockView).setFileTitle(anyString());
-        verify(mockView).setFileWriterName(anyString());
-        verify(mockView).setFileCreateTime(anyString());
+        verify(mockView).initCarouselInfo(any());
     }
 
     @Test
@@ -123,6 +140,7 @@ public class CarouselViewerPresenterImplTest {
             return invocationOnMock;
         }).when(mockView).addFileInfos(eq(0), anyList());
 
+        presenter.setIsFirst(false);
         presenter.onBeforeImageFiles(roomId, lastImageMessageId, 1);
 
         await().until(() -> finish[0]);
@@ -130,7 +148,6 @@ public class CarouselViewerPresenterImplTest {
         verify(mockView).addFileInfos(eq(0), anyList());
     }
 
-    @Ignore
     @Test
     public void testOnAfterImageFiles() throws Exception {
         final boolean[] finish = {false};
@@ -140,9 +157,10 @@ public class CarouselViewerPresenterImplTest {
                 finish[0] = true;
                 return invocationOnMock;
             }
-        }).when(mockView).addFileInfos(any());
+        }).when(mockView).addFileInfos(anyList());
 
-        presenter.onAfterImageFiles(roomId, lastImageMessageId, 1);
+        presenter.setIsLast(false);
+        presenter.onAfterImageFiles(roomId, firstImageMessageId, 1);
 
         await().until(() -> finish[0]);
 

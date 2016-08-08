@@ -90,10 +90,7 @@ public class CarouselViewerModelTest {
             TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
             imageFileListObservable.subscribe(testSubscriber);
 
-            testSubscriber.assertNoErrors();
-            testSubscriber.assertCompleted();
-
-            fail("성공할리가..");
+            testSubscriber.assertError(testSubscriber.getOnErrorEvents().get(0));
         }
 
         {
@@ -102,9 +99,7 @@ public class CarouselViewerModelTest {
             TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
             imageFileListObservable.subscribe(testSubscriber);
 
-            testSubscriber.assertNoErrors();
-            testSubscriber.assertCompleted();
-            fail("성공 할 수 없음..");
+            testSubscriber.assertError(testSubscriber.getOnErrorEvents().get(0));
         }
 
         {
@@ -113,9 +108,7 @@ public class CarouselViewerModelTest {
             TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
             imageFileListObservable.subscribe(testSubscriber);
 
-            testSubscriber.assertNoErrors();
-            testSubscriber.assertCompleted();
-            fail("성공 할 수 없음..");
+            testSubscriber.assertError(testSubscriber.getOnErrorEvents().get(0));
         }
     }
 
@@ -142,10 +135,7 @@ public class CarouselViewerModelTest {
             TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
             imageFileListObservable.subscribe(testSubscriber);
 
-            testSubscriber.assertNoErrors();
-            testSubscriber.assertCompleted();
-
-            fail("성공할리가..");
+            testSubscriber.assertError(testSubscriber.getOnErrorEvents().get(0));
         }
 
         {
@@ -155,10 +145,7 @@ public class CarouselViewerModelTest {
             TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
             imageFileListObservable.subscribe(testSubscriber);
 
-            testSubscriber.assertNoErrors();
-            testSubscriber.assertCompleted();
-
-            fail("성공할리가..");
+            testSubscriber.assertError(testSubscriber.getOnErrorEvents().get(0));
         }
 
         {
@@ -168,8 +155,7 @@ public class CarouselViewerModelTest {
             TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
             imageFileListObservable.subscribe(testSubscriber);
 
-            testSubscriber.assertNoErrors();
-            testSubscriber.assertCompleted();
+            testSubscriber.assertError(testSubscriber.getOnErrorEvents().get(0));
 
             fail("성공할리가..");
         }
@@ -212,8 +198,7 @@ public class CarouselViewerModelTest {
             TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
             imageFileListObservable.subscribe(testSubscriber);
 
-            testSubscriber.assertNoErrors();
-            testSubscriber.assertCompleted();
+            testSubscriber.assertError(testSubscriber.getOnErrorEvents().get(0));
 
             fail("성공하면 안됨..ㅠㅠ");
         }
@@ -225,10 +210,7 @@ public class CarouselViewerModelTest {
             TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
             imageFileListObservable.subscribe(testSubscriber);
 
-            testSubscriber.assertNoErrors();
-            testSubscriber.assertCompleted();
-
-            fail("성공하면 안됨..ㅠㅠ");
+            testSubscriber.assertError(testSubscriber.getOnErrorEvents().get(0));
         }
 
         {
@@ -238,10 +220,7 @@ public class CarouselViewerModelTest {
             TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
             imageFileListObservable.subscribe(testSubscriber);
 
-            testSubscriber.assertNoErrors();
-            testSubscriber.assertCompleted();
-
-            fail("성공하면 안됨..ㅠㅠ");
+            testSubscriber.assertError(testSubscriber.getOnErrorEvents().get(0));
         }
     }
 
@@ -298,7 +277,6 @@ public class CarouselViewerModelTest {
 
         List<CarouselFileInfo> imageFileConvert = model.getImageFileConvert(roomId, fileMessages);
         int linkPosition = model.findLinkPosition(imageFileConvert, lastImageMessageId);
-
 
         assertThat(linkPosition, is(equalTo(imageFileConvert.size() - 1)));
 

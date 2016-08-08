@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.carousel.presenter;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -135,7 +136,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
     @Override
     public void onBeforeImageFiles(long roomId, long fileLinkId, int count) {
 
-        if (isFirst) {
+        if (isFirst()) {
             return;
         }
 
@@ -151,7 +152,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                     List<CarouselFileInfo> imageFiles =
                             carouselViewerModel.getImageFileConvert(roomId, fileMessages);
 
-                    isFirst = imageFiles.size() < count;
+                    setIsFirst(imageFiles.size() < count);
                     if (imageFiles.size() > 0) {
                         view.addFileInfos(0, imageFiles);
                     }
@@ -161,7 +162,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
     @Override
     public void onAfterImageFiles(long roomId, long fileLinkId, int count) {
 
-        if (isLast) {
+        if (isLast()) {
             return;
         }
 
@@ -176,7 +177,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                 .subscribe(fileMessages -> {
                     List<CarouselFileInfo> imageFiles =
                             carouselViewerModel.getImageFileConvert(roomId, fileMessages);
-                    isLast = imageFiles.size() < count;
+                    setIsLast(imageFiles.size() < count);
                     if (imageFiles.size() > 0) {
                         view.addFileInfos(imageFiles);
                     }
@@ -492,6 +493,26 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                     view.remove(fileInfo);
                     view.notifyDataSetChanged();
                 });
+    }
+
+    @Override
+    public void setIsFirst(boolean isFirst) {
+        this.isFirst = isFirst;
+    }
+
+    @Override
+    public boolean isFirst() {
+        return isFirst;
+    }
+
+    @Override
+    public void setIsLast(boolean isLast) {
+        this.isLast = isLast;
+    }
+
+    @Override
+    public boolean isLast() {
+        return isLast;
     }
 
     void downloadFileAndManage(final FileDetailPresenter.FileManageType type,
