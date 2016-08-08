@@ -48,6 +48,7 @@ import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
+import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.file.adapter.SearchedFilesAdapter;
 import com.tosslab.jandi.app.ui.maintab.file.adapter.SearchedFilesAdapterView;
 import com.tosslab.jandi.app.ui.maintab.file.controller.SearchSelectorViewController;

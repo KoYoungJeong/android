@@ -51,8 +51,8 @@ public class FileSearchModelTest {
 
         assertTrue((!searchKeywords.isEmpty()
                 && searchKeywords.size() == 1
-                && !TextUtils.isEmpty(searchKeywords.get(0).getKeyword())
-                && searchKeywords.get(0).getKeyword().equals(query)));
+                && !TextUtils.isEmpty(searchKeywords.get(0))
+                && searchKeywords.get(0).equals(query)));
     }
 
     @Test
