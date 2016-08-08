@@ -11,10 +11,12 @@ import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -23,6 +25,8 @@ import org.junit.runner.RunWith;
 
 import java.util.List;
 
+import rx.Observable;
+import rx.observers.TestSubscriber;
 import setup.BaseInitUtil;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -86,9 +90,20 @@ public class CarouselViewerActivityTest {
     }
 
     private List<CarouselFileInfo> getCarousel() throws RetrofitException {
-        CarouselViewerModel carouselViewerModel = new CarouselViewerModel(null);
-        carouselViewerModel.getImageFileListObservable(teamId, roomId, latestFileId);
-        return carouselViewerModel.getImageFileConvert(roomId, null);
+        CarouselViewerModel model = new CarouselViewerModel(() -> new FileApi(RetrofitBuilder.getInstance()));
+        Observable<List<ResMessages.FileMessage>> imageFileListObservable =
+                model.getImageFileListObservable(teamId, roomId, getLatestFileId());
+        TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();
+        imageFileListObservable.subscribe(testSubscriber);
+
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertCompleted();
+
+        List<ResMessages.FileMessage> fileMessages = testSubscriber.getOnNextEvents().get(0);
+        Assert.assertThat(fileMessages.size(), is(greaterThan(0)));
+
+        List<CarouselFileInfo> imageFileConvert = model.getImageFileConvert(roomId, fileMessages);
+        return imageFileConvert;
     }
 
     @Test
