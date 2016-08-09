@@ -91,8 +91,8 @@ public class SocketEventHistoryUpdator {
 
 
         checkEventHistory(socketConnectedLastTime, restarterPost)
-                .filter(eventHistoryInfo -> !SocketEventRepository.getInstance().hasEvent(eventHistoryInfo))
                 .filter(it -> messageEventActorMapper.containsKey(it.getClass()))
+                .doOnNext(it -> SocketEventRepository.getInstance().addEvent(it))
                 .toSortedList((lhs, rhs) -> ((Long) (lhs.getTs() - rhs.getTs())).intValue())
                 .filter(it -> !it.isEmpty())
                 .doOnNext(its -> {
