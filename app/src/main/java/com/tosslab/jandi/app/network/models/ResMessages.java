@@ -174,7 +174,8 @@ public class ResMessages {
     @JsonTypeInfo(
             use = JsonTypeInfo.Id.NAME,
             include = JsonTypeInfo.As.PROPERTY,
-            property = "contentType")
+            property = "contentType",
+            defaultImpl = OriginalMessage.class)
     @JsonSubTypes({
             @JsonSubTypes.Type(value = TextMessage.class, name = "text"),
             @JsonSubTypes.Type(value = FileMessage.class, name = "file"),
