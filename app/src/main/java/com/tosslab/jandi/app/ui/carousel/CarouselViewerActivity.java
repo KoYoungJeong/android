@@ -423,6 +423,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
+        carouselViewerPresenter.clearAllEventQueue();
         super.onDestroy();
     }
 

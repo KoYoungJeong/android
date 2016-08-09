@@ -42,7 +42,6 @@ public class CarouselViewerModule {
     }
 
     @Provides
-    @Singleton
     public CarouselViewerModel providesCarouselViewerModel(Lazy<FileApi> fileApi) {
         return new CarouselViewerModel(fileApi);
     }

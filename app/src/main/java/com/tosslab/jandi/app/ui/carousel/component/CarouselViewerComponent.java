@@ -11,7 +11,6 @@ import dagger.Component;
  * Created by tonyjs on 2016. 8. 3..
  */
 @Component(modules = {CarouselViewerModule.class})
-@Singleton
 public interface CarouselViewerComponent {
     void inject(CarouselViewerActivity activity);
 }

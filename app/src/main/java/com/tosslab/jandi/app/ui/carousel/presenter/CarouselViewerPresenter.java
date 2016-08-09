@@ -56,6 +56,8 @@ public interface CarouselViewerPresenter {
 
     boolean isLast();
 
+    void clearAllEventQueue();
+
     interface View {
 
         void initCarouselInfo(CarouselFileInfo fileInfo);

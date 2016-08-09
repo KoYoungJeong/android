@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -47,6 +48,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
     private boolean isLast;
 
     private PublishSubject<FileStarredInfo> starredStatePublishSubject;
+    private Subscription starredStatePublishSubjectSubs;
     private Future<File> currentDownloadingFile;
 
     @Inject
@@ -60,35 +62,35 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
     void initStarQueue() {
         starredStatePublishSubject = PublishSubject.create();
-        starredStatePublishSubject.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
-                .onBackpressureBuffer()
-                .concatMap(fileStarredInfo -> Observable.<FileStarredInfo>create(subscriber -> {
-                    boolean starred = fileStarredInfo.isStarred();
-                    long fileId = fileStarredInfo.getFileId();
-                    long teamId = AccountRepository.getRepository().getSelectedTeamId();
-                    try {
-                        if (starred) {
-                            fileDetailModel.registStarredMessage(teamId, fileId);
-                        } else {
-                            fileDetailModel.unregistStarredMessage(teamId, fileId);
-                        }
-                        subscriber.onNext(fileStarredInfo);
-                    } catch (Exception e) {
-                        subscriber.onError(e);
-                    }
-                    subscriber.onCompleted();
-                }))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(fileStarredInfo -> {
-                    if (fileStarredInfo.isStarred()) {
-                        view.showStarredSuccessToast();
-                    } else {
-                        view.showUnstarredSuccessToast();
-                    }
-                    view.setFilesStarredState(
-                            fileStarredInfo.getFileId(), fileStarredInfo.isStarred(), true);
-                }, Throwable::printStackTrace);
+        starredStatePublishSubjectSubs =
+                starredStatePublishSubject.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
+                        .onBackpressureBuffer()
+                        .concatMap(fileStarredInfo -> Observable.defer(() -> {
+                            boolean starred = fileStarredInfo.isStarred();
+                            long fileId = fileStarredInfo.getFileId();
+                            long teamId = AccountRepository.getRepository().getSelectedTeamId();
+                            try {
+                                if (starred) {
+                                    fileDetailModel.registStarredMessage(teamId, fileId);
+                                } else {
+                                    fileDetailModel.unregistStarredMessage(teamId, fileId);
+                                }
+                                return Observable.just(fileStarredInfo);
+                            } catch (Exception e) {
+                                return Observable.error(e);
+                            }
+                        }))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(fileStarredInfo -> {
+                            if (fileStarredInfo.isStarred()) {
+                                view.showStarredSuccessToast();
+                            } else {
+                                view.showUnstarredSuccessToast();
+                            }
+                            view.setFilesStarredState(
+                                    fileStarredInfo.getFileId(), fileStarredInfo.isStarred(), true);
+                        }, Throwable::printStackTrace);
     }
 
     @Override
@@ -514,6 +516,14 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
         return isLast;
     }
 
+    @Override
+    public void clearAllEventQueue() {
+        if (starredStatePublishSubjectSubs != null
+                && !starredStatePublishSubjectSubs.isUnsubscribed()) {
+            starredStatePublishSubjectSubs.unsubscribe();
+        }
+    }
+
     void downloadFileAndManage(final FileDetailPresenter.FileManageType type,
                                CarouselFileInfo carouselFileInfo, ProgressDialog progressDialog) {
         if (carouselFileInfo == null) {
@@ -548,10 +558,5 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                         });
     }
 
-    public void cancelCurrentDownloading() {
-        if (currentDownloadingFile != null) {
-            currentDownloadingFile.cancel(true);
-        }
-    }
 
 }
