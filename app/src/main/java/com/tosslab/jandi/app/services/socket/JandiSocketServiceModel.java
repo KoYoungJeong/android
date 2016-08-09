@@ -42,6 +42,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.RoomMarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TeamRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.direct.message.DirectMessageApi;
 import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
@@ -115,8 +116,6 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicUnstarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicUpdatedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.team.room.DirectMessageRoom;
-import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -158,6 +157,7 @@ public class JandiSocketServiceModel {
     private final Lazy<LoginApi> loginApi;
     private final Lazy<EventsApi> eventsApi;
     private final Lazy<PollApi> pollApi;
+    private final Lazy<DirectMessageApi> directMessageApi;
     PublishSubject<Object> eventPublisher;
     private Lazy<StartApi> startApi;
     private PublishSubject<SocketRoomMarkerEvent> accountRefreshSubject;
@@ -171,13 +171,14 @@ public class JandiSocketServiceModel {
                                    Lazy<LoginApi> loginApi,
                                    Lazy<EventsApi> eventsApi,
                                    Lazy<StartApi> startApi,
-                                   Lazy<PollApi> pollApi) {
+                                   Lazy<PollApi> pollApi, Lazy<DirectMessageApi> directMessageApi) {
         this.context = context;
         this.accountApi = accountApi;
         this.loginApi = loginApi;
         this.eventsApi = eventsApi;
         this.startApi = startApi;
         this.pollApi = pollApi;
+        this.directMessageApi = directMessageApi;
         this.objectMapper = JacksonMapper.getInstance().getObjectMapper();
         initEventActor();
 
@@ -383,16 +384,33 @@ public class JandiSocketServiceModel {
             long messageId = data.getMessageId();
             MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
 
-            if (TeamInfoLoader.getInstance().isChat(roomId)) {
-                DirectMessageRoom chat = TeamInfoLoader.getInstance().getChat(roomId);
+            if (ChatRepository.getInstance().isChat(roomId)) {
+                Chat chat = ChatRepository.getInstance().getChat(roomId);
                 if (chat.getReadLinkId() <= linkId) {
                     ChatRepository.getInstance().updateUnreadCount(roomId, chat.getUnreadCount() - 1);
                 }
-                if (data.getLinkId() >= chat.getLastMessageId()) {
-                    ChatRepository.getInstance().updateLastMessage(roomId, linkId, "", "archived");
+                if (chat.getLastMessage() != null
+                        && data.getLinkId() >= chat.getLastMessage().getId()) {
+                    long teamId = event.getTeamId();
+                    long userId = chat.getCompanionId();
+                    try {
+                        ResMessages resMessages = directMessageApi.get().getDirectMessages(teamId, userId, data.getLinkId(), 1);
+                        if (resMessages != null
+                                && resMessages.records != null
+                                && !resMessages.records.isEmpty()) {
+                            ResMessages.Link link = resMessages.records.get(0);
+                            String contentText = getContentText(link.message);
+                            ChatRepository.getInstance().updateLastMessage(roomId, link.id, contentText, "created");
+                        } else {
+                            ChatRepository.getInstance().updateLastMessage(roomId, linkId, "", "archived");
+                        }
+                    } catch (RetrofitException e) {
+                        ChatRepository.getInstance().updateLastMessage(roomId, linkId, "", "archived");
+                        e.printStackTrace();
+                    }
                 }
-            } else if (TeamInfoLoader.getInstance().isTopic(roomId)) {
-                TopicRoom topic = TeamInfoLoader.getInstance().getTopic(roomId);
+            } else if (TopicRepository.getInstance().isTopic(roomId)) {
+                Topic topic = TopicRepository.getInstance().getTopic(roomId);
                 if (topic.getReadLinkId() <= linkId) {
                     TopicRepository.getInstance().updateUnreadCount(roomId, topic.getUnreadCount() - 1);
                 }
@@ -975,18 +993,7 @@ public class JandiSocketServiceModel {
 
                 ResMessages.OriginalMessage message = linkMessage.message;
                 String text = "";
-                if (message instanceof ResMessages.TextMessage) {
-                    text = ((ResMessages.TextMessage) message).content.body;
-                } else if (message instanceof ResMessages.CommentMessage) {
-                    text = ((ResMessages.CommentMessage) message).content.body;
-                } else if (message instanceof ResMessages.FileMessage) {
-                    text = ((ResMessages.FileMessage) message).content.title;
-                } else if (message instanceof ResMessages.StickerMessage
-                        || message instanceof ResMessages.CommentStickerMessage) {
-                    text = "(sticker)";
-                } else {
-                    text = "";
-                }
+                text = getContentText(message);
 
                 ChatRepository.getInstance().updateLastMessage(roomId, linkMessage.messageId, text, "created");
                 ChatRepository.getInstance().updateLastLinkId(roomId, linkMessage.id);
@@ -997,6 +1004,23 @@ public class JandiSocketServiceModel {
                 }
             }
         }
+    }
+
+    private String getContentText(ResMessages.OriginalMessage message) {
+        String text;
+        if (message instanceof ResMessages.TextMessage) {
+            text = ((ResMessages.TextMessage) message).content.body;
+        } else if (message instanceof ResMessages.CommentMessage) {
+            text = ((ResMessages.CommentMessage) message).content.body;
+        } else if (message instanceof ResMessages.FileMessage) {
+            text = ((ResMessages.FileMessage) message).content.title;
+        } else if (message instanceof ResMessages.StickerMessage
+                || message instanceof ResMessages.CommentStickerMessage) {
+            text = "(sticker)";
+        } else {
+            text = "";
+        }
+        return text;
     }
 
     private <T extends EventHistoryInfo> T getObject(Object object, Class<T> clazz) throws Exception {
