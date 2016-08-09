@@ -131,6 +131,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     private static final StickerInfo NULL_STICKER = new StickerInfo();
 
     @Extra
+    boolean fromCarousel = false;
+
+    @Extra
     long roomId = -1;
 
     @Extra
@@ -728,6 +731,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     public void onImageFileClick(long fileMessageId, ResMessages.FileMessage fileMessage,
                                  boolean shouldOpenImmediately) {
+        if (fromCarousel) {
+            finish();
+            return;
+        }
+
         if (roomId > 0) {
             Intent intent = CarouselViewerActivity.getCarouselViewerIntent(
                     this, fileMessage.id, roomId);

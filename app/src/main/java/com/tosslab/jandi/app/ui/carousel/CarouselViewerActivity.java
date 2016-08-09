@@ -9,7 +9,6 @@ import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -46,6 +45,7 @@ import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.carousel.component.DaggerCarouselViewerComponent;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
+import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 import com.tosslab.jandi.app.ui.carousel.module.CarouselViewerModule;
 import com.tosslab.jandi.app.ui.carousel.presenter.CarouselViewerPresenter;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity;
@@ -57,11 +57,9 @@ import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity_
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.file.FileUtil;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
@@ -151,35 +149,16 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         intent.putExtra("roomId", roomId);
         intent.putExtra("startMessageId", startMessageId);
         intent.putExtra("mode", CAROUSEL_MODE);
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         return intent;
     }
 
     // for only use SINGLE_IMAGE_MODE
     public static Intent getImageViewerIntent(Activity activity, ResMessages.FileMessage fileMessage) {
-        ResMessages.FileContent content = fileMessage.content;
-        CarouselFileInfo carouselFileInfo = new CarouselFileInfo.Builder()
-                .fileMessageId(fileMessage.id)
-                .fileName(fileMessage.content.name)
-                .fileCreateTime(DateTransformator.getTimeString(fileMessage.createTime))
-                .fileWriterId(fileMessage.writerId)
-                .fileWriterName(TeamInfoLoader.getInstance().getMemberName(fileMessage.writerId))
-                .fileType(content.type)
-                .fileOriginalUrl(content.fileUrl)
-                .fileThumbUrl(ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.THUMB))
-                .ext(content.ext)
-                .size(content.size)
-                .fileCommentCount(fileMessage.commentCount)
-                .isStarred(fileMessage.isStarred)
-                .isExternalShared(fileMessage.content.externalShared)
-                .externalCode(fileMessage.content.externalCode)
-                .sharedEntities(fileMessage.shareEntities)
-                .create();
-
+        CarouselFileInfo carouselFileInfo =
+                CarouselViewerModel.getCarouselInfoFromFileMessage(-1, fileMessage);
         Intent intent = new Intent(activity, CarouselViewerActivity.class);
         intent.putExtra("singleImageInfo", carouselFileInfo);
         intent.putExtra("mode", SINGLE_IMAGE_MODE);
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         return intent;
     }
 
@@ -209,20 +188,6 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         initViews();
 
         EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-
-        Dart.inject(this);
-        if (mode == CAROUSEL_MODE && roomId <= 0) {
-            finish();
-            return;
-        }
-
-        initViews();
     }
 
     private void setupStatusBar() {
@@ -597,6 +562,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
                 ? getCarouselFileInfo().getFileMessageId()
                 : -1;
         FileDetailActivity_.intent(this)
+                .fromCarousel(true)
                 .roomId(mode == CAROUSEL_MODE ? roomId : -1)
                 .fileId(fileId)
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)

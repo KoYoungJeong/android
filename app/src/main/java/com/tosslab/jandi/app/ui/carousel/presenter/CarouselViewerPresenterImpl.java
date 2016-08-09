@@ -187,12 +187,11 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
     @Override
     public void onFileDownload(CarouselFileInfo fileInfo) {
         DownloadService.start(fileInfo.getFileMessageId(),
-                fileInfo.getFileLinkUrl(),
+                fileInfo.getFileOriginalUrl(),
                 fileInfo.getFileName(),
                 fileInfo.getExt(),
                 fileInfo.getFileType());
     }
-
 
     @Override
     public void onChangeStarredState(long fileId, boolean starred) {

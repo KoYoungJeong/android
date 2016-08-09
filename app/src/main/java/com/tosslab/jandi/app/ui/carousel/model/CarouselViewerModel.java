@@ -27,6 +27,29 @@ public class CarouselViewerModel {
         this.fileApi = fileApi;
     }
 
+    public static CarouselFileInfo getCarouselInfoFromFileMessage(long entityId,
+                                                                  ResMessages.FileMessage fileMessage) {
+        return new CarouselFileInfo.Builder()
+                .entityId(entityId)
+                .fileMessageId(fileMessage.id)
+                .fileName(fileMessage.content.name)
+                .fileType(fileMessage.content.type)
+                .fileLinkUrl(ImageUtil.getImageFileUrl(fileMessage.content.fileUrl))
+                .fileThumbUrl(ImageUtil.getThumbnailUrl(fileMessage.content.extraInfo, ImageUtil.Thumbnails.THUMB))
+                .fileOriginalUrl(ImageUtil.getImageFileUrl(fileMessage.content.fileUrl))
+                .ext(fileMessage.content.ext)
+                .size(fileMessage.content.size)
+                .fileCreateTime(DateTransformator.getTimeString(fileMessage.createTime))
+                .fileWriterId(fileMessage.writerId)
+                .fileWriterName(TeamInfoLoader.getInstance().getMemberName(fileMessage.writerId))
+                .fileCommentCount(fileMessage.commentCount)
+                .isStarred(fileMessage.isStarred)
+                .isExternalShared(fileMessage.content.externalShared)
+                .externalCode(fileMessage.content.externalCode)
+                .sharedEntities(fileMessage.shareEntities)
+                .create();
+    }
+
     public Observable<List<ResMessages.FileMessage>> getImageFileListObservable(
             long teamId, long roomId, long messageId) {
         return Observable.create(subscriber -> {
@@ -75,27 +98,11 @@ public class CarouselViewerModel {
         if (fileMessages == null || fileMessages.size() <= 0) {
             return fileInfos;
         }
-        
+
         Observable.from(fileMessages)
-                .map(fileMessage -> new CarouselFileInfo.Builder()
-                        .entityId(entityId)
-                        .fileMessageId(fileMessage.id)
-                        .fileName(fileMessage.content.name)
-                        .fileType(fileMessage.content.type)
-                        .fileLinkUrl(ImageUtil.getImageFileUrl(fileMessage.content.fileUrl))
-                        .fileThumbUrl(ImageUtil.getThumbnailUrl(fileMessage.content.extraInfo, ImageUtil.Thumbnails.THUMB))
-                        .fileOriginalUrl(ImageUtil.getImageFileUrl(fileMessage.content.fileUrl))
-                        .ext(fileMessage.content.ext)
-                        .size(fileMessage.content.size)
-                        .fileCreateTime(DateTransformator.getTimeString(fileMessage.createTime))
-                        .fileWriterId(fileMessage.writerId)
-                        .fileWriterName(TeamInfoLoader.getInstance().getMemberName(fileMessage.writerId))
-                        .fileCommentCount(fileMessage.commentCount)
-                        .isStarred(fileMessage.isStarred)
-                        .isExternalShared(fileMessage.content.externalShared)
-                        .externalCode(fileMessage.content.externalCode)
-                        .sharedEntities(fileMessage.shareEntities)
-                        .create()).collect(() -> fileInfos, List::add)
+                .map(fileMessage ->
+                        getCarouselInfoFromFileMessage(entityId, fileMessage))
+                .collect(() -> fileInfos, List::add)
                 .subscribe();
 
         return fileInfos;
