@@ -27,9 +27,9 @@
         android:lineSpacingExtra="2dp"
         android:maxLength="60"
         android:minHeight="32dp"
+        android:hint="@string/jandi_enter_your_status_message"
         android:scrollHorizontally="true"
         android:scrollbars="horizontal"
-        android:text="asdkjha;ksjdhlkajh"
         android:textColor="@color/jandi_text"
         android:textSize="@dimen/jandi_text_size_large" />
 

@@ -219,7 +219,7 @@ public class EditTextDialogFragment extends DialogFragment {
                 break;
             case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
             case ACTION_MODIFY_PROFILE_MEMBER_NAME:
-                input.setHint(R.string.jandi_title_name);
+                input.setHint(R.string.jandi_enter_name);
                 break;
             case ACTION_FORGOT_PASSWORD:
             case ACTION_NEW_EMAIL:
