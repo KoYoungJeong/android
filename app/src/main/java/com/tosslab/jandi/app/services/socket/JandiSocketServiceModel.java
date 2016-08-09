@@ -286,6 +286,7 @@ public class JandiSocketServiceModel {
         return new SocketStart(token, UserAgentUtil.getDefaultUserAgent());
     }
 
+    @Deprecated
     public void onTeamNameUpdated(Object object) {
         // do nothing
 //        try {
@@ -1244,6 +1245,7 @@ public class JandiSocketServiceModel {
 
     }
 
+    @Deprecated
     public void onTeamDomainUpdated(Object object) {
         // do nothing
 //        try {

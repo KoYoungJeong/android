@@ -149,7 +149,7 @@ public class TopicRepositoryTest {
 
     @Test
     public void testUpdateLastLinkId() throws Exception {
-        int lastLinkId = -1;
+        long lastLinkId = TeamInfoLoader.getInstance().getTopic(defaultTopicId).getLastLinkId() + 1;
         boolean success = TopicRepository.getInstance().updateLastLinkId(defaultTopicId, lastLinkId);
         assertThat(success).isTrue();
 
