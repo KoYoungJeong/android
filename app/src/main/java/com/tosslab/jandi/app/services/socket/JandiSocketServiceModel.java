@@ -484,6 +484,7 @@ public class JandiSocketServiceModel {
             SocketTopicLeftEvent.Data data = event.getData();
             if (data.getMemberId() == TeamInfoLoader.getInstance().getMyId()) {
                 TopicRepository.getInstance().updateTopicJoin(data.getTopicId(), false);
+                postEvent(new TopicDeleteEvent(event.getTeamId(), data.getTopicId()));
             }
             TopicRepository.getInstance().removeMember(data.getTopicId(), data.getMemberId());
             RoomMarkerRepository.getInstance().deleteMarker(data.getTopicId(), data.getMemberId());
@@ -491,7 +492,6 @@ public class JandiSocketServiceModel {
 
             PollRepository.getInstance().upsertPollStatus(data.getTopicId(), "deleted");
 
-            postEvent(new TopicDeleteEvent(event.getTeamId(), data.getTopicId()));
             postEvent(new RetrieveTopicListEvent());
             postEvent(new RequestRefreshPollBadgeCountEvent(event.getTeamId()));
         } catch (Exception e) {
