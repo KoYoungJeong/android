@@ -87,7 +87,7 @@ ext.dependecies = [
                 assertj_android             : 'com.squareup.assertj:assertj-android:1.1.1',
                 assertj_android_support     : 'com.squareup.assertj:assertj-android-support-v4:1.1.1@aar',
                 assertj_android_appcompat   : 'com.squareup.assertj:assertj-android-appcompat-v7:1.1.1@aar',
-                assertj_android_recyclerview: 'com.squareup.assertj:assertj-android-recyclerview-v7:1.1.1@aar'
+                assertj_android_recyclerview: 'com.squareup.assertj:assertj-android-recyclerview-v7:1.1.1@aar',
                 timehop_stickyheader_recyclerview: 'com.timehop.stickyheadersrecyclerview:library:0.4.3@aar'
         ],
 
