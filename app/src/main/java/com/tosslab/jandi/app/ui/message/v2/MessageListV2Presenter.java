@@ -1100,7 +1100,7 @@ public class MessageListV2Presenter {
     }
 
     public void saveMessageFromSocket(ResMessages.Link linkMessage) {
-        MessageRepository.getRepository().upsertMessage(linkMessage);
+        MessageRepository.getRepository().insertMessage(linkMessage);
         MessageRepository.getRepository().updateDirty(room.getRoomId(), linkMessage.id);
     }
 

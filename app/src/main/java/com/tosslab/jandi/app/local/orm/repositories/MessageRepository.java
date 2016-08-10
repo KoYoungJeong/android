@@ -183,6 +183,34 @@ public class MessageRepository extends LockExecutorTemplate {
         });
     }
 
+    public boolean insertMessage(ResMessages.Link link) {
+        return execute(() -> {
+            try {
+                Dao<ResMessages.Link, ?> dao = getHelper().getDao(ResMessages.Link.class);
+                dao.createIfNotExists(link);
+
+                if (link.toEntity != null && link.toEntity.size() > 0) {
+                    Dao<RoomLinkRelation, String> relationDao = getDao(RoomLinkRelation.class);
+                    RoomLinkRelation relation;
+                    int size = link.toEntity.size();
+                    for (int idx = 0; idx < size; idx++) {
+                        relation = new RoomLinkRelation();
+                        relation.setRoomId(link.toEntity.get(idx));
+                        relation.setLinkId(link.id);
+                        relationDao.createIfNotExists(relation);
+                    }
+
+                }
+
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+
+        });
+    }
+
     public int deleteMessageOfMessageId(long messageId) {
         return execute(() -> {
             if (messageId <= 0) {
