@@ -102,6 +102,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketServiceStopEvent;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
@@ -1056,15 +1057,22 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
             } else if (link.message instanceof ResMessages.FileMessage) {
                 ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
-                sendAnalyticsEvent(fileMessage.content.type.startsWith("image")
+                boolean isImageFile = fileMessage.content.type.startsWith("image");
+                sendAnalyticsEvent(isImageFile
                         ? AnalyticsValue.Action.FileView_ByPhoto
                         : AnalyticsValue.Action.FileView_ByFile);
 
-                FileDetailActivity_.intent(this)
-                        .roomId(room.getRoomId())
-                        .selectMessageId(link.messageId)
-                        .fileId(link.messageId)
-                        .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+                if (isImageFile) {
+                    Intent intent = CarouselViewerActivity.getCarouselViewerIntent(
+                            getActivity(), fileMessage.id, roomId);
+                    startActivityForResult(intent, JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+                } else {
+                    FileDetailActivity_.intent(this)
+                            .roomId(room.getRoomId())
+                            .selectMessageId(link.messageId)
+                            .fileId(link.messageId)
+                            .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+                }
                 getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
 
             }

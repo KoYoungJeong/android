@@ -211,8 +211,6 @@
 	<string name="jandi_enter_new_passcode">"변경할 비밀번호를 입력해주세요."</string>
 	<string name="jandi_enter_passcode">"비밀번호 입력"</string>
 	<string name="jandi_enter_phone_number">"전화번호를 입력하세요"</string>
-	<string name="jandi_enter_your_name">"이름을 입력하세요"</string>
-	<string name="jandi_enter_your_status_message">"상태 메시지를 입력하세요"</string>
 	<string name="jandi_entity_create_entity_name">"사용자 성함"</string>
 	<string name="jandi_entity_joined_topic">"참여한 토픽"</string>
 	<string name="jandi_entity_unjoined_topic">"참여하지 않은 토픽"</string>
@@ -226,7 +224,8 @@
 	<string name="jandi_explain_global_push_off">"앱의 알림 설정이 꺼져 있습니다. 더보기 > 설정에서 알림을 켜야 알림을 받을 수 있습니다."</string>
 	<string name="jandi_explain_invite">"메세지 검색이 가능한 업무용 메신저 잔디는 
 팀원 모두와 함께 사용해야 그 진가가 발휘됩니다.
-지금 바로 멤버들을 초대하세요."</string>
+지금 바로 멤버들을 초대하세요.
+"</string>
 	<string name="jandi_explain_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 	<string name="jandi_export">"내보내기"</string>
 	<string name="jandi_export_to_app">"다음 앱으로 파일 내보내기"</string>
@@ -429,7 +428,7 @@
 	<string name="jandi_poll">"투표"</string>
 	<string name="jandi_poll_add_item">"보기추가"</string>
 	<string name="jandi_poll_anonymous">"익명투표"</string>
-	<string name="jandi_poll_create">"만들기"</string>
+	<string name="jandi_poll_create">"새 투표 작성하기"</string>
 	<string name="jandi_poll_deleted">"투표를 삭제했습니다."</string>
 	<string name="jandi_poll_empty_1">"진행중인 투표가 없습니다."</string>
 	<string name="jandi_poll_empty_2">"토픽에서 [+]를 눌러 투표를 만들 수 있습니다."</string>
@@ -496,7 +495,7 @@
 	<string name="jandi_search_ing">"<![CDATA[<b><font color=#404040>%s</font></b>]]> 검색 중..."</string>
 	<string name="jandi_search_loading">"검색 중입니다."</string>
 	<string name="jandi_search_no_topic_room">"검색어에 해당하는 대화방이 없습니다"</string>
-	<string name="jandi_search_result_count">"<b>%s</b>개의 메시지 검색 결과가 있습니다"</string>
+	<string name="jandi_search_result_count">"%s개의 메시지 검색 결과가 있습니다"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>에 대한 <b><font color=#404040>%2$d</font></b>개의 검색 결과가 있습니다.]]>"</string>
 	<string name="jandi_select_character">"캐릭터 선택하기"</string>
 	<string name="jandi_select_direct_messages">"대화 시작하기"</string>

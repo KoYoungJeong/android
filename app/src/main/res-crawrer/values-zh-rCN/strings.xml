@@ -211,8 +211,6 @@
 	<string name="jandi_enter_new_passcode">"输入新密码"</string>
 	<string name="jandi_enter_passcode">"输入您的密码"</string>
 	<string name="jandi_enter_phone_number">"请输入您的电话号码"</string>
-	<string name="jandi_enter_your_name">"输入你的名字"</string>
-	<string name="jandi_enter_your_status_message">"输入你的状态"</string>
 	<string name="jandi_entity_create_entity_name">"名字"</string>
 	<string name="jandi_entity_joined_topic">"我的议题"</string>
 	<string name="jandi_entity_unjoined_topic">"其他议题"</string>
@@ -425,7 +423,7 @@
 	<string name="jandi_poll">"问卷调查"</string>
 	<string name="jandi_poll_add_item">"添加选项"</string>
 	<string name="jandi_poll_anonymous">"不记名"</string>
-	<string name="jandi_poll_create">"建立"</string>
+	<string name="jandi_poll_create">"建立新的投票"</string>
 	<string name="jandi_poll_deleted">"投票已经删除"</string>
 	<string name="jandi_poll_empty_1">"无进行中的问卷"</string>
 	<string name="jandi_poll_empty_2">"\n点击[+]建立新问卷"</string>
@@ -492,7 +490,7 @@
 	<string name="jandi_search_ing">"<![CDATA[搜索 <b><font color=#404040>%s</font></b>...]]>"</string>
 	<string name="jandi_search_loading">"搜索中"</string>
 	<string name="jandi_search_no_topic_room">"无相关数据"</string>
-	<string name="jandi_search_result_count">"总共 <b>%s</b> 笔搜寻结果"</string>
+	<string name="jandi_search_result_count">"总共 %s 笔搜寻结果"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>与 <b><font color=#404040>%2$d</font></b>符合]]>"</string>
 	<string name="jandi_select_character">"选择人物"</string>
 	<string name="jandi_select_direct_messages">"选择私信"</string>

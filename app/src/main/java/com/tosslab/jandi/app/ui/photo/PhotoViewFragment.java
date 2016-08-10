@@ -38,8 +38,6 @@ import uk.co.senab.photoview.PhotoView;
 public class PhotoViewFragment extends Fragment {
     public static final String TAG = PhotoViewFragment.class.getSimpleName();
     @FragmentArg
-    boolean fromCarousel = false;
-    @FragmentArg
     String thumbUrl;
     @FragmentArg
     String originalUrl;
@@ -47,6 +45,7 @@ public class PhotoViewFragment extends Fragment {
     String imageType;
     @FragmentArg
     String extensions;
+
     @ViewById(R.id.pv_photoview)
     PhotoView photoView;
     @ViewById(R.id.progress_photoview)
@@ -59,17 +58,13 @@ public class PhotoViewFragment extends Fragment {
     View btnTapToViewOriginal;
     private CarouselViewerActivity.OnCarouselImageClickListener carouselImageClickListener;
     private OnSwipeExitListener onSwipeExitListener;
-    private ShouldOpenImmediatelyUrlProvider shouldOpenImmediatelyUrlProvider;
+    private AutoProgressUpdateController autoProgressUpdateController;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (activity instanceof OnSwipeExitListener) {
             onSwipeExitListener = (OnSwipeExitListener) activity;
-        }
-
-        if (activity instanceof ShouldOpenImmediatelyUrlProvider) {
-            shouldOpenImmediatelyUrlProvider = ((ShouldOpenImmediatelyUrlProvider) activity);
         }
     }
 
@@ -118,18 +113,11 @@ public class PhotoViewFragment extends Fragment {
 
         } else {
 
-            String shouldOpenImmediatelyUrl =
-                    shouldOpenImmediatelyUrlProvider != null
-                            ? shouldOpenImmediatelyUrlProvider.getShouldOpenImmediatelyUrl()
-                            : "";
-
-            final boolean shouldOpenImmediately = originalUrl.equals(shouldOpenImmediatelyUrl);
-
             final Uri originalUri = Uri.parse(originalUrl);
 
             ImageLoader.newInstance()
                     // cache 되어 있는지 확인하기 위해 네트워킹 작업이 실행되면 exception 발생시킨다.
-                    .blockNetworking(!shouldOpenImmediately)
+                    .blockNetworking(true)
                     .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
 
                         @Override
@@ -147,12 +135,9 @@ public class PhotoViewFragment extends Fragment {
                                                    boolean isFirstResource) {
                             hideProgress();
 
-                            if (!shouldOpenImmediately) {
-                                // cache 가 되어 있지 않음
-                                showTapToView(originalUri);
-                                return true;
-                            }
-                            return false;
+                            // cache 가 되어 있지 않음
+                            showTapToView(originalUri);
+                            return true;
                         }
                     })
                     .uri(originalUri)
@@ -160,7 +145,6 @@ public class PhotoViewFragment extends Fragment {
         }
     }
 
-    private AutoProgressUpdateController autoProgressUpdateController;
     private void showTapToView(Uri originalUri) {
         // PhotoView 그려진 이미지(Drawable)이 없으면 ViewTapListener 가 동작하지 않는다.
         photoView.setImageDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -263,7 +247,4 @@ public class PhotoViewFragment extends Fragment {
         this.carouselImageClickListener = carouselImageClickListener;
     }
 
-    public interface ShouldOpenImmediatelyUrlProvider {
-        String getShouldOpenImmediatelyUrl();
-    }
 }

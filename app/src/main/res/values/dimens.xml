@@ -160,7 +160,7 @@
     <dimen name="jandi_text_size_larger_2">18sp</dimen>
 
     <!-- Profile -->
-    <dimen name="jandi_member_profile_margin_top">0dp</dimen>
+    <dimen name="jandi_actionbar_overlay_top_margin">0dp</dimen>
     <dimen name="jandi_member_profile_btn_close_width">54dp</dimen>
     <dimen name="jandi_member_profile_btn_close_height">56dp</dimen>
     <dimen name="jandi_member_profile_buttons_height">80dp</dimen>

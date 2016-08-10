@@ -156,10 +156,10 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
-            android:name=".ui.carousel.CarouselViewerActivity_"
+            android:name=".ui.carousel.CarouselViewerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="fullUser"
-            android:theme="@style/JandiTheme.ActionBarOverlay" />
+            android:theme="@style/JandiTheme.CarouselViewer" />
 
         <activity
             android:name=".ui.photo.PhotoViewActivity_"

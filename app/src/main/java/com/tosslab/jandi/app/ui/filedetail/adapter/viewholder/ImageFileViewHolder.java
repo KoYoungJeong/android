@@ -96,7 +96,7 @@ public class ImageFileViewHolder extends FileViewHolder {
 
         ResMessages.ThumbnailUrls extraInfo = content.extraInfo;
         boolean hasThumbnailUrl = extraInfo != null && !TextUtils.isEmpty(extraInfo.largeThumbnailUrl);
-        ivFileThumb.setOnClickListener(view -> moveToPhotoViewer(fileMessageId, content, false));
+        ivFileThumb.setOnClickListener(view -> moveToPhotoViewer(fileMessageId, fileMessage, false));
 
         String localFilePath = ImageUtil.getLocalFilePath(fileMessage.id);
         if (!TextUtils.isEmpty(localFilePath)) {
@@ -141,7 +141,7 @@ public class ImageFileViewHolder extends FileViewHolder {
                                                Target<GlideDrawable> target,
                                                boolean isFirstResource) {
                         // cache 가 되어 있지 않음
-                        showTapToViewLayout(fileMessageId, content);
+                        showTapToViewLayout(fileMessageId, fileMessage);
                         return true;
                     }
                 })
@@ -149,7 +149,7 @@ public class ImageFileViewHolder extends FileViewHolder {
                 .into(ivFileThumb);
     }
 
-    private void showTapToViewLayout(long fileMessageId, ResMessages.FileContent content) {
+    private void showTapToViewLayout(long fileMessageId, ResMessages.FileMessage fileMessage) {
 
         btnTapToView.setVisibility(View.VISIBLE);
 
@@ -158,14 +158,14 @@ public class ImageFileViewHolder extends FileViewHolder {
         btnTapToView.setOnClickListener(v -> {
             btnTapToView.setVisibility(View.GONE);
 
-            moveToPhotoViewer(fileMessageId, content, true);
+            moveToPhotoViewer(fileMessageId, fileMessage, true);
         });
     }
 
-    private void moveToPhotoViewer(long fileMessageId, ResMessages.FileContent content,
+    private void moveToPhotoViewer(long fileMessageId, ResMessages.FileMessage fileMessage,
                                    boolean shouldOpenImmediately) {
         if (onImageFileClickListener != null) {
-            onImageFileClickListener.onImageFileClick(fileMessageId, content, shouldOpenImmediately);
+            onImageFileClickListener.onImageFileClick(fileMessageId, fileMessage, shouldOpenImmediately);
         }
     }
 
@@ -174,7 +174,7 @@ public class ImageFileViewHolder extends FileViewHolder {
     }
 
     public interface OnImageFileClickListener {
-        void onImageFileClick(long fileMessageId, ResMessages.FileContent content,
+        void onImageFileClick(long fileMessageId, ResMessages.FileMessage fileMessage,
                               boolean shouldOpenImmediately);
     }
 }
