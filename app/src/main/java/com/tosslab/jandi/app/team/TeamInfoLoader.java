@@ -286,7 +286,7 @@ public class TeamInfoLoader {
     }
 
     public long getMyId() {
-        return execute(() -> initialInfo.getSelf().getId());
+        return execute(() -> me.getId());
     }
 
     public boolean isAnnouncementOpened(long topicId) {

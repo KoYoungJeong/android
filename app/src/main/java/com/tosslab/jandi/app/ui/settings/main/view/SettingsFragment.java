@@ -24,9 +24,9 @@ import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.settings.privacy.SettingPrivacyActivity_;
 import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
 import com.tosslab.jandi.app.ui.term.TermActivity;
-import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -240,12 +240,7 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
 
     @Override
     public void launchHelpPage(String supportUrl) {
-        InternalWebActivity_.intent(getActivity())
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .url(supportUrl)
-                .hideActionBar(true)
-                .helpSite(true)
-                .start();
+        ApplicationUtil.startWebBrowser(getActivity(), supportUrl);
     }
 
     public void onEvent(SignOutEvent event) {

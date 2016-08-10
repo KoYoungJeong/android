@@ -416,7 +416,9 @@ public class MainTopicListFragment extends Fragment
                 } else {
                     if (TeamInfoLoader.getInstance().isTopic(selectedEntity)) {
                         int position = updatedTopicAdapter.indexOfEntity(selectedEntity);
-                        updatedTopicAdapter.getItem(position).setUnreadCount(TeamInfoLoader.getInstance().getTopic(selectedEntity).getUnreadCount());
+                        if (position > 0) {
+                            updatedTopicAdapter.getItem(position).setUnreadCount(TeamInfoLoader.getInstance().getTopic(selectedEntity).getUnreadCount());
+                        }
                     }
                     updatedTopicAdapter.startAnimation();
                     updatedTopicAdapter.notifyDataSetChanged();
