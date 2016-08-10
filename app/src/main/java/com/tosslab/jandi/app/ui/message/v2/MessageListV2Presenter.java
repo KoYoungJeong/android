@@ -125,7 +125,8 @@ public class MessageListV2Presenter {
                                     .concatMap(links -> Observable.just(new NewMessageContainer(currentMessageState)));
                         case NewFromLocal:
                             return messageObservable
-                                    .compose(this::composeNewMessageFromLocal);
+                                    .compose(this::composeNewMessageFromLocal)
+                                    .concatMap(links -> Observable.just(new NewMessageFromLocalContainer(null)));
                         case Send:
                             return messageObservable
                                     .compose(this::composeSend);
@@ -198,37 +199,37 @@ public class MessageListV2Presenter {
                 .observeOn(Schedulers.io())
                 .doOnNext(container -> {
                     SendingMessage data = container.getData();
-                    long linkId;
+                    ResMessages.Link link;
                     StickerInfo stickerInfo = data.getStickerInfo();
                     if (stickerInfo != null) {
-                        linkId = messageListModel.sendMessage(data.getLocalId(), room.getTeamId(), room.getRoomId(),
+                        link = messageListModel.sendMessage(data.getLocalId(), room.getTeamId(), room.getRoomId(),
                                 new ReqStickerMessage(stickerInfo.getStickerId(), stickerInfo.getStickerGroupId()));
                     } else {
                         List<MentionObject> mentions = data.getMentions();
-                        linkId = messageListModel.sendMessage(data.getLocalId(), room.getTeamId(), room.getRoomId(),
+                        link = messageListModel.sendMessage(data.getLocalId(), room.getTeamId(), room.getRoomId(),
                                 new ReqTextMessage(data.getMessage(), mentions));
                     }
 
                     int position = adapterModel.getDummyMessagePositionByLocalId(data.getLocalId());
                     DummyMessageLink item = ((DummyMessageLink) adapterModel.getItem(position));
-                    if (linkId > 0) {
+                    if (link != null) {
                         if (position >= 0) {
-                            ResMessages.Link sentLink = MessageRepository.getRepository().getMessage(linkId);
-                            item.message = sentLink.message;
-                            item.id = linkId;
-                            item.time = sentLink.time;
+
+                            item.message = link.message;
+                            item.id = link.id;
+                            item.time = link.time;
                             item.setStatus(SendMessage.Status.COMPLETE.name());
                         }
                     } else {
                         item.setStatus(SendMessage.Status.FAIL.name());
                     }
 
-                    if (linkId > 0) {
+                    if (link != null) {
                         if (!JandiSocketManager.getInstance().isConnectingOrConnected()) {
                             // 소켓이 안 붙어 있으면 임의로 갱신 요청
                             addNewMessageQueue();
                         } else {
-                            addNewMessageOfLocalQueue();
+                            addNewMessageOfLocalQueue(link);
                         }
                     }
                 })
@@ -261,8 +262,10 @@ public class MessageListV2Presenter {
                 });
     }
 
-    private Observable<MessageContainer> composeNewMessageFromLocal(Observable<MessageContainer> observable) {
+    private Observable<List<ResMessages.Link>> composeNewMessageFromLocal(Observable<MessageContainer> observable) {
         return observable
+                .ofType(NewMessageFromLocalContainer.class)
+                .doOnNext(it -> MessageRepository.getRepository().insertDirty(it.getData()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(container -> view.updateRecyclerViewInfo())
                 .observeOn(Schedulers.io())
@@ -278,17 +281,16 @@ public class MessageListV2Presenter {
 
                     List<ResMessages.Link> messages = MessageRepository.getRepository().getMessages(room.getRoomId(), minId, Long.MAX_VALUE);
                     messageListModel.presetTextContent(messages);
-                    return Pair.create(container, messages);
+                    return messages;
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(pair -> addMessages(pair.second, currentMessageState.isFirstLoadNewMessage(), new ArrayList<>()))
+                .doOnNext(messages -> addMessages(messages, currentMessageState.isFirstLoadNewMessage(), new ArrayList<>()))
                 .observeOn(Schedulers.io())
-                .doOnNext(pair -> {
-                    if (pair.second.size() > 0) {
+                .doOnNext(messages -> {
+                    if (messages.size() > 0) {
                         addMarkerQueue();
                     }
-                })
-                .map(pair -> pair.first);
+                });
     }
 
     private Observable<List<ResMessages.Link>> composeNewMessage(Observable<MessageContainer> observable) {
@@ -1083,10 +1085,13 @@ public class MessageListV2Presenter {
         }
     }
 
-    public void addNewMessageOfLocalQueue() {
+    public void addNewMessageOfLocalQueue(ResMessages.Link link) {
         if (isInitialized) {
-            NewMessageFromLocalContainer container = new NewMessageFromLocalContainer(currentMessageState);
-            addQueue(container);
+            if (link != null) {
+                MessageRepository.getRepository().insertMessage(link);
+                NewMessageFromLocalContainer container = new NewMessageFromLocalContainer(link);
+                addQueue(container);
+            }
         }
     }
 
@@ -1097,11 +1102,6 @@ public class MessageListV2Presenter {
     public void onResumeOfView() {
         isViewResumed = true;
         addMarkerQueue();
-    }
-
-    public void saveMessageFromSocket(ResMessages.Link linkMessage) {
-        MessageRepository.getRepository().upsertMessage(linkMessage);
-        MessageRepository.getRepository().updateDirty(room.getRoomId(), linkMessage.id);
     }
 
     public interface View {

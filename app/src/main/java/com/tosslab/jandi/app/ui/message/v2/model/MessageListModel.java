@@ -179,33 +179,32 @@ public class MessageListModel {
         messageManipulator.setRoomId(roomId);
     }
 
-    public long sendMessage(long localId, long teamId, long roomId, ReqMessage reqMessage) {
+    public ResMessages.Link sendMessage(long localId, long teamId, long roomId, ReqMessage reqMessage) {
 
         try {
             List<ResMessages.Link> links = roomsApi.get().sendMessage(teamId, roomId, reqMessage);
             ResMessages.Link link = links.get(0);
-            MessageRepository.getRepository().upsertMessage(link);
 
             SendMessageRepository.getRepository().updateSendMessageStatus(
                     localId, link.id, SendMessage.Status.COMPLETE);
 
             trackMessagePostSuccess();
 
-            return link.id;
+            return link;
         } catch (RetrofitException e) {
             SendMessageRepository.getRepository().updateSendMessageStatus(
                     localId, SendMessage.Status.FAIL);
 
             int errorCode = e.getStatusCode();
             trackMessagePostFail(errorCode);
-            return -1;
+            return null;
         } catch (Exception e) {
 
             SendMessageRepository.getRepository().updateSendMessageStatus(
                     localId, SendMessage.Status.FAIL);
 
             trackMessagePostFail(-1);
-            return -1;
+            return null;
         }
     }
 
