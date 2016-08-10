@@ -1,9 +1,9 @@
-package com.tosslab.jandi.lib.sprinkler.io;
+package com.tosslab.jandi.lib.sprinkler.io.domain.flush;
 
 /**
  * Created by tonyjs on 15. 7. 23..
  */
-final class ResponseBody {
+public final class ResponseBody {
     public static final int SUCCESS = 200;
     public static final int FAIL = 400;
 

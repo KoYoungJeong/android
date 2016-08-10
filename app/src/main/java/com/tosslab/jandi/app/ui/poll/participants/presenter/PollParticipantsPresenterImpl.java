@@ -11,11 +11,11 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.poll.participants.model.PollParticipantsModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import javax.inject.Inject;
 
@@ -64,7 +64,7 @@ public class PollParticipantsPresenterImpl implements PollParticipantsPresenter 
                     }
 
                     AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                            .event(Event.PollMemberOfVoted)
+                            .event(SprinklerEvents.PollMemberOfVoted)
                             .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                             .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                             .property(PropertyKey.ResponseSuccess, true)
@@ -80,7 +80,7 @@ public class PollParticipantsPresenterImpl implements PollParticipantsPresenter 
                     if (t instanceof RetrofitException) {
                         RetrofitException e = (RetrofitException) t;
                         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                                .event(Event.PollMemberOfVoted)
+                                .event(SprinklerEvents.PollMemberOfVoted)
                                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                                 .property(PropertyKey.ResponseSuccess, true)

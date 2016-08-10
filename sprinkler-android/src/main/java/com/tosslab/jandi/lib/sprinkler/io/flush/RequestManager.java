@@ -1,10 +1,14 @@
-package com.tosslab.jandi.lib.sprinkler.io;
+package com.tosslab.jandi.lib.sprinkler.io.flush;
 
 import android.util.Log;
 
-import com.tosslab.jandi.lib.sprinkler.Logger;
+import com.tosslab.jandi.lib.sprinkler.util.Logger;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 
+import java.util.Collection;
+import java.util.Collections;
+
+import okhttp3.Interceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -17,10 +21,10 @@ final class RequestManager {
     private static final int RETRY_COUNT = 3;
     private static RequestManager sInstance;
     private boolean isCanceled = false;
-    private Retrofit retofit;
+    private Retrofit retrofit;
     private RequestManager() {
         RequestConfig config = getRequestConfig();
-        retofit = new Retrofit.Builder()
+        retrofit = new Retrofit.Builder()
                 .client(OkConnectionClient.getDefaultClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(config.getEndPoint())
@@ -35,7 +39,7 @@ final class RequestManager {
     }
 
     public <CLIENT> CLIENT getClient(Class<CLIENT> client) {
-        return retofit.create(client);
+        return retrofit.create(client);
     }
 
     public <RESPONSE> RESPONSE request(Request<RESPONSE> request) throws Exception {
@@ -92,8 +96,8 @@ final class RequestManager {
     }
 
     interface RequestConfig {
-        String getEndPoint();
 
+        String getEndPoint();
     }
 
     static class RequestConfigRelease implements RequestConfig {
@@ -102,7 +106,6 @@ final class RequestManager {
         public String getEndPoint() {
             return "https://track.jandi.com/";
         }
-
     }
 
     static class RequestConfigDev implements RequestConfig {
@@ -111,7 +114,6 @@ final class RequestManager {
         public String getEndPoint() {
             return "https://dev-tracker.sprinklr.io:50079/";
         }
-
     }
 
 }

@@ -1,4 +1,4 @@
-package com.tosslab.jandi.lib.sprinkler.io;
+package com.tosslab.jandi.lib.sprinkler.service;
 
 import android.annotation.SuppressLint;
 import android.app.IntentService;
@@ -8,16 +8,17 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Pair;
 
-import com.tosslab.jandi.lib.sprinkler.Logger;
+import com.tosslab.jandi.lib.sprinkler.io.domain.flush.ResponseBody;
+import com.tosslab.jandi.lib.sprinkler.io.flush.Flusher;
+import com.tosslab.jandi.lib.sprinkler.io.track.Tracker;
+import com.tosslab.jandi.lib.sprinkler.util.Logger;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
-import com.tosslab.jandi.lib.sprinkler.io.model.Track;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.Track;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
-
 
 /**
  * Created by tonyjs on 15. 7. 27..

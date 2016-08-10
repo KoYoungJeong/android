@@ -10,10 +10,10 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.poll.create.model.PollCreateModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.Calendar;
 import java.util.List;
@@ -124,7 +124,7 @@ public class PollCreatePresenterImpl implements PollCreatePresenter {
                     pollCreateView.finish();
 
                     AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                            .event(Event.PollCreated)
+                            .event(SprinklerEvents.PollCreated)
                             .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                             .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                             .property(PropertyKey.ResponseSuccess, true)
@@ -141,7 +141,7 @@ public class PollCreatePresenterImpl implements PollCreatePresenter {
                     if (throwable instanceof RetrofitException) {
                         RetrofitException e = (RetrofitException) throwable;
                         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                                .event(Event.PollCreated)
+                                .event(SprinklerEvents.PollCreated)
                                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                                 .property(PropertyKey.ResponseSuccess, false)

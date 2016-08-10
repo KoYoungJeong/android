@@ -6,11 +6,14 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.tosslab.jandi.lib.sprinkler.constant.DefaultEvent;
+import com.tosslab.jandi.lib.sprinkler.constant.DefaultProperties;
+import com.tosslab.jandi.lib.sprinkler.constant.DefaultPropertyKey;
 import com.tosslab.jandi.lib.sprinkler.constant.IdentifierKey;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.SprinklerService;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.lib.sprinkler.service.SprinklerService;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
+import com.tosslab.jandi.lib.sprinkler.util.FlushRetriever;
+import com.tosslab.jandi.lib.sprinkler.util.Logger;
 
 import java.util.Date;
 
@@ -116,7 +119,7 @@ public class Sprinkler {
         setActive(false);
 
         track(new FutureTrack.Builder()
-                .event(Event.AppClose)
+                .event(DefaultEvent.AppClose)
                 .build());
 
         flush();
@@ -130,18 +133,18 @@ public class Sprinkler {
 
     public FutureTrack getDefaultTrack() {
         return new FutureTrack.Builder()
-                .event(Event.AppOpen)
-                .property(PropertyKey.AppVersion, defaultProperties.getAppVersion())
-                .property(PropertyKey.Brand, defaultProperties.getDeviceBrand())
-                .property(PropertyKey.Manufacturer, defaultProperties.getDeviceManufacturer())
-                .property(PropertyKey.Model, defaultProperties.getDeviceModel())
-                .property(PropertyKey.OS, defaultProperties.getOs())
-                .property(PropertyKey.OSVersion, defaultProperties.getOsVersion())
-                .property(PropertyKey.ScreenDPI, defaultProperties.getScreenDpi())
-                .property(PropertyKey.ScreenHeight, defaultProperties.getScreenHeight())
-                .property(PropertyKey.ScreenWidth, defaultProperties.getScreenWidth())
-                .property(PropertyKey.Carrier, defaultProperties.getDeviceCarrier())
-                .property(PropertyKey.Wifi, defaultProperties.isWifiEnabled())
+                .event(DefaultEvent.AppOpen)
+                .property(DefaultPropertyKey.AppVersion, defaultProperties.getAppVersion())
+                .property(DefaultPropertyKey.Brand, defaultProperties.getDeviceBrand())
+                .property(DefaultPropertyKey.Manufacturer, defaultProperties.getDeviceManufacturer())
+                .property(DefaultPropertyKey.Model, defaultProperties.getDeviceModel())
+                .property(DefaultPropertyKey.OS, defaultProperties.getOs())
+                .property(DefaultPropertyKey.OSVersion, defaultProperties.getOsVersion())
+                .property(DefaultPropertyKey.ScreenDPI, defaultProperties.getScreenDpi())
+                .property(DefaultPropertyKey.ScreenHeight, defaultProperties.getScreenHeight())
+                .property(DefaultPropertyKey.ScreenWidth, defaultProperties.getScreenWidth())
+                .property(DefaultPropertyKey.Carrier, defaultProperties.getDeviceCarrier())
+                .property(DefaultPropertyKey.Wifi, defaultProperties.isWifiEnabled())
                 .build();
     }
 }

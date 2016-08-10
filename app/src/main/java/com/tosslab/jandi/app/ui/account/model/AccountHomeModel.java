@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
@@ -25,9 +24,9 @@ import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -179,7 +178,7 @@ public class AccountHomeModel {
 
     public void trackLaunchTeamSuccess(long teamId) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.LaunchTeam)
+                .event(SprinklerEvents.LaunchTeam)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.TeamId, teamId)
@@ -188,7 +187,7 @@ public class AccountHomeModel {
 
     public void trackLaunchTeamFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.LaunchTeam)
+                .event(SprinklerEvents.LaunchTeam)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)
@@ -197,7 +196,7 @@ public class AccountHomeModel {
 
     public void trackChangeAccountNameSuccess(Context context, String accountId) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.ChangeAccountName)
+                .event(SprinklerEvents.ChangeAccountName)
                 .accountId(accountId)
                 .property(PropertyKey.ResponseSuccess, true)
                 .build());
@@ -205,7 +204,7 @@ public class AccountHomeModel {
 
     public void trackChangeAccountNameFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.ChangeAccountName)
+                .event(SprinklerEvents.ChangeAccountName)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)

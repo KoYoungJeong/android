@@ -1,8 +1,7 @@
-package com.tosslab.jandi.lib.sprinkler.io.model;
+package com.tosslab.jandi.lib.sprinkler.io.domain.track;
 
 import com.tosslab.jandi.lib.sprinkler.constant.IdentifierKey;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.domain.event.Event;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -69,7 +68,7 @@ public class FutureTrack implements Serializable {
         private Event event;
         private Map<String, Object> identifiersMap = new HashMap<>();
         private Map<String, Object> propertiesMap = new HashMap<>();
-        private PropertyKey[] availablePropertyKeys;
+        private String[] availablePropertyKeys;
 
         public Builder event(Event event) {
             this.event = event;
@@ -92,19 +91,19 @@ public class FutureTrack implements Serializable {
             return this;
         }
 
-        public Builder property(PropertyKey key, Object value) {
+        public Builder property(String key, Object value) {
             if (!containsKey(key)) {
                 return this;
             }
 
-            propertiesMap.put(key.getName(), value);
+            propertiesMap.put(key, value);
             return this;
         }
 
-        private boolean containsKey(PropertyKey key) {
+        private boolean containsKey(String key) {
             if (availablePropertyKeys != null && availablePropertyKeys.length > 0) {
-                for (PropertyKey pk : availablePropertyKeys) {
-                    if (pk.getName().equals(key.getName())) {
+                for (String pk : availablePropertyKeys) {
+                    if (pk.equals(key)) {
                         return true;
                     }
                 }

@@ -1,4 +1,4 @@
-package com.tosslab.jandi.lib.sprinkler;
+package com.tosslab.jandi.lib.sprinkler.util;
 
 import android.content.Context;
 import android.os.Handler;
@@ -7,10 +7,12 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+
 /**
  * Created by tonyjs on 15. 7. 20..
  */
-class FlushRetriever {
+public class FlushRetriever {
     public static final String TAG = Logger.makeTag(FlushRetriever.class);
 
     private static final long INTERVAL = 1000 * 60;

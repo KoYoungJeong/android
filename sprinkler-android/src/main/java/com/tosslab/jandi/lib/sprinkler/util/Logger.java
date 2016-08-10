@@ -1,6 +1,8 @@
-package com.tosslab.jandi.lib.sprinkler;
+package com.tosslab.jandi.lib.sprinkler.util;
 
 import android.util.Log;
+
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 
 /**
  * Created by tonyjs on 15. 7. 21..

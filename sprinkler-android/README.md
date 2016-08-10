@@ -10,7 +10,7 @@ $> ./gradlew :sprin:clean :sprin:install
 sprinkler-android/build/
 
 > libs/ javadoc.jar, sources.jar
-> outputs/aar/lib.jar
+> outputs/aar/*.aar
 > poms/pom-default.xml -- pom.xml 으로 이름 변경
 
 ### 3. 사내 넥서스로 배포
