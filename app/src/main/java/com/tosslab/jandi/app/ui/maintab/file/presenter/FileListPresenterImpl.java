@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.file.presenter;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.search.ReqSearch;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -33,11 +34,11 @@ public class FileListPresenterImpl implements FileListPresenter {
     private final BehaviorSubject<String> fileTypeSubject;
     private final BehaviorSubject<Date> endDateSubject;
     private final BehaviorSubject<String> keywordSubject;
+    private final CompositeSubscription compositeSubscription;
     private FileListPresenter.View view;
     private FileListModel fileListModel;
     private long entityId;
     private SearchedFilesAdapterModel searchedFilesAdapterModel;
-    private final CompositeSubscription compositeSubscription;
 
     public FileListPresenterImpl(long entityId, FileListModel fileListModel, View view) {
         this.entityId = entityId;
@@ -316,5 +317,30 @@ public class FileListPresenterImpl implements FileListPresenter {
         if (!compositeSubscription.isUnsubscribed()) {
             compositeSubscription.unsubscribe();
         }
+    }
+
+    @Override
+    public void getImageDetail(long fileId) {
+        view.showProgress();
+        Observable.just(fileId)
+                .observeOn(Schedulers.io())
+                .map(it -> {
+                    try {
+                        return ((ResMessages.FileMessage) fileListModel.getImageFile(fileId));
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
+                    view.dismissProgress();
+                    view.moveToCarousel(it);
+                }, t -> {
+                    view.dismissProgress();
+                    String message = JandiApplication.getContext().getString(R.string.jandi_err_unexpected);
+                    view.showWarningToast(message);
+                });
+
     }
 }

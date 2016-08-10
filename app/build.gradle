@@ -165,6 +165,7 @@ project.gradle.taskGraph.whenReady {
 
 apt {
     arguments {
+        "dart.henson.package" android.defaultConfig.applicationId
         resourcePackageName android.defaultConfig.applicationId
         androidManifestFile variant.outputs[0].processResources.manifestFile
     }

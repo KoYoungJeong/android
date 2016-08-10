@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.profile.modify.property.namestatus.view;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.presenter.NameStatusPresenter;

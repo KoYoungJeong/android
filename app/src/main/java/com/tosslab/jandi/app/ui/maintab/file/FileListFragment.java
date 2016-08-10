@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,6 +43,7 @@ import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl_;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
@@ -62,16 +62,16 @@ import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenterImpl;
 import com.tosslab.jandi.app.ui.search.file.view.FileSearchActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.ArrayList;
@@ -123,6 +123,8 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
     @Bind(R.id.progress_file_list)
     ProgressBar moreLoadingProgressBar;
+
+    private ProgressWheel progressWheel;
 
     private SearchSelectorViewController searchSelectorViewController;
     private FileUploadController filePickerViewModel;
@@ -250,7 +252,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         SearchedFilesAdapter searchedFilesAdapter = new SearchedFilesAdapter();
         lvSearchFiles.setAdapter(searchedFilesAdapter);
         searchedFilesAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
-            moveToFileDetailActivity((searchedFilesAdapter.getItem(position)));
+            moveToFileDetailActivity(searchedFilesAdapter.getItem(position).getFile());
 
             if (onSearchItemSelect != null) {
                 onSearchItemSelect.onSearchItemSelect();
@@ -275,17 +277,22 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         fileListPresenter.setSearchedFilesAdapterModel(searchedFilesAdapter);
     }
 
-    private void moveToFileDetailActivity(ResMessages.FileMessage fileMessage) {
-        if (fileMessage.content.type.startsWith("image")) {
-            Intent intent = CarouselViewerActivity.getImageViewerIntent(getActivity(), fileMessage);
-            startActivityForResult(intent, JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+    private void moveToFileDetailActivity(ResSearch.File file) {
+        if (file.getIcon().startsWith("image")) {
+            fileListPresenter.getImageDetail(file.getId());
         } else {
             FileDetailActivity_
                     .intent(this)
-                    .fileId(fileMessage.id)
+                    .fileId(file.getId())
                     .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
             getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
         }
+    }
+
+    @Override
+    public void moveToCarousel(ResMessages.FileMessage fileMessage) {
+        Intent intent = CarouselViewerActivity.getImageViewerIntent(getActivity(), fileMessage);
+        startActivityForResult(intent, JandiConstants.TYPE_FILE_DETAIL_REFRESH);
     }
 
     @Override
@@ -503,6 +510,24 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     @Override
     public void justRefresh() {
         searchedFilesAdapterView.refreshListView();
+    }
+
+    @Override
+    public void showProgress() {
+        if (progressWheel == null) {
+            progressWheel = new ProgressWheel(getActivity());
+        }
+
+        if (!progressWheel.isShowing()) {
+            progressWheel.show();
+        }
+    }
+
+    @Override
+    public void dismissProgress() {
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
     }
 
     @Override

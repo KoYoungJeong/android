@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.file.model;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.network.client.file.FileApi;
+import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -12,16 +12,12 @@ import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -30,10 +26,12 @@ import dagger.Lazy;
 public class FileListModel {
 
     Lazy<SearchApi> searchApi;
+    Lazy<MessageApi> messageApi;
 
     @Inject
-    public FileListModel(Lazy<SearchApi> searchApi) {
+    public FileListModel(Lazy<SearchApi> searchApi, Lazy<MessageApi> messageApi) {
         this.searchApi = searchApi;
+        this.messageApi = messageApi;
     }
 
     public boolean isDefaultSearchQuery(long page, long roomId, long writerId, String keyword, String fileType) {
@@ -76,5 +74,9 @@ public class FileListModel {
 
     public ResSearch getResults(ReqSearch it) throws RetrofitException {
         return searchApi.get().getSearch(getSelectedTeamId(), it);
+    }
+
+    public ResMessages.OriginalMessage getImageFile(long fileId) throws RetrofitException {
+        return messageApi.get().getMessage(TeamInfoLoader.getInstance().getTeamId(), fileId);
     }
 }

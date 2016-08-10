@@ -211,6 +211,7 @@
 	<string name="jandi_enter_new_passcode">"Enter New Passcode "</string>
 	<string name="jandi_enter_passcode">"Enter your password"</string>
 	<string name="jandi_enter_phone_number">"Please enter your phone number"</string>
+	<string name="jandi_enter_your_status_message">"Enter your status message"</string>
 	<string name="jandi_entity_create_entity_name">"Name"</string>
 	<string name="jandi_entity_joined_topic">"My Topics"</string>
 	<string name="jandi_entity_unjoined_topic">"Other Topics"</string>
@@ -301,7 +302,8 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_insert_team_domain">"Set up your Team Domain"</string>
 	<string name="jandi_insert_team_name">"Set up your Team Name"</string>
 	<string name="jandi_invitation">"Invite"</string>
-	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. To change this setting, go to Team Settings > Invitation Settings."</string>
+	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. 
+To change this setting, go to Team Settings > Invitation Settings."</string>
 	<string name="jandi_invitation_help">"Invite other team members to JANDI!"</string>
 	<string name="jandi_invitation_succeed">"Invitation has been sent"</string>
 	<string name="jandi_invite_app_not_installed">"The app is not installed on your device. The invitation link has been copied to the clipboard instead."</string>
@@ -384,8 +386,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_mypage">"My Page"</string>
 	<string name="jandi_name">"Name"</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
-	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic.
-"</string>
+	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic."</string>
 	<string name="jandi_new_department">"New Department"</string>
 	<string name="jandi_new_job_title">"New Job Title"</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>
@@ -492,7 +493,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_search_ing">"<![CDATA[Searching <b><font color=#404040>%s</font></b>...]]>"</string>
 	<string name="jandi_search_loading">"Searching…"</string>
 	<string name="jandi_search_no_topic_room">"No matching room for the keyword."</string>
-	<string name="jandi_search_result_count">"You have %s message search result(s)."</string>
+	<string name="jandi_search_result_count">"You have <b>%s</b> message search result(s)."</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%2$d</font></b> matches for <b><font color=#404040>%1$s</font></b>]]>"</string>
 	<string name="jandi_select_character">"Select a JANDI character"</string>
 	<string name="jandi_select_direct_messages">"Select Direct Message"</string>

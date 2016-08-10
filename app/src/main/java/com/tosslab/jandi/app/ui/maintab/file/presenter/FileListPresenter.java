@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.file.presenter;
 
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.ui.maintab.file.adapter.SearchedFilesAdapterModel;
 
@@ -41,12 +42,16 @@ public interface FileListPresenter {
 
     void onDestory();
 
+    void getImageDetail(long fileId);
+
     interface View {
         void clearListView();
 
         void searchFailed(int errMessageRes);
 
         void searchSucceed(ResSearchFile resSearchFile);
+
+        void moveToCarousel(ResMessages.FileMessage fileMessage);
 
         void setSearchEmptryViewVisible(int visible);
 
@@ -63,5 +68,9 @@ public interface FileListPresenter {
         void onSearchHeaderReset();
 
         void justRefresh();
+
+        void showProgress();
+
+        void dismissProgress();
     }
 }
