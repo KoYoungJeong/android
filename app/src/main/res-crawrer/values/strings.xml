@@ -211,6 +211,8 @@
 	<string name="jandi_enter_new_passcode">"Enter New Passcode "</string>
 	<string name="jandi_enter_passcode">"Enter your password"</string>
 	<string name="jandi_enter_phone_number">"Please enter your phone number"</string>
+	<string name="jandi_enter_your_name">"Enter your name"</string>
+	<string name="jandi_enter_your_status_message">"Enter your status message"</string>
 	<string name="jandi_entity_create_entity_name">"Name"</string>
 	<string name="jandi_entity_joined_topic">"My Topics"</string>
 	<string name="jandi_entity_unjoined_topic">"Other Topics"</string>
@@ -384,8 +386,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_mypage">"My Page"</string>
 	<string name="jandi_name">"Name"</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
-	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic.
-"</string>
+	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic."</string>
 	<string name="jandi_new_department">"New Department"</string>
 	<string name="jandi_new_job_title">"New Job Title"</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>
@@ -486,8 +487,8 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_sdcard_storage_unmounted">"SD Card unmounted"</string>
 	<string name="jandi_search_all_member">"All Members"</string>
 	<string name="jandi_search_all_room">"All Rooms"</string>
-	<string name="jandi_search_category_everyone">"<b>All Members</b>"</string>
-	<string name="jandi_search_category_everywhere">"<b>All Rooms</b>"</string>
+	<string name="jandi_file_category_everyone">"<b>All Members</b>"</string>
+	<string name="jandi_file_category_everywhere">"<b>All Rooms</b>"</string>
 	<string name="jandi_search_history">"Recent Searches"</string>
 	<string name="jandi_search_ing">"<![CDATA[Searching <b><font color=#404040>%s</font></b>...]]>"</string>
 	<string name="jandi_search_loading">"Searching…"</string>

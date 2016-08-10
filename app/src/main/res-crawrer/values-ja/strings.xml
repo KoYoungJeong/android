@@ -211,6 +211,8 @@
 	<string name="jandi_enter_new_passcode">"新しいパスコードを入力 "</string>
 	<string name="jandi_enter_passcode">"パスワードを入力してください"</string>
 	<string name="jandi_enter_phone_number">"電話番号を入力してください"</string>
+	<string name="jandi_enter_your_name">"お名前を入力"</string>
+	<string name="jandi_enter_your_status_message">"ステータスメッセージを入力"</string>
 	<string name="jandi_entity_create_entity_name">"名前"</string>
 	<string name="jandi_entity_joined_topic">"参加中のトピック"</string>
 	<string name="jandi_entity_unjoined_topic">"未参加のトピック"</string>

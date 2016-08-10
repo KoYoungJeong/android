@@ -211,6 +211,8 @@
 	<string name="jandi_enter_new_passcode">"输入新密码"</string>
 	<string name="jandi_enter_passcode">"输入您的密码"</string>
 	<string name="jandi_enter_phone_number">"请输入您的电话号码"</string>
+	<string name="jandi_enter_your_name">"输入你的名字"</string>
+	<string name="jandi_enter_your_status_message">"输入你的状态"</string>
 	<string name="jandi_entity_create_entity_name">"名字"</string>
 	<string name="jandi_entity_joined_topic">"我的议题"</string>
 	<string name="jandi_entity_unjoined_topic">"其他议题"</string>

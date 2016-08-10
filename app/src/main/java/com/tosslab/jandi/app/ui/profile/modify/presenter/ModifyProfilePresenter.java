@@ -9,7 +9,7 @@ import java.io.File;
 
 public interface ModifyProfilePresenter {
 
-    void onEditEmailClick(String email);
+    void onEditEmailClick();
 
     void onRequestCropImage(Activity activity);
 

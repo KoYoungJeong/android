@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.profile.inputlist;
+package com.tosslab.jandi.app.ui.profile.modify.property.dept;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -21,7 +21,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.profile.inputlist.adapter.InputProfileListAdapter;
+import com.tosslab.jandi.app.ui.profile.modify.property.dept.adapter.DeptPositionAdapter;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
@@ -36,7 +36,7 @@ import rx.functions.Func1;
 /**
  * Created by tee on 16. 7. 5..
  */
-public class InputProfileListActivity extends BaseAppCompatActivity {
+public class DeptPositionActivity extends BaseAppCompatActivity {
 
     public static final String RESULT_EXTRA = "result_extra";
     public static final String EXTRA_INPUT_MODE = "extra_input_mode";
@@ -54,7 +54,7 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
     TextView tvList;
 
     private String mode;
-    private InputProfileListAdapter adapter;
+    private DeptPositionAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,7 +65,7 @@ public class InputProfileListActivity extends BaseAppCompatActivity {
         ButterKnife.bind(this);
         listView.setLayoutManager(new LinearLayoutManager(
                 this, LinearLayoutManager.VERTICAL, false));
-        adapter = new InputProfileListAdapter();
+        adapter = new DeptPositionAdapter();
         adapter.setMode(mode);
         listView.setAdapter(adapter);
         setOnTextChangeListener();

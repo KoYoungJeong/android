@@ -211,6 +211,8 @@
 	<string name="jandi_enter_new_passcode">"輸入新密碼"</string>
 	<string name="jandi_enter_passcode">"輸入您的密碼"</string>
 	<string name="jandi_enter_phone_number">"請輸入您的電話號碼"</string>
+	<string name="jandi_enter_your_name">"輸入你的名字"</string>
+	<string name="jandi_enter_your_status_message">"輸入你的狀態"</string>
 	<string name="jandi_entity_create_entity_name">"名字"</string>
 	<string name="jandi_entity_joined_topic">"我的議題"</string>
 	<string name="jandi_entity_unjoined_topic">"其他議題"</string>
@@ -251,8 +253,7 @@
 	<string name="jandi_file_search_user">"按成員篩選搜尋結果"</string>
 	<string name="jandi_file_size_large_error">"無法上傳大於300MB的檔案"</string>
 	<string name="jandi_file_upload_finish">"檔案已成功上傳"</string>
-	<string name="jandi_file_upload_go_topic">"
-點擊進入JANDI瀏覽"</string>
+	<string name="jandi_file_upload_go_topic">"點擊進入JANDI瀏覽"</string>
 	<string name="jandi_file_upload_state">"上傳檔案中 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"檔案上傳成功"</string>
 	<string name="jandi_file_uploading">"上傳"</string>

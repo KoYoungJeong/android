@@ -3,42 +3,53 @@
 
     <!-- CUSTOMISING PagerSlidingTabStrip -->
     <declare-styleable name="PagerSlidingTabStrip">
-        <attr name="pstsIndicatorColor" format="color" />
-        <attr name="pstsUnderlineColor" format="color" />
-        <attr name="pstsDividerColor" format="color" />
-        <attr name="pstsIndicatorHeight" format="dimension" />
-        <attr name="pstsUnderlineHeight" format="dimension" />
-        <attr name="pstsDividerPadding" format="dimension" />
-        <attr name="pstsTabPaddingLeftRight" format="dimension" />
-        <attr name="pstsScrollOffset" format="dimension" />
-        <attr name="pstsTabBackground" format="reference" />
-        <attr name="pstsShouldExpand" format="boolean" />
-        <attr name="pstsTextAllCaps" format="boolean" />
-        <attr name="pstsTabSwitch" format="boolean" />
-        <attr name="pstsActivateTextColor" format="color" />
-        <attr name="pstsDeactivateTextColor" format="color" />
+        <attr name="pstsIndicatorColor" format="color"/>
+        <attr name="pstsUnderlineColor" format="color"/>
+        <attr name="pstsDividerColor" format="color"/>
+        <attr name="pstsIndicatorHeight" format="dimension"/>
+        <attr name="pstsUnderlineHeight" format="dimension"/>
+        <attr name="pstsDividerPadding" format="dimension"/>
+        <attr name="pstsTabPaddingLeftRight" format="dimension"/>
+        <attr name="pstsScrollOffset" format="dimension"/>
+        <attr name="pstsTabBackground" format="reference"/>
+        <attr name="pstsShouldExpand" format="boolean"/>
+        <attr name="pstsTextAllCaps" format="boolean"/>
+        <attr name="pstsTabSwitch" format="boolean"/>
+        <attr name="pstsActivateTextColor" format="color"/>
+        <attr name="pstsDeactivateTextColor" format="color"/>
     </declare-styleable>
 
     <declare-styleable name="ViewPagerIndicator">
-        <attr name="selectorColor" format="color" />
-        <attr name="unselectorColor" format="color" />
-        <attr name="indicatorCount" format="integer" />
-        <attr name="indicatorMargin" format="dimension" />
-        <attr name="indicatorWidth" format="dimension" />
+        <attr name="selectorColor" format="color"/>
+        <attr name="unselectorColor" format="color"/>
+        <attr name="indicatorCount" format="integer"/>
+        <attr name="indicatorMargin" format="dimension"/>
+        <attr name="indicatorWidth" format="dimension"/>
     </declare-styleable>
 
     <declare-styleable name="SettingsBodyView">
-        <attr name="sbvTitle" format="string" />
-        <attr name="sbvSummary" format="string" />
-        <attr name="sbvSummaryColor" format="color" />
+        <attr name="sbvTitle" format="string"/>
+        <attr name="sbvSummary" format="string"/>
+        <attr name="sbvSummaryColor" format="color"/>
     </declare-styleable>
 
     <declare-styleable name="SettingsBodyCheckView">
-        <attr name="sbvChcked" format="boolean" />
+        <attr name="sbvChcked" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="MessageWidthRelativeLayout">
-        <attr name="boundWidth" format="dimension" />
+        <attr name="boundWidth" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="ProfileLabelView">
+        <attr name="gap" format="dimension"/>
+        <attr name="textSizeTitle" format="dimension"/>
+        <attr name="textColorTitle" format="string"/>
+        <attr name="textTitle" format="string"/>
+        <attr name="textSizeContent" format="dimension"/>
+        <attr name="textColorContent" format="string"/>
+        <attr name="textContent" format="string"/>
+        <attr name="textContentSingleline" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="TabView">

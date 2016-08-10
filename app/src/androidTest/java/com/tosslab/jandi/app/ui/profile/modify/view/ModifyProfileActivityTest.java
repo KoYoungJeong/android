@@ -9,7 +9,8 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
-import com.tosslab.jandi.app.ui.profile.inputlist.InputProfileListActivity;
+import com.tosslab.jandi.app.ui.profile.modify.property.dept.DeptPositionActivity;
+import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.view.NameStatusActivity;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -55,21 +56,19 @@ public class ModifyProfileActivityTest {
         rule.launchActivity(null);
         activity = rule.getActivity();
 
-        await().until(() -> activity.tvProfileUserEmail.length() > 0);
+        await().until(() -> activity.tvProfileUserEmail.getContentLength() > 0);
     }
 
     @Test
     public void testEditStatusMessage() throws Throwable {
-        rule.runOnUiThread(() -> activity.editStatusMessage(activity.tvProfileStatusMessage));
-        onView(withText(R.string.jandi_profile_status_message))
-                .inRoot(isDialog())
-                .check(matches(isDisplayed()));
-        pressBack();
+        rule.runOnUiThread(() -> activity.editStatusMessage());
+        intending(IntentMatchers.hasComponent(NameStatusActivity.class.getName()));
+        intending(IntentMatchers.hasExtra("type", NameStatusActivity.EXTRA_TYPE_STATUS));
     }
 
     @Test
     public void testEditPhoneNumber() throws Throwable {
-        rule.runOnUiThread(() -> activity.editPhoneNumber(activity.tvProfileUserPhone));
+        rule.runOnUiThread(() -> activity.editPhoneNumber());
         onView(withText(R.string.jandi_profile_phone_number))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
@@ -78,33 +77,31 @@ public class ModifyProfileActivityTest {
 
     @Test
     public void testEditName() throws Throwable {
-        rule.runOnUiThread(() -> activity.editName(activity.tvProfileRealName));
-        onView(withText(R.string.jandi_title_name))
-                .inRoot(isDialog())
-                .check(matches(isDisplayed()));
-        pressBack();
+        rule.runOnUiThread(() -> activity.editName());
+        intending(IntentMatchers.hasComponent(NameStatusActivity.class.getName()));
+        intending(IntentMatchers.hasExtra("type", NameStatusActivity.EXTRA_TYPE_NAME));
     }
 
     @Test
     public void testEditDivision() throws Throwable {
         rule.runOnUiThread(() -> activity.editDivision());
 
-        intending(IntentMatchers.hasComponent(InputProfileListActivity.class.getName()));
-        intending(IntentMatchers.hasExtra(InputProfileListActivity.EXTRA_INPUT_MODE, InputProfileListActivity.EXTRA_DEPARTMENT_MODE));
+        intending(IntentMatchers.hasComponent(DeptPositionActivity.class.getName()));
+        intending(IntentMatchers.hasExtra(DeptPositionActivity.EXTRA_INPUT_MODE, DeptPositionActivity.EXTRA_DEPARTMENT_MODE));
     }
 
     @Test
     public void testEditPosition() throws Throwable {
         rule.runOnUiThread(() -> activity.editPosition());
 
-        intending(IntentMatchers.hasComponent(InputProfileListActivity.class.getName()));
-        intending(IntentMatchers.hasExtra(InputProfileListActivity.EXTRA_INPUT_MODE, InputProfileListActivity.EXTRA_JOB_TITLE_MODE));
+        intending(IntentMatchers.hasComponent(DeptPositionActivity.class.getName()));
+        intending(IntentMatchers.hasExtra(DeptPositionActivity.EXTRA_INPUT_MODE, DeptPositionActivity.EXTRA_JOB_TITLE_MODE));
 
     }
 
     @Test
     public void testEditEmail() throws Throwable {
-        rule.runOnUiThread(() -> activity.editEmail(activity.tvProfileUserEmail));
+        rule.runOnUiThread(() -> activity.editEmail());
         onView(withText(R.string.jandi_choose_email))
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()));
@@ -132,12 +129,12 @@ public class ModifyProfileActivityTest {
         User user = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
         rule.runOnUiThread(() -> activity.displayProfile(user));
 
-        assertThat(activity.tvProfileStatusMessage.getText(), is(equalTo(user.getStatusMessage())));
-        assertThat(activity.tvProfileRealName.getText(), is(equalTo(user.getName())));
-        assertThat(activity.tvProfileUserDivision.getText(), is(equalTo(user.getDivision())));
-        assertThat(activity.tvProfileUserEmail.getText(), is(equalTo(user.getEmail())));
-        assertThat(activity.tvProfileUserPhone.getText(), is(equalTo(user.getPhoneNumber())));
-        assertThat(activity.tvProfileUserPosition.getText(), is(equalTo(user.getPosition())));
+        assertThat(activity.tvProfileStatusMessage.getContent(), is(equalTo(user.getStatusMessage())));
+        assertThat(activity.tvProfileRealName.getContent(), is(equalTo(user.getName())));
+        assertThat(activity.tvProfileUserDivision.getContent(), is(equalTo(user.getDivision())));
+        assertThat(activity.tvProfileUserEmail.getContent(), is(equalTo(user.getEmail())));
+        assertThat(activity.tvProfileUserPhone.getContent(), is(equalTo(user.getPhoneNumber())));
+        assertThat(activity.tvProfileUserPosition.getContent(), is(equalTo(user.getPosition())));
     }
 
     @Test
@@ -147,15 +144,8 @@ public class ModifyProfileActivityTest {
     }
 
     @Test
-    public void testSetTextAndChangeColor() throws Throwable {
-        String name = "haha";
-        rule.runOnUiThread(() -> activity.setTextAndChangeColor(activity.tvProfileRealName, name));
-        assertThat(activity.tvProfileRealName.getText(), is(equalTo(name)));
-    }
-
-    @Test
     public void testLaunchEditDialog() throws Throwable {
-        rule.runOnUiThread(() -> activity.launchEditDialog(EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE, activity.tvProfileUserPhone));
+        rule.runOnUiThread(() -> activity.launchEditDialog(EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE, activity.tvProfileUserPhone.getContent()));
 
         onView(withText(R.string.jandi_confirm))
                 .inRoot(isDialog())
@@ -180,7 +170,7 @@ public class ModifyProfileActivityTest {
         String email = "hello1@hello.com";
         rule.runOnUiThread(() -> activity.updateEmailTextColor(email));
 
-        assertThat(activity.tvProfileUserEmail.getText(), is(equalTo(email)));
+        assertThat(activity.tvProfileUserEmail.getContent(), is(equalTo(email)));
     }
 
     @Test
