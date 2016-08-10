@@ -425,7 +425,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_poll">"Poll"</string>
 	<string name="jandi_poll_add_item">"Add a Choice"</string>
 	<string name="jandi_poll_anonymous">"Anonymous"</string>
-	<string name="jandi_poll_create">"Create a New Poll"</string>
+	<string name="jandi_poll_create">"Create"</string>
 	<string name="jandi_poll_deleted">"The poll has been deleted."</string>
 	<string name="jandi_poll_empty_1">"There are no on-going polls."</string>
 	<string name="jandi_poll_empty_2">"You can start a poll by tapping [+] button in a topic."</string>
