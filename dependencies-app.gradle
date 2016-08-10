@@ -88,9 +88,6 @@ rootProject.allprojects { project ->
                 // Calendar View
                 compile rootProject.ext.dependecies.libraries.material_calendarview
 
-                // Joda time
-                compile rootProject.ext.dependecies.libraries.joda_time
-
                 // newrelic
                 compile rootProject.ext.dependecies.libraries.newrelic
 
