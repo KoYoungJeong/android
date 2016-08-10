@@ -1367,8 +1367,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 && !event.getData().getLinkMessage().toEntity.isEmpty()
                 && event.getData().getLinkMessage().toEntity.contains(room.getRoomId())) {
             if (messageListPresenter != null) {
-                messageListPresenter.saveMessageFromSocket(event.getData().getLinkMessage());
-                messageListPresenter.addNewMessageOfLocalQueue();
+                messageListPresenter.addNewMessageOfLocalQueue(event.getData().getLinkMessage());
             }
         }
 

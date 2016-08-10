@@ -47,6 +47,30 @@ public class MessageRepository extends LockExecutorTemplate {
         });
     }
 
+    public boolean insertDirty(ResMessages.Link link) {
+        return execute(() -> {
+            try {
+                if (link.toEntity != null && link.toEntity.size() > 0) {
+                    Dao<RoomLinkRelation, String> relationDao = getDao(RoomLinkRelation.class);
+                    RoomLinkRelation relation;
+                    int size = link.toEntity.size();
+                    for (int idx = 0; idx < size; idx++) {
+                        relation = new RoomLinkRelation();
+                        relation.setRoomId(link.toEntity.get(idx));
+                        relation.setLinkId(link.id);
+                        relation.setDirty(false);
+                        relationDao.createIfNotExists(relation);
+                    }
+
+                }
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+    }
+
     public boolean isDirty(long roomId, long linkId) {
         return execute(() -> {
 
@@ -188,20 +212,6 @@ public class MessageRepository extends LockExecutorTemplate {
             try {
                 Dao<ResMessages.Link, ?> dao = getHelper().getDao(ResMessages.Link.class);
                 dao.createIfNotExists(link);
-
-                if (link.toEntity != null && link.toEntity.size() > 0) {
-                    Dao<RoomLinkRelation, String> relationDao = getDao(RoomLinkRelation.class);
-                    RoomLinkRelation relation;
-                    int size = link.toEntity.size();
-                    for (int idx = 0; idx < size; idx++) {
-                        relation = new RoomLinkRelation();
-                        relation.setRoomId(link.toEntity.get(idx));
-                        relation.setLinkId(link.id);
-                        relationDao.createIfNotExists(relation);
-                    }
-
-                }
-
                 return true;
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -274,6 +284,7 @@ public class MessageRepository extends LockExecutorTemplate {
         });
     }
 
+
     private QueryBuilder<RoomLinkRelation, String> inQueryBuildOfRoomRelation(long roomId) throws SQLException {
         Dao<RoomLinkRelation, String> relationDao = getDao(RoomLinkRelation.class);
         QueryBuilder<RoomLinkRelation, String> queryBuilder = relationDao.queryBuilder();
@@ -304,7 +315,6 @@ public class MessageRepository extends LockExecutorTemplate {
 
         });
     }
-
 
     public List<ResMessages.Link> getOldMessages(long roomId, long lastLinkId, int count) {
         return execute(() -> {
