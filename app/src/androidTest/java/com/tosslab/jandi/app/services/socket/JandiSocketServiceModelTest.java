@@ -33,6 +33,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TeamRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
+import com.tosslab.jandi.app.local.orm.repositories.socket.SocketEventRepository;
 import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
@@ -105,6 +106,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -195,6 +197,7 @@ public class JandiSocketServiceModelTest {
 
         assertThat(longLongPair[0].first).isEqualTo(teamId);
         assertThat(longLongPair[0].second).isEqualTo(fileId);
+        assertThat(SocketEventRepository.getInstance().hasEvent(event)).isTrue();
     }
 
     @Test
@@ -432,6 +435,17 @@ public class JandiSocketServiceModelTest {
             teamId.setAccessible(true);
             teamId.setLong(event, JandiSocketServiceModelTest.teamId);
             teamId.setAccessible(false);
+
+
+            Field unique = clazz.getDeclaredField("unique");
+            unique.setAccessible(true);
+            unique.set(event, UUID.randomUUID().toString());
+            unique.setAccessible(false);
+
+            Field ts = clazz.getDeclaredField("ts");
+            ts.setAccessible(true);
+            ts.setLong(event, System.currentTimeMillis());
+            ts.setAccessible(false);
 
             return (T) event;
         } catch (Exception e) {

@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.local.orm.domain.RecentSticker;
 import com.tosslab.jandi.app.local.orm.domain.RoomLinkRelation;
 import com.tosslab.jandi.app.local.orm.domain.SelectedTeam;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
+import com.tosslab.jandi.app.local.orm.domain.SocketEvent;
 import com.tosslab.jandi.app.local.orm.domain.UploadedFileInfo;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.upgrade.UpgradeChecker;
@@ -71,7 +72,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_START_API = 16;
     private static final int DATABASE_VERSION_START_API_ROOM_MESSAGE_RELATION = 17;
     private static final int DATABASE_VERSION_POLL = 18;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_POLL;
+    private static final int DATABASE_VERSION_EVENT_HISTORY = 19;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_EVENT_HISTORY;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -170,6 +172,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, ResMessages.PollConnectInfo.class);
 
             createTable(connectionSource, ReadyCommentForPoll.class);
+
+            createTable(connectionSource, SocketEvent.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -308,6 +312,9 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, ResMessages.PollConnectInfo.class);
 
                         createTable(connectionSource, ReadyCommentForPoll.class);
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_EVENT_HISTORY, () -> {
+                        createTable(connectionSource, SocketEvent.class);
                     }));
 
 
@@ -405,6 +412,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(getConnectionSource(), ResMessages.PollConnectInfo.class);
 
         clearTable(getConnectionSource(), ReadyCommentForPoll.class);
+        clearTable(getConnectionSource(), SocketEvent.class);
     }
 
     private void clearTable(ConnectionSource connectionSource, Class<?> dataClass) {

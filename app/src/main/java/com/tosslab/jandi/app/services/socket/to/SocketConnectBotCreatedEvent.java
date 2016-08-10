@@ -20,6 +20,7 @@ public class SocketConnectBotCreatedEvent implements EventHistoryInfo {
     private long teamId;
 
     private Data data;
+    private String unique;
 
     @Override
     public String getEvent() {
@@ -44,6 +45,11 @@ public class SocketConnectBotCreatedEvent implements EventHistoryInfo {
         return teamId;
     }
 
+    @Override
+    public String getUnique() {
+        return unique;
+    }
+
     public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
@@ -63,6 +69,10 @@ public class SocketConnectBotCreatedEvent implements EventHistoryInfo {
 
     public void setData(Data data) {
         this.data = data;
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

@@ -22,6 +22,7 @@ public class SocketFileCommentCreatedEvent implements EventHistoryInfo {
     private int version;
     private EventFileInfo file;
     private String event;
+    private String unique;
 
     public SocketFileCommentCreatedEvent() {
         event = "file_comment_created";
@@ -73,6 +74,11 @@ public class SocketFileCommentCreatedEvent implements EventHistoryInfo {
         return teamId;
     }
 
+    @Override
+    public String getUnique() {
+        return unique;
+    }
+
     public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
@@ -93,6 +99,10 @@ public class SocketFileCommentCreatedEvent implements EventHistoryInfo {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

@@ -20,6 +20,7 @@ public class SocketConnectBotUpdatedEvent implements EventHistoryInfo {
     private long teamId;
 
     private Data data;
+    private String unique;
 
     @Override
     public String getEvent() {
@@ -46,6 +47,15 @@ public class SocketConnectBotUpdatedEvent implements EventHistoryInfo {
 
     public void setTeamId(long teamId) {
         this.teamId = teamId;
+    }
+
+    @Override
+    public String getUnique() {
+        return unique;
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     @Override
