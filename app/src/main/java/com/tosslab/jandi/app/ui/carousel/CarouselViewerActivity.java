@@ -282,7 +282,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         setFileInfo(fileSize, fileInfo.getExt());
 
         setFileComments(fileInfo.getFileCommentCount());
-        setFilesStarredState(fileInfo.getFileMessageId(), fileInfo.isStarred(), false);
+        setFileStarredState(fileInfo.isStarred(), false);
 
         supportInvalidateOptionsMenu();
     }
@@ -597,12 +597,44 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
 
     @OnClick(R.id.btn_carousel_star)
     void onFileStar(View view) {
-        boolean futureStarred = !view.isSelected();
         CarouselFileInfo carouselFileInfo = getCarouselFileInfo();
         long fileMessageId = carouselFileInfo.getFileMessageId();
+
+        boolean futureStarred = !carouselFileInfo.isStarred();
         carouselFileInfo.setIsStarred(futureStarred);
 
+        setFileStarredState(futureStarred, true);
+
         carouselViewerPresenter.onChangeStarredState(fileMessageId, futureStarred);
+    }
+
+    private void setFileStarredState(boolean futureStarred, boolean withAnimation) {
+        int iconResId = futureStarred
+                ? R.drawable.image_view_icon_star_on : R.drawable.image_view_icon_star_off;
+
+        btnStar.setImageResource(iconResId);
+
+        if (withAnimation && futureStarred) {
+            btnStar.setScaleX(0.9f);
+            btnStar.setScaleY(0.9f);
+
+            btnStar.animate()
+                    .scaleX(1.2f)
+                    .scaleY(1.2f)
+                    .setDuration(100)
+                    .setListener(new SimpleEndAnimatorListener() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            btnStar.animate()
+                                    .scaleX(1.0f)
+                                    .scaleY(1.0f)
+                                    .setListener(null);
+                        }
+                    });
+        } else {
+            btnStar.setScaleX(1.0f);
+            btnStar.setScaleY(1.0f);
+        }
     }
 
     @OnClick({R.id.btn_carousel_comment, R.id.tv_carousel_file_comment})
@@ -674,43 +706,6 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
                             carouselFileInfo.setIsStarred(starred);
                         }
                     });
-        }
-    }
-
-    @Override
-    public void setFilesStarredState(long fileMessageId, boolean isStarred, boolean withAnimation) {
-        CarouselFileInfo carouselFileInfo = getCarouselFileInfo();
-        if (carouselFileInfo.getFileMessageId() != fileMessageId) {
-            return;
-        }
-
-        btnStar.setSelected(isStarred);
-
-        int iconResId = isStarred
-                ? R.drawable.image_view_icon_star_on : R.drawable.image_view_icon_star_off;
-
-        btnStar.setImageResource(iconResId);
-
-        if (withAnimation && isStarred) {
-            btnStar.setScaleX(0.9f);
-            btnStar.setScaleY(0.9f);
-
-            btnStar.animate()
-                    .scaleX(1.2f)
-                    .scaleY(1.2f)
-                    .setDuration(100)
-                    .setListener(new SimpleEndAnimatorListener() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            btnStar.animate()
-                                    .scaleX(1.0f)
-                                    .scaleY(1.0f)
-                                    .setListener(null);
-                        }
-                    });
-        } else {
-            btnStar.setScaleX(1.0f);
-            btnStar.setScaleY(1.0f);
         }
     }
 

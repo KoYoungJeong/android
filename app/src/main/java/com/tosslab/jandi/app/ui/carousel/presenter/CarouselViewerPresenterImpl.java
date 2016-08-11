@@ -88,8 +88,6 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                             } else {
                                 view.showUnstarredSuccessToast();
                             }
-                            view.setFilesStarredState(
-                                    fileStarredInfo.getFileId(), fileStarredInfo.isStarred(), true);
                         }, Throwable::printStackTrace);
     }
 
