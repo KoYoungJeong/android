@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.share.presenter.image;
 import android.app.ProgressDialog;
 import android.text.TextUtils;
 
-import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -24,7 +23,6 @@ import org.androidannotations.annotations.EBean;
 
 import java.io.File;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 
 @EBean
@@ -127,29 +125,15 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
                            String tvTitle, String commentText,
                            ProgressDialog uploadProgress, List<MentionObject> mentions) {
         try {
-            JsonObject result = shareModel.uploadFile(imageFile,
+            shareModel.uploadFile(imageFile,
                     tvTitle, commentText, teamId, roomId, uploadProgress, isPublic, mentions);
-            if (result.get("code") == null) {
-                view.showSuccessToast(JandiApplication.getContext()
-                        .getString(R.string.jandi_file_upload_succeed));
-                int entityType = 0;
-                setupSelectedTeam(teamId);
-                view.dismissDialog(uploadProgress);
-                view.moveEntity(teamId, roomId, roomType);
-
-                view.finishOnUiThread();
-
-            } else {
-                view.showFailToast(JandiApplication.getContext()
-                        .getString(R.string.err_file_upload_failed));
-            }
-        } catch (ExecutionException e) {
-
+            view.showSuccessToast(JandiApplication.getContext()
+                    .getString(R.string.jandi_file_upload_succeed));
+            setupSelectedTeam(teamId);
             view.dismissDialog(uploadProgress);
-            if (view != null) {
-                view.showFailToast(JandiApplication.getContext()
-                        .getString(R.string.jandi_canceled));
-            }
+            view.moveEntity(teamId, roomId, roomType);
+
+            view.finishOnUiThread();
         } catch (Exception e) {
             view.dismissDialog(uploadProgress);
             view.showFailToast(JandiApplication.getContext()
@@ -170,7 +154,7 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
         view.showProgressBar();
         try {
             File file = GoogleImagePickerUtil
-                    .downloadFile(JandiApplication.getContext(), null, path, downloadDir, downloadName);
+                    .downloadFile(null, path, downloadDir, downloadName);
             imageFile = file;
             view.bindImage(file);
         } catch (Exception e) {

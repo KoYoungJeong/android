@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.utils.image;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -216,6 +217,10 @@ public class ImageUtil {
                         backgroundColor))
                 .uri(Uri.parse(ImageUtil.getLargeProfileUril(url)))
                 .into(imageView);
+    }
+
+    public static  Bitmap getBitmap(Context context, String url) throws Exception {
+        return ImageLoader.newInstance().uri(Uri.parse(url)).getBitmapRect(context);
     }
 
     public static void setResourceIconOrLoadImage(final ImageView imageView,

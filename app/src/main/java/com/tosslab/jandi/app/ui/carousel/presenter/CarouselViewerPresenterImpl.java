@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.carousel.presenter;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -23,13 +22,13 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -49,7 +48,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
     private PublishSubject<FileStarredInfo> starredStatePublishSubject;
     private Subscription starredStatePublishSubjectSubs;
-    private Future<File> currentDownloadingFile;
+    private Call<ResponseBody> currentDownloadingFile;
 
     @Inject
     public CarouselViewerPresenterImpl(CarouselViewerModel carouselViewerModel, FileDetailModel fileDetailModel, View view) {
@@ -535,27 +534,31 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
         String downloadUrl = fileDetailModel.getDownloadUrl(carouselFileInfo.getFileOriginalUrl());
         final String mimeType = carouselFileInfo.getFileType();
 
-        currentDownloadingFile =
-                fileDetailModel.downloadFile(downloadUrl, downloadFilePath,
-                        (downloaded, total) -> progressDialog.setProgress((int) (downloaded * 100 / total)),
-                        (e, result) -> {
+        currentDownloadingFile = fileDetailModel.downloadFile(downloadUrl, downloadFilePath,
+                callback -> callback.distinctUntilChanged()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(it -> {
+                            progressDialog.setMax(100);
+                            progressDialog.setProgress(it);
+                        }, t -> {
                             view.dismissDialog(progressDialog);
-
-                            if (currentDownloadingFile == null || currentDownloadingFile.isCancelled()) {
+                            if (currentDownloadingFile == null || currentDownloadingFile.isCanceled()) {
                                 currentDownloadingFile = null;
                                 return;
                             }
-                            currentDownloadingFile = null;
-                            if (e == null && result != null) {
-                                if (type == FileDetailPresenter.FileManageType.EXPORT) {
-                                    view.startExportedFileViewerActivity(result, mimeType);
-                                } else if (type == FileDetailPresenter.FileManageType.OPEN) {
-                                    view.startDownloadedFileViewerActivity(result, mimeType);
-                                }
-                            } else {
-                                view.showUnexpectedErrorToast();
+                            view.showUnexpectedErrorToast();
+                        }, () -> {
+                            view.dismissDialog(progressDialog);
+                            if (currentDownloadingFile == null || currentDownloadingFile.isCanceled()) {
+                                currentDownloadingFile = null;
+                                return;
                             }
-                        });
+                            if (type == FileDetailPresenter.FileManageType.EXPORT) {
+                                view.startExportedFileViewerActivity(new File(fileDetailModel.getDownloadFilePath(carouselFileInfo.getFileName())), mimeType);
+                            } else if (type == FileDetailPresenter.FileManageType.OPEN) {
+                                view.startDownloadedFileViewerActivity(new File(fileDetailModel.getDownloadFilePath(carouselFileInfo.getFileName())), mimeType);
+                            }
+                        }));
     }
 
 

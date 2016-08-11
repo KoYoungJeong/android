@@ -6,18 +6,12 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.ProgressCallback;
-import com.koushikdutta.ion.future.ResponseFuture;
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.orm.domain.DownloadInfo;
 import com.tosslab.jandi.app.local.orm.repositories.DownloadRepository;
 import com.tosslab.jandi.app.services.download.DownloadController;
 import com.tosslab.jandi.app.services.download.DownloadService;
 import com.tosslab.jandi.app.services.download.domain.DownloadFileInfo;
-import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -53,17 +47,6 @@ public class DownloadModel {
      */
     public static boolean isRestart() {
         return !DownloadRepository.getInstance().getDownloadInfosInProgress().isEmpty();
-    }
-
-    public static ResponseFuture<File> buildDownloadTask(File downloadTargetFile, String downloadUrl,
-                                                         ProgressCallback downloadCallback) {
-
-        return Ion.with(JandiApplication.getContext())
-                .load(downloadUrl)
-                .progress(downloadCallback)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
-                .write(downloadTargetFile);
     }
 
     public static boolean isMediaFile(String fileType) {
