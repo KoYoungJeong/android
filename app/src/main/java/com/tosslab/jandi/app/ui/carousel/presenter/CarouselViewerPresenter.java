@@ -86,8 +86,6 @@ public interface CarouselViewerPresenter {
 
         void showUnstarredSuccessToast();
 
-        void setFilesStarredState(long fileId, boolean isStarred, boolean withAnimation);
-
         void dismissDialog(ProgressDialog progressDialog);
 
         void showUnexpectedErrorToast();
