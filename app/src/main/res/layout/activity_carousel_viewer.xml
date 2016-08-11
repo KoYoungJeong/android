@@ -95,6 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/vg_carousel_file_info"
             android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:text="asdasd"
             android:singleLine="true"
             android:textColor="@color/jandi_text_white"
