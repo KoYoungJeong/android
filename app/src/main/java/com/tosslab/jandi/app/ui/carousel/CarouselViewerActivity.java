@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
@@ -110,6 +111,15 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @Bind(R.id.vg_carousel_infos)
     ViewGroup vgCarouselInfos;
 
+    @Bind(R.id.vg_carousel_swipe_buttons)
+    ViewGroup vgSwipeButtons;
+
+    @Bind(R.id.btn_carousel_swipe_to_left)
+    View btnSwipeToLeft;
+
+    @Bind(R.id.btn_carousel_swipe_to_right)
+    View btnSwipeToRight;
+
     @Bind(R.id.toolbar_carousel)
     Toolbar toolbar;
 
@@ -133,6 +143,10 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @InjectExtra
     boolean shouldOpenImmediately = false;
 
+    @Nullable
+    @InjectExtra
+    boolean fromFileDetail = false;
+
     @Inject
     CarouselViewerPresenter carouselViewerPresenter;
 
@@ -144,22 +158,24 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     private boolean isFullScreen = false;
     private ProgressWheel progressWheel;
 
-    public static Intent getCarouselViewerIntent(Activity activity, long startMessageId, long roomId) {
-        Intent intent = new Intent(activity, CarouselViewerActivity.class);
-        intent.putExtra("roomId", roomId);
-        intent.putExtra("startMessageId", startMessageId);
-        intent.putExtra("mode", CAROUSEL_MODE);
-        return intent;
+    public static CarouselViewerActivity$$IntentBuilder getCarouselViewerIntent(
+            Activity activity, long startMessageId, long roomId) {
+        return Henson.with(activity)
+                .gotoCarouselViewerActivity()
+                .roomId(roomId)
+                .startMessageId(startMessageId)
+                .mode(CAROUSEL_MODE);
     }
 
     // for only use SINGLE_IMAGE_MODE
-    public static Intent getImageViewerIntent(Activity activity, ResMessages.FileMessage fileMessage) {
+    public static CarouselViewerActivity$$IntentBuilder getImageViewerIntent(
+            Activity activity, ResMessages.FileMessage fileMessage) {
         CarouselFileInfo carouselFileInfo =
                 CarouselViewerModel.getCarouselInfoFromFileMessage(-1, fileMessage);
-        Intent intent = new Intent(activity, CarouselViewerActivity.class);
-        intent.putExtra("singleImageInfo", carouselFileInfo);
-        intent.putExtra("mode", SINGLE_IMAGE_MODE);
-        return intent;
+        return Henson.with(activity)
+                .gotoCarouselViewerActivity()
+                .singleImageInfo(carouselFileInfo)
+                .mode(SINGLE_IMAGE_MODE);
     }
 
     @Override
@@ -223,7 +239,10 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
 
                 CarouselFileInfo fileInfo = carouselViewerAdapter.getFileInfo(position);
                 initCarouselInfo(fileInfo);
+
                 int count = carouselViewerAdapter.getCount();
+
+                setSwipeButtons(position, count);
 
                 if (position == 0) {
                     carouselViewerPresenter.onBeforeImageFiles(roomId, fileInfo.getFileMessageId(), count);
@@ -236,10 +255,21 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         });
 
         if (mode == CAROUSEL_MODE) {
+            vgSwipeButtons.setVisibility(View.VISIBLE);
             carouselViewerPresenter.onInitImageFiles(roomId, startMessageId);
         } else if (mode == SINGLE_IMAGE_MODE) {
+            vgSwipeButtons.setVisibility(View.GONE);
             carouselViewerPresenter.onInitImageSingleFile(singleImageInfo);
         }
+    }
+
+    private void setSwipeButtons(int position, int itemCount) {
+        if (itemCount <= 1) {
+            return;
+        }
+
+        setVisibilitySwipeToLeftButton(position != 0);
+        setVisibilitySwipeToRightButton(!(position == itemCount - 1));
     }
 
     @Override
@@ -529,6 +559,24 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         return ((CarouselViewerAdapter) viewPager.getAdapter()).getFileInfo(currentItem);
     }
 
+    @OnClick(R.id.btn_carousel_swipe_to_left)
+    void swipeToLeft() {
+        int currentItem = viewPager.getCurrentItem();
+
+        if (currentItem - 1 >= 0) {
+            viewPager.setCurrentItem(currentItem - 1);
+        }
+    }
+
+    @OnClick(R.id.btn_carousel_swipe_to_right)
+    void swipeToRight() {
+        int currentItem = viewPager.getCurrentItem();
+
+        if (currentItem + 1 < carouselViewerAdapter.getCount()) {
+            viewPager.setCurrentItem(currentItem + 1);
+        }
+    }
+
     @OnClick(R.id.btn_carousel_download)
     void onFileDownload() {
         CarouselFileInfo fileInfo = getCarouselFileInfo();
@@ -557,8 +605,12 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         carouselViewerPresenter.onChangeStarredState(fileMessageId, futureStarred);
     }
 
-    @OnClick(R.id.btn_carousel_comment)
+    @OnClick({R.id.btn_carousel_comment, R.id.tv_carousel_file_comment})
     void moveToFileDetailActivity() {
+        if (fromFileDetail) {
+            finish();
+            return;
+        }
         long fileId = getCarouselFileInfo() != null
                 ? getCarouselFileInfo().getFileMessageId()
                 : -1;
@@ -566,7 +618,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
                 .fromCarousel(true)
                 .roomId(mode == CAROUSEL_MODE ? roomId : -1)
                 .fileId(fileId)
-                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .start();
     }
 
@@ -989,6 +1041,16 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @Override
     public void notifyDataSetChanged() {
         carouselViewerAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void setVisibilitySwipeToLeftButton(boolean show) {
+        btnSwipeToLeft.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void setVisibilitySwipeToRightButton(boolean show) {
+        btnSwipeToRight.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     public interface OnCarouselImageClickListener {

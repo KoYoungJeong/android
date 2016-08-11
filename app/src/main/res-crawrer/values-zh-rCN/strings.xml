@@ -240,6 +240,7 @@
 	<string name="jandi_file_category_spreadsheet">"表单"</string>
 	<string name="jandi_file_category_video">"视频"</string>
 	<string name="jandi_file_category_zip">"压缩文件"</string>
+	<string name="jandi_file_delete">"刪除文件"</string>
 	<string name="jandi_file_delete_message">"您确定要删除此文件？ 请注意留言的部分不会被删除。"</string>
 	<string name="jandi_file_deleted_with_date">"%s 文件已删除"</string>
 	<string name="jandi_file_downloaded_into">"文件下载至 %s"</string>
@@ -250,6 +251,7 @@
 	<string name="jandi_file_search_keyword">"关键词"</string>
 	<string name="jandi_file_search_type">"按文件类型筛选搜索结果"</string>
 	<string name="jandi_file_search_user">"按成员筛选搜索结果"</string>
+	<string name="jandi_file_share_action">"分享"</string>
 	<string name="jandi_file_size_large_error">"无法上传大於300MB的文件"</string>
 	<string name="jandi_file_upload_finish">"文件已成功上传"</string>
 	<string name="jandi_file_upload_go_topic">"点击进入JANDI浏览"</string>
@@ -424,7 +426,7 @@
 	<string name="jandi_poll">"问卷调查"</string>
 	<string name="jandi_poll_add_item">"添加选项"</string>
 	<string name="jandi_poll_anonymous">"不记名"</string>
-	<string name="jandi_poll_create">"建立新的投票"</string>
+	<string name="jandi_poll_create">"建立"</string>
 	<string name="jandi_poll_deleted">"投票已经删除"</string>
 	<string name="jandi_poll_empty_1">"无进行中的问卷"</string>
 	<string name="jandi_poll_empty_2">"\n点击[+]建立新问卷"</string>

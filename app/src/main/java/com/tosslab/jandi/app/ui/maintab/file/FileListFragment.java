@@ -291,7 +291,8 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
     @Override
     public void moveToCarousel(ResMessages.FileMessage fileMessage) {
-        Intent intent = CarouselViewerActivity.getImageViewerIntent(getActivity(), fileMessage);
+        Intent intent = CarouselViewerActivity.getImageViewerIntent(getActivity(), fileMessage)
+                .build();
         startActivityForResult(intent, JandiConstants.TYPE_FILE_DETAIL_REFRESH);
     }
 

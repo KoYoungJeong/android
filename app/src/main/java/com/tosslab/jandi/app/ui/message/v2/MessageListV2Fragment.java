@@ -1064,7 +1064,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
                 if (isImageFile) {
                     Intent intent = CarouselViewerActivity.getCarouselViewerIntent(
-                            getActivity(), fileMessage.id, roomId);
+                            getActivity(), fileMessage.id, roomId)
+                            .build();
                     startActivityForResult(intent, JandiConstants.TYPE_FILE_DETAIL_REFRESH);
                 } else {
                     FileDetailActivity_.intent(this)

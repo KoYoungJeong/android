@@ -129,6 +129,10 @@ public interface CarouselViewerPresenter {
         void finish();
 
         void notifyDataSetChanged();
+
+        void setVisibilitySwipeToLeftButton(boolean show);
+
+        void setVisibilitySwipeToRightButton(boolean show);
     }
 
 }

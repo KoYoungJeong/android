@@ -240,6 +240,7 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_file_category_spreadsheet">"Spreadsheets"</string>
 	<string name="jandi_file_category_video">"Video"</string>
 	<string name="jandi_file_category_zip">"Compressed Files"</string>
+	<string name="jandi_file_delete">"Delete file"</string>
 	<string name="jandi_file_delete_message">"Are you sure you want to delete this file? Please note this will not delete the associated comments."</string>
 	<string name="jandi_file_deleted_with_date">"%s, file was deleted."</string>
 	<string name="jandi_file_downloaded_into">"File downloaded to %s"</string>
@@ -250,6 +251,7 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_file_search_keyword">"Keyword"</string>
 	<string name="jandi_file_search_type">"Filter results by file type"</string>
 	<string name="jandi_file_search_user">"Filter results by member"</string>
+	<string name="jandi_file_share_action">"Share"</string>
 	<string name="jandi_file_size_large_error">"Currently you cannot upload a file that exceeds 300MB."</string>
 	<string name="jandi_file_upload_finish">"Files have been uploaded"</string>
 	<string name="jandi_file_upload_go_topic">"Tap to view on JANDI"</string>
@@ -302,8 +304,7 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_insert_team_domain">"Set up your Team Domain"</string>
 	<string name="jandi_insert_team_name">"Set up your Team Name"</string>
 	<string name="jandi_invitation">"Invite"</string>
-	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. 
-To change this setting, go to Team Settings > Invitation Settings."</string>
+	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. To change this setting, go to Team Settings > Invitation Settings."</string>
 	<string name="jandi_invitation_help">"Invite other team members to JANDI!"</string>
 	<string name="jandi_invitation_succeed">"Invitation has been sent"</string>
 	<string name="jandi_invite_app_not_installed">"The app is not installed on your device. The invitation link has been copied to the clipboard instead."</string>
@@ -386,7 +387,8 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_mypage">"My Page"</string>
 	<string name="jandi_name">"Name"</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
-	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic."</string>
+	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic.
+"</string>
 	<string name="jandi_new_department">"New Department"</string>
 	<string name="jandi_new_job_title">"New Job Title"</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>
@@ -426,7 +428,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_poll">"Poll"</string>
 	<string name="jandi_poll_add_item">"Add a Choice"</string>
 	<string name="jandi_poll_anonymous">"Anonymous"</string>
-	<string name="jandi_poll_create">"Create a New Poll"</string>
+	<string name="jandi_poll_create">"Create"</string>
 	<string name="jandi_poll_deleted">"The poll has been deleted."</string>
 	<string name="jandi_poll_empty_1">"There are no on-going polls."</string>
 	<string name="jandi_poll_empty_2">"You can start a poll by tapping [+] button in a topic."</string>

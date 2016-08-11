@@ -122,7 +122,10 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
     private void setImageFiles(List<CarouselFileInfo> imageFiles, long currentFileMessageId) {
         if (imageFiles.size() > 0) {
             view.addFileInfos(imageFiles);
-
+            if (imageFiles.size() == 1) {
+                view.setVisibilitySwipeToLeftButton(false);
+                view.setVisibilitySwipeToRightButton(false);
+            }
             int startLinkPosition =
                     carouselViewerModel.findLinkPosition(imageFiles, currentFileMessageId);
             if (startLinkPosition >= 0) {
@@ -499,6 +502,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
     @Override
     public void setIsFirst(boolean isFirst) {
         this.isFirst = isFirst;
+        view.setVisibilitySwipeToLeftButton(!isFirst);
     }
 
     @Override
@@ -509,6 +513,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
     @Override
     public void setIsLast(boolean isLast) {
         this.isLast = isLast;
+        view.setVisibilitySwipeToRightButton(!isLast);
     }
 
     @Override
