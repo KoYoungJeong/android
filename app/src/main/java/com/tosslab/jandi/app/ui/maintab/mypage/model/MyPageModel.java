@@ -7,7 +7,7 @@ import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
-import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
+import com.tosslab.jandi.app.network.models.commonobject.StarredMessage;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
@@ -15,7 +15,6 @@ import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.maintab.mypage.dto.MentionMessage;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +66,7 @@ public class MyPageModel {
                 });
     }
 
-    public List<MentionMessage> getConvertedMentionList(List<StarMentionedMessageObject> records) {
+    public List<MentionMessage> getConvertedMentionList(List<StarredMessage> records) {
         List<MentionMessage> mentions = new ArrayList<>();
         if (records == null || records.isEmpty()) {
             return mentions;

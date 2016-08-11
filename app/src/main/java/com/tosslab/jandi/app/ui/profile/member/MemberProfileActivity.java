@@ -356,7 +356,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 .placeHolder(placeHolder, ImageView.ScaleType.FIT_XY)
                 .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
                 .transformation(new BlurTransformation(getApplicationContext(), 10))
-                .uri(Uri.parse(ImageUtil.getLargeProfileUril(profileImageUrlLarge)))
+                .uri(Uri.parse(ImageUtil.getLargeProfileUrl(profileImageUrlLarge)))
                 .into(ivProfileImageLarge);
     }
 

@@ -24,7 +24,6 @@ import com.tosslab.jandi.app.network.models.ResPollComments;
 import com.tosslab.jandi.app.network.models.ResPollDetail;
 import com.tosslab.jandi.app.network.models.ResStarredMessage;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
@@ -301,4 +300,19 @@ public class PollDetailModel {
 
         PollRepository.getInstance().upsertPoll(poll);
     }
+
+    public ResStarredMessage starPoll(long messageId) throws RetrofitException {
+        long teamId = AccountRepository.getRepository().getSelectedTeamId();
+        ResStarredMessage resStarredMessage = messageApi.get()
+                .registStarredMessage(teamId, messageId, new ReqNull());
+        return resStarredMessage;
+    }
+
+    public ResCommon unStarPoll(long messageId) throws RetrofitException {
+        long teamId = AccountRepository.getRepository().getSelectedTeamId();
+        ResCommon resCommon = messageApi.get()
+                .unregistStarredMessage(teamId, messageId);
+        return resCommon;
+    }
+
 }

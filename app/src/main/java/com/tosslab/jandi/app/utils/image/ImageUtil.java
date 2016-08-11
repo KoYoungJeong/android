@@ -168,7 +168,7 @@ public class ImageUtil {
         return small;
     }
 
-    public static String getLargeProfileUril(String url) {
+    public static String getLargeProfileUrl(String url) {
         if (TextUtils.isEmpty(url)
                 || !url.startsWith("http")) {
             return url;
@@ -190,7 +190,7 @@ public class ImageUtil {
 
     public static void loadProfileImage(ImageView imageView, String url, int placeHolder) {
         if (!TextUtils.isEmpty(url) && url.startsWith("http")) {
-            loadProfileImage(imageView, Uri.parse(ImageUtil.getLargeProfileUril(url)), placeHolder);
+            loadProfileImage(imageView, Uri.parse(ImageUtil.getLargeProfileUrl(url)), placeHolder);
         } else {
             loadProfileImage(imageView, Uri.parse(url), placeHolder);
         }
@@ -214,7 +214,7 @@ public class ImageUtil {
                         TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
                         TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
                         backgroundColor))
-                .uri(Uri.parse(ImageUtil.getLargeProfileUril(url)))
+                .uri(Uri.parse(ImageUtil.getLargeProfileUrl(url)))
                 .into(imageView);
     }
 

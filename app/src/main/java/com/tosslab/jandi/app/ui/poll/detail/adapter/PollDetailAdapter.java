@@ -25,7 +25,7 @@ import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollInfoViewHolde
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollItemViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollSharedInViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollVoteViewHolder;
-import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.ProfileViewHolder;
+import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollHeaderViewHolder;
 import com.tosslab.jandi.app.utils.UiUtils;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import rx.Observable;
 public class PollDetailAdapter extends MultiItemRecyclerAdapter
         implements PollDetailDataModel, PollDetailDataView {
 
-    public static final int VIEW_TYPE_PROFILE = 0;
+    public static final int VIEW_TYPE_POLL_HEADER = 0;
     public static final int VIEW_TYPE_POLL_INFO = 1;
     public static final int VIEW_TYPE_POLL_ITEM = 2;
     public static final int VIEW_TYPE_POLL_ITEM_VOTE = 3;
@@ -51,15 +51,17 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
 
     private OnCommentClickListener onCommentClickListener;
     private OnCommentLongClickListener onCommentLongClickListener;
+
     private PollInfoViewHolder.OnPollParticipantsClickListener onPollParticipantsClickListener;
     private PollItemViewHolder.OnPollItemParticipantsClickListener onPollItemParticipantsClickListener;
     private PollVoteViewHolder.OnPollVoteClickListener onPollVoteClickListener;
+    private PollHeaderViewHolder.OnPollStarClickListener onPollStarClickListener;
 
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
-            case VIEW_TYPE_PROFILE:
-                return ProfileViewHolder.newInstance(parent);
+            case VIEW_TYPE_POLL_HEADER:
+                return PollHeaderViewHolder.newInstance(parent, onPollStarClickListener);
 
             case VIEW_TYPE_POLL_INFO:
                 return PollInfoViewHolder.newInstance(parent, onPollParticipantsClickListener);
@@ -105,7 +107,7 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
 
         List<Row<?>> rows = new ArrayList<>();
 
-        rows.add(PollDetailRow.create(poll, VIEW_TYPE_PROFILE));
+        rows.add(PollDetailRow.create(poll, VIEW_TYPE_POLL_HEADER));
 
         rows.add(PollDetailRow.create(poll, VIEW_TYPE_POLL_INFO));
 
@@ -142,7 +144,7 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
     private List<Row<?>> getDeletedPollDetailRows(Poll poll) {
         List<Row<?>> rows = new ArrayList<>();
 
-        rows.add(PollDetailRow.create(poll, VIEW_TYPE_PROFILE));
+        rows.add(PollDetailRow.create(poll, VIEW_TYPE_POLL_HEADER));
         rows.add(PollDetailRow.create(poll, VIEW_TYPE_POLL_DELETED));
 
         TopicRoom room = TeamInfoLoader.getInstance().getTopic(poll.getTopicId());
@@ -331,5 +333,10 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
     public void setOnPollVoteClickListener(
             PollVoteViewHolder.OnPollVoteClickListener onPollVoteClickListener) {
         this.onPollVoteClickListener = onPollVoteClickListener;
+    }
+
+    public void setOnPollStarClickListener(
+            PollHeaderViewHolder.OnPollStarClickListener onPollStarClickListener) {
+        this.onPollStarClickListener = onPollStarClickListener;
     }
 }

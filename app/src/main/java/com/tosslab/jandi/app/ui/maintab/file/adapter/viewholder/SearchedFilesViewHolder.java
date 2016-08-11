@@ -100,7 +100,7 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
         String serverUrl = content.getServerUrl();
         String fileType = content.getIcon();
         String fileUrl = content.getFileUrl();
-        String thumbnailUrl = ImageUtil.getLargeProfileUril(fileUrl);
+        String thumbnailUrl = ImageUtil.getLargeProfileUrl(fileUrl);
         ImageUtil.setResourceIconOrLoadImage(
                 ivFileType, vFileRound,
                 fileUrl, thumbnailUrl,

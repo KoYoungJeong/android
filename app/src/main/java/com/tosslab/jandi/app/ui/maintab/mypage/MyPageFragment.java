@@ -45,8 +45,7 @@ import com.tosslab.jandi.app.ui.poll.list.PollListActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.settings.main.SettingsActivity;
-import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
-import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
+import com.tosslab.jandi.app.ui.starred.StarredListActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.KnockListener;
 import com.tosslab.jandi.app.utils.ViewSlider;
@@ -290,10 +289,7 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
 
     @OnClick(R.id.btn_my_profile_move_to_starred)
     void moveToStarredListActivity() {
-        StarMentionListActivity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .extra("type", StarMentionListActivity.TYPE_STAR_LIST)
-                .start();
+        StarredListActivity.start(getActivity());
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.Stars);
     }
