@@ -240,6 +240,7 @@
 	<string name="jandi_file_category_spreadsheet">"スプレッドシート"</string>
 	<string name="jandi_file_category_video">"動画"</string>
 	<string name="jandi_file_category_zip">"圧縮ファイル"</string>
+	<string name="jandi_file_delete">"ファイル削除"</string>
 	<string name="jandi_file_delete_message">"ファイルを削除してよいですか？削除後もコメントは残ります"</string>
 	<string name="jandi_file_deleted_with_date">"%s に削除されました"</string>
 	<string name="jandi_file_downloaded_into">"ファイルが%sに保存されました。"</string>
@@ -250,6 +251,7 @@
 	<string name="jandi_file_search_keyword">"キーワード"</string>
 	<string name="jandi_file_search_type">"ファイルの種類を選択してください"</string>
 	<string name="jandi_file_search_user">"メンバーを選択してください"</string>
+	<string name="jandi_file_share_action">"共有"</string>
 	<string name="jandi_file_size_large_error">"現在のところ、300MBを超えるファイルはアップロードできません。"</string>
 	<string name="jandi_file_upload_finish">"ファイルアップロード完了"</string>
 	<string name="jandi_file_upload_go_topic">"タップしてJANDIで見る"</string>
@@ -427,7 +429,7 @@
 	<string name="jandi_poll">"投票"</string>
 	<string name="jandi_poll_add_item">"回答を追加する"</string>
 	<string name="jandi_poll_anonymous">"匿名投票"</string>
-	<string name="jandi_poll_create">"新しい投票を作成する"</string>
+	<string name="jandi_poll_create">"作成"</string>
 	<string name="jandi_poll_deleted">"投票を削除しました。"</string>
 	<string name="jandi_poll_empty_1">"実施中の投票がありません。"</string>
 	<string name="jandi_poll_empty_2">"\nトピックで「＋」を押し、投票を作成してください。"</string>

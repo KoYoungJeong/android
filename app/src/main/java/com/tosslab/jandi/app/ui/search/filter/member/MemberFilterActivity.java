@@ -162,10 +162,14 @@ public class MemberFilterActivity extends BaseAppCompatActivity implements Membe
     @OnEditorAction(R.id.et_member_filter)
     boolean onSearchAction(TextView view, int actionId) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            hideKeyboard();
             return true;
         }
         return false;
+    }
+
+    private void hideKeyboard() {
+        inputMethodManager.hideSoftInputFromWindow(etMemberFilter.getWindowToken(), 0);
     }
 
     @Override
@@ -215,6 +219,7 @@ public class MemberFilterActivity extends BaseAppCompatActivity implements Membe
     @Override
     protected void onDestroy() {
         memberFilterPresenter.stopMemberSearchQueue();
+        hideKeyboard();
         super.onDestroy();
     }
 

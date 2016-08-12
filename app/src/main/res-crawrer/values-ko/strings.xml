@@ -225,7 +225,8 @@
 	<string name="jandi_explain_global_push_off">"앱의 알림 설정이 꺼져 있습니다. 더보기 > 설정에서 알림을 켜야 알림을 받을 수 있습니다."</string>
 	<string name="jandi_explain_invite">"메세지 검색이 가능한 업무용 메신저 잔디는 
 팀원 모두와 함께 사용해야 그 진가가 발휘됩니다.
-지금 바로 멤버들을 초대하세요."</string>
+지금 바로 멤버들을 초대하세요.
+"</string>
 	<string name="jandi_explain_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 	<string name="jandi_export">"내보내기"</string>
 	<string name="jandi_export_to_app">"다음 앱으로 파일 내보내기"</string>
@@ -240,6 +241,7 @@
 	<string name="jandi_file_category_spreadsheet">"엑셀"</string>
 	<string name="jandi_file_category_video">"동영상"</string>
 	<string name="jandi_file_category_zip">"압축 파일"</string>
+	<string name="jandi_file_delete">"파일 삭제"</string>
 	<string name="jandi_file_delete_message">"이 파일을 삭제하시겠습니까? 파일의 댓글은 삭제되지 않습니다."</string>
 	<string name="jandi_file_deleted_with_date">"%s에 삭제되었습니다."</string>
 	<string name="jandi_file_downloaded_into">"%s  에 저장되었습니다."</string>
@@ -250,6 +252,7 @@
 	<string name="jandi_file_search_keyword">"검색어"</string>
 	<string name="jandi_file_search_type">"파일 타입을 선택해주세요."</string>
 	<string name="jandi_file_search_user">"팀원을 선택해주세요."</string>
+	<string name="jandi_file_share_action">"공유하기"</string>
 	<string name="jandi_file_size_large_error">"현재 300MB 이상의 파일은 업로드 할 수 없습니다."</string>
 	<string name="jandi_file_upload_finish">"파일 업로드 완료"</string>
 	<string name="jandi_file_upload_go_topic">"탭하여 잔디에서 보기"</string>
@@ -363,7 +366,8 @@
 	<string name="jandi_message_invite_entity">"%1$d 명의 사용자를 초대했습니다"</string>
 	<string name="jandi_message_join_entity">"%1$s에 참여합니다"</string>
 	<string name="jandi_message_leave_private_topic">"비공개 토픽을 나가시면 초대를 받지 않는한 다시 참여하실 수 없습니다.\n나가시겠습니까?"</string>
-	<string name="jandi_message_leave_private_topic_when_only_you">"혼자있는 비공개 토픽을 나가게 될 경우, 토픽은 삭제됩니다."</string>
+	<string name="jandi_message_leave_private_topic_when_only_you">"혼자있는 비공개 토픽을 나가게 될 경우, 토픽은 삭제됩니다.
+그래도 토픽을 나가시겠습니까?"</string>
 	<string name="jandi_message_logout">"로그아웃 되었습니다"</string>
 	<string name="jandi_message_no_member">"아직 팀에 가입한 멤버가 없습니다. 지금 바로 멤버들을 초대하세요."</string>
 	<string name="jandi_message_no_starred">"즐겨찾기가 해제되었습니다"</string>
@@ -428,7 +432,7 @@
 	<string name="jandi_poll">"투표"</string>
 	<string name="jandi_poll_add_item">"보기추가"</string>
 	<string name="jandi_poll_anonymous">"익명투표"</string>
-	<string name="jandi_poll_create">"새 투표 작성하기"</string>
+	<string name="jandi_poll_create">"만들기"</string>
 	<string name="jandi_poll_deleted">"투표를 삭제했습니다."</string>
 	<string name="jandi_poll_empty_1">"진행중인 투표가 없습니다."</string>
 	<string name="jandi_poll_empty_2">"토픽에서 [+]를 눌러 투표를 만들 수 있습니다."</string>

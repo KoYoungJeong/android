@@ -1,6 +1,10 @@
 package com.tosslab.jandi.app.ui.search.main_temp.adapter.viewholder;
 
+import android.graphics.Typeface;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,10 +90,19 @@ public class MessageHeaderViewHolder extends BaseViewHolder<SearchData> {
 
         } else {
             progressInitLoading.setVisibility(View.GONE);
-            tvSearchMessage.setText(
-                    JandiApplication.getContext().getString(R.string.jandi_search_result_count,
-                            searchMessageHeaderData.getSearchedMessageCount()));
+            String count = searchMessageHeaderData.getSearchedMessageCount() + "";
+            String searchedMessage = JandiApplication.getContext().getString(R.string.jandi_search_result_count,
+                    count);
 
+            SpannableStringBuilder ssb = new SpannableStringBuilder(searchedMessage);
+
+            int startIndex = searchedMessage.indexOf(count);
+            int endIndex = startIndex + count.length();
+
+            ssb.setSpan(new StyleSpan(Typeface.BOLD),
+                    startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            tvSearchMessage.setText(ssb);
         }
 
         vgRoomSelectionButton.setOnClickListener(v ->

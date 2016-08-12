@@ -33,7 +33,6 @@ import rx.Observable;
 public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
         implements SearchAdapterDataModel, SearchAdapterViewModel, StickyRecyclerHeadersAdapter<SearchStickyHeaderViewHolder> {
 
-    private boolean isMessageItemFold = false;
     private boolean isRoomItemFold = false;
 
     private List<SearchTopicRoomData> searchTopicRoomDatas = new ArrayList<>();
@@ -152,10 +151,10 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     }
 
     private void makeTopicDatas() {
+        SearchData headerData = new SearchData();
+        headerData.setType(SearchData.ITEM_TYPE_ROOM_HEADER);
+        datas.add(headerData);
         if (searchTopicRoomDatas.size() > 0) {
-            SearchData headerData = new SearchData();
-            headerData.setType(SearchData.ITEM_TYPE_ROOM_HEADER);
-            datas.add(headerData);
             int searchTopicRoomCnt = searchTopicRoomDatas.size();
             Observable.from(searchTopicRoomDatas)
                     .map(searchTopicRoomData -> {
@@ -263,39 +262,6 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     }
 
     private void setViewConfiguration(RecyclerView.ViewHolder holder, int position) {
-        if (isMessageItemFold) {
-            if (getItemViewType(position) == SearchData.ITEM_TYPE_MESSAGE_HEADER) {
-                holder.itemView.getLayoutParams().height = 0;
-            }
-
-            if (getItemViewType(position) == SearchData.ITEM_TYPE_MESSAGE_ITEM) {
-                holder.itemView.getLayoutParams().height = 0;
-            }
-
-            if (getItemViewType(position) == SearchData.ITEM_TYPE_NO_MESSAGE_ITEM) {
-                holder.itemView.getLayoutParams().height = 0;
-
-            }
-        } else {
-            if (getItemViewType(position) == SearchData.ITEM_TYPE_MESSAGE_HEADER) {
-                SearchMessageHeaderData searchMessageHeaderData = (SearchMessageHeaderData) datas.get(position);
-                if (searchMessageHeaderData.isShowSearchedResultMessage()) {
-                    holder.itemView.getLayoutParams().height = (int) UiUtils.getPixelFromDp(96);
-                } else {
-                    holder.itemView.getLayoutParams().height = (int) UiUtils.getPixelFromDp(48);
-                }
-            }
-
-            if (getItemViewType(position) == SearchData.ITEM_TYPE_MESSAGE_ITEM) {
-                holder.itemView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            }
-
-            if (getItemViewType(position) == SearchData.ITEM_TYPE_NO_MESSAGE_ITEM) {
-                holder.itemView.getLayoutParams().height = (int) UiUtils.getPixelFromDp(75);
-
-            }
-        }
-
         if (isRoomItemFold) {
             if (getItemViewType(position) == SearchData.ITEM_TYPE_ROOM_HEADER) {
                 holder.itemView.getLayoutParams().height = 0;
@@ -324,9 +290,7 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     }
 
     public void onClickHeader(long headerId, boolean isFold) {
-        if (headerId == 1) {
-            isMessageItemFold = isFold;
-        } else {
+        if (headerId == 2) {
             isRoomItemFold = isFold;
         }
         notifyDataSetChanged();
@@ -428,7 +392,6 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
             case SearchData.ITEM_TYPE_MESSAGE_ITEM:
             case SearchData.ITEM_TYPE_NO_MESSAGE_ITEM:
                 holder.setType(SearchStickyHeaderViewHolder.TYPE_MESSAGE);
-                holder.setFoldIcon(isMessageItemFold);
                 break;
             case SearchData.ITEM_TYPE_ROOM_HEADER:
             case SearchData.ITEM_TYPE_ROOM_ITEM:
@@ -445,4 +408,5 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     public void setLoading(boolean loading) {
         isLoading = loading;
     }
+
 }

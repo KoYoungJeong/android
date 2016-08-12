@@ -56,6 +56,15 @@ public class SearchableMemberListAdapter extends MultiItemRecyclerAdapter
             holder.itemView.setOnClickListener(
                     v -> onMemberClickListener.onMemberClick(getItem(position)));
         }
+
+        if (holder instanceof MemberViewHolder) {
+            MemberViewHolder memberViewHolder = (MemberViewHolder) holder;
+            if (position == getItemCount() - 1) {
+                memberViewHolder.showFullDivider();
+            } else {
+                memberViewHolder.showHalfDivider();
+            }
+        }
     }
 
     @Override

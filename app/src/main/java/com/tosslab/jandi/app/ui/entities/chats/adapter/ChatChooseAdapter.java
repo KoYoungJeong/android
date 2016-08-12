@@ -103,6 +103,15 @@ public class ChatChooseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 onRecyclerItemClickListener.onItemClick(holder.itemView, ChatChooseAdapter.this, position);
             }
         });
+
+        if (holder instanceof MemberViewHolder) {
+            MemberViewHolder memberViewHolder = (MemberViewHolder)holder;
+            if (position == getItemCount() - 1) {
+                memberViewHolder.showHalfDivider();
+            } else {
+                memberViewHolder.showFullDivider();
+            }
+        }
     }
 
     @Override

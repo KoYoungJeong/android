@@ -197,10 +197,14 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
     @OnEditorAction(R.id.et_room_filter)
     boolean onSearchAction(TextView view, int actionId) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            hideKeyboard();
             return true;
         }
         return false;
+    }
+
+    private void hideKeyboard() {
+        inputMethodManager.hideSoftInputFromWindow(etRoomFilter.getWindowToken(), 0);
     }
 
     @OnClick(R.id.btn_room_filter_topic)
@@ -291,6 +295,7 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
     protected void onDestroy() {
         roomFilterPresenter.stopTopicSearchQueue();
         roomFilterPresenter.stopDirectMessageSearchQueue();
+        hideKeyboard();
         super.onDestroy();
     }
 

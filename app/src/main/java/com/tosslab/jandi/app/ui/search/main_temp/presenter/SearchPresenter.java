@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.search.main_temp.presenter;
 
 import com.tosslab.jandi.app.team.room.TopicRoom;
-import com.tosslab.jandi.app.ui.search.main_temp.adapter.SearchAdapterDataModel;
 
 import java.util.List;
 
@@ -57,6 +56,8 @@ public interface SearchPresenter {
         void moveToFileActivity(long messageId, long fileId);
 
         void moveToMessageActivityFromSearch(long entityId, int entityType, long linkId);
+
+        void hideKeyboard();
 
     }
 }

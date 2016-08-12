@@ -104,6 +104,7 @@ public class SearchPresenterImpl implements SearchPresenter {
                             }
                             searchAdapterDataModel.setMessageHeaderData(searchedMessageHeaderDataBuilder.build());
                             view.refreshSearchedAll();
+                            view.hideKeyboard();
                         })
                         .observeOn(Schedulers.io())
                         .map(it -> {

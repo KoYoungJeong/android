@@ -165,6 +165,23 @@
         android:background="@color/jandi_transparent_white_40p"
         android:visibility="visible" />
 
+    <View
+        android:id="@+id/v_full_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="#ffeeeeee"
+        android:visibility="gone" />
+
+    <View
+        android:id="@+id/v_half_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="75dp"
+        android:background="#ffeeeeee"
+        android:visibility="visible" />
+
 </RelativeLayout>
 
 

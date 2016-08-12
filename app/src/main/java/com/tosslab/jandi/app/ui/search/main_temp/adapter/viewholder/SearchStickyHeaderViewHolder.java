@@ -71,19 +71,20 @@ public class SearchStickyHeaderViewHolder extends RecyclerView.ViewHolder {
             } else {
                 tvStickyCount.setVisibility(View.GONE);
             }
+            ivFolderIcon.setVisibility(View.VISIBLE);
+            if (isFold) {
+                ivFolderIcon.setImageDrawable(JandiApplication.getContext()
+                        .getResources().getDrawable(R.drawable.title_collepse_down));
+            } else {
+                ivFolderIcon.setImageDrawable(JandiApplication.getContext()
+                        .getResources().getDrawable(R.drawable.title_collepse));
+            }
         } else if (type == TYPE_MESSAGE) {
             tvStickyTitle.setText(
                     JandiApplication.getContext().getString(R.string.jandi_title_message)
             );
             tvStickyCount.setVisibility(View.GONE);
-        }
-
-        if (isFold) {
-            ivFolderIcon.setImageDrawable(JandiApplication.getContext()
-                    .getResources().getDrawable(R.drawable.title_collepse_down));
-        } else {
-            ivFolderIcon.setImageDrawable(JandiApplication.getContext()
-                    .getResources().getDrawable(R.drawable.title_collepse));
+            ivFolderIcon.setVisibility(View.GONE);
         }
     }
 

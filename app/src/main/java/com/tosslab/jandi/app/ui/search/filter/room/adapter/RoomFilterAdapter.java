@@ -94,6 +94,15 @@ public class RoomFilterAdapter extends MultiItemRecyclerAdapter
             }
         }
 
+        if (holder instanceof MemberViewHolder) {
+            MemberViewHolder memberViewHolder = (MemberViewHolder)holder;
+            if (position == getItemCount() - 1) {
+                memberViewHolder.showHalfDivider();
+            } else {
+                memberViewHolder.showFullDivider();
+            }
+        }
+
     }
 
     @Override

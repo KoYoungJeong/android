@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -39,6 +40,7 @@ import com.tosslab.jandi.app.ui.search.main_temp.presenter.SearchPresenter;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -47,6 +49,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import butterknife.OnTextChanged;
+import rx.Observable;
 
 /**
  * Created by tee on 16. 7. 20..
@@ -75,7 +78,6 @@ public class SearchActivity extends BaseAppCompatActivity
     SearchAdapterViewModel searchAdapterViewModel;
 
     private boolean isRoomItemFold = false;
-    private boolean isMessageItemFold = false;
     private boolean flagFirstSearch = true;
     private SearchQueryAdapter searchQueryAdapter;
     private AlertDialog deleteConfirmDialog;
@@ -84,6 +86,7 @@ public class SearchActivity extends BaseAppCompatActivity
     private boolean isSelectDirectMessageRoom = false;
     private long selectedRoomId = -1l;
     private long selectedMemberId = -1l;
+    private android.view.inputmethod.InputMethodManager inputMethodManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -109,6 +112,21 @@ public class SearchActivity extends BaseAppCompatActivity
         initDropdownOldQuery();
 
         setHistoryListeners();
+
+        inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!flagFirstSearch) {
+            Observable.just(1)
+                    .delay(100, TimeUnit.MILLISECONDS)
+                    .subscribe(i -> {
+                        hideKeyboard();
+                    });
+
+        }
     }
 
     private void setHistoryListeners() {
@@ -197,7 +215,7 @@ public class SearchActivity extends BaseAppCompatActivity
         });
 
         searchAdapterViewModel.setOnClickMemberSelectionButtonListener(() -> {
-            MemberFilterActivity.startForResult(this, selectedMemberId, REQUEST_CODE_MEMBER_SELECTION);
+            MemberFilterActivity.startForResult(this, -1, REQUEST_CODE_MEMBER_SELECTION);
         });
 
         searchAdapterViewModel.setOnClickRoomSelectionButtonListener(() -> showChooseRoomDialog());
@@ -226,10 +244,7 @@ public class SearchActivity extends BaseAppCompatActivity
         StickyRecyclerHeadersTouchListener touchListener =
                 new StickyRecyclerHeadersTouchListener(lvSearchResult, decoration);
         touchListener.setOnHeaderClickListener((header, position, headerId) -> {
-            if (headerId == 1) {
-                isMessageItemFold = !isMessageItemFold;
-                adapter.onClickHeader(headerId, isMessageItemFold);
-            } else if (headerId == 2) {
+            if (headerId == 2) {
                 isRoomItemFold = !isRoomItemFold;
                 adapter.onClickHeader(headerId, isRoomItemFold);
             }
@@ -416,10 +431,10 @@ public class SearchActivity extends BaseAppCompatActivity
             tvChooseRoomButton.setOnClickListener(v -> {
                 if (isSelectDirectMessageRoom) {
                     RoomFilterActivity.startForResultWithDirectMessageId(
-                            this, selectedRoomId, REQUEST_CODE_ROOM_SELECTION);
+                            this, -1, REQUEST_CODE_ROOM_SELECTION);
                 } else {
                     RoomFilterActivity.startForResultWithTopicId(
-                            this, selectedRoomId, REQUEST_CODE_ROOM_SELECTION);
+                            this, -1, REQUEST_CODE_ROOM_SELECTION);
                 }
                 chooseRoomDialog.dismiss();
             });
@@ -434,6 +449,11 @@ public class SearchActivity extends BaseAppCompatActivity
     protected void onDestroy() {
         searchPresenter.onDestroy();
         super.onDestroy();
+    }
+
+    @Override
+    public void hideKeyboard() {
+        inputMethodManager.hideSoftInputFromWindow(tvSearchKeyword.getWindowToken(), 0);
     }
 
 }

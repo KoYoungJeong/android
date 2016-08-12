@@ -13,7 +13,7 @@
         android:paddingBottom="19dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingTop="19dp">
+        android:paddingTop="18dp">
 
         <ImageView
             android:id="@+id/iv_profile"
@@ -38,7 +38,7 @@
                     android:layout_centerVertical="true"
                     android:text="오후 01:23"
                     android:textColor="@color/jandi_border_gray"
-                    android:textSize="13dp" />
+                    android:textSize="12dp" />
 
                 <TextView
                     android:id="@+id/tv_user_name"
