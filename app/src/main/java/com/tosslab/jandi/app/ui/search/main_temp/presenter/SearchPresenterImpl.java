@@ -60,6 +60,8 @@ public class SearchPresenterImpl implements SearchPresenter {
 
     private MoreState moreState = MoreState.Idle;
 
+    private boolean isOnlyMessageMode = false;
+
     @Inject
     public SearchPresenterImpl() {
         writerSubject = BehaviorSubject.create(-1l);
@@ -94,7 +96,9 @@ public class SearchPresenterImpl implements SearchPresenter {
                         .observeOn(AndroidSchedulers.mainThread())
                         .doOnNext(it -> {
                             if (it.getPage() == 1) {
-                                setTopicRoomDatas(false);
+                                if (!isOnlyMessageMode) {
+                                    setTopicRoomDatas(false);
+                                }
                                 searchedMessageHeaderDataBuilder.setShowSearchedResultMessage(true);
                                 searchedMessageHeaderDataBuilder.setShowProgress(true);
                                 searchAdapterDataModel.setLoading(true);
@@ -103,7 +107,11 @@ public class SearchPresenterImpl implements SearchPresenter {
                                 view.showMoreProgressBar();
                             }
                             searchAdapterDataModel.setMessageHeaderData(searchedMessageHeaderDataBuilder.build());
-                            view.refreshSearchedAll();
+                            if (!isOnlyMessageMode) {
+                                view.refreshSearchedAll();
+                            } else {
+                                view.refreshSearchedOnlyMessage();
+                            }
                             view.hideKeyboard();
                         })
                         .observeOn(Schedulers.io())
@@ -165,7 +173,12 @@ public class SearchPresenterImpl implements SearchPresenter {
 
                                     searchAdapterDataModel.setMessageHeaderData(
                                             searchedMessageHeaderDataBuilder.build());
-                                    view.refreshSearchedAll();
+
+                                    if (!isOnlyMessageMode) {
+                                        view.refreshSearchedAll();
+                                    } else {
+                                        view.refreshSearchedOnlyMessage();
+                                    }
                                 },
                                 t -> {
                                     t.printStackTrace();
@@ -185,7 +198,11 @@ public class SearchPresenterImpl implements SearchPresenter {
                                     }
                                     searchAdapterDataModel.setMessageHeaderData(
                                             searchedMessageHeaderDataBuilder.build());
-                                    view.refreshSearchedAll();
+                                    if (!isOnlyMessageMode) {
+                                        view.refreshSearchedAll();
+                                    } else {
+                                        view.refreshSearchedOnlyMessage();
+                                    }
                                 }
                         ));
 
@@ -231,7 +248,8 @@ public class SearchPresenterImpl implements SearchPresenter {
         }
     }
 
-    public void sendSearchQuery(String keyword) {
+    public void sendSearchQuery(String keyword, boolean isOnlyMessage) {
+        isOnlyMessageMode = isOnlyMessage;
         keywordSubject.onNext(keyword);
         pageSubject.onNext(1);
         endDateSubject.onNext(new Date());
@@ -291,7 +309,8 @@ public class SearchPresenterImpl implements SearchPresenter {
     }
 
     @Override
-    public void onRoomChanged(long roomId, boolean isDirectMessageRoom) {
+    public void onRoomChanged(long roomId) {
+        boolean isDirectMessageRoom = searchModel.isDirectRoomByRoomId(roomId);
         String roomName = "";
 
         if (isDirectMessageRoom) {

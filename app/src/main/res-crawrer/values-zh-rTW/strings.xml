@@ -358,6 +358,7 @@
 	<string name="jandi_mention_push_message">"%s 提到你"</string>
 	<string name="jandi_mentions_are_empty">"你尚未被其他成員提及。
 欲提及其他成員？輸入"@"後成員名單跳出，選取成員完成提及。"</string>
+	<string name="jandi_menu_room_selection">"選擇討論空間_x007f_"</string>
 	<string name="jandi_message_ask_about_delete_comment">"您確定要永久刪除這留言嗎？刪除的留言將無法回復。"</string>
 	<string name="jandi_message_ask_about_deleting">"您確定要刪除此訊息嗎？刪除的訊息將無法回復。"</string>
 	<string name="jandi_message_create_entity">"已建立 %1$s"</string>
@@ -369,6 +370,7 @@
 	<string name="jandi_message_logout">"已登出"</string>
 	<string name="jandi_message_no_member">"不再單打獨鬥，現在就邀請所有夥伴加入你的團隊！"</string>
 	<string name="jandi_message_no_starred">"取消標記"</string>
+	<string name="jandi_message_search">"訊息搜尋"</string>
 	<string name="jandi_message_search_available">"訊息關鍵字搜尋功能上線囉！"</string>
 	<string name="jandi_message_search_available_detail">"利用關鍵字輕鬆搜尋對話記錄，還可以根據議題或發送者縮小搜尋範圍，清楚瞭解對話或事件的來龍去脈！躍躍欲試嗎？馬上點擊右上角的放大鏡開始關鍵字搜尋！"</string>
 	<string name="jandi_message_send">"送出"</string>
