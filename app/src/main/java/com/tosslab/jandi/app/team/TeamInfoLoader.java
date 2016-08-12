@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.team;
 
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.models.start.Bot;
@@ -11,6 +12,7 @@ import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Team;
 import com.tosslab.jandi.app.network.models.start.Topic;
+import com.tosslab.jandi.app.services.SignOutService;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.member.WebhookBot;
@@ -18,6 +20,7 @@ import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
+import com.tosslab.jandi.app.ui.intro.IntroActivity;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -102,7 +105,13 @@ public class TeamInfoLoader {
         execute(() -> {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
             if (teamId > 0) {
-                refresh(teamId);
+                if (InitialInfoRepository.getInstance().hasInitialInfo(teamId)) {
+                    refresh(teamId);
+                } else {
+                    IntroActivity.startActivity(JandiApplication.getContext(), false);
+                }
+            } else {
+                SignOutService.start();
             }
         });
     }
@@ -140,11 +149,12 @@ public class TeamInfoLoader {
         if (users.containsKey(myId)) {
             this.me = users.get(myId);
         } else {
-            this.me = getUserObservable()
+            getUserObservable()
                     .takeFirst(human -> human.getId() == myId)
                     .map(User::new)
-                    .toBlocking()
-                    .firstOrDefault(new User(null));
+                    .subscribe(it -> {
+                        this.me = it;
+                    });
         }
     }
 

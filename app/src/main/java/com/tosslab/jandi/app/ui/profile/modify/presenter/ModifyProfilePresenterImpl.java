@@ -19,7 +19,6 @@ import java.io.File;
 import javax.inject.Inject;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -42,17 +41,13 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
 
     @Override
     public void onRequestProfile() {
-        Observable.create(new Observable.OnSubscribe<User>() {
-            @Override
-            public void call(Subscriber<? super User> subscriber) {
-                User savedProfile = modifyProfileModel.getSavedProfile();
-                subscriber.onNext(savedProfile);
-                subscriber.onCompleted();
-            }
-        })
-                .subscribeOn(Schedulers.computation())
-                .doOnSubscribe(() -> view.showProgressWheel())
+        Observable.just(1)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> view.showProgressWheel());
+
+        Observable.defer(() -> Observable.just(modifyProfileModel.getSavedProfile()))
                 .doOnUnsubscribe(() -> view.dismissProgressWheel())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(user -> {
                     view.displayProfile(user);
@@ -61,23 +56,20 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
 
     @Override
     public void onUpdateProfile(ReqUpdateProfile reqUpdateProfile) {
+        Observable.just(1)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> view.showProgressWheel());
 
-        Observable.create(new Observable.OnSubscribe<Human>() {
-            @Override
-            public void call(Subscriber<? super Human> subscriber) {
-
-                try {
-                    Human human = modifyProfileModel.updateProfile(reqUpdateProfile);
-                    subscriber.onNext(human);
-                } catch (RetrofitException e) {
-                    e.printStackTrace();
-                    subscriber.onError(e);
-                }
-                subscriber.onCompleted();
+        Observable.defer(() -> {
+            try {
+                Human human = modifyProfileModel.updateProfile(reqUpdateProfile);
+                return Observable.just(human);
+            } catch (RetrofitException e) {
+                e.printStackTrace();
+                return Observable.error(e);
             }
         })
                 .subscribeOn(Schedulers.io())
-                .doOnSubscribe(() -> view.showProgressWheel())
                 .doOnUnsubscribe(() -> view.dismissProgressWheel())
                 .doOnNext(human1 -> {
                     HumanRepository.getInstance().updateHuman(human1);

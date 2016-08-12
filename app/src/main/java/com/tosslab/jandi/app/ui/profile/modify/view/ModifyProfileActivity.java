@@ -73,6 +73,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     public static final int REQUEST_GET_JOB_TITLE = 0x21;
     public static final int REQUEST_GET_DEPARTMENT = 0x22;
+    public static final int REQUEST_NAME_STATUS = 0x23;
 
     @Inject
     ModifyProfilePresenter modifyProfilePresenter;
@@ -180,20 +181,20 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     @OnClick(R.id.profile_user_status_message)
     void editStatusMessage() {
         // 닉네임
-        startActivity(Henson.with(ModifyProfileActivity.this)
+        startActivityForResult(Henson.with(ModifyProfileActivity.this)
                 .gotoNameStatusActivity()
                 .type(NameStatusActivity.EXTRA_TYPE_STATUS)
-                .build());
+                .build(), REQUEST_NAME_STATUS);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Status);
     }
 
     @OnClick(R.id.profile_user_realname)
     void editName() {
-        startActivity(Henson.with(ModifyProfileActivity.this)
+        startActivityForResult(Henson.with(ModifyProfileActivity.this)
                 .gotoNameStatusActivity()
                 .type(NameStatusActivity.EXTRA_TYPE_NAME)
-                .build());
+                .build(), REQUEST_NAME_STATUS);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Name);
     }
@@ -357,6 +358,9 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
                 break;
             case REQUEST_GET_DEPARTMENT:
                 onGetDepartmentResult(resultCode, data);
+                break;
+            case REQUEST_NAME_STATUS:
+                modifyProfilePresenter.onRequestProfile();
                 break;
         }
     }

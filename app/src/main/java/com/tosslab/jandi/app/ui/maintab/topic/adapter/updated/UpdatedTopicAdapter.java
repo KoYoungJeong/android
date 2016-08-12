@@ -71,7 +71,11 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public Topic getItem(int position) {
-        return topicItemDataList.get(position);
+        if (position < getItemCount()) {
+            return topicItemDataList.get(position);
+        } else {
+            return null;
+        }
     }
 
     @Override
