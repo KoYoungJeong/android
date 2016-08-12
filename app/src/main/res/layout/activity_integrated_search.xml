@@ -28,12 +28,13 @@
 
         <ImageView
             android:id="@+id/iv_search_backkey"
-            android:layout_width="21dp"
-            android:layout_height="21dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="27dp"
+            android:layout_marginRight="11dp"
             android:background="?android:attr/selectableItemBackground"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
             android:scaleType="centerInside"
             android:src="@drawable/btn_search_back" />
 
