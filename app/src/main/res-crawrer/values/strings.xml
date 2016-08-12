@@ -306,7 +306,8 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_insert_team_domain">"Set up your Team Domain"</string>
 	<string name="jandi_insert_team_name">"Set up your Team Name"</string>
 	<string name="jandi_invitation">"Invite"</string>
-	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. To change this setting, go to Team Settings > Invitation Settings."</string>
+	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. 
+To change this setting, go to Team Settings > Invitation Settings."</string>
 	<string name="jandi_invitation_help">"Invite other team members to JANDI!"</string>
 	<string name="jandi_invitation_succeed">"Invitation has been sent"</string>
 	<string name="jandi_invite_app_not_installed">"The app is not installed on your device. The invitation link has been copied to the clipboard instead."</string>
@@ -391,8 +392,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_mypage">"My Page"</string>
 	<string name="jandi_name">"Name"</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
-	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic.
-"</string>
+	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic."</string>
 	<string name="jandi_new_department">"New Department"</string>
 	<string name="jandi_new_job_title">"New Job Title"</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>

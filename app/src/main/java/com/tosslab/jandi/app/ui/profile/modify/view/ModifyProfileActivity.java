@@ -428,36 +428,21 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     @Override
     public void displayProfile(User user) {
         // 프로필 사진
-
-        String profileImageUrlPath = user.getPhotoUrl();
-
-        displayProfileImage(profileImageUrlPath);
+        displayProfileImage(user.getPhotoUrl());
         // 프로필 이름
         tvProfileRealName.setTextContent(user.getName());
         // 상태 메시지
-        String strStatus = (user.getStatusMessage());
-        if (!TextUtils.isEmpty(strStatus)) {
-            tvProfileStatusMessage.setTextContent(strStatus);
-        }
+        tvProfileStatusMessage.setTextContent(user.getStatusMessage());
 
         // 이메일
         tvProfileUserEmail.setTextContent(user.getEmail());
 
         // 폰넘버
-        String strPhone = (user.getPhoneNumber());
-        if (!TextUtils.isEmpty(strPhone)) {
-            tvProfileUserPhone.setTextContent(strPhone);
-        }
+        tvProfileUserPhone.setTextContent(user.getPhoneNumber());
         // 부서
-        String strDivision = (user.getDivision());
-        if (!TextUtils.isEmpty(strDivision)) {
-            tvProfileUserDivision.setTextContent(strDivision);
-        }
+        tvProfileUserDivision.setTextContent(user.getDivision());
         // 직책
-        String strPosition = user.getPosition();
-        if (!TextUtils.isEmpty(strPosition)) {
-            tvProfileUserPosition.setTextContent(strPosition);
-        }
+        tvProfileUserPosition.setTextContent(user.getPosition());
     }
 
     void displayProfileImage(String profileImageUrlPath) {
