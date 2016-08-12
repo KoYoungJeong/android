@@ -738,11 +738,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         if (roomId > 0) {
             Intent intent = CarouselViewerActivity.getCarouselViewerIntent(
-                    this, fileMessage.id, roomId);
-            startActivityForResult(intent, JandiConstants.TYPE_FILE_DETAIL_REFRESH);
-        } else {
-            Intent intent = CarouselViewerActivity.getImageViewerIntent(this, fileMessage);
+                    FileDetailActivity.this, fileMessage.id, roomId)
+                    .fromFileDetail(true)
+                    .build();
             startActivityForResult(intent, REQUEST_CODE_RETURN_FILE_ID);
+        } else {
+            Intent intent = CarouselViewerActivity.getImageViewerIntent(this, fileMessage)
+                    .fromFileDetail(true)
+                    .build();
+            startActivity(intent);
         }
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewPhoto);
