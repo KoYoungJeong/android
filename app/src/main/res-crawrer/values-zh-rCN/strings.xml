@@ -211,6 +211,8 @@
 	<string name="jandi_enter_new_passcode">"输入新密码"</string>
 	<string name="jandi_enter_passcode">"输入您的密码"</string>
 	<string name="jandi_enter_phone_number">"请输入您的电话号码"</string>
+	<string name="jandi_enter_your_dept">"输入你的部门"</string>
+	<string name="jandi_enter_your_job_title">"输入你的职位"</string>
 	<string name="jandi_enter_your_status_message">"输入你的状态"</string>
 	<string name="jandi_entity_create_entity_name">"名字"</string>
 	<string name="jandi_entity_joined_topic">"我的议题"</string>
@@ -426,7 +428,7 @@
 	<string name="jandi_poll">"问卷调查"</string>
 	<string name="jandi_poll_add_item">"添加选项"</string>
 	<string name="jandi_poll_anonymous">"不记名"</string>
-	<string name="jandi_poll_create">"建立"</string>
+	<string name="jandi_poll_create">"建立新的投票"</string>
 	<string name="jandi_poll_deleted">"投票已经删除"</string>
 	<string name="jandi_poll_empty_1">"无进行中的问卷"</string>
 	<string name="jandi_poll_empty_2">"\n点击[+]建立新问卷"</string>

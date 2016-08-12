@@ -211,6 +211,8 @@
 	<string name="jandi_enter_new_passcode">"新しいパスコードを入力 "</string>
 	<string name="jandi_enter_passcode">"パスワードを入力してください"</string>
 	<string name="jandi_enter_phone_number">"電話番号を入力してください"</string>
+	<string name="jandi_enter_your_dept">"部署を入力してください"</string>
+	<string name="jandi_enter_your_job_title">"役職を入力してください"</string>
 	<string name="jandi_enter_your_status_message">"ステータスメッセージを入力"</string>
 	<string name="jandi_entity_create_entity_name">"名前"</string>
 	<string name="jandi_entity_joined_topic">"参加中のトピック"</string>
@@ -429,7 +431,7 @@
 	<string name="jandi_poll">"投票"</string>
 	<string name="jandi_poll_add_item">"回答を追加する"</string>
 	<string name="jandi_poll_anonymous">"匿名投票"</string>
-	<string name="jandi_poll_create">"作成"</string>
+	<string name="jandi_poll_create">"新しい投票を作成する"</string>
 	<string name="jandi_poll_deleted">"投票を削除しました。"</string>
 	<string name="jandi_poll_empty_1">"実施中の投票がありません。"</string>
 	<string name="jandi_poll_empty_2">"\nトピックで「＋」を押し、投票を作成してください。"</string>

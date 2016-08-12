@@ -49,6 +49,7 @@
         <attr name="textSizeContent" format="dimension"/>
         <attr name="textColorContent" format="string"/>
         <attr name="textContent" format="string"/>
+        <attr name="textHintContent" format="string"/>
         <attr name="textContentSingleline" format="boolean"/>
     </declare-styleable>
 

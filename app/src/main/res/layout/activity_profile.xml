@@ -75,6 +75,7 @@
             android:layout_height="wrap_content"
             android:minHeight="72dp"
             app:textContentSingleline="false"
+            app:textHintContent="@string/jandi_enter_your_status_message"
             app:textTitle="@string/jandi_profile_status_message" />
 
         <View
@@ -85,6 +86,7 @@
         <com.tosslab.jandi.app.views.profile.ProfileLabelView
             android:id="@+id/profile_user_phone_number"
             style="@style/JandiMemberProfile.Profile"
+            app:textHintContent="@string/jandi_enter_phone_number"
             app:textTitle="@string/jandi_profile_phone_number" />
 
         <View
@@ -95,6 +97,7 @@
         <com.tosslab.jandi.app.views.profile.ProfileLabelView
             android:id="@+id/profile_user_division"
             style="@style/JandiMemberProfile.Profile"
+            app:textHintContent="@string/jandi_enter_your_dept"
             app:textTitle="@string/jandi_profile_division" />
 
         <View
@@ -105,6 +108,7 @@
         <com.tosslab.jandi.app.views.profile.ProfileLabelView
             android:id="@+id/profile_user_position"
             style="@style/JandiMemberProfile.Profile"
+            app:textHintContent="@string/jandi_enter_your_job_title"
             app:textTitle="@string/jandi_profile_position" />
 
         <View
