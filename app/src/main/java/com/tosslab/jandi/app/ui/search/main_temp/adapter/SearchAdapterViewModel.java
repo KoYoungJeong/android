@@ -14,6 +14,8 @@ public interface SearchAdapterViewModel {
 
     void refreshSearchedAll();
 
+    void refreshSearchOnlyMessage();
+
     void setOnCheckChangeListener(RoomHeaderViewHolder.OnCheckChangeListener onCheckChangeListener);
 
     void refreshHistory();

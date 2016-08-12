@@ -303,6 +303,14 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     }
 
     @Override
+    public void refreshSearchOnlyMessage(){
+        isHistoryMode = false;
+        datas.clear();
+        makeMessageDatas();
+        notifyDataSetChanged();
+    }
+
+    @Override
     public void refreshHistory() {
         makeHistoryDatas();
         notifyDataSetChanged();

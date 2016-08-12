@@ -18,6 +18,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersDecoration;
 import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersTouchListener;
 import com.tosslab.jandi.app.JandiApplication;
@@ -62,6 +64,10 @@ public class SearchActivity extends BaseAppCompatActivity
     private static final int REQUEST_CODE_ROOM_SELECTION = 0x02;
     private static final int REQUEST_CODE_MEMBER_SELECTION = 0x03;
 
+    @InjectExtra
+    @Nullable
+    long selectedRoomId = -1l;
+
     @Bind(R.id.lv_search_result)
     RecyclerView lvSearchResult;
 
@@ -84,9 +90,10 @@ public class SearchActivity extends BaseAppCompatActivity
     private AlertDialog chooseRoomDialog;
 
     private boolean isSelectDirectMessageRoom = false;
-    private long selectedRoomId = -1l;
     private long selectedMemberId = -1l;
     private android.view.inputmethod.InputMethodManager inputMethodManager;
+
+    private boolean isOnlyMessageMode = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,6 +112,8 @@ public class SearchActivity extends BaseAppCompatActivity
                 .build()
                 .inject(this);
 
+        Dart.inject(this);
+
         initAdapterViewModel();
 
         searchPresenter.sendSearchHistory();
@@ -114,6 +123,13 @@ public class SearchActivity extends BaseAppCompatActivity
         setHistoryListeners();
 
         inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+        if (selectedRoomId != -1l) {
+            searchPresenter.onRoomChanged(selectedRoomId);
+            tvSearchKeyword.setHint(
+                    JandiApplication.getContext().getString(R.string.jandi_message_search));
+            isOnlyMessageMode = true;
+        }
     }
 
     @Override
@@ -136,6 +152,7 @@ public class SearchActivity extends BaseAppCompatActivity
             tvSearchKeyword.setText(keyword);
             tvSearchKeyword.setSelection(keyword.length());
             tvSearchKeyword.dismissDropDown();
+            searchPresenter.sendSearchQuery(keyword, isOnlyMessageMode);
         });
 
         searchAdapterViewModel.setOnDeleteHistoryListener(keyword -> {
@@ -178,8 +195,9 @@ public class SearchActivity extends BaseAppCompatActivity
                 flagFirstSearch = false;
             }
             searchPresenter.sendSearchQuery(
-                    tvSearchKeyword.getText().toString());
+                    tvSearchKeyword.getText().toString(), isOnlyMessageMode);
             tvSearchKeyword.dismissDropDown();
+            hideKeyboard();
             return true;
         }
         return false;
@@ -262,6 +280,11 @@ public class SearchActivity extends BaseAppCompatActivity
     @Override
     public void refreshSearchedAll() {
         searchAdapterViewModel.refreshSearchedAll();
+    }
+
+    @Override
+    public void refreshSearchedOnlyMessage() {
+        searchAdapterViewModel.refreshSearchOnlyMessage();
     }
 
     @Override
@@ -379,7 +402,7 @@ public class SearchActivity extends BaseAppCompatActivity
             isSelectDirectMessageRoom = !data.getBooleanExtra(RoomFilterActivity.KEY_IS_TOPIC, false);
             selectedRoomId = data.getLongExtra(RoomFilterActivity.KEY_FILTERED_ROOM_ID, -1l);
 
-            searchPresenter.onRoomChanged(selectedRoomId, isSelectDirectMessageRoom);
+            searchPresenter.onRoomChanged(selectedRoomId);
 
         } else if (requestCode == REQUEST_CODE_MEMBER_SELECTION) {
             if (resultCode != RESULT_OK) {

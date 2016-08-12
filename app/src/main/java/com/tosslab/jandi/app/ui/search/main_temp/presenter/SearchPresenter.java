@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface SearchPresenter {
 
-    void sendSearchQuery(String keyword);
+    void sendSearchQuery(String keyword, boolean isOnlyMessage);
 
     void setChangeIsShowUnjoinedTopic(boolean isShowUnjoinedTopic);
 
@@ -29,7 +29,7 @@ public interface SearchPresenter {
 
     void onJoinTopic(long topicId, int topicType);
 
-    void onRoomChanged(long roomId, boolean isDirectMessageRoom);
+    void onRoomChanged(long roomId);
 
     void onWriterChanged(long writerId);
 
@@ -40,6 +40,8 @@ public interface SearchPresenter {
     interface View {
 
         void refreshSearchedAll();
+
+        void refreshSearchedOnlyMessage();
 
         void refreshHistory();
 

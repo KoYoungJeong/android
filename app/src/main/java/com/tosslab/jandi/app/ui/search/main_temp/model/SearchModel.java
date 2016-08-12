@@ -144,4 +144,8 @@ public class SearchModel {
         return TeamInfoLoader.getInstance().getMemberName(writerId);
     }
 
+    public boolean isDirectRoomByRoomId(long roomId){
+        return TeamInfoLoader.getInstance().isChat(roomId);
+    }
+
 }
