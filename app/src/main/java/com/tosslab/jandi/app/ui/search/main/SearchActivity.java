@@ -196,7 +196,7 @@ public class SearchActivity extends BaseAppCompatActivity
     }
 
     private void onSearch() {
-        if (tvSearchKeyword.length() > 2) {
+        if (tvSearchKeyword.length() >= 2) {
             if (flagFirstSearch) {
                 setStickyHeaderAdapter();
                 removeHistoryListeners();
