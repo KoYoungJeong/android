@@ -256,7 +256,8 @@
 	<string name="jandi_file_share_action">"分享"</string>
 	<string name="jandi_file_size_large_error">"無法上傳大於300MB的檔案"</string>
 	<string name="jandi_file_upload_finish">"檔案已成功上傳"</string>
-	<string name="jandi_file_upload_go_topic">"點擊進入JANDI瀏覽"</string>
+	<string name="jandi_file_upload_go_topic">"
+點擊進入JANDI瀏覽"</string>
 	<string name="jandi_file_upload_state">"上傳檔案中 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"檔案上傳成功"</string>
 	<string name="jandi_file_uploading">"上傳"</string>
@@ -491,6 +492,7 @@
 	<string name="jandi_sdcard_storage_unmounted">"解除連接記憶卡"</string>
 	<string name="jandi_search_all_member">"所有成員"</string>
 	<string name="jandi_search_all_room">"所有討論"</string>
+	<string name="jandi_search_available_length_of_keyword">"輸入的關鍵字需一個字符以上"</string>
 	<string name="jandi_search_category_everyone">"<b>所有成員</b>"</string>
 	<string name="jandi_search_category_everywhere">"<b>所有討論</b>"</string>
 	<string name="jandi_search_history">"最近搜尋紀錄"</string>

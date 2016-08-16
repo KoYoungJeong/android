@@ -495,6 +495,7 @@
 	<string name="jandi_sdcard_storage_unmounted">"SDカードのマウントを解除しました"</string>
 	<string name="jandi_search_all_member">"全員"</string>
 	<string name="jandi_search_all_room">"全トピック"</string>
+	<string name="jandi_search_available_length_of_keyword">"検索キーワードは２文字以上で入力してください。"</string>
 	<string name="jandi_search_category_everyone">"<b>全員</b>"</string>
 	<string name="jandi_search_category_everywhere">"<b>全トピック</b>"</string>
 	<string name="jandi_search_history">"最近の検索"</string>

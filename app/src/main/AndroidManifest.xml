@@ -589,7 +589,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.search.main_temp.SearchActivity"
+            android:name=".ui.search.main.SearchActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
 

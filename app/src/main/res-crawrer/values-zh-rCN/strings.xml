@@ -491,6 +491,7 @@
 	<string name="jandi_sdcard_storage_unmounted">"解除连接记忆卡"</string>
 	<string name="jandi_search_all_member">"所有成员"</string>
 	<string name="jandi_search_all_room">"所有讨论"</string>
+	<string name="jandi_search_available_length_of_keyword">"输入的关键词需一个字符以上"</string>
 	<string name="jandi_search_category_everyone">"<b>所有成员</b>"</string>
 	<string name="jandi_search_category_everywhere">"<b>所有讨论</b>"</string>
 	<string name="jandi_search_history">"最近搜寻纪录"</string>
