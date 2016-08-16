@@ -294,6 +294,7 @@
 	<string name="jandi_image_too_big">"图像过大无法加载"</string>
 	<string name="jandi_incorrect_passcode">"密码不吻合"</string>
 	<string name="jandi_info">"JANDI版本"</string>
+	<string name="jandi_input_available_length">"总共{number}项聚合"</string>
 	<string name="jandi_input_enough_items">"项目最少要2个以上"</string>
 	<string name="jandi_input_password">"请为选择的团队输入您的密码"</string>
 	<string name="jandi_input_poll_item">"调查项目"</string>
@@ -430,7 +431,7 @@
 	<string name="jandi_poll">"问卷调查"</string>
 	<string name="jandi_poll_add_item">"添加选项"</string>
 	<string name="jandi_poll_anonymous">"不记名"</string>
-	<string name="jandi_poll_create">"建立新的投票"</string>
+	<string name="jandi_poll_create">"建立"</string>
 	<string name="jandi_poll_deleted">"投票已经删除"</string>
 	<string name="jandi_poll_empty_1">"无进行中的问卷"</string>
 	<string name="jandi_poll_empty_2">"\n点击[+]建立新问卷"</string>
