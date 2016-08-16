@@ -207,7 +207,7 @@ public class SearchActivity extends BaseAppCompatActivity
             tvSearchKeyword.dismissDropDown();
             hideKeyboard();
         } else {
-            ColoredToast.show(R.string.jandi_input_available_length);
+            ColoredToast.show(R.string.jandi_search_available_length_of_keyword);
         }
     }
 

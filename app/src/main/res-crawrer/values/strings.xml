@@ -294,7 +294,6 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_image_too_big">"Image is too big to display."</string>
 	<string name="jandi_incorrect_passcode">"Passcode Does Not Match"</string>
 	<string name="jandi_info">"JANDI Information"</string>
-	<string name="jandi_input_available_length">"Total of {number} integrations"</string>
 	<string name="jandi_input_enough_items">"Please add at least 2 choices."</string>
 	<string name="jandi_input_password">"Input your password for selected team"</string>
 	<string name="jandi_input_poll_item">"Choices"</string>
@@ -307,7 +306,8 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_insert_team_domain">"Set up your Team Domain"</string>
 	<string name="jandi_insert_team_name">"Set up your Team Name"</string>
 	<string name="jandi_invitation">"Invite"</string>
-	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. To change this setting, go to Team Settings > Invitation Settings."</string>
+	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. 
+To change this setting, go to Team Settings > Invitation Settings."</string>
 	<string name="jandi_invitation_help">"Invite other team members to JANDI!"</string>
 	<string name="jandi_invitation_succeed">"Invitation has been sent"</string>
 	<string name="jandi_invite_app_not_installed">"The app is not installed on your device. The invitation link has been copied to the clipboard instead."</string>
@@ -433,7 +433,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_poll">"Poll"</string>
 	<string name="jandi_poll_add_item">"Add a Choice"</string>
 	<string name="jandi_poll_anonymous">"Anonymous"</string>
-	<string name="jandi_poll_create">"Create"</string>
+	<string name="jandi_poll_create">"Create a New Poll"</string>
 	<string name="jandi_poll_deleted">"The poll has been deleted."</string>
 	<string name="jandi_poll_empty_1">"There are no on-going polls."</string>
 	<string name="jandi_poll_empty_2">"You can start a poll by tapping [+] button in a topic."</string>
