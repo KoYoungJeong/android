@@ -169,10 +169,9 @@ public class ModifyProfilePresenterImplTest {
 
     @Test
     public void testOnEditEmailClick() throws Exception {
-        String email = "hello@hello.com";
         presenter.onEditEmailClick();
 
-        Mockito.verify(mockView).showEmailChooseDialog(Mockito.any(), Mockito.eq(email));
+        Mockito.verify(mockView).showEmailChooseDialog(Mockito.any(), Mockito.any());
 
     }
 
