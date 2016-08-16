@@ -126,7 +126,13 @@ public class UserSelectorImpl implements UserSelector {
         return Observable.from(TeamInfoLoader.getInstance().getUserList())
                 .filter(User::isEnabled)
                 .filter(user -> !TeamInfoLoader.getInstance().isJandiBot(user.getId()))
-                .map(ExpandRoomData::newMemberData)
+                .map((member) -> {
+                    ExpandRoomData expandRoomData = ExpandRoomData.newMemberData(member);
+                    if (member.getId() == TeamInfoLoader.getInstance().getMyId()) {
+                        expandRoomData.setName(JandiApplication.getContext().getString(R.string.jandi_my_files));
+                    }
+                    return expandRoomData;
+                })
                 .toSortedList((lhs, rhs) -> {
                     if (lhs.getEntityId() == myId) {
                         return -1;

@@ -233,7 +233,7 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_export_to_app">"Export file using..."</string>
 	<string name="jandi_fail_send_password_reset_email">"Your password reset email could not be sent"</string>
 	<string name="jandi_fail_web_token">"We were unable to sign you in automatically. Please try the process manually."</string>
-	<string name="jandi_file_category_all">"<b>All Files</b>"</string>
+	<string name="jandi_file_category_all">"<b>All Types</b>"</string>
 	<string name="jandi_file_category_audio">"Audio"</string>
 	<string name="jandi_file_category_document">"Documents"</string>
 	<string name="jandi_file_category_image">"Images"</string>
@@ -306,8 +306,7 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_insert_team_domain">"Set up your Team Domain"</string>
 	<string name="jandi_insert_team_name">"Set up your Team Name"</string>
 	<string name="jandi_invitation">"Invite"</string>
-	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. 
-To change this setting, go to Team Settings > Invitation Settings."</string>
+	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. To change this setting, go to Team Settings > Invitation Settings."</string>
 	<string name="jandi_invitation_help">"Invite other team members to JANDI!"</string>
 	<string name="jandi_invitation_succeed">"Invitation has been sent"</string>
 	<string name="jandi_invite_app_not_installed">"The app is not installed on your device. The invitation link has been copied to the clipboard instead."</string>

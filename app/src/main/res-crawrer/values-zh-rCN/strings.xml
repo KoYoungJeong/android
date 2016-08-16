@@ -233,7 +233,7 @@
 	<string name="jandi_export_to_app">"导出文件至..."</string>
 	<string name="jandi_fail_send_password_reset_email">"密码重设电子邮件无法寄出"</string>
 	<string name="jandi_fail_web_token">"登录时遇到问题，请再试一次。"</string>
-	<string name="jandi_file_category_all">"<b>所有文件</b>"</string>
+	<string name="jandi_file_category_all">"<b>全部类别</b>"</string>
 	<string name="jandi_file_category_audio">"音频"</string>
 	<string name="jandi_file_category_document">"文件"</string>
 	<string name="jandi_file_category_image">"图像"</string>
