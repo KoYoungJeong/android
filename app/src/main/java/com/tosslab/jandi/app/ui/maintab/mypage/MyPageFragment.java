@@ -27,8 +27,8 @@ import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.poll.RefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.team.member.User;
@@ -257,7 +257,11 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
             return;
         }
 
-        presenter.onInitializePollBadge();
+        if (event.getType() == SocketPollEvent.Type.CREATED) {
+            presenter.onAddPollBadge();
+        } else {
+            presenter.onMinusPollBadge();
+        }
     }
 
     public void onEvent(RequestRefreshPollBadgeCountEvent event) {
@@ -265,14 +269,14 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
             return;
         }
 
-        presenter.onInitializePollBadge();
+        presenter.onGetPollBadge();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        presenter.onInitializePollBadge();
+        presenter.onGetPollBadge();
 
         if (isLaidOut) {
             presenter.onRetrieveMyInfo();

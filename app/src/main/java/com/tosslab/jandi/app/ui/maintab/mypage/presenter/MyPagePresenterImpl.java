@@ -98,16 +98,20 @@ public class MyPagePresenterImpl implements MyPagePresenter {
     }
 
     @Override
-    public void onInitializePollBadge() {
-        model.getEnablePollListObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(polls -> {
-                    view.setPollBadgeCount(polls.size());
-                }, throwable -> {
-                    LogUtil.e(TAG, Log.getStackTraceString(throwable));
-                    view.setPollBadgeCount(0);
-                });
+    public void onAddPollBadge() {
+        model.addPollBadgeCount();
+        view.setPollBadgeCount(model.getPollBadgeCount());
+    }
+
+    @Override
+    public void onMinusPollBadge() {
+        model.minusPollBadgeCount();
+        view.setPollBadgeCount(model.getPollBadgeCount());
+    }
+
+    @Override
+    public void onGetPollBadge() {
+        view.setPollBadgeCount(model.getPollBadgeCount());
     }
 
     @Override
@@ -260,7 +264,9 @@ public class MyPagePresenterImpl implements MyPagePresenter {
                     // 새로운 멘션 메세지 추가
                     view.addNewMention(mentionMessage);
                     view.notifyDataSetChanged();
-                }, t -> {LogUtil.d(TAG, t.getMessage());});
+                }, t -> {
+                    LogUtil.d(TAG, t.getMessage());
+                });
 
     }
 }

@@ -285,7 +285,7 @@
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_guide_to_assign_topic_owner">"トピックメニューから次の管理者を指定してからトピックから退出させられます。"</string>
 	<string name="jandi_has_joined">"%sさんが参加しました"</string>
-	<string name="jandi_has_no_search_result">" '%s'に一致する結果がありません"</string>
+	<string name="jandi_has_no_search_result">"%s'に一致する結果がありません"</string>
 	<string name="jandi_has_no_searched_member">"<![CDATA[<b><font color=#404040>%s</font></b>]]>に一致する結果がありません"</string>
 	<string name="jandi_have_an_account_already">"すでにJANDIに登録済みの方はこちら"</string>
 	<string name="jandi_help">"ヘルプ"</string>
