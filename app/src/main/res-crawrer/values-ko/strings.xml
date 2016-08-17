@@ -286,8 +286,8 @@
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_guide_to_assign_topic_owner">"토픽 상세보기 > 토픽 관리자 변경하기에서 다음 관리자를 지정한 후 토픽에서 내보낼 수 있습니다."</string>
 	<string name="jandi_has_joined">"%s님이 참여하였습니다"</string>
-	<string name="jandi_has_no_search_result">""</string>
-	<string name="jandi_has_no_searched_member">""</string>
+	<string name="jandi_has_no_search_result">"%s'의 검색 결과가 없습니다."</string>
+	<string name="jandi_has_no_searched_member">"<![CDATA[<b><font color=#404040>%s</font></b>]]>의 검색 결과가 없습니다."</string>
 	<string name="jandi_have_an_account_already">"이미 계정이 있으신가요?"</string>
 	<string name="jandi_help">"도움말"</string>
 	<string name="jandi_hi_apk_store">"Hi Apk 스토어"</string>
@@ -295,7 +295,6 @@
 	<string name="jandi_image_too_big">"이미지가 너무 큽니다."</string>
 	<string name="jandi_incorrect_passcode">"비밀번호가 일치하지 않습니다."</string>
 	<string name="jandi_info">"잔디 정보"</string>
-	<string name="jandi_input_available_length">"총 {number}개 커넥트 연동 중"</string>
 	<string name="jandi_input_enough_items">"보기는 최소 2개 이상 입력해주세요."</string>
 	<string name="jandi_input_password">"선택한 팀 계정의 비밀번호를 입력하세요"</string>
 	<string name="jandi_input_poll_item">"보기를 입력하세요"</string>
@@ -437,7 +436,7 @@
 	<string name="jandi_poll">"투표"</string>
 	<string name="jandi_poll_add_item">"보기추가"</string>
 	<string name="jandi_poll_anonymous">"익명투표"</string>
-	<string name="jandi_poll_create">"만들기"</string>
+	<string name="jandi_poll_create">"새 투표 작성하기"</string>
 	<string name="jandi_poll_deleted">"투표를 삭제했습니다."</string>
 	<string name="jandi_poll_empty_1">"진행중인 투표가 없습니다."</string>
 	<string name="jandi_poll_empty_2">"토픽에서 [+]를 눌러 투표를 만들 수 있습니다."</string>
@@ -664,7 +663,7 @@
 	<string name="jandi_unpinned_message">"즐겨찾기 해제됨"</string>
 	<string name="jandi_unread_messages_below">"여기까지 읽었습니다."</string>
 	<string name="jandi_unshare_succeed">"%s 공유가 해제되었습니다."</string>
-	<string name="jandi_unshared_file">""</string>
+	<string name="jandi_unshared_file">"공유 해제됨"</string>
 	<string name="jandi_unshared_file_in_dm">"이 파일은 이 대화에서 공유 해제되어 더 이상 즐겨찾기를 하실 수 없습니다."</string>
 	<string name="jandi_unshared_message">"원본에 대한 접근 권한이 없습니다."</string>
 	<string name="jandi_unstarred">"즐겨찾기 해제"</string>
