@@ -111,6 +111,7 @@ public class MyPagePresenterImpl implements MyPagePresenter {
 
     @Override
     public void onGetPollBadge() {
+
         view.setPollBadgeCount(model.getPollBadgeCount());
     }
 
@@ -264,9 +265,7 @@ public class MyPagePresenterImpl implements MyPagePresenter {
                     // 새로운 멘션 메세지 추가
                     view.addNewMention(mentionMessage);
                     view.notifyDataSetChanged();
-                }, t -> {
-                    LogUtil.d(TAG, t.getMessage());
-                });
+                }, t -> {LogUtil.d(TAG, t.getMessage());});
 
     }
 }
