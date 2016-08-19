@@ -294,7 +294,6 @@
 	<string name="jandi_image_too_big">"图像过大无法加载"</string>
 	<string name="jandi_incorrect_passcode">"密码不吻合"</string>
 	<string name="jandi_info">"JANDI版本"</string>
-	<string name="jandi_input_available_length">"总共{number}项聚合"</string>
 	<string name="jandi_input_enough_items">"项目最少要2个以上"</string>
 	<string name="jandi_input_password">"请为选择的团队输入您的密码"</string>
 	<string name="jandi_input_poll_item">"调查项目"</string>
@@ -326,6 +325,7 @@
 	<string name="jandi_invite_success">"邀请已经成功送出"</string>
 	<string name="jandi_invite_to_dummy_account_again">"其他成员已寄发邀请信至该邮箱，你确定要在发送一次吗？"</string>
 	<string name="jandi_invite_to_team">"邀请加入团队"</string>
+	<string name="jandi_invite_to_team_for_member">"寄送邀请"</string>
 	<string name="jandi_invite_wechat">"微信"</string>
 	<string name="jandi_invited_topic">"%1$s邀请了%2$s"</string>
 	<string name="jandi_is_newcomer">"还没使用过JANDI吗?"</string>
@@ -431,7 +431,7 @@
 	<string name="jandi_poll">"问卷调查"</string>
 	<string name="jandi_poll_add_item">"添加选项"</string>
 	<string name="jandi_poll_anonymous">"不记名"</string>
-	<string name="jandi_poll_create">"建立"</string>
+	<string name="jandi_poll_create">"建立新的投票"</string>
 	<string name="jandi_poll_deleted">"投票已经删除"</string>
 	<string name="jandi_poll_empty_1">"无进行中的问卷"</string>
 	<string name="jandi_poll_empty_2">"\n点击[+]建立新问卷"</string>
@@ -596,6 +596,7 @@
 	<string name="jandi_tab_topic">"议题"</string>
 	<string name="jandi_tab_tos_and_pp">"点击「下一步」即表示您同意%1$s和%2$s。"</string>
 	<string name="jandi_team">"团队"</string>
+	<string name="jandi_team_admin">"团队管理员"</string>
 	<string name="jandi_team_create_domain_info">"想要给您的JANDI\n团队设定什么网址？"</string>
 	<string name="jandi_team_create_domain_invalid">"仅限英文字母、数字和连字符(-)"</string>
 	<string name="jandi_team_create_domain_length_invalid">"至少使用3个字元"</string>
@@ -646,6 +647,7 @@
 	<string name="jandi_topic_was_removed">"你已不在此标记的议题内"</string>
 	<string name="jandi_tos">"使用条款"</string>
 	<string name="jandi_tos_and_pp">"<![CDATA[使用条款 & 隐私权条款]]>"</string>
+	<string name="jandi_total_count_of_member">"成员人数"</string>
 	<string name="jandi_try_again">"请再试一次"</string>
 	<string name="jandi_tutorial_file">"简单的几个点击上传文件"</string>
 	<string name="jandi_tutorial_file_message">"零时间、空间限制，随时从行动装置分享文档、幻灯片、视频及任何文件给所有团队成员。"</string>

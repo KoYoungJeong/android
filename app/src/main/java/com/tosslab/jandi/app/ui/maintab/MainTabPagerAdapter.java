@@ -9,7 +9,7 @@ import android.view.View;
 import com.tosslab.jandi.app.ui.maintab.chat.MainChatListFragment_;
 import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
 import com.tosslab.jandi.app.ui.maintab.mypage.MyPageFragment;
-import com.tosslab.jandi.app.ui.maintab.team.TeamFragment;
+import com.tosslab.jandi.app.ui.maintab.team.TeamMainFragment;
 import com.tosslab.jandi.app.ui.maintab.topic.MainTopicListFragment_;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 import com.tosslab.jandi.app.views.TabView;
@@ -62,7 +62,7 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
             case TAB_FILE:
                 return new FileListFragment();
             case TAB_TEAM:
-                return new TeamFragment();
+                return new TeamMainFragment();
             case TAB_MYPAGE:
                 return new MyPageFragment();
             default:

@@ -285,7 +285,7 @@
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_guide_to_assign_topic_owner">"トピックメニューから次の管理者を指定してからトピックから退出させられます。"</string>
 	<string name="jandi_has_joined">"%sさんが参加しました"</string>
-	<string name="jandi_has_no_search_result">" '%s'に一致する結果がありません"</string>
+	<string name="jandi_has_no_search_result">"%s'に一致する結果がありません"</string>
 	<string name="jandi_has_no_searched_member">"<![CDATA[<b><font color=#404040>%s</font></b>]]>に一致する結果がありません"</string>
 	<string name="jandi_have_an_account_already">"すでにJANDIに登録済みの方はこちら"</string>
 	<string name="jandi_help">"ヘルプ"</string>
@@ -294,7 +294,6 @@
 	<string name="jandi_image_too_big">"画像が大きすぎです"</string>
 	<string name="jandi_incorrect_passcode">"パスコードが間違っています。"</string>
 	<string name="jandi_info">"JANDI情報"</string>
-	<string name="jandi_input_available_length">"総{number}個のコネクト連携中"</string>
 	<string name="jandi_input_enough_items">"回答は少なくとも２つ以上入力してください。"</string>
 	<string name="jandi_input_password">"選択したチームのパスワードを入力してください"</string>
 	<string name="jandi_input_poll_item">"回答"</string>
@@ -327,6 +326,7 @@
 	<string name="jandi_invite_to_dummy_account_again">"入力したメールアドレスはすでに他のメンバーが招待中です。
 招待メールを再送信しますか？"</string>
 	<string name="jandi_invite_to_team">"チームに招待する"</string>
+	<string name="jandi_invite_to_team_for_member">"チーム招待状を送る"</string>
 	<string name="jandi_invite_wechat">"WeChat"</string>
 	<string name="jandi_invited_topic">"%1$sが %2$sさんを招待しました"</string>
 	<string name="jandi_is_newcomer">"初めてJANDIを使いますか？"</string>
@@ -435,7 +435,7 @@
 	<string name="jandi_poll">"投票"</string>
 	<string name="jandi_poll_add_item">"回答を追加する"</string>
 	<string name="jandi_poll_anonymous">"匿名投票"</string>
-	<string name="jandi_poll_create">"作成"</string>
+	<string name="jandi_poll_create">"新しい投票を作成する"</string>
 	<string name="jandi_poll_deleted">"投票を削除しました。"</string>
 	<string name="jandi_poll_empty_1">"実施中の投票がありません。"</string>
 	<string name="jandi_poll_empty_2">"\nトピックで「＋」を押し、投票を作成してください。"</string>
@@ -600,6 +600,7 @@
 	<string name="jandi_tab_topic">"トピックス"</string>
 	<string name="jandi_tab_tos_and_pp">"「次へ」をクリックすることによって、弊社のサービス%1$sと%2$sに同意いただいたことになります。"</string>
 	<string name="jandi_team">"チーム"</string>
+	<string name="jandi_team_admin">"チーム管理者"</string>
 	<string name="jandi_team_create_domain_info">"チームドメインURLを指定してショー\nトカットアドレスに使うことができます。"</string>
 	<string name="jandi_team_create_domain_invalid">"英数字または(-)のみ入力してください。"</string>
 	<string name="jandi_team_create_domain_length_invalid">"3文字以上入力してください。"</string>
@@ -650,6 +651,7 @@
 	<string name="jandi_topic_was_removed">"すでに参加していないトピックなので原本が表示できません"</string>
 	<string name="jandi_tos">"サービス利用規約"</string>
 	<string name="jandi_tos_and_pp">"サービス利用規約"</string>
+	<string name="jandi_total_count_of_member">"メンバー数"</string>
 	<string name="jandi_try_again">"閉じる"</string>
 	<string name="jandi_tutorial_file">"たった数回のタップでファイルを共有"</string>
 	<string name="jandi_tutorial_file_message">"PPT、XLS、PDFなどどのようなファイル形式でもJANDIにアップロードし共有することができます。アップロードされたファイルはいつでも利用可能で、簡単に検索して探すことができます"</string>

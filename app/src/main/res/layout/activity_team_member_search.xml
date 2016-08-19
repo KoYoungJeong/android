@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/actionbar_team_member_search"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/actionbar_icon_back">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <EditText
+                android:id="@+id/et_team_member_search_keyword"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="16dp"
+                android:hint="이름, 부서, 직급"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textColor="@color/white"
+                android:textColorHint="@color/jandi_text_light_gray"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/iv_team_member_search_mic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@+id/et_team_member_search_keyword"
+                android:layout_centerVertical="true"
+                android:src="@drawable/btn_search_voice" />
+        </RelativeLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager_team_member_search"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignTop="@+id/tabs_team_member_search"
+        android:paddingTop="?actionBarSize" />
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabs_team_member_search"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:layout_below="@+id/actionbar_team_member_search"
+        app:tabBackground="@color/jandi_main_tab_background"
+        app:tabIndicatorColor="@color/jandi_primary_color"
+        app:tabIndicatorHeight="4dp"
+        app:tabSelectedTextColor="@color/jandi_primary_color"
+        app:tabTextColor="@color/jandi_text_light" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignBottom="@+id/tabs_team_member_search"
+        android:background="@color/jandi_tab_underline" />
+
+
+</RelativeLayout>
