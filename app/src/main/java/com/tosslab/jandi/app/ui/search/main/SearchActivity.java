@@ -207,8 +207,14 @@ public class SearchActivity extends BaseAppCompatActivity
             }
             searchPresenter.sendSearchQuery(
                     tvSearchKeyword.getText().toString(), isOnlyMessageMode);
-            tvSearchKeyword.dismissDropDown();
             hideKeyboard();
+
+            // nexus 6를 위한 예외처리 - 포커스가 hidekeyboard이후에 간헐적으로 올라옴
+            Observable.just(1)
+                    .delay(100, TimeUnit.MILLISECONDS)
+                    .subscribe(i -> {
+                        tvSearchKeyword.dismissDropDown();
+                    });
         } else {
             ColoredToast.show(R.string.jandi_search_available_length_of_keyword);
         }
