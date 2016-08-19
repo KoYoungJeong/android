@@ -10,15 +10,14 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp" />
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="28dp" />
 
     <TextView
         android:id="@+id/tv_room_filter_topic_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginRight="16dp"
         android:layout_toRightOf="@+id/iv_room_filter_topic_icon"
         android:ellipsize="end"
         android:maxLines="1"

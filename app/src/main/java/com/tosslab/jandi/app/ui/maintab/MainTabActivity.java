@@ -15,7 +15,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -74,6 +73,8 @@ import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -82,8 +83,6 @@ import com.tosslab.jandi.app.views.MaxHeightRecyclerView;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 import com.tosslab.jandi.app.views.TabView;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
@@ -224,14 +223,18 @@ public class MainTabActivity extends BaseAppCompatActivity implements TeamsView 
         Observable.defer(() -> {
             long myId = TeamInfoLoader.getInstance().getMyId();
             User me = TeamInfoLoader.getInstance().getUser(myId);
-            return Observable.just(me);
+            if (me != null) {
+                return Observable.just(me);
+            } else {
+                return Observable.empty();
+            }
         })
                 .filter(me -> !me.isProfileUpdated())
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(user -> {
                     moveSetProfileActivity();
-                });
+                }, t -> {});
 
 
     }

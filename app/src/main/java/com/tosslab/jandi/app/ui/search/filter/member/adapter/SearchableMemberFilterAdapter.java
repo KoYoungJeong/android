@@ -81,6 +81,15 @@ public class SearchableMemberFilterAdapter extends MultiItemRecyclerAdapter
             itemView.setBackgroundColor(isSelectedMember
                     ? resources.getColor(R.color.jandi_selected_member)
                     : resources.getColor(R.color.white));
+
+            if (holder instanceof MemberViewHolder) {
+                MemberViewHolder memberViewHolder = (MemberViewHolder) holder;
+                if (position == getItemCount() - 1) {
+                    memberViewHolder.showFullDivider();
+                } else {
+                    memberViewHolder.showHalfDivider();
+                }
+            }
         }
 
     }

@@ -13,7 +13,7 @@
         <menu>
             <item
                 android:id="@+id/action_file_detail_share"
-                android:title="@string/jandi_action_share" />
+                android:title="@string/jandi_file_share_action" />
             <item
                 android:id="@+id/action_file_detail_unshare"
                 android:title="@string/jandi_action_unshare" />

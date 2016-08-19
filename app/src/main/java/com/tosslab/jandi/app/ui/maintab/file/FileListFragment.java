@@ -162,7 +162,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
             entityId = bundle.getLong(PARAM_ENTITY_ID, -1);
         }
         DaggerFileListComponent.builder()
-                .fileListModule(new FileListModule(this, entityId))
+                .fileListModule(new FileListModule(this, entityId, isInSearchActivity()))
                 .build()
                 .inject(this);
         filePickerViewModel = MainFileUploadControllerImpl_.getInstance_(getContext());
@@ -439,6 +439,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         RelativeLayout.LayoutParams loadingLayoutParams = (RelativeLayout.LayoutParams) loadingView.getLayoutParams();
         loadingLayoutParams.topMargin = paddingTop;
         loadingView.setLayoutParams(loadingLayoutParams);
+        loadingView.setVisibility(View.GONE);
 
         lvSearchFiles.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

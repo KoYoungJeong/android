@@ -44,7 +44,7 @@
             android:layout_toLeftOf="@id/tv_jobtitle_department_count"
             android:background="@android:color/transparent"
             android:gravity="center_vertical"
-            android:hint="@string/jandi_insert_new_department"
+            android:hint="@string/jandi_enter_your_dept"
             android:inputType="text"
             android:lines="1"
             android:maxLines="1"

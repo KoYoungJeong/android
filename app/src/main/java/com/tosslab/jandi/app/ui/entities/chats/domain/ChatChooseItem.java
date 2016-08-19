@@ -31,6 +31,7 @@ public class ChatChooseItem {
                 .enabled(user.isEnabled())
                 .inactive(user.isInactive())
                 .email(user.getEmail())
+                .isBot(user.isBot())
                 .department(user.getDivision())
                 .jobTitle(user.getPosition())
                 .owner(user.isTeamOwner())
@@ -131,6 +132,11 @@ public class ChatChooseItem {
 
     public boolean isBot() {
         return isBot;
+    }
+
+    public ChatChooseItem setBot(boolean bot) {
+        isBot = bot;
+        return this;
     }
 
     public ChatChooseItem isBot(boolean isBot) {

@@ -17,10 +17,12 @@ public class FileListModule {
 
     private FileListPresenterImpl.View view;
     private long searchedEntityId;
+    private final boolean inSearchActivity;
 
-    public FileListModule(FileListPresenterImpl.View view, long searchedEntityId) {
+    public FileListModule(FileListPresenterImpl.View view, long searchedEntityId, boolean inSearchActivity) {
         this.view = view;
         this.searchedEntityId = searchedEntityId;
+        this.inSearchActivity = inSearchActivity;
     }
 
     @Provides
@@ -30,7 +32,7 @@ public class FileListModule {
 
     @Provides
     FileListPresenter provideFileListPresenter(FileListModel model) {
-        return new FileListPresenterImpl(searchedEntityId, model, view);
+        return new FileListPresenterImpl(searchedEntityId, model, view, inSearchActivity);
     }
 
 }

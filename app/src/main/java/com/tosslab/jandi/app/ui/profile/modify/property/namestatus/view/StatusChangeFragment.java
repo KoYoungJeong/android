@@ -108,7 +108,7 @@ public class StatusChangeFragment extends Fragment implements NameStatusPresente
 
     @Override
     public void dismissProgress() {
-        if (progressWheel != null && !progressWheel.isShowing()) {
+        if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
         }
     }

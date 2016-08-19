@@ -1,116 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/layout_search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:visibility="visible" />
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/jandi_settings_background"
-        android:orientation="vertical">
+        android:clipToPadding="false"
+        android:fillViewport="true">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/layout_search_bar"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:visibility="visible" />
+            android:layout_height="match_parent"
+            android:background="@color/jandi_settings_background"
+            android:orientation="vertical">
 
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="132dp"
-            android:layout_marginBottom="12dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="132dp"
+                android:layout_marginBottom="12dp">
 
-            <ImageView
-                android:id="@+id/profile_photo"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center"
-                android:src="@drawable/profile_img" />
+                <ImageView
+                    android:id="@+id/profile_photo"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:src="@drawable/profile_img" />
 
-            <ImageView
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/profile_photo"
+                    android:layout_alignRight="@+id/profile_photo"
+                    android:layout_marginBottom="-4dp"
+                    android:layout_marginRight="-1dp"
+                    android:src="@drawable/icon_profile_photo_edit" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/jandi_d1d1d1" />
+
+            <com.tosslab.jandi.app.views.profile.ProfileLabelView
+                android:id="@+id/profile_user_realname"
+                style="@style/JandiMemberProfile.Profile"
+                app:textTitle="@string/jandi_title_name" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/jandi_d1d1d1" />
+
+            <com.tosslab.jandi.app.views.profile.ProfileLabelView
+                android:id="@+id/profile_user_email"
+                style="@style/JandiMemberProfile.Profile"
+                app:textTitle="@string/jandi_profile_email" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/jandi_d1d1d1" />
+
+            <com.tosslab.jandi.app.views.profile.ProfileLabelView
+                android:id="@+id/profile_user_status_message"
+                style="@style/JandiMemberProfile.Profile"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/profile_photo"
-                android:layout_alignRight="@+id/profile_photo"
-                android:layout_marginBottom="-4dp"
-                android:layout_marginRight="-1dp"
-                android:src="@drawable/icon_profile_photo_edit" />
+                android:minHeight="72dp"
+                app:textContentSingleline="false"
+                app:textHintContent="@string/jandi_enter_your_status_message"
+                app:textTitle="@string/jandi_profile_status_message" />
 
-        </RelativeLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/jandi_d1d1d1" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/jandi_d1d1d1" />
+            <com.tosslab.jandi.app.views.profile.ProfileLabelView
+                android:id="@+id/profile_user_phone_number"
+                style="@style/JandiMemberProfile.Profile"
+                app:textHintContent="@string/jandi_enter_phone_number"
+                app:textTitle="@string/jandi_profile_phone_number" />
 
-        <com.tosslab.jandi.app.views.profile.ProfileLabelView
-            android:id="@+id/profile_user_realname"
-            style="@style/JandiMemberProfile.Profile"
-            app:textTitle="@string/jandi_title_name" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/jandi_d1d1d1" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/jandi_d1d1d1" />
+            <com.tosslab.jandi.app.views.profile.ProfileLabelView
+                android:id="@+id/profile_user_division"
+                style="@style/JandiMemberProfile.Profile"
+                app:textHintContent="@string/jandi_enter_your_dept"
+                app:textTitle="@string/jandi_profile_division" />
 
-        <com.tosslab.jandi.app.views.profile.ProfileLabelView
-            android:id="@+id/profile_user_email"
-            style="@style/JandiMemberProfile.Profile"
-            app:textTitle="@string/jandi_profile_email" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/jandi_d1d1d1" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/jandi_d1d1d1" />
+            <com.tosslab.jandi.app.views.profile.ProfileLabelView
+                android:id="@+id/profile_user_position"
+                style="@style/JandiMemberProfile.Profile"
+                app:textHintContent="@string/jandi_enter_your_job_title"
+                app:textTitle="@string/jandi_profile_position" />
 
-        <com.tosslab.jandi.app.views.profile.ProfileLabelView
-            android:id="@+id/profile_user_status_message"
-            style="@style/JandiMemberProfile.Profile"
-            android:layout_height="wrap_content"
-            android:minHeight="72dp"
-            app:textContentSingleline="false"
-            app:textTitle="@string/jandi_profile_status_message" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/jandi_d1d1d1" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/jandi_d1d1d1" />
-
-        <com.tosslab.jandi.app.views.profile.ProfileLabelView
-            android:id="@+id/profile_user_phone_number"
-            style="@style/JandiMemberProfile.Profile"
-            app:textTitle="@string/jandi_profile_phone_number" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/jandi_d1d1d1" />
-
-        <com.tosslab.jandi.app.views.profile.ProfileLabelView
-            android:id="@+id/profile_user_division"
-            style="@style/JandiMemberProfile.Profile"
-            app:textTitle="@string/jandi_profile_division" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/jandi_d1d1d1" />
-
-        <com.tosslab.jandi.app.views.profile.ProfileLabelView
-            android:id="@+id/profile_user_position"
-            style="@style/JandiMemberProfile.Profile"
-            app:textTitle="@string/jandi_profile_position" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/jandi_d1d1d1" />
-
-    </LinearLayout>
-</ScrollView>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

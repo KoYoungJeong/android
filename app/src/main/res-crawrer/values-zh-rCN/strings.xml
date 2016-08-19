@@ -211,6 +211,8 @@
 	<string name="jandi_enter_new_passcode">"输入新密码"</string>
 	<string name="jandi_enter_passcode">"输入您的密码"</string>
 	<string name="jandi_enter_phone_number">"请输入您的电话号码"</string>
+	<string name="jandi_enter_your_dept">"输入你的部门"</string>
+	<string name="jandi_enter_your_job_title">"输入你的职位"</string>
 	<string name="jandi_enter_your_status_message">"输入你的状态"</string>
 	<string name="jandi_entity_create_entity_name">"名字"</string>
 	<string name="jandi_entity_joined_topic">"我的议题"</string>
@@ -231,7 +233,7 @@
 	<string name="jandi_export_to_app">"导出文件至..."</string>
 	<string name="jandi_fail_send_password_reset_email">"密码重设电子邮件无法寄出"</string>
 	<string name="jandi_fail_web_token">"登录时遇到问题，请再试一次。"</string>
-	<string name="jandi_file_category_all">"<b>所有文件</b>"</string>
+	<string name="jandi_file_category_all">"<b>全部类别</b>"</string>
 	<string name="jandi_file_category_audio">"音频"</string>
 	<string name="jandi_file_category_document">"文件"</string>
 	<string name="jandi_file_category_image">"图像"</string>
@@ -356,6 +358,7 @@
 	<string name="jandi_mention_push_message">"%s 提及你"</string>
 	<string name="jandi_mentions_are_empty">"你尚未被其他成员提及。
 欲提及其他成员？输入"@"后成员名单跳出，选取成员完成提及。"</string>
+	<string name="jandi_menu_room_selection">"选择讨论空间"</string>
 	<string name="jandi_message_ask_about_delete_comment">"您确定要永久删除这留言吗？删除的留言将无法复原。"</string>
 	<string name="jandi_message_ask_about_deleting">"您确定要删除此信息吗？删除的信息将无法复原。"</string>
 	<string name="jandi_message_create_entity">"已建立 %1$s"</string>
@@ -367,6 +370,7 @@
 	<string name="jandi_message_logout">"已登出"</string>
 	<string name="jandi_message_no_member">"不再单打独斗，现在就邀请所有伙伴加入你的团队！"</string>
 	<string name="jandi_message_no_starred">"取消标记"</string>
+	<string name="jandi_message_search">"信息搜索"</string>
 	<string name="jandi_message_search_available">"信息关键词搜索功能上线啰！"</string>
 	<string name="jandi_message_search_available_detail">"利用关键词轻松搜寻对话记录，还可以根据议题或发送者缩小搜寻范围，清楚了解对话或事件的来龙去脉！跃跃欲试吗？马上点击右上角的放大镜开始关键词搜寻！"</string>
 	<string name="jandi_message_send">"送出"</string>
@@ -426,7 +430,7 @@
 	<string name="jandi_poll">"问卷调查"</string>
 	<string name="jandi_poll_add_item">"添加选项"</string>
 	<string name="jandi_poll_anonymous">"不记名"</string>
-	<string name="jandi_poll_create">"建立"</string>
+	<string name="jandi_poll_create">"建立新的投票"</string>
 	<string name="jandi_poll_deleted">"投票已经删除"</string>
 	<string name="jandi_poll_empty_1">"无进行中的问卷"</string>
 	<string name="jandi_poll_empty_2">"\n点击[+]建立新问卷"</string>
@@ -487,6 +491,7 @@
 	<string name="jandi_sdcard_storage_unmounted">"解除连接记忆卡"</string>
 	<string name="jandi_search_all_member">"所有成员"</string>
 	<string name="jandi_search_all_room">"所有讨论"</string>
+	<string name="jandi_search_available_length_of_keyword">"输入的关键词需一个字符以上"</string>
 	<string name="jandi_search_category_everyone">"<b>所有成员</b>"</string>
 	<string name="jandi_search_category_everywhere">"<b>所有讨论</b>"</string>
 	<string name="jandi_search_history">"最近搜寻纪录"</string>

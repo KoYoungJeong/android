@@ -72,7 +72,7 @@ public class FileUtil {
         return !TextUtils.isEmpty(fileName) && fileName.lastIndexOf(".") > 0;
     }
 
-    public static String getFileExtension(String fileName) {
+    public static String getFileName(String fileName, String ext) {
         if (hasFileExt(fileName)) {
             return fileName.substring(fileName.lastIndexOf(".") + 1);
         } else {

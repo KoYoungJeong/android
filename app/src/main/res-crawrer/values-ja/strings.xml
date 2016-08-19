@@ -211,6 +211,8 @@
 	<string name="jandi_enter_new_passcode">"新しいパスコードを入力 "</string>
 	<string name="jandi_enter_passcode">"パスワードを入力してください"</string>
 	<string name="jandi_enter_phone_number">"電話番号を入力してください"</string>
+	<string name="jandi_enter_your_dept">"部署を入力してください"</string>
+	<string name="jandi_enter_your_job_title">"役職を入力してください"</string>
 	<string name="jandi_enter_your_status_message">"ステータスメッセージを入力"</string>
 	<string name="jandi_entity_create_entity_name">"名前"</string>
 	<string name="jandi_entity_joined_topic">"参加中のトピック"</string>
@@ -283,7 +285,7 @@
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_guide_to_assign_topic_owner">"トピックメニューから次の管理者を指定してからトピックから退出させられます。"</string>
 	<string name="jandi_has_joined">"%sさんが参加しました"</string>
-	<string name="jandi_has_no_search_result">" '%s'に一致する結果がありません"</string>
+	<string name="jandi_has_no_search_result">"%s'に一致する結果がありません"</string>
 	<string name="jandi_has_no_searched_member">"<![CDATA[<b><font color=#404040>%s</font></b>]]>に一致する結果がありません"</string>
 	<string name="jandi_have_an_account_already">"すでにJANDIに登録済みの方はこちら"</string>
 	<string name="jandi_help">"ヘルプ"</string>
@@ -357,6 +359,7 @@
 	<string name="jandi_mention_push_message">"%sさんからのメンション"</string>
 	<string name="jandi_mentions_are_empty">"チームメンバーからメンションされたけんがありません。
 メンションするには、メッセージやコメントを入力する時「@」を入力してください"</string>
+	<string name="jandi_menu_room_selection">"トークルーム選択_x007f_"</string>
 	<string name="jandi_message_ask_about_delete_comment">"本当に削除しますか？元には戻せません"</string>
 	<string name="jandi_message_ask_about_deleting">"本当に削除しますか？元には戻せません"</string>
 	<string name="jandi_message_create_entity">"%1$s が作成されました"</string>
@@ -369,6 +372,8 @@
 	<string name="jandi_message_logout">"ログアウトしました"</string>
 	<string name="jandi_message_no_member">"このチームには他のメンバーがいません。新しいメンバーを招待してコラボレーションを始めましょう"</string>
 	<string name="jandi_message_no_starred">"お気に入りから削除しました"</string>
+	<string name="jandi_message_search">"メッセージ
+検索"</string>
 	<string name="jandi_message_search_available">"メッセージ検索機能が実装されました。"</string>
 	<string name="jandi_message_search_available_detail">"キーワードを入力してメッセージを検索したり、送信者や送信先で絞り込んだり、検索結果のメッセージにジャンプすることもできます。"</string>
 	<string name="jandi_message_send">"送信"</string>
@@ -429,7 +434,7 @@
 	<string name="jandi_poll">"投票"</string>
 	<string name="jandi_poll_add_item">"回答を追加する"</string>
 	<string name="jandi_poll_anonymous">"匿名投票"</string>
-	<string name="jandi_poll_create">"作成"</string>
+	<string name="jandi_poll_create">"新しい投票を作成する"</string>
 	<string name="jandi_poll_deleted">"投票を削除しました。"</string>
 	<string name="jandi_poll_empty_1">"実施中の投票がありません。"</string>
 	<string name="jandi_poll_empty_2">"\nトピックで「＋」を押し、投票を作成してください。"</string>
@@ -490,6 +495,7 @@
 	<string name="jandi_sdcard_storage_unmounted">"SDカードのマウントを解除しました"</string>
 	<string name="jandi_search_all_member">"全員"</string>
 	<string name="jandi_search_all_room">"全トピック"</string>
+	<string name="jandi_search_available_length_of_keyword">"検索キーワードは２文字以上で入力してください。"</string>
 	<string name="jandi_search_category_everyone">"<b>全員</b>"</string>
 	<string name="jandi_search_category_everywhere">"<b>全トピック</b>"</string>
 	<string name="jandi_search_history">"最近の検索"</string>

@@ -64,6 +64,10 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     ViewGroup vgUserSelected;
     @Bind(R.id.cb_user_selected)
     AppCompatCheckBox cbUserSelected;
+    @Bind(R.id.v_half_divider)
+    View vHalfDivider;
+    @Bind(R.id.v_full_divider)
+    View vFullDivider;
 
     private boolean isTeamMemberList = false;
     private boolean isKickMode = false;
@@ -85,6 +89,16 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.item_entity_body_two_line, parent, false);
         return new ChatChooseItemViewHolder(itemView);
+    }
+
+    public void showHalfDivider() {
+            vHalfDivider.setVisibility(View.VISIBLE);
+            vFullDivider.setVisibility(View.GONE);
+    }
+
+    public void showFullDivider() {
+            vHalfDivider.setVisibility(View.GONE);
+            vFullDivider.setVisibility(View.VISIBLE);
     }
 
     public void setKickMode(boolean kickMode) {
