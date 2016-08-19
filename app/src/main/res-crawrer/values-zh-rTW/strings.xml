@@ -596,6 +596,7 @@
 	<string name="jandi_tab_topic">"議題"</string>
 	<string name="jandi_tab_tos_and_pp">"點擊「下一步」即表示您同意%1$s和%2$s。"</string>
 	<string name="jandi_team">"團隊"</string>
+	<string name="jandi_team_admin">"團隊管理員"</string>
 	<string name="jandi_team_create_domain_info">"想要給您的JANDI\n團隊設定什麼網址？"</string>
 	<string name="jandi_team_create_domain_invalid">"僅限英文字母、數字和連字符(-)"</string>
 	<string name="jandi_team_create_domain_length_invalid">"至少使用3個字元"</string>
@@ -646,6 +647,7 @@
 	<string name="jandi_topic_was_removed">"此信息/文件已被标示"</string>
 	<string name="jandi_tos">"使用條款"</string>
 	<string name="jandi_tos_and_pp">"<![CDATA[使用條款 & 隱私權條款]]>"</string>
+	<string name="jandi_total_count_of_member">"成員人數"</string>
 	<string name="jandi_try_again">"請再試一次"</string>
 	<string name="jandi_tutorial_file">"簡單的幾個點擊上傳檔案"</string>
 	<string name="jandi_tutorial_file_message">"零時間、空間限制，隨時從行動裝置分享文件、簡報、視頻及任何檔案給所有團隊成員。"</string>

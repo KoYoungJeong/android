@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.ui.search.main.adapter.viewholder.MessageHeaderView
 import com.tosslab.jandi.app.ui.search.main.adapter.viewholder.MessageItemViewHolder;
 import com.tosslab.jandi.app.ui.search.main.adapter.viewholder.NoMessageItemViewHolder;
 import com.tosslab.jandi.app.ui.search.main.adapter.viewholder.NoRoomItemViewHolder;
+import com.tosslab.jandi.app.ui.search.main.adapter.viewholder.OneToOneRoomItemViewHolder;
 import com.tosslab.jandi.app.ui.search.main.adapter.viewholder.RoomHeaderViewHolder;
 import com.tosslab.jandi.app.ui.search.main.adapter.viewholder.RoomItemViewHolder;
 import com.tosslab.jandi.app.ui.search.main.adapter.viewholder.SearchStickyHeaderViewHolder;
@@ -19,6 +20,7 @@ import com.tosslab.jandi.app.ui.search.main.object.SearchData;
 import com.tosslab.jandi.app.ui.search.main.object.SearchHistoryData;
 import com.tosslab.jandi.app.ui.search.main.object.SearchMessageData;
 import com.tosslab.jandi.app.ui.search.main.object.SearchMessageHeaderData;
+import com.tosslab.jandi.app.ui.search.main.object.SearchOneToOneRoomData;
 import com.tosslab.jandi.app.ui.search.main.object.SearchTopicRoomData;
 import com.tosslab.jandi.app.utils.UiUtils;
 
@@ -34,8 +36,10 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
         implements SearchAdapterDataModel, SearchAdapterViewModel, StickyRecyclerHeadersAdapter<SearchStickyHeaderViewHolder> {
 
     private boolean isRoomItemFold = false;
+    private boolean isOnlyMessageMode = false;
 
     private List<SearchTopicRoomData> searchTopicRoomDatas = new ArrayList<>();
+    private List<SearchOneToOneRoomData> searchOneToOneRoomDatas = new ArrayList<>();
     private List<SearchMessageData> searchMessageDatas = new ArrayList<>();
     private SearchMessageHeaderData searchMessageHeaderData = new SearchMessageHeaderData();
     private List<SearchHistoryData> searchHistoryDatas = new ArrayList<>();
@@ -51,6 +55,7 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     private HistoryItemViewHolder.OnDeleteHistoryListener onDeleteHistoryListener;
     private HistoryItemViewHolder.OnSelectHistoryListener onSelectHistoryListener;
     private RoomItemViewHolder.OnClickTopicListener onClickTopicListener;
+    private OneToOneRoomItemViewHolder.OnClickOneToOneRoomListener onClickOneToOneRoomListener;
     private MessageItemViewHolder.OnClickMessageListener onClickMessageListener;
     private MessageHeaderViewHolder.OnClickRoomSelectionButtonListener onClickRoomSelectionButtonListener;
     private MessageHeaderViewHolder.OnClickMemberSelectionButtonListener onClickMemberSelectionButtonListener;
@@ -82,14 +87,19 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
         this.searchHistoryDatas = searchHistoryDatas;
     }
 
-    public int getSearchTopicCnt() {
-        return searchTopicRoomDatas.size();
+    @Override
+    public void setSearchOneToOneRoomDatas(List<SearchOneToOneRoomData> searchOneToOneRoomDatas) {
+        this.searchOneToOneRoomDatas = searchOneToOneRoomDatas;
+    }
+
+    public int getSearchRoomCnt() {
+        return searchTopicRoomDatas.size() + searchOneToOneRoomDatas.size();
     }
 
     private void makeAllDatas() {
         isHistoryMode = false;
         datas.clear();
-        makeTopicDatas();
+        makeRoomDatas();
         makeMessageDatas();
     }
 
@@ -97,24 +107,25 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
         isHistoryMode = true;
         datas.clear();
 
-        SearchMessageHeaderData searchMessageHeaderDataForHistory =
-                new SearchMessageHeaderData.Builder()
-                        .setHasMore(false)
-                        .setShowProgress(false)
-                        .setShowSearchedResultMessage(false)
-                        .setType(SearchData.ITEM_TYPE_MESSAGE_HEADER_FOR_HISTORY)
-                        .setRoomName(searchMessageHeaderData.getRoomName())
-                        .setMemberName(searchMessageHeaderData.getMemberName())
-                        .build();
-        datas.add(searchMessageHeaderDataForHistory);
+        if (isOnlyMessageMode) {
+            SearchMessageHeaderData searchMessageHeaderDataForHistory =
+                    new SearchMessageHeaderData.Builder()
+                            .setHasMore(false)
+                            .setShowProgress(false)
+                            .setShowSearchedResultMessage(false)
+                            .setType(SearchData.ITEM_TYPE_MESSAGE_HEADER_FOR_HISTORY)
+                            .setRoomName(searchMessageHeaderData.getRoomName())
+                            .setMemberName(searchMessageHeaderData.getMemberName())
+                            .build();
+            datas.add(searchMessageHeaderDataForHistory);
+        }
 
         SearchData searchHistoryHeaderData = new SearchData();
         searchHistoryHeaderData.setType(SearchData.ITEM_TYPE_HISTORY_HEADER);
         datas.add(searchHistoryHeaderData);
 
         if (searchHistoryDatas.size() > 0) {
-            Observable.from(searchHistoryDatas)
-                    .subscribe(datas::add);
+            Observable.from(searchHistoryDatas).subscribe(datas::add);
         } else {
             SearchData searchHistoryNoData = new SearchData();
             searchHistoryNoData.setType(SearchData.ITEM_TYPE_NO_HISTORY_ITEM);
@@ -150,28 +161,47 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
         }
     }
 
-    private void makeTopicDatas() {
+    private void makeRoomDatas() {
         SearchData headerData = new SearchData();
         headerData.setType(SearchData.ITEM_TYPE_ROOM_HEADER);
         datas.add(headerData);
+
+        if (searchTopicRoomDatas.size() == 0 && searchOneToOneRoomDatas.size() == 0) {
+            SearchData data = new SearchData();
+            data.setType(SearchData.ITEM_TYPE_NO_ROOM_ITEM);
+            datas.add(data);
+            return;
+        }
+
         if (searchTopicRoomDatas.size() > 0) {
-            int searchTopicRoomCnt = searchTopicRoomDatas.size();
             Observable.from(searchTopicRoomDatas)
                     .map(searchTopicRoomData -> {
-                                if (searchTopicRoomDatas.get(searchTopicRoomCnt - 1)
-                                        .equals(searchTopicRoomData)) {
+                                searchTopicRoomData.setType(SearchData.ITEM_TYPE_TOPIC_ROOM_ITEM);
+                                if (searchOneToOneRoomDatas.size() == 0 &&
+                                        searchTopicRoomDatas.get(searchTopicRoomDatas.size() - 1)
+                                                .equals(searchTopicRoomData)) {
                                     searchTopicRoomData.setHasHalfLine(false);
                                 } else {
                                     searchTopicRoomData.setHasHalfLine(true);
                                 }
-                                searchTopicRoomData.setType(SearchData.ITEM_TYPE_ROOM_ITEM);
                                 return searchTopicRoomData;
                             }
                     ).subscribe(datas::add);
-        } else {
-            SearchData data = new SearchData();
-            data.setType(SearchData.ITEM_TYPE_NO_ROOM_ITEM);
-            datas.add(data);
+        }
+
+        if (searchOneToOneRoomDatas.size() > 0) {
+            Observable.from(searchOneToOneRoomDatas)
+                    .map(searchOneToOneRoomData -> {
+                                searchOneToOneRoomData.setType(SearchData.ITEM_TYPE_ONE_TO_ONE_ROOM_ITEM);
+                                if (searchOneToOneRoomDatas.get(searchOneToOneRoomDatas.size() - 1)
+                                        .equals(searchOneToOneRoomData)) {
+                                    searchOneToOneRoomData.setHasHalfLine(false);
+                                } else {
+                                    searchOneToOneRoomData.setHasHalfLine(true);
+                                }
+                                return searchOneToOneRoomData;
+                            }
+                    ).subscribe(datas::add);
         }
     }
 
@@ -217,13 +247,20 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
                     roomHeaderViewHolder.setSetOnCheckChangeListener(onCheckChangeListener);
                 }
                 return roomHeaderViewHolder;
-            case SearchData.ITEM_TYPE_ROOM_ITEM:
+            case SearchData.ITEM_TYPE_TOPIC_ROOM_ITEM:
                 RoomItemViewHolder roomItemViewHolder =
                         RoomItemViewHolder.newInstance(parent);
                 if (onClickTopicListener != null) {
                     roomItemViewHolder.setOnClickTopicListener(onClickTopicListener);
                 }
                 return roomItemViewHolder;
+            case SearchData.ITEM_TYPE_ONE_TO_ONE_ROOM_ITEM:
+                OneToOneRoomItemViewHolder oneToOneRoomItemViewHolder =
+                        OneToOneRoomItemViewHolder.newInstance(parent);
+                if (onClickOneToOneRoomListener != null) {
+                    oneToOneRoomItemViewHolder.setOnClickOneToOneRoomListener(onClickOneToOneRoomListener);
+                }
+                return oneToOneRoomItemViewHolder;
             case SearchData.ITEM_TYPE_NO_ROOM_ITEM:
                 return NoRoomItemViewHolder.newInstance(parent);
             case SearchData.ITEM_TYPE_HISTORY_HEADER:
@@ -231,6 +268,11 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
                         HistoryHeaderViewHolder.newInstance(parent);
                 if (onDeleteAllHistory != null) {
                     historyHeaderViewHolder.setOnDeleteAllHistory(onDeleteAllHistory);
+                }
+                if (searchHistoryDatas.size() > 0) {
+                    historyHeaderViewHolder.setShowDeleteButton(true);
+                } else {
+                    historyHeaderViewHolder.setShowDeleteButton(false);
                 }
                 return historyHeaderViewHolder;
             case SearchData.ITEM_TYPE_HISTORY_ITEM:
@@ -267,7 +309,11 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
                 holder.itemView.getLayoutParams().height = 0;
             }
 
-            if (getItemViewType(position) == SearchData.ITEM_TYPE_ROOM_ITEM) {
+            if (getItemViewType(position) == SearchData.ITEM_TYPE_TOPIC_ROOM_ITEM) {
+                holder.itemView.getLayoutParams().height = 0;
+            }
+
+            if (getItemViewType(position) == SearchData.ITEM_TYPE_ONE_TO_ONE_ROOM_ITEM) {
                 holder.itemView.getLayoutParams().height = 0;
             }
 
@@ -279,7 +325,11 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
                 holder.itemView.getLayoutParams().height = (int) UiUtils.getPixelFromDp(48);
             }
 
-            if (getItemViewType(position) == SearchData.ITEM_TYPE_ROOM_ITEM) {
+            if (getItemViewType(position) == SearchData.ITEM_TYPE_TOPIC_ROOM_ITEM) {
+                holder.itemView.getLayoutParams().height = (int) UiUtils.getPixelFromDp(75);
+            }
+
+            if (getItemViewType(position) == SearchData.ITEM_TYPE_ONE_TO_ONE_ROOM_ITEM) {
                 holder.itemView.getLayoutParams().height = (int) UiUtils.getPixelFromDp(75);
             }
 
@@ -303,7 +353,7 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     }
 
     @Override
-    public void refreshSearchOnlyMessage(){
+    public void refreshSearchOnlyMessage() {
         isHistoryMode = false;
         datas.clear();
         makeMessageDatas();
@@ -367,6 +417,12 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     }
 
     @Override
+    public void setOnClickOneToOneRoomListener(
+            OneToOneRoomItemViewHolder.OnClickOneToOneRoomListener onClickOneToOneRoomListener) {
+        this.onClickOneToOneRoomListener = onClickOneToOneRoomListener;
+    }
+
+    @Override
     public boolean isHistoryMode() {
         return isHistoryMode;
     }
@@ -380,7 +436,7 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
             case SearchData.ITEM_TYPE_NO_MESSAGE_ITEM:
                 return 1;
             case SearchData.ITEM_TYPE_ROOM_HEADER:
-            case SearchData.ITEM_TYPE_ROOM_ITEM:
+            case SearchData.ITEM_TYPE_TOPIC_ROOM_ITEM:
             case SearchData.ITEM_TYPE_NO_ROOM_ITEM:
                 return 2;
         }
@@ -402,14 +458,20 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
                 holder.setType(SearchStickyHeaderViewHolder.TYPE_MESSAGE);
                 break;
             case SearchData.ITEM_TYPE_ROOM_HEADER:
-            case SearchData.ITEM_TYPE_ROOM_ITEM:
+            case SearchData.ITEM_TYPE_TOPIC_ROOM_ITEM:
             case SearchData.ITEM_TYPE_NO_ROOM_ITEM:
+            case SearchData.ITEM_TYPE_ONE_TO_ONE_ROOM_ITEM:
                 holder.setType(SearchStickyHeaderViewHolder.TYPE_ROOM);
-                holder.setCount(getSearchTopicCnt());
+                holder.setCount(getSearchRoomCnt());
                 holder.setFoldIcon(isRoomItemFold);
                 break;
         }
         holder.onBindView(new Object());
+    }
+
+    @Override
+    public void setOnlyMessageMode(boolean onlyMessageMode) {
+        isOnlyMessageMode = onlyMessageMode;
     }
 
     @Override

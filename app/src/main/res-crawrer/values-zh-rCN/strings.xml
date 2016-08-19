@@ -595,6 +595,7 @@
 	<string name="jandi_tab_topic">"议题"</string>
 	<string name="jandi_tab_tos_and_pp">"点击「下一步」即表示您同意%1$s和%2$s。"</string>
 	<string name="jandi_team">"团队"</string>
+	<string name="jandi_team_admin">"团队管理员"</string>
 	<string name="jandi_team_create_domain_info">"想要给您的JANDI\n团队设定什么网址？"</string>
 	<string name="jandi_team_create_domain_invalid">"仅限英文字母、数字和连字符(-)"</string>
 	<string name="jandi_team_create_domain_length_invalid">"至少使用3个字元"</string>
@@ -645,6 +646,7 @@
 	<string name="jandi_topic_was_removed">"你已不在此标记的议题内"</string>
 	<string name="jandi_tos">"使用条款"</string>
 	<string name="jandi_tos_and_pp">"<![CDATA[使用条款 & 隐私权条款]]>"</string>
+	<string name="jandi_total_count_of_member">"成员人数"</string>
 	<string name="jandi_try_again">"请再试一次"</string>
 	<string name="jandi_tutorial_file">"简单的几个点击上传文件"</string>
 	<string name="jandi_tutorial_file_message">"零时间、空间限制，随时从行动装置分享文档、幻灯片、视频及任何文件给所有团队成员。"</string>
