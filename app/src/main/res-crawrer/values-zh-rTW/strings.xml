@@ -120,7 +120,7 @@
 	<string name="jandi_baidu_app_store">"百度手機助手"</string>
 	<string name="jandi_bot_role">"身為JANDI最強使者，肩負傳遞JANDI Connect和平台訊息通知的任務，絕對使命必達！"</string>
 	<string name="jandi_bot_status">"你好，我是Mr.J！"</string>
-	<string name="jandi_browse_other_topics">"瀏覽其他議題"</string>
+	<string name="jandi_browse_other_topics">"瀏覽並加入議題"</string>
 	<string name="jandi_browse_team">"瀏覽團隊"</string>
 	<string name="jandi_call_acess_permission">"欲直接外撥，請開啟同意電話取用"</string>
 	<string name="jandi_cancel">"取消"</string>
@@ -326,6 +326,7 @@
 	<string name="jandi_invite_success">"邀請已經成功送出"</string>
 	<string name="jandi_invite_to_dummy_account_again">"其他成員已寄發邀請信至該郵箱，你確定要在發送一次嗎？"</string>
 	<string name="jandi_invite_to_team">"邀請加入團隊"</string>
+	<string name="jandi_invite_to_team_for_member">"寄送邀請"</string>
 	<string name="jandi_invite_wechat">"微信"</string>
 	<string name="jandi_invited_topic">"%1$s邀請了%2$s"</string>
 	<string name="jandi_is_newcomer">"還沒使用過JANDI?"</string>
@@ -403,7 +404,7 @@
 	<string name="jandi_no_preview_push_message">"你收到一則新訊息"</string>
 	<string name="jandi_no_recent_stickers">"無最近使用的貼圖"</string>
 	<string name="jandi_no_search_history">"沒有搜尋紀錄"</string>
-	<string name="jandi_no_search_result">"找不到相關的內容"</string>
+	<string name="jandi_no_search_result">"找不到符合條件的內容"</string>
 	<string name="jandi_no_topic_to_join">"沒有可加入的議題"</string>
 	<string name="jandi_normally_topic_messages">"議題訊息"</string>
 	<string name="jandi_not_in_topic">"你已離開此議題"</string>

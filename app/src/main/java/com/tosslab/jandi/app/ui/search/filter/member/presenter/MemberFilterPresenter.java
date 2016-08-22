@@ -44,10 +44,8 @@ public class MemberFilterPresenter extends BaseMemberSearchPresenterImpl {
 
                     memberFilterableDataModel.clear();
 
-                    if (members != null && !members.isEmpty()) {
-                        memberFilterableDataModel.setInitializedMembers(members);
-                        memberFilterableDataModel.addAll(members);
-                    }
+                    memberFilterableDataModel.setInitializedMembers(members);
+                    memberFilterableDataModel.addAll(members);
                 }, throwable -> {
                     LogUtil.e(Log.getStackTraceString(throwable));
                     memberFilterView.hideProgress();
@@ -58,9 +56,7 @@ public class MemberFilterPresenter extends BaseMemberSearchPresenterImpl {
     public void onMemberSearched(String query, List<User> members) {
         memberFilterableDataModel.clear();
 
-        if (members != null && !(members.isEmpty())) {
-            memberFilterableDataModel.addAll(members);
-        }
+        memberFilterableDataModel.addAll(members);
 
         memberFilterView.notifyDataSetChanged();
     }

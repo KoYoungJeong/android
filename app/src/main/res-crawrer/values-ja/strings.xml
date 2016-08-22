@@ -120,7 +120,7 @@
 	<string name="jandi_baidu_app_store">"百度アプリストア"</string>
 	<string name="jandi_bot_role">"僕はJANDIの利用中必ず必要なメッセージや、JANDIコネクトのメッセージをお送りします。"</string>
 	<string name="jandi_bot_status">"こんにちは、ミスターJと言います。"</string>
-	<string name="jandi_browse_other_topics">"未参加のトピック一覧"</string>
+	<string name="jandi_browse_other_topics">"トピック一覧・参加"</string>
 	<string name="jandi_browse_team">"チームに移動"</string>
 	<string name="jandi_call_acess_permission">"通話を発信するには電話へのJANDIのアクセスを求めてください。"</string>
 	<string name="jandi_cancel">"戻る"</string>
@@ -326,6 +326,7 @@
 	<string name="jandi_invite_to_dummy_account_again">"入力したメールアドレスはすでに他のメンバーが招待中です。
 招待メールを再送信しますか？"</string>
 	<string name="jandi_invite_to_team">"チームに招待する"</string>
+	<string name="jandi_invite_to_team_for_member">"チーム招待状を送る"</string>
 	<string name="jandi_invite_wechat">"WeChat"</string>
 	<string name="jandi_invited_topic">"%1$sが %2$sさんを招待しました"</string>
 	<string name="jandi_is_newcomer">"初めてJANDIを使いますか？"</string>
@@ -406,7 +407,7 @@
 	<string name="jandi_no_preview_push_message">"新着メッセージがあります。"</string>
 	<string name="jandi_no_recent_stickers">"最近利用したスタンプがありません"</string>
 	<string name="jandi_no_search_history">"検索履歴がありません。"</string>
-	<string name="jandi_no_search_result">"一致するメッセージがありません。"</string>
+	<string name="jandi_no_search_result">"一致するファイルがありません"</string>
 	<string name="jandi_no_topic_to_join">"参加できるトピックがありません"</string>
 	<string name="jandi_normally_topic_messages">"トピックメッセージ"</string>
 	<string name="jandi_not_in_topic">"既にこのトピックから退出したか退出されました。"</string>
