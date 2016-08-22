@@ -9,7 +9,7 @@ public interface MyPagePresenter {
 
     void onInitializeMyPage(boolean isRefreshAction);
 
-    void onAddPollBadge();
+    void onPlusPollBadge();
 
     void onMinusPollBadge();
 

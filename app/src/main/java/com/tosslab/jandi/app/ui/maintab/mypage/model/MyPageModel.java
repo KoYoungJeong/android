@@ -108,7 +108,7 @@ public class MyPageModel {
         return InitialPollInfoRepository.getInstance().getVotableCount();
     }
 
-    public void addPollBadgeCount() {
+    public void plusPollBadgeCount() {
         InitialPollInfoRepository.getInstance().plusVotableCount();
     }
 
