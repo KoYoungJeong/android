@@ -98,18 +98,6 @@ public class MyPagePresenterImpl implements MyPagePresenter {
     }
 
     @Override
-    public void onPlusPollBadge() {
-        model.plusPollBadgeCount();
-        view.setPollBadgeCount(model.getPollBadgeCount());
-    }
-
-    @Override
-    public void onMinusPollBadge() {
-        model.minusPollBadgeCount();
-        view.setPollBadgeCount(model.getPollBadgeCount());
-    }
-
-    @Override
     public void onGetPollBadge() {
         view.setPollBadgeCount(model.getPollBadgeCount());
     }

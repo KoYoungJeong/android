@@ -24,8 +24,6 @@ import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
-import com.tosslab.jandi.app.events.messages.PollMinusBadgeEvent;
-import com.tosslab.jandi.app.events.messages.PollPlusBadgeEvent;
 import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
@@ -40,6 +38,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialPollInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.RoomMarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TeamRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
@@ -1373,8 +1372,8 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             if (poll != null && poll.getId() > 0) {
+                InitialPollInfoRepository.getInstance().plusVotableCount();
                 postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.CREATED));
-                postEvent(new PollPlusBadgeEvent());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1398,8 +1397,8 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             if (poll != null && poll.getId() > 0) {
+                InitialPollInfoRepository.getInstance().minusVotableCount();
                 postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.FINISHED));
-                postEvent(new PollMinusBadgeEvent());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1423,8 +1422,8 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             if (poll != null && poll.getId() > 0) {
+                InitialPollInfoRepository.getInstance().minusVotableCount();
                 postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.DELETED));
-                postEvent(new PollMinusBadgeEvent());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1448,8 +1447,8 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             if (poll != null && poll.getId() > 0) {
+                InitialPollInfoRepository.getInstance().minusVotableCount();
                 postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.VOTED));
-                postEvent(new PollMinusBadgeEvent());
             }
         } catch (Exception e) {
             e.printStackTrace();

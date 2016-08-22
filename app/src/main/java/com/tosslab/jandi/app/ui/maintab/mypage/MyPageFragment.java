@@ -23,8 +23,6 @@ import android.widget.TextView;
 import com.baidu.android.pushservice.PushSettings;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.messages.PollMinusBadgeEvent;
-import com.tosslab.jandi.app.events.messages.PollPlusBadgeEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.poll.RefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
@@ -252,27 +250,19 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
 
     }
 
-    public void onEvent(PollPlusBadgeEvent event) {
-        presenter.onPlusPollBadge();
-    }
-
-    public void onEvent(PollMinusBadgeEvent event) {
-        presenter.onMinusPollBadge();
-    }
-
     public void onEvent(SocketPollEvent event) {
         Poll poll = event.getPoll();
         if (poll == null
                 || poll.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
+        presenter.onGetPollBadge();
     }
 
     public void onEvent(RequestRefreshPollBadgeCountEvent event) {
         if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
-
         presenter.onGetPollBadge();
     }
 
