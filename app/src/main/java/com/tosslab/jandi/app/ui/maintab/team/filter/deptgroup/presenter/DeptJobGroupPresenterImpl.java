@@ -4,9 +4,13 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.maintab.team.filter.dept.DeptJobFragment;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter.TeamMemberDataModel;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.domain.TeamMemberItem;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -20,6 +24,8 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
     private final TeamMemberDataModel teamMemberDataModel;
     private int type;
     private String keyword;
+    private boolean selectMode;
+    private Set<Long> toggledUser;
 
     @Inject
     public DeptJobGroupPresenterImpl(View view, TeamMemberDataModel teamMemberDataModel) {
@@ -61,11 +67,56 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
     @Override
     public void onMemberClick(int position) {
         TeamMemberItem item = teamMemberDataModel.getItem(position);
-        view.moveMemberProfile(item.getChatChooseItem().getEntityId());
+        ChatChooseItem user = item.getChatChooseItem();
+        if (!selectMode) {
+            view.moveMemberProfile(user.getEntityId());
+        } else {
+            if (toggledUser.contains(user.getEntityId())) {
+                user.setIsChooseItem(false);
+                toggledUser.remove(user.getEntityId());
+            } else {
+                user.setIsChooseItem(true);
+                toggledUser.add(user.getEntityId());
+            }
+
+            view.refreshDataView();
+            view.updateToggledUser(toggledUser.size());
+        }
+    }
+
+    @Override
+    public void onUnselectClick() {
+        toggledUser.clear();
+        for (int idx = 0,size = teamMemberDataModel.getSize(); idx < size; idx++) {
+            teamMemberDataModel.getItem(idx).getChatChooseItem().setIsChooseItem(false);
+        }
+        view.updateToggledUser(toggledUser.size());
+        view.refreshDataView();
+    }
+
+    @Override
+    public void onAddClick() {
+
+        Long[] tempIds = new Long[toggledUser.size()];
+        long[] ids = new long[toggledUser.size()];
+        toggledUser.toArray(tempIds);
+
+        for (int idx = 0; idx < tempIds.length; idx++) {
+            ids[idx] = tempIds[idx];
+        }
+
+        view.comeWithResult(ids);
     }
 
     public void setTypeAndKeyword(int type, String keyword) {
         this.type = type;
         this.keyword = keyword;
+    }
+
+    public void setSelectMode(boolean selectMode) {
+        this.selectMode = selectMode;
+        if (selectMode) {
+            toggledUser = new HashSet<>();
+        }
     }
 }

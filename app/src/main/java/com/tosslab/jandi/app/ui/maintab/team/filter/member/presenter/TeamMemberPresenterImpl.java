@@ -1,14 +1,15 @@
 package com.tosslab.jandi.app.ui.maintab.team.filter.member.presenter;
 
-import android.text.TextUtils;
-
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter.TeamMemberDataModel;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.domain.TeamMemberItem;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -27,6 +28,10 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
 
     private BehaviorSubject<String> filterSubject;
     private Subscription filterSubscription;
+    private long roomId = -1;
+
+    private Set<Long> toggledIds;
+
 
     @Inject
     public TeamMemberPresenterImpl(View view, TeamMemberDataModel teamMemberDataModel) {
@@ -41,21 +46,23 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                 .throttleLast(100, TimeUnit.MILLISECONDS)
                 .observeOn(Schedulers.io())
                 .map(String::toLowerCase)
-                .concatMap(it -> {
-                    if (TextUtils.isEmpty(it)) {
-                        return Observable.from(TeamInfoLoader.getInstance().getUserList())
-                                .filter(User::isEnabled)
-                                .map(TeamMemberItem::new)
-                                .compose(sort());
+                .concatMap(it -> Observable.from(TeamInfoLoader.getInstance().getUserList())
+                        .filter(User::isEnabled)
+                        .filter(user -> user.getName().toLowerCase().contains(it))
+                        .filter(user -> {
+                            if (!selectMode || roomId < 0) {
+                                return true;
+                            }
 
-                    } else {
-                        return Observable.from(TeamInfoLoader.getInstance().getUserList())
-                                .filter(User::isEnabled)
-                                .filter(user -> user.getName().toLowerCase().contains(it))
-                                .map(TeamMemberItem::new)
-                                .compose(sort());
-                    }
-                })
+                            Room room = TeamInfoLoader.getInstance().getRoom(roomId);
+                            if (room != null) {
+                                return room.getMembers().contains(user.getId());
+                            }
+
+                            return true;
+                        })
+                        .map(TeamMemberItem::new)
+                        .compose(sort()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(users -> {
                     teamMemberDataModel.clear();
@@ -91,8 +98,36 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
     public void onItemClick(int position) {
         TeamMemberItem item = teamMemberDataModel.getItem(position);
         long userId = item.getChatChooseItem().getEntityId();
-        view.moveProfile(userId);
+        if (!selectMode) {
+            view.moveProfile(userId);
+        } else {
 
+            if (toggledIds.contains(userId)) {
+                toggledIds.remove(userId);
+                item.getChatChooseItem().setIsChooseItem(false);
+            } else {
+                toggledIds.add(userId);
+                item.getChatChooseItem().setIsChooseItem(true);
+            }
+
+            view.updateToggledUser(toggledIds.size());
+            view.refreshDataView();
+        }
+
+    }
+
+    @Override
+    public void addToggledUser(long[] users) {
+        for (long user : users) {
+            toggledIds.add(user);
+            int position = teamMemberDataModel.findItemOfEntityId(user);
+            if (position >= 0) {
+                teamMemberDataModel.getItem(position).getChatChooseItem().setIsChooseItem(true);
+            }
+        }
+
+        view.refreshDataView();
+        view.updateToggledUser(toggledIds.size());
     }
 
     @Override
@@ -102,5 +137,12 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
 
     public void setSelectMode(boolean selectMode) {
         this.selectMode = selectMode;
+        if (selectMode) {
+            toggledIds = new HashSet<>();
+        }
+    }
+
+    public void setRoomId(long roomId) {
+        this.roomId = roomId;
     }
 }

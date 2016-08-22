@@ -8,9 +8,17 @@ public interface DeptJobGroupPresenter {
 
     void onMemberClick(int position);
 
+    void onUnselectClick();
+
+    void onAddClick();
+
     interface View {
         void refreshDataView();
 
         void moveMemberProfile(long userId);
+
+        void updateToggledUser(int count);
+
+        void comeWithResult(long[] toggledUser);
     }
 }

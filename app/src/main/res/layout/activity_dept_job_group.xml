@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,7 +13,48 @@
         app:navigationIcon="@drawable/actionbar_icon_back" />
 
     <android.support.v7.widget.RecyclerView
+        android:layout_below="@+id/layout_dept_job_group_bar"
         android:id="@+id/list_dept_job_group"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-</LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/vg_dept_job_group_toggled"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:visibility="gone">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/jandi_tab_underline" />
+
+        <View
+            android:id="@+id/space_dept_job_group_toggled_space"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/tv_dept_job_group_toggled_invite"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/space_dept_job_group_toggled_space"
+            android:gravity="center"
+            android:text="xx명 추가"
+            android:textColor="@color/jandi_create_topic"
+            android:textSize="@dimen/jandi_text_size_medium" />
+
+        <TextView
+            android:id="@+id/tv_dept_job_group_toggled_unselect_all"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/space_dept_job_group_toggled_space"
+            android:gravity="center"
+            android:text="선택 취소"
+            android:textColor="@color/jandi_text"
+            android:textSize="@dimen/jandi_text_size_medium" />
+    </RelativeLayout>
+</RelativeLayout>

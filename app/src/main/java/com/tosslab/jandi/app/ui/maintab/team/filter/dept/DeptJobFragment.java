@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.team.filter.dept;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,8 +24,10 @@ import com.tosslab.jandi.app.ui.maintab.team.filter.dept.adapter.DeptJobHeaderAd
 import com.tosslab.jandi.app.ui.maintab.team.filter.dept.dagger.DaggerDeptJobComponent;
 import com.tosslab.jandi.app.ui.maintab.team.filter.dept.dagger.DeptJobModule;
 import com.tosslab.jandi.app.ui.maintab.team.filter.dept.presenter.DeptJobPresenter;
+import com.tosslab.jandi.app.ui.maintab.team.filter.deptgroup.DeptJobGroupActivity;
 import com.tosslab.jandi.app.ui.maintab.team.filter.search.KeywordObservable;
 import com.tosslab.jandi.app.ui.maintab.team.filter.search.TeamMemberSearchActivity;
+import com.tosslab.jandi.app.ui.maintab.team.filter.search.ToggledUser;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
 import javax.inject.Inject;
@@ -46,6 +49,14 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
     @Nullable
     @InjectExtra(TeamMemberSearchActivity.EXTRA_KEY_SELECT_MODE)
     boolean selectMode = false;
+    @Nullable
+    @InjectExtra(TeamMemberSearchActivity.EXTRA_KEY_HAS_HEADER)
+    boolean hasHeader = true;
+    @Nullable
+    @InjectExtra(TeamMemberSearchActivity.EXTRA_KEY_ROOM_ID)
+    long roomId = -1;
+
+
     @Bind(R.id.list_team_dept_job)
     RecyclerView lvMember;
 
@@ -55,16 +66,12 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
     @Inject
     DeptJobPresenter deptJobPresenter;
 
-    public static Fragment create(Context context, int type) {
-        Bundle args = new Bundle(1);
-        args.putInt(EXTRA_TYPE, type);
-        return Fragment.instantiate(context, DeptJobFragment.class.getName(), args);
-    }
-
-    public static Fragment create(Context context, int type, boolean selectMode) {
+    public static Fragment create(Context context, int type, boolean selectMode, boolean hasHeader, int roomId) {
         Bundle args = new Bundle(1);
         args.putInt(EXTRA_TYPE, type);
         args.putBoolean(TeamMemberSearchActivity.EXTRA_KEY_SELECT_MODE, selectMode);
+        args.putBoolean(TeamMemberSearchActivity.EXTRA_KEY_HAS_HEADER, hasHeader);
+        args.putLong(TeamMemberSearchActivity.EXTRA_KEY_ROOM_ID, roomId);
         return Fragment.instantiate(context, DeptJobFragment.class.getName(), args);
     }
 
@@ -85,7 +92,8 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
         DeptJobAdapter adapter = new DeptJobAdapter();
         lvMember.setLayoutManager(new LinearLayoutManager(getActivity()));
         lvMember.addItemDecoration(new SimpleDividerItemDecoration());
-        if (!selectMode) {
+
+        if (hasHeader) {
             adapter.setHasStableIds(true);
             lvMember.addItemDecoration(new StickyHeadersBuilder()
                     .setAdapter(adapter)
@@ -117,7 +125,13 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (REQ_MEMBERS_OF_GROUP == requestCode) {
-            // TODO: 2016. 8. 17. 후처리 넣기
+            if (resultCode == Activity.RESULT_OK) {
+                long[] toggledIds = data.getLongArrayExtra(DeptJobGroupActivity.EXTRA_RESULT);
+                if (toggledIds != null
+                        && getActivity() instanceof ToggledUser) {
+                    ((ToggledUser) getActivity()).addToggledUser(toggledIds);
+                }
+            }
         }
     }
 

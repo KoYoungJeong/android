@@ -16,12 +16,17 @@ public class DeptJobGroupModule {
     private final TeamMemberAdapter teamMemberAdapter;
     private final int type;
     private final String keyword;
+    private final boolean selectMode;
 
-    public DeptJobGroupModule(DeptJobGroupPresenter.View view, TeamMemberAdapter teamMemberAdapter, int type, String keyword) {
+    public DeptJobGroupModule(DeptJobGroupPresenter.View view, TeamMemberAdapter teamMemberAdapter,
+                              int type,
+                              String keyword,
+                              boolean selectMode) {
         this.view = view;
         this.teamMemberAdapter = teamMemberAdapter;
         this.type = type;
         this.keyword = keyword;
+        this.selectMode = selectMode;
     }
 
     @Provides
@@ -42,6 +47,7 @@ public class DeptJobGroupModule {
     @Provides
     DeptJobGroupPresenter presenter(DeptJobGroupPresenterImpl presenter) {
         presenter.setTypeAndKeyword(type, keyword);
+        presenter.setSelectMode(selectMode);
         return presenter;
     }
 }

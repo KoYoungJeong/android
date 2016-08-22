@@ -22,6 +22,7 @@ public class DeptJobAdapter extends RecyclerView.Adapter<DeptJobAdapter.DeptJobV
     private List<Pair<String, String>> names;
     private String keyword;
     private OnRecyclerItemClickListener onRecyclerItemClickListener;
+    private boolean selectMode;
 
     public DeptJobAdapter() {
         names = new ArrayList<>();

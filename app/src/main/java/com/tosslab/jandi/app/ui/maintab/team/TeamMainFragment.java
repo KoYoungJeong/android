@@ -72,6 +72,7 @@ public class TeamMainFragment extends Fragment {
                 startActivity(Henson.with(getActivity())
                         .gotoTeamMemberSearchActivity()
                         .position(viewPager.getCurrentItem())
+                        .isSelectMode(false)
                         .build());
                 break;
         }

@@ -3,11 +3,13 @@ package com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.domain.TeamMemberItem;
 import com.tosslab.jandi.app.ui.members.adapter.searchable.viewholder.MemberViewHolder;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
@@ -21,6 +23,7 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.Us
     private List<TeamMemberItem> users;
     private OnRecyclerItemClickListener onRecyclerItemClickListener;
     private boolean isSelectedMode;
+    private boolean hasHeader;
 
     public TeamMemberAdapter() {
         users = new ArrayList<>();
@@ -44,8 +47,10 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.Us
     @Override
     public void onBindViewHolder(UserViewHolder holder, int position) {
         holder.setSelectMode(isSelectedMode);
-        holder.onBindView(getItem(position));
-        if (isSelectedMode) {
+        TeamMemberItem item = getItem(position);
+        ChatChooseItem chatChooseItem = item.getChatChooseItem();
+        holder.onBindView(item);
+        if (!hasHeader) {
             holder.showFullDivider();
         } else {
             if (isSameFirstCharacterToNext(position)) {
@@ -60,6 +65,7 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.Us
                 onRecyclerItemClickListener.onItemClick(holder.itemView, TeamMemberAdapter.this, position);
             }
         });
+
     }
 
     private boolean isSameFirstCharacterToNext(int position) {
@@ -91,6 +97,17 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.Us
     }
 
     @Override
+    public int findItemOfEntityId(long userId) {
+        for (int idx = 0; idx < users.size(); idx++) {
+            TeamMemberItem user = users.get(idx);
+            if (user.getChatChooseItem().getEntityId() == userId) {
+                return idx;
+            }
+        }
+        return -1;
+    }
+
+    @Override
     public int getItemCount() {
         return users.size();
     }
@@ -109,6 +126,10 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.Us
         isSelectedMode = selectedMode;
     }
 
+    public void setHasHeader(boolean hasHeader) {
+        this.hasHeader = hasHeader;
+    }
+
 
     static class UserViewHolder extends MemberViewHolder<TeamMemberItem> {
 
@@ -119,6 +140,11 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.Us
         public static UserViewHolder createForUser(ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             View itemView = inflater.inflate(R.layout.item_entity_body_two_line, parent, false);
+            TypedValue typedValue = new TypedValue();
+            itemView.getContext().getTheme()
+                    .resolveAttribute(R.attr.selectableItemBackground, typedValue, true);
+            itemView.setBackgroundResource(typedValue.resourceId);
+
             return new UserViewHolder(itemView);
         }
 

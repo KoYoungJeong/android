@@ -22,7 +22,9 @@ import com.tosslab.jandi.app.ui.maintab.team.filter.member.dagger.DaggerTeamMemb
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.dagger.TeamMemberModule;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.presenter.TeamMemberPresenter;
 import com.tosslab.jandi.app.ui.maintab.team.filter.search.KeywordObservable;
+import com.tosslab.jandi.app.ui.maintab.team.filter.search.OnAddToggledUser;
 import com.tosslab.jandi.app.ui.maintab.team.filter.search.TeamMemberSearchActivity;
+import com.tosslab.jandi.app.ui.maintab.team.filter.search.ToggledUser;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 
@@ -32,7 +34,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.Observable;
 
-public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.View, KeywordObservable {
+public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.View, KeywordObservable, OnAddToggledUser {
 
     @Bind(R.id.list_team_member)
     RecyclerView lvMember;
@@ -42,15 +44,22 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     @Nullable
     @InjectExtra(TeamMemberSearchActivity.EXTRA_KEY_SELECT_MODE)
     boolean selectMode;
+
+    @Nullable
+    @InjectExtra(TeamMemberSearchActivity.EXTRA_KEY_HAS_HEADER)
+    boolean hasHeader = true;
+
+    @Nullable
+    @InjectExtra(TeamMemberSearchActivity.EXTRA_KEY_ROOM_ID)
+    long roomId = -1;
+
     private TeamMemberDataView teamMemberDataView;
 
-    public static Fragment create(Context context) {
-        return Fragment.instantiate(context, TeamMemberFragment.class.getName());
-    }
-
-    public static Fragment create(Context context, boolean selectMode) {
+    public static Fragment create(Context context, boolean selectMode, boolean hasHeader, int roomId) {
         Bundle args = new Bundle();
         args.putBoolean(TeamMemberSearchActivity.EXTRA_KEY_SELECT_MODE, selectMode);
+        args.putBoolean(TeamMemberSearchActivity.EXTRA_KEY_HAS_HEADER, hasHeader);
+        args.putLong(TeamMemberSearchActivity.EXTRA_KEY_ROOM_ID, roomId);
         return Fragment.instantiate(context, TeamMemberFragment.class.getName(), args);
     }
 
@@ -74,7 +83,8 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         teamMemberDataView = adapter;
         lvMember.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        if (!selectMode) {
+        adapter.setHasHeader(hasHeader);
+        if (hasHeader) {
             adapter.setHasStableIds(true);
             lvMember.addItemDecoration(new StickyHeadersBuilder()
                     .setAdapter(adapter)
@@ -87,13 +97,14 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         lvMember.setAdapter(adapter);
 
         DaggerTeamMemberComponent.builder()
-                .teamMemberModule(new TeamMemberModule(this, adapter, selectMode))
+                .teamMemberModule(new TeamMemberModule(this, adapter, selectMode, roomId))
                 .build()
                 .inject(this);
 
         presenter.onCreate();
 
         teamMemberDataView.setOnItemClickListener((view, adapter1, position) -> {
+
             presenter.onItemClick(position);
         });
     }
@@ -118,6 +129,13 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     }
 
     @Override
+    public void updateToggledUser(int toggledSize) {
+        if (getActivity() instanceof ToggledUser) {
+            ((ToggledUser) getActivity()).toggle(toggledSize);
+        }
+    }
+
+    @Override
     public void setKeywordObservable(Observable<String> keywordObservable) {
         keywordObservable.subscribe(text -> {
             if (presenter != null) {
@@ -126,4 +144,8 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         });
     }
 
+    @Override
+    public void onAddToggledUser(long[] users) {
+        presenter.addToggledUser(users);
+    }
 }

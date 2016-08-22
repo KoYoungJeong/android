@@ -13,11 +13,16 @@ public class TeamMemberModule {
     private final TeamMemberPresenter.View view;
     private final TeamMemberDataModel teamMemberDataModel;
     private final boolean selectMode;
+    private final long roomId;
 
-    public TeamMemberModule(TeamMemberPresenter.View view, TeamMemberDataModel teamMemberDataModel, boolean selectMode) {
+    public TeamMemberModule(TeamMemberPresenter.View view,
+                            TeamMemberDataModel teamMemberDataModel,
+                            boolean selectMode,
+                            long roomId) {
         this.view = view;
         this.teamMemberDataModel = teamMemberDataModel;
         this.selectMode = selectMode;
+        this.roomId = roomId;
     }
 
     @Provides
@@ -33,6 +38,7 @@ public class TeamMemberModule {
     @Provides
     TeamMemberPresenter providePresenter(TeamMemberPresenterImpl presenter) {
         presenter.setSelectMode(selectMode);
+        presenter.setRoomId(roomId);
         return presenter;
     }
 }

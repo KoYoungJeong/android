@@ -1,12 +1,15 @@
 package com.tosslab.jandi.app.ui.maintab.team.filter.deptgroup;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
@@ -25,9 +28,11 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJobGroupPresenter.View {
 
+    public static final String EXTRA_RESULT = "result";
     @Nullable
     @InjectExtra
     int type;
@@ -52,6 +57,14 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     @Bind(R.id.layout_dept_job_group_bar)
     Toolbar toolbar;
 
+    @Bind(R.id.vg_dept_job_group_toggled)
+    android.view.View vgToggled;
+
+    @Bind(R.id.tv_dept_job_group_toggled_invite)
+    TextView tvAdded;
+
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +82,7 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
         lvMembers.setAdapter(teamMemberAdapter);
 
         DaggerDeptJobGroupComponent.builder()
-                .deptJobGroupModule(new DeptJobGroupModule(this, teamMemberAdapter, type, keyword))
+                .deptJobGroupModule(new DeptJobGroupModule(this, teamMemberAdapter, type, keyword, selectMode))
                 .build()
                 .inject(this);
 
@@ -112,5 +125,34 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
                 .from(MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
                 .memberId(userId)
                 .start();
+    }
+
+    @Override
+    public void updateToggledUser(int count) {
+        if (count <= 0) {
+            vgToggled.setVisibility(View.GONE);
+        } else {
+            vgToggled.setVisibility(View.VISIBLE);
+        }
+
+        tvAdded.setText(String.format("%d명 추가하기", count));
+    }
+
+    @Override
+    public void comeWithResult(long[] toggledUser) {
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_RESULT, toggledUser);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    @OnClick(R.id.tv_dept_job_group_toggled_unselect_all)
+    void onUnselectClick(){
+        presenter.onUnselectClick();
+    }
+
+    @OnClick(R.id.tv_dept_job_group_toggled_invite)
+    void onAddClick() {
+        presenter.onAddClick();
     }
 }

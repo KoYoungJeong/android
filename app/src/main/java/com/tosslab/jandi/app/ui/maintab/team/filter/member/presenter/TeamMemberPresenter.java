@@ -11,10 +11,14 @@ public interface TeamMemberPresenter {
 
     void onSearchKeyword(String text);
 
+    void addToggledUser(long[] users);
+
     interface View {
 
         void refreshDataView();
 
         void moveProfile(long userId);
+
+        void updateToggledUser(int toggledSize);
     }
 }

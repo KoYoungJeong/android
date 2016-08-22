@@ -16,4 +16,5 @@ public interface TeamMemberDataModel {
 
     void clear();
 
+    int findItemOfEntityId(long userId);
 }

@@ -29,14 +29,17 @@ public class TeamViewPagerAdapter extends FragmentPagerAdapter {
         super(fm);
         this.context = context;
         fragments = new ArrayList<>(TEAM_TITLES.length);
-        initFragments(false);
+        initFragments(false, true, -1);
     }
 
-    public TeamViewPagerAdapter(Context context, FragmentManager fm, Observable<String> keywordObservable, boolean isSelectMode) {
+    public TeamViewPagerAdapter(Context context, FragmentManager fm,
+                                Observable<String> keywordObservable,
+                                boolean isSelectMode,
+                                boolean hasHeader, long roomId) {
         super(fm);
         this.context = context;
         fragments = new ArrayList<>(TEAM_TITLES.length);
-        initFragments(isSelectMode);
+        initFragments(isSelectMode , hasHeader, roomId);
 
         for (int idx = 0; idx < fragments.size(); idx++) {
             Fragment fragment = fragments.get(idx);
@@ -46,18 +49,18 @@ public class TeamViewPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    private void initFragments(boolean selectMode) {
+    private void initFragments(boolean selectMode, boolean hasHeader, long roomId) {
         for (int position = 0; position < TEAM_TITLES.length; position++) {
             switch (position) {
                 case 1:
-                    fragments.add(DeptJobFragment.create(context, DeptJobFragment.EXTRA_TYPE_DEPT, selectMode));
+                    fragments.add(DeptJobFragment.create(context, DeptJobFragment.EXTRA_TYPE_DEPT, selectMode, hasHeader, -1));
                     break;
                 case 2:
-                    fragments.add(DeptJobFragment.create(context, DeptJobFragment.EXTRA_TYPE_JOB, selectMode));
+                    fragments.add(DeptJobFragment.create(context, DeptJobFragment.EXTRA_TYPE_JOB, selectMode, hasHeader, -1));
                     break;
                 default:
                 case 0:
-                    fragments.add(TeamMemberFragment.create(context, selectMode));
+                    fragments.add(TeamMemberFragment.create(context, selectMode, hasHeader, -1));
                     break;
             }
         }
