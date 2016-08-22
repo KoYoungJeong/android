@@ -17,6 +17,7 @@ import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.team.filter.dept.adapter.DeptJobAdapter;
 import com.tosslab.jandi.app.ui.maintab.team.filter.dept.adapter.DeptJobDataView;
@@ -27,7 +28,9 @@ import com.tosslab.jandi.app.ui.maintab.team.filter.dept.presenter.DeptJobPresen
 import com.tosslab.jandi.app.ui.maintab.team.filter.deptgroup.DeptJobGroupActivity;
 import com.tosslab.jandi.app.ui.maintab.team.filter.search.KeywordObservable;
 import com.tosslab.jandi.app.ui.maintab.team.filter.search.TeamMemberSearchActivity;
-import com.tosslab.jandi.app.ui.maintab.team.filter.search.ToggledUser;
+import com.tosslab.jandi.app.ui.maintab.team.filter.search.ToggledUserView;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
 import javax.inject.Inject;
@@ -66,7 +69,7 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
     @Inject
     DeptJobPresenter deptJobPresenter;
 
-    public static Fragment create(Context context, int type, boolean selectMode, boolean hasHeader, int roomId) {
+    public static Fragment create(Context context, int type, boolean selectMode, boolean hasHeader, long roomId) {
         Bundle args = new Bundle(1);
         args.putInt(EXTRA_TYPE, type);
         args.putBoolean(TeamMemberSearchActivity.EXTRA_KEY_SELECT_MODE, selectMode);
@@ -115,6 +118,7 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
                     .keyword(((DeptJobAdapter) adapter1).getItem(position).first)
                     .type(type)
                     .selectMode(selectMode)
+                    .pickMode(roomId < 0)
                     .build(), REQ_MEMBERS_OF_GROUP);
 
         });
@@ -124,12 +128,24 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (REQ_MEMBERS_OF_GROUP == requestCode) {
-            if (resultCode == Activity.RESULT_OK) {
-                long[] toggledIds = data.getLongArrayExtra(DeptJobGroupActivity.EXTRA_RESULT);
-                if (toggledIds != null
-                        && getActivity() instanceof ToggledUser) {
-                    ((ToggledUser) getActivity()).addToggledUser(toggledIds);
+        if (REQ_MEMBERS_OF_GROUP == requestCode && resultCode == Activity.RESULT_OK) {
+            if (selectMode) {
+                if (roomId < 0) {
+                    // pick mode
+                    long userId = data.getLongExtra(DeptJobGroupActivity.EXTRA_RESULT, -1);
+                    if (userId > 0) {
+                        deptJobPresenter.onPickUser(userId);
+                    } else {
+                        ColoredToast.show(R.string.err_profile_get_info);
+                    }
+
+                } else {
+                    // multi select mode
+                    long[] toggledIds = data.getLongArrayExtra(DeptJobGroupActivity.EXTRA_RESULT);
+                    if (toggledIds != null
+                            && getActivity() instanceof ToggledUserView) {
+                        ((ToggledUserView) getActivity()).addToggledUser(toggledIds);
+                    }
                 }
             }
         }
@@ -144,6 +160,19 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
     @Override
     public void refreshDataView() {
         deptJobDataView.refresh();
+    }
+
+    @Override
+    public void moveDirectMessage(long teamId, long userId, long roomId, long lastLinkId) {
+        MessageListV2Activity_.intent(getActivity())
+                .teamId(teamId)
+                .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                .entityId(userId)
+                .roomId(roomId)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .lastReadLinkId(lastLinkId)
+                .start();
+        getActivity().finish();
     }
 
     @Override

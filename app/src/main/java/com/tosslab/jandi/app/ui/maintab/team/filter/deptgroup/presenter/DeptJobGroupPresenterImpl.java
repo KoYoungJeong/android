@@ -26,6 +26,7 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
     private String keyword;
     private boolean selectMode;
     private Set<Long> toggledUser;
+    private boolean pickMode;
 
     @Inject
     public DeptJobGroupPresenterImpl(View view, TeamMemberDataModel teamMemberDataModel) {
@@ -37,6 +38,12 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
     public void onCreate() {
         Observable.from(TeamInfoLoader.getInstance().getUserList())
                 .filter(User::isEnabled)
+                .filter(user -> {
+                    if (pickMode) {
+                        return user.getId() != TeamInfoLoader.getInstance().getMyId();
+                    }
+                    return true;
+                })
                 .filter(filterKeyword(type, keyword))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -68,8 +75,8 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
     public void onMemberClick(int position) {
         TeamMemberItem item = teamMemberDataModel.getItem(position);
         ChatChooseItem user = item.getChatChooseItem();
-        if (!selectMode) {
-            view.moveMemberProfile(user.getEntityId());
+        if (!selectMode || pickMode) {
+            view.pickUser(user.getEntityId());
         } else {
             if (toggledUser.contains(user.getEntityId())) {
                 user.setIsChooseItem(false);
@@ -118,5 +125,9 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
         if (selectMode) {
             toggledUser = new HashSet<>();
         }
+    }
+
+    public void setPickMode(boolean pickMode) {
+        this.pickMode = pickMode;
     }
 }

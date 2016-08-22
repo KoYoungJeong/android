@@ -122,4 +122,20 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
     public void onSearchKeyword(String text) {
         deptJobSubject.onNext(text);
     }
+
+    @Override
+    public void onPickUser(long userId) {
+        long roomId = TeamInfoLoader.getInstance().getChatId(userId);
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        long lastLinkId;
+        if (roomId > 0) {
+            lastLinkId = TeamInfoLoader.getInstance().getRoom(roomId).getLastLinkId();
+        } else {
+            lastLinkId = -1;
+        }
+
+
+        view.moveDirectMessage(teamId, userId, roomId, lastLinkId);
+
+    }
 }

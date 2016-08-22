@@ -13,6 +13,14 @@ public interface TeamMemberPresenter {
 
     void addToggledUser(long[] users);
 
+    void addToggleOfAll();
+
+    void onUserSelect(long userId);
+
+    void clearToggle();
+
+    void inviteToggle();
+
     interface View {
 
         void refreshDataView();
@@ -20,5 +28,15 @@ public interface TeamMemberPresenter {
         void moveProfile(long userId);
 
         void updateToggledUser(int toggledSize);
+
+        void moveDirectMessage(long teamId, long userId, long roomId, long lastLinkId);
+
+        void showPrgoress();
+
+        void dismissProgress();
+
+        void successToInvitation();
+
+        void showFailToInvitation();
     }
 }

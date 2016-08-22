@@ -15,7 +15,7 @@ public interface DeptJobGroupPresenter {
     interface View {
         void refreshDataView();
 
-        void moveMemberProfile(long userId);
+        void pickUser(long userId);
 
         void updateToggledUser(int count);
 

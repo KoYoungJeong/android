@@ -1,12 +1,16 @@
 package com.tosslab.jandi.app.ui.maintab.team.filter.member;
 
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +18,11 @@ import android.view.ViewGroup;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity;
+import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity_;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter.TeamMemberAdapter;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter.TeamMemberDataView;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter.TeamMemberHeaderAdapter;
@@ -22,22 +30,30 @@ import com.tosslab.jandi.app.ui.maintab.team.filter.member.dagger.DaggerTeamMemb
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.dagger.TeamMemberModule;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.presenter.TeamMemberPresenter;
 import com.tosslab.jandi.app.ui.maintab.team.filter.search.KeywordObservable;
-import com.tosslab.jandi.app.ui.maintab.team.filter.search.OnAddToggledUser;
+import com.tosslab.jandi.app.ui.maintab.team.filter.search.OnToggledUser;
 import com.tosslab.jandi.app.ui.maintab.team.filter.search.TeamMemberSearchActivity;
-import com.tosslab.jandi.app.ui.maintab.team.filter.search.ToggledUser;
+import com.tosslab.jandi.app.ui.maintab.team.filter.search.ToggledUserView;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
+import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import rx.Observable;
 
-public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.View, KeywordObservable, OnAddToggledUser {
+public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.View, KeywordObservable, OnToggledUser {
 
+    public static final int REQ_DISABLED_MEMBER = 201;
     @Bind(R.id.list_team_member)
     RecyclerView lvMember;
+
+    @Bind(R.id.vg_team_member_disabled)
+    android.view.View vgDisabled;
 
     @Inject
     TeamMemberPresenter presenter;
@@ -54,8 +70,9 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     long roomId = -1;
 
     private TeamMemberDataView teamMemberDataView;
+    private ProgressWheel progressWheel;
 
-    public static Fragment create(Context context, boolean selectMode, boolean hasHeader, int roomId) {
+    public static Fragment create(Context context, boolean selectMode, boolean hasHeader, long roomId) {
         Bundle args = new Bundle();
         args.putBoolean(TeamMemberSearchActivity.EXTRA_KEY_SELECT_MODE, selectMode);
         args.putBoolean(TeamMemberSearchActivity.EXTRA_KEY_HAS_HEADER, hasHeader);
@@ -79,7 +96,7 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         Dart.inject(this, getArguments());
 
         TeamMemberAdapter adapter = new TeamMemberAdapter();
-        adapter.setSelectedMode(selectMode);
+        adapter.setSelectedMode(selectMode && roomId > 0);
         teamMemberDataView = adapter;
         lvMember.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -101,12 +118,39 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
                 .build()
                 .inject(this);
 
+        if (selectMode && roomId < 0) {
+            vgDisabled.setVisibility(View.VISIBLE);
+            DisplayMetrics dm = JandiApplication.getContext().getResources().getDisplayMetrics();
+            float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 75f, dm);
+            lvMember.setPadding(0, 0, 0, (int) padding);
+        } else {
+            vgDisabled.setVisibility(View.GONE);
+        }
+
         presenter.onCreate();
 
         teamMemberDataView.setOnItemClickListener((view, adapter1, position) -> {
 
             presenter.onItemClick(position);
         });
+    }
+
+    @OnClick(R.id.vg_team_member_disabled)
+    void onDisabledClick() {
+        DisabledEntityChooseActivity_.intent(this)
+                .startForResult(REQ_DISABLED_MEMBER);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQ_DISABLED_MEMBER && resultCode == Activity.RESULT_OK) {
+            long userId = data.getLongExtra(DisabledEntityChooseActivity.EXTRA_RESULT, -1);
+            if (userId > 0) {
+                presenter.onUserSelect(userId);
+            } else {
+                ColoredToast.showWarning(R.string.err_profile_get_info);
+            }
+        }
     }
 
     @Override
@@ -130,9 +174,49 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
 
     @Override
     public void updateToggledUser(int toggledSize) {
-        if (getActivity() instanceof ToggledUser) {
-            ((ToggledUser) getActivity()).toggle(toggledSize);
+        if (getActivity() instanceof ToggledUserView) {
+            ((ToggledUserView) getActivity()).toggle(toggledSize);
         }
+    }
+
+    @Override
+    public void moveDirectMessage(long teamId, long userId, long roomId, long lastLinkId) {
+        MessageListV2Activity_.intent(getActivity())
+                .teamId(teamId)
+                .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                .entityId(userId)
+                .roomId(roomId)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .lastReadLinkId(lastLinkId)
+                .start();
+        getActivity().finish();
+    }
+
+    @Override
+    public void showPrgoress() {
+        if (progressWheel == null) {
+            progressWheel = new ProgressWheel(getActivity());
+        }
+        if (!progressWheel.isShowing()) {
+            progressWheel.show();
+        }
+    }
+
+    @Override
+    public void dismissProgress() {
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+    }
+
+    @Override
+    public void successToInvitation() {
+        getActivity().finish();
+    }
+
+    @Override
+    public void showFailToInvitation() {
+        ColoredToast.showWarning(R.string.err_network);
     }
 
     @Override
@@ -147,5 +231,20 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     @Override
     public void onAddToggledUser(long[] users) {
         presenter.addToggledUser(users);
+    }
+
+    @Override
+    public void onAddAllUser() {
+        presenter.addToggleOfAll();
+    }
+
+    @Override
+    public void onUnselectAll() {
+        presenter.clearToggle();
+    }
+
+    @Override
+    public void onInvite() {
+        presenter.inviteToggle();
     }
 }

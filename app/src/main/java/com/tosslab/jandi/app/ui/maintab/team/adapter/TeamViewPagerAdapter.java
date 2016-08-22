@@ -53,14 +53,14 @@ public class TeamViewPagerAdapter extends FragmentPagerAdapter {
         for (int position = 0; position < TEAM_TITLES.length; position++) {
             switch (position) {
                 case 1:
-                    fragments.add(DeptJobFragment.create(context, DeptJobFragment.EXTRA_TYPE_DEPT, selectMode, hasHeader, -1));
+                    fragments.add(DeptJobFragment.create(context, DeptJobFragment.EXTRA_TYPE_DEPT, selectMode, hasHeader, roomId));
                     break;
                 case 2:
-                    fragments.add(DeptJobFragment.create(context, DeptJobFragment.EXTRA_TYPE_JOB, selectMode, hasHeader, -1));
+                    fragments.add(DeptJobFragment.create(context, DeptJobFragment.EXTRA_TYPE_JOB, selectMode, hasHeader, roomId));
                     break;
                 default:
                 case 0:
-                    fragments.add(TeamMemberFragment.create(context, selectMode, hasHeader, -1));
+                    fragments.add(TeamMemberFragment.create(context, selectMode, hasHeader, roomId));
                     break;
             }
         }

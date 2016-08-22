@@ -8,6 +8,11 @@ import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -29,7 +34,7 @@ import butterknife.OnTextChanged;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
-public class TeamMemberSearchActivity extends BaseAppCompatActivity implements ToggledUser {
+public class TeamMemberSearchActivity extends BaseAppCompatActivity implements ToggledUserView {
 
     public static final String EXTRA_KEY_SELECT_MODE = "selectMode";
     public static final String EXTRA_KEY_HAS_HEADER = "has_header";
@@ -50,8 +55,14 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
     @Bind(R.id.vg_team_member_toggled)
     android.view.View vgToggled;
 
+    @Bind(R.id.vg_team_member_search_bar)
+    android.view.View vgSearch;
+
     @Bind(R.id.tv_team_member_toggled_invite)
     TextView tvInvite;
+
+    @Bind(R.id.actionbar_team_member_search)
+    Toolbar toolbar;
 
     @Nullable
     @InjectExtra
@@ -82,15 +93,77 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
 
         viewPager.setOffscreenPageLimit(2);
         adapter = new TeamViewPagerAdapter(this, getSupportFragmentManager(), keywordObservable,
-                isSelectMode, false, roomId);
+                isSelectMode, !isSelectMode || roomId < 0, roomId);
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setCurrentItem(position);
 
+        setUpToolbar();
+
+    }
+
+    private void setUpToolbar() {
+
+        if (!isSelectMode) {
+            toolbar.setVisibility(View.GONE);
+            vgSearch.setVisibility(View.VISIBLE);
+        } else {
+            setSupportActionBar(toolbar);
+            vgSearch.setVisibility(View.GONE);
+
+            ActionBar actionBar = getSupportActionBar();
+            if (roomId > 0) {
+                actionBar.setTitle(R.string.jandi_invite_member_to_topic);
+            } else {
+                actionBar.setTitle("1:1 대화 멤버 선택");
+            }
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        if (isSelectMode) {
+            MenuInflater menuInflater = getMenuInflater();
+
+            if (roomId > 0) {
+                menuInflater.inflate(R.menu.invite_to_topic, menu);
+            } else {
+                menuInflater.inflate(R.menu.invite_to_direct_message, menu);
+            }
+        }
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                vgSearch.setVisibility(View.VISIBLE);
+                break;
+            case R.id.action_select_all:
+                if (adapter.getItem(0) instanceof OnToggledUser) {
+                    OnToggledUser onToggledUser = (OnToggledUser) adapter.getItem(0);
+                    onToggledUser.onAddAllUser();
+
+                }
+                break;
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @OnTextChanged(R.id.tv_search_keyword)
     void onSearchTextChanged(CharSequence text) {
+        if (text.length() > 0) {
+            ivMic.setImageResource(R.drawable.actionbar_icon_remove);
+        } else {
+            ivMic.setImageResource(R.drawable.btn_search_voice);
+        }
         keywordSubject.onNext(text.toString());
     }
 
@@ -100,10 +173,24 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
         super.onDestroy();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (isSelectMode && vgSearch.getVisibility() == View.VISIBLE) {
+            etSearch.setText("");
+            vgSearch.setVisibility(View.GONE);
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     @OnClick(R.id.iv_search_backkey)
     public void onBackImageClick() {
-        finish();
+        if (isSelectMode) {
+            etSearch.setText("");
+            vgSearch.setVisibility(View.GONE);
+        } else {
+            finish();
+        }
     }
 
     @OnClick(R.id.iv_search_mic)
@@ -138,6 +225,22 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
         }
     }
 
+    @OnClick(R.id.tv_team_member_toggled_invite)
+    void onInviteClick() {
+        if (adapter.getItem(0) instanceof OnToggledUser) {
+            OnToggledUser onToggledUser = ((OnToggledUser) adapter.getItem(0));
+            onToggledUser.onInvite();
+        }
+    }
+
+    @OnClick(R.id.tv_team_member_toggled_unselect_all)
+    void onUnselectAllClick() {
+        if (adapter.getItem(0) instanceof OnToggledUser) {
+            OnToggledUser onToggledUser = ((OnToggledUser) adapter.getItem(0));
+            onToggledUser.onUnselectAll();
+        }
+    }
+
     @Override
     public void toggle(int count) {
         if (count <= 0) {
@@ -151,8 +254,8 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
 
     @Override
     public void addToggledUser(long[] users) {
-        if (adapter.getItem(0) instanceof OnAddToggledUser) {
-            OnAddToggledUser item = (OnAddToggledUser) adapter.getItem(0);
+        if (adapter.getItem(0) instanceof OnToggledUser) {
+            OnToggledUser item = (OnToggledUser) adapter.getItem(0);
             item.onAddToggledUser(users);
         }
     }

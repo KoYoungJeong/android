@@ -45,6 +45,10 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     @InjectExtra
     boolean selectMode;
 
+    @Nullable
+    @InjectExtra
+    boolean pickMode = false;
+
     @Bind(R.id.list_dept_job_group)
     RecyclerView lvMembers;
 
@@ -76,13 +80,16 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
         initActionbar();
 
         TeamMemberAdapter teamMemberAdapter = new TeamMemberAdapter();
-        teamMemberAdapter.setSelectedMode(selectMode);
+        teamMemberAdapter.setSelectedMode(selectMode && !pickMode);
         lvMembers.setLayoutManager(new LinearLayoutManager(DeptJobGroupActivity.this));
         lvMembers.addItemDecoration(new SimpleDividerItemDecoration());
         lvMembers.setAdapter(teamMemberAdapter);
 
         DaggerDeptJobGroupComponent.builder()
-                .deptJobGroupModule(new DeptJobGroupModule(this, teamMemberAdapter, type, keyword, selectMode))
+                .deptJobGroupModule(new DeptJobGroupModule(this, teamMemberAdapter,
+                        type,
+                        keyword,
+                        selectMode, pickMode))
                 .build()
                 .inject(this);
 
@@ -120,11 +127,18 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     }
 
     @Override
-    public void moveMemberProfile(long userId) {
-        MemberProfileActivity_.intent(this)
-                .from(MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
-                .memberId(userId)
-                .start();
+    public void pickUser(long userId) {
+        if (pickMode) {
+            Intent intent = new Intent();
+            intent.putExtra(EXTRA_RESULT, userId);
+            setResult(RESULT_OK, intent);
+            finish();
+        } else {
+            MemberProfileActivity_.intent(this)
+                    .from(MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
+                    .memberId(userId)
+                    .start();
+        }
     }
 
     @Override
