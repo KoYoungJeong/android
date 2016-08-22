@@ -126,4 +126,42 @@
             android:textSize="@dimen/jandi_text_size_medium" />
     </RelativeLayout>
 
+    <LinearLayout
+        android:id="@+id/vg_team_member_search_recent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignTop="@+id/viewpager_team_member_search"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="최근 검색어"
+            android:textColor="@color/jandi_text_light"
+            android:textSize="@dimen/jandi_text_size_small" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/jandi_tab_underline" />
+
+        <TextView
+            android:id="@+id/tv_team_member_search_recent_empty"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:gravity="center"
+            android:text="최근 검색어가 없습니다."
+            android:textColor="@color/jandi_text_light"
+            android:textSize="@dimen/jandi_text_size_medium" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/lv_team_member_search_recent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
 </RelativeLayout>

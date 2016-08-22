@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -107,6 +108,7 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
         if (!isSelectMode) {
             toolbar.setVisibility(View.GONE);
             vgSearch.setVisibility(View.VISIBLE);
+            showRecentKeyword();
         } else {
             setSupportActionBar(toolbar);
             vgSearch.setVisibility(View.GONE);
@@ -118,6 +120,10 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
                 actionBar.setTitle("1:1 대화 멤버 선택");
             }
         }
+    }
+
+    private void showRecentKeyword() {
+
     }
 
     @Override
@@ -176,8 +182,7 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
     @Override
     public void onBackPressed() {
         if (isSelectMode && vgSearch.getVisibility() == View.VISIBLE) {
-            etSearch.setText("");
-            vgSearch.setVisibility(View.GONE);
+            onBackImageClick();
         } else {
             super.onBackPressed();
         }
@@ -188,6 +193,8 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
         if (isSelectMode) {
             etSearch.setText("");
             vgSearch.setVisibility(View.GONE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
         } else {
             finish();
         }
