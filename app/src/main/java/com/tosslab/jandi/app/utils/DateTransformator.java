@@ -6,8 +6,6 @@ import android.support.annotation.Nullable;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 
-import org.joda.time.Interval;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,6 +16,10 @@ import java.util.Locale;
  */
 public class DateTransformator {
     public static final long PARSE_FAIL = -1;
+    private static final long SECOND_OF_MILL = 1000L;
+    private static final long DAY_OF_MILL = SECOND_OF_MILL * 60L * 60L * 24L;
+    private static final long HOUR_OF_MILL = SECOND_OF_MILL * 60L * 60L;
+    private static final long MINUTE_OF_MILL = SECOND_OF_MILL * 60L;
 
     public static String getTimeString(Date date) {
         Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
@@ -73,32 +75,61 @@ public class DateTransformator {
             return "";
         }
 
-        Interval interval = new Interval(new Date().getTime(), date.getTime());
-        long leftDay = interval.toPeriod().getDays();
-        long leftHour = interval.toPeriod().getHours();
-        long leftMinute = interval.toPeriod().getMinutes();
+        long[] diffValue = getDiffTimes(new Date(), date);
+
+
+        long leftDay = diffValue[0];
+        long leftHour = diffValue[1];
+        long leftMinute = diffValue[2];
 
         Resources resources = JandiApplication.getContext().getResources();
         StringBuilder sb = new StringBuilder();
 
         if (leftDay > 0) {
-            String days = resources.getString(R.string.jandi_date_days);
-            sb.append(leftDay + days + " " + resources.getString(R.string.jandi_date_remaining));
-            String left = sb.toString();
-            return left;
+            return sb.append(leftDay)
+                    .append(resources.getString(R.string.jandi_date_days))
+                    .append(" ")
+                    .append(resources.getString(R.string.jandi_date_remaining)).toString();
         }
 
         if (leftHour > 0) {
-            String hours = resources.getString(R.string.jandi_date_hours);
-            sb.append(leftHour + hours + " ");
+            return sb.append(leftHour)
+                    .append(resources.getString(R.string.jandi_date_hours))
+                    .append(" ").toString();
         }
 
-        String remaining = resources.getString(R.string.jandi_date_minutes)
-                + " "
-                + resources.getString(R.string.jandi_date_remaining);
-        sb.append(leftMinute + remaining);
-        String left = sb.toString();
-        return left;
+        return sb.append(leftMinute)
+                .append(resources.getString(R.string.jandi_date_minutes))
+                .append(" ")
+                .append(resources.getString(R.string.jandi_date_remaining)).toString();
+    }
+
+    private static long[] getDiffTimes(Date sourceTime, Date targetTime) {
+
+        long[] diffTimes = new long[4];// Day, Hour, Minute, Second
+
+        long source = sourceTime.getTime();
+        long target = targetTime.getTime();
+
+        long diff = target - source;
+        long diffDay = diff / DAY_OF_MILL;
+
+        diff = diff % DAY_OF_MILL; // remain time of a day
+        long diffHour = diff / HOUR_OF_MILL;
+
+        diff = diff % HOUR_OF_MILL; // remain time of a hour
+        long diffMin = diff / MINUTE_OF_MILL;
+
+        diff = diff % MINUTE_OF_MILL; // remain time of a min
+        long diffSec = diff / SECOND_OF_MILL;
+
+
+        diffTimes[0] = diffDay;
+        diffTimes[1] = diffHour;
+        diffTimes[2] = diffMin;
+        diffTimes[3] = diffSec;
+
+        return diffTimes;
     }
 
 }

@@ -41,9 +41,12 @@ import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl_;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
@@ -56,20 +59,20 @@ import com.tosslab.jandi.app.ui.maintab.file.dagger.DaggerFileListComponent;
 import com.tosslab.jandi.app.ui.maintab.file.dagger.FileListModule;
 import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenter;
 import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenterImpl;
-import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
-import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
+import com.tosslab.jandi.app.ui.search.file.view.FileSearchActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +88,7 @@ import de.greenrobot.event.EventBus;
  * Created by tee on 16. 6. 28..
  */
 public class FileListFragment extends Fragment implements FileListPresenterImpl.View,
-        SearchActivity.SearchSelectView, ListScroller, MainTabPagerAdapter.OnItemFocused {
+        FileSearchActivity.SearchSelectView, ListScroller, MainTabPagerAdapter.OnItemFocused {
 
     public static final String KEY_COMMENT_COUNT = "comment_count";
     public static final String KEY_FILE_ID = "file_id";
@@ -121,19 +124,21 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     @Bind(R.id.progress_file_list)
     ProgressBar moreLoadingProgressBar;
 
+    private ProgressWheel progressWheel;
+
     private SearchSelectorViewController searchSelectorViewController;
     private FileUploadController filePickerViewModel;
 
     private long entityId = -1;
 
     private SearchedFilesAdapterView searchedFilesAdapterView;
-    private SearchActivity.OnSearchItemSelect onSearchItemSelect;
-    private SearchActivity.OnSearchText onSearchText;
+    private FileSearchActivity.OnSearchItemSelect onSearchItemSelect;
+    private FileSearchActivity.OnSearchText onSearchText;
     private boolean isSearchLayoutFirst = true;
     private boolean isForeground;
     private boolean focused = true; // maintab 에서 현재 화면인지 체크하기 위함
 
-    public void setOnSearchItemSelect(SearchActivity.OnSearchItemSelect onSearchItemSelect) {
+    public void setOnSearchItemSelect(FileSearchActivity.OnSearchItemSelect onSearchItemSelect) {
         this.onSearchItemSelect = onSearchItemSelect;
     }
 
@@ -157,7 +162,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
             entityId = bundle.getLong(PARAM_ENTITY_ID, -1);
         }
         DaggerFileListComponent.builder()
-                .fileListModule(new FileListModule(this, entityId))
+                .fileListModule(new FileListModule(this, entityId, isInSearchActivity()))
                 .build()
                 .inject(this);
         filePickerViewModel = MainFileUploadControllerImpl_.getInstance_(getContext());
@@ -179,6 +184,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
+        fileListPresenter.onDestory();
         super.onDestroy();
     }
 
@@ -199,15 +205,12 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
         setHasOptionsMenu(true);
 
-        fileListPresenter.initSearchQuery();
-
         resetFilterLayoutPosition();
 
         if (isInSearchActivity() && isSearchLayoutFirst) {
             initSearchLayoutIfFirst();
         }
 
-        fileListPresenter.doSearchAll();
     }
 
     @OnClick(R.id.ly_file_list_where)
@@ -232,9 +235,9 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     }
 
     private void setListView() {
-        if (getActivity() instanceof SearchActivity) {
+        if (getActivity() instanceof FileSearchActivity) {
             AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                    .event(Event.ScreenView)
+                    .event(SprinklerEvents.ScreenView)
                     .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                     .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                     .property(PropertyKey.ScreenView, ScreenViewProperty.FILE_SEARCH)
@@ -249,7 +252,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         SearchedFilesAdapter searchedFilesAdapter = new SearchedFilesAdapter();
         lvSearchFiles.setAdapter(searchedFilesAdapter);
         searchedFilesAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
-            moveToFileDetailActivity((searchedFilesAdapter.getItem(position).id));
+            moveToFileDetailActivity(searchedFilesAdapter.getItem(position).getFile());
 
             if (onSearchItemSelect != null) {
                 onSearchItemSelect.onSearchItemSelect();
@@ -263,7 +266,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
                 action = AnalyticsValue.Action.ChooseFilteredFile;
             }
 
-            if (getActivity() instanceof SearchActivity) {
+            if (getActivity() instanceof FileSearchActivity) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, action);
             } else {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, action);
@@ -274,12 +277,23 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         fileListPresenter.setSearchedFilesAdapterModel(searchedFilesAdapter);
     }
 
-    private void moveToFileDetailActivity(long fileId) {
-        FileDetailActivity_
-                .intent(this)
-                .fileId(fileId)
-                .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
-        getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+    private void moveToFileDetailActivity(ResSearch.File file) {
+        if (file.getIcon().startsWith("image")) {
+            fileListPresenter.getImageDetail(file.getId());
+        } else {
+            FileDetailActivity_
+                    .intent(this)
+                    .fileId(file.getId())
+                    .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+            getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+        }
+    }
+
+    @Override
+    public void moveToCarousel(ResMessages.FileMessage fileMessage) {
+        Intent intent = CarouselViewerActivity.getImageViewerIntent(getActivity(), fileMessage)
+                .build();
+        startActivityForResult(intent, JandiConstants.TYPE_FILE_DETAIL_REFRESH);
     }
 
     @Override
@@ -368,9 +382,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_main_search) {
-            SearchActivity_.intent(getActivity())
-                    .isFromFiles(true)
-                    .start();
+            FileSearchActivity.start(getActivity(), -1);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -391,7 +403,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     }
 
     private boolean isInSearchActivity() {
-        return getActivity() instanceof SearchActivity;
+        return getActivity() instanceof FileSearchActivity;
     }
 
     public void initSearchLayoutIfFirst() {
@@ -427,6 +439,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         RelativeLayout.LayoutParams loadingLayoutParams = (RelativeLayout.LayoutParams) loadingView.getLayoutParams();
         loadingLayoutParams.topMargin = paddingTop;
         loadingView.setLayoutParams(loadingLayoutParams);
+        loadingView.setVisibility(View.GONE);
 
         lvSearchFiles.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -502,17 +515,35 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     }
 
     @Override
+    public void showProgress() {
+        if (progressWheel == null) {
+            progressWheel = new ProgressWheel(getActivity());
+        }
+
+        if (!progressWheel.isShowing()) {
+            progressWheel.show();
+        }
+    }
+
+    @Override
+    public void dismissProgress() {
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+    }
+
+    @Override
     public void scrollToTop() {
         lvSearchFiles.scrollToPosition(0);
     }
 
     @Override
     public void onNewQuery(String query) {
-        fileListPresenter.doKeywordSearch(query);
+        fileListPresenter.onNewQuery(query);
     }
 
     @Override
-    public void setOnSearchText(SearchActivity.OnSearchText onSearchText) {
+    public void setOnSearchText(FileSearchActivity.OnSearchText onSearchText) {
         this.onSearchText = onSearchText;
     }
 

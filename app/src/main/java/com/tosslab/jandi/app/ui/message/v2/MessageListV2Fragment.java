@@ -102,6 +102,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketServiceStopEvent;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
@@ -147,6 +148,9 @@ import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
@@ -157,10 +161,7 @@ import com.tosslab.jandi.app.views.SoftInputDetectLinearLayout;
 import com.tosslab.jandi.app.views.controller.SoftInputAreaController;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.spannable.JandiURLSpan;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -562,7 +563,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 ? ScreenViewProperty.PUBLIC_TOPIC : ScreenViewProperty.PRIVATE_TOPIC;
 
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.ScreenView)
+                .event(SprinklerEvents.ScreenView)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ScreenView, screenView)
@@ -1056,15 +1057,23 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
             } else if (link.message instanceof ResMessages.FileMessage) {
                 ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
-                sendAnalyticsEvent(fileMessage.content.type.startsWith("image")
+                boolean isImageFile = fileMessage.content.type.startsWith("image");
+                sendAnalyticsEvent(isImageFile
                         ? AnalyticsValue.Action.FileView_ByPhoto
                         : AnalyticsValue.Action.FileView_ByFile);
 
-                FileDetailActivity_.intent(this)
-                        .roomId(room.getRoomId())
-                        .selectMessageId(link.messageId)
-                        .fileId(link.messageId)
-                        .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+                if (isImageFile) {
+                    Intent intent = CarouselViewerActivity.getCarouselViewerIntent(
+                            getActivity(), fileMessage.id, room.getRoomId())
+                            .build();
+                    startActivityForResult(intent, JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+                } else {
+                    FileDetailActivity_.intent(this)
+                            .roomId(room.getRoomId())
+                            .selectMessageId(link.messageId)
+                            .fileId(link.messageId)
+                            .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+                }
                 getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
 
             }
@@ -1359,8 +1368,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 && !event.getData().getLinkMessage().toEntity.isEmpty()
                 && event.getData().getLinkMessage().toEntity.contains(room.getRoomId())) {
             if (messageListPresenter != null) {
-                messageListPresenter.saveMessageFromSocket(event.getData().getLinkMessage());
-                messageListPresenter.addNewMessageOfLocalQueue();
+                messageListPresenter.addNewMessageOfLocalQueue(event.getData().getLinkMessage());
             }
         }
 

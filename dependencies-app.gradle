@@ -20,9 +20,6 @@ rootProject.allprojects { project ->
                 compile rootProject.ext.dependecies.libraries.photoView
                 compile rootProject.ext.dependecies.libraries.imageZoomCrop
 
-//    compile project(':sprinkler-android'))
-//    compile project(':photoview-expand'))
-
                 retrolambdaConfig rootProject.ext.dependecies.libraries.retrolambda
                 apt rootProject.ext.dependecies.libraries.androidAnnotationApt
                 compile rootProject.ext.dependecies.libraries.androidAnnotation
@@ -91,9 +88,6 @@ rootProject.allprojects { project ->
                 // Calendar View
                 compile rootProject.ext.dependecies.libraries.material_calendarview
 
-                // Joda time
-                compile rootProject.ext.dependecies.libraries.joda_time
-
                 // newrelic
                 compile rootProject.ext.dependecies.libraries.newrelic
 
@@ -102,6 +96,8 @@ rootProject.allprojects { project ->
                 compile rootProject.ext.dependecies.libraries.okhttp3
                 compile rootProject.ext.dependecies.libraries.okhttp3_ws
                 compile rootProject.ext.dependecies.libraries.jackson
+                compile rootProject.ext.dependecies.libraries.timehop_stickyheader_recyclerview
+
                 debugCompile rootProject.ext.dependecies.libraries.okhttp3_logging
 
                 debugCompile rootProject.ext.dependecies.libraries.stetho_okhttp3
@@ -112,6 +108,7 @@ rootProject.allprojects { project ->
                 androidTestCompile rootProject.ext.dependecies.libraries.espresso_core
                 androidTestCompile rootProject.ext.dependecies.libraries.espresso_intent
                 androidTestCompile rootProject.ext.dependecies.libraries.dexmaker_mockito
+                androidTestCompile rootProject.ext.dependecies.libraries.mockito
                 androidTestCompile rootProject.ext.dependecies.libraries.dexmaker_dx
                 androidTestCompile rootProject.ext.dependecies.libraries.awaitility
                 androidTestCompile rootProject.ext.dependecies.libraries.assertj_android

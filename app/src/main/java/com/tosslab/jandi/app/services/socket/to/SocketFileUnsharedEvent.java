@@ -24,6 +24,7 @@ public class SocketFileUnsharedEvent implements EventHistoryInfo {
     private int version;
     private EventFileInfo file;
     private String event;
+    private String unique;
 
     @Override
     public long getTs() {
@@ -65,6 +66,11 @@ public class SocketFileUnsharedEvent implements EventHistoryInfo {
         return teamId;
     }
 
+    @Override
+    public String getUnique() {
+        return unique;
+    }
+
     public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
@@ -76,6 +82,10 @@ public class SocketFileUnsharedEvent implements EventHistoryInfo {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

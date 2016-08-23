@@ -40,23 +40,23 @@ public class MessageSearchApi extends ApiTemplate<MessageSearchApi.Api> {
 
     interface Api {
 
-        // Message Search
-        @GET("teams/{teamId}/search/messages")
+        // Message ReqSearch
+        @GET("teams/{teamId}/searchMessages/messages")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResMessageSearch> searchMessages(@Path("teamId") long teamId, @Query("q") String query, @Query("page") int page,
                                         @Query("perPage") int perPage, @Query("writerId") long writerId, @Query("entityId") long entityId);
 
-        @GET("teams/{teamId}/search/messages")
+        @GET("teams/{teamId}/searchMessages/messages")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResMessageSearch> searchMessagesByEntityId(@Path("teamId") long teamId, @Query("q") String query, @Query("page") int page,
                                                   @Query("perPage") int perPage, @Query("entityId") long entityId);
 
-        @GET("teams/{teamId}/search/messages")
+        @GET("teams/{teamId}/searchMessages/messages")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResMessageSearch> searchMessagesByWriterId(@Path("teamId") long teamId, @Query("q") String query, @Query("page") int page,
                                                   @Query("perPage") int perPage, @Query("writerId") long writerId);
 
-        @GET("teams/{teamId}/search/messages")
+        @GET("teams/{teamId}/searchMessages/messages")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResMessageSearch> searchMessages(@Path("teamId") long teamId, @Query("q") String query, @Query("page") int page,
                                         @Query("perPage") int perPage);

@@ -111,4 +111,8 @@
         <item name="toolbarStyle">@style/ImageCarousel.Toolbar</item>
     </style>
 
+    <style name="JandiTheme.CarouselViewer" parent="@style/Jandi.NoTitle">
+        <item name="colorPrimaryDark">@color/jandi_transparent_black_60p</item>
+    </style>
+
 </resources>

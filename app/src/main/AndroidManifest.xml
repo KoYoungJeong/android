@@ -68,6 +68,12 @@
         </activity>
 
         <activity
+            android:name=".ui.profile.modify.property.namestatus.view.NameStatusActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".services.upload.UploadNotificationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleInstance"
@@ -150,10 +156,10 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
-            android:name=".ui.carousel.CarouselViewerActivity_"
+            android:name=".ui.carousel.CarouselViewerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="fullUser"
-            android:theme="@style/JandiTheme.ActionBarOverlay" />
+            android:theme="@style/JandiTheme.CarouselViewer" />
 
         <activity
             android:name=".ui.photo.PhotoViewActivity_"
@@ -214,7 +220,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.search.main.view.SearchActivity_"
+            android:name=".ui.search.file.view.FileSearchActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_topic_paricipants"
             android:screenOrientation="portrait" />
@@ -578,7 +584,22 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.profile.inputlist.InputProfileListActivity"
+            android:name=".ui.profile.modify.property.dept.DeptPositionActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.search.main.SearchActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.search.filter.member.MemberFilterActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.search.filter.room.RoomFilterActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
 
@@ -644,7 +665,7 @@
         <!-- Download Service -->
         <service android:name=".services.download.DownloadService" />
 
-        <service android:name="com.tosslab.jandi.lib.sprinkler.io.SprinklerService" />
+        <service android:name="com.tosslab.jandi.lib.sprinkler.service.SprinklerService" />
 
         <!-- Process start Intent Service -->
         <service android:name=".dummy.JandiProcessStartService" />

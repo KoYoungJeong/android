@@ -16,6 +16,7 @@ public class SocketChatCreatedEvent implements EventHistoryInfo {
     private Data data;
     private long ts;
     private long teamId;
+    private String unique;
 
     @Override
     public int getVersion() {
@@ -29,6 +30,11 @@ public class SocketChatCreatedEvent implements EventHistoryInfo {
     @Override
     public long getTeamId() {
         return teamId;
+    }
+
+    @Override
+    public String getUnique() {
+        return unique;
     }
 
     public void setTeamId(long teamId) {
@@ -59,6 +65,10 @@ public class SocketChatCreatedEvent implements EventHistoryInfo {
 
     public void setData(Data data) {
         this.data = data;
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

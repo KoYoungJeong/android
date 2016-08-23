@@ -222,11 +222,7 @@ public class ChatDetailFragment extends Fragment {
 
     @OnClick(R.id.vg_chat_detail_leave)
     void onChatLeaveClick() {
-        if (leaveViewModel.canLeaveRoom(entityId)) {
-            leaveViewModel.leave(entityId);
-        } else {
-            leaveViewModel.showPrivateTopicLeaveDialog(getActivity(), entityId);
-        }
+        leaveViewModel.leave(entityId);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.Leave);
     }
 

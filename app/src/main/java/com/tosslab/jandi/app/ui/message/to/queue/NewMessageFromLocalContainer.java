@@ -1,11 +1,11 @@
 package com.tosslab.jandi.app.ui.message.to.queue;
 
-import com.tosslab.jandi.app.ui.message.to.MessageState;
+import com.tosslab.jandi.app.network.models.ResMessages;
 
-public class NewMessageFromLocalContainer implements MessageContainer<MessageState> {
-    private final MessageState messageState;
+public class NewMessageFromLocalContainer implements MessageContainer<ResMessages.Link> {
+    private final ResMessages.Link link;
 
-    public NewMessageFromLocalContainer(MessageState messageState) {this.messageState = messageState;}
+    public NewMessageFromLocalContainer(ResMessages.Link link) {this.link = link;}
 
     @Override
     public LoadType getQueueType() {
@@ -13,7 +13,7 @@ public class NewMessageFromLocalContainer implements MessageContainer<MessageSta
     }
 
     @Override
-    public MessageState getData() {
-        return messageState;
+    public ResMessages.Link getData() {
+        return link;
     }
 }

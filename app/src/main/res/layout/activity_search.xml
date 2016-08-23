@@ -7,7 +7,6 @@
         android:id="@+id/layout_search_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/layout_search_category"
         android:background="@color/jandi_background_default" />
 
     <RelativeLayout
@@ -55,38 +54,5 @@
             android:src="@drawable/btn_search_voice" />
 
     </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_search_category"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/jandi_search_default_size"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/bg_search_tab"
-        android:gravity="center_vertical"
-        android:weightSum="2">
-
-        <TextView
-            android:id="@+id/tv_search_category_messages"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?android:attr/selectableItemBackground"
-            android:gravity="center"
-            android:text="@string/jandi_messages"
-            android:textColor="@color/text_color_category"
-            android:textSize="@dimen/jadi_search_scope_txt_size" />
-
-        <TextView
-            android:id="@+id/tv_search_category_files"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?android:attr/selectableItemBackground"
-            android:gravity="center"
-            android:text="@string/jandi_tab_file"
-            android:textColor="@color/text_color_category"
-            android:textSize="@dimen/jadi_search_scope_txt_size" />
-    </LinearLayout>
-
 
 </RelativeLayout>

@@ -22,6 +22,7 @@ public class SocketMessageUnstarredEvent implements EventHistoryInfo {
 
     private long ts;
     private long teamId;
+    private String unique;
 
     @Override
     public long getTs() {
@@ -58,6 +59,15 @@ public class SocketMessageUnstarredEvent implements EventHistoryInfo {
 
     public void setTeamId(long teamId) {
         this.teamId = teamId;
+    }
+
+    @Override
+    public String getUnique() {
+        return unique;
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     public StarredInfo getStarredInfo() {

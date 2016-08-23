@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="75dp"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/vg_no_item_view"
+        android:layout_width="match_parent"
+        android:layout_height="74dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/jandi_no_search_result"
+            android:textColor="@color/jandi_border_gray"
+            android:textSize="14dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/jandi_dialog_min_width"
+    android:orientation="vertical"
+    android:paddingBottom="8dp"
+    android:paddingTop="8dp">
+
+    <TextView
+        android:id="@+id/tv_all_room_button"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_list_item"
+        android:clickable="true"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:text="@string/jandi_search_all_room"
+        android:textColor="@color/message_controller_popup_text_color"
+        android:textSize="@dimen/jandi_text_size_large" />
+
+    <TextView
+        android:id="@+id/tv_joined_room_button"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_list_item"
+        android:clickable="true"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:text="@string/jandi_joined_room"
+        android:textColor="@color/message_controller_popup_text_color"
+        android:textSize="@dimen/jandi_text_size_large" />
+
+    <TextView
+        android:id="@+id/tv_choose_room_Button"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_list_item"
+        android:clickable="true"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:text="@string/jandi_menu_room_selection"
+        android:textColor="@color/message_controller_popup_text_color"
+        android:textSize="@dimen/jandi_text_size_large" />
+
+</LinearLayout>

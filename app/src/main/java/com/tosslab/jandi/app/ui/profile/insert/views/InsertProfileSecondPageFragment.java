@@ -16,11 +16,11 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.member.User;
-import com.tosslab.jandi.app.ui.profile.inputlist.InputProfileListActivity;
 import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
 import com.tosslab.jandi.app.ui.profile.insert.dagger.DaggerInsertProfileSecondPageComponent;
 import com.tosslab.jandi.app.ui.profile.insert.dagger.InsertProfileSecondPageModule;
 import com.tosslab.jandi.app.ui.profile.insert.presenter.InsertProfileSecondPagePresenter;
+import com.tosslab.jandi.app.ui.profile.modify.property.dept.DeptPositionActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -141,11 +141,11 @@ public class InsertProfileSecondPageFragment extends Fragment
 
     @OnClick(R.id.tv_department)
     void onClickChooseDepartment() {
-        Intent intent = new Intent(getContext(), InputProfileListActivity.class);
-        intent.putExtra(InputProfileListActivity.EXTRA_INPUT_MODE,
-                InputProfileListActivity.EXTRA_DEPARTMENT_MODE);
+        Intent intent = new Intent(getContext(), DeptPositionActivity.class);
+        intent.putExtra(DeptPositionActivity.EXTRA_INPUT_MODE,
+                DeptPositionActivity.EXTRA_DEPARTMENT_MODE);
         if (!TextUtils.isEmpty(tvDepartment.getText().toString())) {
-            intent.putExtra(InputProfileListActivity.EXTRA_DEFAULT,
+            intent.putExtra(DeptPositionActivity.EXTRA_DEFAULT,
                     tvDepartment.getText().toString());
         }
         startActivityForResult(intent, REQUEST_GET_DEPARTMENT);
@@ -154,11 +154,11 @@ public class InsertProfileSecondPageFragment extends Fragment
     @OnClick(R.id.tv_positon)
     void onClickChooseJobTitle(View view) {
         // 직책
-        Intent intent = new Intent(getContext(), InputProfileListActivity.class);
-        intent.putExtra(InputProfileListActivity.EXTRA_INPUT_MODE,
-                InputProfileListActivity.EXTRA_JOB_TITLE_MODE);
+        Intent intent = new Intent(getContext(), DeptPositionActivity.class);
+        intent.putExtra(DeptPositionActivity.EXTRA_INPUT_MODE,
+                DeptPositionActivity.EXTRA_JOB_TITLE_MODE);
         if (!TextUtils.isEmpty(tvPosition.getText().toString())) {
-            intent.putExtra(InputProfileListActivity.EXTRA_DEFAULT,
+            intent.putExtra(DeptPositionActivity.EXTRA_DEFAULT,
                     tvPosition.getText().toString());
         }
         startActivityForResult(intent, REQUEST_GET_JOB_TITLE);
@@ -307,14 +307,14 @@ public class InsertProfileSecondPageFragment extends Fragment
 
     private void onGetJobTitle(int resultCode, Intent data) {
         if (resultCode == getActivity().RESULT_OK) {
-            String jobTitle = data.getStringExtra(InputProfileListActivity.RESULT_EXTRA);
+            String jobTitle = data.getStringExtra(DeptPositionActivity.RESULT_EXTRA);
             tvPosition.setText(jobTitle);
         }
     }
 
     private void onGetDepartmentResult(int resultCode, Intent data) {
         if (resultCode == getActivity().RESULT_OK) {
-            String department = data.getStringExtra(InputProfileListActivity.RESULT_EXTRA);
+            String department = data.getStringExtra(DeptPositionActivity.RESULT_EXTRA);
             tvDepartment.setText(department);
         }
     }

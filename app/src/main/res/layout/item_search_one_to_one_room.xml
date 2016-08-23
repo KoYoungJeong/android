@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="75dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="74dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_profile"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_margin="15dp" />
+
+        <TextView
+            android:id="@+id/tv_room_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="16dp"
+            android:text="Tee Kim"
+            android:textColor="#333333"
+            android:textSize="16dp" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/v_half_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginLeft="75dp"
+        android:background="#ffeeeeee" />
+
+    <View
+        android:id="@+id/v_full_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#ffeeeeee"
+        android:visibility="visible" />
+
+</LinearLayout>

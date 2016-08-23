@@ -28,7 +28,7 @@ public class MemberSearchModel {
     }
 
     public List<User> getSearchedMembers(final String query,
-                                                    List<User> currentMembers) {
+                                         List<User> currentMembers) {
         List<User> searchedMembers = new ArrayList<>();
         if (currentMembers == null || currentMembers.isEmpty()) {
             return searchedMembers;
@@ -40,7 +40,8 @@ public class MemberSearchModel {
                         return true;
                     }
 
-                    return member.getName().toLowerCase().contains(query.toLowerCase());
+                    return member.getName().toLowerCase().contains(query.toLowerCase())
+                            || member.getDivision().toLowerCase().contains(query.toLowerCase());
                 })
                 .toSortedList((entity, entity2) -> {
                     if (entity.isBot()) {

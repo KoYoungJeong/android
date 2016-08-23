@@ -28,6 +28,7 @@ import setup.BaseInitUtil;
 
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
@@ -65,46 +66,42 @@ public class MentionControlViewModelTest {
     }
 
     @Test
-    public void testSetUpMention() throws Exception {
+    public void testSetUpMention() throws Throwable {
 
-        rule.getActivity().runOnUiThread(this::init);
+        rule.runOnUiThread(this::init);
 
-        rule.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
+        {
+            rule.runOnUiThread(() -> mentionControlViewModel.setUpMention("hahahah"));
 
-                mentionControlViewModel.setUpMention("hahahah");
-                Editable text = textView.getText();
-                assertTrue(text instanceof Spanned);
+            Editable text = textView.getText();
+            assertTrue(text instanceof Spanned);
+            MentionMessageSpannable[] spans = text.getSpans(0, text.length(), MentionMessageSpannable.class);
+            assertThat(spans, is(notNullValue()));
+            assertThat(spans.length, is(0));
+        }
 
-                for (int idx = 0; idx < text.length() - 1; idx++) {
+        {
+            rule.runOnUiThread(() -> {
+                mentionControlViewModel.refreshMembers(Arrays.asList(TeamInfoLoader.getInstance().getDefaultTopicId()));
+                Observable.from(TeamInfoLoader.getInstance().getUserList())
+                        .takeFirst(user1 -> user1.getId() != TeamInfoLoader.getInstance().getMyId())
+                        .map(User::getId)
+                        .subscribe(id -> {
+                            StringBuffer buffer = new StringBuffer();
+                            buffer.append("@").append("hahahah").append("\u2063").append(id).append("\u2063");
+                            mentionControlViewModel.setUpMention(buffer.toString());
+                        });
 
-                    MentionMessageSpannable[] spans = text.getSpans(idx, idx, MentionMessageSpannable.class);
-                    assertThat(spans, is(notNullValue()));
-                    assertThat(spans.length, is(0));
-                }
+            });
 
-            }
-        });
 
-        rule.getActivity().runOnUiThread(() -> {
-            User user = Observable.from(TeamInfoLoader.getInstance().getUserList())
-                    .takeFirst(user1 -> user1.getId() != TeamInfoLoader.getInstance().getMyId())
-                    .toBlocking().first();
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("@").append(user.getName()).append("\u2063").append(user.getId()).append("\u2063");
-            mentionControlViewModel.setUpMention(buffer.toString());
             Editable text = textView.getText();
             assertTrue(text instanceof Spanned);
 
-            for (int idx = 1; idx < text.length() - 1; idx++) {
-                MentionMessageSpannable[] spans = text.getSpans(idx, idx, MentionMessageSpannable.class);
-                assertThat(spans, is(notNullValue()));
-                System.out.println("Span Length : " + spans.length);
-                assertThat(spans.length, is(1));
-            }
-
-        });
+            MentionMessageSpannable[] spans = text.getSpans(0, text.length(), MentionMessageSpannable.class);
+            assertThat(spans, is(notNullValue()));
+            assertThat(spans.length, is(greaterThanOrEqualTo(1)));
+        }
 
     }
 
@@ -117,7 +114,7 @@ public class MentionControlViewModelTest {
             User user = Observable.from(TeamInfoLoader.getInstance().getUserList())
                     .takeFirst(user1 -> user1.getId() != TeamInfoLoader.getInstance().getMyId())
                     .toBlocking().first();
-            
+
             SearchedItemVO searchedItemVO = new SearchedItemVO();
             searchedItemVO.setId(user.getId());
             searchedItemVO.setName(user.getName());

@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.maintab.file.adapter.viewholder;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -8,7 +7,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -47,21 +46,18 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.iv_searched_file_type_comment)
     ImageView ivComment;
 
-    Context context;
-
-    public SearchedFilesViewHolder(View itemView, Context context) {
+    public SearchedFilesViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
-        this.context = context;
     }
 
-    public void bind(ResMessages.FileMessage searchedFile) {
-        ResMessages.FileContent content = searchedFile.content;
+    public void bind(ResSearch.SearchRecord searchedFile) {
+        ResSearch.File content = searchedFile.getFile();
 
-        String searchedFileName = content.title;
+        String searchedFileName = content.getTitle();
         tvFileName.setText(searchedFileName);
 
-        User entity = TeamInfoLoader.getInstance().getUser(searchedFile.writerId);
+        User entity = TeamInfoLoader.getInstance().getUser(searchedFile.getWriterId());
 
         if (entity != null) {
             String searchedFileOwnerName = entity.getName();
@@ -70,19 +66,19 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
             tvFileOwner.setText("");
         }
 
-        if (content.size > 0) {
-            String fileSize = FileUtil.formatFileSize(content.size);
-            tvFileType.setText(String.format("%s, %s", fileSize, content.ext));
+        if (content.getSize() > 0) {
+            String fileSize = FileUtil.formatFileSize(content.getSize());
+            tvFileType.setText(String.format("%s, %s", fileSize, content.getExt()));
         } else {
-            tvFileType.setText(content.ext);
+            tvFileType.setText(content.getExt());
         }
 
-        String searchedFileDate = DateTransformator.getTimeString(searchedFile.createTime);
+        String searchedFileDate = DateTransformator.getTimeString(searchedFile.getCreatedAt());
         tvDate.setText(searchedFileDate);
 
-        tvComment.setText(String.valueOf(searchedFile.commentCount));
+        tvComment.setText(String.valueOf(content.getCommentCount()));
 
-        if (searchedFile.commentCount > 0) {
+        if (content.getCommentCount() > 0) {
             ivComment.setVisibility(View.VISIBLE);
             tvComment.setVisibility(View.VISIBLE);
         } else {
@@ -100,11 +96,10 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
             vLineThrough.setVisibility(View.VISIBLE);
         }
 
-        String serverUrl = content.serverUrl;
-        String fileType = content.icon;
-        String fileUrl = content.fileUrl;
-        String thumbnailUrl =
-                ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
+        String serverUrl = content.getServerUrl();
+        String fileType = content.getIcon();
+        String fileUrl = content.getFileUrl();
+        String thumbnailUrl = ImageUtil.getLargeProfileUril(fileUrl);
         ImageUtil.setResourceIconOrLoadImage(
                 ivFileType, vFileRound,
                 fileUrl, thumbnailUrl,

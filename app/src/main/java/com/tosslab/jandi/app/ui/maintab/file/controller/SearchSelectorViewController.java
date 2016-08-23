@@ -16,7 +16,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
-import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
+import com.tosslab.jandi.app.ui.search.file.view.FileSearchActivity;
 import com.tosslab.jandi.app.ui.selector.filetype.FileTypeSelector;
 import com.tosslab.jandi.app.ui.selector.filetype.FileTypeSelectorImpl;
 import com.tosslab.jandi.app.ui.selector.room.RoomSelector;
@@ -76,7 +76,7 @@ public class SearchSelectorViewController {
     private void setSpinnerByWhom() {
         tvFileListWhom.setText(
                 (currentUserNameText == null || currentUserNameText.equals(""))
-                        ? JandiApplication.getContext().getString(R.string.jandi_file_category_everyone)
+                        ? JandiApplication.getContext().getString(R.string.jandi_search_category_everyone)
                         : currentUserNameText
         );
     }
@@ -84,7 +84,7 @@ public class SearchSelectorViewController {
     private void setSpinnerByWhere() {
         tvFileListWhere.setText(
                 (currentEntityNameText == null || currentEntityNameText.equals(""))
-                        ? JandiApplication.getContext().getString(R.string.jandi_file_category_everywhere)
+                        ? JandiApplication.getContext().getString(R.string.jandi_search_category_everywhere)
                         : currentEntityNameText
         );
     }
@@ -136,7 +136,7 @@ public class SearchSelectorViewController {
             }
 
             AnalyticsValue.Screen screen;
-            if (context instanceof SearchActivity) {
+            if (context instanceof FileSearchActivity) {
                 screen = AnalyticsValue.Screen.FilesSearch;
             } else {
                 screen = AnalyticsValue.Screen.FilesTab;
@@ -148,7 +148,7 @@ public class SearchSelectorViewController {
 
         fileSelector.setOnFileTypeDismissListener(() -> {
             setUpTypeTextView(tvFileListType, false);
-            if (context instanceof SearchActivity) {
+            if (context instanceof FileSearchActivity) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseTypeFilter);
             } else {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.CloseTypeFilter);
@@ -157,7 +157,7 @@ public class SearchSelectorViewController {
 
         fileSelector.show(((View) tvFileListType.getParent().getParent()));
 
-        if (context instanceof SearchActivity) {
+        if (context instanceof FileSearchActivity) {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTypeFilter);
         } else {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTypeFilter);
@@ -170,7 +170,7 @@ public class SearchSelectorViewController {
         userSelector.setOnUserSelectListener(item -> {
 
             if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
-                currentUserNameText = context.getString(R.string.jandi_file_category_everyone);
+                currentUserNameText = context.getString(R.string.jandi_search_category_everyone);
                 tvFileListWhom.setText(currentUserNameText);
                 EventBus.getDefault().post(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
             } else if (item.getEntityId() == TeamInfoLoader.getInstance().getMyId()) {
@@ -185,7 +185,7 @@ public class SearchSelectorViewController {
             userSelector.dismiss();
 
             AnalyticsValue.Screen screen;
-            if (context instanceof SearchActivity) {
+            if (context instanceof FileSearchActivity) {
                 screen = AnalyticsValue.Screen.FilesSearch;
             } else {
                 screen = AnalyticsValue.Screen.FilesTab;
@@ -200,7 +200,7 @@ public class SearchSelectorViewController {
 
         userSelector.setOnUserDismissListener(() -> {
             setUpTypeTextView(tvFileListWhom, false);
-            if (context instanceof SearchActivity) {
+            if (context instanceof FileSearchActivity) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseMemberFilter);
             } else {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.CloseMemberFilter);
@@ -209,7 +209,7 @@ public class SearchSelectorViewController {
 
         userSelector.show(((View) tvFileListWhom.getParent().getParent()));
 
-        if (context instanceof SearchActivity) {
+        if (context instanceof FileSearchActivity) {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenMemberFilter);
         } else {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenMemberFilter);
@@ -239,7 +239,7 @@ public class SearchSelectorViewController {
             long sharedEntityId = CategorizingAsEntity.EVERYWHERE;
             if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
                 // 첫번째는 "Everywhere"인 더미 entity
-                currentEntityNameText = context.getString(R.string.jandi_file_category_everywhere);
+                currentEntityNameText = context.getString(R.string.jandi_search_category_everywhere);
             } else {
                 sharedEntityId = item.getEntityId();
                 currentEntityNameText = item.getName();
@@ -250,7 +250,7 @@ public class SearchSelectorViewController {
             roomSelector.dismiss();
 
             AnalyticsValue.Screen screen;
-            if (context instanceof SearchActivity) {
+            if (context instanceof FileSearchActivity) {
                 screen = AnalyticsValue.Screen.FilesSearch;
             } else {
                 screen = AnalyticsValue.Screen.FilesTab;
@@ -267,7 +267,7 @@ public class SearchSelectorViewController {
 
         roomSelector.setOnRoomDismissListener(() -> {
             setUpTypeTextView(tvFileListWhere, false);
-            if (context instanceof SearchActivity) {
+            if (context instanceof FileSearchActivity) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseTopicFilter);
             } else {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.CloseTopicFilter);
@@ -275,7 +275,7 @@ public class SearchSelectorViewController {
         });
 
         roomSelector.show(((View) tvFileListWhere.getParent().getParent()));
-        if (context instanceof SearchActivity) {
+        if (context instanceof FileSearchActivity) {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.OpenTopicFilter);
         } else {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.OpenTopicFilter);
@@ -286,7 +286,7 @@ public class SearchSelectorViewController {
     private void setUpTypeTextView(TextView textVew, boolean isFocused) {
         Drawable rightDrawable;
         if (isFocused) {
-            if (context instanceof SearchActivity) {
+            if (context instanceof FileSearchActivity) {
                 rightDrawable = textVew.getResources().getDrawable(R.drawable.file_arrow_up);
                 ((View) textVew.getParent()).setBackgroundColor(context.getResources().getColor(R.color.jandi_primary_color_focus));
             } else {
@@ -294,7 +294,7 @@ public class SearchSelectorViewController {
                 ((View) textVew.getParent()).setBackgroundColor(Color.WHITE);
             }
         } else {
-            if (context instanceof SearchActivity) {
+            if (context instanceof FileSearchActivity) {
                 rightDrawable = textVew.getResources().getDrawable(R.drawable.file_arrow_down);
             } else {
                 rightDrawable = textVew.getResources().getDrawable(R.drawable.file_arrow_down_gray);

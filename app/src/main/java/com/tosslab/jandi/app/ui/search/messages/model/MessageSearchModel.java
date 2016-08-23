@@ -13,9 +13,9 @@ import com.tosslab.jandi.app.ui.search.messages.adapter.strategy.TextStrategy;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -120,7 +120,7 @@ public class MessageSearchModel {
         }
 
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.MessageKeywordSearch)
+                .event(SprinklerEvents.MessageKeywordSearch)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, true)
@@ -131,7 +131,7 @@ public class MessageSearchModel {
 
     public void trackMessageKeywordSearchFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.MessageKeywordSearch)
+                .event(SprinklerEvents.MessageKeywordSearch)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, false)

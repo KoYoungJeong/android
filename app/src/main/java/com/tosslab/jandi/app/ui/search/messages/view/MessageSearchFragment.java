@@ -27,7 +27,7 @@ import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
-import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
+import com.tosslab.jandi.app.ui.search.file.view.FileSearchActivity;
 import com.tosslab.jandi.app.ui.search.messages.adapter.MessageSearchResultAdapter;
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenter;
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenterImpl;
@@ -41,11 +41,11 @@ import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -66,7 +66,7 @@ import rx.functions.Func0;
  * Created by Steve SeongUg Jung on 15. 3. 10..
  */
 @EFragment(R.layout.fragment_message_search)
-public class MessageSearchFragment extends Fragment implements MessageSearchPresenter.View, SearchActivity.SearchSelectView {
+public class MessageSearchFragment extends Fragment implements MessageSearchPresenter.View, FileSearchActivity.SearchSelectView {
 
     @Bean(MessageSearchPresenterImpl.class)
     MessageSearchPresenter messageSearchPresenter;
@@ -100,13 +100,13 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     private int scropMinY;
     private boolean isFirstLayout = true;
     private boolean isForeground;
-    private SearchActivity.OnSearchItemSelect onSearchItemSelect;
-    private SearchActivity.OnSearchText onSearchText;
+    private FileSearchActivity.OnSearchItemSelect onSearchItemSelect;
+    private FileSearchActivity.OnSearchText onSearchText;
 
     @AfterViews
     void initObject() {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.ScreenView)
+                .event(SprinklerEvents.ScreenView)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_SEARCH)
@@ -265,7 +265,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
         roomSelector.setOnRoomSelectListener(item -> {
             if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
-                EventBus.getDefault().post(new SelectEntityEvent(-1, getString(R.string.jandi_file_category_everywhere)));
+                EventBus.getDefault().post(new SelectEntityEvent(-1, getString(R.string.jandi_search_category_everywhere)));
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.ChooseTopicFilter, AnalyticsValue.Label.AllTopic);
             } else {
                 EventBus.getDefault().post(new SelectEntityEvent(item.getEntityId(), item.getName()));
@@ -297,7 +297,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         UserSelector userSelector = new UserSelectorImpl();
         userSelector.setOnUserSelectListener(item -> {
             if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
-                EventBus.getDefault().post(new SelectMemberEvent(-1, getString(R.string.jandi_file_category_everyone)));
+                EventBus.getDefault().post(new SelectMemberEvent(-1, getString(R.string.jandi_search_category_everyone)));
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.ChooseMemberFilter, AnalyticsValue.Label.AllMember);
             } else {
                 EventBus.getDefault().post(new SelectMemberEvent(item.getEntityId(), item.getName()));
@@ -439,12 +439,12 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     }
 
     @Override
-    public void setOnSearchItemSelect(SearchActivity.OnSearchItemSelect onSearchItemSelect) {
+    public void setOnSearchItemSelect(FileSearchActivity.OnSearchItemSelect onSearchItemSelect) {
         this.onSearchItemSelect = onSearchItemSelect;
     }
 
     @Override
-    public void setOnSearchText(SearchActivity.OnSearchText onSearchText) {
+    public void setOnSearchText(FileSearchActivity.OnSearchText onSearchText) {
         this.onSearchText = onSearchText;
     }
 

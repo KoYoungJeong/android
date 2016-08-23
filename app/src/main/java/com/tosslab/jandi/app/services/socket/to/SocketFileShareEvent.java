@@ -18,6 +18,7 @@ public class SocketFileShareEvent implements EventHistoryInfo {
     private long writer;
     private FileObject file;
     private long ts;
+    private String unique;
 
     @Override
     public long getTs() {
@@ -45,6 +46,11 @@ public class SocketFileShareEvent implements EventHistoryInfo {
     @Override
     public long getTeamId() {
         return teamId;
+    }
+
+    @Override
+    public String getUnique() {
+        return unique;
     }
 
     public void setTeamId(long teamId) {
@@ -76,6 +82,10 @@ public class SocketFileShareEvent implements EventHistoryInfo {
                 ", writer=" + writer +
                 ", file=" + file +
                 '}';
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
 

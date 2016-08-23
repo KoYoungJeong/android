@@ -56,9 +56,9 @@ import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
@@ -179,33 +179,32 @@ public class MessageListModel {
         messageManipulator.setRoomId(roomId);
     }
 
-    public long sendMessage(long localId, long teamId, long roomId, ReqMessage reqMessage) {
+    public ResMessages.Link sendMessage(long localId, long teamId, long roomId, ReqMessage reqMessage) {
 
         try {
             List<ResMessages.Link> links = roomsApi.get().sendMessage(teamId, roomId, reqMessage);
             ResMessages.Link link = links.get(0);
-            MessageRepository.getRepository().upsertMessage(link);
 
             SendMessageRepository.getRepository().updateSendMessageStatus(
                     localId, link.id, SendMessage.Status.COMPLETE);
 
             trackMessagePostSuccess();
 
-            return link.id;
+            return link;
         } catch (RetrofitException e) {
             SendMessageRepository.getRepository().updateSendMessageStatus(
                     localId, SendMessage.Status.FAIL);
 
             int errorCode = e.getStatusCode();
             trackMessagePostFail(errorCode);
-            return -1;
+            return null;
         } catch (Exception e) {
 
             SendMessageRepository.getRepository().updateSendMessageStatus(
                     localId, SendMessage.Status.FAIL);
 
             trackMessagePostFail(-1);
-            return -1;
+            return null;
         }
     }
 
@@ -352,7 +351,7 @@ public class MessageListModel {
 
     private void trackMessagePostSuccess() {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.MessagePost)
+                .event(SprinklerEvents.MessagePost)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, true)
@@ -363,7 +362,7 @@ public class MessageListModel {
 
     private void trackMessagePostFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.MessagePost)
+                .event(SprinklerEvents.MessagePost)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, false)
@@ -374,7 +373,7 @@ public class MessageListModel {
 
     public void trackMessageDeleteSuccess(long messageId) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.MessageDelete)
+                .event(SprinklerEvents.MessageDelete)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, true)
@@ -385,7 +384,7 @@ public class MessageListModel {
 
     public void trackMessageDeleteFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.MessageDelete)
+                .event(SprinklerEvents.MessageDelete)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, false)

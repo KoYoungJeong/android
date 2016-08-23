@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="jandi_member_profile_margin_top">25dp</dimen>
+    <dimen name="jandi_actionbar_overlay_top_margin">25dp</dimen>
 </resources>

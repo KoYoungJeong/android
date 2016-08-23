@@ -15,6 +15,7 @@ public class SocketTopicJoinedEvent implements EventHistoryInfo {
     private long teamId;
     private Data data;
     private long ts;
+    private String unique;
 
     @Override
     public int getVersion() {
@@ -39,6 +40,11 @@ public class SocketTopicJoinedEvent implements EventHistoryInfo {
         return teamId;
     }
 
+    @Override
+    public String getUnique() {
+        return unique;
+    }
+
     public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
@@ -58,6 +64,10 @@ public class SocketTopicJoinedEvent implements EventHistoryInfo {
 
     public void setTs(long ts) {
         this.ts = ts;
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

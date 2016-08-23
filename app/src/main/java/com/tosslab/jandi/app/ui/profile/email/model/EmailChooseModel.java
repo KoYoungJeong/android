@@ -15,9 +15,9 @@ import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 
@@ -106,7 +106,7 @@ public class EmailChooseModel {
     public void trackChangeAccountEmailSuccess(String accountId) {
         String email = getPrimaryEmail();
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.ChangeAccountPrimaryEmail)
+                .event(SprinklerEvents.ChangeAccountPrimaryEmail)
                 .accountId(accountId)
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.Email, email)
@@ -116,7 +116,7 @@ public class EmailChooseModel {
 
     public void trackChangeAccountEmailFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.ChangeAccountPrimaryEmail)
+                .event(SprinklerEvents.ChangeAccountPrimaryEmail)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)
@@ -127,7 +127,7 @@ public class EmailChooseModel {
     public void trackRequestVerifyEmailSuccess() {
         String email = getPrimaryEmail();
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.RequestVerificationEmail)
+                .event(SprinklerEvents.RequestVerificationEmail)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.Email, email)
@@ -137,7 +137,7 @@ public class EmailChooseModel {
 
     public void trackRequestVerifyEmailFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.RequestVerificationEmail)
+                .event(SprinklerEvents.RequestVerificationEmail)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)

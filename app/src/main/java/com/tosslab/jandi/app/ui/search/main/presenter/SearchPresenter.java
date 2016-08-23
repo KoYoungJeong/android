@@ -1,46 +1,68 @@
 package com.tosslab.jandi.app.ui.search.main.presenter;
 
-import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
+import com.tosslab.jandi.app.team.room.TopicRoom;
+import com.tosslab.jandi.app.ui.search.main.object.SearchMessageData;
 
 import java.util.List;
 
 /**
- * Created by Steve SeongUg Jung on 15. 3. 10..
+ * Created by tee on 16. 7. 25..
  */
 public interface SearchPresenter {
 
-    void setView(View view);
+    void sendSearchQuery(String keyword, boolean isOnlyMessage);
 
-    void onSearchTextChange(String s);
+    void setChangeIsShowUnjoinedTopic(boolean isShowUnjoinedTopic);
 
-    void onSearchVoice();
+    void sendMoreResults();
 
-    void onVoiceSearchResult(List<String> voiceSearchResults);
+    void sendSearchHistory();
 
-    void onSearchAction(String text);
+    void upsertKeywordHistory(String keyword);
+
+    List<String> getOldQueryList(String keyword);
+
+    void onDeleteaAllHistoryItem();
+
+    void onDeleteaHistoryItemByKeyword(String keyword);
+
+    void onLaunchTopicRoom(long topicId, boolean isJoined);
+
+    void onJoinTopic(long topicId, int topicType);
+
+    void onRoomChanged(long roomId, long memberId);
+
+    void onWriterChanged(long writerId);
+
+    void onAccessTypeChanged(String accessType);
+
+    void onSetOnlyMessageMode(boolean onlyMessageMode);
+
+    void onMoveToMessageFromSearch(SearchMessageData searchMessageData);
+
+    void onDestroy();
 
     interface View {
 
-        void setOldQueries(List<SearchKeyword> searchKeywords);
+        void refreshSearchedAll();
 
-        void startVoiceActivity();
+        void refreshSearchedOnlyMessage();
 
-        void setSearchText(String searchText);
+        void refreshHistory();
 
-        void showNoVoiceSearchItem();
+        void showMoreProgressBar();
 
-        void sendNewQuery(String searchText);
+        void dismissMoreProgressBar();
 
-        void setMicToClearImage();
+        void moveToMessageActivity(long entityId, int entityType);
 
-        void setClearToMicImage();
+        void showTopicInfoDialog(TopicRoom topicRoom);
 
-        CharSequence getSearchText();
+        void moveToPollActivity(long pollId);
 
-        void dismissDropDown();
+        void moveToMessageActivityFromSearch(long entityId, int entityType, long linkId);
 
-        void hideSoftInput();
+        void hideKeyboard();
 
-        void showSoftInput();
     }
 }

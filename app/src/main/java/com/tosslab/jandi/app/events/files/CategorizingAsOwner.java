@@ -4,14 +4,10 @@ package com.tosslab.jandi.app.events.files;
  * Created by justinygchoi on 2014. 8. 15..
  */
 public class CategorizingAsOwner {
-    public static final String EVERYONE = "all";
-    public String userId;
-
-    public CategorizingAsOwner(String userId) {
-        this.userId = userId;
-    }
+    public static final long EVERYONE = -1;
+    public long userId;
 
     public CategorizingAsOwner(long userId) {
-        this.userId = userId + "";
+        this.userId = userId;
     }
 }

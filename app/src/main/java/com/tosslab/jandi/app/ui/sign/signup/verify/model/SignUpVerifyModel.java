@@ -17,9 +17,9 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -84,7 +84,7 @@ public class SignUpVerifyModel {
 
     public void trackSignUpSuccessAndFlush(ResAccountInfo accountInfo) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.SignUp)
+                .event(SprinklerEvents.SignUp)
                 .accountId(accountInfo.getId())
                 .property(PropertyKey.ResponseSuccess, true)
                 .build());
@@ -93,7 +93,7 @@ public class SignUpVerifyModel {
 
     public void trackSignUpFailAndFlush(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.SignUp)
+                .event(SprinklerEvents.SignUp)
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)
                 .build());

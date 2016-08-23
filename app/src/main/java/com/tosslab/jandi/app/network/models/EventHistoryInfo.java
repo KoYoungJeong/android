@@ -25,6 +25,8 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageUnstarredEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketPollCommentCreatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketPollCommentDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollFinishedEvent;
@@ -106,7 +108,9 @@ import com.tosslab.jandi.app.services.socket.to.UnknownEventHistoryInfo;
         @JsonSubTypes.Type(name = "poll_created", value = SocketPollCreatedEvent.class),
         @JsonSubTypes.Type(name = "poll_finished", value = SocketPollFinishedEvent.class),
         @JsonSubTypes.Type(name = "poll_deleted", value = SocketPollDeletedEvent.class),
-        @JsonSubTypes.Type(name = "poll_voted", value = SocketPollVotedEvent.class)
+        @JsonSubTypes.Type(name = "poll_voted", value = SocketPollVotedEvent.class),
+        @JsonSubTypes.Type(name = "poll_comment_created", value = SocketPollCommentCreatedEvent.class),
+        @JsonSubTypes.Type(name = "poll_comment_deleted", value = SocketPollCommentDeletedEvent.class),
 })
 public interface EventHistoryInfo {
 
@@ -117,4 +121,6 @@ public interface EventHistoryInfo {
     int getVersion();
 
     long getTeamId();
+
+    String getUnique();
 }

@@ -13,12 +13,11 @@ import com.tosslab.jandi.app.local.orm.domain.DownloadInfo;
 import com.tosslab.jandi.app.local.orm.repositories.DownloadRepository;
 import com.tosslab.jandi.app.services.download.domain.DownloadFileInfo;
 import com.tosslab.jandi.app.services.download.model.DownloadModel;
-import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.io.File;
 import java.util.List;
@@ -182,7 +181,7 @@ public class DownloadController {
     void trackFileDownloadSuccess(long fileId, String fileType, String fileExt, int fileSize) {
         Context context = JandiApplication.getContext();
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.FileDownload)
+                .event(SprinklerEvents.FileDownload)
                 .accountId(AccountUtil.getAccountId(context))
                 .memberId(AccountUtil.getMemberId(context))
                 .property(PropertyKey.ResponseSuccess, true)

@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.file.presenter;
 
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.ui.maintab.file.adapter.SearchedFilesAdapterModel;
 
@@ -8,8 +9,6 @@ import com.tosslab.jandi.app.ui.maintab.file.adapter.SearchedFilesAdapterModel;
  */
 public interface FileListPresenter {
     void setSearchedFilesAdapterModel(SearchedFilesAdapterModel adapterModel);
-
-    void initSearchQuery();
 
     void setListNoMoreLoad();
 
@@ -27,7 +26,7 @@ public interface FileListPresenter {
 
     void onFileTypeSelection(String query, String searchText);
 
-    void onMemberSelection(String userId, String searchText);
+    void onMemberSelection(long userId, String searchText);
 
     void onEntitySelection(long sharedEntityId, String searchText);
 
@@ -37,9 +36,13 @@ public interface FileListPresenter {
 
     void onNetworkConnection();
 
-    void doKeywordSearch(String s);
+    void onNewQuery(String s);
 
     void onRefreshFileInfo(long fileId, int commentCount);
+
+    void onDestory();
+
+    void getImageDetail(long fileId);
 
     interface View {
         void clearListView();
@@ -47,6 +50,8 @@ public interface FileListPresenter {
         void searchFailed(int errMessageRes);
 
         void searchSucceed(ResSearchFile resSearchFile);
+
+        void moveToCarousel(ResMessages.FileMessage fileMessage);
 
         void setSearchEmptryViewVisible(int visible);
 
@@ -63,5 +68,9 @@ public interface FileListPresenter {
         void onSearchHeaderReset();
 
         void justRefresh();
+
+        void showProgress();
+
+        void dismissProgress();
     }
 }

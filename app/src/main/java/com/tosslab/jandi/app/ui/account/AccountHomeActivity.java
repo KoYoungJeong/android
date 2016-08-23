@@ -29,7 +29,6 @@ import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
-import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
 import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -38,12 +37,12 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.views.AccountPendingTeamRowView;
 import com.tosslab.jandi.app.views.AccountTeamRowView;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.List;
 
@@ -107,7 +106,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
 
     void initView() {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.ScreenView)
+                .event(SprinklerEvents.ScreenView)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .property(PropertyKey.ScreenView, ScreenViewProperty.ACCOUNT_HOME)
                 .build());

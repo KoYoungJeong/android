@@ -33,7 +33,6 @@ import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.KnockListener;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import javax.inject.Inject;
@@ -102,7 +101,6 @@ public class TeamFragment extends Fragment implements TeamView, ListScroller {
     private void initTeamMemberListView(SearchableMemberListAdapter adapter) {
         layoutManager = new LinearLayoutManager(getActivity().getBaseContext());
         lvTeam.setLayoutManager(layoutManager);
-        lvTeam.addItemDecoration(new SimpleDividerItemDecoration());
         lvTeam.setAdapter(adapter);
         lvTeam.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

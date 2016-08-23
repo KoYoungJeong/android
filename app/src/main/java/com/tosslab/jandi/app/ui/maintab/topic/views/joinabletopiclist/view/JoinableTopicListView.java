@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.view;
 
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 
 /**
@@ -9,7 +10,7 @@ public interface JoinableTopicListView {
 
     void moveToMessageActivity(long entityId, int entityType, boolean starred, long teamId, long markerLinkId);
 
-    void showTopicInfoDialog(Topic item);
+    void showTopicInfoDialog(final TopicRoom item);
 
     void notifyDataSetChanged();
 

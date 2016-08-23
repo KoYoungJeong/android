@@ -19,6 +19,7 @@ public class SocketPollDeletedEvent implements EventHistoryInfo {
     private long teamId;
     private long ts;
     private Data data;
+    private String unique;
 
     @Override
     public long getTs() {
@@ -54,6 +55,15 @@ public class SocketPollDeletedEvent implements EventHistoryInfo {
 
     public void setTeamId(long teamId) {
         this.teamId = teamId;
+    }
+
+    @Override
+    public String getUnique() {
+        return unique;
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     public Data getData() {

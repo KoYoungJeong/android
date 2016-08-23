@@ -18,6 +18,7 @@ public class SocketAnnouncementDeletedEvent implements EventHistoryInfo {
     private long teamId;
     private long ts;
     private Data data;
+    private String unique;
 
     @Override
     public long getTs() {
@@ -52,6 +53,11 @@ public class SocketAnnouncementDeletedEvent implements EventHistoryInfo {
         return teamId;
     }
 
+    @Override
+    public String getUnique() {
+        return unique;
+    }
+
     public void setTeamId(long teamId) {
         this.teamId = teamId;
     }
@@ -71,6 +77,10 @@ public class SocketAnnouncementDeletedEvent implements EventHistoryInfo {
                 ", version=" + version +
                 ", data=" + data +
                 '}';
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

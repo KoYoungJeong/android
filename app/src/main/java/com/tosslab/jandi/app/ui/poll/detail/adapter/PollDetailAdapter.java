@@ -18,7 +18,7 @@ import com.tosslab.jandi.app.ui.comment.OnCommentLongClickListener;
 import com.tosslab.jandi.app.ui.comment.StickerCommentViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.model.PollDetailDataModel;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.view.PollDetailDataView;
-import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.DividerViewHolder;
+import com.tosslab.jandi.app.views.decoration.DividerViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollDeletedInfoViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollDetailRow;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollInfoViewHolder;

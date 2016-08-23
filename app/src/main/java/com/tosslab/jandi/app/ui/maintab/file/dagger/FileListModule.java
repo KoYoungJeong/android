@@ -1,12 +1,10 @@
 package com.tosslab.jandi.app.ui.maintab.file.dagger;
 
-import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
-import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenterImpl;
 import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenter;
+import com.tosslab.jandi.app.ui.maintab.file.presenter.FileListPresenterImpl;
 
-import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
 
@@ -19,10 +17,12 @@ public class FileListModule {
 
     private FileListPresenterImpl.View view;
     private long searchedEntityId;
+    private final boolean inSearchActivity;
 
-    public FileListModule(FileListPresenterImpl.View view, long searchedEntityId) {
+    public FileListModule(FileListPresenterImpl.View view, long searchedEntityId, boolean inSearchActivity) {
         this.view = view;
         this.searchedEntityId = searchedEntityId;
+        this.inSearchActivity = inSearchActivity;
     }
 
     @Provides
@@ -31,13 +31,8 @@ public class FileListModule {
     }
 
     @Provides
-    FileListModel provideFileListModel(Lazy<FileApi> fileApi) {
-        return new FileListModel(fileApi);
-    }
-
-    @Provides
     FileListPresenter provideFileListPresenter(FileListModel model) {
-        return new FileListPresenterImpl(searchedEntityId, model, view);
+        return new FileListPresenterImpl(searchedEntityId, model, view, inSearchActivity);
     }
 
 }

@@ -1,7 +1,9 @@
 package com.tosslab.jandi.app.ui.base.adapter;
 
 import android.support.v7.widget.RecyclerView;
+
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,6 +93,11 @@ public abstract class MultiItemRecyclerAdapter extends RecyclerView.Adapter<Base
         holder.onViewDetachedFromWindow();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return super.getItemId(position);
+    }
+
     public static class Row<ITEM> {
         private ITEM item;
         private int itemViewType;
@@ -112,5 +119,4 @@ public abstract class MultiItemRecyclerAdapter extends RecyclerView.Adapter<Base
             return itemViewType;
         }
     }
-
 }

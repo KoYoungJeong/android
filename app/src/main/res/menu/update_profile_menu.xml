@@ -5,7 +5,6 @@
     <item
         android:id="@+id/action_update_profile"
         android:orderInCategory="100"
-        android:showAsAction="always"
         android:title="@string/jandi_profile_update"
-        app:showAsAction="always" />
+        app:showAsAction="always"/>
 </menu>

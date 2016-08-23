@@ -19,6 +19,7 @@ public class SocketLinkPreviewMessageEvent implements EventHistoryInfo {
     private String event;
     private long ts;
     private Data data;
+    private String unique;
 
     @Override
     public long getTs() {
@@ -47,6 +48,15 @@ public class SocketLinkPreviewMessageEvent implements EventHistoryInfo {
 
     public void setTeamId(long teamId) {
         this.teamId = teamId;
+    }
+
+    @Override
+    public String getUnique() {
+        return unique;
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     @Override

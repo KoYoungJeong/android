@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -49,7 +50,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.TopicFolderSettin
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
-import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
+import com.tosslab.jandi.app.ui.search.main.SearchActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
@@ -57,14 +58,14 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -104,6 +105,9 @@ public class MainTopicListFragment extends Fragment
     @ViewById(R.id.rv_main_topic)
     RecyclerView lvMainTopic;
 
+    @ViewById(R.id.iv_main_topic_order)
+    ImageView ivTopicOrder;
+
     @ViewById(R.id.tv_main_topic_order_title)
     TextView tvSortTitle;
 
@@ -142,7 +146,7 @@ public class MainTopicListFragment extends Fragment
         super.onViewCreated(view, savedInstanceState);
 
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.ScreenView)
+                .event(SprinklerEvents.ScreenView)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_PANEL)
@@ -261,8 +265,7 @@ public class MainTopicListFragment extends Fragment
 
     @OptionsItem(R.id.action_main_search)
     void onSearchOptionSelect() {
-        SearchActivity_.intent(getActivity())
-                .start();
+        startActivity(new Intent(getActivity(), SearchActivity.class));
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.Search);
     }
@@ -273,11 +276,13 @@ public class MainTopicListFragment extends Fragment
             mainTopicListPresenter.onRefreshUpdatedTopicList();
             lvMainTopic.setAdapter(updatedTopicAdapter);
             tvSortTitle.setText(R.string.jandi_sort_updated);
+            ivTopicOrder.setImageResource(R.drawable.topic_list_recent);
         } else if (!currentFolder && changeToFolder) {
             mainTopicListPresenter.refreshList();
             lvMainTopic.setAdapter(wrappedAdapter);  // requires *wrapped* expandableTopicAdapter
             lvMainTopic.setHasFixedSize(false);
             tvSortTitle.setText(R.string.jandi_sort_folder);
+            ivTopicOrder.setImageResource(R.drawable.topic_list_folder);
         }
     }
 
@@ -411,7 +416,12 @@ public class MainTopicListFragment extends Fragment
                 } else {
                     if (TeamInfoLoader.getInstance().isTopic(selectedEntity)) {
                         int position = updatedTopicAdapter.indexOfEntity(selectedEntity);
-                        updatedTopicAdapter.getItem(position).setUnreadCount(TeamInfoLoader.getInstance().getTopic(selectedEntity).getUnreadCount());
+                        if (position >= 0) {
+                            Topic item = updatedTopicAdapter.getItem(position);
+                            if (item != null) {
+                                item.setUnreadCount(TeamInfoLoader.getInstance().getTopic(selectedEntity).getUnreadCount());
+                            }
+                        }
                     }
                     updatedTopicAdapter.startAnimation();
                     updatedTopicAdapter.notifyDataSetChanged();

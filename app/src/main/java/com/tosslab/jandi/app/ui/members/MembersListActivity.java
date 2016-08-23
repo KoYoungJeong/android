@@ -33,11 +33,10 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -128,7 +127,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         vEmptyTeamMember.setVisibility(View.GONE);
 
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.ScreenView)
+                .event(SprinklerEvents.ScreenView)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_MEMBER)
@@ -140,7 +139,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
         memberListView.setLayoutManager(new LinearLayoutManager(MembersListActivity.this,
                 RecyclerView.VERTICAL, false));
-        memberListView.addItemDecoration(new SimpleDividerItemDecoration());
         memberListView.setAdapter(topicModdableMemberListAdapter);
         initProgressWheel();
 

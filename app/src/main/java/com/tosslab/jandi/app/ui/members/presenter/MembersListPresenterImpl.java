@@ -26,11 +26,11 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -339,7 +339,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     private void trackTopicMemberInviteSuccess(int memberCount, long entityId) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.TopicMemberInvite)
+                .event(SprinklerEvents.TopicMemberInvite)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, true)
@@ -350,7 +350,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     private void trackTopicMemberInviteFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(Event.TopicMemberInvite)
+                .event(SprinklerEvents.TopicMemberInvite)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, false)

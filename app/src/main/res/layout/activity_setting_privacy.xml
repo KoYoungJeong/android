@@ -13,7 +13,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/jandi_settings_background"
+        android:background="@color/jandi_material_grey_50"
         android:orientation="vertical">
 
         <LinearLayout

@@ -1,57 +1,83 @@
 package com.tosslab.jandi.app.ui.search.main.model;
 
 import android.support.test.runner.AndroidJUnit4;
-import android.text.TextUtils;
-import android.util.Log;
 
-import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.search.ReqSearch;
+import com.tosslab.jandi.app.network.models.search.ResSearch;
+import com.tosslab.jandi.app.ui.search.main.object.SearchTopicRoomData;
 
+import junit.framework.Assert;
+
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import javax.inject.Inject;
+
+import dagger.Component;
+import setup.BaseInitUtil;
 
 /**
- * Created by tonyjs on 15. 11. 26..
+ * Created by tee on 16. 7. 25..
  */
 @RunWith(AndroidJUnit4.class)
 public class SearchModelTest {
 
+    @Inject
     SearchModel searchModel;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        BaseInitUtil.initData();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
+
     @Before
-    public void setup() throws Exception {
-        searchModel = SearchModel_.getInstance_(JandiApplication.getContext());
+    public void setUp() throws Exception {
+        DaggerSearchModelTest_SearchModelTestComponent.builder()
+                .build()
+                .inject(this);
     }
 
     @Test
-    public void testSearchOldQuery() throws Exception {
-        searchModel.upsertQuery(0, null);
-
-        List<SearchKeyword> searchKeywords = searchModel.searchOldQuery(null);
-
-        assertTrue(searchKeywords.isEmpty());
+    public void testSearch() {
+        try {
+            ReqSearch reqSearch = new ReqSearch.Builder()
+                    .setKeyword("검색")
+                    .build();
+            ResSearch resSearch = searchModel.searchMessages(reqSearch);
+            Assert.assertNotNull(resSearch);
+        } catch (RetrofitException e) {
+            e.printStackTrace();
+            Assert.fail();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
     }
 
     @Test
-    public void testUpsertQuery() throws Exception {
-        String query = "r";
+    public void testGetSearchedTopics() {
+        List<SearchTopicRoomData> paticipatedTopics = searchModel.getSearchedTopics("테스트", true);
+        List<SearchTopicRoomData> topics = searchModel.getSearchedTopics("테스트", false);
 
-        searchModel.upsertQuery(0, query);
-        // 중복된 경우 테스트
-        searchModel.upsertQuery(0, query);
-
-        List<SearchKeyword> searchKeywords = searchModel.searchOldQuery(query);
-
-        Log.d("Test", searchKeywords.toString());
-
-        assertTrue((!searchKeywords.isEmpty()
-                && searchKeywords.size() == 1
-                && !TextUtils.isEmpty(searchKeywords.get(0).getKeyword())
-                && searchKeywords.get(0).getKeyword().equals(query)));
+        Assert.assertNotNull(paticipatedTopics);
+        Assert.assertNotNull(topics);
     }
+
+    @Component(modules = ApiClientModule.class)
+    public interface SearchModelTestComponent {
+        void inject(SearchModelTest test);
+    }
+
 }

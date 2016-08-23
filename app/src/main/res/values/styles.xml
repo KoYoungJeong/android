@@ -1,4 +1,5 @@
-<resources>
+<?xml version="1.0" encoding="utf-8" ?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="PopupAnimation">
         <item name="android:windowEnterAnimation">@anim/popup_show</item>
@@ -397,6 +398,22 @@
         <item name="android:paddingRight">16dp</item>
     </style>
 
+    <style name="JandiMemberProfile.Profile" parent="JandiMemberProfile">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">72dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="gap">4dp</item>
+        <item name="textColorContent">@color/jandi_text_medium</item>
+        <item name="textColorTitle">@color/jandi_member_profile_user_name</item>
+        <item name="textContentSingleline">true</item>
+        <item name="textSizeContent">@dimen/jandi_text_size_medium</item>
+        <item name="textSizeTitle">@dimen/jandi_text_size_large</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+
     <style name="JandiMemberProfile.Layout.Sub"
         parent="JandiMemberProfile">
         <item name="android:layout_width">match_parent</item>
@@ -473,15 +490,9 @@
 
     <style name="ImageCarousel.Title"
         parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/jandi_text_white</item>
-        <item name="android:textSize">19sp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="ImageCarousel.SubTitle"
-        parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
-        <item name="android:textColor">@color/jandi_carousel_file_size_ext_create_time</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">17sp</item>
     </style>
 
     <style name="JandiTopicDetail"/>

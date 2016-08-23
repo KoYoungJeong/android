@@ -190,7 +190,7 @@
         android:id="@+id/btn_member_profile_close"
         android:layout_width="@dimen/jandi_member_profile_btn_close_width"
         android:layout_height="@dimen/jandi_member_profile_btn_close_height"
-        android:layout_marginTop="@dimen/jandi_member_profile_margin_top"
+        android:layout_marginTop="@dimen/jandi_actionbar_overlay_top_margin"
         android:scaleType="center"
         android:src="@drawable/actionbar_icon_remove" />
 

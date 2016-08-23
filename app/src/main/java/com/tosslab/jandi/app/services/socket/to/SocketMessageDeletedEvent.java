@@ -18,6 +18,7 @@ public class SocketMessageDeletedEvent implements EventHistoryInfo {
     private long teamId;
     private long ts;
     private Data data;
+    private String unique;
 
     @Override
     public long getTeamId() {
@@ -26,6 +27,15 @@ public class SocketMessageDeletedEvent implements EventHistoryInfo {
 
     public void setTeamId(long teamId) {
         this.teamId = teamId;
+    }
+
+    @Override
+    public String getUnique() {
+        return unique;
+    }
+
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     @Override
@@ -61,6 +71,31 @@ public class SocketMessageDeletedEvent implements EventHistoryInfo {
 
     public void setData(Data data) {
         this.data = data;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SocketMessageDeletedEvent that = (SocketMessageDeletedEvent) o;
+
+        if (version != that.version) return false;
+        if (teamId != that.teamId) return false;
+        if (ts != that.ts) return false;
+        if (event != null ? !event.equals(that.event) : that.event != null) return false;
+        return data != null ? data.equals(that.data) : that.data == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = version;
+        result = 31 * result + (event != null ? event.hashCode() : 0);
+        result = 31 * result + (int) (teamId ^ (teamId >>> 32));
+        result = 31 * result + (int) (ts ^ (ts >>> 32));
+        result = 31 * result + (data != null ? data.hashCode() : 0);
+        return result;
     }
 
     public static class Data {
@@ -112,30 +147,5 @@ public class SocketMessageDeletedEvent implements EventHistoryInfo {
             result = 31 * result + (int) (roomId ^ (roomId >>> 32));
             return result;
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SocketMessageDeletedEvent that = (SocketMessageDeletedEvent) o;
-
-        if (version != that.version) return false;
-        if (teamId != that.teamId) return false;
-        if (ts != that.ts) return false;
-        if (event != null ? !event.equals(that.event) : that.event != null) return false;
-        return data != null ? data.equals(that.data) : that.data == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = version;
-        result = 31 * result + (event != null ? event.hashCode() : 0);
-        result = 31 * result + (int) (teamId ^ (teamId >>> 32));
-        result = 31 * result + (int) (ts ^ (ts >>> 32));
-        result = 31 * result + (data != null ? data.hashCode() : 0);
-        return result;
     }
 }

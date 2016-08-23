@@ -18,9 +18,7 @@
                 android:id="@+id/iv_profile"
                 android:layout_width="@dimen/jandi_entity_item_icon"
                 android:layout_height="@dimen/jandi_entity_item_icon"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="17dp" />
+                android:layout_centerInParent="true" />
 
             <ImageView
                 android:id="@+id/iv_favorite"
@@ -165,6 +163,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/jandi_transparent_white_40p"
+        android:visibility="visible" />
+
+    <View
+        android:id="@+id/v_full_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="#ffeeeeee"
+        android:visibility="gone" />
+
+    <View
+        android:id="@+id/v_half_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="75dp"
+        android:background="#ffeeeeee"
         android:visibility="visible" />
 
 </RelativeLayout>
