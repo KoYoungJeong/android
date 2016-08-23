@@ -498,6 +498,7 @@
 	<string name="jandi_search_history">"最近搜寻纪录"</string>
 	<string name="jandi_search_ing">"<![CDATA[搜索 <b><font color=#404040>%s</font></b>...]]>"</string>
 	<string name="jandi_search_loading">"搜索中"</string>
+	<string name="jandi_search_member_name_or_division">"输入姓名或部门搜寻成员"</string>
 	<string name="jandi_search_no_topic_room">"无相关数据"</string>
 	<string name="jandi_search_result_count">"总共 <b>%s</b> 笔搜寻结果"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>与 <b><font color=#404040>%2$d</font></b>符合]]>"</string>

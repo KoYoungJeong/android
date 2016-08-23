@@ -256,8 +256,7 @@
 	<string name="jandi_file_share_action">"分享"</string>
 	<string name="jandi_file_size_large_error">"無法上傳大於300MB的檔案"</string>
 	<string name="jandi_file_upload_finish">"檔案已成功上傳"</string>
-	<string name="jandi_file_upload_go_topic">"
-點擊進入JANDI瀏覽"</string>
+	<string name="jandi_file_upload_go_topic">"點擊進入JANDI瀏覽"</string>
 	<string name="jandi_file_upload_state">"上傳檔案中 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"檔案上傳成功"</string>
 	<string name="jandi_file_uploading">"上傳"</string>
@@ -499,6 +498,7 @@
 	<string name="jandi_search_history">"最近搜尋紀錄"</string>
 	<string name="jandi_search_ing">"<![CDATA[搜尋 <b><font color=#404040>%s</font></b>...]]>"</string>
 	<string name="jandi_search_loading">"搜尋中"</string>
+	<string name="jandi_search_member_name_or_division">"輸入姓名或部門搜尋成員"</string>
 	<string name="jandi_search_no_topic_room">"無相關資料"</string>
 	<string name="jandi_search_result_count">"總共 <b>%s</b> 筆搜尋結果"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>與 <b><font color=#404040>%2$d</font></b>符合]]>"</string>
