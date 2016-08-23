@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.network.models.search.ReqSearch;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
-import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.search.main.object.SearchOneToOneRoomData;
 import com.tosslab.jandi.app.ui.search.main.object.SearchTopicRoomData;
@@ -104,6 +103,7 @@ public class SearchModel {
         List<User> userList = TeamInfoLoader.getInstance().getUserList();
         List<SearchOneToOneRoomData> searchOneToOneRoomDatas = new ArrayList<>();
         Observable.from(userList)
+                .filter(User::isEnabled)
                 .filter(user -> user.getName().toLowerCase().contains(keyword.toLowerCase()))
                 .filter(user -> user.getId() != TeamInfoLoader.getInstance().getMyId())
                 .map(user -> new SearchOneToOneRoomData.Builder()
