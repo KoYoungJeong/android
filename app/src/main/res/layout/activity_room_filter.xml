@@ -25,7 +25,7 @@
             android:inputType="text"
             android:textColor="@color/jandi_text"
             android:textColorHint="@color/jandi_text_medium"
-            android:textSize="18dp"/>
+            android:textSize="18dp" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -49,7 +49,7 @@
             android:gravity="center"
             android:text="@string/jandi_tab_topic"
             android:textColor="@color/text_color_room_filter_tab"
-            android:textSize="12dp"/>
+            android:textSize="12dp" />
 
         <TextView
             android:id="@+id/btn_room_filter_dm"
@@ -60,7 +60,7 @@
             android:gravity="center"
             android:text="@string/jandi_tab_direct_message"
             android:textColor="@color/text_color_room_filter_tab"
-            android:textSize="12dp"/>
+            android:textSize="12dp" />
 
     </LinearLayout>
 
@@ -69,6 +69,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/vg_room_filter_room_type"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical" />
 
 </RelativeLayout>

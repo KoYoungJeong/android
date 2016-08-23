@@ -120,7 +120,7 @@
 	<string name="jandi_baidu_app_store">"百度手机助手"</string>
 	<string name="jandi_bot_role">"身为JANDI最强使者，肩负传递JANDI Connect和平台信息通知的任务，绝对使命必达！"</string>
 	<string name="jandi_bot_status">"你好，我是Mr.J！"</string>
-	<string name="jandi_browse_other_topics">"浏览其他议题"</string>
+	<string name="jandi_browse_other_topics">"浏览并加入议题"</string>
 	<string name="jandi_browse_team">"浏览团队"</string>
 	<string name="jandi_call_acess_permission">"欲直接拨话，请开启同意电话取用"</string>
 	<string name="jandi_cancel">"取消"</string>
@@ -403,7 +403,7 @@
 	<string name="jandi_no_preview_push_message">"你收到一则新信息"</string>
 	<string name="jandi_no_recent_stickers">"无最近使用的贴图"</string>
 	<string name="jandi_no_search_history">"没有搜寻纪录"</string>
-	<string name="jandi_no_search_result">"找不到相关的内容"</string>
+	<string name="jandi_no_search_result">"找不到符合条件的内容"</string>
 	<string name="jandi_no_topic_to_join">"没有可加入的议题"</string>
 	<string name="jandi_normally_topic_messages">"议题信息"</string>
 	<string name="jandi_not_in_topic">"你已离开此议题"</string>
@@ -498,6 +498,7 @@
 	<string name="jandi_search_history">"最近搜寻纪录"</string>
 	<string name="jandi_search_ing">"<![CDATA[搜索 <b><font color=#404040>%s</font></b>...]]>"</string>
 	<string name="jandi_search_loading">"搜索中"</string>
+	<string name="jandi_search_member_name_or_division">"输入姓名或部门搜寻成员"</string>
 	<string name="jandi_search_no_topic_room">"无相关数据"</string>
 	<string name="jandi_search_result_count">"总共 <b>%s</b> 笔搜寻结果"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>与 <b><font color=#404040>%2$d</font></b>符合]]>"</string>

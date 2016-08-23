@@ -120,7 +120,7 @@
 	<string name="jandi_baidu_app_store">"百度アプリストア"</string>
 	<string name="jandi_bot_role">"僕はJANDIの利用中必ず必要なメッセージや、JANDIコネクトのメッセージをお送りします。"</string>
 	<string name="jandi_bot_status">"こんにちは、ミスターJと言います。"</string>
-	<string name="jandi_browse_other_topics">"未参加のトピック一覧"</string>
+	<string name="jandi_browse_other_topics">"トピック一覧・参加"</string>
 	<string name="jandi_browse_team">"チームに移動"</string>
 	<string name="jandi_call_acess_permission">"通話を発信するには電話へのJANDIのアクセスを求めてください。"</string>
 	<string name="jandi_cancel">"戻る"</string>
@@ -407,7 +407,7 @@
 	<string name="jandi_no_preview_push_message">"新着メッセージがあります。"</string>
 	<string name="jandi_no_recent_stickers">"最近利用したスタンプがありません"</string>
 	<string name="jandi_no_search_history">"検索履歴がありません。"</string>
-	<string name="jandi_no_search_result">"一致するメッセージがありません。"</string>
+	<string name="jandi_no_search_result">"一致するファイルがありません"</string>
 	<string name="jandi_no_topic_to_join">"参加できるトピックがありません"</string>
 	<string name="jandi_normally_topic_messages">"トピックメッセージ"</string>
 	<string name="jandi_not_in_topic">"既にこのトピックから退出したか退出されました。"</string>
@@ -502,6 +502,7 @@
 	<string name="jandi_search_history">"最近の検索"</string>
 	<string name="jandi_search_ing">"<![CDATA[<b><font color=#404040>%s</font></b>を検索しています]]>"</string>
 	<string name="jandi_search_loading">"検索中です。"</string>
+	<string name="jandi_search_member_name_or_division">"メンバーの名前、部署で検索"</string>
 	<string name="jandi_search_no_topic_room">"検索キーワードに一致するトークルームは見つかりませんでした。"</string>
 	<string name="jandi_search_result_count">"<b>%s</b>件のメッセージ検索結果があります。"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>の検索結果が<b><font color=#404040>%2$d</font></b>件あります]]>"</string>

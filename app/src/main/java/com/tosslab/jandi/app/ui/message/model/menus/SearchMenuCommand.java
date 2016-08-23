@@ -15,10 +15,12 @@ public class SearchMenuCommand implements MenuCommand {
 
     private final Context context;
     private final long entityId;
+    private final long memberId;
 
-    public SearchMenuCommand(Context context, long entityId) {
+    public SearchMenuCommand(Context context, long entityId, long memberId) {
         this.context = context;
         this.entityId = entityId;
+        this.memberId = memberId;
     }
 
     @Override
@@ -27,9 +29,10 @@ public class SearchMenuCommand implements MenuCommand {
         context.startActivity(Henson.with(context)
                 .gotoSearchActivity()
                 .selectedRoomId(entityId)
+                .selectedOneToOneRoomMemberId(memberId)
                 .build());
 
-        if (TeamInfoLoader.getInstance().isUser(entityId)) {
+        if (TeamInfoLoader.getInstance().isUser(memberId)) {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Message, AnalyticsValue.Action.Message_Search);
         } else {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.TopicChat_Search);
