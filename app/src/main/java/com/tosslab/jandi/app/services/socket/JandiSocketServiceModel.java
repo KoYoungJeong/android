@@ -42,9 +42,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.RoomMarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TeamRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.local.orm.repositories.socket.SocketEventRepository;
-import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.direct.message.DirectMessageApi;
-import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
@@ -146,8 +144,6 @@ public class JandiSocketServiceModel {
     private final Context context;
     private final ObjectMapper objectMapper;
     private final Lazy<LoginApi> loginApi;
-    private final Lazy<EventsApi> eventsApi;
-    private final Lazy<PollApi> pollApi;
     private final Lazy<DirectMessageApi> directMessageApi;
     PublishSubject<Object> eventPublisher;
     private PublishSubject<SocketRoomMarkerEvent> accountRefreshSubject;
