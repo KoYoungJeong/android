@@ -19,7 +19,7 @@ public class SelfRepository extends LockExecutorTemplate {
     public boolean isMe(long userId) {
         return execute(() -> {
             try {
-                Dao<InitialInfo.Self, ?> dao = getHelper().getDao(InitialInfo.Self.class);
+                Dao<InitialInfo.Self, ?> dao = SelfRepository.this.getHelper().getDao(InitialInfo.Self.class);
                 return dao.queryBuilder()
                         .where()
                         .eq("id", userId)

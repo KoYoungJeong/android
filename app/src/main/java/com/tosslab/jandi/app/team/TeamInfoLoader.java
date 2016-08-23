@@ -52,6 +52,8 @@ public class TeamInfoLoader {
     private Team team;
     private User jandiBot;
 
+    private int pollBadge;
+
     private TeamInfoLoader() {
         lock = new ReentrantLock();
         rooms = new ArrayList<>();
@@ -129,6 +131,11 @@ public class TeamInfoLoader {
         setUpMembers();
         setUpMe();
         setUpTopicFolders();
+        setUpPollBadge();
+    }
+
+    private void setUpPollBadge() {
+        setPollBadge(initialInfo.getPoll().getVotableCount());
     }
 
     private void setUpTeam() {
@@ -557,6 +564,13 @@ public class TeamInfoLoader {
         });
     }
 
+    public int getPollBadge() {
+        return pollBadge;
+    }
+
+    public void setPollBadge(int pollBadge) {
+        this.pollBadge = pollBadge;
+    }
 
     interface Call0<T> {
         T execute();

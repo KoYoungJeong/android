@@ -26,6 +26,9 @@ public class InitialInfo {
     private Self self;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Team team;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private Poll poll;
+
     @ForeignCollectionField
     private Collection<Folder> folders;
     @ForeignCollectionField
@@ -36,8 +39,10 @@ public class InitialInfo {
     private Collection<Human> members;
     @ForeignCollectionField
     private Collection<Bot> bots;
+
     @DatabaseField
     private long ts;
+
     @DatabaseField(persisterClass = CollectionLongConverter.class)
     private List<Long> starredMessageIds;
 
@@ -121,6 +126,14 @@ public class InitialInfo {
         this.starredMessageIds = starredMessageIds;
     }
 
+    public Poll getPoll() {
+        return poll;
+    }
+
+    public void setPoll(Poll poll) {
+        this.poll = poll;
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @DatabaseTable(tableName = "initial_info_self")
@@ -154,4 +167,39 @@ public class InitialInfo {
                     '}';
         }
     }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @DatabaseTable(tableName = "initial_poll_info")
+    public static class Poll {
+        @DatabaseField(id = true)
+        private long id = 1;
+
+        @DatabaseField
+        private int votableCount;
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public int getVotableCount() {
+            return votableCount;
+        }
+
+        public void setVotableCount(int votableCount) {
+            this.votableCount = votableCount;
+        }
+
+        @Override
+        public String toString() {
+            return "Poll{" +
+                    "votableCount=" + votableCount +
+                    '}';
+        }
+    }
+
 }

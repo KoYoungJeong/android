@@ -2,8 +2,6 @@ package com.tosslab.jandi.app.ui.maintab.mypage.model;
 
 import android.util.Pair;
 
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
@@ -106,15 +104,8 @@ public class MyPageModel {
         return mentions;
     }
 
-    public Observable<List<Poll>> getEnablePollListObservable() {
-        long teamId = AccountRepository.getRepository().getSelectedTeamId();
-
-        return Observable.from(PollRepository.getInstance().getPolls())
-                .filter(poll ->
-                        poll.getTeamId() == teamId
-                                && "created".equals(poll.getStatus())
-                                && "enabled".equals(poll.getVoteStatus()))
-                .toList();
-
+    public int getPollBadgeCount() {
+        return TeamInfoLoader.getInstance().getPollBadge();
     }
+
 }

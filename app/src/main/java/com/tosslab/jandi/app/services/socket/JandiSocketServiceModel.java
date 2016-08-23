@@ -38,6 +38,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialPollInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.RoomMarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TeamRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
@@ -1371,6 +1372,7 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             if (poll != null && poll.getId() > 0) {
+                InitialPollInfoRepository.getInstance().increaseVotableCount();
                 postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.CREATED));
             }
         } catch (Exception e) {
@@ -1395,6 +1397,7 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             if (poll != null && poll.getId() > 0) {
+                InitialPollInfoRepository.getInstance().decreaseVotableCount();
                 postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.FINISHED));
             }
         } catch (Exception e) {
@@ -1419,6 +1422,7 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             if (poll != null && poll.getId() > 0) {
+                InitialPollInfoRepository.getInstance().decreaseVotableCount();
                 postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.DELETED));
             }
         } catch (Exception e) {
@@ -1443,6 +1447,7 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             if (poll != null && poll.getId() > 0) {
+                InitialPollInfoRepository.getInstance().decreaseVotableCount();
                 postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.VOTED));
             }
         } catch (Exception e) {
