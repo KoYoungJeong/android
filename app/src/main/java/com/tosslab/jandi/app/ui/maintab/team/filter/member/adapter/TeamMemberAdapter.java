@@ -9,24 +9,29 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.domain.TeamMemberItem;
 import com.tosslab.jandi.app.ui.members.adapter.searchable.viewholder.MemberViewHolder;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.UserViewHolder>
-        implements TeamMemberDataModel, TeamMemberDataView {
+        implements TeamMemberDataModel, TeamMemberDataView, ToggleCollector {
 
     private List<TeamMemberItem> users;
     private OnRecyclerItemClickListener onRecyclerItemClickListener;
     private boolean isSelectedMode;
     private boolean hasHeader;
 
+    private Set<Long> toggledIds;
+
     public TeamMemberAdapter() {
         users = new ArrayList<>();
+        toggledIds = new HashSet<>();
     }
 
     @Override
@@ -48,7 +53,7 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.Us
     public void onBindViewHolder(UserViewHolder holder, int position) {
         holder.setSelectMode(isSelectedMode);
         TeamMemberItem item = getItem(position);
-        ChatChooseItem chatChooseItem = item.getChatChooseItem();
+        item.getChatChooseItem().setIsChooseItem(containsId(item.getChatChooseItem().getEntityId()));
         holder.onBindView(item);
         if (!hasHeader) {
             holder.showFullDivider();
@@ -128,6 +133,41 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.Us
 
     public void setHasHeader(boolean hasHeader) {
         this.hasHeader = hasHeader;
+    }
+
+    @Override
+    public boolean containsId(long id) {
+        return toggledIds.contains(id);
+    }
+
+    @Override
+    public void addId(long id) {
+        toggledIds.add(id);
+    }
+
+    @Override
+    public void addAllIds(List<Long> ids) {
+        toggledIds.addAll(ids);
+    }
+
+    @Override
+    public void removeId(long id) {
+        toggledIds.remove(id);
+    }
+
+    @Override
+    public void clearIds() {
+        toggledIds.clear();
+    }
+
+    @Override
+    public int count() {
+        return toggledIds.size();
+    }
+
+    @Override
+    public List<Long> getIds() {
+        return Collections.unmodifiableList(new ArrayList<>(toggledIds));
     }
 
 

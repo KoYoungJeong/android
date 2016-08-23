@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.ui.maintab.team.filter.deptgroup.presenter.DeptJobG
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter.TeamMemberAdapter;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter.TeamMemberDataModel;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter.TeamMemberDataView;
+import com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter.ToggleCollector;
 
 import dagger.Module;
 import dagger.Provides;
@@ -38,6 +39,11 @@ public class DeptJobGroupModule {
 
     @Provides
     TeamMemberDataView teamMemberDataView() {
+        return teamMemberAdapter;
+    }
+
+    @Provides
+    ToggleCollector toggleCollector() {
         return teamMemberAdapter;
     }
 

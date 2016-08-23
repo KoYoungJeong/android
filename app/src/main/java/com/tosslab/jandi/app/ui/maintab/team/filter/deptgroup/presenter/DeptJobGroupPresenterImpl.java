@@ -7,10 +7,10 @@ import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.maintab.team.filter.dept.DeptJobFragment;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter.TeamMemberDataModel;
+import com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter.ToggleCollector;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.domain.TeamMemberItem;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -25,13 +25,14 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
     private int type;
     private String keyword;
     private boolean selectMode;
-    private Set<Long> toggledUser;
+    private ToggleCollector toggledUser;
     private boolean pickMode;
 
     @Inject
-    public DeptJobGroupPresenterImpl(View view, TeamMemberDataModel teamMemberDataModel) {
+    public DeptJobGroupPresenterImpl(View view, TeamMemberDataModel teamMemberDataModel, ToggleCollector toggledUser) {
         this.view = view;
         this.teamMemberDataModel = teamMemberDataModel;
+        this.toggledUser = toggledUser;
     }
 
     @Override
@@ -39,7 +40,7 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
         Observable.from(TeamInfoLoader.getInstance().getUserList())
                 .filter(User::isEnabled)
                 .filter(user -> {
-                    if (pickMode) {
+                    if (pickMode || selectMode) {
                         return user.getId() != TeamInfoLoader.getInstance().getMyId();
                     }
                     return true;
@@ -78,38 +79,32 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
         if (!selectMode || pickMode) {
             view.pickUser(user.getEntityId());
         } else {
-            if (toggledUser.contains(user.getEntityId())) {
-                user.setIsChooseItem(false);
-                toggledUser.remove(user.getEntityId());
+            if (toggledUser.containsId(user.getEntityId())) {
+                toggledUser.removeId(user.getEntityId());
             } else {
-                user.setIsChooseItem(true);
-                toggledUser.add(user.getEntityId());
+                toggledUser.addId(user.getEntityId());
             }
 
             view.refreshDataView();
-            view.updateToggledUser(toggledUser.size());
+            view.updateToggledUser(toggledUser.count());
         }
     }
 
     @Override
     public void onUnselectClick() {
-        toggledUser.clear();
-        for (int idx = 0,size = teamMemberDataModel.getSize(); idx < size; idx++) {
-            teamMemberDataModel.getItem(idx).getChatChooseItem().setIsChooseItem(false);
-        }
-        view.updateToggledUser(toggledUser.size());
+        toggledUser.clearIds();
+        view.updateToggledUser(toggledUser.count());
         view.refreshDataView();
     }
 
     @Override
     public void onAddClick() {
+        List<Long> ids1 = toggledUser.getIds();
+        long[] ids = new long[toggledUser.count()];
 
-        Long[] tempIds = new Long[toggledUser.size()];
-        long[] ids = new long[toggledUser.size()];
-        toggledUser.toArray(tempIds);
-
-        for (int idx = 0; idx < tempIds.length; idx++) {
-            ids[idx] = tempIds[idx];
+        int size = ids1.size();
+        for (int idx = 0; idx < size; idx++) {
+            ids[idx] = ids1.get(idx);
         }
 
         view.comeWithResult(ids);
@@ -122,9 +117,6 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
 
     public void setSelectMode(boolean selectMode) {
         this.selectMode = selectMode;
-        if (selectMode) {
-            toggledUser = new HashSet<>();
-        }
     }
 
     public void setPickMode(boolean pickMode) {

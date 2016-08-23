@@ -9,11 +9,14 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -22,17 +25,27 @@ import android.widget.TextView;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.local.orm.domain.MemberRecentKeyword;
+import com.tosslab.jandi.app.local.orm.repositories.search.MemberRecentKeywordRepository;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.team.adapter.TeamViewPagerAdapter;
+import com.tosslab.jandi.app.ui.maintab.team.filter.search.adapter.MemberRecentKeywordAdapter;
+import com.tosslab.jandi.app.ui.maintab.team.filter.search.domain.MemberRecentEmptyKeyword;
+import com.tosslab.jandi.app.ui.maintab.team.filter.search.domain.MemberRecentSearchKeyword;
+import com.tosslab.jandi.app.ui.maintab.team.filter.search.domain.MemberSearchKeyword;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnEditorAction;
 import butterknife.OnTextChanged;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
 import rx.subjects.PublishSubject;
 
 public class TeamMemberSearchActivity extends BaseAppCompatActivity implements ToggledUserView {
@@ -64,6 +77,12 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
 
     @Bind(R.id.actionbar_team_member_search)
     Toolbar toolbar;
+
+    @Bind(R.id.lv_team_member_search_recent)
+    RecyclerView lvRecentSearch;
+
+    @Bind(R.id.vg_team_member_search_recent)
+    android.view.View vgRecentSearch;
 
     @Nullable
     @InjectExtra
@@ -123,6 +142,44 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
     }
 
     private void showRecentKeyword() {
+        vgRecentSearch.setVisibility(View.VISIBLE);
+
+        MemberRecentKeywordAdapter adapter = new MemberRecentKeywordAdapter();
+        lvRecentSearch.setLayoutManager(new LinearLayoutManager(lvRecentSearch.getContext()));
+        lvRecentSearch.setAdapter(adapter);
+
+        adapter.setOnDeleteAll(() -> {
+            MemberRecentKeywordRepository.getInstance().removeAll();
+            adapter.clear();
+            adapter.add(new MemberRecentEmptyKeyword());
+            adapter.notifyDataSetChanged();
+        });
+
+        adapter.setOnDeleteItem(position -> {
+            MemberSearchKeyword item = adapter.getActualItem(position);
+            long id = ((MemberRecentSearchKeyword) item).getId();
+            MemberRecentKeywordRepository.getInstance().remove(id);
+
+            adapter.remove(id);
+            adapter.notifyDataSetChanged();
+        });
+
+        adapter.setItemClickListener((view, adapter1, position1) -> {
+            MemberRecentSearchKeyword item = (MemberRecentSearchKeyword) adapter.getActualItem(position1);
+            etSearch.setText(item.getKeyword());
+            etSearch.setSelection(etSearch.length());
+        });
+
+        List<MemberRecentKeyword> keywords = MemberRecentKeywordRepository.getInstance().getKeywords();
+        Observable.from(keywords)
+                .map((raw) -> ((MemberSearchKeyword) new MemberRecentSearchKeyword(raw)))
+                .defaultIfEmpty(new MemberRecentEmptyKeyword())
+                .collect((Func0<ArrayList<MemberSearchKeyword>>) ArrayList::new, List::add)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((keywords1) -> {
+                    adapter.addAll(keywords1);
+                    adapter.notifyDataSetChanged();
+                }, t -> {});
 
     }
 
@@ -142,12 +199,22 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
         return super.onCreateOptionsMenu(menu);
     }
 
+    @OnEditorAction(R.id.tv_search_keyword)
+    boolean onSearchImeAction(int actionId) {
+        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            MemberRecentKeywordRepository.getInstance().upsertKeyword(etSearch.getText().toString());
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.action_search:
                 vgSearch.setVisibility(View.VISIBLE);
+                showRecentKeyword();
                 break;
             case R.id.action_select_all:
                 if (adapter.getItem(0) instanceof OnToggledUser) {
@@ -166,11 +233,13 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
     @OnTextChanged(R.id.tv_search_keyword)
     void onSearchTextChanged(CharSequence text) {
         if (text.length() > 0) {
-            ivMic.setImageResource(R.drawable.actionbar_icon_remove);
+            ivMic.setImageResource(R.drawable.search_word_delete);
+            vgRecentSearch.setVisibility(View.GONE);
         } else {
             ivMic.setImageResource(R.drawable.btn_search_voice);
         }
         keywordSubject.onNext(text.toString());
+
     }
 
     @Override
@@ -193,6 +262,7 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
         if (isSelectMode) {
             etSearch.setText("");
             vgSearch.setVisibility(View.GONE);
+            vgRecentSearch.setVisibility(View.GONE);
             InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
         } else {
@@ -202,13 +272,19 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
 
     @OnClick(R.id.iv_search_mic)
     void onVoiceSearch() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        try {
-            startActivityForResult(intent, REQUEST_CODE_SPEECH);
-        } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
+
+        if (etSearch.length() == 0) {
+
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            try {
+                startActivityForResult(intent, REQUEST_CODE_SPEECH);
+            } catch (ActivityNotFoundException e) {
+                e.printStackTrace();
+            }
+        } else {
+            etSearch.setText("");
         }
     }
 

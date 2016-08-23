@@ -10,6 +10,8 @@ public interface DeptJobPresenter {
 
     void onPickUser(long userId);
 
+    void onItemClick(int position);
+
     interface View {
         void refreshDataView();
 

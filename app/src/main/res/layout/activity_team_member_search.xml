@@ -19,7 +19,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:padding="8dp"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <AutoCompleteTextView
             android:id="@+id/tv_search_keyword"
@@ -50,11 +50,12 @@
 
         <ImageView
             android:id="@+id/iv_search_mic"
-            android:layout_width="21dp"
-            android:layout_height="21dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
             android:background="?android:attr/selectableItemBackground"
             android:scaleType="centerInside"
             android:src="@drawable/btn_search_voice" />
@@ -131,31 +132,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignTop="@+id/viewpager_team_member_search"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:text="최근 검색어"
-            android:textColor="@color/jandi_text_light"
-            android:textSize="@dimen/jandi_text_size_small" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/jandi_tab_underline" />
-
-        <TextView
-            android:id="@+id/tv_team_member_search_recent_empty"
-            android:layout_width="match_parent"
-            android:layout_height="75dp"
-            android:gravity="center"
-            android:text="최근 검색어가 없습니다."
-            android:textColor="@color/jandi_text_light"
-            android:textSize="@dimen/jandi_text_size_medium" />
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/lv_team_member_search_recent"

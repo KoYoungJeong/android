@@ -13,11 +13,11 @@ import com.tosslab.jandi.app.R;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class DeptJobHeaderAdapter implements StickyHeadersAdapter<DeptJobHeaderAdapter.ViewHolder> {
+public class DeptJobHeaderADapter implements StickyHeadersAdapter<DeptJobHeaderADapter.ViewHolder> {
 
     private final DeptJobDataModel deptJobDataModel;
 
-    public DeptJobHeaderAdapter(DeptJobDataModel deptJobDataModel) {
+    public DeptJobHeaderADapter(DeptJobDataModel deptJobDataModel) {
         this.deptJobDataModel = deptJobDataModel;
     }
 

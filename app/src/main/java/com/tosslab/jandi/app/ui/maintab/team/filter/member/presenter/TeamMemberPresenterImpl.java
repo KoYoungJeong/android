@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.team.filter.member.presenter;
 
 import com.tosslab.jandi.app.events.entities.InvitationSuccessEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
+import com.tosslab.jandi.app.local.orm.repositories.search.MemberRecentKeywordRepository;
 import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -12,13 +13,11 @@ import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter.TeamMemberDataModel;
+import com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter.ToggleCollector;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.domain.TeamMemberItem;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -43,15 +42,16 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
     private Subscription filterSubscription;
     private long roomId = -1;
 
-    private Set<Long> toggledIds;
+    private ToggleCollector toggledIds;
 
 
     @Inject
-    public TeamMemberPresenterImpl(View view, TeamMemberDataModel teamMemberDataModel, Lazy<ChannelApi> channelApi, Lazy<GroupApi> groupApi) {
+    public TeamMemberPresenterImpl(View view, TeamMemberDataModel teamMemberDataModel, Lazy<ChannelApi> channelApi, Lazy<GroupApi> groupApi, ToggleCollector toggledIds) {
         this.view = view;
         this.teamMemberDataModel = teamMemberDataModel;
         this.channelApi = channelApi;
         this.groupApi = groupApi;
+        this.toggledIds = toggledIds;
     }
 
     @Override
@@ -59,6 +59,7 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
         filterSubject = BehaviorSubject.create("");
         filterSubscription = filterSubject
                 .throttleLast(100, TimeUnit.MILLISECONDS)
+                .onBackpressureBuffer()
                 .observeOn(Schedulers.io())
                 .map(String::toLowerCase)
                 .concatMap(it -> Observable.from(TeamInfoLoader.getInstance().getUserList())
@@ -111,6 +112,12 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
 
     @Override
     public void onItemClick(int position) {
+
+        String value = filterSubject.getValue();
+        if (value.length() > 0) {
+            MemberRecentKeywordRepository.getInstance().upsertKeyword(value);
+        }
+
         TeamMemberItem item = teamMemberDataModel.getItem(position);
         long userId = item.getChatChooseItem().getEntityId();
         if (!selectMode) {
@@ -118,15 +125,13 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
         } else {
 
             if (roomId > 0) {
-                if (toggledIds.contains(userId)) {
-                    toggledIds.remove(userId);
-                    item.getChatChooseItem().setIsChooseItem(false);
+                if (toggledIds.containsId(userId)) {
+                    toggledIds.removeId(userId);
                 } else {
-                    toggledIds.add(userId);
-                    item.getChatChooseItem().setIsChooseItem(true);
+                    toggledIds.addId(userId);
                 }
 
-                view.updateToggledUser(toggledIds.size());
+                view.updateToggledUser(toggledIds.count());
                 view.refreshDataView();
             } else {
 
@@ -140,28 +145,20 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
 
     @Override
     public void addToggledUser(long[] users) {
-        for (long user : users) {
-            toggledIds.add(user);
-            int position = teamMemberDataModel.findItemOfEntityId(user);
-            if (position >= 0) {
-                teamMemberDataModel.getItem(position).getChatChooseItem().setIsChooseItem(true);
-            }
-        }
 
         view.refreshDataView();
-        view.updateToggledUser(toggledIds.size());
+        view.updateToggledUser(toggledIds.count());
     }
 
     @Override
     public void addToggleOfAll() {
         for (int idx = 0, size = teamMemberDataModel.getSize(); idx < size; idx++) {
             ChatChooseItem chatChooseItem = teamMemberDataModel.getItem(idx).getChatChooseItem();
-            chatChooseItem.setIsChooseItem(true);
-            toggledIds.add(chatChooseItem.getEntityId());
+            toggledIds.addId(chatChooseItem.getEntityId());
         }
 
         view.refreshDataView();
-        view.updateToggledUser(toggledIds.size());
+        view.updateToggledUser(toggledIds.count());
     }
 
     @Override
@@ -181,20 +178,16 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
 
     @Override
     public void clearToggle() {
-        for (int idx = 0, size = teamMemberDataModel.getSize(); idx < size; idx++) {
-            ChatChooseItem item = teamMemberDataModel.getItem(idx).getChatChooseItem();
-            item.setIsChooseItem(false);
-        }
-        toggledIds.clear();
+        toggledIds.clearIds();
         view.refreshDataView();
-        view.updateToggledUser(toggledIds.size());
+        view.updateToggledUser(toggledIds.count());
     }
 
     @Override
     public void inviteToggle() {
         view.showPrgoress();
         Observable.defer(() -> {
-            List<Long> userIds = new ArrayList<>(toggledIds);
+            List<Long> userIds = toggledIds.getIds();
             long teamId = TeamInfoLoader.getInstance().getTeamId();
             ResCommon resCommon;
             try {
@@ -211,7 +204,7 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
-                    TopicRepository.getInstance().addMember(roomId, new ArrayList<>(toggledIds));
+                    TopicRepository.getInstance().addMember(roomId, toggledIds.getIds());
                     TeamInfoLoader.getInstance().refresh();
                     EventBus.getDefault().post(new InvitationSuccessEvent());
 
@@ -231,9 +224,6 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
 
     public void setSelectMode(boolean selectMode) {
         this.selectMode = selectMode;
-        if (selectMode) {
-            toggledIds = new HashSet<>();
-        }
     }
 
     public void setRoomId(long roomId) {

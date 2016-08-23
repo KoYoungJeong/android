@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.team.filter.dept.presenter;
 import android.text.TextUtils;
 import android.util.Pair;
 
+import com.tosslab.jandi.app.local.orm.repositories.search.MemberRecentKeywordRepository;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.maintab.team.filter.dept.DeptJobFragment;
@@ -47,6 +48,7 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
 
 
         subscription.add(deptJobSubject.filter(it -> type == DeptJobFragment.EXTRA_TYPE_DEPT)
+                .onBackpressureBuffer()
                 .throttleLast(100, TimeUnit.MILLISECONDS)
                 .map(String::toLowerCase)
                 .observeOn(Schedulers.io())
@@ -73,6 +75,7 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
 
 
         subscription.add(deptJobSubject.filter(it -> type == DeptJobFragment.EXTRA_TYPE_JOB)
+                .onBackpressureBuffer()
                 .throttleLast(100, TimeUnit.MILLISECONDS)
                 .map(String::toLowerCase)
                 .observeOn(Schedulers.io())
@@ -137,5 +140,13 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
 
         view.moveDirectMessage(teamId, userId, roomId, lastLinkId);
 
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        String value = deptJobSubject.getValue();
+        if (value.length() > 0) {
+            MemberRecentKeywordRepository.getInstance().upsertKeyword(value);
+        }
     }
 }

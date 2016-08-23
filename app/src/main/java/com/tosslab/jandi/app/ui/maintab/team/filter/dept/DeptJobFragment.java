@@ -21,7 +21,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.team.filter.dept.adapter.DeptJobAdapter;
 import com.tosslab.jandi.app.ui.maintab.team.filter.dept.adapter.DeptJobDataView;
-import com.tosslab.jandi.app.ui.maintab.team.filter.dept.adapter.DeptJobHeaderAdapter;
+import com.tosslab.jandi.app.ui.maintab.team.filter.dept.adapter.DeptJobHeaderADapter;
 import com.tosslab.jandi.app.ui.maintab.team.filter.dept.dagger.DaggerDeptJobComponent;
 import com.tosslab.jandi.app.ui.maintab.team.filter.dept.dagger.DeptJobModule;
 import com.tosslab.jandi.app.ui.maintab.team.filter.dept.presenter.DeptJobPresenter;
@@ -102,7 +102,7 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
                     .setAdapter(adapter)
                     .setRecyclerView(lvMember)
                     .setSticky(true)
-                    .setStickyHeadersAdapter(new DeptJobHeaderAdapter(adapter), false)
+                    .setStickyHeadersAdapter(new DeptJobHeaderADapter(adapter), false)
                     .build());
         }
 
@@ -113,6 +113,7 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
                 .inject(this);
 
         deptJobDataView.setOnItemClick((view, adapter1, position) -> {
+            deptJobPresenter.onItemClick(position);
             startActivityForResult(Henson.with(getActivity())
                     .gotoDeptJobGroupActivity()
                     .keyword(((DeptJobAdapter) adapter1).getItem(position).first)

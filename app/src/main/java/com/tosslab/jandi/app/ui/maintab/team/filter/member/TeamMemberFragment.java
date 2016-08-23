@@ -114,7 +114,7 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         lvMember.setAdapter(adapter);
 
         DaggerTeamMemberComponent.builder()
-                .teamMemberModule(new TeamMemberModule(this, adapter, selectMode, roomId))
+                .teamMemberModule(new TeamMemberModule(this, adapter, adapter,selectMode, roomId))
                 .build()
                 .inject(this);
 
