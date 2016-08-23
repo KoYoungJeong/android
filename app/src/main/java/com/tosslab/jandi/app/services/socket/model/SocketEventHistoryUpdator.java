@@ -54,7 +54,6 @@ import javax.inject.Inject;
 import dagger.Lazy;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
 public class SocketEventHistoryUpdator {
 
@@ -149,12 +148,8 @@ public class SocketEventHistoryUpdator {
             try {
                 long teamId = TeamInfoLoader.getInstance().getTeamId();
                 InitialInfo initializeInfo = startApi.get().getInitializeInfo(teamId);
-                TeamInfoLoader.getInstance().refresh(initializeInfo);
-                Observable.just(initializeInfo)
-                        .observeOn(Schedulers.newThread())
-                        .subscribe(o -> {
-                            InitialInfoRepository.getInstance().upsertInitialInfo(o);
-                        });
+                InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+                TeamInfoLoader.getInstance().refresh();
                 JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
                 EventBus.getDefault().post(new RetrieveTopicListEvent());
                 EventBus.getDefault().post(new ChatListRefreshEvent());

@@ -5,4 +5,4 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tabView:tabIcon="@drawable/jandi_tab_selector_chat"
-    tabView:tabTitle="@string/jandi_messages"/>
+    tabView:tabTitle="@string/jandi_one_to_one"/>

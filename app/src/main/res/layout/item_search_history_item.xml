@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="45dp"
-    android:background="?android:attr/selectableItemBackground"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <TextView
@@ -14,6 +14,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="46dp"
         android:gravity="center_vertical"
+        android:singleLine="true"
         android:text="Andrew"
         android:textColor="@color/dark_gray"
         android:textSize="16dp" />

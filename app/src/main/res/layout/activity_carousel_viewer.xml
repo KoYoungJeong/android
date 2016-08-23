@@ -17,9 +17,9 @@
         android:layout_height="match_parent">
 
         <View
-            android:layout_marginTop="@dimen/jandi_actionbar_overlay_top_margin"
             android:layout_width="match_parent"
             android:layout_height="112dp"
+            android:layout_marginTop="@dimen/jandi_actionbar_overlay_top_margin"
             android:background="@drawable/image_slide_view_top"/>
 
         <View
@@ -27,6 +27,28 @@
             android:layout_height="166dp"
             android:layout_alignParentBottom="true"
             android:background="@drawable/image_slide_view_bottom"/>
+
+        <RelativeLayout
+            android:id="@+id/vg_carousel_swipe_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp">
+
+            <View
+                android:id="@+id/btn_carousel_swipe_to_left"
+                android:layout_width="23dp"
+                android:layout_height="35dp"
+                android:background="@drawable/slideview_arrow_left"/>
+            <View
+                android:id="@+id/btn_carousel_swipe_to_right"
+                android:layout_width="23dp"
+                android:layout_height="35dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/slideview_arrow_right"/>
+
+        </RelativeLayout>
 
         <View
             android:id="@+id/vg_carousel_buttons_divider"
@@ -73,7 +95,9 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/vg_carousel_file_info"
             android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:text="asdasd"
+            android:singleLine="true"
             android:textColor="@color/jandi_text_white"
             android:textSize="@dimen/jandi_carousel_file_writer_txt"
             android:textStyle="bold"/>
@@ -137,8 +161,8 @@
                 style="@style/ImageCarousel.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:ellipsize="end"
+                android:gravity="center_vertical"
                 android:maxLines="2"/>
 
         </android.support.v7.widget.Toolbar>

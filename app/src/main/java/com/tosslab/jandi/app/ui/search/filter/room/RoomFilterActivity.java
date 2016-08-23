@@ -48,6 +48,8 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
 
     public static final String KEY_FILTERED_ROOM_ID = "roomId";
 
+    public static final String KEY_FILTERED_MEMBER_ID = "memberId";
+
     @Inject
     InputMethodManager inputMethodManager;
 
@@ -138,7 +140,7 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
         });
 
         roomFilterDataView.setOnTopicRoomClickListener(roomId -> {
-            setResultRoomId(true, roomId);
+            setResult(true, roomId, -1l);
             finish();
         });
     }
@@ -197,10 +199,14 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
     @OnEditorAction(R.id.et_room_filter)
     boolean onSearchAction(TextView view, int actionId) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            hideKeyboard();
             return true;
         }
         return false;
+    }
+
+    private void hideKeyboard() {
+        inputMethodManager.hideSoftInputFromWindow(etRoomFilter.getWindowToken(), 0);
     }
 
     @OnClick(R.id.btn_room_filter_topic)
@@ -251,10 +257,13 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
     }
 
     @Override
-    public void setResultRoomId(boolean isTopic, long roomId) {
+    public void setResult(boolean isTopic, long roomId, long memberId) {
         Intent intent = new Intent();
         intent.putExtra(KEY_IS_TOPIC, isTopic);
         intent.putExtra(KEY_FILTERED_ROOM_ID, roomId);
+        if (memberId != -1) {
+            intent.putExtra(KEY_FILTERED_MEMBER_ID, memberId);
+        }
         setResult(RESULT_OK, intent);
     }
 
@@ -291,6 +300,7 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
     protected void onDestroy() {
         roomFilterPresenter.stopTopicSearchQueue();
         roomFilterPresenter.stopDirectMessageSearchQueue();
+        hideKeyboard();
         super.onDestroy();
     }
 

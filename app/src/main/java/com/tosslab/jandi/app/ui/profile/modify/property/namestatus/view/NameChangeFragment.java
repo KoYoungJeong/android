@@ -122,7 +122,7 @@ public class NameChangeFragment extends Fragment implements NameStatusPresenter.
 
     @Override
     public void dismissProgress() {
-        if (progressWheel != null && !progressWheel.isShowing()) {
+        if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
         }
     }

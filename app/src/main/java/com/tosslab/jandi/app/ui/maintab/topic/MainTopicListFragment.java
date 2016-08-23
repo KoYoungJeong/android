@@ -50,7 +50,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.TopicFolderSettin
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.JoinableTopicListActivity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
-import com.tosslab.jandi.app.ui.search.main_temp.SearchActivity;
+import com.tosslab.jandi.app.ui.search.main.SearchActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
@@ -58,13 +58,13 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
@@ -416,8 +416,11 @@ public class MainTopicListFragment extends Fragment
                 } else {
                     if (TeamInfoLoader.getInstance().isTopic(selectedEntity)) {
                         int position = updatedTopicAdapter.indexOfEntity(selectedEntity);
-                        if (position > 0) {
-                            updatedTopicAdapter.getItem(position).setUnreadCount(TeamInfoLoader.getInstance().getTopic(selectedEntity).getUnreadCount());
+                        if (position >= 0) {
+                            Topic item = updatedTopicAdapter.getItem(position);
+                            if (item != null) {
+                                item.setUnreadCount(TeamInfoLoader.getInstance().getTopic(selectedEntity).getUnreadCount());
+                            }
                         }
                     }
                     updatedTopicAdapter.startAnimation();

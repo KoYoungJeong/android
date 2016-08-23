@@ -1,11 +1,10 @@
 package com.tosslab.jandi.app.ui.message.model.menus;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.MenuItem;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.search.main_temp.SearchActivity;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
@@ -16,17 +15,24 @@ public class SearchMenuCommand implements MenuCommand {
 
     private final Context context;
     private final long entityId;
+    private final long memberId;
 
-    public SearchMenuCommand(Context context, long entityId) {
+    public SearchMenuCommand(Context context, long entityId, long memberId) {
         this.context = context;
         this.entityId = entityId;
+        this.memberId = memberId;
     }
 
     @Override
     public void execute(MenuItem menuItem) {
-        context.startActivity(new Intent(context, SearchActivity.class));
 
-        if (TeamInfoLoader.getInstance().isUser(entityId)) {
+        context.startActivity(Henson.with(context)
+                .gotoSearchActivity()
+                .selectedRoomId(entityId)
+                .selectedOneToOneRoomMemberId(memberId)
+                .build());
+
+        if (TeamInfoLoader.getInstance().isUser(memberId)) {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Message, AnalyticsValue.Action.Message_Search);
         } else {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.TopicChat_Search);

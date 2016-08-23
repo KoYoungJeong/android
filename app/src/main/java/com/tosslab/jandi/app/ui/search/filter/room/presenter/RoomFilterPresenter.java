@@ -34,7 +34,7 @@ public interface RoomFilterPresenter {
 
         void notifyDataSetChanged();
 
-        void setResultRoomId(boolean b, long roomId);
+        void setResult(boolean b, long roomId, long memberId);
 
         void finish();
     }

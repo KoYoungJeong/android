@@ -15,7 +15,7 @@ public class ReqSearch {
     // 작성자 ID
     private long writerId = -1;
 
-    // 토픽 ID
+    // ROOM ID - -100일 경우 룸아이디가 아직 생성안된 멤버
     private long roomId = -1;
 
     // 검색 타입 all, message, file, poll

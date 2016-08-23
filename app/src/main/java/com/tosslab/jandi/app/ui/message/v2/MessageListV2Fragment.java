@@ -148,6 +148,8 @@ import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
@@ -159,8 +161,6 @@ import com.tosslab.jandi.app.views.SoftInputDetectLinearLayout;
 import com.tosslab.jandi.app.views.controller.SoftInputAreaController;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.spannable.JandiURLSpan;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
@@ -1064,7 +1064,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
                 if (isImageFile) {
                     Intent intent = CarouselViewerActivity.getCarouselViewerIntent(
-                            getActivity(), fileMessage.id, roomId);
+                            getActivity(), fileMessage.id, room.getRoomId())
+                            .build();
                     startActivityForResult(intent, JandiConstants.TYPE_FILE_DETAIL_REFRESH);
                 } else {
                     FileDetailActivity_.intent(this)

@@ -53,6 +53,7 @@ public class ProfileLabelView extends LinearLayout {
 
         int textColorContent = typedArray.getColor(R.styleable.ProfileLabelView_textColorContent, DEFAULT_CONTENT_COLOR);
         String textContent = typedArray.getString(R.styleable.ProfileLabelView_textContent);
+        String textHintContent = typedArray.getString(R.styleable.ProfileLabelView_textHintContent);
 
         int gap = typedArray.getDimensionPixelSize(R.styleable.ProfileLabelView_gap, -1);
 
@@ -68,6 +69,7 @@ public class ProfileLabelView extends LinearLayout {
 
         setTextColorTitle(textColorTitle);
         setTextColorContent(textColorContent);
+        setTextHintContent(textHintContent);
 
         if (gap > 0) {
             setTextGap(gap);
@@ -79,6 +81,10 @@ public class ProfileLabelView extends LinearLayout {
         setTextContent(textContent);
 
         typedArray.recycle();
+    }
+
+    public void setTextHintContent(String textHintContent) {
+        tvContent.setHint(textHintContent);
     }
 
     private void setContentSingleLine(boolean contentSingleline) {

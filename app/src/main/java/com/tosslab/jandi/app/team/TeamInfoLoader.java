@@ -140,11 +140,12 @@ public class TeamInfoLoader {
         if (users.containsKey(myId)) {
             this.me = users.get(myId);
         } else {
-            this.me = getUserObservable()
+            getUserObservable()
                     .takeFirst(human -> human.getId() == myId)
                     .map(User::new)
-                    .toBlocking()
-                    .firstOrDefault(new User(null));
+                    .subscribe(it -> {
+                        this.me = it;
+                    });
         }
     }
 

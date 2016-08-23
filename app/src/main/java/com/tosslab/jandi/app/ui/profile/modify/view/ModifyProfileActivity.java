@@ -73,6 +73,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     public static final int REQUEST_GET_JOB_TITLE = 0x21;
     public static final int REQUEST_GET_DEPARTMENT = 0x22;
+    public static final int REQUEST_NAME_STATUS = 0x23;
 
     @Inject
     ModifyProfilePresenter modifyProfilePresenter;
@@ -180,20 +181,20 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     @OnClick(R.id.profile_user_status_message)
     void editStatusMessage() {
         // 닉네임
-        startActivity(Henson.with(ModifyProfileActivity.this)
+        startActivityForResult(Henson.with(ModifyProfileActivity.this)
                 .gotoNameStatusActivity()
                 .type(NameStatusActivity.EXTRA_TYPE_STATUS)
-                .build());
+                .build(), REQUEST_NAME_STATUS);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Status);
     }
 
     @OnClick(R.id.profile_user_realname)
     void editName() {
-        startActivity(Henson.with(ModifyProfileActivity.this)
+        startActivityForResult(Henson.with(ModifyProfileActivity.this)
                 .gotoNameStatusActivity()
                 .type(NameStatusActivity.EXTRA_TYPE_NAME)
-                .build());
+                .build(), REQUEST_NAME_STATUS);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Name);
     }
@@ -358,6 +359,9 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
             case REQUEST_GET_DEPARTMENT:
                 onGetDepartmentResult(resultCode, data);
                 break;
+            case REQUEST_NAME_STATUS:
+                modifyProfilePresenter.onRequestProfile();
+                break;
         }
     }
 
@@ -428,36 +432,21 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     @Override
     public void displayProfile(User user) {
         // 프로필 사진
-
-        String profileImageUrlPath = user.getPhotoUrl();
-
-        displayProfileImage(profileImageUrlPath);
+        displayProfileImage(user.getPhotoUrl());
         // 프로필 이름
         tvProfileRealName.setTextContent(user.getName());
         // 상태 메시지
-        String strStatus = (user.getStatusMessage());
-        if (!TextUtils.isEmpty(strStatus)) {
-            tvProfileStatusMessage.setTextContent(strStatus);
-        }
+        tvProfileStatusMessage.setTextContent(user.getStatusMessage());
 
         // 이메일
         tvProfileUserEmail.setTextContent(user.getEmail());
 
         // 폰넘버
-        String strPhone = (user.getPhoneNumber());
-        if (!TextUtils.isEmpty(strPhone)) {
-            tvProfileUserPhone.setTextContent(strPhone);
-        }
+        tvProfileUserPhone.setTextContent(user.getPhoneNumber());
         // 부서
-        String strDivision = (user.getDivision());
-        if (!TextUtils.isEmpty(strDivision)) {
-            tvProfileUserDivision.setTextContent(strDivision);
-        }
+        tvProfileUserDivision.setTextContent(user.getDivision());
         // 직책
-        String strPosition = user.getPosition();
-        if (!TextUtils.isEmpty(strPosition)) {
-            tvProfileUserPosition.setTextContent(strPosition);
-        }
+        tvProfileUserPosition.setTextContent(user.getPosition());
     }
 
     void displayProfileImage(String profileImageUrlPath) {

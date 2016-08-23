@@ -209,6 +209,7 @@ public class ResSearch {
         private String serverUrl;
         private String fileUrl;
         private String icon;
+        private String ext;
         private int sharedCount;
 
         public String getFileUrl() {
@@ -289,6 +290,14 @@ public class ResSearch {
 
         public void setIcon(String icon) {
             this.icon = icon;
+        }
+
+        public String getExt() {
+            return ext;
+        }
+
+        public void setExt(String ext) {
+            this.ext = ext;
         }
     }
 

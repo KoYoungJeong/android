@@ -211,6 +211,8 @@
 	<string name="jandi_enter_new_passcode">"변경할 비밀번호를 입력해주세요."</string>
 	<string name="jandi_enter_passcode">"비밀번호 입력"</string>
 	<string name="jandi_enter_phone_number">"전화번호를 입력하세요"</string>
+	<string name="jandi_enter_your_dept">"부서를 입력하세요"</string>
+	<string name="jandi_enter_your_job_title">"직책을 입력하세요"</string>
 	<string name="jandi_enter_your_status_message">"상태 메시지를 입력하세요"</string>
 	<string name="jandi_entity_create_entity_name">"사용자 성함"</string>
 	<string name="jandi_entity_joined_topic">"참여한 토픽"</string>
@@ -225,7 +227,8 @@
 	<string name="jandi_explain_global_push_off">"앱의 알림 설정이 꺼져 있습니다. 더보기 > 설정에서 알림을 켜야 알림을 받을 수 있습니다."</string>
 	<string name="jandi_explain_invite">"메세지 검색이 가능한 업무용 메신저 잔디는 
 팀원 모두와 함께 사용해야 그 진가가 발휘됩니다.
-지금 바로 멤버들을 초대하세요."</string>
+지금 바로 멤버들을 초대하세요.
+"</string>
 	<string name="jandi_explain_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 	<string name="jandi_export">"내보내기"</string>
 	<string name="jandi_export_to_app">"다음 앱으로 파일 내보내기"</string>
@@ -240,6 +243,7 @@
 	<string name="jandi_file_category_spreadsheet">"엑셀"</string>
 	<string name="jandi_file_category_video">"동영상"</string>
 	<string name="jandi_file_category_zip">"압축 파일"</string>
+	<string name="jandi_file_delete">"파일 삭제"</string>
 	<string name="jandi_file_delete_message">"이 파일을 삭제하시겠습니까? 파일의 댓글은 삭제되지 않습니다."</string>
 	<string name="jandi_file_deleted_with_date">"%s에 삭제되었습니다."</string>
 	<string name="jandi_file_downloaded_into">"%s  에 저장되었습니다."</string>
@@ -250,6 +254,7 @@
 	<string name="jandi_file_search_keyword">"검색어"</string>
 	<string name="jandi_file_search_type">"파일 타입을 선택해주세요."</string>
 	<string name="jandi_file_search_user">"팀원을 선택해주세요."</string>
+	<string name="jandi_file_share_action">"공유하기"</string>
 	<string name="jandi_file_size_large_error">"현재 300MB 이상의 파일은 업로드 할 수 없습니다."</string>
 	<string name="jandi_file_upload_finish">"파일 업로드 완료"</string>
 	<string name="jandi_file_upload_go_topic">"탭하여 잔디에서 보기"</string>
@@ -281,8 +286,8 @@
 	<string name="jandi_google_docs">"Google Docs"</string>
 	<string name="jandi_guide_to_assign_topic_owner">"토픽 상세보기 > 토픽 관리자 변경하기에서 다음 관리자를 지정한 후 토픽에서 내보낼 수 있습니다."</string>
 	<string name="jandi_has_joined">"%s님이 참여하였습니다"</string>
-	<string name="jandi_has_no_search_result">""</string>
-	<string name="jandi_has_no_searched_member">""</string>
+	<string name="jandi_has_no_search_result">"%s'의 검색 결과가 없습니다."</string>
+	<string name="jandi_has_no_searched_member">"<![CDATA[<b><font color=#404040>%s</font></b>]]>의 검색 결과가 없습니다."</string>
 	<string name="jandi_have_an_account_already">"이미 계정이 있으신가요?"</string>
 	<string name="jandi_help">"도움말"</string>
 	<string name="jandi_hi_apk_store">"Hi Apk 스토어"</string>
@@ -322,6 +327,7 @@
 	<string name="jandi_invite_to_dummy_account_again">"입력하신 이메일 주소는 이미 다른 멤버가 초대 중입니다.
 초대메일을 다시 보낼까요?"</string>
 	<string name="jandi_invite_to_team">"팀으로 초대하기"</string>
+	<string name="jandi_invite_to_team_for_member">"팀에 멤버 초대하기"</string>
 	<string name="jandi_invite_wechat">"위챗으로 보내기"</string>
 	<string name="jandi_invited_topic">"%1$s님이 %2$s님을 초대했습니다."</string>
 	<string name="jandi_is_newcomer">"잔디가 처음이신가요?"</string>
@@ -356,6 +362,7 @@
 	<string name="jandi_mentions_are_empty">"다른 멤버에게 받은 멘션이 없습니다. 
 메시지 입력 시 "@"를 입력하여 
 멘션을 주고 받을 수 있습니다."</string>
+	<string name="jandi_menu_room_selection">"대화방 선택"</string>
 	<string name="jandi_message_ask_about_delete_comment">"이 댓글을 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
 	<string name="jandi_message_ask_about_deleting">"이 메시지를 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
 	<string name="jandi_message_create_entity">"%1$s을 생성하였습니다"</string>
@@ -363,10 +370,12 @@
 	<string name="jandi_message_invite_entity">"%1$d 명의 사용자를 초대했습니다"</string>
 	<string name="jandi_message_join_entity">"%1$s에 참여합니다"</string>
 	<string name="jandi_message_leave_private_topic">"비공개 토픽을 나가시면 초대를 받지 않는한 다시 참여하실 수 없습니다.\n나가시겠습니까?"</string>
-	<string name="jandi_message_leave_private_topic_when_only_you">"혼자있는 비공개 토픽을 나가게 될 경우, 토픽은 삭제됩니다."</string>
+	<string name="jandi_message_leave_private_topic_when_only_you">"혼자있는 비공개 토픽을 나가게 될 경우, 토픽은 삭제됩니다.
+그래도 토픽을 나가시겠습니까?"</string>
 	<string name="jandi_message_logout">"로그아웃 되었습니다"</string>
 	<string name="jandi_message_no_member">"아직 팀에 가입한 멤버가 없습니다. 지금 바로 멤버들을 초대하세요."</string>
 	<string name="jandi_message_no_starred">"즐겨찾기가 해제되었습니다"</string>
+	<string name="jandi_message_search">"메시지 검색"</string>
 	<string name="jandi_message_search_available">"잔디에 메시지 검색 기능이 업데이트 되었습니다!"</string>
 	<string name="jandi_message_search_available_detail">"메시지 검색으로 원하는 내용을 토픽 별, 멤버 별로 찾으실 수 있습니다. 또한, 검색 기능 이용 시, 해당 메시지가 작성된 대화로의 이동이 가능해 업무 맥락도 쉽게 파악하실 수 있습니다. 손쉬운 메시지 검색으로 한결 편해진 업무 환경을 경험해보세요!"</string>
 	<string name="jandi_message_send">"전송"</string>
@@ -400,7 +409,7 @@
 	<string name="jandi_no_preview_push_message">"새 메시지가 도착했습니다."</string>
 	<string name="jandi_no_recent_stickers">"최근 사용한 스티커가 없습니다."</string>
 	<string name="jandi_no_search_history">"최근 검색한 내역이 없습니다."</string>
-	<string name="jandi_no_search_result">" 메세지 검색 결과가 없습니다."</string>
+	<string name="jandi_no_search_result">"검색 결과가 없습니다"</string>
 	<string name="jandi_no_topic_to_join">"참여 가능한 토픽이 없습니다"</string>
 	<string name="jandi_normally_topic_messages">"일반 토픽 메시지"</string>
 	<string name="jandi_not_in_topic">"이미 이 토픽에서 나갔거나 퇴장되었습니다."</string>
@@ -489,6 +498,7 @@
 	<string name="jandi_sdcard_storage_unmounted">"SD 카드가 해제되었습니다"</string>
 	<string name="jandi_search_all_member">"모든 팀원"</string>
 	<string name="jandi_search_all_room">"모든 대화방"</string>
+	<string name="jandi_search_available_length_of_keyword">"검색어는 2자 이상 입력해주세요."</string>
 	<string name="jandi_search_category_everyone">"<b>모든 팀원</b>"</string>
 	<string name="jandi_search_category_everywhere">"<b>모든 대화방</b>"</string>
 	<string name="jandi_search_history">"최근 검색어"</string>
@@ -593,6 +603,7 @@
 	<string name="jandi_tab_topic">"토픽"</string>
 	<string name="jandi_tab_tos_and_pp">"다음을 탭하면 %1$s과 %2$s에 \n동의하는 것으로 간주합니다."</string>
 	<string name="jandi_team">"팀"</string>
+	<string name="jandi_team_admin">"팀 관리자"</string>
 	<string name="jandi_team_create_domain_info">"팀 도메인은 웹에서 잔디를 접속할 때 \n사용하는 바로가기 주소입니다."</string>
 	<string name="jandi_team_create_domain_invalid">"알파벳, 숫자 또는 (-)만 입력 가능합니다."</string>
 	<string name="jandi_team_create_domain_length_invalid">"알파벳 3자 이상 입력해주세요."</string>
@@ -643,6 +654,7 @@
 	<string name="jandi_topic_was_removed">"이미 나갔거나 삭제된 토픽이므로 원본을 확인할 수 없습니다."</string>
 	<string name="jandi_tos">"이용약관"</string>
 	<string name="jandi_tos_and_pp">"이용 약관 및 개인정보 취급방침"</string>
+	<string name="jandi_total_count_of_member">"총 멤버 수"</string>
 	<string name="jandi_try_again">"다시 시도하기"</string>
 	<string name="jandi_tutorial_file">"파일 업로드, 공유, 검색을 메신저에서 한 번에"</string>
 	<string name="jandi_tutorial_file_message">"사진과 동영상 뿐 아니라 PPT, 엑셀, PDF 등 다양한 포맷의 업무 파일을 직접 업로드하여 토픽이나 개인과 공유할 수 있습니다. 또한 업로드한 파일들은 계속 보관되며 강력한 검색 기능 또한 지원하기 때문에 굳이 클라우드 서비스를 사용할 필요가 없습니다."</string>
@@ -654,7 +666,7 @@
 	<string name="jandi_unpinned_message">"즐겨찾기 해제됨"</string>
 	<string name="jandi_unread_messages_below">"여기까지 읽었습니다."</string>
 	<string name="jandi_unshare_succeed">"%s 공유가 해제되었습니다."</string>
-	<string name="jandi_unshared_file">""</string>
+	<string name="jandi_unshared_file">"공유 해제됨"</string>
 	<string name="jandi_unshared_file_in_dm">"이 파일은 이 대화에서 공유 해제되어 더 이상 즐겨찾기를 하실 수 없습니다."</string>
 	<string name="jandi_unshared_message">"원본에 대한 접근 권한이 없습니다."</string>
 	<string name="jandi_unstarred">"즐겨찾기 해제"</string>

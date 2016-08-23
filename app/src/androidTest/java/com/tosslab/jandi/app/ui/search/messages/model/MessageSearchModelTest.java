@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -19,6 +20,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by tonyjs on 15. 12. 29..
  */
+@Ignore
 @RunWith(AndroidJUnit4.class)
 public class MessageSearchModelTest {
 
