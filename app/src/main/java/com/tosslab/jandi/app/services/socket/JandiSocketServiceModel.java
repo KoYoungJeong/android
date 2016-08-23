@@ -1372,7 +1372,7 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             if (poll != null && poll.getId() > 0) {
-                InitialPollInfoRepository.getInstance().plusVotableCount();
+                InitialPollInfoRepository.getInstance().increaseVotableCount();
                 postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.CREATED));
             }
         } catch (Exception e) {
@@ -1397,7 +1397,7 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             if (poll != null && poll.getId() > 0) {
-                InitialPollInfoRepository.getInstance().minusVotableCount();
+                InitialPollInfoRepository.getInstance().decreaseVotableCount();
                 postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.FINISHED));
             }
         } catch (Exception e) {
@@ -1422,7 +1422,7 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             if (poll != null && poll.getId() > 0) {
-                InitialPollInfoRepository.getInstance().minusVotableCount();
+                InitialPollInfoRepository.getInstance().decreaseVotableCount();
                 postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.DELETED));
             }
         } catch (Exception e) {
@@ -1447,7 +1447,7 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             if (poll != null && poll.getId() > 0) {
-                InitialPollInfoRepository.getInstance().minusVotableCount();
+                InitialPollInfoRepository.getInstance().decreaseVotableCount();
                 postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.VOTED));
             }
         } catch (Exception e) {

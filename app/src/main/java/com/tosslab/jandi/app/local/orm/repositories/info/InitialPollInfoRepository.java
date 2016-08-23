@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 
@@ -24,10 +25,9 @@ public class InitialPollInfoRepository extends LockExecutorTemplate {
     public int getVotableCount() {
         return execute(() -> {
             try {
-                Dao<InitialInfo.Poll, ?> dao = InitialPollInfoRepository
-                        .this.getHelper().getDao(InitialInfo.Poll.class);
+                Dao<InitialInfo.Poll, Object> dao = getDao(InitialInfo.Poll.class);
                 return dao.queryBuilder()
-                        .query().get(0).getVotableCount();
+                        .queryForFirst().getVotableCount();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -35,37 +35,31 @@ public class InitialPollInfoRepository extends LockExecutorTemplate {
         });
     }
 
-    public void plusVotableCount() {
-        execute(new Executor<Void>() {
-            @Override
-            public Void execute() {
-                try {
-                    Dao<InitialInfo.Poll, ?> dao = getHelper().getDao(InitialInfo.Poll.class);
-                    InitialInfo.Poll poll = new InitialInfo.Poll();
-                    poll.setVotableCount(getVotableCount() + 1);
-                    dao.update(poll);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                return null;
+    public boolean increaseVotableCount() {
+        return execute(() -> {
+            try {
+                Dao<InitialInfo.Poll, Long> dao = getDao(InitialInfo.Poll.class);
+                UpdateBuilder<InitialInfo.Poll, Long> updateBuilder = dao.updateBuilder();
+                updateBuilder.updateColumnExpression("votableCount", "votableCount + 1");
+                return updateBuilder.update() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
+            return false;
         });
     }
 
-    public void minusVotableCount() {
-        execute(new Executor<Void>() {
-            @Override
-            public Void execute() {
-                try {
-                    Dao<InitialInfo.Poll, ?> dao = getHelper().getDao(InitialInfo.Poll.class);
-                    InitialInfo.Poll poll = new InitialInfo.Poll();
-                    poll.setVotableCount(getVotableCount() - 1);
-                    dao.update(poll);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                return null;
+    public boolean decreaseVotableCount() {
+        return execute(() -> {
+            try {
+                Dao<InitialInfo.Poll, Long> dao = getDao(InitialInfo.Poll.class);
+                UpdateBuilder<InitialInfo.Poll, Long> updateBuilder = dao.updateBuilder();
+                updateBuilder.updateColumnExpression("votableCount", "votableCount - 1");
+                return updateBuilder.update() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
+            return false;
         });
     }
 
