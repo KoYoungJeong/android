@@ -364,12 +364,12 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(roomId -> {
                     roomFilterView.hideProgress();
-                    roomFilterView.setResultRoomId(false, roomId);
+                    roomFilterView.setResult(false, roomId, memberId);
                     roomFilterView.finish();
                 }, throwable -> {
                     LogUtil.e(Log.getStackTraceString(throwable));
                     roomFilterView.hideProgress();
-                    roomFilterView.setResultRoomId(false, -1L);
+                    roomFilterView.setResult(false, -1L, memberId);
                     roomFilterView.finish();
                 });
     }

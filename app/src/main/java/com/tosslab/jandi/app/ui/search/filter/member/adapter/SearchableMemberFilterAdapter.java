@@ -8,10 +8,10 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
-import com.tosslab.jandi.app.ui.members.adapter.searchable.viewholder.EmptySearchedMemberViewHolder;
 import com.tosslab.jandi.app.ui.members.adapter.searchable.viewholder.MemberViewHolder;
 import com.tosslab.jandi.app.ui.search.filter.member.adapter.model.MemberFilterableDataModel;
 import com.tosslab.jandi.app.ui.search.filter.member.adapter.vieholder.AllMemberViewHolder;
+import com.tosslab.jandi.app.ui.search.filter.member.adapter.vieholder.EmptyMemberViewHolder;
 import com.tosslab.jandi.app.ui.search.filter.member.adapter.view.MemberFilterableDataView;
 
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class SearchableMemberFilterAdapter extends MultiItemRecyclerAdapter
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case VIEW_TYPE_EMPTY_QUERY:
-                return EmptySearchedMemberViewHolder.newInstance(parent);
+                return EmptyMemberViewHolder.newInstance(parent);
             case VIEW_TYPE_ALL_MEMBER:
                 return AllMemberViewHolder.newInstance(parent);
             default:
@@ -63,6 +63,10 @@ public class SearchableMemberFilterAdapter extends MultiItemRecyclerAdapter
         super.onBindViewHolder(holder, position);
 
         int itemViewType = getItemViewType(position);
+
+        if (itemViewType == VIEW_TYPE_EMPTY_QUERY) {
+            return;
+        }
 
         View itemView = holder.itemView;
         if (itemViewType == VIEW_TYPE_ALL_MEMBER && onAllMemberClickListener != null) {
@@ -106,11 +110,13 @@ public class SearchableMemberFilterAdapter extends MultiItemRecyclerAdapter
 
     @Override
     public synchronized void addAll(List<User> members) {
-        if (members == null || members.isEmpty()) {
-            return;
-        }
 
         List<Row<?>> rows = new ArrayList<>();
+
+        if (members == null || members.isEmpty()) {
+            rows.add(Row.create("", SearchableMemberFilterAdapter.VIEW_TYPE_EMPTY_QUERY));
+            return;
+        }
 
         if (members.size() == initializedMembers.size()) {
             rows.add(Row.create("", SearchableMemberFilterAdapter.VIEW_TYPE_ALL_MEMBER));

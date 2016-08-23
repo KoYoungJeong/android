@@ -120,7 +120,7 @@
 	<string name="jandi_baidu_app_store">"Baidu App Store"</string>
 	<string name="jandi_bot_role">"I deliver messages from JANDI Connect and essential notifications from our customer experience team"</string>
 	<string name="jandi_bot_status">"Hello. I'm Mr. J."</string>
-	<string name="jandi_browse_other_topics">"Browse other topics"</string>
+	<string name="jandi_browse_other_topics">"Browse and join topic."</string>
 	<string name="jandi_browse_team">"Browse team "</string>
 	<string name="jandi_call_acess_permission">"Provide us with access to your Phone to call directly from JANDI"</string>
 	<string name="jandi_cancel">"Cancel"</string>
@@ -326,6 +326,7 @@ To change this setting, go to Team Settings > Invitation Settings."</string>
 	<string name="jandi_invite_success">"Invitation has been sent successfully"</string>
 	<string name="jandi_invite_to_dummy_account_again">"Another team member has already sent an invitation to this team member. Do you want to send another?"</string>
 	<string name="jandi_invite_to_team">"Invite"</string>
+	<string name="jandi_invite_to_team_for_member">"Send Invitations"</string>
 	<string name="jandi_invite_wechat">"WeChat"</string>
 	<string name="jandi_invited_topic">"%1$s invited %2$s"</string>
 	<string name="jandi_is_newcomer">"New to JANDI?"</string>
@@ -392,8 +393,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_mypage">"My Page"</string>
 	<string name="jandi_name">"Name"</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
-	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic.
-"</string>
+	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic."</string>
 	<string name="jandi_new_department">"New Department"</string>
 	<string name="jandi_new_job_title">"New Job Title"</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>
@@ -405,7 +405,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_no_preview_push_message">"You received a new message."</string>
 	<string name="jandi_no_recent_stickers">"No Recent Stickers"</string>
 	<string name="jandi_no_search_history">"No recent search history."</string>
-	<string name="jandi_no_search_result">"Message not found"</string>
+	<string name="jandi_no_search_result">"No files found matching"</string>
 	<string name="jandi_no_topic_to_join">"No topics to join"</string>
 	<string name="jandi_normally_topic_messages">"Topic messages"</string>
 	<string name="jandi_not_in_topic">"You have left or been removed from this topic."</string>
@@ -500,6 +500,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_search_history">"Recent Searches"</string>
 	<string name="jandi_search_ing">"<![CDATA[Searching <b><font color=#404040>%s</font></b>...]]>"</string>
 	<string name="jandi_search_loading">"Searching…"</string>
+	<string name="jandi_search_member_name_or_division">"Search members by name or division."</string>
 	<string name="jandi_search_no_topic_room">"No matching room for the keyword."</string>
 	<string name="jandi_search_result_count">"You have <b>%s</b> message search result(s)."</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%2$d</font></b> matches for <b><font color=#404040>%1$s</font></b>]]>"</string>
@@ -598,6 +599,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_tab_topic">"Topics"</string>
 	<string name="jandi_tab_tos_and_pp">"By tapping Next, I agree to the \n%1$s and %2$s."</string>
 	<string name="jandi_team">"Team"</string>
+	<string name="jandi_team_admin">"Team Admin"</string>
 	<string name="jandi_team_create_domain_info">"What web address do you want \nfor your JANDI team?"</string>
 	<string name="jandi_team_create_domain_invalid">"Letters, numbers, and hyphens only."</string>
 	<string name="jandi_team_create_domain_length_invalid">"Use at least 3 characters."</string>
@@ -648,6 +650,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_topic_was_removed">"You are no longer in the topic where this item was shared."</string>
 	<string name="jandi_tos">"Terms of Service"</string>
 	<string name="jandi_tos_and_pp">"<![CDATA[Terms & Conditions]]>"</string>
+	<string name="jandi_total_count_of_member">"No. of Members"</string>
 	<string name="jandi_try_again">"Try again"</string>
 	<string name="jandi_tutorial_file">"Upload and Share Files with a Few Taps"</string>
 	<string name="jandi_tutorial_file_message">"Share documents, images, and any other files right from your phone or JANDI file drawer. All of your content is stored and indexed automatically so you can easily find what you're looking for down the road."</string>

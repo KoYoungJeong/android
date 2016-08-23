@@ -95,7 +95,7 @@ public class RoomFilterAdapter extends MultiItemRecyclerAdapter
         }
 
         if (holder instanceof MemberViewHolder) {
-            MemberViewHolder memberViewHolder = (MemberViewHolder)holder;
+            MemberViewHolder memberViewHolder = (MemberViewHolder) holder;
             if (position == getItemCount() - 1) {
                 memberViewHolder.showHalfDivider();
             } else {
@@ -114,7 +114,7 @@ public class RoomFilterAdapter extends MultiItemRecyclerAdapter
         }
 
         Observable.from(folders)
-                .toSortedList((folder, folder2) -> folder2.getSeq() - folder.getSeq())
+                .toSortedList((folder, folder2) -> folder.getSeq() - folder2.getSeq())
                 .concatMap(Observable::from)
                 .doOnNext(folder -> {
                     if (rows.size() > 0) {
@@ -228,4 +228,5 @@ public class RoomFilterAdapter extends MultiItemRecyclerAdapter
     public void setOnMemberClickListener(OnMemberClickListener onMemberClickListener) {
         this.onMemberClickListener = onMemberClickListener;
     }
+
 }
