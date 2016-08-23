@@ -48,6 +48,8 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
 
     public static final String KEY_FILTERED_ROOM_ID = "roomId";
 
+    public static final String KEY_FILTERED_MEMBER_ID = "memberId";
+
     @Inject
     InputMethodManager inputMethodManager;
 
@@ -138,7 +140,7 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
         });
 
         roomFilterDataView.setOnTopicRoomClickListener(roomId -> {
-            setResultRoomId(true, roomId);
+            setResult(true, roomId, -1l);
             finish();
         });
     }
@@ -255,10 +257,13 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
     }
 
     @Override
-    public void setResultRoomId(boolean isTopic, long roomId) {
+    public void setResult(boolean isTopic, long roomId, long memberId) {
         Intent intent = new Intent();
         intent.putExtra(KEY_IS_TOPIC, isTopic);
         intent.putExtra(KEY_FILTERED_ROOM_ID, roomId);
+        if (memberId != -1) {
+            intent.putExtra(KEY_FILTERED_MEMBER_ID, memberId);
+        }
         setResult(RESULT_OK, intent);
     }
 

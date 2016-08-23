@@ -40,7 +40,8 @@ public class MemberSearchModel {
                         return true;
                     }
 
-                    return member.getName().toLowerCase().contains(query.toLowerCase());
+                    return member.getName().toLowerCase().contains(query.toLowerCase())
+                            || member.getDivision().toLowerCase().contains(query.toLowerCase());
                 })
                 .toSortedList((entity, entity2) -> {
                     if (entity.isBot()) {

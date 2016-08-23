@@ -120,7 +120,7 @@
 	<string name="jandi_baidu_app_store">"百度手機助手"</string>
 	<string name="jandi_bot_role">"身為JANDI最強使者，肩負傳遞JANDI Connect和平台訊息通知的任務，絕對使命必達！"</string>
 	<string name="jandi_bot_status">"你好，我是Mr.J！"</string>
-	<string name="jandi_browse_other_topics">"瀏覽其他議題"</string>
+	<string name="jandi_browse_other_topics">"瀏覽並加入議題"</string>
 	<string name="jandi_browse_team">"瀏覽團隊"</string>
 	<string name="jandi_call_acess_permission">"欲直接外撥，請開啟同意電話取用"</string>
 	<string name="jandi_cancel">"取消"</string>
@@ -326,6 +326,7 @@
 	<string name="jandi_invite_success">"邀請已經成功送出"</string>
 	<string name="jandi_invite_to_dummy_account_again">"其他成員已寄發邀請信至該郵箱，你確定要在發送一次嗎？"</string>
 	<string name="jandi_invite_to_team">"邀請加入團隊"</string>
+	<string name="jandi_invite_to_team_for_member">"寄送邀請"</string>
 	<string name="jandi_invite_wechat">"微信"</string>
 	<string name="jandi_invited_topic">"%1$s邀請了%2$s"</string>
 	<string name="jandi_is_newcomer">"還沒使用過JANDI?"</string>
@@ -403,7 +404,7 @@
 	<string name="jandi_no_preview_push_message">"你收到一則新訊息"</string>
 	<string name="jandi_no_recent_stickers">"無最近使用的貼圖"</string>
 	<string name="jandi_no_search_history">"沒有搜尋紀錄"</string>
-	<string name="jandi_no_search_result">"找不到相關的內容"</string>
+	<string name="jandi_no_search_result">"找不到符合條件的內容"</string>
 	<string name="jandi_no_topic_to_join">"沒有可加入的議題"</string>
 	<string name="jandi_normally_topic_messages">"議題訊息"</string>
 	<string name="jandi_not_in_topic">"你已離開此議題"</string>
@@ -596,6 +597,7 @@
 	<string name="jandi_tab_topic">"議題"</string>
 	<string name="jandi_tab_tos_and_pp">"點擊「下一步」即表示您同意%1$s和%2$s。"</string>
 	<string name="jandi_team">"團隊"</string>
+	<string name="jandi_team_admin">"團隊管理員"</string>
 	<string name="jandi_team_create_domain_info">"想要給您的JANDI\n團隊設定什麼網址？"</string>
 	<string name="jandi_team_create_domain_invalid">"僅限英文字母、數字和連字符(-)"</string>
 	<string name="jandi_team_create_domain_length_invalid">"至少使用3個字元"</string>
@@ -646,6 +648,7 @@
 	<string name="jandi_topic_was_removed">"此信息/文件已被标示"</string>
 	<string name="jandi_tos">"使用條款"</string>
 	<string name="jandi_tos_and_pp">"<![CDATA[使用條款 & 隱私權條款]]>"</string>
+	<string name="jandi_total_count_of_member">"成員人數"</string>
 	<string name="jandi_try_again">"請再試一次"</string>
 	<string name="jandi_tutorial_file">"簡單的幾個點擊上傳檔案"</string>
 	<string name="jandi_tutorial_file_message">"零時間、空間限制，隨時從行動裝置分享文件、簡報、視頻及任何檔案給所有團隊成員。"</string>

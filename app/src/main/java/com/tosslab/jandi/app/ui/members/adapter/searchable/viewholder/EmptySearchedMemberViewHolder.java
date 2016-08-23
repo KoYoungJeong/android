@@ -33,8 +33,7 @@ public class EmptySearchedMemberViewHolder extends BaseViewHolder<String> {
 
     @Override
     public void onBindView(String query) {
-        String message = itemView.getResources()
-                .getString(R.string.jandi_has_no_searched_member, query);
+        String message = "";
         tvMessage.setText(Html.fromHtml(message));
     }
 }

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.search.main.presenter;
 
 import com.tosslab.jandi.app.team.room.TopicRoom;
+import com.tosslab.jandi.app.ui.search.main.object.SearchMessageData;
 
 import java.util.List;
 
@@ -29,11 +30,15 @@ public interface SearchPresenter {
 
     void onJoinTopic(long topicId, int topicType);
 
-    void onRoomChanged(long roomId);
+    void onRoomChanged(long roomId, long memberId);
 
     void onWriterChanged(long writerId);
 
     void onAccessTypeChanged(String accessType);
+
+    void onSetOnlyMessageMode(boolean onlyMessageMode);
+
+    void onMoveToMessageFromSearch(SearchMessageData searchMessageData);
 
     void onDestroy();
 
@@ -54,8 +59,6 @@ public interface SearchPresenter {
         void showTopicInfoDialog(TopicRoom topicRoom);
 
         void moveToPollActivity(long pollId);
-
-        void moveToFileActivity(long messageId, long fileId);
 
         void moveToMessageActivityFromSearch(long entityId, int entityType, long linkId);
 

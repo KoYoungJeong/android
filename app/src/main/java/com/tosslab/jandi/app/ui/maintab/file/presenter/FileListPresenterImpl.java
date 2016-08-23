@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.file.presenter;
 
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -31,6 +33,7 @@ public class FileListPresenterImpl implements FileListPresenter {
     private final BehaviorSubject<Integer> pageSubject;
     private final BehaviorSubject<Long> writerSubject;
     private final BehaviorSubject<Long> entitySubject;
+    private final boolean inSearchActivity;
     private final BehaviorSubject<String> fileTypeSubject;
     private final BehaviorSubject<Date> endDateSubject;
     private final BehaviorSubject<String> keywordSubject;
@@ -40,12 +43,13 @@ public class FileListPresenterImpl implements FileListPresenter {
     private long entityId;
     private SearchedFilesAdapterModel searchedFilesAdapterModel;
 
-    public FileListPresenterImpl(long entityId, FileListModel fileListModel, View view) {
+    public FileListPresenterImpl(long entityId, FileListModel fileListModel, View view, boolean inSearchActivity) {
         this.entityId = entityId;
         this.fileListModel = fileListModel;
         this.view = view;
 
         entitySubject = BehaviorSubject.create(entityId);
+        this.inSearchActivity = inSearchActivity;
         writerSubject = BehaviorSubject.create(-1L);
         fileTypeSubject = BehaviorSubject.create("all");
         endDateSubject = BehaviorSubject.create(new Date());
@@ -84,11 +88,13 @@ public class FileListPresenterImpl implements FileListPresenter {
                         })
                         .onBackpressureBuffer()
                         .throttleLast(100, TimeUnit.MILLISECONDS)
+                        .filter(it -> !inSearchActivity || (!TextUtils.isEmpty(it.getKeyword()) && it.getKeyword().length() >= 2))
                         .observeOn(AndroidSchedulers.mainThread())
                         .doOnNext(it -> {
                             if (it.getPage() > 1) {
                                 view.showMoreProgressBar();
                             } else {
+                                view.setSearchEmptryViewVisible(android.view.View.GONE);
                                 view.setInitLoadingViewVisible(android.view.View.VISIBLE);
                             }
                         })
@@ -102,7 +108,6 @@ public class FileListPresenterImpl implements FileListPresenter {
                             }
                             return new ArrayList<ResSearch.SearchRecord>();
                         })
-                        .filter(it -> it != null && !it.isEmpty())
                         .doOnNext(it -> fileListModel.trackFileKeywordSearchSuccess(keywordSubject.getValue()))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -132,25 +137,30 @@ public class FileListPresenterImpl implements FileListPresenter {
                 entitySubject.getValue(), writerSubject.getValue(),
                 keywordSubject.getValue(), fileTypeSubject.getValue())) {
 
-            if (totalItemCount > 0) {
-                view.setEmptyViewVisible(android.view.View.GONE);
-            } else {
+            if (totalItemCount <= 0) {
+                // 첫 검색
                 view.setEmptyViewVisible(android.view.View.VISIBLE);
+            } else {
+                view.setEmptyViewVisible(android.view.View.GONE);
             }
             view.setSearchEmptryViewVisible(android.view.View.GONE);
         } else {
-            if (totalItemCount > 0) {
-                view.setSearchEmptryViewVisible(android.view.View.GONE);
-            } else {
+            if (totalItemCount <= 0) {
+                // 첫 검색
                 view.setSearchEmptryViewVisible(android.view.View.VISIBLE);
+            } else {
+                view.setSearchEmptryViewVisible(android.view.View.GONE);
             }
             view.setEmptyViewVisible(android.view.View.GONE);
         }
+
         view.setInitLoadingViewVisible(android.view.View.GONE);
 
 
         if (its.size() < DEFAULT_COUNT) {
-            view.showWarningToast(JandiApplication.getContext().getString(R.string.warn_no_more_files));
+            if (pageSubject.getValue() > 1) {
+                view.showWarningToast(JandiApplication.getContext().getString(R.string.warn_no_more_files));
+            }
             setListNoMoreLoad();
         } else {
             setListReadyLoadMore();
@@ -275,11 +285,15 @@ public class FileListPresenterImpl implements FileListPresenter {
 
     @Override
     public void onNewQuery(String s) {
-        searchedFilesAdapterModel.clearList();
-        view.justRefresh();
-        keywordSubject.onNext(s);
-        pageSubject.onNext(1);
-        endDateSubject.onNext(new Date());
+        if (!TextUtils.isEmpty(s) && s.length() >= 2) {
+            searchedFilesAdapterModel.clearList();
+            view.justRefresh();
+            keywordSubject.onNext(s);
+            pageSubject.onNext(1);
+            endDateSubject.onNext(new Date());
+        } else {
+            view.showWarningToast(JandiApplication.getContext().getString(R.string.jandi_search_available_length_of_keyword));
+        }
     }
 
     private void removeItem(int position) {
