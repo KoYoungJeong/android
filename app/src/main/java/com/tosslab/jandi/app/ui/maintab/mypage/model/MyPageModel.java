@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.maintab.mypage.model;
 
 import android.util.Pair;
 
-import com.tosslab.jandi.app.local.orm.repositories.info.InitialPollInfoRepository;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
@@ -105,7 +104,7 @@ public class MyPageModel {
     }
 
     public int getPollBadgeCount() {
-        return InitialPollInfoRepository.getInstance().getVotableCount();
+        return TeamInfoLoader.getInstance().getPollBadge();
     }
 
 }
