@@ -200,14 +200,14 @@ public class SearchActivity extends BaseAppCompatActivity
     }
 
     private void onSearch() {
-        if (tvSearchKeyword.length() >= 2) {
+        String searchKeyword = tvSearchKeyword.getText().toString().trim();
+        if (searchKeyword.length() >= 2) {
             if (flagFirstSearch) {
                 setStickyHeaderAdapter();
                 removeHistoryListeners();
                 flagFirstSearch = false;
             }
-            searchPresenter.sendSearchQuery(
-                    tvSearchKeyword.getText().toString(), isOnlyMessageMode);
+            searchPresenter.sendSearchQuery(searchKeyword, isOnlyMessageMode);
             tvSearchKeyword.dismissDropDown();
             hideKeyboard();
         } else {
