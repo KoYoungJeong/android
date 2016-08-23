@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    android:background="@drawable/search_bubble">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_member_filter"
@@ -25,7 +25,7 @@
             android:inputType="text"
             android:textColor="@color/jandi_text"
             android:textColorHint="@color/jandi_text_medium"
-            android:textSize="18dp"/>
+            android:textSize="18dp" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar_member_filter"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical" />
 
     <ProgressBar
         android:id="@+id/progress_member_filter"
@@ -43,6 +43,6 @@
         android:layout_centerInParent="true"
         android:indeterminate="true"
         android:indeterminateDrawable="@drawable/progress_refresh_animation"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </RelativeLayout>
