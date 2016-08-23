@@ -418,7 +418,7 @@ public class SearchActivity extends BaseAppCompatActivity
         }
     }
 
-    public void showDeleteConfirmDialog() {
+    void showDeleteConfirmDialog() {
         if (deleteConfirmDialog == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this,
                     R.style.JandiTheme_AlertDialog_FixWidth_300);
