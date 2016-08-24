@@ -6,14 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
-import com.google.gson.JsonObject;
-import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.ProgressCallback;
-import com.koushikdutta.ion.builder.Builders;
-import com.koushikdutta.ion.future.ResponseFuture;
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.FileUploadProgressEvent;
@@ -22,23 +15,19 @@ import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel_;
 import com.tosslab.jandi.app.local.orm.domain.UploadedFileInfo;
 import com.tosslab.jandi.app.local.orm.repositories.UploadedFileInfoRepository;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
+import com.tosslab.jandi.app.network.file.FileUploadApi;
+import com.tosslab.jandi.app.network.file.body.ProgressCallback;
 import com.tosslab.jandi.app.network.models.ResUploadedFile;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
-import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.app.utils.UserAgentUtil;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
+import retrofit2.Call;
 import rx.Observable;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
@@ -53,8 +42,8 @@ public class FileUploadManager {
     private static final String EXTRA_STOP = "stop";
     private static FileUploadManager manager;
     private PublishSubject<FileUploadDTO> objectPublishSubject;
-    private ResponseFuture<JsonObject> lastRequest;
-    private List<FileUploadDTO> fileUploadDTOList;
+    private Call<ResUploadedFile> lastRequest;
+    private List<FileUploadDTO> fileUploadDTOs;
     private int notificationId = 100;
     private NotificationCompat.Builder notificationBuilder;
     private Subscription subscription;
@@ -62,7 +51,7 @@ public class FileUploadManager {
 
     private FileUploadManager() {
         Context context = JandiApplication.getContext();
-        fileUploadDTOList = new CopyOnWriteArrayList<>();
+        fileUploadDTOs = new CopyOnWriteArrayList<>();
 
         notificationBuilder = new NotificationCompat.Builder(context);
         notificationBuilder
@@ -85,40 +74,16 @@ public class FileUploadManager {
         return manager;
     }
 
-    private static ResponseFuture<JsonObject> uploadFile(Context context,
-                                                         String realFilePath,
-                                                         boolean isPublicTopic,
-                                                         String title, long teamId, long entityId,
-                                                         String comment, List<MentionObject> mentions,
-                                                         ProgressCallback progressCallback) throws ExecutionException, InterruptedException {
+    private static Call<ResUploadedFile> uploadFile(String realFilePath,
+                                                    boolean isPublicTopic,
+                                                    String title, long teamId, long entityId,
+                                                    String comment, List<MentionObject> mentions,
+                                                    ProgressCallback progressCallback) {
         File uploadFile = new File(realFilePath);
-        String requestURL = JandiConstantsForFlavors.SERVICE_FILE_UPLOAD_URL + "inner-api/file";
         String permissionCode = (isPublicTopic) ? "744" : "740";
-        Builders.Any.M ionBuilder
-                = Ion
-                .with(context)
-                .load(requestURL)
-                .uploadProgress(progressCallback)
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
-                .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
-                .setMultipartParameter("title", title)
-                .setMultipartParameter("share", String.valueOf(entityId))
-                .setMultipartParameter("permission", permissionCode)
-                .setMultipartParameter("teamId", String.valueOf(teamId));
 
-        // Comment가 함께 등록될 경우 추가
-        if (comment != null && !comment.isEmpty()) {
-            ionBuilder.setMultipartParameter("comment", comment);
-            try {
-                ionBuilder.setMultipartParameter("mentions", JacksonMapper.getInstance().getObjectMapper().writeValueAsString(mentions));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
-                .asJsonObject();
+        FileUploadApi fileUploadApi = new FileUploadApi();
+        return fileUploadApi.uploadFile(title, entityId, permissionCode, teamId, comment, mentions, uploadFile, progressCallback);
 
     }
 
@@ -129,7 +94,7 @@ public class FileUploadManager {
 
                     notificationBuilder.setProgress(100, 0, false)
                             .setAutoCancel(false)
-                            .setContentTitle(JandiApplication.getContext().getString(R.string.jandi_file_upload_state, (fileUploadDTOList.indexOf(fileUploadDTO) + 1), fileUploadDTOList.size()))
+                            .setContentTitle(JandiApplication.getContext().getString(R.string.jandi_file_upload_state, String.valueOf((fileUploadDTOs.indexOf(fileUploadDTO) + 1)), String.valueOf(fileUploadDTOs.size())))
                             .setContentIntent(getPendingActivities(context, fileUploadDTO))
                             .setSmallIcon(android.R.drawable.stat_sys_upload);
                     updateNotificationBuilder();
@@ -142,47 +107,41 @@ public class FileUploadManager {
 
                     boolean isPublicTopic = filePickerModel.isPublicEntity(fileUploadDTO.getEntity());
 
+                    Call<ResUploadedFile> request = uploadFile(fileUploadDTO.getFilePath(),
+                            isPublicTopic, fileUploadDTO.getFileName(),
+                            fileUploadDTO.getTeamId(),
+                            fileUploadDTO.getEntity(),
+                            fileUploadDTO.getComment(),
+                            fileUploadDTO.getMentions(),
+                            callback -> callback.distinctUntilChanged()
+                                    .subscribe(it -> {
+                                        progress[1] = it;
+                                        FileUploadProgressEvent event = new FileUploadProgressEvent(fileUploadDTO.getEntity(), it);
+                                        EventBus.getDefault().post(event);
+                                        if (progress[0] != progress[1]) {
+                                            progress[0] = progress[1];
+                                            notificationBuilder.setContentTitle(JandiApplication.getContext().getString(R.string.jandi_file_upload_state, String.valueOf((fileUploadDTOs.indexOf(fileUploadDTO) + 1)), String.valueOf(fileUploadDTOs.size())))
+                                                    .setContentText(JandiApplication.getContext().getString(R.string.app_name));
+                                            notificationBuilder.setProgress(100, progress[0], false);
+                                            showNotification(context);
+                                        }
+                                    }, t -> {
+                                    }, () -> {
+
+                                    }));
+                    lastRequest = request;
+
                     try {
-                        ResponseFuture<JsonObject> uploadFuture = uploadFile(JandiApplication.getContext(),
-                                fileUploadDTO.getFilePath(),
-                                isPublicTopic, fileUploadDTO.getFileName(),
-                                fileUploadDTO.getTeamId(),
-                                fileUploadDTO.getEntity(),
-                                fileUploadDTO.getComment(),
-                                fileUploadDTO.getMentions(),
-                                (downloaded, total) -> {
-                                    progress[1] = (int) (downloaded * 100 / total);
-                                    FileUploadProgressEvent event = new FileUploadProgressEvent(fileUploadDTO.getEntity(), (int) (downloaded * 100 / total));
-                                    EventBus.getDefault().post(event);
-                                    if (progress[0] != progress[1]) {
-                                        progress[0] = progress[1];
-                                        notificationBuilder.setContentTitle(JandiApplication.getContext().getString(R.string.jandi_file_upload_state, (fileUploadDTOList.indexOf(fileUploadDTO) + 1), fileUploadDTOList.size()))
-                                                .setContentText(JandiApplication.getContext().getString(R.string.app_name));
-                                        notificationBuilder.setProgress(100, progress[0], false);
-                                        showNotification(context);
-                                    }
-                                });
-                        lastRequest = uploadFuture;
-                        JsonObject result = uploadFuture.get();
-
-                        if (result.get("code") == null) {
-                            try {
-                                ResUploadedFile resUploadedFile = JacksonMapper.getInstance().getObjectMapper().readValue(result
-                                        .toString(), ResUploadedFile.class);
-                                UploadedFileInfo fileInfo = new UploadedFileInfo();
-                                fileInfo.setMessageId(resUploadedFile.getMessageId());
-                                fileInfo.setLocalPath(fileUploadDTO.getFilePath());
-                                UploadedFileInfoRepository.getRepository().insertFileInfo(fileInfo);
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                        ResUploadedFile result = request.execute().body();
+                        if (result != null) {
+                            UploadedFileInfo fileInfo = new UploadedFileInfo();
+                            fileInfo.setMessageId(result.getMessageId());
+                            fileInfo.setLocalPath(fileUploadDTO.getFilePath());
+                            UploadedFileInfoRepository.getRepository().insertFileInfo(fileInfo);
                             fileUploadDTO.setUploadState(FileUploadDTO.UploadState.SUCCESS);
                         } else {
                             fileUploadDTO.setUploadState(FileUploadDTO.UploadState.FAIL);
                         }
-                    } catch (CancellationException | InterruptedException e) {
-                        // do nothing.
                     } catch (Exception e) {
                         fileUploadDTO.setUploadState(FileUploadDTO.UploadState.FAIL);
                     }
@@ -244,12 +203,12 @@ public class FileUploadManager {
 
     private void resetAllIfFinishedAll(boolean finishAll) {
         if (finishAll) {
-            fileUploadDTOList.clear();
+            fileUploadDTOs.clear();
         }
     }
 
     private boolean isFinishAll() {
-        for (FileUploadDTO fileUploadDTO : fileUploadDTOList) {
+        for (FileUploadDTO fileUploadDTO : fileUploadDTOs) {
             if (fileUploadDTO.getUploadState() != FileUploadDTO.UploadState.SUCCESS) {
                 return false;
             }
@@ -258,19 +217,19 @@ public class FileUploadManager {
     }
 
     public void add(FileUploadDTO fileUploadDTO) {
-        fileUploadDTOList.add(fileUploadDTO);
+        fileUploadDTOs.add(fileUploadDTO);
 
         objectPublishSubject.onNext(fileUploadDTO);
     }
 
     public void remove(FileUploadDTO fileUploadDTO) {
-        fileUploadDTOList.remove(fileUploadDTO);
+        fileUploadDTOs.remove(fileUploadDTO);
     }
 
     public void retryAsFailed(long entityId) {
         FileUploadDTO temp;
-        for (int idx = 0, size = fileUploadDTOList.size(); idx < size; idx++) {
-            temp = fileUploadDTOList.get(idx);
+        for (int idx = 0, size = fileUploadDTOs.size(); idx < size; idx++) {
+            temp = fileUploadDTOs.get(idx);
             if (temp.getEntity() == entityId) {
                 objectPublishSubject.onNext(temp);
                 temp.setUploadState(FileUploadDTO.UploadState.IDLE);
@@ -286,7 +245,7 @@ public class FileUploadManager {
     public List<FileUploadDTO> getUploadInfos(long entityId) {
 
         List<FileUploadDTO> list = new ArrayList<>();
-        Observable.from(fileUploadDTOList)
+        Observable.from(fileUploadDTOs)
                 .filter(fileUploadDTO -> fileUploadDTO.getEntity() == entityId)
                 .filter(it -> it.getUploadState() != FileUploadDTO.UploadState.SUCCESS)
                 .collect(() -> list, List::add)
@@ -304,7 +263,7 @@ public class FileUploadManager {
 
         initSubscription(JandiApplication.getContext());
 
-        Observable.from(fileUploadDTOList)
+        Observable.from(fileUploadDTOs)
                 .subscribe(fileUploadDTO -> {
                     if (fileUploadDTO.getUploadState() != FileUploadDTO.UploadState.SUCCESS) {
                         fileUploadDTO.setUploadState(FileUploadDTO.UploadState.SUCCESS);
@@ -312,9 +271,9 @@ public class FileUploadManager {
                     }
                 }, t -> {});
 
-        fileUploadDTOList.clear();
-        if (lastRequest != null && !lastRequest.isDone() && !lastRequest.isCancelled()) {
-            lastRequest.cancel(true);
+        fileUploadDTOs.clear();
+        if (lastRequest != null && lastRequest.isExecuted() && !lastRequest.isCanceled()) {
+            lastRequest.cancel();
         }
 
     }

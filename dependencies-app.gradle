@@ -52,7 +52,6 @@ rootProject.allprojects { project ->
                 // UI
                 compile rootProject.ext.dependecies.libraries.supertoast
                 compile rootProject.ext.dependecies.libraries.recyclerview_stickyheader
-                compile rootProject.ext.dependecies.libraries.android_crop
 
                 // BadgeCount
                 compile rootProject.ext.dependecies.libraries.shortcutbadger
@@ -62,9 +61,6 @@ rootProject.allprojects { project ->
                 compile(rootProject.ext.dependecies.libraries.socketio) {
                     exclude group: 'org.json', module: 'json'
                 }
-
-                // Cache
-                compile rootProject.ext.dependecies.libraries.ion
                 // Image
                 compile rootProject.ext.dependecies.libraries.glide_okhttp
                 compile rootProject.ext.dependecies.libraries.glide_transformation

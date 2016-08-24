@@ -5,32 +5,35 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
-import com.koushikdutta.ion.ProgressCallback;
-import com.koushikdutta.ion.future.ResponseFuture;
+
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.domain.DownloadInfo;
 import com.tosslab.jandi.app.local.orm.repositories.DownloadRepository;
+import com.tosslab.jandi.app.network.file.FileDownloadApi;
 import com.tosslab.jandi.app.services.download.domain.DownloadFileInfo;
 import com.tosslab.jandi.app.services.download.model.DownloadModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 public class DownloadController {
     public static final String TAG = DownloadService.TAG;
 
     View view;
 
-    private ResponseFuture<File> downloadTask;
+    private Call<ResponseBody> downloadTask;
 
     public DownloadController() {
     }
@@ -110,12 +113,12 @@ public class DownloadController {
 
         try {
             File file = downloadFileAndGet(downloadTargetFile,
-                    downloadUrl, (downloaded, total) -> {
-                        view.notifyProgress(downloaded,
-                                total,
-                                notificationId,
-                                progressNotificationBuilder);
-                    });
+                    downloadUrl,
+                    callback -> callback.distinctUntilChanged()
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(it -> {
+                                view.notifyProgress(it, 100, notificationId, progressNotificationBuilder);
+                            }, t -> {}));
 
 
             String name = file.getName();
@@ -158,16 +161,15 @@ public class DownloadController {
     }
 
     File downloadFileAndGet(File downloadTargetFile, String downloadUrl,
-                            ProgressCallback downloadCallback)
-            throws InterruptedException, java.util.concurrent.ExecutionException {
+                            com.tosslab.jandi.app.network.file.body.ProgressCallback callback) {
         // Ion File download task - 인터넷이 끊긴 상황에서 cancel 하기 위해 field 로 활용
-        downloadTask = DownloadModel.buildDownloadTask(downloadTargetFile, downloadUrl, downloadCallback);
-        return downloadTask.get();
+        downloadTask = new FileDownloadApi().download(downloadUrl, downloadTargetFile.getAbsolutePath(), callback);
+        return downloadTargetFile;
     }
 
     synchronized void cancelDownload() {
 
-        if (downloadTask != null) {
+        if (downloadTask != null && downloadTask.isExecuted()) {
             downloadTask.cancel();
         }
     }

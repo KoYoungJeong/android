@@ -49,8 +49,11 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
     private final PollDetailPresenter.View pollDetailView;
     private final PollDetailDataModel pollDetailDataModel;
 
-    private final PublishSubject<Long> reInitializePollDetailQueue;
-    private final Subscription reInitializePollDetailQueueSubs;
+    private PublishSubject<Long> reInitializePollDetailQueue;
+    private Subscription reInitializePollDetailQueueSubs;
+
+    private PublishSubject<Pair<Long, Boolean>> starredStateChangeQueue;
+    private Subscription starredStateChangeQueueSubs;
 
     @Inject
     public PollDetailPresenterImpl(PollDetailModel pollDetailModel,
@@ -60,6 +63,12 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
         this.pollDetailDataModel = pollDetailDataModel;
         this.pollDetailView = pollDetailView;
 
+        initPollDetailInitializeQueue();
+        initPollStarQueue();
+    }
+
+    @Override
+    public void initPollDetailInitializeQueue() {
         reInitializePollDetailQueue = PublishSubject.create();
         reInitializePollDetailQueueSubs =
                 reInitializePollDetailQueue.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
@@ -103,6 +112,33 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                         }, e -> {
                             LogUtil.e(TAG, Log.getStackTraceString(e));
                         });
+    }
+
+    @Override
+    public void initPollStarQueue() {
+        starredStateChangeQueue = PublishSubject.create();
+        starredStateChangeQueueSubs =
+                starredStateChangeQueue.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
+                        .onBackpressureBuffer()
+                        .concatMap(pair -> {
+                            long messageId = pair.first;
+                            boolean futureStar = pair.second;
+                            return Observable.defer(() -> {
+                                try {
+                                    if (futureStar) {
+                                        pollDetailModel.starPoll(messageId);
+                                    } else {
+                                        pollDetailModel.unStarPoll(messageId);
+                                    }
+                                    return Observable.just(pair);
+                                } catch (RetrofitException e) {
+                                    return Observable.error(e);
+                                }
+                            });
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(pair -> {
+                        }, Throwable::printStackTrace);
     }
 
     @Override
@@ -167,7 +203,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
     }
 
     @Override
-    public void onVote(long pollId, Collection<Integer> seqs) {
+    public void onPollVoteAction(long pollId, Collection<Integer> seqs) {
         if (!NetworkCheckUtil.isConnected()) {
             pollDetailView.showCheckNetworkDialog(false);
             return;
@@ -639,8 +675,13 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
     @Override
     public void clearAllEventQueue() {
         if (reInitializePollDetailQueueSubs != null
-                && !reInitializePollDetailQueueSubs.isUnsubscribed()) {
+                && !(reInitializePollDetailQueueSubs.isUnsubscribed())) {
             reInitializePollDetailQueueSubs.unsubscribe();
+        }
+
+        if (starredStateChangeQueueSubs != null
+                && !(starredStateChangeQueueSubs.isUnsubscribed())) {
+            starredStateChangeQueueSubs.unsubscribe();
         }
     }
 
@@ -655,6 +696,14 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                 pollDetailView.showPollItemParticipants(poll.getId(), item);
             }
         }
+    }
+
+    @Override
+    public void onChangePollStarredState(Poll poll) {
+        poll.setIsStarred(!poll.isStarred());
+        pollDetailView.notifyDataSetChanged();
+
+        starredStateChangeQueue.onNext(Pair.create(poll.getMessageId(), poll.isStarred()));
     }
 
     @Override

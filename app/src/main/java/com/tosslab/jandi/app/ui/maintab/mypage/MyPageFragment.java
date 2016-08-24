@@ -27,8 +27,8 @@ import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.poll.RefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.team.member.User;
@@ -45,8 +45,7 @@ import com.tosslab.jandi.app.ui.poll.list.PollListActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.settings.main.SettingsActivity;
-import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity;
-import com.tosslab.jandi.app.ui.starmention.StarMentionListActivity_;
+import com.tosslab.jandi.app.ui.starred.StarredListActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.KnockListener;
 import com.tosslab.jandi.app.utils.ViewSlider;
@@ -256,23 +255,21 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
                 || poll.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
-
-        presenter.onInitializePollBadge();
+        presenter.onGetPollBadge();
     }
 
     public void onEvent(RequestRefreshPollBadgeCountEvent event) {
         if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
-
-        presenter.onInitializePollBadge();
+        presenter.onGetPollBadge();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        presenter.onInitializePollBadge();
+        presenter.onGetPollBadge();
 
         if (isLaidOut) {
             presenter.onRetrieveMyInfo();
@@ -290,10 +287,7 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
 
     @OnClick(R.id.btn_my_profile_move_to_starred)
     void moveToStarredListActivity() {
-        StarMentionListActivity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .extra("type", StarMentionListActivity.TYPE_STAR_LIST)
-                .start();
+        StarredListActivity.start(getActivity());
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.Stars);
     }

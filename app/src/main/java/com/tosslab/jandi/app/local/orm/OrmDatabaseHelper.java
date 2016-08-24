@@ -74,8 +74,10 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_START_API_ROOM_MESSAGE_RELATION = 17;
     private static final int DATABASE_VERSION_POLL = 18;
     private static final int DATABASE_VERSION_EVENT_HISTORY = 19;
-    private static final int DATABASE_VERSION_MEMBER_FILTER = 20;
+    private static final int DATABASE_VERSION_ADD_STARTAPI_POLL_INFO = 20;
+    private static final int DATABASE_VERSION_MEMBER_FILTER = 21;
     private static final int DATABASE_VERSION = DATABASE_VERSION_MEMBER_FILTER;
+    public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
         super(context, "jandi-v2.db", null, DATABASE_VERSION);
@@ -155,6 +157,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             createTable(connectionSource, InitialInfo.class);
             createTable(connectionSource, InitialInfo.Self.class);
+            createTable(connectionSource, InitialInfo.Poll.class);
             createTable(connectionSource, Team.class);
             createTable(connectionSource, Folder.class);
             createTable(connectionSource, Topic.class);
@@ -319,6 +322,9 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                     UpgradeChecker.create(() -> DATABASE_VERSION_EVENT_HISTORY, () -> {
                         createTable(connectionSource, SocketEvent.class);
                     }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_ADD_STARTAPI_POLL_INFO, () -> {
+                        createTable(connectionSource, InitialInfo.Poll.class);
+                    }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_MEMBER_FILTER, () -> {
                         createTable(connectionSource, MemberRecentKeyword.class);
                     }));
@@ -400,6 +406,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
         clearTable(getConnectionSource(), InitialInfo.class);
         clearTable(getConnectionSource(), InitialInfo.Self.class);
+        clearTable(getConnectionSource(), InitialInfo.Poll.class);
         clearTable(getConnectionSource(), Team.class);
         clearTable(getConnectionSource(), Folder.class);
         clearTable(getConnectionSource(), Topic.class);

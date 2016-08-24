@@ -19,7 +19,6 @@ import com.tosslab.jandi.app.ui.profile.defaultimage.model.ProfileImageSelectorM
 import com.tosslab.jandi.app.ui.search.messages.model.MessageSearchManager;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
 import com.tosslab.jandi.app.ui.sign.signup.verify.model.SignUpVerifyModel;
-import com.tosslab.jandi.app.ui.starmention.model.StarMentionListModel;
 
 import dagger.Component;
 
@@ -60,8 +59,6 @@ public interface ApiClientComponent {
     void inject(MainTopicModel mainTopicModel);
 
     void inject(com.tosslab.jandi.app.ui.maintab.topic.dialog.model.TopicFolderSettingModel topicFolderSettingModel);
-
-    void inject(StarMentionListModel starMentionListModel);
 
     void inject(InvitationDialogExecutor invitationDialogExecutor);
 

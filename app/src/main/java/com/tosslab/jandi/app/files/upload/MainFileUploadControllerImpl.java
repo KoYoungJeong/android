@@ -7,9 +7,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 
-import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
+import com.tosslab.jandi.app.network.models.ResUploadedFile;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.file.FileUtil;
@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @EBean
 public class MainFileUploadControllerImpl implements FileUploadController {
@@ -142,19 +141,10 @@ public class MainFileUploadControllerImpl implements FileUploadController {
     void uploadFile(Context context, String title, long entityId, String realFilePath, String comment, ProgressDialog uploadProgress) {
         boolean isPublicTopic = filePickerModel.isPublicEntity(entityId);
         try {
-            JsonObject result = filePickerModel.uploadFile(context, uploadProgress, realFilePath, isPublicTopic, title, entityId, comment);
-            if (result.get("code") == null) {
-
-                LogUtil.e("Upload Success : " + result);
-                showSuccessToast(context, context.getString(R.string.jandi_file_upload_succeed));
-                filePickerModel.trackUploadingFile(entityId, result);
-            } else {
-                LogUtil.e("Upload Fail : Result : " + result);
-                showFailToast(context, context.getString(R.string.err_file_upload_failed));
-            }
-        } catch (ExecutionException e) {
-            filePickerModel.trackUploadingFileFail(-1);
-            showFailToast(context, context.getString(R.string.jandi_canceled));
+            ResUploadedFile result = filePickerModel.uploadFile(uploadProgress, realFilePath, isPublicTopic, title, entityId, comment);
+            LogUtil.e("Upload Success : " + result);
+            showSuccessToast(context, context.getString(R.string.jandi_file_upload_succeed));
+            filePickerModel.trackUploadingFile(entityId, result.getMessageId());
         } catch (Exception e) {
             filePickerModel.trackUploadingFileFail(-1);
             LogUtil.e("Upload Error : ", e);

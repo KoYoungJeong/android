@@ -8,11 +8,19 @@ import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAvatarsInfo;
 import com.tosslab.jandi.app.network.models.start.Human;
 
+import java.io.File;
+import java.net.URLConnection;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
+import retrofit2.http.Multipart;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public class ProfileApi extends ApiTemplate<ProfileApi.Api> {
@@ -30,6 +38,12 @@ public class ProfileApi extends ApiTemplate<ProfileApi.Api> {
 
     public Human getMemberProfile(long teamId, long memberId) throws RetrofitException {
         return call(() -> getApi().getMemberProfile(teamId, memberId));
+    }
+
+    public Human uploadProfilePhoto(long memberId, File file) throws RetrofitException {
+        MediaType mediaType = MediaType.parse(URLConnection.guessContentTypeFromName(file.getName()));
+        MultipartBody.Part userFilePart = MultipartBody.Part.createFormData("photo", file.getName(), RequestBody.create(mediaType, file));
+        return call(() -> getApi().uploadProfilePhoto(memberId, userFilePart));
     }
 
 
@@ -50,5 +64,9 @@ public class ProfileApi extends ApiTemplate<ProfileApi.Api> {
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResAvatarsInfo> getAvartarsInfo();
 
+        @Multipart
+        @PUT("members/{memberId}/profile/photo")
+        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+        Call<Human> uploadProfilePhoto(@Path("memberId") long memberId, @Part MultipartBody.Part photo);
     }
 }

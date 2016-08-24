@@ -14,7 +14,6 @@ import android.support.v4.app.NotificationCompat;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 
-import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -29,6 +28,7 @@ import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 public class JandiPushReceiverModel {
@@ -198,10 +198,7 @@ public class JandiPushReceiverModel {
         Bitmap profileImage = null;
         if (!TextUtils.isEmpty(writerThumb)) {
             try {
-                profileImage = Ion.with(context)
-                        .load(writerThumb)
-                        .asBitmap()
-                        .get();
+                profileImage = ImageUtil.getBitmap(context, writerThumb);
             } catch (Exception e) {
                 LogUtil.e("Failed Notification Image", e);
             }

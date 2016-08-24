@@ -34,10 +34,10 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -53,7 +53,7 @@ public class FileDetailPresenter {
     private PublishSubject<Pair<Long, Boolean>> initializePublishSubject;
     private PublishSubject<FileStarredInfo> starredStatePublishSubject;
 
-    private Future<File> currentDownloadingFile;
+    private retrofit2.Call<okhttp3.ResponseBody> currentDownloadingFile;
 
     public void setView(View view) {
         this.view = view;
@@ -303,32 +303,36 @@ public class FileDetailPresenter {
         String downloadUrl = fileDetailModel.getDownloadUrl(fileMessage.content.fileUrl);
         final String mimeType = fileMessage.content.type;
 
-        currentDownloadingFile =
-                fileDetailModel.downloadFile(downloadUrl, downloadFilePath,
-                        (downloaded, total) -> progressDialog.setProgress((int) (downloaded * 100 / total)),
-                        (e, result) -> {
+        currentDownloadingFile = fileDetailModel.downloadFile(downloadUrl, downloadFilePath,
+                callback -> callback.distinctUntilChanged()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(it -> {
+                            progressDialog.setMax(100);
+                            progressDialog.setProgress(it);
+                        }, t -> {
                             view.dismissDialog(progressDialog);
-
-                            if (currentDownloadingFile == null || currentDownloadingFile.isCancelled()) {
+                            if (currentDownloadingFile == null || currentDownloadingFile.isCanceled()) {
                                 currentDownloadingFile = null;
                                 return;
                             }
-                            currentDownloadingFile = null;
-                            if (e == null && result != null) {
-                                if (type == FileManageType.EXPORT) {
-                                    view.startExportedFileViewerActivity(result, mimeType);
-                                } else if (type == FileManageType.OPEN) {
-                                    view.startDownloadedFileViewerActivity(result, mimeType);
-                                }
-                            } else {
-                                view.showUnexpectedErrorToast();
+                            view.showUnexpectedErrorToast();
+                        }, () -> {
+                            view.dismissDialog(progressDialog);
+                            if (currentDownloadingFile == null || currentDownloadingFile.isCanceled()) {
+                                currentDownloadingFile = null;
+                                return;
                             }
-                        });
+                            if (type == FileDetailPresenter.FileManageType.EXPORT) {
+                                view.startExportedFileViewerActivity(new File(fileDetailModel.getDownloadFilePath(fileMessage.content.title)), mimeType);
+                            } else if (type == FileDetailPresenter.FileManageType.OPEN) {
+                                view.startDownloadedFileViewerActivity(new File(fileDetailModel.getDownloadFilePath(fileMessage.content.title)), mimeType);
+                            }
+                        }));
     }
 
     public void cancelCurrentDownloading() {
-        if (currentDownloadingFile != null) {
-            currentDownloadingFile.cancel(true);
+        if (currentDownloadingFile != null && currentDownloadingFile.isExecuted()) {
+            currentDownloadingFile.cancel();
         }
     }
 
