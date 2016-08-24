@@ -61,6 +61,25 @@ public class Poll {
 
     private boolean isMine;
 
+    private long messageId;
+    private boolean isStarred;
+
+    public long getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(long messageId) {
+        this.messageId = messageId;
+    }
+
+    public boolean isStarred() {
+        return isStarred;
+    }
+
+    public void setIsStarred(boolean isStarred) {
+        this.isStarred = isStarred;
+    }
+
     public long getId() {
         return id;
     }

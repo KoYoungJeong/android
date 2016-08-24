@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/vg_starred_list_tab"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/jandi_star_tab_default_size"
+        android:background="@drawable/bg_search_tab"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <TextView
+            android:id="@+id/btn_starred_list_all"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="@string/jandi_starred_all"
+            android:textColor="@color/text_color_category"
+            android:textSize="@dimen/jandi_star_tab_text_size"/>
+
+        <TextView
+            android:id="@+id/btn_starred_list_file"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="@string/jandi_starred_files"
+            android:textColor="@color/text_color_category"
+            android:textSize="@dimen/jandi_star_tab_text_size"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/v_starred_list_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/vg_starred_list_tab"
+        android:background="@color/jandi_starred_list_line"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/lv_starred_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/v_starred_list_divider"
+        android:clipToPadding="false"/>
+
+    <LinearLayout
+        android:id="@+id/vg_starred_list_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/v_starred_list_divider"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingLeft="48dp"
+        android:paddingRight="48dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_starred_list_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="27dp"
+            android:gravity="center"
+            android:text="@string/jandi_mention_no_mentions"
+            android:textColor="@color/account_home_help_dialog_text"
+            android:textSize="@dimen/jandi_text_size_large"/>
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_starred_list_more_loading"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bg_circle_white"
+        android:indeterminate="true"/>
+
+</RelativeLayout>

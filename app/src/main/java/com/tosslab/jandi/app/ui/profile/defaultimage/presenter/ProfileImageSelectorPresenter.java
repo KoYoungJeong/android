@@ -4,10 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.net.Uri;
 
-import com.koushikdutta.async.future.Future;
-import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.profile.defaultimage.model.ProfileImageSelectorModel;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -17,7 +16,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by tee on 16. 1. 6..
@@ -49,13 +47,9 @@ public class ProfileImageSelectorPresenter {
         File profileImageFile = new File(fileUri.getPath());
         Bitmap profileImageBitmap = null;
 
-        Future<Bitmap> bitmapFuture = Ion.with(JandiApplication.getContext())
-                .load(imageUrl)
-                .asBitmap();
-
         try {
-            profileImageBitmap = bitmapFuture.get();
-        } catch (ExecutionException | InterruptedException e) {
+            profileImageBitmap = ImageLoader.newInstance().uri(Uri.parse(imageUrl)).getBitmapRect(JandiApplication.getContext());
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

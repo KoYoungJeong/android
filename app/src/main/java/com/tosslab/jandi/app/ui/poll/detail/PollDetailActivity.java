@@ -209,8 +209,11 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
             sendAnalyticsEvent(AnalyticsValue.Action.ViewChoiceParticipant);
         });
         adapter.setOnPollVoteClickListener((pollId, votedItemSeqs) -> {
-            pollDetailPresenter.onVote(pollId, votedItemSeqs);
+            pollDetailPresenter.onPollVoteAction(pollId, votedItemSeqs);
             sendAnalyticsEvent(AnalyticsValue.Action.Vote);
+        });
+        adapter.setOnPollStarClickListener(poll -> {
+            pollDetailPresenter.onChangePollStarredState(poll);
         });
     }
 

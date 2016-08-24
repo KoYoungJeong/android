@@ -15,11 +15,15 @@ public interface PollDetailPresenter {
 
     String TAG = PollDetailPresenter.class.getSimpleName();
 
+    void initPollDetailInitializeQueue();
+
+    void initPollStarQueue();
+
     void onInitializePollDetail(long pollId);
 
     void reInitializePollDetail(long pollId);
 
-    void onVote(long pollId, Collection<Integer> seqs);
+    void onPollVoteAction(long pollId, Collection<Integer> seqs);
 
     void onCommentCreated(ResMessages.Link linkComment);
 
@@ -46,6 +50,8 @@ public interface PollDetailPresenter {
     void onRequestShowPollParticipants(Poll poll);
 
     void onRequestShowPollItemParticipants(Poll poll, Poll.Item item);
+
+    void onChangePollStarredState(Poll poll);
 
     interface View {
         void showProgress();

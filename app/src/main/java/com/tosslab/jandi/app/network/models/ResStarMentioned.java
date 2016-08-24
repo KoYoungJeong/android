@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.network.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
+import com.tosslab.jandi.app.network.models.commonobject.StarredMessage;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public class ResStarMentioned {
 
     private boolean hasMore;
 
-    private List<StarMentionedMessageObject> records;
+    private List<StarredMessage> records;
 
     public boolean hasMore() {
         return hasMore;
@@ -25,11 +25,11 @@ public class ResStarMentioned {
         this.hasMore = hasMore;
     }
 
-    public List<StarMentionedMessageObject> getRecords() {
+    public List<StarredMessage> getRecords() {
         return records;
     }
 
-    public void setRecords(List<StarMentionedMessageObject> records) {
+    public void setRecords(List<StarredMessage> records) {
         this.records = records;
     }
 

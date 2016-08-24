@@ -4,11 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.ProgressCallback;
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.FileDetailRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
@@ -20,6 +16,8 @@ import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.client.sticker.StickerApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.file.FileDownloadApi;
+import com.tosslab.jandi.app.network.file.body.ProgressCallback;
 import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
@@ -32,16 +30,14 @@ import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
-import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
@@ -53,11 +49,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
 import dagger.Lazy;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
 import rx.Observable;
 
 @EBean
@@ -311,13 +308,8 @@ public class FileDetailModel {
                 externalCode);
     }
 
-    public Future<File> downloadFile(String downloadUrl, String downloadPath, ProgressCallback progressCallback, FutureCallback<File> callback) {
-        return Ion.with(JandiApplication.getContext())
-                .load(downloadUrl)
-                .progressHandler(progressCallback)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
-                .write(new File(downloadPath)).setCallback(callback);
+    public Call<ResponseBody> downloadFile(String downloadUrl, String downloadPath, ProgressCallback callback2) {
+        return new FileDownloadApi().download(downloadUrl, downloadPath, callback2);
     }
 
     public String getDownloadFilePath(String title) {

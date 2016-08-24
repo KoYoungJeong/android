@@ -726,7 +726,7 @@ public class RecyclerViewExpandableItemManager {
      */
     public interface OnGroupExpandListener {
         /**
-         * Callback method to be invoked when a group in this expandable list has been expanded.
+         * ProgressCallback method to be invoked when a group in this expandable list has been expanded.
          *
          * @param groupPosition The group position that was expanded
          * @param fromUser      Whether the expand request is issued by a user operation
@@ -739,7 +739,7 @@ public class RecyclerViewExpandableItemManager {
      */
     public interface OnGroupCollapseListener {
         /**
-         * Callback method to be invoked when a group in this expandable list has been collapsed.
+         * ProgressCallback method to be invoked when a group in this expandable list has been collapsed.
          *
          * @param groupPosition The group position that was collapsed
          * @param fromUser      Whether the collapse request is issued by a user operation

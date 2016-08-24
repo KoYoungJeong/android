@@ -4,11 +4,12 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 
-import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.utils.UserAgentUtil;
+import com.tosslab.jandi.app.network.file.FileDownloadApi;
 
 import java.io.File;
+
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 10..
@@ -21,7 +22,6 @@ public class GoogleImagePickerUtil {
     /**
      * 구글,피카사 등 웹의 이미지 다운로드한다
      *
-     * @param context
      * @param downloadProgress
      * @param url
      * @param downloadDir
@@ -29,25 +29,34 @@ public class GoogleImagePickerUtil {
      * @return
      * @throws Exception
      */
-    public static File downloadFile(Context context, ProgressDialog downloadProgress, String url, String downloadDir, String downloadName) throws Exception {
+    public static File downloadFile(ProgressDialog downloadProgress,
+                                    String url,
+                                    String downloadDir,
+                                    String downloadName) throws Exception {
 
         File dir = new File(downloadDir);
         dir.mkdirs();
 
         if (downloadProgress != null) {
+            return new FileDownloadApi().downloadImmediatly(url, dir + "/" + downloadName, callback -> callback
+                    .distinctUntilChanged()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(it -> {
+                        downloadProgress.setMax(100);
+                        downloadProgress.setProgress(it);
+                    }, t -> {
+                        if (downloadProgress != null && downloadProgress.isShowing()) {
+                            downloadProgress.dismiss();
+                        }
+                    }, () -> {
+                        if (downloadProgress != null && downloadProgress.isShowing()) {
+                            downloadProgress.dismiss();
+                        }
+                    })
+            );
 
-            return Ion.with(context)
-                    .load(url)
-                    .progressDialog(downloadProgress)
-                    .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
-                    .write(new File(dir, downloadName))
-                    .get();
         } else {
-            return Ion.with(context)
-                    .load(url)
-                    .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
-                    .write(new File(dir, downloadName))
-                    .get();
+            return new FileDownloadApi().downloadImmediatly(url, dir + "/" + downloadName, null);
         }
 
     }
