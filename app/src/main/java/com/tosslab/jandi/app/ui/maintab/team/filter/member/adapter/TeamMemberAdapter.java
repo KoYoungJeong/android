@@ -7,6 +7,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.domain.TeamMemberItem;
@@ -18,6 +19,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import butterknife.Bind;
 
 public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.UserViewHolder>
         implements TeamMemberDataModel, TeamMemberDataView, ToggleCollector {
@@ -173,6 +176,9 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.Us
 
     static class UserViewHolder extends MemberViewHolder<TeamMemberItem> {
 
+        @Bind(R.id.tv_user_name)
+        TextView tvName;
+
         UserViewHolder(View itemView) {
             super(itemView);
         }
@@ -192,6 +198,7 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.Us
         public void onBindView(TeamMemberItem item) {
             bindView(item.getChatChooseItem());
             setIsTeamMemberList(true);
+            tvName.setText(item.getNameOfSpan(), TextView.BufferType.SPANNABLE);
         }
     }
 }

@@ -6,14 +6,13 @@ import android.util.Pair;
 import java.util.List;
 
 public interface DeptJobDataModel {
-    Pair<String, String> getItem(int position);
-    void setKeyword(String keyword);
+    Pair<CharSequence, String> getItem(int position);
 
     int getSize();
 
-    void add(Pair<String, String> item);
+    void add(Pair<CharSequence, String> item);
 
-    void addAll(List<Pair<String, String>> items);
+    void addAll(List<Pair<CharSequence, String>> items);
 
     void clear();
 }

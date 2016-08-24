@@ -19,10 +19,8 @@ import butterknife.ButterKnife;
 
 public class DeptJobAdapter extends RecyclerView.Adapter<DeptJobAdapter.DeptJobViewHolder>
         implements DeptJobDataModel, DeptJobDataView {
-    private List<Pair<String, String>> names;
-    private String keyword;
+    private List<Pair<CharSequence, String>> names;
     private OnRecyclerItemClickListener onRecyclerItemClickListener;
-    private boolean selectMode;
 
     public DeptJobAdapter() {
         names = new ArrayList<>();
@@ -38,8 +36,8 @@ public class DeptJobAdapter extends RecyclerView.Adapter<DeptJobAdapter.DeptJobV
 
     @Override
     public void onBindViewHolder(DeptJobViewHolder holder, int position) {
-        Pair<String, String> item = getItem(position);
-        holder.tvTitle.setText(item.first);
+        Pair<CharSequence, String> item = getItem(position);
+        holder.tvTitle.setText(item.first, TextView.BufferType.SPANNABLE);
 
         holder.itemView.setOnClickListener(v -> {
             if (onRecyclerItemClickListener != null) {
@@ -49,13 +47,8 @@ public class DeptJobAdapter extends RecyclerView.Adapter<DeptJobAdapter.DeptJobV
     }
 
     @Override
-    public Pair<String, String> getItem(int position) {
+    public Pair<CharSequence, String> getItem(int position) {
         return names.get(position);
-    }
-
-    @Override
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
     }
 
     @Override
@@ -75,12 +68,12 @@ public class DeptJobAdapter extends RecyclerView.Adapter<DeptJobAdapter.DeptJobV
     }
 
     @Override
-    public void add(Pair<String, String> item) {
+    public void add(Pair<CharSequence, String> item) {
         names.add(item);
     }
 
     @Override
-    public void addAll(List<Pair<String, String>> items) {
+    public void addAll(List<Pair<CharSequence, String>> items) {
         names.addAll(items);
     }
 

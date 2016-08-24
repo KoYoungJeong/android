@@ -1,8 +1,13 @@
 package com.tosslab.jandi.app.ui.maintab.team.filter.dept.presenter;
 
+import android.graphics.Color;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Pair;
 
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.search.MemberRecentKeywordRepository;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
@@ -10,6 +15,7 @@ import com.tosslab.jandi.app.ui.maintab.team.filter.dept.DeptJobFragment;
 import com.tosslab.jandi.app.ui.maintab.team.filter.dept.adapter.DeptJobDataModel;
 import com.tosslab.jandi.app.utils.FirstCharacterUtil;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
+import com.tosslab.jandi.app.views.spannable.HighlightSpannable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +25,7 @@ import javax.inject.Inject;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
 import rx.subscriptions.CompositeSubscription;
@@ -30,12 +37,16 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
     private int type;
     private BehaviorSubject<String> deptJobSubject;
     private CompositeSubscription subscription;
+    private HighlightSpannable highlightSpan;
 
     @Inject
     public DeptJobPresenterImpl(View view, DeptJobDataModel deptJobDataModel) {
         this.view = view;
         this.deptJobDataModel = deptJobDataModel;
         subscription = new CompositeSubscription();
+
+        int highlighteColor = JandiApplication.getContext().getResources().getColor(R.color.rgb_00abe8);
+        highlightSpan = new HighlightSpannable(Color.TRANSPARENT, highlighteColor);
     }
 
     public void setType(int type) {
@@ -64,12 +75,11 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
                             }
                         })
                         .distinct()
-                        .toSortedList(StringCompareUtil::compare))
+                        .toSortedList(StringCompareUtil::compare)
+                        .compose(textToSpan(it)))
                 .observeOn(AndroidSchedulers.mainThread())
                 .compose(dataMap())
-                .subscribe(its -> {
-                    addDatas(its);
-                }));
+                .subscribe(this::addDatas));
 
 
         subscription.add(deptJobSubject.filter(it -> type == DeptJobFragment.EXTRA_TYPE_JOB)
@@ -89,16 +99,40 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
                             }
                         })
                         .distinct()
-                        .toSortedList(StringCompareUtil::compare))
+                        .toSortedList(StringCompareUtil::compare)
+                        .compose(textToSpan(it)))
                 .observeOn(AndroidSchedulers.mainThread())
                 .compose(dataMap())
-                .subscribe(its -> {
-                    addDatas(its);
-                }));
+                .subscribe(this::addDatas));
 
     }
 
-    protected void addDatas(List<Pair<String, String>> its) {
+    private Observable.Transformer<? super List<String>, ? extends List<CharSequence>> textToSpan(final String it) {
+        return observable -> observable.concatMap(new Func1<List<String>, Observable<? extends List<CharSequence>>>() {
+            @Override
+            public Observable<? extends ArrayList<CharSequence>> call(List<String> its) {
+                if (TextUtils.isEmpty(it)) {
+                    return Observable.just(new ArrayList<CharSequence>(its));
+                } else {
+                    return Observable.from(its)
+                            .map(text -> {
+
+                                int index = text.toLowerCase().indexOf(it.toLowerCase());
+                                if (index >= 0) {
+                                    SpannableStringBuilder builder = new SpannableStringBuilder(text);
+                                    builder.setSpan(highlightSpan, index, index + it.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                    return builder;
+                                } else {
+                                    return text;
+                                }
+                            })
+                            .collect(ArrayList::new, List::add);
+                }
+            }
+        });
+    }
+
+    protected void addDatas(List<Pair<CharSequence, String>> its) {
         deptJobDataModel.clear();
         if (!its.isEmpty()) {
             view.dismissEmptyView();
@@ -109,11 +143,11 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
         }
     }
 
-    private Observable.Transformer<? super List<String>, ? extends List<Pair<String, String>>> dataMap() {
+    private Observable.Transformer<? super List<CharSequence>, ? extends List<Pair<CharSequence, String>>> dataMap() {
         return ob -> ob.map(its -> {
-            List<Pair<String, String>> list = new ArrayList<Pair<String, String>>();
-            for (String it : its) {
-                list.add(Pair.create(it, FirstCharacterUtil.firstCharacter(it)));
+            List<Pair<CharSequence, String>> list = new ArrayList<>();
+            for (CharSequence it : its) {
+                list.add(Pair.create(it, FirstCharacterUtil.firstCharacter(it.toString())));
             }
             return list;
         });

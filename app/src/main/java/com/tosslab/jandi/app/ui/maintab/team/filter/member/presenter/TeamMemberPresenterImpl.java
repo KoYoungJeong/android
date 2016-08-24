@@ -1,5 +1,12 @@
 package com.tosslab.jandi.app.ui.maintab.team.filter.member.presenter;
 
+import android.graphics.Color;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.TextUtils;
+
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.InvitationSuccessEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.local.orm.repositories.search.MemberRecentKeywordRepository;
@@ -16,7 +23,9 @@ import com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter.TeamMemberDat
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter.ToggleCollector;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.domain.TeamMemberItem;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
+import com.tosslab.jandi.app.views.spannable.HighlightSpannable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +36,7 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
 
@@ -36,6 +46,7 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
     private final TeamMemberDataModel teamMemberDataModel;
     private final Lazy<ChannelApi> channelApi;
     private final Lazy<GroupApi> groupApi;
+    private final HighlightSpannable highlightSpan;
     private boolean selectMode;
 
     private BehaviorSubject<String> filterSubject;
@@ -52,6 +63,9 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
         this.channelApi = channelApi;
         this.groupApi = groupApi;
         this.toggledIds = toggledIds;
+
+        int highlighteColor = JandiApplication.getContext().getResources().getColor(R.color.rgb_00abe8);
+        highlightSpan = new HighlightSpannable(Color.TRANSPARENT, highlighteColor);
     }
 
     @Override
@@ -77,8 +91,9 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
 
                             return true;
                         })
-                        .map(TeamMemberItem::new)
-                        .compose(sort()))
+                        .map((user1) -> new TeamMemberItem(user1, it))
+                        .compose(sort())
+                        .compose(textToSpan(it)))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(users -> {
                     teamMemberDataModel.clear();
@@ -99,6 +114,36 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                     // true == disabeld 없음, false == disabled 있음
                     view.setDisabledUserBar(!hasDisabled);
                 }, t -> {});
+    }
+
+    private Observable.Transformer<? super List<TeamMemberItem>, ? extends List<TeamMemberItem>> textToSpan(String it) {
+        return observable -> observable.concatMap(new Func1<List<TeamMemberItem>, Observable<? extends List<TeamMemberItem>>>() {
+            @Override
+            public Observable<? extends List<TeamMemberItem>> call(List<TeamMemberItem> teamMemberItems) {
+                if (TextUtils.isEmpty(it)) {
+                    return Observable.from(teamMemberItems)
+                            .map(it -> {
+                                it.setNameOfSpan(it.getName());
+                                return it;
+                            })
+                            .collect(ArrayList::new, List::add);
+                } else {
+                    return Observable.from(teamMemberItems)
+                            .map(item -> {
+                                int index = item.getName().toLowerCase().indexOf(it.toLowerCase());
+                                if (index >= 0) {
+                                    SpannableStringBuilder builder = new SpannableStringBuilder(item.getName());
+                                    builder.setSpan(highlightSpan, index, index + it.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                    item.setNameOfSpan(builder);
+                                } else {
+                                    item.setNameOfSpan(item.getName());
+                                }
+                                return item;
+                            })
+                            .collect(ArrayList::new, List::add);
+                }
+            }
+        });
     }
 
     private Observable.Transformer<? super TeamMemberItem, ? extends List<TeamMemberItem>> sort() {

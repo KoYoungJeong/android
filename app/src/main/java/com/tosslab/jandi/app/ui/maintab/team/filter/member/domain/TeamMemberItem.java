@@ -8,11 +8,15 @@ import com.tosslab.jandi.app.utils.FirstCharacterUtil;
 public class TeamMemberItem {
 
     private final ChatChooseItem chatChooseItem;
-    private final String name;
     private final String firstCharacter;
+    private final String keyword;
+    private final String name;
+    private CharSequence nameOfSpan;
 
-    public TeamMemberItem(User user) {
+
+    public TeamMemberItem(User user, String keyword) {
         chatChooseItem = ChatChooseItem.create(user);
+        this.keyword = keyword;
         if (!chatChooseItem.isInactive()) {
             name = chatChooseItem.getName();
         } else {
@@ -32,5 +36,17 @@ public class TeamMemberItem {
 
     public String getFirstCharacter() {
         return firstCharacter;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public CharSequence getNameOfSpan() {
+        return nameOfSpan;
+    }
+
+    public void setNameOfSpan(CharSequence nameOfSpan) {
+        this.nameOfSpan = nameOfSpan;
     }
 }
