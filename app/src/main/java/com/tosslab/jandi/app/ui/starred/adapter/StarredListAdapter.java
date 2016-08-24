@@ -156,9 +156,8 @@ public class StarredListAdapter extends MultiItemRecyclerAdapter
     @Override
     public StarredMessage findMessageById(long messageId) {
         return Observable.from(getRows())
-                .filter(row -> row.getItem() instanceof StarredMessage)
                 .map(Row::getItem)
-                .cast(StarredMessage.class)
+                .ofType(StarredMessage.class)
                 .takeFirst(starredMessage -> starredMessage.getMessage().id == messageId)
                 .toBlocking()
                 .firstOrDefault(new StarredMessage());
