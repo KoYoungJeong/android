@@ -221,6 +221,9 @@ public class JandiSocketService extends Service {
         EventListener memberUpdatedListener = objects -> jandiSocketServiceModel.onMemberUpdated(objects[0]);
         eventHashMap.put("member_updated", memberUpdatedListener);
 
+        EventListener fileCreatedListener = objects -> jandiSocketServiceModel.onFileCreated(objects[0]);
+        eventHashMap.put("file_created", fileCreatedListener);
+
         EventListener fileDeletedListener = objects -> jandiSocketServiceModel.onFileDeleted(objects[0]);
         eventHashMap.put("file_deleted", fileDeletedListener);
 
@@ -229,6 +232,7 @@ public class JandiSocketService extends Service {
 
         EventListener fileSharedListener = objects -> jandiSocketServiceModel.onFileShared(objects[0]);
         eventHashMap.put("file_shared", fileSharedListener);
+
 
         EventListener fileCommentCreatedListener = objects ->
                 jandiSocketServiceModel.onFileCommentCreated(objects[0]);
@@ -328,7 +332,8 @@ public class JandiSocketService extends Service {
             jandiSocketServiceModel.updateEventHistory();
         });
 
-        eventHashMap.put("jandi_ping", objects -> {});
+        eventHashMap.put("jandi_ping", objects -> {
+        });
 
         eventHashMap.put("error_start", objects -> {
             LogUtil.e(TAG, "Get Error - error_connect_team");
