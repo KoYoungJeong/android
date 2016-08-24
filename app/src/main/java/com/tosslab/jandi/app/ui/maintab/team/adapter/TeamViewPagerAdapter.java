@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.team.filter.dept.DeptJobFragment;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.TeamMemberFragment;
 import com.tosslab.jandi.app.ui.maintab.team.filter.search.KeywordObservable;
@@ -17,8 +18,8 @@ import rx.Observable;
 
 public class TeamViewPagerAdapter extends FragmentPagerAdapter {
 
-    private static final String[] TEAM_TITLES = {
-            "Members", "Departments", "Job Titles"
+    private static final int[] TEAM_TITLES = {
+            R.string.jandi_members, R.string.jandi_department, R.string.jandi_job_title
     };
     private final Context context;
 
@@ -68,7 +69,7 @@ public class TeamViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return TEAM_TITLES[position];
+        return context.getResources().getString(TEAM_TITLES[position]);
     }
 
     @Override

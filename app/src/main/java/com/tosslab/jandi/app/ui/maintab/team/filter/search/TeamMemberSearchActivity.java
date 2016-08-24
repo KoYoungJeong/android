@@ -136,7 +136,7 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
             if (roomId > 0) {
                 actionBar.setTitle(R.string.jandi_invite_member_to_topic);
             } else {
-                actionBar.setTitle("1:1 대화 멤버 선택");
+                actionBar.setTitle(R.string.jandi_choose_1_1_member);
             }
         }
     }

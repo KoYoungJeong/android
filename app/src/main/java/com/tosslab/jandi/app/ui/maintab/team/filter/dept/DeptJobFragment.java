@@ -192,7 +192,7 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
     @Override
     public void showEmptyView(String keyword) {
         vgEmpty.setVisibility(View.VISIBLE);
-        String textFormat = "\"<font color=\"#333333\">%s</font>\"의 검색 결과가 없습니다.";
+        String textFormat = getString(R.string.jandi_has_no_searched_member, keyword);
         tvEmpty.setText(Html.fromHtml(String.format(textFormat, keyword)));
     }
 

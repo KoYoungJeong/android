@@ -124,6 +124,7 @@
 	<string name="jandi_browse_team">"팀으로 가기"</string>
 	<string name="jandi_call_acess_permission">"전화를 하기 위해 잔디가 전화를 사용할 수 있도록 해주세요."</string>
 	<string name="jandi_cancel">"취소"</string>
+	<string name="jandi_cancel_all">"선택 취소"</string>
 	<string name="jandi_cancel_invitation">"초대 취소"</string>
 	<string name="jandi_canceled">"취소됨"</string>
 	<string name="jandi_cannot_connect_service_try_again">"일시적으로 서비스 접속이 되지 않습니다. 잠시 후 다시 시도해주세요."</string>
@@ -134,6 +135,7 @@
 	<string name="jandi_change_passcode">"비밀번호 변경"</string>
 	<string name="jandi_character">"캐릭터"</string>
 	<string name="jandi_chat_detail">"대화창 설정"</string>
+	<string name="jandi_choose_1_1_member">"1:1 대화 멤버 선택"</string>
 	<string name="jandi_choose_app_store">"앱 마켓을 선택해주세요."</string>
 	<string name="jandi_choose_email">"이메일 선택"</string>
 	<string name="jandi_choose_your_domain">"도메인명"</string>
@@ -351,6 +353,7 @@
 	<string name="jandi_member_profile_email">"이메일"</string>
 	<string name="jandi_member_profile_mention">"내 멘션"</string>
 	<string name="jandi_member_profile_phone">"전화"</string>
+	<string name="jandi_members">"멤버"</string>
 	<string name="jandi_mention_all_topic_members">"모든 토픽 멤버"</string>
 	<string name="jandi_mention_mentioned_you">"님의 멘션"</string>
 	<string name="jandi_mention_mentions">"멘션"</string>

@@ -124,6 +124,7 @@
 	<string name="jandi_browse_team">"Browse team "</string>
 	<string name="jandi_call_acess_permission">"Provide us with access to your Phone to call directly from JANDI"</string>
 	<string name="jandi_cancel">"Cancel"</string>
+	<string name="jandi_cancel_all">"Cancel All"</string>
 	<string name="jandi_cancel_invitation">"Cancel Invitation"</string>
 	<string name="jandi_canceled">"Canceled"</string>
 	<string name="jandi_cannot_connect_service_try_again">"JANDI appears to be currently unavailable. Please try again soon. Sorry for any inconvenience!"</string>
@@ -134,6 +135,7 @@
 	<string name="jandi_change_passcode">"Change Passcode"</string>
 	<string name="jandi_character">"Character"</string>
 	<string name="jandi_chat_detail">"Chat setting"</string>
+	<string name="jandi_choose_1_1_member">"Select a Member to Chat"</string>
 	<string name="jandi_choose_app_store">"Choose an app market."</string>
 	<string name="jandi_choose_email">"Choose an email"</string>
 	<string name="jandi_choose_your_domain">"Choose your domain"</string>
@@ -351,6 +353,7 @@ To change this setting, go to Team Settings > Invitation Settings."</string>
 	<string name="jandi_member_profile_email">"Email"</string>
 	<string name="jandi_member_profile_mention">"My Mentions"</string>
 	<string name="jandi_member_profile_phone">"Phone"</string>
+	<string name="jandi_members">"Members"</string>
 	<string name="jandi_mention_all_topic_members">"topic members"</string>
 	<string name="jandi_mention_mentioned_you">"mentioned you"</string>
 	<string name="jandi_mention_mentions">"Mentions"</string>

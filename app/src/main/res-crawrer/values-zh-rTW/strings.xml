@@ -124,6 +124,7 @@
 	<string name="jandi_browse_team">"瀏覽團隊"</string>
 	<string name="jandi_call_acess_permission">"欲直接外撥，請開啟同意電話取用"</string>
 	<string name="jandi_cancel">"取消"</string>
+	<string name="jandi_cancel_all">"全部取消"</string>
 	<string name="jandi_cancel_invitation">"取消邀請"</string>
 	<string name="jandi_canceled">"取消了"</string>
 	<string name="jandi_cannot_connect_service_try_again">"非常抱歉！JANDI暫時無法運作，先喝杯茶稍後再試！"</string>
@@ -134,6 +135,7 @@
 	<string name="jandi_change_passcode">"更改密碼"</string>
 	<string name="jandi_character">"人物"</string>
 	<string name="jandi_chat_detail">"聊天設定"</string>
+	<string name="jandi_choose_1_1_member">"選擇成員並發送訊息"</string>
 	<string name="jandi_choose_app_store">"選擇應用程式商鋪"</string>
 	<string name="jandi_choose_email">"選擇一個電子郵件"</string>
 	<string name="jandi_choose_your_domain">"請輸入團隊的網域名稱"</string>
@@ -350,6 +352,7 @@
 	<string name="jandi_member_profile_email">"電子郵件"</string>
 	<string name="jandi_member_profile_mention">"我的提及列表"</string>
 	<string name="jandi_member_profile_phone">"連絡電話"</string>
+	<string name="jandi_members">"成員"</string>
 	<string name="jandi_mention_all_topic_members">"議題成員"</string>
 	<string name="jandi_mention_mentioned_you">"提到你"</string>
 	<string name="jandi_mention_mentions">"提及"</string>

@@ -122,7 +122,7 @@
             android:layout_height="match_parent"
             android:layout_toLeftOf="@+id/space_team_member_toggled_space"
             android:gravity="center"
-            android:text="선택 취소"
+            android:text="@string/jandi_cancel_all"
             android:textColor="@color/jandi_text"
             android:textSize="@dimen/jandi_text_size_medium" />
     </RelativeLayout>
