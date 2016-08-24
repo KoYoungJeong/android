@@ -197,7 +197,7 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
             }
         }
 
-        tvMessageContent.setText(ssb);
+        tvMessageContent.setText(ssb, TextView.BufferType.SPANNABLE);
     }
 
     private void mesureRoomInfoArea() {

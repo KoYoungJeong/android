@@ -269,11 +269,7 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
                 if (onDeleteAllHistory != null) {
                     historyHeaderViewHolder.setOnDeleteAllHistory(onDeleteAllHistory);
                 }
-                if (searchHistoryDatas.size() > 0) {
-                    historyHeaderViewHolder.setShowDeleteButton(true);
-                } else {
-                    historyHeaderViewHolder.setShowDeleteButton(false);
-                }
+
                 return historyHeaderViewHolder;
             case SearchData.ITEM_TYPE_HISTORY_ITEM:
                 HistoryItemViewHolder historyItemViewHolder =
@@ -300,6 +296,16 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
         setViewConfiguration(holder, position);
+
+        if (getItemViewType(position) == SearchData.ITEM_TYPE_HISTORY_HEADER) {
+            HistoryHeaderViewHolder historyHeaderViewHolder = (HistoryHeaderViewHolder) holder;
+            if (searchHistoryDatas.size() > 0) { // 헤더가 포함된 데이터
+                historyHeaderViewHolder.setShowDeleteButton(true);
+            } else {
+                historyHeaderViewHolder.setShowDeleteButton(false);
+            }
+        }
+
         holder.onBindView(datas.get(position));
     }
 

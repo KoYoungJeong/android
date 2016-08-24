@@ -20,8 +20,6 @@ public interface SearchPresenter {
 
     void upsertKeywordHistory(String keyword);
 
-    List<String> getOldQueryList(String keyword);
-
     void onDeleteaAllHistoryItem();
 
     void onDeleteaHistoryItemByKeyword(String keyword);
@@ -41,6 +39,8 @@ public interface SearchPresenter {
     void onMoveToMessageFromSearch(SearchMessageData searchMessageData);
 
     void onDestroy();
+
+    void onSearchKeywordChanged(String text);
 
     interface View {
 
@@ -64,5 +64,6 @@ public interface SearchPresenter {
 
         void hideKeyboard();
 
+        void setSearchHints(List<String> keywords);
     }
 }
