@@ -11,4 +11,10 @@
         android:clipToPadding="false"
         android:paddingBottom="48dp" />
 
+    <include
+        android:id="@+id/layout_team_member_search_empty"
+        layout="@layout/layout_team_member_search_empty"
+        android:visibility="gone"/>
+
+
 </RelativeLayout>

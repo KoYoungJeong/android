@@ -9,11 +9,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.f2prateek.dart.Dart;
@@ -54,6 +56,12 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
 
     @Bind(R.id.vg_team_member_disabled)
     android.view.View vgDisabled;
+
+    @Bind(R.id.layout_team_member_search_empty)
+    android.view.View vgEmpty;
+
+    @Bind(R.id.tv_team_member_search_empty)
+    TextView tvEmpty;
 
     @Inject
     TeamMemberPresenter presenter;
@@ -101,6 +109,7 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         lvMember.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         adapter.setHasHeader(hasHeader);
+
         if (hasHeader) {
             adapter.setHasStableIds(true);
             lvMember.addItemDecoration(new StickyHeadersBuilder()
@@ -114,18 +123,9 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         lvMember.setAdapter(adapter);
 
         DaggerTeamMemberComponent.builder()
-                .teamMemberModule(new TeamMemberModule(this, adapter, adapter,selectMode, roomId))
+                .teamMemberModule(new TeamMemberModule(this, adapter, adapter, selectMode, roomId))
                 .build()
                 .inject(this);
-
-        if (selectMode && roomId < 0) {
-            vgDisabled.setVisibility(View.VISIBLE);
-            DisplayMetrics dm = JandiApplication.getContext().getResources().getDisplayMetrics();
-            float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 75f, dm);
-            lvMember.setPadding(0, 0, 0, (int) padding);
-        } else {
-            vgDisabled.setVisibility(View.GONE);
-        }
 
         presenter.onCreate();
 
@@ -217,6 +217,36 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     @Override
     public void showFailToInvitation() {
         ColoredToast.showWarning(R.string.err_network);
+    }
+
+    @Override
+    public void setDisabledUserBar(boolean hasDisabledUser) {
+
+        if (hasDisabledUser) {
+            if (selectMode && roomId < 0) {
+                vgDisabled.setVisibility(View.VISIBLE);
+                DisplayMetrics dm = JandiApplication.getContext().getResources().getDisplayMetrics();
+                float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 75f, dm);
+                lvMember.setPadding(0, 0, 0, (int) padding);
+            } else {
+                vgDisabled.setVisibility(View.GONE);
+            }
+        } else {
+            vgDisabled.setVisibility(View.GONE);
+        }
+
+    }
+
+    @Override
+    public void showEmptyView(String keyword) {
+        vgEmpty.setVisibility(View.VISIBLE);
+        String textFormat = "\"<font color=\"#333333\">%s</font>\"의 검색 결과가 없습니다.";
+        tvEmpty.setText(Html.fromHtml(String.format(textFormat, keyword)));
+    }
+
+    @Override
+    public void dismissEmptyView() {
+        vgEmpty.setVisibility(View.GONE);
     }
 
     @Override

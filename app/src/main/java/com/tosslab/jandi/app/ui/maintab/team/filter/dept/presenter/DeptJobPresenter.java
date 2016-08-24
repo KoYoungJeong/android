@@ -16,5 +16,9 @@ public interface DeptJobPresenter {
         void refreshDataView();
 
         void moveDirectMessage(long teamId, long userId, long roomId, long lastLinkId);
+
+        void dismissEmptyView();
+
+        void showEmptyView(String keyword);
     }
 }

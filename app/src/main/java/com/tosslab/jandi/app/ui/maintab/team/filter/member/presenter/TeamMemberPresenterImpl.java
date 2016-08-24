@@ -82,9 +82,23 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(users -> {
                     teamMemberDataModel.clear();
-                    teamMemberDataModel.addAll(users);
+                    if (!users.isEmpty()) {
+                        teamMemberDataModel.addAll(users);
+                        view.dismissEmptyView();
+                    } else {
+                        view.showEmptyView(filterSubject.getValue());
+                    }
                     view.refreshDataView();
                 });
+
+        Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .map(User::isEnabled) // enabled 상태 받음
+                .takeFirst(it -> !it) // disabled 인 상태 필터
+                .defaultIfEmpty(true) // disabled 상태가 없으면 true 반환
+                .subscribe((hasDisabled) -> {
+                    // true == disabeld 없음, false == disabled 있음
+                    view.setDisabledUserBar(!hasDisabled);
+                }, t -> {});
     }
 
     private Observable.Transformer<? super TeamMemberItem, ? extends List<TeamMemberItem>> sort() {

@@ -68,9 +68,7 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .compose(dataMap())
                 .subscribe(its -> {
-                    deptJobDataModel.clear();
-                    deptJobDataModel.addAll(its);
-                    view.refreshDataView();
+                    addDatas(its);
                 }));
 
 
@@ -95,11 +93,20 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .compose(dataMap())
                 .subscribe(its -> {
-                    deptJobDataModel.clear();
-                    deptJobDataModel.addAll(its);
-                    view.refreshDataView();
+                    addDatas(its);
                 }));
 
+    }
+
+    protected void addDatas(List<Pair<String, String>> its) {
+        deptJobDataModel.clear();
+        if (!its.isEmpty()) {
+            view.dismissEmptyView();
+            deptJobDataModel.addAll(its);
+            view.refreshDataView();
+        } else {
+            view.showEmptyView(deptJobSubject.getValue());
+        }
     }
 
     private Observable.Transformer<? super List<String>, ? extends List<Pair<String, String>>> dataMap() {

@@ -138,6 +138,10 @@ public class MemberRecentKeywordAdapter extends RecyclerView.Adapter<RecyclerVie
         return keywords.size() + 1;
     }
 
+    public int getActualItemCount() {
+        return keywords.size();
+    }
+
     public void add(MemberSearchKeyword keyword) {
         keywords.add(keyword);
     }

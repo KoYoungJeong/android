@@ -9,9 +9,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.f2prateek.dart.Dart;
@@ -62,6 +64,12 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
 
     @Bind(R.id.list_team_dept_job)
     RecyclerView lvMember;
+
+    @Bind(R.id.layout_team_member_search_empty)
+    android.view.View vgEmpty;
+
+    @Bind(R.id.tv_team_member_search_empty)
+    TextView tvEmpty;
 
     @Inject
     DeptJobDataView deptJobDataView;
@@ -174,6 +182,18 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
                 .lastReadLinkId(lastLinkId)
                 .start();
         getActivity().finish();
+    }
+
+    @Override
+    public void dismissEmptyView() {
+        vgEmpty.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showEmptyView(String keyword) {
+        vgEmpty.setVisibility(View.VISIBLE);
+        String textFormat = "\"<font color=\"#333333\">%s</font>\"의 검색 결과가 없습니다.";
+        tvEmpty.setText(Html.fromHtml(String.format(textFormat, keyword)));
     }
 
     @Override

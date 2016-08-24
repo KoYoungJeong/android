@@ -38,5 +38,11 @@ public interface TeamMemberPresenter {
         void successToInvitation();
 
         void showFailToInvitation();
+
+        void setDisabledUserBar(boolean hasDisabledUser);
+
+        void showEmptyView(String keyword);
+
+        void dismissEmptyView();
     }
 }

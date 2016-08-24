@@ -161,7 +161,14 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
             MemberRecentKeywordRepository.getInstance().remove(id);
 
             adapter.remove(id);
+
+            if (adapter.getActualItemCount() == 0) {
+                adapter.add(new MemberRecentEmptyKeyword());
+            }
+
             adapter.notifyDataSetChanged();
+
+
         });
 
         adapter.setItemClickListener((view, adapter1, position1) -> {
