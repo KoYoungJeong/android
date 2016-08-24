@@ -14,18 +14,19 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="46dp"
         android:gravity="center_vertical"
+        android:singleLine="true"
         android:text="Andrew"
         android:textColor="@color/dark_gray"
         android:textSize="16dp" />
 
     <ImageView
         android:id="@+id/iv_delete_button"
-        android:layout_width="14dp"
-        android:layout_height="14dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="16dp"
-        android:gravity="center_vertical"
+        android:layout_marginRight="0.5dp"
+        android:padding="15.5dp"
         android:src="@drawable/search_word_delete" />
 
 

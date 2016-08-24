@@ -115,7 +115,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                         String downloadName = GoogleImagePickerUtil.getWebImageName();
                         try {
                             File file = GoogleImagePickerUtil
-                                    .downloadFile(JandiApplication.getContext(), null, path, downloadDir, downloadName);
+                                    .downloadFile(null, path, downloadDir, downloadName);
                             return new FileShareData(file.getAbsolutePath());
                         } catch (Exception e) {
                             e.printStackTrace();

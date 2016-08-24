@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.ui.search.main.model.SearchModel;
 import com.tosslab.jandi.app.ui.search.main.object.SearchHistoryData;
 import com.tosslab.jandi.app.ui.search.main.object.SearchMessageData;
 import com.tosslab.jandi.app.ui.search.main.object.SearchMessageHeaderData;
+import com.tosslab.jandi.app.ui.search.main.object.SearchOneToOneRoomData;
 import com.tosslab.jandi.app.ui.search.main.object.SearchTopicRoomData;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
+import rx.subjects.PublishSubject;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -43,6 +45,8 @@ public class SearchPresenterImpl implements SearchPresenter {
     private final BehaviorSubject<Date> endDateSubject;
     private final BehaviorSubject<String> keywordSubject;
     private final CompositeSubscription compositeSubscription;
+
+    private final PublishSubject<String> searchKeywordSubject;
 
     @Inject
     SearchModel searchModel;
@@ -71,9 +75,11 @@ public class SearchPresenterImpl implements SearchPresenter {
         endDateSubject = BehaviorSubject.create(new Date());
         keywordSubject = BehaviorSubject.create("");
 
+        searchKeywordSubject = PublishSubject.create();
+
         compositeSubscription = new CompositeSubscription();
 
-        compositeSubscription.add(
+        compositeSubscription.addAll(
                 Observable.combineLatest(
                         writerSubject,
                         roomSubject,
@@ -97,15 +103,23 @@ public class SearchPresenterImpl implements SearchPresenter {
                         .doOnNext(it -> {
                             if (it.getPage() == 1) {
                                 if (!isOnlyMessageMode) {
-                                    setTopicRoomDatas(false);
+                                    setRoomDatas(false);
                                 }
-                                searchedMessageHeaderDataBuilder.setShowSearchedResultMessage(true);
-                                searchedMessageHeaderDataBuilder.setShowProgress(true);
-                                searchAdapterDataModel.setLoading(true);
-                                searchAdapterDataModel.clearSearchMessageDatas();
-                            } else {
-                                view.showMoreProgressBar();
                             }
+                            if (it.getRoomId() != -100l) {
+                                if (it.getPage() == 1) {
+                                    searchedMessageHeaderDataBuilder.setShowSearchedResultMessage(true);
+                                    searchedMessageHeaderDataBuilder.setShowProgress(true);
+                                    searchAdapterDataModel.setLoading(true);
+                                    searchAdapterDataModel.clearSearchMessageDatas();
+                                } else {
+                                    view.showMoreProgressBar();
+                                }
+                            } else {
+                                searchedMessageHeaderDataBuilder.setShowSearchedResultMessage(false);
+                                searchAdapterDataModel.clearSearchMessageDatas();
+                            }
+
                             searchAdapterDataModel.setMessageHeaderData(searchedMessageHeaderDataBuilder.build());
                             if (!isOnlyMessageMode) {
                                 view.refreshSearchedAll();
@@ -114,6 +128,7 @@ public class SearchPresenterImpl implements SearchPresenter {
                             }
                             view.hideKeyboard();
                         })
+                        .filter(it -> it.getRoomId() != -100l)
                         .observeOn(Schedulers.io())
                         .map(it -> {
                             try {
@@ -142,6 +157,7 @@ public class SearchPresenterImpl implements SearchPresenter {
                                         .setFile(searchRecord.getFile())
                                         .setPoll(searchRecord.getPoll())
                                         .setTokens(searchRecords.getTokens())
+                                        .setKeyword(keywordSubject.getValue())
                                         .build();
                                 searchMessageDatas.add(searchMessageData);
                             }
@@ -204,7 +220,17 @@ public class SearchPresenterImpl implements SearchPresenter {
                                         view.refreshSearchedOnlyMessage();
                                     }
                                 }
-                        ));
+                        ),
+                searchKeywordSubject
+                        .onBackpressureBuffer()
+                        .throttleLast(100, TimeUnit.MILLISECONDS)
+                        .distinctUntilChanged()
+                        .observeOn(Schedulers.io())
+                        .map(it -> searchModel.searchOldQuery(it))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(it -> {
+                            view.setSearchHints(it);
+                        }));
 
 
     }
@@ -227,15 +253,19 @@ public class SearchPresenterImpl implements SearchPresenter {
         searchModel.upsertSearchQuery(keyword);
     }
 
-    private void setTopicRoomDatas(boolean isShowUnjoinedTopic) {
+    private void setRoomDatas(boolean isShowUnjoinedTopic) {
         List<SearchTopicRoomData> topicRoomDatas =
                 searchModel.getSearchedTopics(keywordSubject.getValue(), isShowUnjoinedTopic);
         searchAdapterDataModel.setSearchTopicRoomDatas(topicRoomDatas);
+
+        List<SearchOneToOneRoomData> searchOneToOneRoomDatas =
+                searchModel.getSearchedOneToOneRoom(keywordSubject.getValue());
+        searchAdapterDataModel.setSearchOneToOneRoomDatas(searchOneToOneRoomDatas);
     }
 
     @Override
     public void setChangeIsShowUnjoinedTopic(boolean isShowUnjoinedTopic) {
-        setTopicRoomDatas(isShowUnjoinedTopic);
+        setRoomDatas(isShowUnjoinedTopic);
         view.refreshSearchedAll();
     }
 
@@ -267,11 +297,6 @@ public class SearchPresenterImpl implements SearchPresenter {
     public void onDeleteaHistoryItemByKeyword(String keyword) {
         searchModel.removeHistoryItemByKeyword(keyword);
         sendSearchHistory();
-    }
-
-    @Override
-    public List<String> getOldQueryList(String keyword) {
-        return searchModel.searchOldQuery(keyword);
     }
 
     @Override
@@ -309,9 +334,17 @@ public class SearchPresenterImpl implements SearchPresenter {
     }
 
     @Override
-    public void onRoomChanged(long roomId) {
-        boolean isDirectMessageRoom = searchModel.isDirectRoomByRoomId(roomId);
+    public void onRoomChanged(long roomId, long memberId) {
+
         String roomName = "";
+
+        // 1:1 chat에서 roomId가 아직 생성되지 않은 멤버인 경우
+        if (roomId == -1) {
+            SetNotCreatedOneToOneRoom(memberId);
+            return;
+        }
+
+        boolean isDirectMessageRoom = searchModel.isDirectRoomByRoomId(roomId);
 
         if (isDirectMessageRoom) {
             long companionId = TeamInfoLoader.getInstance().getChat(roomId).getCompanionId();
@@ -330,6 +363,24 @@ public class SearchPresenterImpl implements SearchPresenter {
             endDateSubject.onNext(new Date());
             hasMoreSearchResult = false;
         }
+
+        if (searchAdapterDataModel.isHistoryMode()) {
+            searchAdapterDataModel.setMessageHeaderData(searchedMessageHeaderDataBuilder.build());
+            view.refreshHistory();
+        }
+
+    }
+
+    private void SetNotCreatedOneToOneRoom(long memberId) {
+        String roomName;
+        roomName = TeamInfoLoader.getInstance().getMemberName(memberId);
+        if (!TextUtils.isEmpty(roomName)) {
+            searchedMessageHeaderDataBuilder.setRoomName(roomName);
+        }
+        roomSubject.onNext(-100l);
+        pageSubject.onNext(1);
+        endDateSubject.onNext(new Date());
+        hasMoreSearchResult = false;
 
         if (searchAdapterDataModel.isHistoryMode()) {
             searchAdapterDataModel.setMessageHeaderData(searchedMessageHeaderDataBuilder.build());
@@ -386,10 +437,38 @@ public class SearchPresenterImpl implements SearchPresenter {
     }
 
     @Override
+    public void onSetOnlyMessageMode(boolean onlyMessageMode) {
+        searchAdapterDataModel.setOnlyMessageMode(onlyMessageMode);
+    }
+
+    @Override
+    public void onMoveToMessageFromSearch(SearchMessageData searchMessageData) {
+        if (TeamInfoLoader.getInstance().isChat(searchMessageData.getRoomId())) {
+            long memberId = TeamInfoLoader.getInstance()
+                    .getChat(searchMessageData.getRoomId()).getCompanionId();
+            view.moveToMessageActivityFromSearch(memberId,
+                    JandiConstants.TYPE_DIRECT_MESSAGE,
+                    searchMessageData.getLinkId());
+        } else {
+            int entityType =
+                    TeamInfoLoader.getInstance().isPublicTopic(searchMessageData.getRoomId())
+                            ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
+            view.moveToMessageActivityFromSearch(searchMessageData.getRoomId(),
+                    entityType,
+                    searchMessageData.getLinkId());
+        }
+    }
+
+    @Override
     public void onDestroy() {
         if (!compositeSubscription.isUnsubscribed()) {
             compositeSubscription.unsubscribe();
         }
+    }
+
+    @Override
+    public void onSearchKeywordChanged(String text) {
+        searchKeywordSubject.onNext(text);
     }
 
     public enum MoreState {

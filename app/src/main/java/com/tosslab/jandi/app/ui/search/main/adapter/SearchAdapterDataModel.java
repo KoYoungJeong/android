@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.search.main.adapter;
 import com.tosslab.jandi.app.ui.search.main.object.SearchHistoryData;
 import com.tosslab.jandi.app.ui.search.main.object.SearchMessageData;
 import com.tosslab.jandi.app.ui.search.main.object.SearchMessageHeaderData;
+import com.tosslab.jandi.app.ui.search.main.object.SearchOneToOneRoomData;
 import com.tosslab.jandi.app.ui.search.main.object.SearchTopicRoomData;
 
 import java.util.List;
@@ -22,6 +23,10 @@ public interface SearchAdapterDataModel {
     void addSearchMessageDatas(List<SearchMessageData> searchMessageDatas);
 
     void setSearchHistoryDatas(List<SearchHistoryData> searchHistoryDatas);
+
+    void setSearchOneToOneRoomDatas(List<SearchOneToOneRoomData> searchOneToOneRoomDatas);
+
+    void setOnlyMessageMode(boolean onlyMessageMode);
 
     boolean isHistoryMode();
 

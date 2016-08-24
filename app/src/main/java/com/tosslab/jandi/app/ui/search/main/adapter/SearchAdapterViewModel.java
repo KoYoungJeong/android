@@ -4,6 +4,7 @@ import com.tosslab.jandi.app.ui.search.main.adapter.viewholder.HistoryHeaderView
 import com.tosslab.jandi.app.ui.search.main.adapter.viewholder.HistoryItemViewHolder;
 import com.tosslab.jandi.app.ui.search.main.adapter.viewholder.MessageHeaderViewHolder;
 import com.tosslab.jandi.app.ui.search.main.adapter.viewholder.MessageItemViewHolder;
+import com.tosslab.jandi.app.ui.search.main.adapter.viewholder.OneToOneRoomItemViewHolder;
 import com.tosslab.jandi.app.ui.search.main.adapter.viewholder.RoomHeaderViewHolder;
 import com.tosslab.jandi.app.ui.search.main.adapter.viewholder.RoomItemViewHolder;
 
@@ -32,6 +33,10 @@ public interface SearchAdapterViewModel {
     void setOnClickTopicListener(
             RoomItemViewHolder.OnClickTopicListener onClickTopicListener);
 
+    void setOnClickOneToOneRoomListener(
+            OneToOneRoomItemViewHolder.OnClickOneToOneRoomListener onClickOneToOneRoomListener
+    );
+
     void setOnClickMessageListener(
             MessageItemViewHolder.OnClickMessageListener onClickMessageListener);
 
@@ -40,5 +45,6 @@ public interface SearchAdapterViewModel {
 
     void setOnClickMemberSelectionButtonListener(
             MessageHeaderViewHolder.OnClickMemberSelectionButtonListener onClickMemberSelectionButtonListener);
+
 
 }

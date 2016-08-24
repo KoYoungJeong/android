@@ -27,7 +27,6 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.view.TopicInfoDialog;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
@@ -68,19 +67,18 @@ public class SearchActivity extends BaseAppCompatActivity
     @InjectExtra
     @Nullable
     long selectedRoomId = -1l;
+    @InjectExtra
+    @Nullable
+    long selectedOneToOneRoomMemberId = -1l;
 
     @Bind(R.id.lv_search_result)
     RecyclerView lvSearchResult;
-
     @Bind(R.id.tv_search_keyword)
     AutoCompleteTextView tvSearchKeyword;
-
     @Bind(R.id.progress_more_loading_message)
     ProgressBar progressMoreLoadingMessage;
-
     @Inject
     SearchPresenter searchPresenter;
-
     @Inject
     SearchAdapterViewModel searchAdapterViewModel;
 
@@ -92,6 +90,7 @@ public class SearchActivity extends BaseAppCompatActivity
 
     private boolean isSelectDirectMessageRoom = false;
     private long selectedMemberId = -1l;
+
     private android.view.inputmethod.InputMethodManager inputMethodManager;
 
     private boolean isOnlyMessageMode = false;
@@ -126,11 +125,15 @@ public class SearchActivity extends BaseAppCompatActivity
         inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
         if (selectedRoomId != -1l) {
-            searchPresenter.onRoomChanged(selectedRoomId);
+            isOnlyMessageMode = true;
+            searchPresenter.onSetOnlyMessageMode(isOnlyMessageMode);
+            searchPresenter.onRoomChanged(selectedRoomId, -1);
             tvSearchKeyword.setHint(
                     JandiApplication.getContext().getString(R.string.jandi_message_search));
-            isOnlyMessageMode = true;
+        } else {
+            searchPresenter.onAccessTypeChanged("joined");
         }
+
     }
 
     @Override
@@ -181,14 +184,15 @@ public class SearchActivity extends BaseAppCompatActivity
 
     @OnTextChanged(R.id.tv_search_keyword)
     void searchKeywordChanged(CharSequence text) {
-        searchQueryAdapter.clear();
-        searchQueryAdapter.addAll(searchPresenter.getOldQueryList(text.toString()));
-        searchQueryAdapter.notifyDataSetChanged();
+        searchPresenter.onSearchKeywordChanged(text.toString());
     }
 
     @OnEditorAction(R.id.tv_search_keyword)
     boolean onSearchAction(TextView view, int actionId) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            searchQueryAdapter.clear();
+            searchQueryAdapter.notifyDataSetChanged();
+            tvSearchKeyword.dismissDropDown();
             onSearch();
             return true;
         }
@@ -196,14 +200,14 @@ public class SearchActivity extends BaseAppCompatActivity
     }
 
     private void onSearch() {
-        if (tvSearchKeyword.length() >= 2) {
+        String searchKeyword = tvSearchKeyword.getText().toString().trim();
+        if (searchKeyword.length() >= 2) {
             if (flagFirstSearch) {
                 setStickyHeaderAdapter();
                 removeHistoryListeners();
                 flagFirstSearch = false;
             }
-            searchPresenter.sendSearchQuery(
-                    tvSearchKeyword.getText().toString(), isOnlyMessageMode);
+            searchPresenter.sendSearchQuery(searchKeyword, isOnlyMessageMode);
             tvSearchKeyword.dismissDropDown();
             hideKeyboard();
         } else {
@@ -227,16 +231,11 @@ public class SearchActivity extends BaseAppCompatActivity
         });
 
         searchAdapterViewModel.setOnClickMessageListener(searchMessageData -> {
-            if (searchMessageData.getFeedbackType() != null) {
-                if (searchMessageData.getFeedbackType().equals("poll")) {
-                    moveToPollActivity(searchMessageData.getPoll().getId());
-                } else if (searchMessageData.getFeedbackType().equals("file")) {
-                    moveToFileActivity(searchMessageData.getMessageId(), searchMessageData.getFile().getId());
-                }
+            if (searchMessageData.getFeedbackType() != null
+                    && searchMessageData.getFeedbackType().equals("poll")) {
+                moveToPollActivity(searchMessageData.getPoll().getId());
             } else {
-                moveToMessageActivityFromSearch(searchMessageData.getRoomId(),
-                        searchMessageData.getType(),
-                        searchMessageData.getLinkId());
+                searchPresenter.onMoveToMessageFromSearch(searchMessageData);
             }
         });
 
@@ -246,6 +245,10 @@ public class SearchActivity extends BaseAppCompatActivity
 
         searchAdapterViewModel.setOnClickRoomSelectionButtonListener(() -> showChooseRoomDialog());
         LinearLayoutManager layoutManager = (LinearLayoutManager) lvSearchResult.getLayoutManager();
+
+        searchAdapterViewModel.setOnClickOneToOneRoomListener(memberId -> {
+            moveDirectMessage(memberId);
+        });
 
         // SCROLL
         lvSearchResult.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -342,14 +345,6 @@ public class SearchActivity extends BaseAppCompatActivity
     }
 
     @Override
-    public void moveToFileActivity(long messageId, long fileId) {
-        FileDetailActivity_.intent(this)
-                .selectMessageId(messageId)
-                .fileId(fileId)
-                .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
-    }
-
-    @Override
     public void moveToMessageActivityFromSearch(long entityId, int entityType, long linkId) {
         MessageListV2Activity_.intent(this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -409,8 +404,9 @@ public class SearchActivity extends BaseAppCompatActivity
 
             isSelectDirectMessageRoom = !data.getBooleanExtra(RoomFilterActivity.KEY_IS_TOPIC, false);
             selectedRoomId = data.getLongExtra(RoomFilterActivity.KEY_FILTERED_ROOM_ID, -1l);
+            selectedOneToOneRoomMemberId = data.getLongExtra(RoomFilterActivity.KEY_FILTERED_MEMBER_ID, -1l);
 
-            searchPresenter.onRoomChanged(selectedRoomId);
+            searchPresenter.onRoomChanged(selectedRoomId, selectedOneToOneRoomMemberId);
 
         } else if (requestCode == REQUEST_CODE_MEMBER_SELECTION) {
             if (resultCode != RESULT_OK) {
@@ -422,7 +418,7 @@ public class SearchActivity extends BaseAppCompatActivity
         }
     }
 
-    public void showDeleteConfirmDialog() {
+    void showDeleteConfirmDialog() {
         if (deleteConfirmDialog == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this,
                     R.style.JandiTheme_AlertDialog_FixWidth_300);
@@ -484,7 +480,22 @@ public class SearchActivity extends BaseAppCompatActivity
 
     @Override
     public void hideKeyboard() {
-        inputMethodManager.hideSoftInputFromWindow(tvSearchKeyword.getWindowToken(), 0);
+        inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    }
+
+    @Override
+    public void setSearchHints(List<String> keywords) {
+        searchQueryAdapter.clear();
+        searchQueryAdapter.addAll(keywords);
+    }
+
+    private void moveDirectMessage(long memberId) {
+        MessageListV2Activity_.intent(this)
+                .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                .entityId(memberId)
+                .roomId(-1)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .start();
     }
 
 }

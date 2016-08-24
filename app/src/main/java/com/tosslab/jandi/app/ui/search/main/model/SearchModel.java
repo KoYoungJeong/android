@@ -12,7 +12,9 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.search.ReqSearch;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
+import com.tosslab.jandi.app.ui.search.main.object.SearchOneToOneRoomData;
 import com.tosslab.jandi.app.ui.search.main.object.SearchTopicRoomData;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
@@ -42,9 +44,7 @@ public class SearchModel {
     }
 
     public List<SearchTopicRoomData> getSearchedTopics(String keyword, boolean isShowUnjoinedTopic) {
-
         List<SearchTopicRoomData> topics = new ArrayList<>();
-
         List<TopicRoom> topicList = TeamInfoLoader.getInstance().getTopicList();
         Observable.from(topicList)
                 .map(topicRoom -> new SearchTopicRoomData.Builder()
@@ -56,7 +56,6 @@ public class SearchModel {
                         .setIsStarred(topicRoom.isStarred())
                         .setDescription(topicRoom.getDescription())
                         .setKeyword(keyword)
-
                         .build())
                 .filter(topic -> {
                     if (!isShowUnjoinedTopic) {
@@ -97,6 +96,31 @@ public class SearchModel {
                 .subscribe();
 
         return topics;
+    }
+
+    public List<SearchOneToOneRoomData> getSearchedOneToOneRoom(String keyword) {
+
+        List<User> userList = TeamInfoLoader.getInstance().getUserList();
+        List<SearchOneToOneRoomData> searchOneToOneRoomDatas = new ArrayList<>();
+        Observable.from(userList)
+                .filter(User::isEnabled)
+                .filter(user -> user.getName().toLowerCase().contains(keyword.toLowerCase()))
+                .filter(user -> user.getId() != TeamInfoLoader.getInstance().getMyId())
+                .map(user -> new SearchOneToOneRoomData.Builder()
+                        .setKeyword(keyword)
+                        .setUserProfileUrl(user.getPhotoUrl())
+                        .setMemberId(user.getId())
+                        .setTitle(user.getName())
+                        .setUserProfileUrl(user.getPhotoUrl())
+                        .build())
+                .toSortedList((lhs, rhs) -> {
+                    return StringCompareUtil.compare(lhs.getTitle(), rhs.getTitle());
+                })
+                .collect(() -> searchOneToOneRoomDatas, List::addAll)
+                .subscribe();
+
+        return searchOneToOneRoomDatas;
+
     }
 
     public long upsertSearchQuery(String text) {
@@ -140,11 +164,11 @@ public class SearchModel {
         TeamInfoLoader.getInstance().refresh();
     }
 
-    public String getWriterName(long writerId){
+    public String getWriterName(long writerId) {
         return TeamInfoLoader.getInstance().getMemberName(writerId);
     }
 
-    public boolean isDirectRoomByRoomId(long roomId){
+    public boolean isDirectRoomByRoomId(long roomId) {
         return TeamInfoLoader.getInstance().isChat(roomId);
     }
 

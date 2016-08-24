@@ -182,7 +182,7 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
                 .mention(mentionAnalysisInfo, false)
                 .lookUp(tvMessageContent.getContext());
 
-        String[] tokens = searchMessageData.getTokens();
+        String[] tokens = searchMessageData.getKeyword().split(" ");
 
         for (String token : tokens) {
             Pattern compile = Pattern.compile(token, Pattern.CASE_INSENSITIVE);
@@ -197,7 +197,7 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
             }
         }
 
-        tvMessageContent.setText(ssb);
+        tvMessageContent.setText(ssb, TextView.BufferType.SPANNABLE);
     }
 
     private void mesureRoomInfoArea() {

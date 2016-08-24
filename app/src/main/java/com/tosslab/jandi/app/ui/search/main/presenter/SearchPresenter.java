@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.search.main.presenter;
 
 import com.tosslab.jandi.app.team.room.TopicRoom;
+import com.tosslab.jandi.app.ui.search.main.object.SearchMessageData;
 
 import java.util.List;
 
@@ -19,8 +20,6 @@ public interface SearchPresenter {
 
     void upsertKeywordHistory(String keyword);
 
-    List<String> getOldQueryList(String keyword);
-
     void onDeleteaAllHistoryItem();
 
     void onDeleteaHistoryItemByKeyword(String keyword);
@@ -29,13 +28,19 @@ public interface SearchPresenter {
 
     void onJoinTopic(long topicId, int topicType);
 
-    void onRoomChanged(long roomId);
+    void onRoomChanged(long roomId, long memberId);
 
     void onWriterChanged(long writerId);
 
     void onAccessTypeChanged(String accessType);
 
+    void onSetOnlyMessageMode(boolean onlyMessageMode);
+
+    void onMoveToMessageFromSearch(SearchMessageData searchMessageData);
+
     void onDestroy();
+
+    void onSearchKeywordChanged(String text);
 
     interface View {
 
@@ -55,11 +60,10 @@ public interface SearchPresenter {
 
         void moveToPollActivity(long pollId);
 
-        void moveToFileActivity(long messageId, long fileId);
-
         void moveToMessageActivityFromSearch(long entityId, int entityType, long linkId);
 
         void hideKeyboard();
 
+        void setSearchHints(List<String> keywords);
     }
 }

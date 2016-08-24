@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.Nullable;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -132,6 +133,15 @@ public class ImageLoader {
     public ImageLoader uri(Uri uri) {
         this.uri = uri;
         return this;
+    }
+
+    public Bitmap getBitmapRect(Context context) throws Exception {
+        DrawableTypeRequest<Uri> request = getRequest(context);
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int widthPixels = displayMetrics.widthPixels;
+        int heightPixels = displayMetrics.heightPixels;
+        int min = Math.min(widthPixels, heightPixels);
+        return request.asBitmap().load(uri).into(min, min).get();
     }
 
     @SuppressWarnings("unchecked")

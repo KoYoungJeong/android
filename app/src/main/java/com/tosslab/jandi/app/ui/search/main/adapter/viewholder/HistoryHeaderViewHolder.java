@@ -21,6 +21,7 @@ public class HistoryHeaderViewHolder extends BaseViewHolder<SearchData> {
     TextView tvAllDeleteButton;
 
     private OnDeleteAllHistory onDeleteAllHistory;
+    private boolean isShowDeleteButton = true;
 
     public HistoryHeaderViewHolder(View itemView) {
         super(itemView);
@@ -38,6 +39,15 @@ public class HistoryHeaderViewHolder extends BaseViewHolder<SearchData> {
         if (onDeleteAllHistory != null) {
             tvAllDeleteButton.setOnClickListener(v -> onDeleteAllHistory.onDeleteAllHistory());
         }
+        if (isShowDeleteButton) {
+            tvAllDeleteButton.setVisibility(View.VISIBLE);
+        } else {
+            tvAllDeleteButton.setVisibility(View.GONE);
+        }
+    }
+
+    public void setShowDeleteButton(boolean showDeleteButton) {
+        isShowDeleteButton = showDeleteButton;
     }
 
     public void setOnDeleteAllHistory(OnDeleteAllHistory onDeleteAllHistory) {

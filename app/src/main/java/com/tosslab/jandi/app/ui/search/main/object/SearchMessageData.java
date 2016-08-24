@@ -23,6 +23,7 @@ public class SearchMessageData extends SearchData {
     private String[] tokens;
     private boolean hasHalfLine;
     private List<MentionObject> mentions;
+    private String keyword;
 
     private SearchMessageData() {
     }
@@ -123,6 +124,14 @@ public class SearchMessageData extends SearchData {
         this.hasHalfLine = hasHalfLine;
     }
 
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
     public static class Builder {
 
         private SearchMessageData searchMessageData;
@@ -189,6 +198,11 @@ public class SearchMessageData extends SearchData {
 
         public Builder setHasHalfLine(boolean hasHalfLine) {
             searchMessageData.hasHalfLine = hasHalfLine;
+            return this;
+        }
+
+        public Builder setKeyword(String keyword) {
+            searchMessageData.keyword = keyword;
             return this;
         }
 
