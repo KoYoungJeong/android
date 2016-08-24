@@ -14,13 +14,13 @@ import java.util.List;
  * Created by tonyjs on 16. 6. 15..
  */
 public interface PollDetailDataModel {
-    void removePollDetailRow();
-
-    boolean hasCommentRows();
-
     void setPollDetails(Poll poll);
 
     void replacePollDetails(Poll poll);
+
+    void removePollDetailRow();
+
+    boolean hasCommentRows();
 
     void addPollComments(List<ResMessages.OriginalMessage> comments);
 

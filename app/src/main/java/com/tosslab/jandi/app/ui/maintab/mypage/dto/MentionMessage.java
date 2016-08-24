@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.mypage.dto;
 
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
+import com.tosslab.jandi.app.network.models.commonobject.StarredMessage;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,7 +37,7 @@ public class MentionMessage {
     private Date createdAt;
     private long pollId;
 
-    private MentionMessage(StarMentionedMessageObject from,
+    private MentionMessage(StarredMessage from,
                            String roomName,
                            String writerName, String writerProfileUrl) {
         this.teamId = from.getTeamId();
@@ -46,7 +46,7 @@ public class MentionMessage {
         this.roomName = roomName;
         this.linkId = from.getLinkId();
 
-        StarMentionedMessageObject.Message message = from.getMessage();
+        StarredMessage.Message message = from.getMessage();
         if (message != null) {
             this.messageId = message.id;
             this.writerId = message.writerId;
@@ -126,7 +126,7 @@ public class MentionMessage {
         return new MentionMessage(link, roomType, roomName, writerName, photoUrl);
     }
 
-    public static MentionMessage create(StarMentionedMessageObject vo,
+    public static MentionMessage create(StarredMessage vo,
                                         String roomName,
                                         String writerName, String writerProfileUrl) {
         return new MentionMessage(vo, roomName, writerName, writerProfileUrl);

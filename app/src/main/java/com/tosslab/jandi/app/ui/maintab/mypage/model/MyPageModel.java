@@ -63,7 +63,7 @@ public class MyPageModel {
                 });
     }
 
-    public List<MentionMessage> getConvertedMentionList(List<StarMentionedMessageObject> records) {
+    public List<MentionMessage> getConvertedMentionList(List<StarredMessage> records) {
         List<MentionMessage> mentions = new ArrayList<>();
         if (records == null || records.isEmpty()) {
             return mentions;

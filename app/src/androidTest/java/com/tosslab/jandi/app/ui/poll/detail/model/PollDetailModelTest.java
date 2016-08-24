@@ -16,10 +16,8 @@ import com.tosslab.jandi.app.network.models.ResPollComments;
 import com.tosslab.jandi.app.network.models.ResPollDetail;
 import com.tosslab.jandi.app.network.models.ResPollLink;
 import com.tosslab.jandi.app.network.models.ResStarredMessage;
-import com.tosslab.jandi.app.network.models.commonobject.StarMentionedMessageObject;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 
 import org.junit.AfterClass;
 import org.junit.Before;

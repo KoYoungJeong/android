@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.utils.image;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -168,7 +169,7 @@ public class ImageUtil {
         return small;
     }
 
-    public static String getLargeProfileUril(String url) {
+    public static String getLargeProfileUrl(String url) {
         if (TextUtils.isEmpty(url)
                 || !url.startsWith("http")) {
             return url;
@@ -190,7 +191,7 @@ public class ImageUtil {
 
     public static void loadProfileImage(ImageView imageView, String url, int placeHolder) {
         if (!TextUtils.isEmpty(url) && url.startsWith("http")) {
-            loadProfileImage(imageView, Uri.parse(ImageUtil.getLargeProfileUril(url)), placeHolder);
+            loadProfileImage(imageView, Uri.parse(ImageUtil.getLargeProfileUrl(url)), placeHolder);
         } else {
             loadProfileImage(imageView, Uri.parse(url), placeHolder);
         }
@@ -214,8 +215,12 @@ public class ImageUtil {
                         TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
                         TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
                         backgroundColor))
-                .uri(Uri.parse(ImageUtil.getLargeProfileUril(url)))
+                .uri(Uri.parse(ImageUtil.getLargeProfileUrl(url)))
                 .into(imageView);
+    }
+
+    public static  Bitmap getBitmap(Context context, String url) throws Exception {
+        return ImageLoader.newInstance().uri(Uri.parse(url)).getBitmapRect(context);
     }
 
     public static void setResourceIconOrLoadImage(final ImageView imageView,
