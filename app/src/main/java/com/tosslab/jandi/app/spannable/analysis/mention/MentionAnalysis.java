@@ -10,6 +10,7 @@ import android.util.TypedValue;
 
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.spannable.analysis.RuleAnalysis;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.spannable.ClickableMentionMessageSpannable;
 import com.tosslab.jandi.app.views.spannable.MentionMessageSpannable;
@@ -47,7 +48,16 @@ public class MentionAnalysis implements RuleAnalysis {
                 continue;
             }
 
-            boolean mentionForMe = mention.getId() == mentionAnalysisInfo.getMyId();
+            boolean mentionForMe = false;
+
+            // all일 경우 나에게 온걸로 가정한다.
+            if (TeamInfoLoader.getInstance().isTopic(mention.getId())) {
+                mentionForMe = true;
+            } else {
+                mentionForMe =
+                        mention.getId() == mentionAnalysisInfo.getMyId();
+            }
+
             int textColor = mentionForMe
                     ? mentionAnalysisInfo.getForMeTextColor()
                     : mentionAnalysisInfo.getTextColor();
@@ -55,6 +65,7 @@ public class MentionAnalysis implements RuleAnalysis {
             int backgroundColor = mentionForMe
                     ? mentionAnalysisInfo.getForMeBackgroundColor()
                     : mentionAnalysisInfo.getBackgroundColor();
+
             MentionMessageSpannable mentionMessageSpannable =
                     new ClickableMentionMessageSpannable(name, mention.getId(),
                             mentionAnalysisInfo.getTextSize(), textColor, backgroundColor);
@@ -70,8 +81,10 @@ public class MentionAnalysis implements RuleAnalysis {
         }
     }
 
-    private @Nullable String getName(MentionObject mention,
-                                     SpannableStringBuilder spannableStringBuilder) {
+    private
+    @Nullable
+    String getName(MentionObject mention,
+                   SpannableStringBuilder spannableStringBuilder) {
         try {
             int start = mention.getOffset() + 1;
             int end = mention.getLength() + mention.getOffset();
