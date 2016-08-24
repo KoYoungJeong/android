@@ -29,7 +29,6 @@ public class SearchQueryAdapter extends ArrayAdapter<String> {
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                notifyDataSetChanged();
             }
         };
     }
