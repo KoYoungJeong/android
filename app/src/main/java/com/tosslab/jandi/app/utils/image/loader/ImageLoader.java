@@ -20,6 +20,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.ViewPropertyAnimation;
 import com.crashlytics.android.Crashlytics;
+import com.tosslab.jandi.app.utils.image.ProgressTarget;
 import com.tosslab.jandi.app.utils.image.target.DynamicImageViewTarget;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -165,9 +166,9 @@ public class ImageLoader {
             return;
         }
 
-        request.fitCenter();
+//        request.fitCenter();
 
-        request.diskCacheStrategy(DiskCacheStrategy.ALL);
+        request.diskCacheStrategy(DiskCacheStrategy.SOURCE);
 
         if (placeHolderDrawable != null) {
             request.placeholder(placeHolderDrawable);
@@ -201,6 +202,85 @@ public class ImageLoader {
                         .actualImageScaleType(actualImageScaleType)
                         .errorScaleType(errorScaleType)
                         .build(imageView));
+    }
+
+    @SuppressWarnings("unchecked")
+    public void intoWithProgress(ImageView imageView) {
+        Context context = getAvailableContext(imageView);
+        if (context == null) {
+            return;
+        }
+
+        if (backgroundColor != Integer.MAX_VALUE) {
+            imageView.setBackgroundColor(backgroundColor);
+        }
+
+        DrawableRequestBuilder<Uri> request = null;
+        try {
+            request = getRequest(context);
+        } catch (Exception e) {
+            LogUtil.e(Log.getStackTraceString(e));
+            String log = String.format("ImageLoader.getRequest Exception : %s", Log.getStackTraceString(e));
+            Crashlytics.getInstance().core.log(log);
+            return;
+        }
+
+//        request.fitCenter();
+
+        request.diskCacheStrategy(DiskCacheStrategy.SOURCE);
+
+        if (placeHolderDrawable != null) {
+            request.placeholder(placeHolderDrawable);
+        } else if (placeHolder != -1) {
+            request.placeholder(placeHolder);
+        }
+
+        request.error(error);
+
+        if (transformation != null) {
+            request.bitmapTransform(transformation);
+        }
+
+        if (anim != -1) {
+            request.animate(anim);
+        } else if (animator != null) {
+            request.animate(animator);
+        } else {
+            // crossFade 가 동작하면 fitCenter 가 정상동작하지 않는다.(TransitionDrawable issue)
+            request.animate(view -> {
+                view.setAlpha(0.0f);
+                view.animate()
+                        .alpha(1.0f)
+                        .setDuration(300);
+            });
+        }
+
+        request.listener(listener)
+                .into(new ProgressTarget<String, GlideDrawable>(uri.toString(), DynamicImageViewTarget.newBuilder()
+                        .placeHolderScaleType(placeHolderScaleType)
+                        .actualImageScaleType(actualImageScaleType)
+                        .errorScaleType(errorScaleType)
+                        .build(imageView)) {
+                    @Override
+                    protected void onConnecting() {
+                        Log.d(TAG, "onConnecting() called : " + uri.getLastPathSegment());
+                    }
+
+                    @Override
+                    protected void onDownloading(long bytesRead, long expectedLength) {
+                        Log.d(TAG, "onDownloading() called with: bytesRead = [" + bytesRead + "], expectedLength = [" + expectedLength + "] : " + uri.getLastPathSegment());
+                    }
+
+                    @Override
+                    protected void onDownloaded() {
+                        Log.d(TAG, "onDownloaded() called : " + uri.getLastPathSegment());
+                    }
+
+                    @Override
+                    protected void onDelivered() {
+                        Log.d(TAG, "onDelivered() called : " + uri.getLastPathSegment());
+                    }
+                });
     }
 
     private DrawableTypeRequest<Uri> getRequest(Context context) throws Exception {

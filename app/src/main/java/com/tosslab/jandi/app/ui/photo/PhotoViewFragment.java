@@ -105,7 +105,7 @@ public class PhotoViewFragment extends Fragment {
         autoProgressUpdateController = new AutoProgressUpdateController();
         autoProgressUpdateController.setPercentageTextView(tvPercentage);
         autoProgressUpdateController.setProgressBar(progressBar);
-        autoProgressUpdateController.start();
+//        autoProgressUpdateController.start();
 
         if (!TextUtils.isEmpty(thumbUrl)) {
 
@@ -117,7 +117,7 @@ public class PhotoViewFragment extends Fragment {
 
             ImageLoader.newInstance()
                     // cache 되어 있는지 확인하기 위해 네트워킹 작업이 실행되면 exception 발생시킨다.
-                    .blockNetworking(true)
+//                    .blockNetworking(true)
                     .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
 
                         @Override
@@ -141,7 +141,7 @@ public class PhotoViewFragment extends Fragment {
                         }
                     })
                     .uri(originalUri)
-                    .into(photoView);
+                    .intoWithProgress(photoView);
         }
     }
 
@@ -225,7 +225,7 @@ public class PhotoViewFragment extends Fragment {
                         return false;
                     }
                 })
-                .into(photoView);
+                .intoWithProgress(photoView);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
