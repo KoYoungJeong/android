@@ -32,6 +32,7 @@ import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
+import com.tosslab.jandi.app.events.files.FileCreatedEvent;
 import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
@@ -657,6 +658,10 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
             fileListPresenter.onEntitySelection(
                     event.sharedEntityId, null);
         }
+    }
+
+    public void onEventMainThread(FileCreatedEvent event) {
+        fileListPresenter.doSearchAll();
     }
 
     public void onEvent(RequestFileUploadEvent event) {

@@ -8,37 +8,35 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 
-import com.google.gson.JsonObject;
-import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.builder.Builders;
-import com.koushikdutta.ion.future.ResponseFuture;
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.client.profile.ProfileApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.file.FileUploadApi;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.models.ResUploadedFile;
+import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.profile.defaultimage.ProfileImageSelectorActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 
 import java.io.File;
-import java.net.URLConnection;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 12..
@@ -173,40 +171,29 @@ public class FilePickerModel {
         return TeamInfoLoader.getInstance().isPublicTopic(entityId);
     }
 
-    public JsonObject uploadFile(Context context, ProgressDialog progressDialog, String realFilePath, boolean isPublicTopic, String title, long entityId, String comment) throws ExecutionException, InterruptedException {
+    public ResUploadedFile uploadFile(ProgressDialog progressDialog, String realFilePath, boolean isPublicTopic, String title, long entityId, String comment) throws IOException {
 
         File uploadFile = new File(realFilePath);
-        String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/file";
         String permissionCode = (isPublicTopic) ? "744" : "740";
-        Builders.Any.M ionBuilder
-                = Ion
-                .with(context)
-                .load(requestURL)
-                .uploadProgressDialog(progressDialog)
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
-                .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
-                .setMultipartParameter("title", title)
-                .setMultipartParameter("share", String.valueOf(entityId))
-                .setMultipartParameter("permission", permissionCode)
-                .setMultipartParameter("teamId", String.valueOf(AccountRepository.getRepository().getSelectedTeamInfo().getTeamId()));
 
-        // Comment가 함께 등록될 경우 추가
-        if (comment != null && !comment.isEmpty()) {
-            ionBuilder.setMultipartParameter("comment", comment);
-        }
+        return new FileUploadApi().uploadFile(title, entityId, permissionCode, TeamInfoLoader.getInstance().getTeamId(), comment, new ArrayList<>(), uploadFile, callback -> callback.distinctUntilChanged()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(progress -> {
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.setMax(100);
+                        progressDialog.setProgress(progress);
+                    }
+                }, t -> {}, () -> {
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                }))
+                .execute().body();
 
-        ResponseFuture<JsonObject> requestFuture = ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
-                .asJsonObject();
-
-        progressDialog.setOnCancelListener(dialog -> requestFuture.cancel());
-
-        return requestFuture.get();
 
     }
 
-    public void trackUploadingFile(long entityId, JsonObject result) {
-        int fileId = result.get("messageId").getAsInt();
+    public void trackUploadingFile(long entityId, long fileId) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(SprinklerEvents.FileUpload)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
@@ -227,19 +214,8 @@ public class FilePickerModel {
                 .build());
     }
 
-    public JsonObject uploadProfilePhoto(Context context, File file) throws ExecutionException, InterruptedException {
-
-        String requestURL
-                = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/members/" + TeamInfoLoader.getInstance().getMyId() + "/profile/photo";
-
-        return Ion.with(context)
-                .load("PUT", requestURL)
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
-                .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
-                .setMultipartFile("photo", URLConnection.guessContentTypeFromName(file.getName()), file)
-                .asJsonObject()
-                .get();
+    public Human uploadProfilePhoto(File file) throws RetrofitException {
+        return new ProfileApi(RetrofitBuilder.getInstance()).uploadProfilePhoto(TeamInfoLoader.getInstance().getMyId(), file);
     }
 
     public ArrayList<String> getFilePathsFromInnerGallery(Intent intent) {

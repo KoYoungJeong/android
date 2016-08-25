@@ -145,11 +145,7 @@ public class FileDetailModelTest {
         String downloadFilePath = fileDetailModel.getDownloadFilePath(fileMessage.content.title);
 
         final boolean[] finish = {false};
-        fileDetailModel.downloadFile(fileUrl, downloadFilePath, (downloaded, total) -> {
-
-        }, (e, result) -> {
-            finish[0] = true;
-        });
+        fileDetailModel.downloadFile(fileUrl, downloadFilePath, callback2 -> callback2.subscribe(it -> {}, t -> {}, () -> finish[0] = true));
 
         await().until(() -> finish[0]);
 

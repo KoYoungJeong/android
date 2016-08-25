@@ -184,14 +184,15 @@ public class SearchActivity extends BaseAppCompatActivity
 
     @OnTextChanged(R.id.tv_search_keyword)
     void searchKeywordChanged(CharSequence text) {
-        searchQueryAdapter.clear();
-        searchQueryAdapter.addAll(searchPresenter.getOldQueryList(text.toString()));
-        searchQueryAdapter.notifyDataSetChanged();
+        searchPresenter.onSearchKeywordChanged(text.toString());
     }
 
     @OnEditorAction(R.id.tv_search_keyword)
     boolean onSearchAction(TextView view, int actionId) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            searchQueryAdapter.clear();
+            searchQueryAdapter.notifyDataSetChanged();
+            tvSearchKeyword.dismissDropDown();
             onSearch();
             return true;
         }
@@ -199,14 +200,14 @@ public class SearchActivity extends BaseAppCompatActivity
     }
 
     private void onSearch() {
-        if (tvSearchKeyword.length() >= 2) {
+        String searchKeyword = tvSearchKeyword.getText().toString().trim();
+        if (searchKeyword.length() >= 2) {
             if (flagFirstSearch) {
                 setStickyHeaderAdapter();
                 removeHistoryListeners();
                 flagFirstSearch = false;
             }
-            searchPresenter.sendSearchQuery(
-                    tvSearchKeyword.getText().toString(), isOnlyMessageMode);
+            searchPresenter.sendSearchQuery(searchKeyword, isOnlyMessageMode);
             tvSearchKeyword.dismissDropDown();
             hideKeyboard();
         } else {
@@ -417,7 +418,7 @@ public class SearchActivity extends BaseAppCompatActivity
         }
     }
 
-    public void showDeleteConfirmDialog() {
+    void showDeleteConfirmDialog() {
         if (deleteConfirmDialog == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this,
                     R.style.JandiTheme_AlertDialog_FixWidth_300);
@@ -480,6 +481,12 @@ public class SearchActivity extends BaseAppCompatActivity
     @Override
     public void hideKeyboard() {
         inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    }
+
+    @Override
+    public void setSearchHints(List<String> keywords) {
+        searchQueryAdapter.clear();
+        searchQueryAdapter.addAll(keywords);
     }
 
     private void moveDirectMessage(long memberId) {

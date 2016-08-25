@@ -30,6 +30,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
+import rx.subjects.PublishSubject;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -44,6 +45,8 @@ public class SearchPresenterImpl implements SearchPresenter {
     private final BehaviorSubject<Date> endDateSubject;
     private final BehaviorSubject<String> keywordSubject;
     private final CompositeSubscription compositeSubscription;
+
+    private final PublishSubject<String> searchKeywordSubject;
 
     @Inject
     SearchModel searchModel;
@@ -72,9 +75,11 @@ public class SearchPresenterImpl implements SearchPresenter {
         endDateSubject = BehaviorSubject.create(new Date());
         keywordSubject = BehaviorSubject.create("");
 
+        searchKeywordSubject = PublishSubject.create();
+
         compositeSubscription = new CompositeSubscription();
 
-        compositeSubscription.add(
+        compositeSubscription.addAll(
                 Observable.combineLatest(
                         writerSubject,
                         roomSubject,
@@ -88,7 +93,6 @@ public class SearchPresenterImpl implements SearchPresenter {
                                         .setWriterId(writerId)
                                         .setType("message")
                                         .setAccessType(accessType)
-                                        .setEndAt(date)
                                         .setPage(page)
                                         .setKeyword(keyword).build())
                         .filter(reqSearch -> !TextUtils.isEmpty(keywordSubject.getValue()))
@@ -215,7 +219,17 @@ public class SearchPresenterImpl implements SearchPresenter {
                                         view.refreshSearchedOnlyMessage();
                                     }
                                 }
-                        ));
+                        ),
+                searchKeywordSubject
+                        .onBackpressureBuffer()
+                        .throttleLast(100, TimeUnit.MILLISECONDS)
+                        .distinctUntilChanged()
+                        .observeOn(Schedulers.io())
+                        .map(it -> searchModel.searchOldQuery(it))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(it -> {
+                            view.setSearchHints(it);
+                        }));
 
 
     }
@@ -282,11 +296,6 @@ public class SearchPresenterImpl implements SearchPresenter {
     public void onDeleteaHistoryItemByKeyword(String keyword) {
         searchModel.removeHistoryItemByKeyword(keyword);
         sendSearchHistory();
-    }
-
-    @Override
-    public List<String> getOldQueryList(String keyword) {
-        return searchModel.searchOldQuery(keyword);
     }
 
     @Override
@@ -454,6 +463,11 @@ public class SearchPresenterImpl implements SearchPresenter {
         if (!compositeSubscription.isUnsubscribed()) {
             compositeSubscription.unsubscribe();
         }
+    }
+
+    @Override
+    public void onSearchKeywordChanged(String text) {
+        searchKeywordSubject.onNext(text);
     }
 
     public enum MoreState {

@@ -7,13 +7,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel_;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity_;
@@ -33,7 +33,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @EBean
 public class ProfileFileUploadControllerImpl implements FileUploadController {
@@ -137,7 +136,7 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
                                               String url, String downloadDir, String downloadName) {
         try {
             File file = GoogleImagePickerUtil.downloadFile(
-                    activity.getApplicationContext(), downloadProgress, url, downloadDir, downloadName);
+                    downloadProgress, url, downloadDir, downloadName);
             dismissProgressDialog(downloadProgress);
             uploadProfileImage(activity, file);
         } catch (Exception e) {
@@ -149,18 +148,17 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
     void uploadProfileImage(Activity activity, File profileFile) {
         showProgressWheel(activity);
         try {
-            JsonObject jsonObject = filePickerModel.uploadProfilePhoto(activity.getApplicationContext(), profileFile);
-            JsonElement photoUrlElement = jsonObject.get("photoUrl");
-            if (photoUrlElement != null) {
-                String photoUrl = photoUrlElement.getAsString();
-                long myId = TeamInfoLoader.getInstance().getMyId();
-                HumanRepository.getInstance().updatePhotoUrl(myId, photoUrl);
-                TeamInfoLoader.getInstance().refresh();
-            }
+            Human human = filePickerModel.uploadProfilePhoto(profileFile);
+            String photoUrl = human.getPhotoUrl();
+            long myId = TeamInfoLoader.getInstance().getMyId();
+            HumanRepository.getInstance().updatePhotoUrl(myId, photoUrl);
+            TeamInfoLoader.getInstance().refresh();
             successPhotoUpload(activity.getApplicationContext());
 
             dismissProgressWheel();
-        } catch (ExecutionException | InterruptedException e) {
+
+        } catch (RetrofitException e) {
+            e.printStackTrace();
             dismissProgressWheel();
             LogUtil.e("uploadFileDone: FAILED", e);
             failPhotoUpload(activity.getApplicationContext());

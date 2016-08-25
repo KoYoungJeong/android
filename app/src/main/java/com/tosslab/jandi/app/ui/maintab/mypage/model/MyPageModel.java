@@ -6,7 +6,6 @@ import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.commonobject.StarredMessage;
-import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.DirectMessageRoom;

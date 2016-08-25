@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.model;
 
 import android.app.NotificationManager;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -10,14 +9,8 @@ import android.text.TextUtils;
 import android.util.Pair;
 import android.view.MenuItem;
 
-import com.google.gson.JsonObject;
-import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.builder.Builders;
-import com.koushikdutta.ion.future.ResponseFuture;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -52,12 +45,10 @@ import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.poll.util.PollUtil;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
-import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
@@ -65,14 +56,11 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
-import java.io.File;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
@@ -226,38 +214,6 @@ public class MessageListModel {
 
     public boolean isMyMessage(long writerId) {
         return TeamInfoLoader.getInstance().getMyId() == writerId;
-    }
-
-    @Deprecated
-    public JsonObject uploadFile(ConfirmFileUploadEvent event, ProgressDialog progressDialog, boolean isPublicTopic) throws ExecutionException, InterruptedException {
-        File uploadFile = new File(event.realFilePath);
-        String requestURL = JandiConstantsForFlavors.SERVICE_FILE_UPLOAD_URL + "inner-api/file";
-        String permissionCode = (isPublicTopic) ? "744" : "740";
-        Builders.Any.M ionBuilder
-                = Ion
-                .with(activity)
-                .load(requestURL)
-                .uploadProgressDialog(progressDialog)
-                .progress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
-                .setHeader("Accept", JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
-                .setMultipartParameter("title", event.title)
-                .setMultipartParameter("share", "" + event.entityId)
-                .setMultipartParameter("permission", permissionCode)
-                .setMultipartParameter("teamId", String.valueOf(AccountRepository.getRepository().getSelectedTeamInfo().getTeamId()));
-
-        // Comment가 함께 등록될 경우 추가
-        if (event.comment != null && !event.comment.isEmpty()) {
-            ionBuilder.setMultipartParameter("comment", event.comment);
-        }
-
-        ResponseFuture<JsonObject> requestFuture = ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
-                .asJsonObject();
-
-        progressDialog.setOnCancelListener(dialog -> requestFuture.cancel());
-
-        return requestFuture.get();
     }
 
     public void updateLastLinkId(long lastUpdateLinkId) throws RetrofitException {

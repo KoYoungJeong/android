@@ -96,7 +96,6 @@
             android:layout_above="@+id/vg_carousel_file_info"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:text="asdasd"
             android:singleLine="true"
             android:textColor="@color/jandi_text_white"
             android:textSize="@dimen/jandi_carousel_file_writer_txt"
@@ -116,7 +115,6 @@
                 android:id="@+id/tv_carousel_file_create_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hello Ajik NAl"
                 android:textColor="@color/jandi_text_white"
                 android:textSize="@dimen/jandi_carousel_file_create_time_txt"/>
 
@@ -132,7 +130,6 @@
                 android:id="@+id/tv_carousel_file_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hello Ajik NAl"
                 android:textColor="@color/jandi_text_white"
                 android:textSize="@dimen/jandi_carousel_file_create_time_txt"/>
         </LinearLayout>
@@ -145,7 +142,6 @@
             android:layout_alignParentRight="true"
             android:layout_marginBottom="8dp"
             android:layout_marginRight="16dp"
-            android:text="Hello Ajik NAl"
             android:textColor="@color/jandi_text_white"
             android:textSize="@dimen/jandi_carousel_file_create_time_txt"/>
 
