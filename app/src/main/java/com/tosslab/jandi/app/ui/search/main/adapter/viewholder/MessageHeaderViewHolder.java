@@ -125,7 +125,7 @@ public class MessageHeaderViewHolder extends BaseViewHolder<SearchData> {
 
     private void setRoomButtonColor() {
         if (TextUtils.equals(tvRoomSelectionButton.getText().toString(),
-                JandiApplication.getContext().getString(R.string.jandi_search_category_everywhere))) {
+                JandiApplication.getContext().getString(R.string.jandi_joined_room))) {
             vgRoomSelectionButtonBorder.setBackgroundColor(0xff999999);
             tvRoomSelectionButton.setTextColor(0xff999999);
             ivRoomSelectionButton.setImageDrawable(
