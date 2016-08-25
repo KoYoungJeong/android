@@ -94,6 +94,7 @@ public class SearchPresenterImpl implements SearchPresenter {
                                         .setType("message")
                                         .setAccessType(accessType)
                                         .setPage(page)
+                                        .setEndAt(date)
                                         .setKeyword(keyword).build())
                         .filter(reqSearch -> !TextUtils.isEmpty(keywordSubject.getValue()))
                         .onBackpressureBuffer()
