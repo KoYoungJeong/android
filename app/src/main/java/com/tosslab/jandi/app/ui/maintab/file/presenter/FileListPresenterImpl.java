@@ -81,7 +81,6 @@ public class FileListPresenterImpl implements FileListPresenter {
                                     .setWriterId(writerId)
                                     .setType("file")
                                     .setFileType(fileType)
-                                    .setEndAt(date)
                                     .setPage(page)
                                     .setCount(DEFAULT_COUNT)
                                     .setKeyword(keyword).build();

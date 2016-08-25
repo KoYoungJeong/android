@@ -93,7 +93,6 @@ public class SearchPresenterImpl implements SearchPresenter {
                                         .setWriterId(writerId)
                                         .setType("message")
                                         .setAccessType(accessType)
-                                        .setEndAt(date)
                                         .setPage(page)
                                         .setKeyword(keyword).build())
                         .filter(reqSearch -> !TextUtils.isEmpty(keywordSubject.getValue()))
