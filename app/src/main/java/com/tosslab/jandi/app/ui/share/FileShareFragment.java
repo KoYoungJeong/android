@@ -26,7 +26,7 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
+//import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.share.model.ScrollViewHelper;
 import com.tosslab.jandi.app.ui.share.presenter.image.ImageSharePresenter;
@@ -257,9 +257,9 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     @Override
     public void moveEntity(long teamId, long entityId, int entityType) {
 
-        MainTabActivity_.intent(getActivity())
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+//        MainTabActivity_.intent(getActivity())
+//                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//                .start();
 
         MessageListV2Activity_.intent(getActivity())
                 .teamId(teamId)

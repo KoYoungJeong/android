@@ -1,0 +1,31 @@
+package com.tosslab.jandi.app.ui.maintab.unit.teams.presenter;
+
+import com.tosslab.jandi.app.ui.team.select.to.Team;
+
+import java.util.List;
+
+/**
+ * Created by tonyjs on 16. 3. 21..
+ */
+public interface TeamsPresenter {
+
+    String TAG = TeamsPresenter.class.getSimpleName();
+
+    void initializeTeamInitializeQueue();
+
+    void onInitializeTeams();
+
+    void reInitializeTeams();
+
+    void onTeamJoinAction(long teamId);
+
+    void onTeamInviteAcceptAction(Team team);
+
+    void onTeamInviteIgnoreAction(Team team);
+
+    void onTeamCreated();
+
+    void clearTeamInitializeQueue();
+
+    void determineAnotherTeamHasMessage(long selectedTeamId, List<Team> teams);
+}

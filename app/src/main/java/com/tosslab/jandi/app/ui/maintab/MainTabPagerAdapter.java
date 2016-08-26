@@ -6,11 +6,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
 
-import com.tosslab.jandi.app.ui.maintab.chat.MainChatListFragment_;
-import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
-import com.tosslab.jandi.app.ui.maintab.mypage.MyPageFragment;
-import com.tosslab.jandi.app.ui.maintab.team.TeamFragment;
-import com.tosslab.jandi.app.ui.maintab.topic.MainTopicListFragment_;
+import com.tosslab.jandi.app.ui.maintab.tabs.chat.MainChatListFragment_;
+import com.tosslab.jandi.app.ui.maintab.tabs.file.FileListFragment;
+import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.MentionListFragment;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.TeamFragment;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.MainTopicListFragment_;
 import com.tosslab.jandi.app.views.PagerSlidingTabStrip;
 import com.tosslab.jandi.app.views.TabView;
 
@@ -64,7 +64,7 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
             case TAB_TEAM:
                 return new TeamFragment();
             case TAB_MYPAGE:
-                return new MyPageFragment();
+                return new MentionListFragment();
             default:
                 return MainTopicListFragment_.builder().build();
         }

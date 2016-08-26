@@ -9,7 +9,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
+//import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 
@@ -148,7 +148,7 @@ public class AccountHomeActivityTest {
     public void testMoveSelectedTeam() throws Throwable {
         rule.runOnUiThread(() -> activity.moveSelectedTeam());
         assertThat(activity.isFinishing(), is(true));
-        intending(IntentMatchers.hasComponent(MainTabActivity_.class.getName()));
+//        intending(IntentMatchers.hasComponent(MainTabActivity_.class.getName()));
     }
 
 //    @Ignore

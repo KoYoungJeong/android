@@ -27,7 +27,7 @@ import com.tosslab.jandi.app.ui.account.dagger.AccountHomeModule;
 import com.tosslab.jandi.app.ui.account.dagger.DaggerAccountHomeComponent;
 import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
+//import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
 import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
@@ -287,9 +287,9 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
         JandiSocketService.stopService(AccountHomeActivity.this);
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
-        MainTabActivity_.intent(AccountHomeActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+//        MainTabActivity_.intent(AccountHomeActivity.this)
+//                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//                .start();
 
         finish();
     }

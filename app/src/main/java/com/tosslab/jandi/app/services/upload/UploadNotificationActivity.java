@@ -11,7 +11,7 @@ import com.tosslab.jandi.app.services.upload.dagger.DaggerUploadNotificationComp
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
+//import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 
 import javax.inject.Inject;
@@ -83,10 +83,10 @@ public class UploadNotificationActivity extends BaseAppCompatActivity {
     }
 
     private void moveToRoom(long teamId, long entityId) {
-        MainTabActivity_.intent(UploadNotificationActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .fromPush(true)
-                .start();
+//        MainTabActivity_.intent(UploadNotificationActivity.this)
+//                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//                .fromPush(true)
+//                .start();
 
         int entityType;
 

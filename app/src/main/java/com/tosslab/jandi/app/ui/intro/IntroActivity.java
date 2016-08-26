@@ -16,7 +16,8 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.dagger.DaggerIntroComponent;
 import com.tosslab.jandi.app.ui.intro.dagger.IntroModule;
 import com.tosslab.jandi.app.ui.intro.presenter.IntroActivityPresenter;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
+//import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.sign.SignHomeActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
@@ -87,9 +88,9 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
     @Override
     public void moveToMainActivity() {
-        Intent intent = MainTabActivity_.intent(IntroActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        | Intent.FLAG_ACTIVITY_NEW_TASK).get();
+        Intent intent = new Intent(IntroActivity.this, MainTabActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_NEW_TASK);
 
         startActivity(intent);
         finish();

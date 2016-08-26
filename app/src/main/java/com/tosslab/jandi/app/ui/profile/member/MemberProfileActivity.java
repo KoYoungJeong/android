@@ -41,7 +41,7 @@ import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
+//import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.dagger.DaggerMemberProfileComponent;
@@ -757,10 +757,10 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     private void startStarMentionListActivity() {
-        MainTabActivity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .tabIndex(MainTabPagerAdapter.TAB_MYPAGE)
-                .start();
+//        MainTabActivity_.intent(this)
+//                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//                .tabIndex(MainTabPagerAdapter.TAB_MYPAGE)
+//                .start();
     }
 
     @Click(R.id.tv_member_profile_email)
