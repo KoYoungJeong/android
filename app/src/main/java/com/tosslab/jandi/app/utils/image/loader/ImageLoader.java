@@ -167,7 +167,7 @@ public class ImageLoader {
 
         request.fitCenter();
 
-        request.diskCacheStrategy(DiskCacheStrategy.ALL);
+        request.diskCacheStrategy(DiskCacheStrategy.SOURCE);
 
         if (placeHolderDrawable != null) {
             request.placeholder(placeHolderDrawable);
