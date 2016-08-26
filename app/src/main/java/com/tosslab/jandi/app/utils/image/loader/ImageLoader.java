@@ -45,6 +45,11 @@ public class ImageLoader {
     private RequestListener<Uri, GlideDrawable> listener;
     private Uri uri;
 
+    private ProgressStarted progressStarted;
+    private ProgressDownloading progressDownloading;
+    private ProgressCompleted progressCompleted;
+    private ProgressPresent progressPresent;
+
     ImageLoader() {
     }
 
@@ -64,6 +69,38 @@ public class ImageLoader {
         }
 
         Glide.with(context).load(resId).into(imageView);
+    }
+
+    public ImageLoader progress(ProgressStarted progressStarted,
+                                ProgressDownloading progressDownloading,
+                                ProgressCompleted progressCompleted,
+                                ProgressPresent progressPresent) {
+        this.progressStarted = progressStarted;
+        this.progressDownloading = progressDownloading;
+        this.progressCompleted = progressCompleted;
+        this.progressPresent = progressPresent;
+
+        return this;
+    }
+
+    public ImageLoader progressStarted(ProgressStarted progressStarted) {
+        this.progressStarted = progressStarted;
+        return this;
+    }
+
+    public ImageLoader progressDownloading(ProgressDownloading progressDownloading) {
+        this.progressDownloading = progressDownloading;
+        return this;
+    }
+
+    public ImageLoader progressCompleted(ProgressCompleted progressCompleted) {
+        this.progressCompleted = progressCompleted;
+        return this;
+    }
+
+    public ImageLoader progressPresent(ProgressPresent progressPresent) {
+        this.progressPresent = progressPresent;
+        return this;
     }
 
     public ImageLoader backgroundColor(int color) {
@@ -166,7 +203,7 @@ public class ImageLoader {
             return;
         }
 
-//        request.fitCenter();
+        request.fitCenter();
 
         request.diskCacheStrategy(DiskCacheStrategy.SOURCE);
 
@@ -225,7 +262,7 @@ public class ImageLoader {
             return;
         }
 
-//        request.fitCenter();
+        request.fitCenter();
 
         request.diskCacheStrategy(DiskCacheStrategy.SOURCE);
 
@@ -263,22 +300,30 @@ public class ImageLoader {
                         .build(imageView)) {
                     @Override
                     protected void onConnecting() {
-                        Log.d(TAG, "onConnecting() called : " + uri.getLastPathSegment());
+                        if (progressStarted != null) {
+                            progressStarted.onStart();
+                        }
                     }
 
                     @Override
                     protected void onDownloading(long bytesRead, long expectedLength) {
-                        Log.d(TAG, "onDownloading() called with: bytesRead = [" + bytesRead + "], expectedLength = [" + expectedLength + "] : " + uri.getLastPathSegment());
+                        if (progressDownloading != null) {
+                            progressDownloading.onDownloading(((int) (bytesRead * 100 / expectedLength)));
+                        }
                     }
 
                     @Override
                     protected void onDownloaded() {
-                        Log.d(TAG, "onDownloaded() called : " + uri.getLastPathSegment());
+                        if (progressCompleted != null) {
+                            progressCompleted.onCompleted();
+                        }
                     }
 
                     @Override
                     protected void onDelivered() {
-                        Log.d(TAG, "onDelivered() called : " + uri.getLastPathSegment());
+                        if (progressPresent != null) {
+                            progressPresent.onPresent();
+                        }
                     }
                 });
     }
@@ -317,4 +362,19 @@ public class ImageLoader {
         return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && activity.isDestroyed());
     }
 
+    public interface ProgressStarted {
+        void onStart();
+    }
+
+    public interface ProgressDownloading {
+        void onDownloading(int progress);
+    }
+
+    public interface ProgressCompleted {
+        void onCompleted();
+    }
+
+    public interface ProgressPresent {
+        void onPresent();
+    }
 }

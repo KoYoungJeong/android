@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.utils.image;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
@@ -85,10 +83,7 @@ public class JandiGlideModule implements GlideModule {
         private static final Map<String, UIProgressListener> LISTENERS = new HashMap<>();
         private static final Map<String, Long> PROGRESSES = new HashMap<>();
 
-        private final Handler handler;
-
         DispatchingProgressListener() {
-            this.handler = new Handler(Looper.getMainLooper());
         }
 
         static void forget(String url) {
@@ -112,12 +107,7 @@ public class JandiGlideModule implements GlideModule {
                 forget(key);
             }
             if (needsDispatch(key, bytesRead, contentLength, listener.getGranualityPercentage())) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onProgress(bytesRead, contentLength);
-                    }
-                });
+                listener.onProgress(bytesRead, contentLength);
             }
         }
 
