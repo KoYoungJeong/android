@@ -189,6 +189,7 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
                     LogUtil.e(Log.getStackTraceString(throwable));
                     return new ArrayList<>();
                 })
+                .defaultIfEmpty(new ArrayList<>(0))
                 .doOnNext(roomFilterDataModel::setFolders)
                 .map(topicFolders -> {
                     List<TopicRoom> unFoldedTopics = roomFilterModel.getUnfoldedTopics(topicFolders);

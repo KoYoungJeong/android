@@ -356,13 +356,17 @@ public class SearchActivity extends BaseAppCompatActivity
     }
 
     @Override
-    public void showTopicInfoDialog(TopicRoom topicRoom) {
+    public void showTopicInfoDialog(TopicRoom topicRoom, boolean fromRoomSearch, long searchedLinkId) {
         TopicInfoDialog dialog = TopicInfoDialog.instantiate(topicRoom);
         int type = topicRoom.isPublicTopic() ?
                 JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
         dialog.show(getSupportFragmentManager(), "dialog");
-        dialog.setOnJoinClickListener((topicEntityId) ->
-                searchPresenter.onJoinTopic(topicEntityId, type));
+        dialog.setOnJoinClickListener((topicEntityId) -> {
+            searchPresenter.onJoinTopic(topicEntityId, type, fromRoomSearch, searchedLinkId);
+            if(fromRoomSearch){
+
+            }
+        });
     }
 
     @OnClick(R.id.iv_search_mic)
