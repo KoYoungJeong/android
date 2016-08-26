@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
+import com.tosslab.jandi.app.events.files.FileCreatedEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.messages.AnnouncementUpdatedEvent;
@@ -72,6 +73,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketConnectBotDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketConnectBotUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketFileCreated;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileShareEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
@@ -246,8 +248,8 @@ public class JandiSocketServiceModel {
         messageEventActorMapper.put(SocketTopicFolderItemDeletedEvent.class, this::onFolderItemDeleted);
         messageEventActorMapper.put(SocketTeamUpdatedEvent.class, this::onTeamUpdated);
 
-
         // 메세지 관련 처리
+        messageEventActorMapper.put(SocketFileCreated.class, this::onFileCreated);
         messageEventActorMapper.put(SocketFileDeletedEvent.class, this::onFileDeleted);
         messageEventActorMapper.put(SocketFileUnsharedEvent.class, this::onFileUnshared);
         messageEventActorMapper.put(SocketFileCommentDeletedEvent.class, this::onFileCommentDeleted);
@@ -306,6 +308,10 @@ public class JandiSocketServiceModel {
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
         }
+    }
+
+    public void onFileCreated(Object object) {
+        postEvent(new FileCreatedEvent());
     }
 
     private void saveEvent(EventHistoryInfo event) {
