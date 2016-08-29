@@ -63,7 +63,7 @@
         android:background="@color/jandi_d1d1d1" />
 
 
-    <ImageView
+    <TextView
         android:id="@+id/btn_team_info_invite"
         android:layout_width="match_parent"
         android:layout_height="36dp"
@@ -72,6 +72,7 @@
         android:layout_margin="16dp"
         android:background="@drawable/bg_round_blue_rect"
         android:foreground="?android:attr/selectableItemBackground"
+        android:gravity="center"
         android:text="@string/jandi_invite_to_team_for_member"
         android:textColor="@color/white"
         android:textSize="@dimen/jandi_text_size_large" />

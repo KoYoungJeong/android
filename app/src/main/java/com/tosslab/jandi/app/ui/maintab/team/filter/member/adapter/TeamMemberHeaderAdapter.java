@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersAdapter;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.maintab.team.filter.member.domain.TeamDisabledMemberItem;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.domain.TeamMemberItem;
 
 import butterknife.Bind;
@@ -32,21 +33,32 @@ public class TeamMemberHeaderAdapter implements StickyHeadersAdapter<TeamMemberH
     public void onBindViewHolder(HeaderViewHolder headerViewHolder, int position) {
         TeamMemberItem item = dataModel.getItem(position);
 
-        if (item.getChatChooseItem().isStarred()) {
-            headerViewHolder.tvTitle.setText(R.string.jandi_action_starred);
+        if (item instanceof TeamDisabledMemberItem) {
+            headerViewHolder.itemView.setVisibility(View.GONE);
         } else {
-            headerViewHolder.tvTitle.setText(item.getFirstCharacter());
+            headerViewHolder.itemView.setVisibility(View.VISIBLE);
+
+            if (item.getChatChooseItem().isStarred()) {
+                headerViewHolder.tvTitle.setText(R.string.jandi_action_starred);
+            } else {
+                headerViewHolder.tvTitle.setText(item.getFirstCharacter());
+            }
         }
+
 
     }
 
     @Override
     public long getHeaderId(int position) {
         TeamMemberItem item = dataModel.getItem(position);
-        if (item.getChatChooseItem().isStarred()) {
-            return "Starred".hashCode();
+        if (item instanceof TeamDisabledMemberItem) {
+            return "disabled".hashCode();
         } else {
-            return item.getFirstCharacter().hashCode();
+            if (item.getChatChooseItem().isStarred()) {
+                return "Starred".hashCode();
+            } else {
+                return item.getFirstCharacter().hashCode();
+            }
         }
     }
 

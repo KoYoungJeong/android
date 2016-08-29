@@ -127,7 +127,7 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
                     .keyword(((DeptJobAdapter) adapter1).getItem(position).first.toString())
                     .type(type)
                     .selectMode(selectMode)
-                    .pickMode(roomId < 0)
+                    .pickMode(selectMode && roomId < 0)
                     .build(), REQ_MEMBERS_OF_GROUP);
 
         });
@@ -192,7 +192,7 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
     @Override
     public void showEmptyView(String keyword) {
         vgEmpty.setVisibility(View.VISIBLE);
-        String textFormat = getString(R.string.jandi_has_no_searched_member, keyword);
+        String textFormat = getString(R.string.jandi_has_no_searched_member_333333, keyword);
         tvEmpty.setText(Html.fromHtml(String.format(textFormat, keyword)));
     }
 

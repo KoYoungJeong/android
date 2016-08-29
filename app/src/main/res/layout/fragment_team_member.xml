@@ -1,43 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_team_member"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="48dp"/>
+        android:clipToPadding="false" />
 
-
-    <LinearLayout
-        android:id="@+id/vg_team_member_disabled"
-        android:layout_width="match_parent"
-        android:layout_height="75dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/jandi_more_bg"
-        android:gravity="center"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/icon_disabled_members"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:text="@string/jandi_disabled_members"
-            android:textColor="@color/jandi_text"
-            android:textSize="@dimen/jandi_text_size_large"/>
-    </LinearLayout>
 
     <include
         android:id="@+id/layout_team_member_search_empty"
         layout="@layout/layout_team_member_search_empty"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </RelativeLayout>

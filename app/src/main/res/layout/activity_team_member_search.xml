@@ -28,7 +28,7 @@
             android:background="@drawable/bg_round_rect_white"
             android:completionThreshold="1"
             android:gravity="center_vertical"
-            android:hint="@string/jandi_topic_message_search"
+            android:hint="@string/jandi_search_member_name_or_division"
             android:imeOptions="actionSearch|flagNoExtractUi"
             android:inputType="text"
             android:paddingLeft="64dp"
@@ -54,9 +54,9 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:background="?android:attr/selectableItemBackground"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:background="?android:attr/selectableItemBackground"
             android:scaleType="centerInside"
             android:src="@drawable/btn_search_voice" />
 

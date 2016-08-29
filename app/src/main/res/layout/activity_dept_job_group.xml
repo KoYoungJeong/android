@@ -10,13 +10,14 @@
         android:id="@+id/layout_dept_job_group_bar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:navigationIcon="@drawable/actionbar_icon_back" />
+        app:navigationIcon="@drawable/actionbar_icon_back"
+        app:titleMarginEnd="16dp" />
 
     <android.support.v7.widget.RecyclerView
-        android:layout_below="@+id/layout_dept_job_group_bar"
         android:id="@+id/list_dept_job_group"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layout_dept_job_group_bar" />
 
     <RelativeLayout
         android:id="@+id/vg_dept_job_group_toggled"

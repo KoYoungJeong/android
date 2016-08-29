@@ -289,6 +289,7 @@
 	<string name="jandi_has_joined">"%s已加入"</string>
 	<string name="jandi_has_no_search_result">"沒有符合 '%s' 的結果"</string>
 	<string name="jandi_has_no_searched_member">"沒有符合 <![CDATA[<b><font color=#404040>%s</font></b>]]> 的結果"</string>
+	<string name="jandi_has_no_searched_member_333333">"沒有符合 <![CDATA[<font color=#333333>%s</font>]]> 的結果"</string>
 	<string name="jandi_have_an_account_already">"已經有團隊註冊了嗎?"</string>
 	<string name="jandi_help">"説明"</string>
 	<string name="jandi_hi_apk_store">"安卓市場"</string>

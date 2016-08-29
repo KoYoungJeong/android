@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter;
 
 
+import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.maintab.team.filter.member.domain.TeamDisabledMemberItem;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.domain.TeamMemberItem;
 import com.tosslab.jandi.app.ui.members.adapter.searchable.viewholder.MemberViewHolder;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
@@ -22,9 +24,11 @@ import java.util.Set;
 
 import butterknife.Bind;
 
-public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.UserViewHolder>
+public class TeamMemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements TeamMemberDataModel, TeamMemberDataView, ToggleCollector {
 
+    private static final int TYPE_DISABLED = 2;
+    private static final int TYPE_NORMAL = 1;
     private List<TeamMemberItem> users;
     private OnRecyclerItemClickListener onRecyclerItemClickListener;
     private boolean isSelectedMode;
@@ -48,29 +52,54 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.Us
     }
 
     @Override
-    public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return UserViewHolder.createForUser(parent);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == TYPE_NORMAL) {
+            return UserViewHolder.createForUser(parent);
+        } else {
+            return DisabledViewHolder.create(parent);
+        }
     }
 
     @Override
-    public void onBindViewHolder(UserViewHolder holder, int position) {
-        holder.setSelectMode(isSelectedMode);
-        TeamMemberItem item = getItem(position);
-        item.getChatChooseItem().setIsChooseItem(containsId(item.getChatChooseItem().getEntityId()));
-        holder.onBindView(item);
-        if (!hasHeader) {
-            holder.showFullDivider();
+    public int getItemViewType(int position) {
+        if (getItem(position) instanceof TeamDisabledMemberItem) {
+            return TYPE_DISABLED;
         } else {
-            if (isSameFirstCharacterToNext(position)) {
-                holder.showHalfDivider();
-            } else {
-                holder.dismissDividers();
-            }
+            return TYPE_NORMAL;
         }
+    }
 
-        holder.itemView.setOnClickListener(v -> {
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        if (getItemViewType(position) == TYPE_NORMAL) {
+            UserViewHolder holder = (UserViewHolder) viewHolder;
+            holder.setProfileImageClickable(false);
+            holder.setSelectMode(isSelectedMode);
+            TeamMemberItem item = getItem(position);
+            item.getChatChooseItem().setIsChooseItem(containsId(item.getChatChooseItem().getEntityId()));
+            holder.onBindView(item);
+            if (!hasHeader) {
+                if (position >= getItemCount() - 1) {
+                    holder.dismissDividers();
+                } else {
+                    holder.showHalfDivider();
+                }
+            } else {
+                if (isSameFirstCharacterToNext(position)) {
+                    if (position >= getItemCount() - 1) {
+                        holder.dismissDividers();
+                    } else {
+                        holder.showHalfDivider();
+                    }
+                } else {
+                    holder.dismissDividers();
+                }
+            }
+
+        }
+        viewHolder.itemView.setOnClickListener(v -> {
             if (onRecyclerItemClickListener != null) {
-                onRecyclerItemClickListener.onItemClick(holder.itemView, TeamMemberAdapter.this, position);
+                onRecyclerItemClickListener.onItemClick(viewHolder.itemView, TeamMemberAdapter.this, position);
             }
         });
 
@@ -174,10 +203,26 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.Us
     }
 
 
+    static class DisabledViewHolder extends RecyclerView.ViewHolder {
+
+        public DisabledViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        public static DisabledViewHolder create(ViewGroup parent) {
+            LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+            View view = layoutInflater.inflate(R.layout.item_team_disabled_member, parent, false);
+            return new DisabledViewHolder(view);
+        }
+    }
+
     static class UserViewHolder extends MemberViewHolder<TeamMemberItem> {
 
         @Bind(R.id.tv_user_name)
         TextView tvName;
+
+        @Bind(R.id.cb_user_selected)
+        AppCompatCheckBox cbUserSelected;
 
         UserViewHolder(View itemView) {
             super(itemView);
@@ -197,6 +242,10 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<TeamMemberAdapter.Us
         @Override
         public void onBindView(TeamMemberItem item) {
             bindView(item.getChatChooseItem());
+            cbUserSelected.setFocusable(false);
+            cbUserSelected.setFocusableInTouchMode(false);
+            cbUserSelected.setClickable(false);
+            cbUserSelected.setOnClickListener(null);
             setIsTeamMemberList(true);
             tvName.setText(item.getNameOfSpan(), TextView.BufferType.SPANNABLE);
         }

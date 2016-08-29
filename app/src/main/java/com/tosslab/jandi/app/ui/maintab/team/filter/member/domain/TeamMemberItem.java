@@ -15,15 +15,22 @@ public class TeamMemberItem {
 
 
     public TeamMemberItem(User user, String keyword) {
-        chatChooseItem = ChatChooseItem.create(user);
-        this.keyword = keyword;
-        if (!chatChooseItem.isInactive()) {
-            name = chatChooseItem.getName();
-        } else {
-            name = chatChooseItem.getEmail();
-        }
+        if (user != null) {
 
-        firstCharacter = FirstCharacterUtil.firstCharacter(name);
+            chatChooseItem = ChatChooseItem.create(user);
+            if (!chatChooseItem.isInactive()) {
+                name = chatChooseItem.getName();
+            } else {
+                name = chatChooseItem.getEmail();
+            }
+            firstCharacter = FirstCharacterUtil.firstCharacter(name);
+        } else {
+            chatChooseItem = null;
+            name = "";
+            firstCharacter = "";
+        }
+        this.keyword = keyword;
+
     }
 
     public ChatChooseItem getChatChooseItem() {

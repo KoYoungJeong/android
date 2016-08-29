@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter.TeamMemberDataModel;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.adapter.ToggleCollector;
+import com.tosslab.jandi.app.ui.maintab.team.filter.member.domain.TeamDisabledMemberItem;
 import com.tosslab.jandi.app.ui.maintab.team.filter.member.domain.TeamMemberItem;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 import com.tosslab.jandi.app.views.spannable.HighlightSpannable;
@@ -92,6 +93,17 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                             return true;
                         })
                         .map((user1) -> new TeamMemberItem(user1, it))
+                        .concatWith(Observable.defer(() -> {
+                            // 검색어 없을 때
+                            // 선택 모드
+                            // 1인 pick 모드
+                            return Observable.just(TextUtils.isEmpty(it) && selectMode && roomId < 0)
+                                    .filter(pickmode -> pickmode)
+                                    .flatMap(ttt -> Observable.from(TeamInfoLoader.getInstance().getUserList()))
+                                    .map(User::isEnabled) // enabled 상태 받음
+                                    .takeFirst(enabled -> !enabled) // disabled 인 상태 필터
+                                    .map(disabld -> new TeamDisabledMemberItem(null, it));
+                        }))
                         .compose(sort())
                         .compose(textToSpan(it)))
                 .observeOn(AndroidSchedulers.mainThread())
@@ -106,14 +118,6 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                     view.refreshDataView();
                 });
 
-        Observable.from(TeamInfoLoader.getInstance().getUserList())
-                .map(User::isEnabled) // enabled 상태 받음
-                .takeFirst(it -> !it) // disabled 인 상태 필터
-                .defaultIfEmpty(true) // disabled 상태가 없으면 true 반환
-                .subscribe((hasDisabled) -> {
-                    // true == disabeld 없음, false == disabled 있음
-                    view.setDisabledUserBar(!hasDisabled);
-                }, t -> {});
     }
 
     private Observable.Transformer<? super List<TeamMemberItem>, ? extends List<TeamMemberItem>> textToSpan(String it) {
@@ -148,6 +152,13 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
 
     private Observable.Transformer<? super TeamMemberItem, ? extends List<TeamMemberItem>> sort() {
         return userObservable -> userObservable.toSortedList((entity, entity2) -> {
+
+                    if (entity instanceof TeamDisabledMemberItem) {
+                        return 1;
+                    } else if (entity2 instanceof TeamDisabledMemberItem) {
+                        return -1;
+                    }
+
                     if (selectMode) {
                         return StringCompareUtil.compare(entity.getName(), entity2.getName());
                     } else {
@@ -171,6 +182,11 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
 
     @Override
     public void onItemClick(int position) {
+
+        if (teamMemberDataModel.getItem(position) instanceof TeamDisabledMemberItem) {
+            view.moveDisabledMembers();
+            return;
+        }
 
         String value = filterSubject.getValue();
         if (value.length() > 0) {

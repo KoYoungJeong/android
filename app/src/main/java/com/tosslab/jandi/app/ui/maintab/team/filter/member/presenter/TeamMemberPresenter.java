@@ -23,6 +23,8 @@ public interface TeamMemberPresenter {
 
     interface View {
 
+        void moveDisabledMembers();
+
         void refreshDataView();
 
         void moveProfile(long userId);
@@ -38,8 +40,6 @@ public interface TeamMemberPresenter {
         void successToInvitation();
 
         void showFailToInvitation();
-
-        void setDisabledUserBar(boolean hasDisabledUser);
 
         void showEmptyView(String keyword);
 

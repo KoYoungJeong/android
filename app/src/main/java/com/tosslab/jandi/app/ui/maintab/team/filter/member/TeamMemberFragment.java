@@ -10,8 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +18,6 @@ import android.widget.TextView;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity;
@@ -45,7 +42,6 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import rx.Observable;
 
 public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.View, KeywordObservable, OnToggledUser {
@@ -53,9 +49,6 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     public static final int REQ_DISABLED_MEMBER = 201;
     @Bind(R.id.list_team_member)
     RecyclerView lvMember;
-
-    @Bind(R.id.vg_team_member_disabled)
-    android.view.View vgDisabled;
 
     @Bind(R.id.layout_team_member_search_empty)
     android.view.View vgEmpty;
@@ -135,8 +128,8 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         });
     }
 
-    @OnClick(R.id.vg_team_member_disabled)
-    void onDisabledClick() {
+    @Override
+    public void moveDisabledMembers() {
         DisabledEntityChooseActivity_.intent(this)
                 .startForResult(REQ_DISABLED_MEMBER);
     }
@@ -220,28 +213,10 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     }
 
     @Override
-    public void setDisabledUserBar(boolean hasDisabledUser) {
-
-        if (hasDisabledUser) {
-            if (selectMode && roomId < 0) {
-                vgDisabled.setVisibility(View.VISIBLE);
-                DisplayMetrics dm = JandiApplication.getContext().getResources().getDisplayMetrics();
-                float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 75f, dm);
-                lvMember.setPadding(0, 0, 0, (int) padding);
-            } else {
-                vgDisabled.setVisibility(View.GONE);
-            }
-        } else {
-            vgDisabled.setVisibility(View.GONE);
-        }
-
-    }
-
-    @Override
     public void showEmptyView(String keyword) {
         vgEmpty.setVisibility(View.VISIBLE);
-        String textFormat = "\"<font color=\"#333333\">%s</font>\"의 검색 결과가 없습니다.";
-        tvEmpty.setText(Html.fromHtml(String.format(textFormat, keyword)));
+        String msg = getString(R.string.jandi_has_no_searched_member_333333, keyword);
+        tvEmpty.setText(Html.fromHtml(msg));
     }
 
     @Override

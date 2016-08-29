@@ -289,6 +289,7 @@
 	<string name="jandi_has_joined">"%s님이 참여하였습니다"</string>
 	<string name="jandi_has_no_search_result">"%s'의 검색 결과가 없습니다."</string>
 	<string name="jandi_has_no_searched_member">"<![CDATA[<b><font color=#404040>%s</font></b>]]>의 검색 결과가 없습니다."</string>
+	<string name="jandi_has_no_searched_member_333333">"<![CDATA[<font color=#333333>%s</font>]]>의 검색 결과가 없습니다."</string>
 	<string name="jandi_have_an_account_already">"이미 계정이 있으신가요?"</string>
 	<string name="jandi_help">"도움말"</string>
 	<string name="jandi_hi_apk_store">"Hi Apk 스토어"</string>
@@ -561,8 +562,8 @@
 	<string name="jandi_signup_title">"가입하기"</string>
 	<string name="jandi_signup_verification_code">"인증번호 이메일을 발송했습니다.\n받으신 인증번호를 입력해주세요."</string>
 	<string name="jandi_signup_verify_title">"인증번호 확인"</string>
-	<string name="jandi_sort_folder">"폴더 순으로"</string>
-	<string name="jandi_sort_updated">"최신 메시지 순으로"</string>
+	<string name="jandi_sort_folder">"폴더 순"</string>
+	<string name="jandi_sort_updated">"최신 메시지 순"</string>
 	<string name="jandi_sounds">"소리"</string>
 	<string name="jandi_sounds_air_pop">"버블팝"</string>
 	<string name="jandi_sounds_arise">"기타 이중음"</string>
