@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.model.NavigationDataModel;
 import com.tosslab.jandi.app.ui.maintab.navigation.model.NavigationModel;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
@@ -326,7 +327,12 @@ public class NavigationPresenterImpl implements NavigationPresenter {
 
     @Override
     public void onInitUserProfile() {
-        navigationView.setUserProfile(navigationModel.getMe());
+        try {
+            User me = navigationModel.getMe();
+            navigationView.setUserProfile(me);
+        } catch (Exception e) {
+            LogUtil.e(Log.getStackTraceString(e));
+        }
     }
 
 }
