@@ -10,7 +10,7 @@
         android:id="@+id/actionbar_team_member_search"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:navigationIcon="@drawable/actionbar_icon_back" />
+        app:navigationIcon="@drawable/actionbar_icon_back"/>
 
 
     <RelativeLayout
@@ -34,7 +34,7 @@
             android:paddingLeft="64dp"
             android:paddingRight="64dp"
             android:textColor="#333333"
-            android:textSize="18dp" />
+            android:textSize="18dp"/>
 
         <ImageView
             android:id="@+id/iv_search_backkey"
@@ -46,7 +46,7 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/btn_search_back" />
+            android:src="@drawable/btn_search_back"/>
 
         <ImageView
             android:id="@+id/iv_search_mic"
@@ -58,7 +58,7 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/btn_search_voice" />
+            android:src="@drawable/btn_search_voice"/>
 
     </RelativeLayout>
 
@@ -67,7 +67,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/tabs_team_member_search"
-        android:overScrollMode="never" />
+        android:overScrollMode="never"/>
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tabs_team_member_search"
@@ -77,15 +77,16 @@
         app:tabBackground="@color/jandi_primary_color"
         app:tabIndicatorColor="@color/white"
         app:tabIndicatorHeight="3dp"
+        app:tabMaxWidth="0dp"
         app:tabSelectedTextColor="@color/white"
         app:tabTextAppearance="@style/TeamTabTextApprearance"
-        app:tabTextColor="@color/jandi_transparent_white_70p" />
+        app:tabTextColor="@color/jandi_transparent_white_70p"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignBottom="@+id/tabs_team_member_search"
-        android:background="@color/jandi_tab_underline" />
+        android:background="@color/jandi_tab_underline"/>
 
     <RelativeLayout
         android:id="@+id/vg_team_member_toggled"
@@ -98,13 +99,13 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/jandi_tab_underline" />
+            android:background="@color/jandi_tab_underline"/>
 
         <View
             android:id="@+id/space_team_member_toggled_space"
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"/>
 
         <TextView
             android:id="@+id/tv_team_member_toggled_invite"
@@ -114,7 +115,7 @@
             android:gravity="center"
             android:text="xx명 선택"
             android:textColor="@color/jandi_create_topic"
-            android:textSize="@dimen/jandi_text_size_medium" />
+            android:textSize="@dimen/jandi_text_size_medium"/>
 
         <TextView
             android:id="@+id/tv_team_member_toggled_unselect_all"
@@ -124,7 +125,7 @@
             android:gravity="center"
             android:text="@string/jandi_cancel_all"
             android:textColor="@color/jandi_text"
-            android:textSize="@dimen/jandi_text_size_medium" />
+            android:textSize="@dimen/jandi_text_size_medium"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -139,7 +140,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/lv_team_member_search_recent"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"/>
 
     </LinearLayout>
 

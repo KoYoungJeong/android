@@ -46,6 +46,7 @@ import com.tosslab.jandi.app.ui.maintab.presenter.MainTabPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.TabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.ChatTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.MypageTabInfo;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.TeamTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.TopicTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.BackPressConsumer;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.TabFactory;
@@ -260,7 +261,8 @@ public class MainTabActivity extends BaseAppCompatActivity
 
                 int position = tab.getPosition();
                 tvTitle.setText(tab.getText());
-                vTopShadow.setVisibility(position == MypageTabInfo.INDEX ? View.GONE : View.VISIBLE);
+                boolean withoutShadow = position == MypageTabInfo.INDEX || position == TeamTabInfo.INDEX;
+                vTopShadow.setVisibility(withoutShadow ? View.GONE : View.VISIBLE);
 
                 boolean isFABController = position == TopicTabInfo.INDEX || position == ChatTabInfo.INDEX;
                 btnFab.setVisibility(isFABController ? View.VISIBLE : View.GONE);

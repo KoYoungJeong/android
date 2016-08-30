@@ -264,7 +264,7 @@
             android:theme="@style/Jandi.NoTitle"/>
 
         <activity
-            android:name=".ui.maintab.team.filter.deptgroup.DeptJobGroupActivity"
+            android:name=".ui.maintab.tabs.team.filter.deptgroup.DeptJobGroupActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"/>
 
@@ -592,12 +592,12 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.maintab.team.info.TeamInfoActivity"
+            android:name=".ui.maintab.tabs.team.info.TeamInfoActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.maintab.team.filter.search.TeamMemberSearchActivity"
+            android:name=".ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize"/>
