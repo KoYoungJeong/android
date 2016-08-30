@@ -8,18 +8,17 @@ import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.model.NavigationDataModel;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.view.NavigationDataView;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.viewholder.NavigationViewHolder;
-import com.tosslab.jandi.app.ui.maintab.navigation.adapter.viewholder.ProfileViewHolder;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.viewholder.TeamCreateViewHolder;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.viewholder.TeamPendingActionViewHolder;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.viewholder.TeamPendingViewHolder;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.viewholder.TeamRow;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.viewholder.TeamViewHolder;
+import com.tosslab.jandi.app.ui.maintab.navigation.adapter.viewholder.VersionViewHolder;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.views.decoration.DividerViewHolder;
@@ -35,7 +34,6 @@ import rx.Observable;
 public class NavigationAdapter extends MultiItemRecyclerAdapter
         implements NavigationDataModel, NavigationDataView {
 
-    private static final int VIEW_TYPE_PROFILE = 0;
     private static final int VIEW_TYPE_TEAM_CREATE = 1;
     private static final int VIEW_TYPE_TEAM = 2;
     private static final int VIEW_TYPE_TEAM_PENDING = 3;
@@ -48,12 +46,11 @@ public class NavigationAdapter extends MultiItemRecyclerAdapter
     private OnTeamClickListener onTeamClickListener;
     private TeamCreateViewHolder.OnRequestTeamCreateListener onRequestTeamCreateListener;
     private LongSparseArray<Boolean> pendingActionOpenedIds;
+    private OnVersionClickListener onVersionClickListener;
 
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
-            case VIEW_TYPE_PROFILE:
-                return ProfileViewHolder.newInstance(parent);
             case VIEW_TYPE_TEAM_CREATE:
                 return TeamCreateViewHolder.newInstance(parent, onRequestTeamCreateListener);
             case VIEW_TYPE_TEAM:
@@ -64,11 +61,12 @@ public class NavigationAdapter extends MultiItemRecyclerAdapter
                 return TeamPendingActionViewHolder.newInstance(parent);
             case VIEW_TYPE_NAVIGATION:
                 return NavigationViewHolder.newInstance(parent);
+            case VIEW_TYPE_VERSION:
+                return VersionViewHolder.newInstance(parent);
+            default:
             case VIEW_TYPE_DIVIDER:
                 return DividerViewHolder.newInstance(parent);
         }
-
-        return null;
     }
 
     @Override
@@ -93,6 +91,10 @@ public class NavigationAdapter extends MultiItemRecyclerAdapter
 
             case VIEW_TYPE_TEAM_PENDING:
                 itemView.setOnClickListener(v -> openOrClosePendingActionView(getItem(position)));
+                break;
+
+            case VIEW_TYPE_VERSION:
+                itemView.setOnClickListener(v -> onVersionClickListener.onVersionClick());
                 break;
         }
     }
@@ -126,11 +128,6 @@ public class NavigationAdapter extends MultiItemRecyclerAdapter
         }
 
         return rows;
-    }
-
-    @Override
-    public Row<User> getProfileRow(User user) {
-        return Row.create(user, VIEW_TYPE_PROFILE);
     }
 
     @Override
@@ -272,6 +269,11 @@ public class NavigationAdapter extends MultiItemRecyclerAdapter
     }
 
     @Override
+    public Row<String> getVersionRow(String versionName) {
+        return Row.create(versionName, VIEW_TYPE_VERSION);
+    }
+
+    @Override
     public void setOnNavigationItemClickListener(OnNavigationItemClickListener onNavigationItemClickListener) {
         this.onNavigationItemClickListener = onNavigationItemClickListener;
     }
@@ -279,6 +281,11 @@ public class NavigationAdapter extends MultiItemRecyclerAdapter
     public void setOnRequestTeamCreateListener(
             TeamCreateViewHolder.OnRequestTeamCreateListener onRequestTeamCreateListener) {
         this.onRequestTeamCreateListener = onRequestTeamCreateListener;
+    }
+
+    @Override
+    public void setOnVersionClickListener(OnVersionClickListener onVersionClickListener) {
+        this.onVersionClickListener = onVersionClickListener;
     }
 
     @Override

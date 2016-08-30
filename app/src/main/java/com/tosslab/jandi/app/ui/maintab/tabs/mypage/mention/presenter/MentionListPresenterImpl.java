@@ -98,16 +98,6 @@ public class MentionListPresenterImpl implements MentionListPresenter {
     }
 
     @Override
-    public void onGetPollBadge() {
-        view.setPollBadgeCount(model.getPollBadgeCount());
-    }
-
-    @Override
-    public void onRetrieveMyInfo() {
-        view.setMe(model.getMe());
-    }
-
-    @Override
     public void loadMoreMentions(long offset) {
         view.showMoreProgress();
 

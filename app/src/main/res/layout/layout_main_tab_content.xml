@@ -20,7 +20,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:contentInsetStart="0dp"
-                app:layout_scrollFlags="scroll|enterAlways">
+                app:layout_scrollFlags="scroll|snap|enterAlways">
 
                 <com.tosslab.jandi.app.ui.maintab.navigation.widget.BadgeOverFlowMenu
                     android:id="@+id/btn_main_tab_menu"

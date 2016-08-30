@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.module.StarredListMo
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.presentor.StarredListPresenter;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import javax.inject.Inject;
 
@@ -42,7 +43,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tee on 15. 7. 29..
  */
-public class StarredListFragment extends Fragment implements StarredListPresenter.View {
+public class StarredListFragment extends Fragment implements StarredListPresenter.View, ListScroller {
 
     @Bind(R.id.btn_starred_list_all)
     View btnTabAll;
@@ -298,6 +299,11 @@ public class StarredListFragment extends Fragment implements StarredListPresente
     public void onDestroyView() {
         EventBus.getDefault().unregister(this);
         super.onDestroyView();
+    }
+
+    @Override
+    public void scrollToTop() {
+        lvStarredList.scrollToPosition(0);
     }
 
     private class StarredMessageLoadMoreRequestHandler implements StarredListAdapter.OnLoadMoreCallback {

@@ -236,6 +236,10 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                     }
                 })
                 .map(navigationDataModel::getNavigationRows)
+                .doOnNext(rows -> {
+                    String versionName = SettingsModel.getVersionName();
+                    rows.add(navigationDataModel.getVersionRow(versionName));
+                })
                 .subscribeOn(Schedulers.immediate())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(rows -> {
@@ -266,11 +270,11 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                 });
     }
 
-    @Override
-    public void onInitJandiVersion() {
-        String version = SettingsModel.getVersionName();
-        navigationView.setVersion(version);
-    }
+//    @Override
+//    public void onInitJandiVersion() {
+//        String version = SettingsModel.getVersionName();
+//        navigationView.setVersion(version);
+//    }
 
     @Override
     public void initializeBadgeCountingQueue() {
@@ -330,6 +334,5 @@ public class NavigationPresenterImpl implements NavigationPresenter {
     public void onInitUserProfile() {
         navigationView.setUserProfile(navigationModel.getMe());
     }
-
 
 }

@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.maintab.tabs.chat;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -24,12 +23,12 @@ import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
-import com.tosslab.jandi.app.ui.maintab.tabs.util.fab.FloatingActionButtonController;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.adapter.MainChatListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresenterImpl;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.to.ChatItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.EntityMenuDialogFragment_;
+import com.tosslab.jandi.app.ui.maintab.tabs.util.fab.FloatingActionButtonProvider;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
@@ -56,8 +55,7 @@ import de.greenrobot.event.EventBus;
 
 @EFragment(R.layout.fragment_main_chat_list)
 @OptionsMenu(R.menu.main_activity_menu)
-public class MainChatListFragment extends Fragment
-        implements MainChatListPresenter.View, FloatingActionButtonController, ListScroller {
+public class MainChatListFragment extends Fragment implements MainChatListPresenter.View, ListScroller {
 
     @Bean(MainChatListPresenterImpl.class)
     MainChatListPresenter mainChatListPresenter;
@@ -323,11 +321,26 @@ public class MainChatListFragment extends Fragment
     }
 
     @Override
-    public void onFloatingActionButtonProvided(View fabButton) {
-        fabButton.setOnClickListener(v -> {
-            chooseUser();
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.SelectTeamMember);
-        });
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (isVisibleToUser) {
+            setFloatingActionButtonIfExists();
+        }
+    }
+
+    private void setFloatingActionButtonIfExists() {
+        if (getActivity() == null || !(getActivity() instanceof FloatingActionButtonProvider)) {
+            return;
+        }
+        View btnFab = ((FloatingActionButtonProvider) getActivity()).provideFloatingActionButton();
+        if (btnFab != null) {
+            btnFab.setOnClickListener(v -> {
+                chooseUser();
+                AnalyticsUtil.sendEvent(
+                        AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.SelectTeamMember);
+            });
+        }
     }
 
 }

@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.view;
 
-import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.dto.MentionMessage;
 
 import java.util.List;
@@ -9,8 +8,6 @@ import java.util.List;
  * Created by tonyjs on 16. 3. 17..
  */
 public interface MentionListView {
-    void setMe(User me);
-
     void showProgress();
 
     void hideProgress();
@@ -40,8 +37,6 @@ public interface MentionListView {
     void clearLoadMoreOffset();
 
     void hideEmptyMentionView();
-
-    void setPollBadgeCount(int pollCount);
 
     void addNewMention(MentionMessage mentionMessages);
 

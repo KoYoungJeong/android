@@ -9,10 +9,6 @@ public interface MentionListPresenter {
 
     void onInitializeMyPage(boolean isRefreshAction);
 
-    void onGetPollBadge();
-
-    void onRetrieveMyInfo();
-
     void loadMoreMentions(long offset);
 
     void onClickMention(MentionMessage mention);

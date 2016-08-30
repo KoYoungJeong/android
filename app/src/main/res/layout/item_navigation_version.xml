@@ -2,24 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:gravity="center"
     android:background="?android:attr/selectableItemBackground"
+    android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingLeft="16dp"
     android:paddingRight="16dp">
 
-    <View
-        android:id="@+id/v_navigation_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginRight="32dp"/>
-
     <TextView
-        android:id="@+id/tv_navigation_title"
+        android:id="@+id/tv_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="center"
         android:singleLine="true"
-        android:textColor="@color/jandi_text"
+        android:textColor="@color/jandi_text_light"
         android:textSize="14dp"/>
 
 </LinearLayout>

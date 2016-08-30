@@ -7,7 +7,15 @@
         android:id="@+id/iv_navigation_profile_large"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:foreground="@color/rgb_000000_20"
         android:scaleType="centerCrop"/>
+
+    <View
+        android:id="@+id/v_navigation_profile_large_overlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/jandi_member_profile_img_overlay_default"
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/iv_navigation_profile"

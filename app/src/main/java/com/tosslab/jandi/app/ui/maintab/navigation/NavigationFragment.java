@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +23,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.baidu.android.pushservice.PushSettings;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
@@ -39,6 +42,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
+import com.tosslab.jandi.app.ui.maintab.dialog.UsageInformationDialogFragment_;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.NavigationAdapter;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.view.NavigationDataView;
 import com.tosslab.jandi.app.ui.maintab.navigation.component.DaggerNavigationComponent;
@@ -57,12 +61,14 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.KnockListener;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.Arrays;
@@ -85,6 +91,8 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     ImageView ivProfileLarge;
     @Bind(R.id.iv_navigation_profile)
     ImageView ivProfile;
+    @Bind(R.id.v_navigation_profile_large_overlay)
+    View vProfileImageLargeOverlay;
     @Bind(R.id.tv_navigation_profile_name)
     TextView tvName;
     @Bind(R.id.tv_navigation_profile_email)
@@ -102,6 +110,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     NavigationDataView navigationDataView;
 
     private ProgressWheel progressWheel;
+    private KnockListener usageInformationKnockListener;
 
     @Nullable
     @Override
@@ -124,6 +133,8 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         initProgressWheel();
 
         initNavigations();
+
+        initUsageInformationKnockListener();
     }
 
     void initNavigations() {
@@ -150,6 +161,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         navigationDataView.setOnNavigationItemClickListener(this::onOptionsItemSelected);
         navigationDataView.setOnRequestTeamCreateListener(this::moveToTeamCreate);
         navigationDataView.setOnTeamClickListener(this::joinToTeam);
+        navigationDataView.setOnVersionClickListener(() -> usageInformationKnockListener.knock());
     }
 
     private void joinToTeam(Team team) {
@@ -303,18 +315,8 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     }
 
     @Override
-    public void setOrientation(int orientation) {
-
-    }
-
-    @Override
     public void moveLoginActivity() {
         IntroActivity.startActivity(getActivity(), false);
-    }
-
-    @Override
-    public void setVersion(String version) {
-//        sbvVersion.setTitle(version);
     }
 
     @Override
@@ -326,9 +328,10 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         JandiSocketService.stopService(getActivity());
         getActivity().sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
-        Intent intent = new Intent(getActivity(), MainTabActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        startActivity(Henson.with(getActivity())
+                .gotoMainTabActivity()
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
         getActivity().finish();
     }
@@ -360,7 +363,13 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
     @Override
     public void showTeamInviteAcceptFailDialog(String errorMessage, Team team) {
+        if (getActivity() == null || getActivity().isFinishing()) {
+            return;
+        }
 
+        AlertUtil.showConfirmDialog(getActivity(), errorMessage, (dialog, which) -> {
+            navigationPresenter.onTeamInviteIgnoreAction(team);
+        }, false);
     }
 
     private void trackSignOut() {
@@ -396,19 +405,37 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         String photoUrl = user.getPhotoUrl();
         ImageUtil.loadProfileImage(ivProfile, photoUrl, R.drawable.profile_img);
 
-        Resources resources = ivProfile.getResources();
-        int defaultColor = resources.getColor(R.color.jandi_member_profile_img_overlay_default);
-        Drawable placeHolder = new ColorDrawable(defaultColor);
-        ImageLoader.newInstance()
-                .placeHolder(placeHolder, ImageView.ScaleType.FIT_XY)
-                .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
-                .transformation(new BlurTransformation(ivProfile.getContext(), 50))
-                .uri(Uri.parse(ImageUtil.getLargeProfileUrl(photoUrl)))
-                .into(ivProfileLarge);
-        ivProfileLarge.setOnClickListener(v -> moveToProfileSettingActivity());
+        if (!TextUtils.isEmpty(photoUrl) && photoUrl.contains("files-profile")) {
+            vProfileImageLargeOverlay.setVisibility(View.GONE);
+            Resources resources = ivProfile.getResources();
+            int defaultColor = resources.getColor(R.color.jandi_member_profile_img_overlay_default);
+            Drawable placeHolder = new ColorDrawable(defaultColor);
+            ImageLoader.newInstance()
+                    .placeHolder(placeHolder, ImageView.ScaleType.FIT_XY)
+                    .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                    .transformation(new BlurTransformation(ivProfile.getContext(), 50))
+                    .uri(Uri.parse(ImageUtil.getLargeProfileUrl(photoUrl)))
+                    .into(ivProfileLarge);
+        } else {
+            vProfileImageLargeOverlay.setVisibility(View.VISIBLE);
+        }
+
+        ivProfile.setOnClickListener(v -> moveToProfileSettingActivity());
         tvName.setText(user.getName());
         vOwnerBadge.setVisibility(user.isTeamOwner() ? View.VISIBLE : View.GONE);
         tvEmail.setText(user.getEmail());
+        easterEggForLog(tvEmail);
+    }
+
+    private void easterEggForLog(View view) {
+        KnockListener knockListener = KnockListener.create()
+                .expectKnockCount(10)
+                .expectKnockedIn(3000)
+                .onKnocked(() -> {
+                    LogUtil.LOG = true;
+                    PushSettings.enableDebugMode(JandiApplication.getContext(), LogUtil.LOG);
+                });
+        view.setOnClickListener(v -> knockListener.knock());
     }
 
     private void moveToProfileSettingActivity() {
@@ -441,6 +468,18 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
     public void onEvent(MessageReadEvent event) {
         navigationPresenter.onMessageRead(event.fromSelf(), event.getTeamId(), event.getReadCount());
+    }
+
+    private void initUsageInformationKnockListener() {
+        usageInformationKnockListener = KnockListener.create()
+                .expectKnockCount(10)
+                .expectKnockedIn(5000)
+                .onKnocked(this::showBugReportDialog);
+    }
+
+    private void showBugReportDialog() {
+        UsageInformationDialogFragment_.builder().build()
+                .show(getFragmentManager(), "usageInformationKnock");
     }
 
     @Override
