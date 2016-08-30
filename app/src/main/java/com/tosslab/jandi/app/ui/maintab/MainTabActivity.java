@@ -56,7 +56,6 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.TabView;
 
@@ -258,6 +257,18 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         viewPager.setOffscreenPageLimit(tabInfos.size());
         viewPager.setAdapter(tabPagerAdapter);
 
+        Observable.from(tabInfos)
+                .subscribe(tabInfo -> {
+                    TabView tabView = tabInfo.getTabView(getLayoutInflater(), tabLayout);
+                    initTabView(tabInfo, tabView);
+
+                    int index = tabInfo.getIndex();
+                    boolean isFirstTab = tabIndex == tabInfo.getIndex();
+                    tabLayout.addTab(tabLayout.newTab()
+                            .setText(tabInfo.getTitle())
+                            .setCustomView(tabView), index, isFirstTab);
+                });
+
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -298,17 +309,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             }
         });
 
-        Observable.from(tabInfos)
-                .subscribe(tabInfo -> {
-                    TabView tabView = tabInfo.getTabView(getLayoutInflater(), tabLayout);
-                    initTabView(tabInfo, tabView);
 
-                    int index = tabInfo.getIndex();
-                    boolean isFirstTab = tabIndex == tabInfo.getIndex();
-                    tabLayout.addTab(tabLayout.newTab()
-                            .setText(tabInfo.getTitle())
-                            .setCustomView(tabView), index, isFirstTab);
-                });
     }
 
     private void initTabView(TabInfo tabInfo, TabView tabView) {

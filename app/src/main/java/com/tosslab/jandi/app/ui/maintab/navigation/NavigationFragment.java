@@ -72,6 +72,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
+import io.intercom.android.sdk.Intercom;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
 /**
@@ -192,11 +193,18 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
             case R.id.nav_help:
                 moveToShowHelpPage();
                 return true;
+            case R.id.nav_1_on_1:
+                moveToLiveSupport();
+                return true;
             case R.id.nav_sign_out:
                 signOut();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void moveToLiveSupport() {
+        Intercom.client().displayMessenger();
     }
 
     private void moveToShowHelpPage() {

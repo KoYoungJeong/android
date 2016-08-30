@@ -55,6 +55,7 @@
 	<string name="file_upload_comment">"コメント(任意)"</string>
 	<string name="jadi_account_home">"ホームに戻る"</string>
 	<string name="jandi_1_1_message">"ダイレクトメッセージ"</string>
+	<string name="jandi_1_on_1_support">"お問い合わせ"</string>
 	<string name="jandi_91_apk_store">"91 Apkストア"</string>
 	<string name="jandi_about">"JANDIについて"</string>
 	<string name="jandi_account">"アカウント"</string>
@@ -124,6 +125,7 @@
 	<string name="jandi_browse_team">"チームに移動"</string>
 	<string name="jandi_call_acess_permission">"通話を発信するには電話へのJANDIのアクセスを求めてください。"</string>
 	<string name="jandi_cancel">"戻る"</string>
+	<string name="jandi_cancel_all">"全解除"</string>
 	<string name="jandi_cancel_invitation">"招待をキャンセル"</string>
 	<string name="jandi_canceled">"キャンセルされました"</string>
 	<string name="jandi_cannot_connect_service_try_again">"JANDIに接続できません。後で再起動してください。"</string>
@@ -134,6 +136,7 @@
 	<string name="jandi_change_passcode">"パスコード変更"</string>
 	<string name="jandi_character">"キャラクター"</string>
 	<string name="jandi_chat_detail">"トピック設定"</string>
+	<string name="jandi_choose_1_1_member">"ダイレクトメッセージを送るメンバーを選択"</string>
 	<string name="jandi_choose_app_store">"アプリストアを選択してください"</string>
 	<string name="jandi_choose_email">"メールアドレスを選択"</string>
 	<string name="jandi_choose_your_domain">"ドメイン名(英数字)を入力"</string>
@@ -287,6 +290,7 @@
 	<string name="jandi_has_joined">"%sさんが参加しました"</string>
 	<string name="jandi_has_no_search_result">"%s'に一致する結果がありません"</string>
 	<string name="jandi_has_no_searched_member">"<![CDATA[<b><font color=#404040>%s</font></b>]]>に一致する結果がありません"</string>
+	<string name="jandi_has_no_searched_member_333333">"<![CDATA[<font color=#333333>%s</font>]]>に一致する結果がありません"</string>
 	<string name="jandi_have_an_account_already">"すでにJANDIに登録済みの方はこちら"</string>
 	<string name="jandi_help">"ヘルプ"</string>
 	<string name="jandi_hi_apk_store">"Hi Apkストア"</string>
@@ -351,6 +355,7 @@
 	<string name="jandi_member_profile_email">"メールアドレス"</string>
 	<string name="jandi_member_profile_mention">"私のメンション"</string>
 	<string name="jandi_member_profile_phone">"電話番号"</string>
+	<string name="jandi_members">"メンバー"</string>
 	<string name="jandi_mention_all_topic_members">"トピック内"</string>
 	<string name="jandi_mention_mentioned_you">"さんからのメンション"</string>
 	<string name="jandi_mention_mentions">"メンション"</string>

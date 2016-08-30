@@ -330,28 +330,26 @@ public class NavigationPresenterImpl implements NavigationPresenter {
 
     @Override
     public void onInitIntercom() {
-        Observable.just(Registration.create())
-                .doOnNext(it -> {
 
+        Observable.just(new Object())
+                .observeOn(Schedulers.io())
+                .subscribe(o -> {
+                    Registration it = Registration.create();
                     ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
                     it.withUserId(accountInfo.getId());
-                    Observable.from(accountInfo.getEmails())
-                            .takeFirst(ResAccountInfo.UserEmail::isPrimary)
-                            .subscribe(email -> {
-                                it.withEmail(email.getId());
-                            });
+                    Intercom.client().registerIdentifiedUser(it);
 
                     long myId = TeamInfoLoader.getInstance().getMyId();
                     User user = TeamInfoLoader.getInstance().getUser(myId);
+
                     Map<String, Object> attr = new HashMap<>();
                     attr.put("name", user.getName());
+                    attr.put("email", user.getEmail());
                     attr.put("create_at", accountInfo.getCreatedAt());
                     attr.put("language_override", Locale.getDefault().getDisplayLanguage());
 
-                    it.withUserAttributes(attr);
-                })
-                .subscribe(it -> {
-                    Intercom.client().registerIdentifiedUser(it);
+                    Intercom.client().updateUser(attr);
+                    Intercom.client().setInAppMessageVisibility(Intercom.Visibility.GONE);
                 });
 
 
