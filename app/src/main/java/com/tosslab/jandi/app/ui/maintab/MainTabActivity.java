@@ -147,9 +147,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
             startSocketService();
 
-//            initTabs();
+            initTabs();
 
-            initTabBadges();
+//            initTabBadges();
 
             checkIfNotProfileSetUp();
 
