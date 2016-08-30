@@ -44,6 +44,8 @@ public interface NavigationPresenter {
 
     void onMessageRead(boolean fromSelf, long teamId, int readCount);
 
+    void onInitIntercom();
+
     interface View {
 
         void showCheckNetworkDialog();

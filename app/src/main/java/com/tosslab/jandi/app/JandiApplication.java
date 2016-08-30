@@ -50,6 +50,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.LogManager;
 
 import io.fabric.sdk.android.Fabric;
+import io.intercom.android.sdk.Intercom;
 import okhttp3.OkHttpClient;
 
 /**
@@ -98,6 +99,8 @@ public class JandiApplication extends MultiDexApplication {
 
         JandiApplication.setContext(this);
         FacebookSdk.sdkInitialize(this);
+
+        Intercom.initialize(this, "android_sdk-40917d53dc07205e1515f909a14a94752d410f70", "yt1d5jat");
 
         initParse();
 

@@ -124,7 +124,10 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         initProgressWheel();
 
         initNavigations();
+
+        navigationPresenter.onInitIntercom();
     }
+
 
     void initNavigations() {
         navigationPresenter.onInitUserProfile();

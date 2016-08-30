@@ -13,6 +13,8 @@ import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.model.NavigationDataModel;
 import com.tosslab.jandi.app.ui.maintab.navigation.model.NavigationModel;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
@@ -23,12 +25,17 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import io.intercom.android.sdk.Intercom;
+import io.intercom.android.sdk.identity.Registration;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -319,6 +326,35 @@ public class NavigationPresenterImpl implements NavigationPresenter {
             // 다른 플랫폼에서 읽으면 노답인데...
             onInitializeTeams();
         }
+    }
+
+    @Override
+    public void onInitIntercom() {
+        Observable.just(Registration.create())
+                .doOnNext(it -> {
+
+                    ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
+                    it.withUserId(accountInfo.getId());
+                    Observable.from(accountInfo.getEmails())
+                            .takeFirst(ResAccountInfo.UserEmail::isPrimary)
+                            .subscribe(email -> {
+                                it.withEmail(email.getId());
+                            });
+
+                    long myId = TeamInfoLoader.getInstance().getMyId();
+                    User user = TeamInfoLoader.getInstance().getUser(myId);
+                    Map<String, Object> attr = new HashMap<>();
+                    attr.put("name", user.getName());
+                    attr.put("create_at", accountInfo.getCreatedAt());
+                    attr.put("language_override", Locale.getDefault().getDisplayLanguage());
+
+                    it.withUserAttributes(attr);
+                })
+                .subscribe(it -> {
+                    Intercom.client().registerIdentifiedUser(it);
+                });
+
+
     }
 
     @Override
