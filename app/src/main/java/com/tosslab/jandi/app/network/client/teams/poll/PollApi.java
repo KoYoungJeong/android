@@ -107,7 +107,7 @@ public class PollApi extends ApiTemplate<PollApi.Api> {
         Call<ResPollCommentCreated> sendPollComment(@Path("teamId") long teamId, @Path("pollId") long pollId,
                                                     @Body ReqSendPollComment reqSendComment);
 
-        @PUT("teams/{teamId}/polls/{pollId}/successToInvitation")
+        @PUT("teams/{teamId}/polls/{pollId}/finish")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResPollLink> finishPoll(@Path("teamId") long teamId, @Path("pollId") long pollId);
 
