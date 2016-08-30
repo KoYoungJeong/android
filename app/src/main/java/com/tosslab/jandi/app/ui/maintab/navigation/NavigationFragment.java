@@ -402,6 +402,10 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
     @Override
     public void setUserProfile(User user) {
+        if (user == null || user.getId() <= 0) {
+            return;
+        }
+
         String photoUrl = user.getPhotoUrl();
         ImageUtil.loadProfileImage(ivProfile, photoUrl, R.drawable.profile_img);
 
