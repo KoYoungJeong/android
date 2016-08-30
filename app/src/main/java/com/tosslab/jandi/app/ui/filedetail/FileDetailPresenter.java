@@ -178,14 +178,26 @@ public class FileDetailPresenter {
 
     @Background(serial = "file_detail_background")
     public void onSendComment(long fileId, String message, List<MentionObject> mentions) {
+        boolean hasAllMention = fileDetailModel.hasAllMention(mentions, message);
+
         try {
             fileDetailModel.sendMessageComment(fileId, message, mentions);
 
             retrieveFileDetail(fileId, false);
 
             view.scrollToLastComment();
+
+            // for sprinklr
+            fileDetailModel.trackMessagePostSuccess(mentions.size(), hasAllMention);
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
+
+            if (e instanceof RetrofitException) {
+                RetrofitException e1 = (RetrofitException) e;
+                // for sprinklr
+                fileDetailModel.trackMessagePostFail(
+                        e1.getResponseCode(), mentions.size(), hasAllMention);
+            }
         }
     }
 
@@ -503,10 +515,17 @@ public class FileDetailPresenter {
             view.dismissProgress();
 
             view.setExternalLinkToClipboard();
+
+            fileDetailModel.trackCreatePublicLinkSuccess(fileId);
+
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
             view.dismissProgress();
             view.showUnexpectedErrorToast();
+            if (e instanceof RetrofitException) {
+                RetrofitException e1 = (RetrofitException) e;
+                fileDetailModel.trackCreatePublicLinkFail(fileId, e1.getResponseCode());
+            }
         }
     }
 
@@ -524,12 +543,20 @@ public class FileDetailPresenter {
             view.dismissProgress();
 
             view.showDisableExternalLinkSuccessToast();
+
+            fileDetailModel.trackDisablePublicLinkSuccess(fileId);
+
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
             view.dismissProgress();
             view.showUnexpectedErrorToast();
+            if (e instanceof RetrofitException) {
+                RetrofitException e1 = (RetrofitException) e;
+                fileDetailModel.trackDisablePublicLinkFail(fileId, e1.getResponseCode());
+            }
         }
     }
+
 
     public void onTopicDeleted(long entityId,
                                Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities) {
