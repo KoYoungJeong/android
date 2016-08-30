@@ -584,11 +584,6 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.search.main.SearchActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait" />
-
-        <activity
             android:name=".ui.search.filter.member.MemberFilterActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
