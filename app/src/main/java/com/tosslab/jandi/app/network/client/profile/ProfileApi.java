@@ -40,10 +40,10 @@ public class ProfileApi extends ApiTemplate<ProfileApi.Api> {
         return call(() -> getApi().getMemberProfile(teamId, memberId));
     }
 
-    public Human uploadProfilePhoto(long memberId, File file) throws RetrofitException {
+    public Human uploadProfilePhoto(long teamId, long memberId, File file) throws RetrofitException {
         MediaType mediaType = MediaType.parse(URLConnection.guessContentTypeFromName(file.getName()));
         MultipartBody.Part userFilePart = MultipartBody.Part.createFormData("photo", file.getName(), RequestBody.create(mediaType, file));
-        return call(() -> getApi().uploadProfilePhoto(memberId, userFilePart));
+        return call(() -> getApi().uploadProfilePhoto(teamId, memberId, userFilePart));
     }
 
 
@@ -65,8 +65,10 @@ public class ProfileApi extends ApiTemplate<ProfileApi.Api> {
         Call<ResAvatarsInfo> getAvartarsInfo();
 
         @Multipart
-        @PUT("members/{memberId}/profile/photo")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-        Call<Human> uploadProfilePhoto(@Path("memberId") long memberId, @Part MultipartBody.Part photo);
+        @PUT("teams/{teamId}/members/{memberId}/profile")
+        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+        Call<Human> uploadProfilePhoto(@Path("teamId") long teamId,
+                                       @Path("memberId") long memberId,
+                                       @Part MultipartBody.Part photo);
     }
 }
