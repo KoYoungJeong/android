@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
@@ -22,7 +23,6 @@ import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
-import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.adapter.MainChatListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresenterImpl;
@@ -308,8 +308,12 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
 
     @Click(R.id.btn_chat_list_no_messages)
     void chooseUser() {
-        EntityChooseActivity_.intent(getActivity())
-                .start();
+
+        startActivity(Henson.with(getActivity())
+                .gotoTeamMemberSearchActivity()
+                .isSelectMode(true)
+                .build());
+
         getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.SelectTeamMember_EmptyData);

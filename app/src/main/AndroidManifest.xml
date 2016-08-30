@@ -263,6 +263,11 @@
             android:screenOrientation="fullUser"
             android:theme="@style/Jandi.NoTitle"/>
 
+        <activity
+            android:name=".ui.maintab.team.filter.deptgroup.DeptJobGroupActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"/>
+
         <service android:name="com.parse.PushService"/>
 
 
@@ -585,6 +590,17 @@
             android:name=".ui.search.filter.room.RoomFilterActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.maintab.team.info.TeamInfoActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.maintab.team.filter.search.TeamMemberSearchActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
 
         <service android:name=".services.socket.JandiSocketService"/>
 

@@ -8,10 +8,10 @@ import com.tosslab.jandi.app.network.models.ReqCreatePoll;
 import com.tosslab.jandi.app.network.models.ReqSendPollComment;
 import com.tosslab.jandi.app.network.models.ReqVotePoll;
 import com.tosslab.jandi.app.network.models.ResCreatePoll;
-import com.tosslab.jandi.app.network.models.ResPollLink;
 import com.tosslab.jandi.app.network.models.ResPollCommentCreated;
 import com.tosslab.jandi.app.network.models.ResPollComments;
 import com.tosslab.jandi.app.network.models.ResPollDetail;
+import com.tosslab.jandi.app.network.models.ResPollLink;
 import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.ResPollParticipants;
 
@@ -107,7 +107,7 @@ public class PollApi extends ApiTemplate<PollApi.Api> {
         Call<ResPollCommentCreated> sendPollComment(@Path("teamId") long teamId, @Path("pollId") long pollId,
                                                     @Body ReqSendPollComment reqSendComment);
 
-        @PUT("teams/{teamId}/polls/{pollId}/finish")
+        @PUT("teams/{teamId}/polls/{pollId}/successToInvitation")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResPollLink> finishPoll(@Path("teamId") long teamId, @Path("pollId") long pollId);
 

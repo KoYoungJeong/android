@@ -22,6 +22,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Streaming;
 import rx.Observable;
 import rx.Subscription;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 public class FileDownloadApi {
@@ -38,7 +39,9 @@ public class FileDownloadApi {
         download.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                writeResponseBodyToDisk(response.body(), saveFile, progressCallback);
+                Observable.just(response)
+                        .observeOn(Schedulers.io())
+                        .subscribe(it -> writeResponseBodyToDisk(it.body(), saveFile, progressCallback));
             }
 
             @Override

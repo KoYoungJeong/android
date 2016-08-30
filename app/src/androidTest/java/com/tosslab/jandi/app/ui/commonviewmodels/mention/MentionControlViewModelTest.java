@@ -95,6 +95,8 @@ public class MentionControlViewModelTest {
             });
 
 
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+
             Editable text = textView.getText();
             assertTrue(text instanceof Spanned);
 
