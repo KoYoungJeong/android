@@ -76,19 +76,6 @@ public class NavigationModel {
         return JandiApplication.getContext().getResources().getBoolean(R.bool.portrait_only);
     }
 
-    public Observable<Object> getRefreshAccountInfoObservable() {
-        return Observable.defer(() -> {
-            try {
-                ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
-                AccountUtil.removeDuplicatedTeams(resAccountInfo);
-                AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
-                return Observable.just(new Object());
-            } catch (RetrofitException retrofitError) {
-                return Observable.error(retrofitError);
-            }
-        });
-    }
-
     public void refreshAccountInfo() {
         try {
             ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
@@ -102,8 +89,6 @@ public class NavigationModel {
     public Observable<List<Team>> getTeamsObservable() {
         return Observable.from(AccountRepository.getRepository().getAccountTeams())
                 .map(Team::createTeam)
-//                .toList()
-//                .defaultIfEmpty(new ArrayList<>());
                 .collect(ArrayList::new, List::add);
     }
 
@@ -122,11 +107,6 @@ public class NavigationModel {
             LogUtil.e(Log.getStackTraceString(e));
         }
         return teams;
-    }
-
-    public Observable<List<Team>> getSortedTeamListObservable(List<Team> teams) {
-        return Observable.from(teams)
-                .toSortedList((team, team2) -> team.getStatus() == Team.Status.PENDING ? -1 : 1);
     }
 
     public Observable<Object> getUpdateEntityInfoObservable(final long teamId) {

@@ -28,7 +28,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresente
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresenterImpl;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.to.ChatItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.EntityMenuDialogFragment_;
-import com.tosslab.jandi.app.ui.maintab.tabs.util.fab.FloatingActionButtonProvider;
+import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionButtonProvider;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;

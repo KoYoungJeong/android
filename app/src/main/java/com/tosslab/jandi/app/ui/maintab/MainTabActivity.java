@@ -49,7 +49,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.mypage.MypageTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.TopicTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.BackPressConsumer;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.TabFactory;
-import com.tosslab.jandi.app.ui.maintab.tabs.util.fab.FloatingActionButtonProvider;
+import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionButtonProvider;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;

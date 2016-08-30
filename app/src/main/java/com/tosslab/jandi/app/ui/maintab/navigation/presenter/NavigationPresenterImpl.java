@@ -270,12 +270,6 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                 });
     }
 
-//    @Override
-//    public void onInitJandiVersion() {
-//        String version = SettingsModel.getVersionName();
-//        navigationView.setVersion(version);
-//    }
-
     @Override
     public void initializeBadgeCountingQueue() {
         badgeCountingQueue = PublishSubject.create();

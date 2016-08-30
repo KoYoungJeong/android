@@ -47,7 +47,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderS
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderSettingActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.JoinableTopicListActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.BackPressConsumer;
-import com.tosslab.jandi.app.ui.maintab.tabs.util.fab.FloatingActionButtonProvider;
+import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionButtonProvider;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.SearchActivity;
