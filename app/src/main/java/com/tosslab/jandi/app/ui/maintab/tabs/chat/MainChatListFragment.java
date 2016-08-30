@@ -25,7 +25,6 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.fab.FloatingActionButtonController;
-import com.tosslab.jandi.app.ui.maintab.tabs.util.fab.OnFABControllerChangedListener;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.adapter.MainChatListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresenterImpl;
@@ -97,7 +96,6 @@ public class MainChatListFragment extends Fragment
 
         mainChatListPresenter.initChatList(getActivity(), selectedEntity);
 
-        sendToFabControllerChangeListener();
     }
 
     @Override
@@ -320,16 +318,6 @@ public class MainChatListFragment extends Fragment
     }
 
     @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-
-        if (!hidden) {
-            sendToFabControllerChangeListener();
-        }
-
-    }
-
-    @Override
     public void scrollToTop() {
         lvChat.scrollToPosition(0);
     }
@@ -342,10 +330,4 @@ public class MainChatListFragment extends Fragment
         });
     }
 
-    private void sendToFabControllerChangeListener() {
-        FragmentActivity activity = getActivity();
-        if (activity != null && activity instanceof OnFABControllerChangedListener) {
-            ((OnFABControllerChangedListener) activity).onFABControllerChanged(this);
-        }
-    }
 }

@@ -6,10 +6,46 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @Version(1)
-public class MessageOfOtherTeamEvent {
+public class MessageReadEvent {
+    private boolean fromSelf = false;
+
+    private long teamId;
+
     private int version;
 
     private long ts;
+
+    private int readCount;
+
+    public MessageReadEvent(long teamId) {
+        this(teamId, 0);
+    }
+
+    public MessageReadEvent(long teamId, int readCount) {
+        this.teamId = teamId;
+        this.readCount = readCount;
+    }
+
+    private MessageReadEvent(long teamId, int readCount, boolean fromSelf) {
+        this(teamId, readCount);
+        this.fromSelf = fromSelf;
+    }
+
+    public static MessageReadEvent fromSelf(long teamId, int readCount) {
+        return new MessageReadEvent(teamId, readCount, true);
+    }
+
+    public boolean fromSelf() {
+        return fromSelf;
+    }
+
+    public long getTeamId() {
+        return teamId;
+    }
+
+    public int getReadCount() {
+        return readCount;
+    }
 
     public long getTs() {
         return ts;
@@ -29,7 +65,7 @@ public class MessageOfOtherTeamEvent {
 
     @Override
     public String toString() {
-        return "MessageOfOtherTeamEvent{" +
+        return "MessageReadEvent{" +
                 "version=" + version +
                 '}';
     }
@@ -39,7 +75,7 @@ public class MessageOfOtherTeamEvent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        MessageOfOtherTeamEvent that = (MessageOfOtherTeamEvent) o;
+        MessageReadEvent that = (MessageReadEvent) o;
 
         if (version != that.version) return false;
         return ts == that.ts;

@@ -1,7 +1,10 @@
 package com.tosslab.jandi.app.ui.maintab.presenter;
 
+import android.util.Log;
+
 import com.tosslab.jandi.app.ui.maintab.model.MainTabModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import javax.inject.Inject;
@@ -45,6 +48,7 @@ public class MainTabPresenterImpl implements MainTabPresenter {
     @Override
     public void onCheckIfNotLastestVersion(Action0 completeAction) {
         if (!NetworkCheckUtil.isConnected()) {
+            completeAction.call();
             return;
         }
 
@@ -60,9 +64,15 @@ public class MainTabPresenterImpl implements MainTabPresenter {
                                 System.currentTimeMillis() - JandiPreference.getVersionPopupLastTime();
                         if (timeFromLastPopup > oneDayMillis) {
                             mainTabView.showUpdateVersionDialog(configInfo);
+                            return;
                         }
                     }
-                }, Throwable::printStackTrace, completeAction);
+
+                    completeAction.call();
+                }, t -> {
+                    LogUtil.e(Log.getStackTraceString(t));
+                    completeAction.call();
+                });
     }
 
     @Override

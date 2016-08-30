@@ -34,8 +34,6 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.maintab.tabs.util.fab.FloatingActionButtonController;
-import com.tosslab.jandi.app.ui.maintab.tabs.util.fab.OnFABControllerChangedListener;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.ExpandableTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.updated.UpdatedTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.EntityMenuDialogFragment_;
@@ -50,6 +48,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderS
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderSettingActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.JoinableTopicListActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.BackPressConsumer;
+import com.tosslab.jandi.app.ui.maintab.tabs.util.fab.FloatingActionButtonController;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.SearchActivity;
@@ -167,7 +166,6 @@ public class MainTopicListFragment extends Fragment
         }
 
         setFloatingActionMenu();
-        sendToFabControllerChangeListener();
     }
 
     private void initUpdatedTopicAdapter() {
@@ -203,7 +201,7 @@ public class MainTopicListFragment extends Fragment
                     showCreateNewFolderDialog();
                 });
         floatingActionMenu.addItem(R.drawable.btn_fab_item_go_unjoined,
-                    getResources().getString(R.string.jandi_browse_other_topics), () -> {
+                getResources().getString(R.string.jandi_browse_other_topics), () -> {
                     if (floatingActionMenu.isOpened()) {
                         floatingActionMenu.close();
                     }
@@ -736,20 +734,13 @@ public class MainTopicListFragment extends Fragment
     }
 
     @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
 
-        if (!hidden) {
-            sendToFabControllerChangeListener();
-        } else {
-            floatingActionMenu.setVisibility(false);
-        }
-    }
-
-    private void sendToFabControllerChangeListener() {
-        FragmentActivity activity = getActivity();
-        if (activity != null && activity instanceof OnFABControllerChangedListener) {
-            ((OnFABControllerChangedListener) activity).onFABControllerChanged(this);
+        if (!isVisibleToUser) {
+            if (floatingActionMenu != null) {
+                floatingActionMenu.setVisibility(false);
+            }
         }
     }
 
@@ -766,11 +757,16 @@ public class MainTopicListFragment extends Fragment
 
     @Override
     public void onFloatingActionButtonProvided(View fabButton) {
+        LogUtil.i("tony", "onFloatingActionButtonProvided");
+
         fabButton.setOnClickListener(v -> {
-            if (floatingActionMenu != null) {
-                floatingActionMenu.setVisibility(true);
-                floatingActionMenu.open();
+            LogUtil.e("tony", "getact ? " + (getActivity() != null));
+            if (floatingActionMenu == null) {
+                return;
             }
+            floatingActionMenu.setVisibility(true);
+            floatingActionMenu.setupButtonLocation(fabButton);
+            floatingActionMenu.open();
         });
     }
 }

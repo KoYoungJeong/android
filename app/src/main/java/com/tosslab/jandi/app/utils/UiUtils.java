@@ -50,6 +50,16 @@ public class UiUtils {
         return actionBarHeight;
     }
 
+    public static int getStatusBarHeight() {
+        int statusBarHeight = 0;
+        Resources resources = JandiApplication.getContext().getResources();
+        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            statusBarHeight = resources.getDimensionPixelSize(resourceId);
+        }
+        return statusBarHeight;
+    }
+
     public interface KeyboardHandler {
         void hideKeyboard();
     }

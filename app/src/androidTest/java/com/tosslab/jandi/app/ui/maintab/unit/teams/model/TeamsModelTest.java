@@ -30,81 +30,81 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class TeamsModelTest {
 
-    private TeamsModel model;
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        BaseInitUtil.initData();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        BaseInitUtil.releaseDatabase();
-    }
-
-    @Before
-    public void setup() throws Exception {
-
-        model = new TeamsModel(() -> new AccountApi(RetrofitBuilder.getInstance()),
-                () -> new StartApi(RetrofitBuilder.getInstance()),
-                () -> new InvitationApi(RetrofitBuilder.getInstance()));
-    }
-
-    @Test
-    public void testGetRefreshAccountInfoObservable() throws Exception {
-        Observable<Object> refreshAccountInfoObservable = model.getRefreshAccountInfoObservable();
-
-        TestSubscriber<Object> testSubscriber = new TestSubscriber<>();
-        refreshAccountInfoObservable.subscribe(testSubscriber);
-
-        testSubscriber.assertNoErrors();
-        testSubscriber.assertCompleted();
-    }
-
-    @Test
-    public void testGetTeamsObservable() throws Exception {
-        Observable<List<Team>> teamsObservable = model.getTeamsObservable(new ArrayList<>());
-
-        TestSubscriber<List<Team>> testSubscriber = new TestSubscriber<>();
-        teamsObservable.subscribe(testSubscriber);
-
-        testSubscriber.assertNoErrors();
-        testSubscriber.assertCompleted();
-
-        List<Team> teams = testSubscriber.getOnNextEvents().get(0);
-
-        assertTrue(teams.size() > 0);
-    }
-
-    @Test
-    public void testGetPendingTeamsObservable() throws Exception {
-        Observable<List<Team>> pendingTeamsObservable = model.getPendingTeamsObservable(new ArrayList<>());
-
-        TestSubscriber<List<Team>> testSubscriber = new TestSubscriber<>();
-        pendingTeamsObservable.subscribe(testSubscriber);
-
-        testSubscriber.assertNoErrors();
-        testSubscriber.assertCompleted();
-
-        List<Team> teams = testSubscriber.getOnNextEvents().get(0);
-
-        assertTrue(teams.size() <= 0);
-    }
-
-    @Test
-    public void testGetCheckSelectedTeamObservable() throws Exception {
-        Observable<Pair<Long, List<Team>>> checkSelectedTeamObservable =
-                model.getTeamsObservable(new ArrayList<>())
-                        .concatMap(model::getCheckSelectedTeamObservable);
-
-        TestSubscriber<Pair<Long, List<Team>>> testSubscriber = new TestSubscriber<>();
-        checkSelectedTeamObservable.subscribe(testSubscriber);
-
-        testSubscriber.assertNoErrors();
-        testSubscriber.assertCompleted();
-
-        Pair<Long, List<Team>> pair = testSubscriber.getOnNextEvents().get(0);
-        Long selectedTeamId = pair.first;
-        assertTrue(selectedTeamId > 0);
-    }
+//    private TeamsModel model;
+//
+//    @BeforeClass
+//    public static void setUpClass() throws Exception {
+//        BaseInitUtil.initData();
+//    }
+//
+//    @AfterClass
+//    public static void tearDownClass() throws Exception {
+//        BaseInitUtil.releaseDatabase();
+//    }
+//
+//    @Before
+//    public void setup() throws Exception {
+//
+//        model = new TeamsModel(() -> new AccountApi(RetrofitBuilder.getInstance()),
+//                () -> new StartApi(RetrofitBuilder.getInstance()),
+//                () -> new InvitationApi(RetrofitBuilder.getInstance()));
+//    }
+//
+//    @Test
+//    public void testGetRefreshAccountInfoObservable() throws Exception {
+//        Observable<Object> refreshAccountInfoObservable = model.getRefreshAccountInfoObservable();
+//
+//        TestSubscriber<Object> testSubscriber = new TestSubscriber<>();
+//        refreshAccountInfoObservable.subscribe(testSubscriber);
+//
+//        testSubscriber.assertNoErrors();
+//        testSubscriber.assertCompleted();
+//    }
+//
+//    @Test
+//    public void testGetTeamsObservable() throws Exception {
+//        Observable<List<Team>> teamsObservable = model.getTeamsObservable(new ArrayList<>());
+//
+//        TestSubscriber<List<Team>> testSubscriber = new TestSubscriber<>();
+//        teamsObservable.subscribe(testSubscriber);
+//
+//        testSubscriber.assertNoErrors();
+//        testSubscriber.assertCompleted();
+//
+//        List<Team> teams = testSubscriber.getOnNextEvents().get(0);
+//
+//        assertTrue(teams.size() > 0);
+//    }
+//
+//    @Test
+//    public void testGetPendingTeamsObservable() throws Exception {
+//        Observable<List<Team>> pendingTeamsObservable = model.getPendingTeamsObservable(new ArrayList<>());
+//
+//        TestSubscriber<List<Team>> testSubscriber = new TestSubscriber<>();
+//        pendingTeamsObservable.subscribe(testSubscriber);
+//
+//        testSubscriber.assertNoErrors();
+//        testSubscriber.assertCompleted();
+//
+//        List<Team> teams = testSubscriber.getOnNextEvents().get(0);
+//
+//        assertTrue(teams.size() <= 0);
+//    }
+//
+//    @Test
+//    public void testGetCheckSelectedTeamObservable() throws Exception {
+//        Observable<Pair<Long, List<Team>>> checkSelectedTeamObservable =
+//                model.getTeamsObservable(new ArrayList<>())
+//                        .concatMap(model::getCheckSelectedTeamObservable);
+//
+//        TestSubscriber<Pair<Long, List<Team>>> testSubscriber = new TestSubscriber<>();
+//        checkSelectedTeamObservable.subscribe(testSubscriber);
+//
+//        testSubscriber.assertNoErrors();
+//        testSubscriber.assertCompleted();
+//
+//        Pair<Long, List<Team>> pair = testSubscriber.getOnNextEvents().get(0);
+//        Long selectedTeamId = pair.first;
+//        assertTrue(selectedTeamId > 0);
+//    }
 }

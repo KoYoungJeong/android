@@ -43,7 +43,6 @@ public class FloatingActionMenu extends FrameLayout {
     RelativeLayout rootView;
     private int buttonCnt = 0;
 
-    private ImageView btMenu;
     private ImageView btMenuIcon;
 
     private List<View> vgItems;
@@ -100,17 +99,6 @@ public class FloatingActionMenu extends FrameLayout {
         rootView.setLayoutParams(params);
         window.addView(rootView);
 
-        int bottomTabHeight = UiUtils.getActionBarHeight();
-
-        btMenu = new ImageView(getContext());
-        RelativeLayout.LayoutParams menuParams =
-                new RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT);
-        menuParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        menuParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        menuParams.setMargins(0, dpToPx(7), dpToPx(20), dpToPx(20) + bottomTabHeight);
-
         btMenuIcon = new ImageView(getContext());
         RelativeLayout.LayoutParams menuIconParams =
                 new RelativeLayout.LayoutParams(
@@ -118,16 +106,11 @@ public class FloatingActionMenu extends FrameLayout {
                         ViewGroup.LayoutParams.WRAP_CONTENT);
         menuIconParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         menuIconParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        menuIconParams.setMargins(0, dpToPx(7), dpToPx(24), dpToPx(24) + bottomTabHeight);
 
-        this.rootView.addView(btMenu, menuParams);
+        btMenuIcon.setClickable(true);
+        btMenuIcon.setId(R.id.fab_menu_button);
+        btMenuIcon.setImageResource(R.drawable.btn_chat_fab);
         this.rootView.addView(btMenuIcon, menuIconParams);
-
-        btMenu.setClickable(true);
-        btMenu.setImageResource(R.drawable.chat_bg_fab);
-        btMenu.setId(R.id.fab_menu_button);
-
-        btMenuIcon.setImageResource(R.drawable.chat_fab_icon);
 
         vgItems = new ArrayList<>();
         btItems = new ArrayList<>();
@@ -216,7 +199,7 @@ public class FloatingActionMenu extends FrameLayout {
 
     private void setOnMenuButtonClicked() {
         setOnMenuAnimation();
-        btMenu.setOnClickListener(v -> {
+        btMenuIcon.setOnClickListener(v -> {
             if (isOpened) {
                 close();
             } else {
@@ -350,6 +333,16 @@ public class FloatingActionMenu extends FrameLayout {
 
     public void setVisibility(boolean show) {
         rootView.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    public void setupButtonLocation(View fabButton) {
+        post(() -> {
+            MarginLayoutParams layoutParams = (MarginLayoutParams) btMenuIcon.getLayoutParams();
+            layoutParams.rightMargin = rootView.getMeasuredWidth() - fabButton.getRight();
+            layoutParams.bottomMargin = rootView.getMeasuredHeight() - fabButton.getBottom()
+                    - UiUtils.getStatusBarHeight();
+            btMenuIcon.setLayoutParams(layoutParams);
+        });
     }
 
     public interface OnButtonClickListener {

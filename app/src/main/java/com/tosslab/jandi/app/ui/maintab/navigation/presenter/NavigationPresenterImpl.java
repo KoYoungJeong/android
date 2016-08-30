@@ -1,19 +1,20 @@
 package com.tosslab.jandi.app.ui.maintab.navigation.presenter;
 
-import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.Pair;
+import android.view.MenuItem;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.NavigationBadgeEvent;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
-import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.model.NavigationDataModel;
 import com.tosslab.jandi.app.ui.maintab.navigation.model.NavigationModel;
-import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -21,7 +22,7 @@ import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -46,6 +47,9 @@ public class NavigationPresenterImpl implements NavigationPresenter {
     private PublishSubject<Object> teamInitializeQueue;
     private Subscription teamInitializeQueueSubscription;
 
+    private PublishSubject<Pair<Long, Integer>> badgeCountingQueue;
+    private Subscription badgeCountingQueueSubscription;
+
     @Inject
     public NavigationPresenterImpl(NavigationModel navigationModel,
                                    NavigationDataModel navigationDataModel,
@@ -55,6 +59,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
         this.navigationView = navigationView;
 
         initializeTeamInitializeQueue();
+        initializeBadgeCountingQueue();
     }
 
     @Override
@@ -63,55 +68,65 @@ public class NavigationPresenterImpl implements NavigationPresenter {
         teamInitializeQueueSubscription =
                 teamInitializeQueue.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
                         .onBackpressureBuffer()
+                        .doOnNext(o -> {
+                            if (NetworkCheckUtil.isConnected()) {
+                                navigationModel.refreshAccountInfo();
+                            }
+                        })
+                        .concatMap(o -> navigationModel.getTeamsObservable())
+                        .doOnNext(teams -> {
+                            ResAccountInfo.UserTeam selectedTeamInfo =
+                                    AccountRepository.getRepository().getSelectedTeamInfo();
+                            Observable.from(teams)
+                                    .filter(team -> selectedTeamInfo.getTeamId() == team.getTeamId())
+                                    .subscribe(team -> team.setSelected(true));
+                        })
+                        .map(teams -> {
+                            if (NetworkCheckUtil.isConnected()) {
+                                teams.addAll(navigationModel.getPendingTeams());
+                            }
+                            return teams;
+                        })
+                        .doOnNext(teams -> Collections.sort(teams,
+                                (team, team2) -> team.getStatus() == Team.Status.PENDING ? -1 : 1))
+                        .doOnNext(this::initBadgeCount)
+                        .map(navigationDataModel::getTeamRows)
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(o -> onInitializeTeams());
+                        .subscribe(teamRows -> {
+                            navigationDataModel.removeAllTeamRows();
+                            navigationDataModel.addTeamRows(teamRows);
+                            navigationView.notifyDataSetChanged();
+                        }, Throwable::printStackTrace);
+
+    }
+
+    private void initBadgeCount(List<Team> teams) {
+        Observable.combineLatest(
+                Observable.from(teams)
+                        .filter(team -> team.getStatus() == Team.Status.PENDING)
+                        .count(),
+                Observable.from(teams)
+                        .filter(team -> team.getStatus() == Team.Status.JOINED)
+                        .map(Team::getUnread)
+                        .reduce((prev, current) -> prev + current),
+                (pendingTeams, unreadCount) -> {
+                    BadgeUtils.setBadge(JandiApplication.getContext(), unreadCount);
+                    return pendingTeams + unreadCount;
+                })
+                .subscribe(total -> {
+                    LogUtil.d("tony", "total - " + total);
+                    EventBus.getDefault().post(new NavigationBadgeEvent(total));
+                }, t -> {
+                    LogUtil.e("tony", Log.getStackTraceString(t));
+                });
     }
 
     @Override
     public void onInitializeTeams() {
-        if (!(NetworkCheckUtil.isConnected())) {
-            return;
+        if (!teamInitializeQueueSubscription.isUnsubscribed()) {
+            teamInitializeQueue.onNext(new Object());
         }
-
-        final List<Team> teamList = new ArrayList<>();
-        navigationModel.getRefreshAccountInfoObservable()
-                .concatMap(o -> navigationModel.getTeamsObservable(teamList))
-                .concatMap(navigationModel::getPendingTeamsObservable)
-                .concatMap(navigationModel::getSortedTeamListObservable)
-                .concatMap(navigationModel::getCheckSelectedTeamObservable)
-                .doOnNext(pair -> {
-                    List<Team> teams = pair.second;
-                    Observable.combineLatest(
-                            Observable.from(teams)
-                                    .filter(team -> team.getStatus() == Team.Status.PENDING)
-                                    .count(),
-                            Observable.from(teams)
-                                    .filter(team -> team.getStatus() == Team.Status.JOINED)
-                                    .map(Team::getUnread)
-                                    .reduce((prev, current) -> prev + current)
-                                    .doOnNext(unread ->
-                                            BadgeUtils.setBadge(JandiApplication.getContext(), unread)),
-                            (pendingTeams, unreadCount) -> pendingTeams + unreadCount)
-                            .subscribe(total -> {
-                                EventBus.getDefault().post(new NavigationBadgeEvent(total));
-                            });
-                })
-                .subscribeOn(Schedulers.io())
-                .map(pair -> {
-                    List<Team> teams = pair.second;
-                    return navigationDataModel.getTeamRows(teams);
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(teamRows -> {
-                    navigationDataModel.removeAllTeamRows();
-                    navigationDataModel.addTeamRows(teamRows);
-                    navigationView.notifyDataSetChanged();
-                }, Throwable::printStackTrace);
-    }
-
-    @Override
-    public void reInitializeTeams() {
-        teamInitializeQueue.onNext(new Object());
     }
 
     @Override
@@ -205,16 +220,22 @@ public class NavigationPresenterImpl implements NavigationPresenter {
     }
 
     @Override
+    public void clearBadgeCountingQueue() {
+        if (badgeCountingQueueSubscription != null && !badgeCountingQueueSubscription.isUnsubscribed()) {
+            badgeCountingQueueSubscription.unsubscribe();
+        }
+    }
+
+    @Override
     public void onInitializePresetNavigationItems() {
-        Observable.defer(() -> {
-            List<MultiItemRecyclerAdapter.Row<?>> rows = new ArrayList<>();
-
-            List<MultiItemRecyclerAdapter.Row<?>> navigationRows =
-                    navigationDataModel.getNavigationRows(navigationModel.getNavigationMenus());
-            rows.addAll(navigationRows);
-
-            return Observable.just(rows);
-        })
+        Observable.just(navigationModel.getNavigationMenus())
+                .doOnNext(menuBuilder -> {
+                    MenuItem item = menuBuilder.findItem(R.id.nav_setting_orientation);
+                    if (item != null && navigationModel.isPhoneMode()) {
+                        item.setVisible(false);
+                    }
+                })
+                .map(navigationDataModel::getNavigationRows)
                 .subscribeOn(Schedulers.immediate())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(rows -> {
@@ -252,20 +273,52 @@ public class NavigationPresenterImpl implements NavigationPresenter {
     }
 
     @Override
-    public void onInitOrientations() {
-        boolean portraitOnly = JandiApplication.getContext().getResources().getBoolean(R.bool.portrait_only);
-        if (portraitOnly) {
-            navigationView.setOrientationViewVisibility(false);
-        } else {
-            String value = PreferenceManager.getDefaultSharedPreferences(
-                    JandiApplication.getContext()).getString(Settings.SETTING_ORIENTATION, "0");
-            onSetUpOrientation(value);
+    public void initializeBadgeCountingQueue() {
+        badgeCountingQueue = PublishSubject.create();
+        badgeCountingQueueSubscription =
+                badgeCountingQueue.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
+                        .onBackpressureBuffer()
+                        .map(pair ->
+                                Pair.create(navigationDataModel.getTeamById(pair.first), pair.second))
+                        .filter(pair -> pair.first != null && pair.first.getTeamId() > 0)
+                        .doOnNext(pair -> {
+                            Team team = pair.first;
+                            int unread = team.getUnread() + pair.second;
+                            if (unread < 0) {
+                                unread = 0;
+                            }
+                            team.setUnread(unread);
+                            initBadgeCount(navigationDataModel.getTeams());
+                        })
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(team -> navigationView.notifyDataSetChanged());
+
+    }
+
+    @Override
+    public void onMessageDeleted(long teamId) {
+        if (!badgeCountingQueueSubscription.isUnsubscribed()) {
+            badgeCountingQueue.onNext(Pair.create(teamId, -1));
         }
     }
 
     @Override
-    public void onSetUpOrientation(String selectedValue) {
-        //TODO
+    public void onMessageCreated(long teamId) {
+        if (!badgeCountingQueueSubscription.isUnsubscribed()) {
+            badgeCountingQueue.onNext(Pair.create(teamId, 1));
+        }
+    }
+
+    @Override
+    public void onMessageRead(boolean fromSelf, long teamId, int readCount) {
+        if (fromSelf && readCount > 0) {
+            if (!badgeCountingQueueSubscription.isUnsubscribed()) {
+                badgeCountingQueue.onNext(Pair.create(teamId, -readCount));
+            }
+        } else {
+            // 다른 플랫폼에서 읽으면 노답인데...
+            onInitializeTeams();
+        }
     }
 
     @Override

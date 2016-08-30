@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
+import com.tosslab.jandi.app.services.socket.to.MessageReadEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.model.MainChatListModel;
@@ -131,7 +132,8 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
     @Override
     public void onEntityItemClick(Context context, int position) {
         ChatItem chatItem = view.getChatItem(position);
-
+        EventBus.getDefault().post(
+                MessageReadEvent.fromSelf(mainChatListModel.getTeamId(), chatItem.getUnread()));
         chatItem.unread(0);
         view.refreshListView();
 

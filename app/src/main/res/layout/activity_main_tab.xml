@@ -9,13 +9,6 @@
 
     <include layout="@layout/layout_main_tab_content"/>
 
-    <!--<FrameLayout-->
-    <!--android:id="@+id/vg_main_navigation"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_gravity="start"-->
-    <!--android:fitsSystemWindows="true"/>-->
-
     <fragment
         android:id="@+id/fragment_navigation"
         class="com.tosslab.jandi.app.ui.maintab.navigation.NavigationFragment"
@@ -23,13 +16,5 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         tools:layout="@layout/fragment_navigation"/>
-
-    <!--<android.support.design.widget.NavigationView-->
-    <!--android:id="@+id/nav_view"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_gravity="start"-->
-    <!--android:fitsSystemWindows="true"-->
-    <!--app:menu="@menu/carousel_activity_menu"/>-->
 
 </android.support.v4.widget.DrawerLayout>

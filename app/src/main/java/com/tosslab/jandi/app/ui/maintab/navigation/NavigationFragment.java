@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.navigation;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,7 +25,6 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
-import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
@@ -32,7 +32,7 @@ import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
-import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
+import com.tosslab.jandi.app.services.socket.to.MessageReadEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -47,6 +47,7 @@ import com.tosslab.jandi.app.ui.maintab.navigation.presenter.NavigationPresenter
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.account.SettingAccountActivity;
+import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.settings.privacy.SettingPrivacyActivity_;
 import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
 import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
@@ -113,6 +114,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        EventBus.getDefault().register(this);
 
         NavigationAdapter navigationAdapter = new NavigationAdapter();
         injectComponent(navigationAdapter);
@@ -122,8 +124,6 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         initProgressWheel();
 
         initNavigations();
-
-        EventBus.getDefault().register(this);
     }
 
     void initNavigations() {
@@ -174,6 +174,9 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
             case R.id.nav_setting_passcode:
                 moveToSetUpPasscode();
                 return true;
+            case R.id.nav_setting_orientation:
+                showSettingOrientationDialog();
+                return true;
             case R.id.nav_setting_account:
                 moveToSetUpAccount();
                 return true;
@@ -193,50 +196,51 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         return super.onOptionsItemSelected(item);
     }
 
-    void moveToShowHelpPage() {
+    private void moveToShowHelpPage() {
         navigationPresenter.onLaunchHelpPage();
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.Help);
     }
 
-    void signOut() {
+    private void signOut() {
         showSignOutDialog();
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.SignOut);
     }
 
-    void moveToCheckPrivacyPolicy() {
+    private void moveToCheckPrivacyPolicy() {
         startActivity(new Intent(getActivity(), TermActivity.class)
                 .putExtra(TermActivity.EXTRA_TERM_MODE, TermActivity.Mode.Privacy.name()));
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.PrivacyPolicy);
     }
 
-    void moveToCheckTeamsOfService() {
+    private void moveToCheckTeamsOfService() {
         startActivity(new Intent(getActivity(), TermActivity.class)
                 .putExtra(TermActivity.EXTRA_TERM_MODE, TermActivity.Mode.Agreement.name()));
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.TermsOfService);
     }
 
-    void moveToSetUpAccount() {
+    private void moveToSetUpAccount() {
         Intent intent = new Intent(getActivity(), SettingAccountActivity.class);
         startActivity(intent);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, AnalyticsValue.Action.Account);
     }
 
-    void moveToSetUpPasscode() {
+    private void moveToSetUpPasscode() {
         SettingPrivacyActivity_.intent(getActivity())
                 .start();
     }
 
-    void moveToSetUpNotification() {
+    private void moveToSetUpNotification() {
         SettingPushActivity_
                 .intent(getActivity())
                 .start();
     }
 
-    private void showOrientationDialog() {
+    @SuppressLint("CommitPrefEdits")
+    private void showSettingOrientationDialog() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String value = sharedPreferences.getString(Settings.SETTING_ORIENTATION, "0");
         String[] values = getResources().getStringArray(R.array.jandi_pref_orientation_values);
@@ -251,8 +255,8 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                         sharedPreferences.edit()
                                 .putString(Settings.SETTING_ORIENTATION, selectedValue)
                                 .commit();
-
-                        navigationPresenter.onSetUpOrientation(selectedValue);
+                        int orientation = SettingsModel.getOrientationValue(selectedValue);
+                        getActivity().setRequestedOrientation(orientation);
                     }
                     dialog.dismiss();
                 });
@@ -299,18 +303,8 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     }
 
     @Override
-    public void setOrientationViewVisibility(boolean show) {
-//        vgOrientation.setVisibility(show ? View.VISIBLE : View.GONE);
-    }
-
-    @Override
     public void setOrientation(int orientation) {
-        getActivity().setRequestedOrientation(orientation);
-    }
 
-    @Override
-    public void setOrientationSummary(String value) {
-//        sbvOrientation.setSummary(SettingsModel.getOrientationSummary(value));
     }
 
     @Override
@@ -350,18 +344,18 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     }
 
     public void onEvent(TeamDeletedEvent event) {
-        navigationPresenter.reInitializeTeams();
+        navigationPresenter.onInitializeTeams();
     }
 
     public void onEventMainThread(NetworkConnectEvent event) {
         if (event.isConnected()) {
-            navigationPresenter.reInitializeTeams();
+            navigationPresenter.onInitializeTeams();
         }
     }
 
     @Override
     public void showTeamInviteIgnoreFailToast(String errorMessage) {
-
+        ColoredToast.showError(errorMessage);
     }
 
     @Override
@@ -433,30 +427,27 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         }
     }
 
-    public void onEventMainThread(MessageOfOtherTeamEvent event) {
-        navigationPresenter.reInitializeTeams();
-    }
-
-    public void onEventMainThread(TeamInfoChangeEvent event) {
-        navigationPresenter.reInitializeTeams();
+    public void onEvent(TeamInfoChangeEvent event) {
+        navigationPresenter.onInitializeTeams();
     }
 
     public void onEvent(SocketMessageDeletedEvent event) {
-        navigationPresenter.reInitializeTeams();
-    }
-
-    public void onEvent(RoomMarkerEvent event) {
-        navigationPresenter.reInitializeTeams();
+        navigationPresenter.onMessageDeleted(event.getTeamId());
     }
 
     public void onEvent(SocketMessageCreatedEvent event) {
-        navigationPresenter.reInitializeTeams();
+        navigationPresenter.onMessageCreated(event.getTeamId());
+    }
+
+    public void onEvent(MessageReadEvent event) {
+        navigationPresenter.onMessageRead(event.fromSelf(), event.getTeamId(), event.getReadCount());
     }
 
     @Override
     public void onDestroyView() {
         EventBus.getDefault().unregister(this);
         navigationPresenter.clearTeamInitializeQueue();
+        navigationPresenter.clearBadgeCountingQueue();
         super.onDestroyView();
     }
 }

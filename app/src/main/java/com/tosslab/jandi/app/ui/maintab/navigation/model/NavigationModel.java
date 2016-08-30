@@ -5,7 +5,7 @@ import android.content.res.Resources;
 import android.support.v7.view.SupportMenuInflater;
 import android.support.v7.view.menu.MenuBuilder;
 import android.text.TextUtils;
-import android.util.Pair;
+import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -32,6 +32,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,64 +72,61 @@ public class NavigationModel {
         return menuBuilder;
     }
 
+    public boolean isPhoneMode() {
+        return JandiApplication.getContext().getResources().getBoolean(R.bool.portrait_only);
+    }
+
     public Observable<Object> getRefreshAccountInfoObservable() {
-        return Observable.create(subscriber -> {
+        return Observable.defer(() -> {
             try {
                 ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
                 AccountUtil.removeDuplicatedTeams(resAccountInfo);
                 AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
-                subscriber.onNext(new Object());
+                return Observable.just(new Object());
             } catch (RetrofitException retrofitError) {
-                subscriber.onError(retrofitError);
+                return Observable.error(retrofitError);
             }
-            subscriber.onCompleted();
         });
     }
 
-    public Observable<List<Team>> getTeamsObservable(final List<Team> teams) {
-        return Observable.from(AccountRepository.getRepository().getAccountTeams())
-                .map(Team::createTeam)
-                .collect(() -> teams, List::add);
+    public void refreshAccountInfo() {
+        try {
+            ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+            AccountUtil.removeDuplicatedTeams(resAccountInfo);
+            AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+        } catch (RetrofitException retrofitError) {
+            LogUtil.e(Log.getStackTraceString(retrofitError));
+        }
     }
 
-    public Observable<List<Team>> getPendingTeamsObservable(final List<Team> teams) {
-        Observable.OnSubscribe<List<ResPendingTeamInfo>> subscribe = subscriber -> {
-            try {
-                List<ResPendingTeamInfo> pendingTeamInfoByInvitationApi =
-                        invitationApi.get().getPedingTeamInfo();
-
-                subscriber.onNext(pendingTeamInfoByInvitationApi);
-
-            } catch (RetrofitException error) {
-                subscriber.onError(error);
-            }
-            subscriber.onCompleted();
-        };
-
-        return Observable.create(subscribe)
-                .concatMap(Observable::from)
-                .filter(resPendingTeamInfo ->
-                        TextUtils.equals("pending", resPendingTeamInfo.getStatus()))
+    public Observable<List<Team>> getTeamsObservable() {
+        return Observable.from(AccountRepository.getRepository().getAccountTeams())
                 .map(Team::createTeam)
-                .collect(() -> teams, List::add);
+//                .toList()
+//                .defaultIfEmpty(new ArrayList<>());
+                .collect(ArrayList::new, List::add);
+    }
+
+    public List<Team> getPendingTeams() {
+        ArrayList<Team> teams = new ArrayList<>();
+        try {
+            List<ResPendingTeamInfo> pendingTeamInfoByInvitationApi =
+                    invitationApi.get().getPedingTeamInfo();
+            Observable.from(pendingTeamInfoByInvitationApi)
+                    .filter(resPendingTeamInfo ->
+                            TextUtils.equals("pending", resPendingTeamInfo.getStatus()))
+                    .map(Team::createTeam)
+                    .subscribe(teams::add);
+
+        } catch (RetrofitException e) {
+            LogUtil.e(Log.getStackTraceString(e));
+        }
+        return teams;
     }
 
     public Observable<List<Team>> getSortedTeamListObservable(List<Team> teams) {
         return Observable.from(teams)
                 .toSortedList((team, team2) -> team.getStatus() == Team.Status.PENDING ? -1 : 1);
-    }
-
-    public Observable<Pair<Long, List<Team>>> getCheckSelectedTeamObservable(final List<Team> teams) {
-        return Observable.<Pair<Long, List<Team>>>create(subscriber -> {
-            ResAccountInfo.UserTeam selectedTeamInfo =
-                    AccountRepository.getRepository().getSelectedTeamInfo();
-            Observable.from(teams)
-                    .filter(team -> selectedTeamInfo.getTeamId() == team.getTeamId())
-                    .subscribe(team -> team.setSelected(true), t -> {
-                    });
-            subscriber.onNext(Pair.create(selectedTeamInfo.getTeamId(), teams));
-            subscriber.onCompleted();
-        });
     }
 
     public Observable<Object> getUpdateEntityInfoObservable(final long teamId) {

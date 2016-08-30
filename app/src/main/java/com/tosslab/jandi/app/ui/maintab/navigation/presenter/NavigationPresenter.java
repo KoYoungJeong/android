@@ -14,8 +14,6 @@ public interface NavigationPresenter {
 
     void onInitializeTeams();
 
-    void reInitializeTeams();
-
     void onTeamJoinAction(long teamId);
 
     void onTeamInviteAcceptAction(Team team);
@@ -26,19 +24,25 @@ public interface NavigationPresenter {
 
     void clearTeamInitializeQueue();
 
+    void clearBadgeCountingQueue();
+
     void onInitializePresetNavigationItems();
 
     void onSignOutAction();
 
     void onInitJandiVersion();
 
-    void onInitOrientations();
-
     void onLaunchHelpPage();
 
     void onInitUserProfile();
 
-    void onSetUpOrientation(String selectedValue);
+    void initializeBadgeCountingQueue();
+
+    void onMessageDeleted(long teamId);
+
+    void onMessageCreated(long teamId);
+
+    void onMessageRead(boolean fromSelf, long teamId, int readCount);
 
     interface View {
 
@@ -50,11 +54,7 @@ public interface NavigationPresenter {
 
         void dismissProgressWheel();
 
-        void setOrientationViewVisibility(boolean show);
-
         void setOrientation(int orientation);
-
-        void setOrientationSummary(String value);
 
         void moveLoginActivity();
 

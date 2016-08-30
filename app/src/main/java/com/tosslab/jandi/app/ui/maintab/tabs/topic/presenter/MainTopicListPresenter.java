@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResCreateFolder;
 import com.tosslab.jandi.app.network.models.start.Folder;
+import com.tosslab.jandi.app.services.socket.to.MessageReadEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
@@ -36,7 +37,6 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action2;
 
 /**
  * Created by tee on 15. 8. 26..
@@ -76,9 +76,10 @@ public class MainTopicListPresenter {
         AnalyticsValue.Action action = item.isPublic() ? AnalyticsValue.Action.ChoosePublicTopic : AnalyticsValue.Action.ChoosePrivateTopic;
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, action);
 
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        EventBus.getDefault().post(MessageReadEvent.fromSelf(teamId, item.getUnreadCount()));
         item.setUnreadCount(0);
 
-        long teamId = TeamInfoLoader.getInstance().getTeamId();
         mainTopicModel.getUnreadCount()
                 .subscribe(unreadCount -> {
                     EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
@@ -94,8 +95,12 @@ public class MainTopicListPresenter {
         if (item == null) {
             return;
         }
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+
         TopicFolderData topicFolderData = topicAdapter.getTopicFolderData(groupPosition);
+
         int itemsUnreadCount = item.getUnreadCount();
+        EventBus.getDefault().post(MessageReadEvent.fromSelf(teamId, itemsUnreadCount));
         topicFolderData.setChildBadgeCnt(topicFolderData.getChildBadgeCnt() - itemsUnreadCount);
         item.setUnreadCount(0);
         adapter.notifyDataSetChanged();
@@ -103,7 +108,6 @@ public class MainTopicListPresenter {
         AnalyticsValue.Action action = item.isPublic() ? AnalyticsValue.Action.ChoosePublicTopic : AnalyticsValue.Action.ChoosePrivateTopic;
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, action);
 
-        long teamId = TeamInfoLoader.getInstance().getTeamId();
 
         getUnreadCount(Observable.from(topicAdapter.getAllTopicItemData()))
                 .subscribe(unreadCount -> {
@@ -184,7 +188,8 @@ public class MainTopicListPresenter {
                                         .name(JandiApplication.getContext().getString(R.string.jandi_entity_unjoined_topic))
                                         .build())))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(topicList::addAll, t -> {}, () -> {
+                .subscribe(topicList::addAll, t -> {
+                }, () -> {
                     view.setUpdatedItems(topicList);
 
                     int unreadCount = getUnreadCountFromUpdatedList(Observable.from(topicList));
@@ -208,7 +213,8 @@ public class MainTopicListPresenter {
                                 Arrays.asList(new Topic.Builder()
                                         .name(JandiApplication.getContext().getString(R.string.jandi_entity_unjoined_topic))
                                         .build())))
-                .subscribe(topicList::addAll, t -> {}, () -> view.setUpdatedItems(topicList));
+                .subscribe(topicList::addAll, t -> {
+                }, () -> view.setUpdatedItems(topicList));
 
     }
 

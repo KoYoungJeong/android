@@ -27,4 +27,7 @@ public interface NavigationDataModel {
 
     void removeAllTeamRows();
 
+    Team getTeamById(long teamId);
+
+    List<Team> getTeams();
 }

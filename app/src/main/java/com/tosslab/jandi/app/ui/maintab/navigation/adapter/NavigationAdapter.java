@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.navigation.adapter;
 
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuItemImpl;
+import android.util.LongSparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -46,6 +47,7 @@ public class NavigationAdapter extends MultiItemRecyclerAdapter
     private OnNavigationItemClickListener onNavigationItemClickListener;
     private OnTeamClickListener onTeamClickListener;
     private TeamCreateViewHolder.OnRequestTeamCreateListener onRequestTeamCreateListener;
+    private LongSparseArray<Boolean> pendingActionOpenedIds;
 
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -141,15 +143,29 @@ public class NavigationAdapter extends MultiItemRecyclerAdapter
         rows.add(TeamRow.create(new Object(), VIEW_TYPE_TEAM_CREATE));
         Observable.from(teams)
                 .map(team -> team.getStatus() == Team.Status.PENDING
-                        ? Row.create(team, VIEW_TYPE_TEAM_PENDING) : Row.create(team, VIEW_TYPE_TEAM))
-                .collect(() -> rows, List::add)
+                        ? TeamRow.create(team, VIEW_TYPE_TEAM_PENDING)
+                        : TeamRow.create(team, VIEW_TYPE_TEAM))
+                .collect(() -> rows, (list, teamRow) -> {
+                    list.add(teamRow);
+                    if (pendingActionOpenedIds == null) {
+                        return;
+                    }
+
+                    if (teamRow.getItemViewType() == VIEW_TYPE_TEAM_PENDING) {
+                        Team team = teamRow.getItem();
+                        boolean hasOpened = pendingActionOpenedIds.get(team.getTeamId(), false);
+                        if (hasOpened) {
+                            list.add(TeamRow.create(team, VIEW_TYPE_TEAM_PENDING_ACTION));
+                        }
+                    }
+                })
                 .doOnCompleted(() -> {
                     int dividerHeight = (int) UiUtils.getPixelFromDp(0.5f);
                     int dividerColor = JandiApplication.getContext()
                             .getResources().getColor(R.color.rgb_d9d9d9);
                     DividerViewHolder.Info dividerInfo =
                             DividerViewHolder.Info.create(dividerHeight, dividerColor);
-                    rows.add(Row.create(dividerInfo, VIEW_TYPE_DIVIDER));
+                    rows.add(TeamRow.create(dividerInfo, VIEW_TYPE_DIVIDER));
                 })
                 .subscribe();
         return rows;
@@ -179,10 +195,15 @@ public class NavigationAdapter extends MultiItemRecyclerAdapter
         }
 
         if (targetPosition >= 0) {
+            if (pendingActionOpenedIds == null) {
+                pendingActionOpenedIds = new LongSparseArray<>();
+            }
             if (open) {
+                pendingActionOpenedIds.put(team.getTeamId(), true);
                 addRow(targetPosition, row);
                 notifyItemInserted(targetPosition);
             } else {
+                pendingActionOpenedIds.put(team.getTeamId(), false);
                 remove(targetPosition);
                 notifyItemRemoved(targetPosition);
             }
@@ -212,6 +233,42 @@ public class NavigationAdapter extends MultiItemRecyclerAdapter
                 remove(row);
             }
         }
+    }
+
+    @Override
+    public Team getTeamById(long teamId) {
+        for (int i = getItemCount() - 1; i >= 0; i--) {
+            if (!(getItem(i) instanceof Team)) {
+                continue;
+            }
+
+            int itemViewType = getItemViewType(i);
+            if (itemViewType != VIEW_TYPE_TEAM) {
+                continue;
+            }
+
+            Team target = getItem(i);
+            if (target.getTeamId() == teamId) {
+                return target;
+            }
+        }
+
+        return Team.createEmptyTeam();
+    }
+
+    @Override
+    public List<Team> getTeams() {
+        List<Team> teams = new ArrayList<>();
+
+        for (int i = getItemCount() - 1; i >= 0; i--) {
+            int itemViewType = getItemViewType(i);
+            if ((itemViewType == VIEW_TYPE_TEAM || itemViewType == VIEW_TYPE_TEAM_PENDING)
+                    && getItem(i) instanceof Team) {
+                teams.add(getItem(i));
+            }
+        }
+
+        return teams;
     }
 
     @Override
