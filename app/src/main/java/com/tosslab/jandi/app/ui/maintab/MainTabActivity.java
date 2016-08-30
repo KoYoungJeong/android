@@ -140,11 +140,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
         initOffLineLayer();
 
-        if (savedInstanceState != null) {
-            ColoredToast.show("Hello - " + getSupportFragmentManager().getFragments().size());
-//            removeAllSavedFragment();
-        }
-
         mainTabPresenter.onCheckIfNotLastestVersion(() -> {
             if (isFinishing()) {
                 return;
@@ -152,7 +147,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
             startSocketService();
 
-            initTabs();
+//            initTabs();
 
             initTabBadges();
 
@@ -314,32 +309,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                             .setText(tabInfo.getTitle())
                             .setCustomView(tabView), index, isFirstTab);
                 });
-
-//        TabSelector tabSelector =
-//                new TabSelector(R.id.vg_main_tab_fragment_container, getSupportFragmentManager());
-//        tabSelector.setOnTabFocusedListener((tabIndex, tabTitle) -> {
-//            vTopShadow.setVisibility(tabIndex == MypageTabInfo.INDEX ? View.GONE : View.VISIBLE);
-//            btnFab.setVisibility(tabIndex == TopicTabInfo.INDEX || tabIndex == ChatTabInfo.INDEX
-//                    ? View.VISIBLE : View.GONE);
-//            tvTitle.setText(tabTitle);
-//        });
-//
-//        tabLayout.setOnTabSelectedListener(tabSelector);
-//
-//        Observable.from(tabInfos)
-//                .subscribe(tabInfo -> {
-//                    TabView tabView = tabInfo.getTabView(getLayoutInflater(), tabLayout);
-//
-//                    boolean isFirstTab = tabIndex == tabInfo.getIndex();
-//                    initTabView(tabInfo, tabView);
-//
-//                    int index = tabInfo.getIndex();
-//                    tabLayout.addTab(tabLayout.newTab()
-//                            .setTag(tabInfo)
-//                            .setCustomView(tabView), index, isFirstTab);
-//                });
-
-
     }
 
     private void initTabView(TabInfo tabInfo, TabView tabView) {
@@ -425,9 +394,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
     @Override
     protected void onDestroy() {
-
-        LogUtil.i("tony", "onDestroy");
-
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
