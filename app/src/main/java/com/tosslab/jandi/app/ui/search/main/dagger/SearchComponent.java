@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.search.main.dagger;
 
+import com.tosslab.jandi.app.ui.search.main.SearchActivity;
+
 import dagger.Component;
 
 /**
