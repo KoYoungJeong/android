@@ -23,8 +23,8 @@
         app:tabGravity="fill"
         app:tabIndicatorColor="@android:color/white"
         app:tabIndicatorHeight="2dp"
-        app:tabMode="fixed"
         app:tabMaxWidth="0dp"
+        app:tabMode="fixed"
         app:tabPaddingEnd="0dp"
         app:tabPaddingStart="0dp"/>
 

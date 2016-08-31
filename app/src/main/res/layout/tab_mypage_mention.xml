@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/jandi_mention_mentions"
-        android:textColor="@color/text_color_room_filter_tab"
+        android:textColor="@color/text_color_mypage_tab"
         android:textSize="14sp"/>
 
 </FrameLayout>
