@@ -149,6 +149,7 @@ public class MainTopicListFragment extends Fragment
 
     @AfterViews
     void initViews() {
+        setHasOptionsMenu(true);
         lvMainTopic.setLayoutManager(layoutManager);
         initUpdatedTopicAdapter();
         mainTopicListPresenter.onLoadList();
