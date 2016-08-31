@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.NavigationBadgeEvent;
+import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.poll.RefreshPollBadgeCountEvent;
@@ -127,6 +128,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     private TabView tabChat;
     private TabView tabMyPage;
     private MainTabPagerAdapter tabPagerAdapter;
+    private InvitationDialogExecutor invitationDialogExecutor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -196,8 +198,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         view.findViewById(R.id.btn_invitation_popup_invite).setOnClickListener(v -> {
             dialog.dismiss();
 
-            InvitationDialogExecutor invitationDialogExecutor =
-                    InvitationDialogExecutor_.getInstance_(getBaseContext());
+            if (invitationDialogExecutor == null) {
+                invitationDialogExecutor = InvitationDialogExecutor_.getInstance_(getBaseContext());
+            }
             invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_POPUP);
             invitationDialogExecutor.execute();
 
@@ -375,6 +378,15 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         if (selectedTeamInfo != null) {
             tvTitle.setText(selectedTeamInfo.getName());
         }
+    }
+
+    public void onEventMainThread(RequestInviteMemberEvent event) {
+        int from = event.getFrom() > 0 ? event.getFrom() : InvitationDialogExecutor.FROM_MAIN_INVITE;
+        if (invitationDialogExecutor == null) {
+            invitationDialogExecutor = InvitationDialogExecutor_.getInstance_(getBaseContext());
+        }
+        invitationDialogExecutor.setFrom(from);
+        invitationDialogExecutor.execute();
     }
 
     @OnClick(R.id.vg_main_offline)
