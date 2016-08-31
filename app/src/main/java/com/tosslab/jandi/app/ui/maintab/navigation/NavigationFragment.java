@@ -41,7 +41,6 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.dialog.UsageInformationDialogFragment_;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.NavigationAdapter;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.view.NavigationDataView;
@@ -324,6 +323,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         ApplicationUtil.startWebBrowser(getActivity(), supportUrl);
     }
 
+    @Override
     public void moveToSelectTeam() {
         JandiSocketService.stopService(getActivity());
         getActivity().sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
@@ -431,6 +431,13 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         easterEggForLog(tvEmail);
     }
 
+    @Override
+    public void closeNavigation() {
+        if (getActivity() != null && getActivity() instanceof NavigationOwner) {
+            ((NavigationOwner) getActivity()).closeNavigation();
+        }
+    }
+
     private void easterEggForLog(View view) {
         KnockListener knockListener = KnockListener.create()
                 .expectKnockCount(10)
@@ -493,4 +500,11 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         navigationPresenter.clearBadgeCountingQueue();
         super.onDestroyView();
     }
+
+    public interface NavigationOwner {
+        void openNavigation();
+
+        void closeNavigation();
+    }
+
 }
