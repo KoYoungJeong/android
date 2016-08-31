@@ -178,7 +178,7 @@ public class FileDetailPresenter {
 
     @Background(serial = "file_detail_background")
     public void onSendComment(long fileId, String message, List<MentionObject> mentions) {
-        boolean hasAllMention = fileDetailModel.hasAllMention(mentions, message);
+        boolean hasAllMention = fileDetailModel.hasAllMention(message, mentions);
 
         try {
             fileDetailModel.sendMessageComment(fileId, message, mentions);
@@ -188,7 +188,7 @@ public class FileDetailPresenter {
             view.scrollToLastComment();
 
             // for sprinklr
-            fileDetailModel.trackMessagePostSuccess(mentions.size(), hasAllMention);
+            fileDetailModel.trackMessagePostSuccess(fileId, mentions.size(), hasAllMention);
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
@@ -196,7 +196,7 @@ public class FileDetailPresenter {
                 RetrofitException e1 = (RetrofitException) e;
                 // for sprinklr
                 fileDetailModel.trackMessagePostFail(
-                        e1.getResponseCode(), mentions.size(), hasAllMention);
+                        e1.getResponseCode(), fileId, mentions.size(), hasAllMention);
             }
         }
     }

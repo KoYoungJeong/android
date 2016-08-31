@@ -250,7 +250,98 @@ public class FileDetailModel {
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)
                 .build());
+    }
 
+    public void trackMessagePostSuccess(long fileId, int mentionCount, boolean hasAllMention) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.MessagePost)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.MentionCount, mentionCount)
+                .property(PropertyKey.HasAllMention, hasAllMention)
+                .property(PropertyKey.FileId, fileId)
+                .build());
+    }
+
+    public void trackMessagePostFail(int errorCode, long fileId, int mentionCount, boolean hasAllMention) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.MessagePost)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.MentionCount, mentionCount)
+                .property(PropertyKey.HasAllMention, hasAllMention)
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .property(PropertyKey.FileId, fileId)
+                .build());
+    }
+
+    public void trackCreatePublicLinkSuccess(long fileId) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.PublicLinkCreated)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.FileId, fileId)
+                .build()
+        );
+    }
+
+    public void trackDisablePublicLinkSuccess(long fileId) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.PublicLinkDeleted)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.FileId, fileId)
+                .build()
+        );
+    }
+
+    public void trackCreatePublicLinkFail(long fileId, int errorCode) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.PublicLinkCreated)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .property(PropertyKey.FileId, fileId)
+                .build()
+        );
+    }
+
+    public void trackDisablePublicLinkFail(long fileId, int errorCode) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.PublicLinkDeleted)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .property(PropertyKey.FileId, fileId)
+                .build()
+        );
+    }
+
+
+    public boolean hasAllMention(String message, List<MentionObject> mentions) {
+        return Observable.from(mentions)
+                .takeFirst(mentionObject -> {
+                    int start = mentionObject.getOffset() + 1;
+                    int end = start + mentionObject.getLength();
+                    if (message.substring(start, end).equals("All")) {
+                        return true;
+                    }
+                    return false;
+                })
+                .map(mentionObject -> {
+                    if (mentionObject != null) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                })
+                .toBlocking().firstOrDefault(false);
     }
 
     public void registStarredMessage(long teamId, long messageId) throws RetrofitException {
