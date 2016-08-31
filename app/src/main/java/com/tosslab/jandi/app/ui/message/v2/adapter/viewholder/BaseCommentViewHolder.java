@@ -147,6 +147,10 @@ public abstract class BaseCommentViewHolder implements BodyViewHolder {
         this.hasContentInfo = hasContentInfo;
     }
 
+    public android.view.View getItemContentView() {
+        return null;
+    }
+
     protected boolean hasContentInfo() {
         return hasContentInfo;
     }

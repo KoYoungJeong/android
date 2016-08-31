@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -15,7 +16,10 @@ import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BaseCommentViewHolder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BaseMessageViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
@@ -166,26 +170,55 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
         BodyViewHolder bodyViewHolder = viewHolder.getViewHolder();
         bodyViewHolder.bindData(item, teamId, roomId, entityId);
 
-        if (item.id == lastMarker) {
+        if (item.id == lastMarker &&
+                (bodyViewHolder instanceof BaseMessageViewHolder
+                        || bodyViewHolder instanceof BaseCommentViewHolder)) {
+
+            View view = null;
+
+            if (bodyViewHolder instanceof BaseMessageViewHolder) {
+                view = ((BaseMessageViewHolder) bodyViewHolder).getItemContentView();
+            } else if (bodyViewHolder instanceof BaseCommentViewHolder) {
+                view = ((BaseCommentViewHolder) bodyViewHolder).getItemContentView();
+            }
+
             if (markerAnimState == MessageListSearchAdapter.AnimState.Idle) {
-                final View view = viewHolder.itemView;
-                Integer colorFrom = context.getResources().getColor(R.color.jandi_chat_list_default_background_1f);
-                Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_1f);
-                final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+                final View contentView = view;
+                Drawable originBackground = view.getBackground();
+                Integer startBackgroundColor = 0;
+
+                if (TeamInfoLoader.getInstance().getMyId() == item.fromEntity) {
+                    startBackgroundColor = context.getResources().getColor(
+                            R.color.jandi_messages_blue_background);
+                } else {
+                    startBackgroundColor = context.getResources().getColor(
+                            R.color.white);
+                }
+
+                Integer colorFrom = startBackgroundColor;
+                Integer colorTo = context.getResources().getColor(
+                        R.color.rgb_fffad1);
+
+                final ValueAnimator colorAnimation = ValueAnimator.ofObject(
+                        new ArgbEvaluator(), colorFrom, colorTo);
                 colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
                 colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
                 colorAnimation.setRepeatCount(1);
-                colorAnimation.addUpdateListener(animator -> view.setBackgroundColor((Integer) animator.getAnimatedValue()));
+                colorAnimation.addUpdateListener(animator ->
+                        contentView.setBackgroundColor((Integer) animator.getAnimatedValue()));
 
                 colorAnimation.addListener(new SimpleEndAnimatorListener() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         markerAnimState = MessageListSearchAdapter.AnimState.End;
+                        contentView.setBackground(originBackground);
                     }
                 });
+
                 colorAnimation.start();
                 markerAnimState = MessageListSearchAdapter.AnimState.Loading;
             }
+
         }
 
         if (position > 0 && position < getItemCount() - 1 - getDummyMessageCount()) {

@@ -205,8 +205,12 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         tvMessage.setOnLongClickListener(itemLongClickListener);
     }
 
-    public static class Builder extends BaseViewHolderBuilder {
+    @Override
+    public View getItemContentView() {
+        return tvMessage;
+    }
 
+    public static class Builder extends BaseViewHolderBuilder {
         public MessageViewHolder build() {
             MessageViewHolder messageViewHolder = new MessageViewHolder();
             messageViewHolder.setHasOnlyBadge(hasOnlyBadge);

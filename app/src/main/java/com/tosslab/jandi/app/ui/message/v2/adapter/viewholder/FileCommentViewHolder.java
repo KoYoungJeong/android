@@ -442,6 +442,11 @@ public class FileCommentViewHolder extends BaseCommentViewHolder {
         this.hasFlatTop = hasFlatTop;
     }
 
+    @Override
+    public View getItemContentView() {
+        return vgProfileNestedComment;
+    }
+
     public static class Builder extends BaseViewHolderBuilder {
 
         public FileCommentViewHolder build() {
