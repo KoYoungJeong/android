@@ -16,7 +16,7 @@
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_mypage"
         android:layout_width="match_parent"
-        android:layout_height="46dp"
+        android:layout_height="48dp"
         android:background="@color/jandi_primary_color"
         android:fillViewport="true"
         app:layout_collapseMode="pin"
@@ -31,7 +31,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_below="@id/tab_mypage"
+        android:layout_alignBottom="@id/tab_mypage"
         android:background="@color/rgb_e5e5e5"/>
 
 </RelativeLayout>

@@ -29,6 +29,8 @@
         android:layout_height="18dp"
         android:layout_alignBottom="@id/iv_navigation_profile"
         android:layout_alignRight="@id/iv_navigation_profile"
+        android:layout_marginBottom="-2dp"
+        android:layout_marginRight="-2dp"
         android:background="@drawable/profile_edit"/>
 
     <LinearLayout
