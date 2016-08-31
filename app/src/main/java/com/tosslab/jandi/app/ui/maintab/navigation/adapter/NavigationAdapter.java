@@ -1,8 +1,10 @@
 package com.tosslab.jandi.app.ui.maintab.navigation.adapter;
 
+import android.graphics.Color;
+import android.support.annotation.NonNull;
+import android.support.v4.util.LongSparseArray;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuItemImpl;
-import android.util.LongSparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -112,14 +114,13 @@ public class NavigationAdapter extends MultiItemRecyclerAdapter
         for (int i = 0; i < enableItems.size(); i++) {
             MenuItemImpl menuItem = enableItems.get(i);
             if (groupId == -1) {
+                rows.add(Row.create(getSectionMarginDividerInfo(), VIEW_TYPE_DIVIDER));
                 groupId = menuItem.getGroupId();
             } else if (menuItem.getGroupId() != groupId) {
-                int dividerHeight = (int) UiUtils.getPixelFromDp(0.5f);
-                int dividerColor = JandiApplication.getContext()
-                        .getResources().getColor(R.color.rgb_d9d9d9);
-                DividerViewHolder.Info dividerInfo =
-                        DividerViewHolder.Info.create(dividerHeight, dividerColor);
-                rows.add(Row.create(dividerInfo, VIEW_TYPE_DIVIDER));
+
+                rows.add(Row.create(getSectionMarginDividerInfo(), VIEW_TYPE_DIVIDER));
+                rows.add(Row.create(getDividerInfo(), VIEW_TYPE_DIVIDER));
+                rows.add(Row.create(getSectionMarginDividerInfo(), VIEW_TYPE_DIVIDER));
 
                 groupId = menuItem.getGroupId();
             }
@@ -130,6 +131,18 @@ public class NavigationAdapter extends MultiItemRecyclerAdapter
         return rows;
     }
 
+    @NonNull
+    private DividerViewHolder.Info getDividerInfo() {
+        int dividerHeight = (int) UiUtils.getPixelFromDp(0.5f);
+        int dividerColor = JandiApplication.getContext()
+                .getResources().getColor(R.color.rgb_d9d9d9);
+        return DividerViewHolder.Info.create(dividerHeight, dividerColor);
+    }
+
+    private DividerViewHolder.Info getSectionMarginDividerInfo() {
+        return DividerViewHolder.Info.create((int) UiUtils.getPixelFromDp(8), Color.TRANSPARENT);
+    }
+
     @Override
     public List<Row<?>> getTeamRows(List<Team> teams) {
         List<Row<?>> rows = new ArrayList<>();
@@ -137,6 +150,7 @@ public class NavigationAdapter extends MultiItemRecyclerAdapter
             return rows;
         }
 
+        rows.add(TeamRow.create(getSectionMarginDividerInfo(), VIEW_TYPE_DIVIDER));
         rows.add(TeamRow.create(new Object(), VIEW_TYPE_TEAM_CREATE));
         Observable.from(teams)
                 .map(team -> team.getStatus() == Team.Status.PENDING
@@ -157,12 +171,8 @@ public class NavigationAdapter extends MultiItemRecyclerAdapter
                     }
                 })
                 .doOnCompleted(() -> {
-                    int dividerHeight = (int) UiUtils.getPixelFromDp(0.5f);
-                    int dividerColor = JandiApplication.getContext()
-                            .getResources().getColor(R.color.rgb_d9d9d9);
-                    DividerViewHolder.Info dividerInfo =
-                            DividerViewHolder.Info.create(dividerHeight, dividerColor);
-                    rows.add(TeamRow.create(dividerInfo, VIEW_TYPE_DIVIDER));
+                    rows.add(TeamRow.create(getSectionMarginDividerInfo(), VIEW_TYPE_DIVIDER));
+                    rows.add(TeamRow.create(getDividerInfo(), VIEW_TYPE_DIVIDER));
                 })
                 .subscribe();
         return rows;
