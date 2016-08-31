@@ -80,14 +80,14 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.onBindView(item);
             if (!hasHeader) {
                 if (position >= getItemCount() - 1) {
-                    holder.dismissDividers();
+                    holder.showFullDivider();
                 } else {
                     holder.showHalfDivider();
                 }
             } else {
                 if (isSameFirstCharacterToNext(position)) {
                     if (position >= getItemCount() - 1) {
-                        holder.dismissDividers();
+                        holder.showFullDivider();
                     } else {
                         holder.showHalfDivider();
                     }

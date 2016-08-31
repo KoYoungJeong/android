@@ -22,7 +22,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemb
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberDataView;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
-import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
 import javax.inject.Inject;
 
@@ -82,7 +81,6 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
         TeamMemberAdapter teamMemberAdapter = new TeamMemberAdapter();
         teamMemberAdapter.setSelectedMode(selectMode && !pickMode);
         lvMembers.setLayoutManager(new LinearLayoutManager(DeptJobGroupActivity.this));
-        lvMembers.addItemDecoration(new SimpleDividerItemDecoration());
         lvMembers.setAdapter(teamMemberAdapter);
 
         DaggerDeptJobGroupComponent.builder()
