@@ -201,7 +201,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             dialog.dismiss();
 
             if (invitationDialogExecutor == null) {
-                invitationDialogExecutor = InvitationDialogExecutor_.getInstance_(getBaseContext());
+                invitationDialogExecutor = InvitationDialogExecutor_.getInstance_(this);
             }
             invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_POPUP);
             invitationDialogExecutor.execute();
@@ -391,7 +391,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     public void onEventMainThread(RequestInviteMemberEvent event) {
         int from = event.getFrom() > 0 ? event.getFrom() : InvitationDialogExecutor.FROM_MAIN_INVITE;
         if (invitationDialogExecutor == null) {
-            invitationDialogExecutor = InvitationDialogExecutor_.getInstance_(getBaseContext());
+            invitationDialogExecutor = InvitationDialogExecutor_.getInstance_(this);
         }
         invitationDialogExecutor.setFrom(from);
         invitationDialogExecutor.execute();
