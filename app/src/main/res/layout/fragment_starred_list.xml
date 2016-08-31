@@ -9,7 +9,6 @@
         android:id="@+id/vg_starred_list_tab"
         android:layout_width="match_parent"
         android:layout_height="@dimen/jandi_star_tab_default_size"
-        android:background="@drawable/bg_search_tab"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:weightSum="2"
