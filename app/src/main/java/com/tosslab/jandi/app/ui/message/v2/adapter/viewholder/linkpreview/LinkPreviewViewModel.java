@@ -52,6 +52,7 @@ public class LinkPreviewViewModel {
 
         if (message.linkPreview == null || TextUtils.isEmpty(message.linkPreview.linkUrl)) {
             vgLinkPreview.setVisibility(View.GONE);
+            vDividier.setVisibility(View.GONE);
             return;
         } else {
             vgLinkPreview.removeAllViews();
@@ -59,12 +60,12 @@ public class LinkPreviewViewModel {
                     .inflate(R.layout.item_message_layout_linkpreview_v2, vgLinkPreview, true);
             initInnerView(vgLinkPreview);
             vgLinkPreview.setVisibility(View.VISIBLE);
+            vDividier.setVisibility(View.VISIBLE);
         }
 
         ResMessages.LinkPreview linkPreview = message.linkPreview;
 
         if (!TextUtils.isEmpty(linkPreview.title)) {
-
             tvTitle.setVisibility(View.VISIBLE);
             tvTitle.setText(linkPreview.title);
         } else {
@@ -100,7 +101,6 @@ public class LinkPreviewViewModel {
 
     void showImage(ResMessages.LinkPreview linkPreview, final Resources resources) {
         vDividier.setVisibility(View.VISIBLE);
-
         ImageLoader.newInstance()
                 .backgroundColor(resources.getColor(R.color.jandi_messages_image_background))
                 .placeHolder(R.drawable.comment_image_preview_download, ImageView.ScaleType.CENTER_INSIDE)
@@ -120,6 +120,7 @@ public class LinkPreviewViewModel {
     void disableImage() {
         vgSummary.setBackgroundResource(R.drawable.bg_round_white_rect_for_message);
         ivThumb.setVisibility(View.GONE);
+        vDividier.setVisibility(View.GONE);
     }
 
     private void initInnerView(ViewGroup vgLinkPreview) {
