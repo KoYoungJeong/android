@@ -306,12 +306,12 @@ public class SearchPresenterImpl implements SearchPresenter {
                     JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
             view.moveToMessageActivity(topicId, type);
         } else {
-            view.showTopicInfoDialog(topicRoom, true, -1);
+            view.showTopicInfoDialog(topicRoom);
         }
     }
 
     @Override
-    public void onJoinTopic(long topicId, int topicType, boolean fromRoomSearch, long linkId) {
+    public void onJoinTopic(long topicId, int topicType, long linkId) {
         Observable.create(subscriber -> {
             try {
                 searchModel.joinTopic(topicId);
@@ -325,11 +325,7 @@ public class SearchPresenterImpl implements SearchPresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(o -> {
-                    if (fromRoomSearch) {
-                        view.moveToMessageActivity(topicId, topicType);
-                    } else {
-                        view.moveToMessageActivityFromSearch(topicId, topicType, linkId);
-                    }
+                    view.moveToMessageActivityFromSearch(topicId, topicType, linkId);
                 })
                 .subscribe(o -> {
                         }, e -> {
@@ -460,7 +456,7 @@ public class SearchPresenterImpl implements SearchPresenter {
                             ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
             TopicRoom topicRoom = searchModel.getTopicRoomById(searchMessageData.getRoomId());
             if (!topicRoom.isJoined()) {
-                view.showTopicInfoDialog(topicRoom, false, searchMessageData.getLinkId());
+                view.showJoinRoomDialog(topicRoom, searchMessageData.getLinkId());
             } else {
                 view.moveToMessageActivityFromSearch(searchMessageData.getRoomId(),
                         entityType,
