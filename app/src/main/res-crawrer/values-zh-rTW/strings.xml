@@ -55,6 +55,7 @@
 	<string name="file_upload_comment">"留言（非必要）"</string>
 	<string name="jadi_account_home">"帳號首頁"</string>
 	<string name="jandi_1_1_message">"私訊"</string>
+	<string name="jandi_1_on_1_support">"線上客服"</string>
 	<string name="jandi_91_apk_store">"91安卓下載"</string>
 	<string name="jandi_about">"有關"</string>
 	<string name="jandi_account">"帳號"</string>
@@ -97,6 +98,7 @@
 	<string name="jandi_are_you_sure_disable_external_link">"若移除共享連結，存取至該檔案的權限將被撤銷。你確定要移除共享連結？"</string>
 	<string name="jandi_ask_assign_topic_owner">"你確定將議題管理權限轉移至此成員？"</string>
 	<string name="jandi_ask_delete_all_history">"你確定要清除所有的搜尋紀錄？"</string>
+	<string name="jandi_ask_join_topic">"你尚未加入此議題，要加入嗎？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你確定將此成員剔除議題？"</string>
 	<string name="jandi_ask_poll_delete">"確定要刪除此次投票？\n請注意留言的部分不會被刪除。"</string>
 	<string name="jandi_ask_poll_finish">"你確定結束此投票？"</string>
@@ -258,7 +260,8 @@
 	<string name="jandi_file_share_action">"分享"</string>
 	<string name="jandi_file_size_large_error">"無法上傳大於300MB的檔案"</string>
 	<string name="jandi_file_upload_finish">"檔案已成功上傳"</string>
-	<string name="jandi_file_upload_go_topic">"點擊進入JANDI瀏覽"</string>
+	<string name="jandi_file_upload_go_topic">"
+點擊進入JANDI瀏覽"</string>
 	<string name="jandi_file_upload_state">"上傳檔案中 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"檔案上傳成功"</string>
 	<string name="jandi_file_uploading">"上傳"</string>

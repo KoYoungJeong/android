@@ -55,6 +55,7 @@
 	<string name="file_upload_comment">"Comments (Optional)"</string>
 	<string name="jadi_account_home">"Account Home"</string>
 	<string name="jandi_1_1_message">"1:1 Message"</string>
+	<string name="jandi_1_on_1_support">"Live Support"</string>
 	<string name="jandi_91_apk_store">"91 Apk Store"</string>
 	<string name="jandi_about">"About"</string>
 	<string name="jandi_account">"Account"</string>
@@ -97,6 +98,7 @@
 	<string name="jandi_are_you_sure_disable_external_link">"Access to the previously shared file will be revoked. Are you sure?"</string>
 	<string name="jandi_ask_assign_topic_owner">"Are you sure you want to transfer topic administrator permissions to this member?"</string>
 	<string name="jandi_ask_delete_all_history">"Clear all of the recent searches?"</string>
+	<string name="jandi_ask_join_topic">"You have not joined this topic. Do you want to join now?"</string>
 	<string name="jandi_ask_kick_user_from_topic">"Are you sure you want to remove this member from the topic?"</string>
 	<string name="jandi_ask_poll_delete">"Are you sure you want to delete this poll? \nPlease note this will not delete the associated comments."</string>
 	<string name="jandi_ask_poll_finish">"Are you sure you want to end this poll?"</string>
@@ -397,7 +399,8 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_mypage">"My Page"</string>
 	<string name="jandi_name">"Name"</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
-	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic."</string>
+	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic.
+"</string>
 	<string name="jandi_new_department">"New Department"</string>
 	<string name="jandi_new_job_title">"New Job Title"</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>
@@ -544,7 +547,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_sign_in_block">"<u>Sign In</u>"</string>
 	<string name="jandi_sign_in_ids_explain">"Choose an email address where we should send all of your JANDI related emails. Add other email addresses to assign to specific teams."</string>
 	<string name="jandi_sign_out_message">"Are you sure you want to sign out?"</string>
-	<string name="jandi_sign_up_now">"It seems your email is not registered. Sign-up now?"</string>
+	<string name="jandi_sign_up_now">"eg"</string>
 	<string name="jandi_signup_agree_all">"Accept all of JANDI's usage policies"</string>
 	<string name="jandi_signup_agree_pp">"I have reviewed and agree to the <u><b>Privacy Policy</b></u>"</string>
 	<string name="jandi_signup_agree_tos">"I have reviewed and agree to the<u><b> Terms of Service</b></u>"</string>

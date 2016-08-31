@@ -55,6 +55,7 @@
 	<string name="file_upload_comment">"留言（非必要）"</string>
 	<string name="jadi_account_home">"账号首页"</string>
 	<string name="jandi_1_1_message">"私信"</string>
+	<string name="jandi_1_on_1_support">"在线客服"</string>
 	<string name="jandi_91_apk_store">"91安卓下载"</string>
 	<string name="jandi_about">"有关"</string>
 	<string name="jandi_account">"账号"</string>
@@ -97,6 +98,7 @@
 	<string name="jandi_are_you_sure_disable_external_link">"若移除共享链接，访问至该文件的权限将被撤销。 你确定要移除共享链接？"</string>
 	<string name="jandi_ask_assign_topic_owner">"你确定将议题管理权限转移至此成员？"</string>
 	<string name="jandi_ask_delete_all_history">"你确定要清除所有的搜寻纪录？"</string>
+	<string name="jandi_ask_join_topic">"你尚未加入此议题，要加入吗？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你确定将此成员剔除议题？"</string>
 	<string name="jandi_ask_poll_delete">"确定要删除此次投票？ \n请注意留言的部分不会被删除。"</string>
 	<string name="jandi_ask_poll_finish">"你确定结束此投票？"</string>
