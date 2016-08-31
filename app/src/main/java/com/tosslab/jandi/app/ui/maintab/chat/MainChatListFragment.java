@@ -85,6 +85,7 @@ public class MainChatListFragment extends Fragment
 
     @AfterViews
     void initViews() {
+        setHasOptionsMenu(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         lvChat.setLayoutManager(layoutManager);
         lvChat.addItemDecoration(new SimpleDividerItemDecoration());
