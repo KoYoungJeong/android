@@ -156,6 +156,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
             initTabs();
 
+            initTabBadges();
+
             checkIfNotProfileSetUp();
 
             showInvitePopupIfNeed();
@@ -242,6 +244,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 this, drawerLayout, R.string.app_name, R.string.app_name);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+    }
+
+    private void initTabBadges() {
+        mainTabPresenter.onInitTopicBadge();
+        mainTabPresenter.onInitChatBadge();
+        mainTabPresenter.onInitMyPageBadge();
     }
 
     private void initTabs() {
