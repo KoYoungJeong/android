@@ -35,6 +35,11 @@ public class DeptJobAdapter extends RecyclerView.Adapter<DeptJobAdapter.DeptJobV
     }
 
     @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
     public void onBindViewHolder(DeptJobViewHolder holder, int position) {
         Pair<CharSequence, String> item = getItem(position);
         holder.tvTitle.setText(item.first, TextView.BufferType.SPANNABLE);
