@@ -41,6 +41,7 @@ import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor_;
 import com.tosslab.jandi.app.ui.maintab.component.DaggerMainTabComponent;
 import com.tosslab.jandi.app.ui.maintab.module.MainTabModule;
+import com.tosslab.jandi.app.ui.maintab.navigation.NavigationFragment;
 import com.tosslab.jandi.app.ui.maintab.navigation.widget.BadgeOverFlowMenu;
 import com.tosslab.jandi.app.ui.maintab.presenter.MainTabPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.TabInfo;
@@ -76,8 +77,8 @@ import rx.schedulers.Schedulers;
 /**
  * Created by justinygchoi on 2014. 8. 11..
  */
-public class MainTabActivity extends BaseAppCompatActivity
-        implements MainTabPresenter.View, FloatingActionButtonProvider {
+public class MainTabActivity extends BaseAppCompatActivity implements MainTabPresenter.View,
+        NavigationFragment.NavigationOwner, FloatingActionButtonProvider {
 
     @Bind(R.id.toolbar_main_tab)
     Toolbar toolbar;
@@ -332,8 +333,14 @@ public class MainTabActivity extends BaseAppCompatActivity
     }
 
     @OnClick(R.id.btn_main_tab_menu)
-    void openDrawer() {
+    @Override
+    public void openNavigation() {
         drawerLayout.openDrawer(Gravity.LEFT);
+    }
+
+    @Override
+    public void closeNavigation() {
+        drawerLayout.closeDrawer(Gravity.LEFT);
     }
 
     public void onEventMainThread(NavigationBadgeEvent event) {

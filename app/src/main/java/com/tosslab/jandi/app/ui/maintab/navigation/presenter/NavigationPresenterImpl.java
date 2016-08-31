@@ -133,6 +133,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
     @Override
     public void onTeamJoinAction(long teamId) {
         if (navigationModel.isCurrentTeam(teamId)) {
+            navigationView.closeNavigation();
             return;
         }
 
@@ -232,8 +233,8 @@ public class NavigationPresenterImpl implements NavigationPresenter {
         Observable.just(navigationModel.getNavigationMenus())
                 .doOnNext(menuBuilder -> {
                     MenuItem item = menuBuilder.findItem(R.id.nav_setting_orientation);
-                    if (item != null && navigationModel.isPhoneMode()) {
-                        item.setVisible(false);
+                    if (item != null) {
+                        item.setVisible(!(navigationModel.isPhoneMode()));
                     }
                 })
                 .map(navigationDataModel::getNavigationRows)

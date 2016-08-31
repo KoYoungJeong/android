@@ -65,6 +65,8 @@ public interface NavigationPresenter {
         void notifyDataSetChanged();
 
         void setUserProfile(User user);
+
+        void closeNavigation();
     }
 
 }
