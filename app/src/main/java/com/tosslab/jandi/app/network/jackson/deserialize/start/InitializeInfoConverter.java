@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class InitializeInfoConverter implements Converter<InitialInfo, InitialInfo> {
@@ -45,6 +46,26 @@ public class InitializeInfoConverter implements Converter<InitialInfo, InitialIn
                 if (markers != null && !markers.isEmpty()) {
                     for (Marker marker : markers) {
                         marker.setChat(chat);
+                    }
+                } else {
+                    // marker 가 없으면 임의로 지정함
+                    ArrayList<Marker> markers1 = new ArrayList<>();
+                    for (Long id : chat.getMembers()) {
+                        Marker marker = new Marker();
+                        marker.setMemberId(id);
+                        marker.setReadLinkId(chat.getLastLinkId());
+                        marker.setChat(chat);
+                        markers1.add(marker);
+                    }
+                    chat.setMarkers(markers1);
+                }
+
+                if (chat.getCompanionId() == 0) {
+                    for (Long id : chat.getMembers()) {
+                        if (id != value.getSelf().getId()) {
+                            chat.setCompanionId(id);
+                            break;
+                        }
                     }
                 }
             }
