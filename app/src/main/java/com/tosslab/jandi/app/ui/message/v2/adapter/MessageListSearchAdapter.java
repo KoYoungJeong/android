@@ -40,8 +40,8 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
     boolean moreFromNew;
     MoreState oldMoreState;
     MoreState newMoreState;
-    MessageListSearchAdapter.OnItemClickListener onItemClickListener;
-    MessageListSearchAdapter.OnItemLongClickListener onItemLongClickListener;
+    OnItemClickListener onItemClickListener;
+    OnItemLongClickListener onItemLongClickListener;
     long teamId;
     long roomId = -1;
     long entityId;
@@ -182,7 +182,7 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
                 view = ((BaseCommentViewHolder) bodyViewHolder).getItemContentView();
             }
 
-            if (markerAnimState == MessageListSearchAdapter.AnimState.Idle) {
+            if (markerAnimState == AnimState.Idle) {
                 final View contentView = view;
                 Drawable originBackground = view.getBackground();
                 Integer startBackgroundColor = 0;
@@ -210,13 +210,13 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
                 colorAnimation.addListener(new SimpleEndAnimatorListener() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        markerAnimState = MessageListSearchAdapter.AnimState.End;
+                        markerAnimState = AnimState.End;
                         contentView.setBackground(originBackground);
                     }
                 });
 
                 colorAnimation.start();
-                markerAnimState = MessageListSearchAdapter.AnimState.Loading;
+                markerAnimState = AnimState.Loading;
             }
 
         }
@@ -227,17 +227,17 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
             bodyViewHolder.setLastReadViewVisible(0, -1);
         }
 
-        if (position <= getItemCount() / 10 && oldMoreState == MessageListSearchAdapter.MoreState.Idle) {
-            oldMoreState = MessageListSearchAdapter.MoreState.Loading;
+        if (position <= getItemCount() / 10 && oldMoreState == MoreState.Idle) {
+            oldMoreState = MoreState.Loading;
             synchronized (this) {
-                if (oldMoreState != MessageListSearchAdapter.MoreState.Idle) {
+                if (oldMoreState != MoreState.Idle) {
                     EventBus.getDefault().post(new RefreshOldMessageEvent());
                 }
             }
-        } else if (moreFromNew && position == getItemCount() - 1 && newMoreState == MessageListSearchAdapter.MoreState.Idle) {
-            newMoreState = MessageListSearchAdapter.MoreState.Loading;
+        } else if (moreFromNew && position == getItemCount() - 1 && newMoreState == MoreState.Idle) {
+            newMoreState = MoreState.Loading;
             synchronized (this) {
-                if (newMoreState != MessageListSearchAdapter.MoreState.Idle) {
+                if (newMoreState != MoreState.Idle) {
                     EventBus.getDefault().post(new RefreshNewMessageEvent());
                 }
             }
