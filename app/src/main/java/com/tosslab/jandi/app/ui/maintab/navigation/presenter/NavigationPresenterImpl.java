@@ -116,10 +116,9 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                     return pendingTeams + unreadCount;
                 })
                 .subscribe(total -> {
-                    LogUtil.d("tony", "total - " + total);
                     EventBus.getDefault().post(new NavigationBadgeEvent(total));
                 }, t -> {
-                    LogUtil.e("tony", Log.getStackTraceString(t));
+                    LogUtil.e(TAG, Log.getStackTraceString(t));
                 });
     }
 
@@ -332,7 +331,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
             User me = navigationModel.getMe();
             navigationView.setUserProfile(me);
         } catch (Exception e) {
-            LogUtil.e(Log.getStackTraceString(e));
+            LogUtil.e(TAG, Log.getStackTraceString(e));
         }
     }
 
