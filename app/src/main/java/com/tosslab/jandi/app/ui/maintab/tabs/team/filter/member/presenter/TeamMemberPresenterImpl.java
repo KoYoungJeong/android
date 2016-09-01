@@ -16,13 +16,12 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.team.member.User;
-import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberDataModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.ToggleCollector;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.domain.TeamDisabledMemberItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.domain.TeamMemberItem;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.model.TeamMemberModel;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 import com.tosslab.jandi.app.views.spannable.HighlightSpannable;
 
@@ -44,22 +43,29 @@ import rx.subjects.BehaviorSubject;
 public class TeamMemberPresenterImpl implements TeamMemberPresenter {
 
     private final View view;
+    private final TeamMemberModel teamMemberModel;
     private final TeamMemberDataModel teamMemberDataModel;
     private final Lazy<ChannelApi> channelApi;
     private final Lazy<GroupApi> groupApi;
     private final HighlightSpannable highlightSpan;
     private boolean selectMode;
 
-    private BehaviorSubject<String> filterSubject;
-    private Subscription filterSubscription;
+    BehaviorSubject<String> filterSubject;
+    Subscription filterSubscription;
     private long roomId = -1;
 
     private ToggleCollector toggledIds;
 
 
     @Inject
-    public TeamMemberPresenterImpl(View view, TeamMemberDataModel teamMemberDataModel, Lazy<ChannelApi> channelApi, Lazy<GroupApi> groupApi, ToggleCollector toggledIds) {
+    public TeamMemberPresenterImpl(View view,
+                                   TeamMemberModel teamMemberModel,
+                                   TeamMemberDataModel teamMemberDataModel,
+                                   Lazy<ChannelApi> channelApi,
+                                   Lazy<GroupApi> groupApi,
+                                   ToggleCollector toggledIds) {
         this.view = view;
+        this.teamMemberModel = teamMemberModel;
         this.teamMemberDataModel = teamMemberDataModel;
         this.channelApi = channelApi;
         this.groupApi = groupApi;
@@ -77,33 +83,7 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                 .onBackpressureBuffer()
                 .observeOn(Schedulers.io())
                 .map(String::toLowerCase)
-                .concatMap(it -> Observable.from(TeamInfoLoader.getInstance().getUserList())
-                        .filter(User::isEnabled)
-                        .filter(user -> user.getName().toLowerCase().contains(it))
-                        .filter(user -> {
-                            if (!selectMode || roomId < 0) {
-                                return true;
-                            }
-
-                            Room room = TeamInfoLoader.getInstance().getRoom(roomId);
-                            if (room != null) {
-                                return !room.getMembers().contains(user.getId());
-                            }
-
-                            return true;
-                        })
-                        .map((user1) -> new TeamMemberItem(user1, it))
-                        .concatWith(Observable.defer(() -> {
-                            // 검색어 없을 때
-                            // 선택 모드
-                            // 1인 pick 모드
-                            return Observable.just(TextUtils.isEmpty(it) && selectMode && roomId < 0)
-                                    .filter(pickmode -> pickmode)
-                                    .flatMap(ttt -> Observable.from(TeamInfoLoader.getInstance().getUserList()))
-                                    .map(User::isEnabled) // enabled 상태 받음
-                                    .takeFirst(enabled -> !enabled) // disabled 인 상태 필터
-                                    .map(disabld -> new TeamDisabledMemberItem(null, it));
-                        }))
+                .concatMap(it -> teamMemberModel.getFilteredUser(it, selectMode, roomId)
                         .compose(sort())
                         .compose(textToSpan(it)))
                 .observeOn(AndroidSchedulers.mainThread())
