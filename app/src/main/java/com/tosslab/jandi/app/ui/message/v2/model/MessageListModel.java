@@ -172,9 +172,9 @@ public class MessageListModel {
     public boolean hasAllMention(String message, List<MentionObject> mentions) {
         return Observable.from(mentions)
                 .takeFirst(mentionObject -> {
-                    int start = mentionObject.getOffset() + 1;
+                    int start = mentionObject.getOffset();
                     int end = start + mentionObject.getLength();
-                    if (message.substring(start, end).equals("All")) {
+                    if (message.substring(start, end).equals("@all")) {
                         return true;
                     }
                     return false;
@@ -192,7 +192,6 @@ public class MessageListModel {
     public ResMessages.Link sendMessage(long localId, long teamId, long roomId, ReqMessage reqMessage) {
 
         try {
-
             List<ResMessages.Link> links = roomsApi.get().sendMessage(teamId, roomId, reqMessage);
             ResMessages.Link link = links.get(0);
 

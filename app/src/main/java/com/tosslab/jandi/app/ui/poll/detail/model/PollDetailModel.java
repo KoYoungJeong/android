@@ -320,6 +320,71 @@ public class PollDetailModel {
         return resCommon;
     }
 
+    public void trackPollCommentPostSuccess(long messageId,
+                                            long pollId,
+                                            int mentionCount,
+                                            boolean hasAllMention) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.MessagePost)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.MentionCount, mentionCount)
+                .property(PropertyKey.HasAllMention, hasAllMention)
+                .property(PropertyKey.PollId, pollId)
+                .property(PropertyKey.MessageId, messageId)
+                .build());
+    }
+
+    public void trackPollStickerCommentPostSuccess(long messageId,
+                                                   long pollId,
+                                                   String stickerId,
+                                                   int mentionCount,
+                                                   boolean hasAllMention) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.MessagePost)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.StickerId, stickerId)
+                .property(PropertyKey.MentionCount, mentionCount)
+                .property(PropertyKey.HasAllMention, hasAllMention)
+                .property(PropertyKey.PollId, pollId)
+                .property(PropertyKey.MessageId, messageId)
+                .build());
+    }
+
+
+    public void trackPollCommentPostFail(int errorCode) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.MessagePost)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
+    }
+
+    public void trackPollCommentDeleteSuccess(long pollId) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.MessageDelete)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.PollId, pollId)
+                .build());
+    }
+
+    public void trackPollCommentDeleteFail(int errorCode) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.MessageDelete)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
+    }
+
     public void trackStarredPollSuccess(long pollId) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(SprinklerEvents.Starred)
@@ -383,9 +448,9 @@ public class PollDetailModel {
     public boolean hasAllMention(String message, List<MentionObject> mentions) {
         return Observable.from(mentions)
                 .takeFirst(mentionObject -> {
-                    int start = mentionObject.getOffset() + 1;
+                    int start = mentionObject.getOffset();
                     int end = start + mentionObject.getLength();
-                    if (message.substring(start, end).equals("All")) {
+                    if (message.substring(start, end).equals("@all")) {
                         return true;
                     }
                     return false;

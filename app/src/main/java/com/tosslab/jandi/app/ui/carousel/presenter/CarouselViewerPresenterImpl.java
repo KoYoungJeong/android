@@ -268,8 +268,10 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
             try {
                 ResMessages.FileMessage fileMessage =
                         fileDetailModel.enableExternalLink(teamId, fileMessageId);
+                fileDetailModel.trackCreatePublicLinkSuccess(fileMessageId);
                 subscriber.onNext(fileMessage);
             } catch (RetrofitException e) {
+                fileDetailModel.trackCreatePublicLinkFail(e.getResponseCode());
                 subscriber.onError(e);
             }
             subscriber.onCompleted();
@@ -301,8 +303,10 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
             try {
                 ResMessages.FileMessage fileMessage =
                         fileDetailModel.disableExternalLink(teamId, fileMessageId);
+                fileDetailModel.trackDisablePublicLinkSuccess(fileMessageId);
                 subscriber.onNext(fileMessage);
             } catch (RetrofitException e) {
+                fileDetailModel.trackDisablePublicLinkFail(e.getResponseCode());
                 subscriber.onError(e);
             }
             subscriber.onCompleted();

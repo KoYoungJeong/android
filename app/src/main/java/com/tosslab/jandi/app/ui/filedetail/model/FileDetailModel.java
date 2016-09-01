@@ -170,16 +170,19 @@ public class FileDetailModel {
         }
     }
 
-    public void sendMessageCommentWithSticker(long fileId, long stickerGroupId, String stickerId, String comment, List<MentionObject> mentions) throws RetrofitException {
+    public long sendMessageCommentWithSticker(long fileId, long stickerGroupId, String stickerId, String comment, List<MentionObject> mentions) throws RetrofitException {
         try {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
             ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerGroupId, stickerId, teamId, fileId, "", comment, mentions);
-            stickerApi.get().sendStickerComment(reqSendSticker);
+            ResCommon resCommon = stickerApi.get().sendStickerComment(reqSendSticker);
+            return resCommon.id;
         } catch (RetrofitException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return -1;
     }
 
     public void trackFileShareSuccess(long topicId, long fileId) {
@@ -265,6 +268,25 @@ public class FileDetailModel {
                 .build());
     }
 
+    public void trackFileStickerCommentPostSuccess(long messageId,
+                                                   long fileId,
+                                                   String stickerId,
+                                                   long mentionCount,
+                                                   boolean hasAllMention) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.MessagePost)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.StickerId, stickerId)
+                .property(PropertyKey.MentionCount, mentionCount)
+                .property(PropertyKey.HasAllMention, hasAllMention)
+                .property(PropertyKey.FileId, fileId)
+                .property(PropertyKey.MessageId, messageId)
+                .build());
+    }
+
+
     public void trackFileCommentPostFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(SprinklerEvents.MessagePost)
@@ -317,26 +339,24 @@ public class FileDetailModel {
         );
     }
 
-    public void trackCreatePublicLinkFail(long fileId, int errorCode) {
+    public void trackCreatePublicLinkFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(SprinklerEvents.PublicLinkCreated)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)
-                .property(PropertyKey.FileId, fileId)
                 .build()
         );
     }
 
-    public void trackDisablePublicLinkFail(long fileId, int errorCode) {
+    public void trackDisablePublicLinkFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(SprinklerEvents.PublicLinkDeleted)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)
-                .property(PropertyKey.FileId, fileId)
                 .build()
         );
     }
@@ -404,9 +424,9 @@ public class FileDetailModel {
     public boolean hasAllMention(String message, List<MentionObject> mentions) {
         return Observable.from(mentions)
                 .takeFirst(mentionObject -> {
-                    int start = mentionObject.getOffset() + 1;
+                    int start = mentionObject.getOffset();
                     int end = start + mentionObject.getLength();
-                    if (message.substring(start, end).equals("All")) {
+                    if (message.substring(start, end).equals("@all")) {
                         return true;
                     }
                     return false;
