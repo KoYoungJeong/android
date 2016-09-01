@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
@@ -118,7 +119,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
     @Nullable
     @InjectExtra
-    int tabIndex = 0;
+    int tabIndex = -1;
 
     private long selectedEntity = -1;
 
@@ -141,6 +142,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         }
 
         injectComponent();
+
+        Dart.inject(this);
 
         ButterKnife.bind(this);
 
@@ -259,11 +262,11 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     private void initTabs() {
         List<TabInfo> tabInfos = TabFactory.getTabs(selectedEntity);
 
-        setPosition();
-
         tabPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), tabInfos);
         viewPager.setOffscreenPageLimit(tabInfos.size());
         viewPager.setAdapter(tabPagerAdapter);
+
+        setPosition();
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
@@ -292,19 +295,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 }
             }
 
-            @Nullable
-            private Fragment getFragment(int position) {
-                try {
-                    Object item = tabPagerAdapter.instantiateItem(viewPager, position);
-                    if (item != null && item instanceof Fragment) {
-                        return (Fragment) item;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
         });
 
         Observable.from(tabInfos)
@@ -329,7 +319,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 viewPager.setCurrentItem(ChatTabInfo.INDEX);
             }
         } else {
-            viewPager.setCurrentItem(JandiPreference.getLastSelectedTab());
+            int lastSelectedTab = JandiPreference.getLastSelectedTab();
+            viewPager.setCurrentItem(lastSelectedTab);
         }
     }
 
@@ -534,13 +525,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             return;
         }
 
-        Fragment fragment = tabPagerAdapter.getItem(viewPager.getCurrentItem());
+        Fragment fragment = getFragment(viewPager.getCurrentItem());
         if (fragment != null
                 && fragment instanceof BackPressConsumer) {
             if (((BackPressConsumer) fragment).consumeBackPress()) {
                 return;
             }
-            super.onBackPressed();
         }
 
         super.onBackPressed();
@@ -550,5 +540,18 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     @Override
     public View provideFloatingActionButton() {
         return btnFab;
+    }
+
+    @Nullable
+    private Fragment getFragment(int position) {
+        try {
+            Object item = tabPagerAdapter.instantiateItem(viewPager, position);
+            if (item != null && item instanceof Fragment) {
+                return (Fragment) item;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

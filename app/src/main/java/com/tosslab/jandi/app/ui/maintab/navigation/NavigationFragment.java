@@ -409,10 +409,9 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         String photoUrl = user.getPhotoUrl();
         ImageUtil.loadProfileImage(ivProfile, photoUrl, R.drawable.profile_img);
 
+        Resources resources = ivProfile.getResources();
+        int defaultColor = resources.getColor(R.color.jandi_member_profile_img_overlay_default);
         if (!TextUtils.isEmpty(photoUrl) && photoUrl.contains("files-profile")) {
-            vProfileImageLargeOverlay.setVisibility(View.GONE);
-            Resources resources = ivProfile.getResources();
-            int defaultColor = resources.getColor(R.color.jandi_member_profile_img_overlay_default);
             Drawable placeHolder = new ColorDrawable(defaultColor);
             ImageLoader.newInstance()
                     .placeHolder(placeHolder, ImageView.ScaleType.FIT_XY)
@@ -421,7 +420,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                     .uri(Uri.parse(ImageUtil.getLargeProfileUrl(photoUrl)))
                     .into(ivProfileLarge);
         } else {
-            vProfileImageLargeOverlay.setVisibility(View.VISIBLE);
+            vProfileImageLargeOverlay.setBackgroundColor(defaultColor);
         }
 
         ivProfile.setOnClickListener(v -> moveToProfileSettingActivity());
