@@ -80,7 +80,7 @@ public class FileDownloadApi {
     private boolean writeResponseBodyToDisk(ResponseBody body, String targetFile, ProgressCallback progressCallback) {
         PublishSubject<Integer> callback = PublishSubject.create();
         if (progressCallback != null) {
-            progressCallback.callback(callback);
+            progressCallback.callback(callback.onBackpressureBuffer());
         } else {
             callback.subscribe(it -> {}, t -> {});
         }
