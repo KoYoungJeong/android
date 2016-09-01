@@ -3,9 +3,11 @@ package com.tosslab.jandi.app.ui.maintab.chat;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Menu;
 import android.view.View;
 
 import com.tosslab.jandi.app.JandiConstants;
@@ -23,6 +25,7 @@ import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.chat.adapter.MainChatListAdapter;
 import com.tosslab.jandi.app.ui.maintab.chat.presenter.MainChatListPresenter;
 import com.tosslab.jandi.app.ui.maintab.chat.presenter.MainChatListPresenterImpl;
@@ -45,7 +48,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
@@ -54,7 +56,6 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 
 @EFragment(R.layout.fragment_main_chat_list)
-@OptionsMenu(R.menu.main_activity_menu)
 public class MainChatListFragment extends Fragment
         implements MainChatListPresenter.View, ListScroller {
 
@@ -84,6 +85,7 @@ public class MainChatListFragment extends Fragment
 
     @AfterViews
     void initViews() {
+        setHasOptionsMenu(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         lvChat.setLayoutManager(layoutManager);
         lvChat.addItemDecoration(new SimpleDividerItemDecoration());
@@ -256,7 +258,6 @@ public class MainChatListFragment extends Fragment
     }
 
     public void onEvent(MessagePushEvent event) {
-
         if (!foreground) {
             return;
         }
@@ -286,6 +287,19 @@ public class MainChatListFragment extends Fragment
             return;
         }
         mainChatListPresenter.onReloadChatList();
+    }
+
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        menu.clear();
+
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainTabActivity) {
+            activity.getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+        }
     }
 
     @OptionsItem(R.id.action_main_search)

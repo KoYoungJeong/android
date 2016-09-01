@@ -21,7 +21,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Streaming;
 import rx.Observable;
-import rx.Subscription;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 public class FileDownloadApi {
@@ -38,7 +38,9 @@ public class FileDownloadApi {
         download.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                writeResponseBodyToDisk(response.body(), saveFile, progressCallback);
+                Observable.just(response)
+                        .observeOn(Schedulers.io())
+                        .subscribe(it -> writeResponseBodyToDisk(it.body(), saveFile, progressCallback));
             }
 
             @Override
@@ -77,14 +79,12 @@ public class FileDownloadApi {
 
     private boolean writeResponseBodyToDisk(ResponseBody body, String targetFile, ProgressCallback progressCallback) {
         PublishSubject<Integer> callback = PublishSubject.create();
-        Subscription callbackSubscription;
         if (progressCallback != null) {
-            callbackSubscription = progressCallback.callback(callback);
+            progressCallback.callback(callback.onBackpressureBuffer());
         } else {
-            callbackSubscription = callback.subscribe(it -> {}, t -> {});
+            callback.subscribe(it -> {}, t -> {});
         }
         try {
-            // todo change the file location/name according to your needs
             File futureStudioIconFile = new File(targetFile);
 
             InputStream inputStream = null;
@@ -130,10 +130,6 @@ public class FileDownloadApi {
         } catch (IOException e) {
             callback.onError(e);
             return false;
-        } finally {
-            if (!callbackSubscription.isUnsubscribed()) {
-                callbackSubscription.unsubscribe();
-            }
         }
     }
 

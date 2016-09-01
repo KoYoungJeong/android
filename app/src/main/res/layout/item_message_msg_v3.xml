@@ -9,7 +9,7 @@
         android:layout_width="@dimen/jandi_messages_profile_size"
         android:layout_height="@dimen/jandi_messages_profile_size"
         android:layout_marginLeft="@dimen/jandi_messages_profile_margin_right"
-        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"/>
+        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right" />
 
     <View
         android:id="@+id/v_message_user_profile_cover"

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.search.filter.room.adapter;
 
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -118,14 +119,7 @@ public class RoomFilterAdapter extends MultiItemRecyclerAdapter
                 .concatMap(Observable::from)
                 .doOnNext(folder -> {
                     if (rows.size() > 0) {
-                        int height = (int) UiUtils.getPixelFromDp(1);
-                        int color = JandiApplication.getContext()
-                                .getResources().getColor(R.color.rgb_eeeeee);
-
-                        DividerViewHolder.Info dividerInfo =
-                                DividerViewHolder.Info.create(height, color);
-
-                        rows.add(Row.create(dividerInfo, VIEW_TYPE_FOLDER_DIVIDER));
+                        rows.addAll(getFolderDividerRow());
                     }
                     rows.add(Row.create(folder.getFolder(), VIEW_TYPE_FOLDER));
                 })
@@ -134,16 +128,25 @@ public class RoomFilterAdapter extends MultiItemRecyclerAdapter
                                 rows.add(Row.create(topicRoom, VIEW_TYPE_TOPIC)),
                         Throwable::printStackTrace,
                         () -> {
-                            int height = (int) UiUtils.getPixelFromDp(1);
-                            int color = JandiApplication.getContext()
-                                    .getResources().getColor(R.color.rgb_eeeeee);
-
-                            DividerViewHolder.Info dividerInfo =
-                                    DividerViewHolder.Info.create(height, color);
-
-                            rows.add(Row.create(dividerInfo, VIEW_TYPE_FOLDER_DIVIDER));
+                            rows.addAll(getFolderDividerRow());
                         });
 
+        return rows;
+    }
+
+    private List<Row<?>> getFolderDividerRow() {
+        List<Row<?>> rows = new ArrayList<>();
+
+        DividerViewHolder.Info marginDividerInfo =
+                DividerViewHolder.Info.create((int) UiUtils.getPixelFromDp(8), Color.TRANSPARENT);
+        rows.add(Row.create(marginDividerInfo, VIEW_TYPE_FOLDER_DIVIDER));
+
+        int height = (int) UiUtils.getPixelFromDp(1);
+        int color = JandiApplication.getContext()
+                .getResources().getColor(R.color.rgb_eeeeee);
+        DividerViewHolder.Info dividerInfo =
+                DividerViewHolder.Info.create(height, color);
+        rows.add(Row.create(dividerInfo, VIEW_TYPE_FOLDER_DIVIDER));
         return rows;
     }
 

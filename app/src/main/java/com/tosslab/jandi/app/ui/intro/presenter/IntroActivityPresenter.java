@@ -154,12 +154,6 @@ public class IntroActivityPresenter {
         Observable<Boolean> hasTeamObservable = Observable.just(model.hasSelectedTeam() && !startForInvite)
                 .share();
 
-        hasTeamObservable.filter(it -> it)
-                .observeOn(Schedulers.io())
-                .subscribe(it -> {
-                    view.startSocketService();
-                }, t -> { });
-
         // 팀 정보가 있는 경우
         hasTeamObservable.filter(it -> it)
                 .doOnNext(it -> PushUtil.registPush())
@@ -180,6 +174,7 @@ public class IntroActivityPresenter {
                             model.refreshEntityInfo();
                         }
                     }
+                    view.startSocketService();
 
                     TeamInfoLoader.getInstance();
                 })

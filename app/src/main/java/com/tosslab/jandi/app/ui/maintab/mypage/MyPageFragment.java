@@ -12,7 +12,6 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -212,8 +211,10 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.maintab_mypage, menu);
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.clear();
+        getActivity().getMenuInflater().inflate(R.menu.maintab_mypage, menu);
     }
 
     @Override
@@ -255,21 +256,21 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
                 || poll.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
-        presenter.onGetPollBadge();
+        presenter.onUpdatePollBadge();
     }
 
     public void onEvent(RequestRefreshPollBadgeCountEvent event) {
         if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
-        presenter.onGetPollBadge();
+        presenter.onUpdatePollBadge();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        presenter.onGetPollBadge();
+        presenter.onUpdatePollBadge();
 
         if (isLaidOut) {
             presenter.onRetrieveMyInfo();

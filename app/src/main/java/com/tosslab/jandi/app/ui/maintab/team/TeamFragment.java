@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -82,6 +84,8 @@ public class TeamFragment extends Fragment implements TeamView, ListScroller {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        setHasOptionsMenu(true);
+
         SearchableMemberListAdapter adapter = new SearchableMemberListAdapter();
         DaggerTeamComponent.builder()
                 .teamModule(new TeamModule(this, adapter))
@@ -96,6 +100,12 @@ public class TeamFragment extends Fragment implements TeamView, ListScroller {
         initUsageInformationKnockListener();
 
         presenter.onInitializeTeam();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
     }
 
     private void initTeamMemberListView(SearchableMemberListAdapter adapter) {
@@ -144,6 +154,12 @@ public class TeamFragment extends Fragment implements TeamView, ListScroller {
     private void showBugReportDialog() {
         UsageInformationDialogFragment_.builder().build()
                 .show(getFragmentManager(), "usageInformationKnock");
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.clear();
     }
 
     @OnClick(R.id.vg_team_member_search)

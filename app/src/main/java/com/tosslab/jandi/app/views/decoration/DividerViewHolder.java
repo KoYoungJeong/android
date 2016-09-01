@@ -5,7 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
-import com.tosslab.jandi.app.utils.UiUtils;
 
 /**
  * Created by tonyjs on 16. 6. 22..
@@ -23,10 +22,7 @@ public class DividerViewHolder extends BaseViewHolder<DividerViewHolder.Info> {
         int height = ViewGroup.LayoutParams.WRAP_CONTENT;
 
         ViewGroup.MarginLayoutParams layoutParams = new ViewGroup.MarginLayoutParams(width, height);
-        layoutParams.setMargins(layoutParams.leftMargin, (int) UiUtils.getPixelFromDp(8),
-                layoutParams.rightMargin, layoutParams.bottomMargin);
         itemView.setLayoutParams(layoutParams);
-
 
         return new DividerViewHolder(itemView);
     }
