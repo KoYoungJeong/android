@@ -102,7 +102,6 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
 
         DeptJobAdapter adapter = new DeptJobAdapter();
         lvMember.setLayoutManager(new LinearLayoutManager(getActivity()));
-        lvMember.addItemDecoration(new SimpleDividerItemDecoration());
 
         if (hasHeader) {
             adapter.setHasStableIds(true);

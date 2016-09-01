@@ -92,7 +92,7 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         holder.showHalfDivider();
                     }
                 } else {
-                    holder.dismissDividers();
+                    holder.showFullDivider();
                 }
             }
 
