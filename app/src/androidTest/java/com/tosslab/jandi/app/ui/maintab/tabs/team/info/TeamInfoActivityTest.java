@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.team.info;
 
 import android.support.test.rule.ActivityTestRule;
+import android.view.MenuItem;
 
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
@@ -15,6 +16,8 @@ import rx.observers.TestSubscriber;
 import setup.BaseInitUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 @org.junit.runner.RunWith(android.support.test.runner.AndroidJUnit4.class)
 public class TeamInfoActivityTest {
@@ -85,5 +88,15 @@ public class TeamInfoActivityTest {
         String versionName = String.format("%s : %s", "App Version", ApplicationUtil.getAppVersionName());
 
         assertThat(version).isEqualTo(versionName);
+    }
+
+    @Test
+    public void optionHome() throws Exception {
+        MenuItem mock = mock(MenuItem.class);
+        doReturn(android.R.id.home).when(mock).getItemId();
+        activity.onOptionsItemSelected(mock);
+
+        assertThat(activity.isFinishing()).isTrue();
+
     }
 }
