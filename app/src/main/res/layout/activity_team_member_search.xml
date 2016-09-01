@@ -78,14 +78,14 @@
         app:tabBackground="@color/jandi_primary_color"
         app:tabGravity="fill"
         app:tabIndicatorColor="@color/white"
-        app:tabIndicatorHeight="3dp"
+        app:tabIndicatorHeight="2dp"
         app:tabMaxWidth="0dp"
         app:tabMode="fixed"
         app:tabPaddingEnd="0dp"
         app:tabPaddingStart="0dp"
         app:tabSelectedTextColor="@color/white"
         app:tabTextAppearance="@style/TeamTabTextApprearance"
-        app:tabTextColor="@color/jandi_transparent_white_70p"/>
+        app:tabTextColor="@color/jandi_transparent_white_20p"/>
 
     <View
         android:layout_width="match_parent"
