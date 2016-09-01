@@ -70,9 +70,9 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                             long teamId = AccountRepository.getRepository().getSelectedTeamId();
                             try {
                                 if (starred) {
-                                    fileDetailModel.registStarredMessage(teamId, fileId);
+                                    fileDetailModel.registStarredFile(teamId, fileId);
                                 } else {
-                                    fileDetailModel.unregistStarredMessage(teamId, fileId);
+                                    fileDetailModel.unregistStarredFile(teamId, fileId);
                                 }
                                 return Observable.just(fileStarredInfo);
                             } catch (Exception e) {

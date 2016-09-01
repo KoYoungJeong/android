@@ -103,8 +103,9 @@ public class FileDetailModel {
         entityClientManager.unshareMessage(fileId, entityIdToBeUnshared);
     }
 
-    public void sendMessageComment(long fileId, String message, List<MentionObject> mentions) throws RetrofitException {
-        entityClientManager.sendMessageComment(fileId, message, mentions);
+    public long sendMessageComment(long fileId, String message, List<MentionObject> mentions) throws RetrofitException {
+        ResCommon resCommon = entityClientManager.sendMessageComment(fileId, message, mentions);
+        return resCommon.id;
     }
 
     public void deleteComment(long messageId, long feedbackId) throws RetrofitException {
@@ -182,7 +183,6 @@ public class FileDetailModel {
     }
 
     public void trackFileShareSuccess(long topicId, long fileId) {
-
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(SprinklerEvents.FileShare)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
@@ -226,11 +226,9 @@ public class FileDetailModel {
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)
                 .build());
-
     }
 
     public void trackFileDeleteSuccess(long topicId, long fileId) {
-
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(SprinklerEvents.FileDelete)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
@@ -239,7 +237,6 @@ public class FileDetailModel {
                 .property(PropertyKey.TopicId, topicId)
                 .property(PropertyKey.FileId, fileId)
                 .build());
-
     }
 
     public void trackFileDeleteFail(int errorCode) {
@@ -252,7 +249,10 @@ public class FileDetailModel {
                 .build());
     }
 
-    public void trackMessagePostSuccess(long fileId, int mentionCount, boolean hasAllMention) {
+    public void trackFileCommentPostSuccess(long messageId,
+                                            long fileId,
+                                            int mentionCount,
+                                            boolean hasAllMention) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(SprinklerEvents.MessagePost)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
@@ -261,19 +261,37 @@ public class FileDetailModel {
                 .property(PropertyKey.MentionCount, mentionCount)
                 .property(PropertyKey.HasAllMention, hasAllMention)
                 .property(PropertyKey.FileId, fileId)
+                .property(PropertyKey.MessageId, messageId)
                 .build());
     }
 
-    public void trackMessagePostFail(int errorCode, long fileId, int mentionCount, boolean hasAllMention) {
+    public void trackFileCommentPostFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(SprinklerEvents.MessagePost)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.MentionCount, mentionCount)
-                .property(PropertyKey.HasAllMention, hasAllMention)
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)
-                .property(PropertyKey.FileId, fileId)
+                .build());
+    }
+
+    public void trackFileCommentDeleteSuccess(long messageId) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.MessageDelete)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.MessageId, messageId)
+                .build());
+    }
+
+    public void trackFileCommentDeleteFail(int errorCode) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.MessageDelete)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
                 .build());
     }
 
@@ -323,6 +341,65 @@ public class FileDetailModel {
         );
     }
 
+    public void trackStarredFileSuccess(long fileId) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.Starred)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.FileId, fileId)
+                .build());
+    }
+
+    public void trackStarredCommentSuccess(long commentId) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.Starred)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.MessageId, commentId)
+                .build());
+    }
+
+    public void trackStarredFail(int errorCode) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.Starred)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
+    }
+
+    public void trackUnStarredFileSuccess(long fileId) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.UnStarred)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.FileId, fileId)
+                .build());
+    }
+
+    public void trackUnStarredCommentSuccess(long commentId) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.UnStarred)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.MessageId, commentId)
+                .build());
+    }
+
+    public void trackUnStarredFail(int errorCode) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.UnStarred)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
+    }
 
     public boolean hasAllMention(String message, List<MentionObject> mentions) {
         return Observable.from(mentions)
@@ -348,8 +425,10 @@ public class FileDetailModel {
         try {
             messageApi.get().registStarredMessage(teamId, messageId, new ReqNull());
             MessageRepository.getRepository().updateStarred(messageId, true);
+            trackStarredCommentSuccess(messageId);
         } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
+            trackStarredFail(e.getResponseCode());
         }
     }
 
@@ -357,8 +436,32 @@ public class FileDetailModel {
         try {
             messageApi.get().unregistStarredMessage(teamId, messageId);
             MessageRepository.getRepository().updateStarred(messageId, false);
+            trackUnStarredCommentSuccess(messageId);
         } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
+            trackUnStarredFail(e.getResponseCode());
+        }
+    }
+
+    public void registStarredFile(long teamId, long fileId) throws RetrofitException {
+        try {
+            messageApi.get().registStarredMessage(teamId, fileId, new ReqNull());
+            MessageRepository.getRepository().updateStarred(fileId, true);
+            trackStarredFileSuccess(fileId);
+        } catch (RetrofitException e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
+            trackStarredFail(e.getResponseCode());
+        }
+    }
+
+    public void unregistStarredFile(long teamId, long fileId) throws RetrofitException {
+        try {
+            messageApi.get().unregistStarredMessage(teamId, fileId);
+            MessageRepository.getRepository().updateStarred(fileId, false);
+            trackUnStarredFileSuccess(fileId);
+        } catch (RetrofitException e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
+            trackUnStarredFail(e.getResponseCode());
         }
     }
 

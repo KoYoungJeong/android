@@ -181,22 +181,21 @@ public class FileDetailPresenter {
         boolean hasAllMention = fileDetailModel.hasAllMention(message, mentions);
 
         try {
-            fileDetailModel.sendMessageComment(fileId, message, mentions);
+            long messageId = fileDetailModel.sendMessageComment(fileId, message, mentions);
 
             retrieveFileDetail(fileId, false);
 
             view.scrollToLastComment();
 
             // for sprinklr
-            fileDetailModel.trackMessagePostSuccess(fileId, mentions.size(), hasAllMention);
+            fileDetailModel.trackFileCommentPostSuccess(messageId, fileId, mentions.size(), hasAllMention);
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
             if (e instanceof RetrofitException) {
                 RetrofitException e1 = (RetrofitException) e;
                 // for sprinklr
-                fileDetailModel.trackMessagePostFail(
-                        e1.getResponseCode(), fileId, mentions.size(), hasAllMention);
+                fileDetailModel.trackFileCommentPostFail(e1.getResponseCode());
             }
         }
     }
@@ -209,10 +208,10 @@ public class FileDetailPresenter {
         long teamId = AccountRepository.getRepository().getSelectedTeamId();
         try {
             if (starred) {
-                fileDetailModel.registStarredMessage(teamId, fileId);
+                fileDetailModel.registStarredFile(teamId, fileId);
                 view.showStarredSuccessToast();
             } else {
-                fileDetailModel.unregistStarredMessage(teamId, fileId);
+                fileDetailModel.unregistStarredFile(teamId, fileId);
                 view.showUnstarredSuccessToast();
             }
             view.setFilesStarredState(starred);
@@ -233,7 +232,6 @@ public class FileDetailPresenter {
                 fileDetailModel.unregistStarredMessage(teamId, messageId);
                 view.showCommentUnStarredSuccessToast();
             }
-
             view.modifyCommentStarredState(messageId, starred);
 
             EventBus.getDefault().post(new StarredInfoChangeEvent());
@@ -485,7 +483,7 @@ public class FileDetailPresenter {
             } else {
                 fileDetailModel.deleteComment(messageId, feedbackId);
             }
-
+            fileDetailModel.trackFileCommentDeleteSuccess(messageId);
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
@@ -495,7 +493,9 @@ public class FileDetailPresenter {
                 view.addComment(adapterPosition, comment);
                 view.notifyDataSetChanged();
             }
-
+            if (e instanceof RetrofitException) {
+                fileDetailModel.trackFileCommentDeleteFail(((RetrofitException) e).getResponseCode());
+            }
         }
     }
 
