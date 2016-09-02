@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.utils.image;
 
 
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -93,23 +92,19 @@ public abstract class ProgressTarget<T, Z> extends WrappingTarget<Z> implements 
     }
 
     @Override public void onLoadStarted(Drawable placeholder) {
-        Log.d("PROGRESS", "onLoadStarted: ");
         super.onLoadStarted(placeholder);
         start();
     }
     @Override public void onResourceReady(Z resource, GlideAnimation<? super Z> animation) {
         cleanup();
-        Log.d("PROGRESS", "onResourceReady: ");
         super.onResourceReady(resource, animation);
     }
     @Override public void onLoadFailed(Exception e, Drawable errorDrawable) {
         cleanup();
-        Log.d("PROGRESS", "onLoadFailed: ");
         super.onLoadFailed(e, errorDrawable);
     }
     @Override public void onLoadCleared(Drawable placeholder) {
         cleanup();
-        Log.d("PROGRESS", "onLoadCleared: ");
         super.onLoadCleared(placeholder);
     }
 }

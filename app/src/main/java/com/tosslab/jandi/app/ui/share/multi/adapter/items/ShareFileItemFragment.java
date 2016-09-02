@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import java.io.File;
@@ -60,6 +59,7 @@ public class ShareFileItemFragment extends Fragment {
             vgFileType.setVisibility(View.GONE);
             ivImageThumb.setVisibility(View.VISIBLE);
             ImageLoader.newInstance()
+                    .fragment(this)
                     .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
                     .uri(Uri.fromFile(new File(filePath)))
                     .into(ivImageThumb);

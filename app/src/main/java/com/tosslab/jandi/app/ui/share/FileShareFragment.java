@@ -173,6 +173,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
             ivShareImage.setVisibility(View.VISIBLE);
 
             ImageLoader.newInstance()
+                    .fragment(this)
                     .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
                     .uri(Uri.fromFile(file))
                     .into(ivShareImage);

@@ -123,6 +123,7 @@ public class PhotoViewFragment extends Fragment {
                             return true;
                         }
                     })
+                    .fragment(this)
                     .uri(originalUri)
                     .progress(() -> Observable.just(0)
                                     .observeOn(AndroidSchedulers.mainThread())
@@ -194,6 +195,7 @@ public class PhotoViewFragment extends Fragment {
     public void loadImage(Uri uri) {
         ImageLoader.newInstance()
                 .uri(uri)
+                .fragment(this)
                 .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, Uri model, Target<GlideDrawable> target,
