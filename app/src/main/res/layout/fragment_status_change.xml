@@ -23,11 +23,12 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:background="@null"
+        android:hint="@string/jandi_enter_your_status_message"
         android:imeOptions="actionDone"
         android:lineSpacingExtra="2dp"
         android:maxLength="60"
         android:minHeight="32dp"
-        android:hint="@string/jandi_enter_your_status_message"
+        android:paddingTop="16dp"
         android:scrollHorizontally="true"
         android:scrollbars="horizontal"
         android:textColor="@color/jandi_text"
@@ -51,6 +52,8 @@
         android:layout_alignRight="@+id/tv_status_change_divider"
         android:layout_below="@+id/tv_status_change_divider"
         android:gravity="center"
-        android:text="0/60" />
+        android:text="0/60"
+        android:textColor="@color/jandi_text_light"
+        android:textSize="12sp" />
 
 </RelativeLayout>
