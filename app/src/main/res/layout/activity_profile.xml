@@ -28,8 +28,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="132dp"
-                android:layout_marginBottom="12dp">
+                android:layout_height="132dp">
 
                 <ImageView
                     android:id="@+id/profile_photo"
@@ -79,7 +78,6 @@
                 android:id="@+id/profile_user_status_message"
                 style="@style/JandiMemberProfile.Profile"
                 android:layout_height="wrap_content"
-                android:minHeight="72dp"
                 app:textContentSingleline="false"
                 app:textHintContent="@string/jandi_enter_your_status_message"
                 app:textTitle="@string/jandi_profile_status_message" />
