@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
@@ -184,7 +185,6 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
 
     @Override
     public void onDestroyView() {
-        presenter.clearMentionInitializeQueue();
         EventBus.getDefault().unregister(this);
         super.onDestroyView();
     }
@@ -308,6 +308,14 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
     @Override
     public void moveToPollDetailActivity(long pollId) {
         PollDetailActivity.start(getActivity(), pollId);
+    }
+
+    public void onEventMainThread(NetworkConnectEvent event) {
+        if (!(event.isConnected())) {
+            return;
+        }
+
+        presenter.reInitializeIfEmpty(adapter.getItemCount() <= 0);
     }
 
     private boolean isFinishing() {

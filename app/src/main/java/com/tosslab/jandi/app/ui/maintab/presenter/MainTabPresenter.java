@@ -15,7 +15,7 @@ public interface MainTabPresenter {
 
     void onInitMyPageBadge();
 
-    void onCheckIfNotLastestVersion(Action0 completeAction);
+    void onCheckIfNotLatestVersion(Action0 completeAction);
 
     void onCheckIfNotProfileSetUp();
 
