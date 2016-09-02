@@ -310,6 +310,7 @@ public class FileDetailPresenter {
                             progressDialog.setMax(100);
                             progressDialog.setProgress(it);
                         }, t -> {
+                            t.printStackTrace();
                             view.dismissDialog(progressDialog);
                             if (currentDownloadingFile == null || currentDownloadingFile.isCanceled()) {
                                 currentDownloadingFile = null;
