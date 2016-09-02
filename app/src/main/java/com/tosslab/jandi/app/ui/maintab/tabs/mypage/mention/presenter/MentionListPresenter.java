@@ -5,15 +5,13 @@ import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.dto.MentionMessage;
 
 public interface MentionListPresenter {
 
-    void initializeMentionInitializeQueue();
-
     void onInitializeMyPage(boolean isRefreshAction);
 
     void loadMoreMentions(long offset);
 
     void onClickMention(MentionMessage mention);
 
-    void clearMentionInitializeQueue();
-
     void addMentionedMessage(ResMessages.Link link);
+
+    void reInitializeIfEmpty(boolean isEmpty);
 }

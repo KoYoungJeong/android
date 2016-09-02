@@ -25,6 +25,8 @@ public interface StarredListPresenter {
 
     void onMessageStarred(long messageId, StarredType starredType);
 
+    void reInitializeIfEmpty(StarredType starredType);
+
     enum StarredType {
         All(""),
         File("file");
@@ -41,8 +43,6 @@ public interface StarredListPresenter {
     }
 
     interface View {
-        void showCheckNetworkDialog();
-
         void showEmptyLayout();
 
         void notifyDataSetChanged();

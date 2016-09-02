@@ -175,6 +175,11 @@ public class StarredListAdapter extends MultiItemRecyclerAdapter
         return rows;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return getRows() == null || getRows().size() <= 0;
+    }
+
     private Row<?> getMessageRow(StarredMessage starredMessage) {
         int itemViewType = VIEW_TYPE_TEXT_MESSAGE;
 
@@ -198,7 +203,7 @@ public class StarredListAdapter extends MultiItemRecyclerAdapter
 
     @Nullable
     public StarredMessage getLastStarredMessage() {
-        for (int i = getItemCount()-1; i >= 0; i--) {
+        for (int i = getItemCount() - 1; i >= 0; i--) {
             if (getItem(i) instanceof StarredMessage) {
                 return getItem(i);
             }

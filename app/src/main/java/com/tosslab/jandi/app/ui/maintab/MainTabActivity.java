@@ -153,7 +153,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
         initOffLineLayer();
 
-        mainTabPresenter.onCheckIfNotLastestVersion(() -> {
+        mainTabPresenter.onCheckIfNotLatestVersion(() -> {
             if (isFinishing()) {
                 return;
             }

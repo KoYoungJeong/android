@@ -46,7 +46,7 @@ public class MainTabPresenterImpl implements MainTabPresenter {
     }
 
     @Override
-    public void onCheckIfNotLastestVersion(Action0 completeAction) {
+    public void onCheckIfNotLatestVersion(Action0 completeAction) {
         if (!NetworkCheckUtil.isConnected()) {
             completeAction.call();
             return;
