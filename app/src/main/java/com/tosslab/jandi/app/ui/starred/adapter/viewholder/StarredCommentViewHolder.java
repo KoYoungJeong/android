@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.network.models.commonobject.StarredMessage;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.starred.vo.StarMentionVO;
@@ -50,9 +51,9 @@ public class StarredCommentViewHolder extends BaseViewHolder<StarredMessage> {
 
     @Override
     public void onBindView(StarredMessage starredMessage) {
-        User user = TeamInfoLoader.getInstance().getUser(starredMessage.getMessage().writerId);
+        Member member = TeamInfoLoader.getInstance().getMember(starredMessage.getMessage().writerId);
         StarredMessageProfileBinder.newInstance(tvWriter, ivProfile)
-                .bind(user);
+                .bind(member);
 
         tvFileName.setText(starredMessage.getMessage().feedbackTitle);
 
