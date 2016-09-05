@@ -126,13 +126,6 @@ public class StickerViewModel {
     private void addStickerView(List<ResMessages.StickerContent> stickers, ViewPager vgStickerItems) {
         int size = stickers.size();
 
-        //페이지가 한개만 있을 땐 스크롤을 막음
-        if (size <= 8) {
-            pagerStickerItems.setOnTouchListener((v, event) -> true);
-        } else {
-            pagerStickerItems.setOnTouchListener(null);
-        }
-
         if (size <= 0) {
             vgNoItemsLayout.setVisibility(View.VISIBLE);
             viewPagerIndicator.setVisibility(View.GONE);
