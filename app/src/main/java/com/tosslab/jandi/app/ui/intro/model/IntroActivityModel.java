@@ -20,17 +20,14 @@ import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import javax.inject.Inject;
 
 import dagger.Lazy;
-import rx.Observable;
-import rx.schedulers.Schedulers;
 
 public class IntroActivityModel {
 
@@ -71,12 +68,8 @@ public class IntroActivityModel {
         try {
             long selectedTeamId = selectedTeamInfo.getTeamId();
             InitialInfo initialInfo = startApi.get().getInitializeInfo(selectedTeamId);
+            InitialInfoRepository.getInstance().upsertInitialInfo(initialInfo);
             TeamInfoLoader.getInstance().refresh(initialInfo);
-            Observable.just(initialInfo)
-                    .observeOn(Schedulers.io())
-                    .subscribe(o -> {
-                        InitialInfoRepository.getInstance().upsertInitialInfo(o);
-                    });
             JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
             return true;
         } catch (RetrofitException e) {
@@ -125,7 +118,18 @@ public class IntroActivityModel {
 
     public boolean hasLeftSideMenu() {
         long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-        return InitialInfoRepository.getInstance().hasInitialInfo(selectedTeamId);
+        boolean hasInitInfo = InitialInfoRepository.getInstance().hasInitialInfo(selectedTeamId);
+
+        if (hasInitInfo) {
+            try {
+                return TeamInfoLoader.getInstance().getTeamId() > 0;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     public boolean hasSelectedTeam() {

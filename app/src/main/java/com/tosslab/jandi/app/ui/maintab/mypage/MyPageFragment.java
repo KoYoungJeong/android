@@ -256,21 +256,21 @@ public class MyPageFragment extends Fragment implements MyPageView, ListScroller
                 || poll.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
-        presenter.onGetPollBadge();
+        presenter.onUpdatePollBadge();
     }
 
     public void onEvent(RequestRefreshPollBadgeCountEvent event) {
         if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
-        presenter.onGetPollBadge();
+        presenter.onUpdatePollBadge();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        presenter.onGetPollBadge();
+        presenter.onUpdatePollBadge();
 
         if (isLaidOut) {
             presenter.onRetrieveMyInfo();
