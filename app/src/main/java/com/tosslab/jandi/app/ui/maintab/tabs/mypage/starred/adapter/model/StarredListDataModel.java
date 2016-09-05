@@ -23,4 +23,7 @@ public interface StarredListDataModel {
     List<MultiItemRecyclerAdapter.Row<?>> getStarredMessageRow(StarredMessage message);
 
     void addRows(int position, List<MultiItemRecyclerAdapter.Row<?>> rows);
+
+    boolean isEmpty();
+
 }

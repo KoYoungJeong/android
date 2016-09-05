@@ -35,29 +35,17 @@ public class MentionListPresenterImpl implements MentionListPresenter {
     private final MentionListModel model;
     private final MentionListView view;
 
-    private Subscription mentionInitializeQueueSubscription;
-    private PublishSubject<Object> mentionInitializeQueue;
+    private boolean isInInitializing = false;
 
     @Inject
     public MentionListPresenterImpl(MentionListModel model, MentionListView view) {
         this.model = model;
         this.view = view;
-
-        initializeMentionInitializeQueue();
-    }
-
-    @Override
-    public void initializeMentionInitializeQueue() {
-        mentionInitializeQueue = PublishSubject.create();
-        mentionInitializeQueueSubscription =
-                mentionInitializeQueue.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
-                        .onBackpressureBuffer()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(o -> onInitializeMyPage(false));
     }
 
     @Override
     public void onInitializeMyPage(final boolean isRefreshAction) {
+        isInInitializing = true;
         view.clearLoadMoreOffset();
 
         if (!isRefreshAction) {
@@ -84,6 +72,7 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                     } else {
                         view.hideEmptyMentionView();
                         view.addMentions(records);
+                        view.notifyDataSetChanged();
                     }
                 }, throwable -> {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
@@ -93,8 +82,11 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                     } else {
                         view.hideProgress();
                         view.hideEmptyMentionView();
+                        view.clearMentions();
+                        view.notifyDataSetChanged();
                     }
-                }, view::notifyDataSetChanged);
+                    isInInitializing = false;
+                });
     }
 
     @Override
@@ -178,15 +170,6 @@ public class MentionListPresenterImpl implements MentionListPresenter {
     }
 
     @Override
-    public void clearMentionInitializeQueue() {
-        if (mentionInitializeQueueSubscription != null
-                && !mentionInitializeQueueSubscription.isUnsubscribed()) {
-
-            mentionInitializeQueueSubscription.unsubscribe();
-        }
-    }
-
-    @Override
     public void addMentionedMessage(ResMessages.Link link) {
         Observable.just(link)
                 .observeOn(Schedulers.io())
@@ -244,5 +227,12 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                     view.notifyDataSetChanged();
                 }, t -> {LogUtil.d(TAG, t.getMessage());});
 
+    }
+
+    @Override
+    public void reInitializeIfEmpty(boolean isEmpty) {
+        if (isEmpty && !isInInitializing) {
+            onInitializeMyPage(false);
+        }
     }
 }

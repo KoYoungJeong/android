@@ -29,6 +29,7 @@ public class StarredListPresenterImpl implements StarredListPresenter {
     private final StarredListModel starredListModel;
     private final StarredListDataModel starredListDataModel;
     private final View starredListView;
+    private boolean isInInitializing = false;
 
     @Inject
     public StarredListPresenterImpl(StarredListModel starredListModel,
@@ -41,11 +42,7 @@ public class StarredListPresenterImpl implements StarredListPresenter {
 
     @Override
     public void onInitializeStarredList(StarredType starredType) {
-        if (!(NetworkCheckUtil.isConnected())) {
-            starredListView.showCheckNetworkDialog();
-            return;
-        }
-
+        isInInitializing = true;
         starredListView.hideEmptyLayout();
         starredListModel.getStarredListObservable(starredType.getName(), -1, StarredListModel.DEFAULT_COUNT)
                 .map(resStarMentioned -> {
@@ -69,9 +66,11 @@ public class StarredListPresenterImpl implements StarredListPresenter {
                         starredListView.showEmptyLayout();
                     }
                 }, e -> {
+                    LogUtil.e(e.getMessage());
                     starredListDataModel.clear();
                     starredListView.notifyDataSetChanged();
                     starredListView.showEmptyLayout();
+                    isInInitializing = false;
                 });
     }
 
@@ -210,6 +209,17 @@ public class StarredListPresenterImpl implements StarredListPresenter {
                     starredListDataModel.addRows(0, rows);
                     starredListView.notifyDataSetChanged();
                 }, Throwable::printStackTrace);
+    }
+
+    @Override
+    public void reInitializeIfEmpty(StarredType starredType) {
+        if (isInInitializing) {
+            return;
+        }
+
+        if (starredListDataModel.isEmpty()) {
+            onInitializeStarredList(starredType);
+        }
     }
 
     private void moveToMessageList(StarredMessage message) {

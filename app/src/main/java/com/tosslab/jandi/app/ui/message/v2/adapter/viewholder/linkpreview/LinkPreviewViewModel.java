@@ -52,7 +52,6 @@ public class LinkPreviewViewModel {
 
         if (message.linkPreview == null || TextUtils.isEmpty(message.linkPreview.linkUrl)) {
             vgLinkPreview.setVisibility(View.GONE);
-            vDividier.setVisibility(View.GONE);
             return;
         } else {
             vgLinkPreview.removeAllViews();
