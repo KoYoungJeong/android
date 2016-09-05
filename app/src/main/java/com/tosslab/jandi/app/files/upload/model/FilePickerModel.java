@@ -215,7 +215,7 @@ public class FilePickerModel {
     }
 
     public Human uploadProfilePhoto(File file) throws RetrofitException {
-        return new ProfileApi(RetrofitBuilder.getInstance()).uploadProfilePhoto(TeamInfoLoader.getInstance().getMyId(), file);
+        return new ProfileApi(RetrofitBuilder.getInstance()).uploadProfilePhoto(TeamInfoLoader.getInstance().getTeamId(), TeamInfoLoader.getInstance().getMyId(), file);
     }
 
     public ArrayList<String> getFilePathsFromInnerGallery(Intent intent) {

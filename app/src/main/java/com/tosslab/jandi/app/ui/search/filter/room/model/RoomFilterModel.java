@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.search.filter.room.model;
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.DirectMessageRoom;
@@ -79,9 +78,6 @@ public class RoomFilterModel {
     }
 
     public List<TopicRoom> getUnfoldedTopics(List<TopicFolder> topicFolders) {
-        if (topicFolders == null || topicFolders.isEmpty()) {
-            return new ArrayList<>();
-        }
 
         List<TopicRoom> unFoldedTopics = new ArrayList<>();
 
@@ -89,10 +85,23 @@ public class RoomFilterModel {
         Observable.from(topicFolders)
                 .concatMap(folder -> Observable.from(folder.getRooms()))
                 .collect(() -> foldedTopicIds, (topicIds, topicRoom) -> topicIds.add(topicRoom.getId()))
+                .defaultIfEmpty(new ArrayList<>(0))
                 .concatMap(ids ->
                         Observable.from(TeamInfoLoader.getInstance().getTopicList())
                                 .filter(topicRoom ->
                                         topicRoom.isJoined() && !(ids.contains(topicRoom.getId()))))
+                .sorted((lhs, rhs) -> {
+                    if (lhs.isStarred() && rhs.isStarred()) {
+                        return StringCompareUtil.compare(lhs.getName(), rhs.getName());
+
+                    } else if (lhs.isStarred()) {
+                        return -1;
+                    } else if (rhs.isStarred()) {
+                        return 1;
+                    } else {
+                        return StringCompareUtil.compare(lhs.getName(), rhs.getName());
+                    }
+                })
                 .collect(() -> unFoldedTopics, List::add)
                 .subscribe();
 

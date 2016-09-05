@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.file.presenter;
 
 import android.text.TextUtils;
+import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
@@ -48,8 +49,8 @@ public class FileListPresenterImpl implements FileListPresenter {
         this.fileListModel = fileListModel;
         this.view = view;
 
-        entitySubject = BehaviorSubject.create(entityId);
         this.inSearchActivity = inSearchActivity;
+        entitySubject = BehaviorSubject.create(entityId);
         writerSubject = BehaviorSubject.create(-1L);
         fileTypeSubject = BehaviorSubject.create("all");
         endDateSubject = BehaviorSubject.create(new Date());
@@ -69,25 +70,24 @@ public class FileListPresenterImpl implements FileListPresenter {
                                         }
                                     }
                                     return entity;
-                                }),
-                        writerSubject,
-                        fileTypeSubject,
-                        endDateSubject,
-                        pageSubject,
-                        keywordSubject,
+                                }).distinctUntilChanged(),
+                        writerSubject.distinctUntilChanged(),
+                        fileTypeSubject.distinctUntilChanged(),
+                        endDateSubject.distinctUntilChanged(),
+                        pageSubject.distinctUntilChanged(),
+                        keywordSubject.distinctUntilChanged(),
                         (entity, writerId, fileType, date, page, keyword) -> {
                             return new ReqSearch.Builder()
                                     .setRoomId(entity)
                                     .setWriterId(writerId)
                                     .setType("file")
                                     .setFileType(fileType)
-                                    .setEndAt(date)
                                     .setPage(page)
                                     .setCount(DEFAULT_COUNT)
                                     .setKeyword(keyword).build();
                         })
-                        .onBackpressureBuffer()
                         .throttleLast(100, TimeUnit.MILLISECONDS)
+                        .onBackpressureBuffer()
                         .filter(it -> !inSearchActivity || (!TextUtils.isEmpty(it.getKeyword()) && it.getKeyword().length() >= 2))
                         .observeOn(AndroidSchedulers.mainThread())
                         .doOnNext(it -> {
@@ -97,24 +97,31 @@ public class FileListPresenterImpl implements FileListPresenter {
                                 view.setSearchEmptryViewVisible(android.view.View.GONE);
                                 view.setInitLoadingViewVisible(android.view.View.VISIBLE);
                             }
+                            if (it.getPage() == 1) {
+                                searchedFilesAdapterModel.clearList();
+                                view.justRefresh();
+                            }
                         })
                         .observeOn(Schedulers.io())
                         .map(it -> {
                             try {
                                 ResSearch results = fileListModel.getResults(it);
-                                return results.getRecords();
+                                fileListModel.trackFileKeywordSearchSuccess(it.getKeyword());
+                                return Pair.create(it, results.getRecords());
                             } catch (RetrofitException e) {
                                 e.printStackTrace();
                             }
-                            return new ArrayList<ResSearch.SearchRecord>();
+                            return Pair.create(it, new ArrayList<ResSearch.SearchRecord>());
                         })
-                        .doOnNext(it -> fileListModel.trackFileKeywordSearchSuccess(keywordSubject.getValue()))
-                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(its -> {
-                            searchedFilesAdapterModel.add(its);
+                        .subscribe(pair -> {
+                            if (pair.first.getPage() == 1) {
+                                searchedFilesAdapterModel.clearList();
+                                view.justRefresh();
+                            }
+                            searchedFilesAdapterModel.add(pair.second);
                             view.justRefresh();
-                            afterProccess(its);
+                            afterProccess(pair.first, pair.second);
                         }, t -> {
                             t.printStackTrace();
                             if (t instanceof RetrofitException) {
@@ -131,7 +138,7 @@ public class FileListPresenterImpl implements FileListPresenter {
 
     }
 
-    private void afterProccess(List<ResSearch.SearchRecord> its) {
+    private void afterProccess(ReqSearch first, List<ResSearch.SearchRecord> its) {
         int totalItemCount = searchedFilesAdapterModel.getItemCount();
         if (fileListModel.isDefaultSearchQuery(pageSubject.getValue(),
                 entitySubject.getValue(), writerSubject.getValue(),
@@ -246,7 +253,6 @@ public class FileListPresenterImpl implements FileListPresenter {
 
     @Override
     public void onMemberSelection(long userId, String searchText) {
-        searchedFilesAdapterModel.clearList();
         view.justRefresh();
         writerSubject.onNext(userId);
         pageSubject.onNext(1);
@@ -255,7 +261,6 @@ public class FileListPresenterImpl implements FileListPresenter {
 
     @Override
     public void onEntitySelection(long sharedEntityId, String searchText) {
-        searchedFilesAdapterModel.clearList();
         view.justRefresh();
         entitySubject.onNext(sharedEntityId);
         pageSubject.onNext(1);
@@ -269,7 +274,6 @@ public class FileListPresenterImpl implements FileListPresenter {
         }
         // 토픽이 삭제되거나 나간 경우 해당 토픽의 파일 접근 여부를 알 수 없으므로
         // 리로드하도록 처리함
-        searchedFilesAdapterModel.clearList();
         view.justRefresh();
         pageSubject.onNext(1);
         endDateSubject.onNext(new Date());
@@ -286,7 +290,6 @@ public class FileListPresenterImpl implements FileListPresenter {
     @Override
     public void onNewQuery(String s) {
         if (!TextUtils.isEmpty(s) && s.length() >= 2) {
-            searchedFilesAdapterModel.clearList();
             view.justRefresh();
             keywordSubject.onNext(s);
             pageSubject.onNext(1);

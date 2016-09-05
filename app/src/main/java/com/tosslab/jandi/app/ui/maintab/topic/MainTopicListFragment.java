@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -74,7 +76,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
@@ -91,7 +92,6 @@ import rx.schedulers.Schedulers;
  * Created by tee on 15. 8. 26..
  */
 @EFragment(R.layout.fragment_joined_topic_list)
-@OptionsMenu(R.menu.main_activity_menu)
 public class MainTopicListFragment extends Fragment
         implements MainTopicListPresenter.View, ListScroller {
 
@@ -168,6 +168,7 @@ public class MainTopicListFragment extends Fragment
 
     @AfterViews
     void initViews() {
+        setHasOptionsMenu(true);
         lvMainTopic.setLayoutManager(layoutManager);
         initUpdatedTopicAdapter();
         mainTopicListPresenter.onLoadList();
@@ -262,7 +263,17 @@ public class MainTopicListFragment extends Fragment
                 });
     }
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
 
+        menu.clear();
+
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainTabActivity) {
+            activity.getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+        }
+    }
     @OptionsItem(R.id.action_main_search)
     void onSearchOptionSelect() {
         startActivity(new Intent(getActivity(), SearchActivity.class));

@@ -93,7 +93,6 @@ public class SearchPresenterImpl implements SearchPresenter {
                                         .setWriterId(writerId)
                                         .setType("message")
                                         .setAccessType(accessType)
-                                        .setEndAt(date)
                                         .setPage(page)
                                         .setKeyword(keyword).build())
                         .filter(reqSearch -> !TextUtils.isEmpty(keywordSubject.getValue()))
@@ -312,7 +311,7 @@ public class SearchPresenterImpl implements SearchPresenter {
     }
 
     @Override
-    public void onJoinTopic(long topicId, int topicType) {
+    public void onJoinTopic(long topicId, int topicType, long linkId) {
         Observable.create(subscriber -> {
             try {
                 searchModel.joinTopic(topicId);
@@ -325,7 +324,9 @@ public class SearchPresenterImpl implements SearchPresenter {
         })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(o -> view.moveToMessageActivity(topicId, topicType))
+                .doOnNext(o -> {
+                    view.moveToMessageActivityFromSearch(topicId, topicType, linkId);
+                })
                 .subscribe(o -> {
                         }, e -> {
                             e.printStackTrace();
@@ -453,9 +454,14 @@ public class SearchPresenterImpl implements SearchPresenter {
             int entityType =
                     TeamInfoLoader.getInstance().isPublicTopic(searchMessageData.getRoomId())
                             ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
-            view.moveToMessageActivityFromSearch(searchMessageData.getRoomId(),
-                    entityType,
-                    searchMessageData.getLinkId());
+            TopicRoom topicRoom = searchModel.getTopicRoomById(searchMessageData.getRoomId());
+            if (!topicRoom.isJoined()) {
+                view.showJoinRoomDialog(topicRoom, searchMessageData.getLinkId());
+            } else {
+                view.moveToMessageActivityFromSearch(searchMessageData.getRoomId(),
+                        entityType,
+                        searchMessageData.getLinkId());
+            }
         }
     }
 

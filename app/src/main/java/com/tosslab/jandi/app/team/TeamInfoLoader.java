@@ -135,7 +135,8 @@ public class TeamInfoLoader {
     }
 
     private void setUpPollBadge() {
-        setPollBadge(initialInfo.getPoll().getVotableCount());
+        InitialInfo.Poll poll = initialInfo.getPoll();
+        setPollBadge(poll != null ? poll.getVotableCount() : 0);
     }
 
     private void setUpTeam() {

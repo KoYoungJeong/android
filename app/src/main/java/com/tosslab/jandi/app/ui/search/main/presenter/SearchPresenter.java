@@ -26,7 +26,7 @@ public interface SearchPresenter {
 
     void onLaunchTopicRoom(long topicId, boolean isJoined);
 
-    void onJoinTopic(long topicId, int topicType);
+    void onJoinTopic(long topicId, int topicType, long linkId);
 
     void onRoomChanged(long roomId, long memberId);
 
@@ -57,6 +57,8 @@ public interface SearchPresenter {
         void moveToMessageActivity(long entityId, int entityType);
 
         void showTopicInfoDialog(TopicRoom topicRoom);
+
+        void showJoinRoomDialog(TopicRoom topicRoom, long linkId);
 
         void moveToPollActivity(long pollId);
 
