@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.presenter.PollListPrese
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import java.util.Date;
 
@@ -33,7 +34,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tonyjs on 16. 6. 27..
  */
-public class PollListFragment extends Fragment implements PollListPresenter.View {
+public class PollListFragment extends Fragment implements PollListPresenter.View, ListScroller {
 
     @Inject
     PollListPresenter pollListPresenter;
@@ -178,6 +179,11 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
 
     private void sendAnalyticsEvent(AnalyticsValue.Action action, AnalyticsValue.Label label) {
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Polls, action, label);
+    }
+
+    @Override
+    public void scrollToTop() {
+        lvPollList.scrollToPosition(0);
     }
 
     private class MorePollListRequestHandler implements PollListAdapter.OnLoadMoreCallback {

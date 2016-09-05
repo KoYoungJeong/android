@@ -18,11 +18,17 @@ public interface NavigationDataView {
 
     void setOnRequestTeamCreateListener(TeamCreateViewHolder.OnRequestTeamCreateListener onRequestTeamCreateListener);
 
+    void setOnVersionClickListener(OnVersionClickListener onVersionClickListener);
+
     interface OnTeamClickListener {
         void onTeamClick(Team team);
     }
 
     interface OnNavigationItemClickListener {
         void onNavigationItemClick(MenuItem menuItem);
+    }
+
+    interface OnVersionClickListener {
+        void onVersionClick();
     }
 }

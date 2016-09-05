@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
-import com.tosslab.jandi.app.ui.entities.chats.view.ChatsChooseFragment;
 import com.tosslab.jandi.app.ui.entities.disabled.presenter.DisabledEntityChoosePresenter;
 import com.tosslab.jandi.app.ui.entities.disabled.presenter.DisabledEntityChoosePresenterImpl;
 
@@ -27,6 +26,7 @@ import java.util.List;
 @EActivity(R.layout.activity_disabled_entity_choose)
 public class DisabledEntityChooseActivity extends BaseAppCompatActivity implements DisabledEntityChoosePresenter.View {
 
+    public static final String EXTRA_RESULT = "result";
     @Bean(DisabledEntityChoosePresenterImpl.class)
     DisabledEntityChoosePresenter presenter;
     @ViewById(R.id.lv_disabled_choose)
@@ -86,7 +86,7 @@ public class DisabledEntityChooseActivity extends BaseAppCompatActivity implemen
         ChatChooseItem item = adapter.getItem(position);
         long entityId = item.getEntityId();
         Intent intent = new Intent();
-        intent.putExtra(ChatsChooseFragment.EXTRA_ENTITY_ID, entityId);
+        intent.putExtra(EXTRA_RESULT, entityId);
         setResult(RESULT_OK, intent);
         finish();
     }

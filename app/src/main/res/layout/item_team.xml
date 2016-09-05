@@ -2,10 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:background="@color/white"
+    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingRight="16dp">
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/tv_team_name"

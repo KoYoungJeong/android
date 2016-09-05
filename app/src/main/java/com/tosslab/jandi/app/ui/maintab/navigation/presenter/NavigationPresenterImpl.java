@@ -122,10 +122,9 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                     return pendingTeams + unreadCount;
                 })
                 .subscribe(total -> {
-                    LogUtil.d("tony", "total - " + total);
                     EventBus.getDefault().post(new NavigationBadgeEvent(total));
                 }, t -> {
-                    LogUtil.e("tony", Log.getStackTraceString(t));
+                    LogUtil.e(TAG, Log.getStackTraceString(t));
                 });
     }
 
@@ -139,6 +138,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
     @Override
     public void onTeamJoinAction(long teamId) {
         if (navigationModel.isCurrentTeam(teamId)) {
+            navigationView.closeNavigation();
             return;
         }
 
@@ -238,11 +238,15 @@ public class NavigationPresenterImpl implements NavigationPresenter {
         Observable.just(navigationModel.getNavigationMenus())
                 .doOnNext(menuBuilder -> {
                     MenuItem item = menuBuilder.findItem(R.id.nav_setting_orientation);
-                    if (item != null && navigationModel.isPhoneMode()) {
-                        item.setVisible(false);
+                    if (item != null) {
+                        item.setVisible(!(navigationModel.isPhoneMode()));
                     }
                 })
                 .map(navigationDataModel::getNavigationRows)
+                .doOnNext(rows -> {
+                    String versionName = SettingsModel.getVersionName();
+                    rows.add(navigationDataModel.getVersionRow(versionName));
+                })
                 .subscribeOn(Schedulers.immediate())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(rows -> {
@@ -271,12 +275,6 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                 }, t -> {
                     navigationView.dismissProgressWheel();
                 });
-    }
-
-    @Override
-    public void onInitJandiVersion() {
-        String version = SettingsModel.getVersionName();
-        navigationView.setVersion(version);
     }
 
     @Override
@@ -362,8 +360,12 @@ public class NavigationPresenterImpl implements NavigationPresenter {
 
     @Override
     public void onInitUserProfile() {
-        navigationView.setUserProfile(navigationModel.getMe());
+        try {
+            User me = navigationModel.getMe();
+            navigationView.setUserProfile(me);
+        } catch (Exception e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
+        }
     }
-
 
 }

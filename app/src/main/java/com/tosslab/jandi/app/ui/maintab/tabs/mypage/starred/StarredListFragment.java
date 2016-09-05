@@ -19,18 +19,19 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarEvent;
+import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
-import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.StarredListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.view.StarredListDataView;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.component.DaggerStarredListComponent;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.module.StarredListModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.presentor.StarredListPresenter;
-import com.tosslab.jandi.app.utils.AlertUtil;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
+import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import javax.inject.Inject;
 
@@ -42,7 +43,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tee on 15. 7. 29..
  */
-public class StarredListFragment extends Fragment implements StarredListPresenter.View {
+public class StarredListFragment extends Fragment implements StarredListPresenter.View, ListScroller {
 
     @Bind(R.id.btn_starred_list_all)
     View btnTabAll;
@@ -153,11 +154,6 @@ public class StarredListFragment extends Fragment implements StarredListPresente
     private void setupTabs(StarredListPresenter.StarredType starredType) {
         btnTabAll.setSelected(starredType == StarredListPresenter.StarredType.All);
         btnTabFile.setSelected(starredType == StarredListPresenter.StarredType.File);
-    }
-
-    @Override
-    public void showCheckNetworkDialog() {
-        AlertUtil.showCheckNetworkDialog(getActivity(), (dialog, which) -> getActivity().finish());
     }
 
     @Override
@@ -294,10 +290,21 @@ public class StarredListFragment extends Fragment implements StarredListPresente
         }
     }
 
+    public void onEventMainThread(NetworkConnectEvent event) {
+        if (event.isConnected()) {
+            starredListPresenter.reInitializeIfEmpty(starredType);
+        }
+    }
+
     @Override
     public void onDestroyView() {
         EventBus.getDefault().unregister(this);
         super.onDestroyView();
+    }
+
+    @Override
+    public void scrollToTop() {
+        lvStarredList.scrollToPosition(0);
     }
 
     private class StarredMessageLoadMoreRequestHandler implements StarredListAdapter.OnLoadMoreCallback {

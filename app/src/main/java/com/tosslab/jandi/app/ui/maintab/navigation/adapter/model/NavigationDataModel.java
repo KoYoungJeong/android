@@ -15,8 +15,6 @@ public interface NavigationDataModel {
 
     List<MultiItemRecyclerAdapter.Row<?>> getNavigationRows(MenuBuilder menuBuilder);
 
-    MultiItemRecyclerAdapter.Row<User> getProfileRow(User user);
-
     List<MultiItemRecyclerAdapter.Row<?>> getTeamRows(List<Team> teams);
 
     void addTeamRows(List<MultiItemRecyclerAdapter.Row<?>> teamRows);
@@ -30,4 +28,7 @@ public interface NavigationDataModel {
     Team getTeamById(long teamId);
 
     List<Team> getTeams();
+
+    MultiItemRecyclerAdapter.Row<String> getVersionRow(String versionName);
+
 }

@@ -98,6 +98,7 @@
 	<string name="jandi_are_you_sure_disable_external_link">"削除すると、リンクをもう使用することができません。本当に削除しますか？"</string>
 	<string name="jandi_ask_assign_topic_owner">"このメンバーにトピック管理者の権限を譲りますか？"</string>
 	<string name="jandi_ask_delete_all_history">"検索履歴を全て消去しますか？"</string>
+	<string name="jandi_ask_join_topic">"参加していないトピックです。参加しますか？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"本当にこのメンバーをトピックから退出させますか？"</string>
 	<string name="jandi_ask_poll_delete">"投票を削除しますか？\ㅜn削除後もコメントは残ります"</string>
 	<string name="jandi_ask_poll_finish">"投票を終了しますか？"</string>

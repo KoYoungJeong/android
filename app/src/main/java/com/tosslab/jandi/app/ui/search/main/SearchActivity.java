@@ -356,18 +356,16 @@ public class SearchActivity extends BaseAppCompatActivity
     }
 
     @Override
-    public void showTopicInfoDialog(TopicRoom topicRoom, boolean fromRoomSearch, long searchedLinkId) {
+    public void showTopicInfoDialog(TopicRoom topicRoom) {
         TopicInfoDialog dialog = TopicInfoDialog.instantiate(topicRoom);
         int type = topicRoom.isPublicTopic() ?
                 JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
         dialog.show(getSupportFragmentManager(), "dialog");
         dialog.setOnJoinClickListener((topicEntityId) -> {
-            searchPresenter.onJoinTopic(topicEntityId, type, fromRoomSearch, searchedLinkId);
-            if(fromRoomSearch){
-
-            }
+            searchPresenter.onJoinTopic(topicEntityId, type, -1);
         });
     }
+
 
     @OnClick(R.id.iv_search_mic)
     void onVoiceSearch() {
@@ -500,6 +498,21 @@ public class SearchActivity extends BaseAppCompatActivity
                 .roomId(-1)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
+    }
+
+    @Override
+    public void showJoinRoomDialog(TopicRoom topicRoom, long linkId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
+
+        builder.setMessage(R.string.jandi_ask_join_topic)
+                .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
+                    int type = topicRoom.isPublicTopic() ?
+                            JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
+                    searchPresenter.onJoinTopic(topicRoom.getId(), type, linkId);
+                })
+                .setNegativeButton(getString(R.string.jandi_cancel), null);
+        builder.show();
     }
 
 }

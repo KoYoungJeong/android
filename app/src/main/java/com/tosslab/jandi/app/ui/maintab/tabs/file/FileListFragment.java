@@ -89,7 +89,7 @@ import de.greenrobot.event.EventBus;
  * Created by tee on 16. 6. 28..
  */
 public class FileListFragment extends Fragment implements FileListPresenterImpl.View,
-        FileSearchActivity.SearchSelectView, ListScroller, MainTabPagerAdapter.OnItemFocused {
+        FileSearchActivity.SearchSelectView, ListScroller {
 
     public static final String KEY_COMMENT_COUNT = "comment_count";
     public static final String KEY_FILE_ID = "file_id";
@@ -710,7 +710,9 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     }
 
     @Override
-    public void onItemFocused(boolean focused) {
-        this.focused = focused;
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        this.focused = isVisibleToUser;
     }
+
 }

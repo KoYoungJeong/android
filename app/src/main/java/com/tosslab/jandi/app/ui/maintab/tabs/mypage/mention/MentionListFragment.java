@@ -9,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,15 +16,10 @@ import android.widget.ProgressBar;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.messages.SocketPollEvent;
-import com.tosslab.jandi.app.events.poll.RefreshPollBadgeCountEvent;
-import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
-import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.MentionListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.component.DaggerMentionListComponent;
@@ -35,7 +29,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.presenter.MentionLis
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.view.MentionListView;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
-import com.tosslab.jandi.app.ui.settings.main.SettingsActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -78,13 +71,9 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
 
     private MentionMessageMoreRequestHandler moreRequestHandler;
 
-    private boolean isLaidOut;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        isLaidOut = false;
 
         injectComponent();
     }
@@ -114,7 +103,6 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
         initMentionListView();
         initMoreLoadingProgress();
 
-        presenter.onRetrieveMyInfo();
         presenter.onInitializeMyPage(false);
     }
 
@@ -141,7 +129,6 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
         adapter.setOnLoadMoreCallback(moreRequestHandler);
         lvMyPage.setAdapter(adapter);
 
-//        lvMyPage.addOnScrollListener(new ViewSlider(vgProfileLayout));
         adapter.setOnMentionClickListener(mention -> {
             presenter.onClickMention(mention);
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.ChooseMention);
@@ -196,38 +183,8 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
 
     }
 
-    public void onEvent(SocketPollEvent event) {
-        Poll poll = event.getPoll();
-        if (poll == null
-                || poll.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
-            return;
-        }
-        presenter.onGetPollBadge();
-    }
-
-    public void onEvent(RequestRefreshPollBadgeCountEvent event) {
-        if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
-            return;
-        }
-        presenter.onGetPollBadge();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        presenter.onGetPollBadge();
-
-        if (isLaidOut) {
-            presenter.onRetrieveMyInfo();
-        }
-
-        isLaidOut = true;
-    }
-
     @Override
     public void onDestroyView() {
-        presenter.clearMentionInitializeQueue();
         EventBus.getDefault().unregister(this);
         super.onDestroyView();
     }
@@ -243,65 +200,6 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
             return;
         }
         pbMyPage.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void setMe(User me) {
-        if (isFinishing() || me == null) {
-            return;
-        }
-
-//        String name = TextUtils.isEmpty(me.getName()) ? "" : me.getName();
-//        SpannableStringBuilder ssb = new SpannableStringBuilder(name);
-//        if (me.isTeamOwner()) {
-//            int start = ssb.length();
-//            String ownerText = JandiApplication.getContext()
-//                    .getResources().getString(R.string.jandi_team_owner);
-//            ssb.append(ownerText);
-//
-//            int marginLeftDp = 4;
-//            OwnerSpannable ownerSpannable = new OwnerSpannable(ownerText, marginLeftDp);
-//            ssb.setSpan(ownerSpannable, start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//        }
-//        tvName.setText(ssb);
-//
-//        String userEmail = me.getEmail();
-//        tvEmail.setText(userEmail);
-//
-//        String userLargeProfileUrl = me.getPhotoUrl();
-//        if (!TextUtils.isEmpty(userEmail)) {
-//            ImageUtil.loadProfileImage(ivProfile, userLargeProfileUrl, R.drawable.profile_img);
-//        } else {
-//            ivProfile.setScaleType(ImageView.ScaleType.FIT_CENTER);
-//            ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img);
-//        }
-//        btnSetting.setOnClickListener(v -> {
-//            startActivity(new Intent(getActivity(), ModifyProfileActivity.class));
-//
-//            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTabInfo, AnalyticsValue.Action.EditProfile);
-//        });
-//
-//        final long memberId = me.getId();
-//        ivProfile.setOnClickListener(v -> {
-//            MemberProfileActivity_.intent(getActivity())
-//                    .memberId(memberId)
-//                    .start();
-//
-//            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTabInfo, AnalyticsValue.Action.ViewMyProfile);
-//        });
-
-        easterEggForLog();
-    }
-
-    private void easterEggForLog() {
-//        KnockListener knockListener = KnockListener.create()
-//                .expectKnockCount(10)
-//                .expectKnockedIn(3000)
-//                .onKnocked(() -> {
-//                    LogUtil.LOG = true;
-//                    PushSettings.enableDebugMode(JandiApplication.getContext(), LogUtil.LOG);
-//                });
-//        tvName.setOnClickListener(v -> knockListener.knock());
     }
 
     @Override
@@ -407,31 +305,17 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
         }
     }
 
-
-    @Override
-    public void setPollBadgeCount(int pollCount) {
-        EventBus.getDefault().post(new RefreshPollBadgeCountEvent(pollCount));
-
-        if (isFinishing()) {
-            return;
-        }
-
-//        if (pollCount <= 0) {
-//            tvPollBadge.setVisibility(View.GONE);
-//        } else if (pollCount >= 1000) {
-//            tvPollBadge.setVisibility(View.VISIBLE);
-//            String count = "999+";
-//            tvPollBadge.setText(count);
-//        } else {
-//            tvPollBadge.setVisibility(View.VISIBLE);
-//            String count = Integer.toString(pollCount);
-//            tvPollBadge.setText(count);
-//        }
-    }
-
     @Override
     public void moveToPollDetailActivity(long pollId) {
         PollDetailActivity.start(getActivity(), pollId);
+    }
+
+    public void onEventMainThread(NetworkConnectEvent event) {
+        if (!(event.isConnected())) {
+            return;
+        }
+
+        presenter.reInitializeIfEmpty(adapter.getItemCount() <= 0);
     }
 
     private boolean isFinishing() {
@@ -440,8 +324,6 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
 
     @Override
     public void scrollToTop() {
-//        vgProfileLayout.animate()
-//                .translationY(0);
         lvMyPage.scrollToPosition(0);
     }
 

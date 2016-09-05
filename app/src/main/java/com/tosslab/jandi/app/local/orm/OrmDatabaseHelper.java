@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.tosslab.jandi.app.JandiApplication;
@@ -15,6 +16,7 @@ import com.tosslab.jandi.app.local.orm.domain.DownloadInfo;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.domain.LeftSideMenu;
+import com.tosslab.jandi.app.local.orm.domain.MemberRecentKeyword;
 import com.tosslab.jandi.app.local.orm.domain.PushHistory;
 import com.tosslab.jandi.app.local.orm.domain.ReadyComment;
 import com.tosslab.jandi.app.local.orm.domain.ReadyCommentForPoll;
@@ -74,7 +76,9 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_POLL = 18;
     private static final int DATABASE_VERSION_EVENT_HISTORY = 19;
     private static final int DATABASE_VERSION_ADD_STARTAPI_POLL_INFO = 20;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_ADD_STARTAPI_POLL_INFO;
+    private static final int DATABASE_VERSION_ADD_STARTAPI_POLL_INFO_HOT_FIX = 21;
+    private static final int DATABASE_VERSION_MEMBER_FILTER = 22;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_MEMBER_FILTER;
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -174,6 +178,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, ResMessages.PollConnectInfo.class);
 
             createTable(connectionSource, ReadyCommentForPoll.class);
+
+            createTable(connectionSource, MemberRecentKeyword.class);
 
             createTable(connectionSource, SocketEvent.class);
         } catch (SQLException e) {
@@ -320,6 +326,23 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_ADD_STARTAPI_POLL_INFO, () -> {
                         createTable(connectionSource, InitialInfo.Poll.class);
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_ADD_STARTAPI_POLL_INFO_HOT_FIX, () -> {
+
+                        try {
+                            Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
+                            dao.executeRawNoArgs("ALTER TABLE `initial_info_base` ADD COLUMN poll_id INTEGER;");
+                            UpdateBuilder<InitialInfo, ?> updateBuilder = dao.updateBuilder();
+                            updateBuilder.updateColumnExpression("poll_id", "1");
+                            updateBuilder.update();
+
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_MEMBER_FILTER, () -> {
+                        createTable(connectionSource, MemberRecentKeyword.class);
                     }));
 
 
@@ -419,6 +442,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
         clearTable(getConnectionSource(), ReadyCommentForPoll.class);
         clearTable(getConnectionSource(), SocketEvent.class);
+        clearTable(getConnectionSource(), MemberRecentKeyword.class);
     }
 
     private void clearTable(ConnectionSource connectionSource, Class<?> dataClass) {

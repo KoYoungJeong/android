@@ -30,8 +30,6 @@ public interface NavigationPresenter {
 
     void onSignOutAction();
 
-    void onInitJandiVersion();
-
     void onLaunchHelpPage();
 
     void onInitUserProfile();
@@ -56,11 +54,7 @@ public interface NavigationPresenter {
 
         void dismissProgressWheel();
 
-        void setOrientation(int orientation);
-
         void moveLoginActivity();
-
-        void setVersion(String version);
 
         void launchHelpPage(String supportUrl);
 
@@ -73,6 +67,8 @@ public interface NavigationPresenter {
         void notifyDataSetChanged();
 
         void setUserProfile(User user);
+
+        void closeNavigation();
     }
 
 }

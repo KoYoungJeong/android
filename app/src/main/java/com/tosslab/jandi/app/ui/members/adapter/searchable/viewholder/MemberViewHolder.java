@@ -92,13 +92,18 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     }
 
     public void showHalfDivider() {
-            vHalfDivider.setVisibility(View.VISIBLE);
-            vFullDivider.setVisibility(View.GONE);
+        vHalfDivider.setVisibility(View.VISIBLE);
+        vFullDivider.setVisibility(View.GONE);
     }
 
     public void showFullDivider() {
-            vHalfDivider.setVisibility(View.GONE);
-            vFullDivider.setVisibility(View.VISIBLE);
+        vHalfDivider.setVisibility(View.GONE);
+        vFullDivider.setVisibility(View.VISIBLE);
+    }
+
+    public void dismissDividers() {
+        vHalfDivider.setVisibility(View.GONE);
+        vFullDivider.setVisibility(View.GONE);
     }
 
     public void setKickMode(boolean kickMode) {

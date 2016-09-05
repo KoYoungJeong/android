@@ -21,6 +21,9 @@ public class InitialInfoRepository extends LockExecutorTemplate {
         return execute(() -> {
             try {
                 Dao<InitialInfo, ?> dao = getHelper().getDao(InitialInfo.class);
+                DeleteBuilder<InitialInfo, ?> deleteBuilder = dao.deleteBuilder();
+                deleteBuilder.where().eq("teamId", initialInfo.getTeamId());
+                deleteBuilder.delete();
                 dao.createOrUpdate(initialInfo);
                 return true;
             } catch (SQLException e) {

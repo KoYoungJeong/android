@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.DeleteTopicDialogFragment;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
@@ -297,7 +298,14 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     @OnClick(R.id.vg_topic_detail_invite)
     void onTopicInviteClick() {
-        topicDetailPresenter.onTopicInvite(getActivity(), entityId);
+
+        startActivity(Henson.with(getActivity())
+                .gotoTeamMemberSearchActivity()
+                .isSelectMode(true)
+                .room_id(entityId)
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
+
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.InviteTeamMembers);
     }
 

@@ -14,9 +14,11 @@ import com.tosslab.jandi.app.views.TabView;
  */
 public class TeamTabInfo implements TabInfo {
 
+    public static final int INDEX = 3;
+
     @Override
     public int getIndex() {
-        return 3;
+        return INDEX;
     }
 
     @Override
@@ -32,6 +34,6 @@ public class TeamTabInfo implements TabInfo {
 
     @Override
     public Fragment getFragment() {
-        return new TeamFragment();
+        return new TeamMainFragment();
     }
 }

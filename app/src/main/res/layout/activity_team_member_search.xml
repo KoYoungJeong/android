@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/actionbar_team_member_search"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/actionbar_icon_back"/>
+
+
+    <RelativeLayout
+        android:id="@+id/vg_team_member_search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:padding="8dp"
+        android:visibility="visible">
+
+        <AutoCompleteTextView
+            android:id="@+id/tv_search_keyword"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_round_rect_white"
+            android:completionThreshold="1"
+            android:gravity="center_vertical"
+            android:hint="@string/jandi_search_member_name_or_division"
+            android:imeOptions="actionSearch|flagNoExtractUi"
+            android:inputType="text"
+            android:paddingLeft="64dp"
+            android:paddingRight="64dp"
+            android:textColor="#333333"
+            android:textSize="18dp"/>
+
+        <ImageView
+            android:id="@+id/iv_search_backkey"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="11dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/btn_search_back"/>
+
+        <ImageView
+            android:id="@+id/iv_search_mic"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/btn_search_voice"/>
+
+    </RelativeLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager_team_member_search"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tabs_team_member_search"
+        android:overScrollMode="never"/>
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabs_team_member_search"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:fillViewport="true"
+        app:tabBackground="@color/jandi_primary_color"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/white"
+        app:tabIndicatorHeight="2dp"
+        app:tabMaxWidth="0dp"
+        app:tabMode="fixed"
+        app:tabPaddingEnd="0dp"
+        app:tabPaddingStart="0dp"
+        app:tabSelectedTextColor="@color/white"
+        app:tabTextAppearance="@style/TeamTabTextApprearance"
+        app:tabTextColor="@color/jandi_transparent_white_20p"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignBottom="@+id/tabs_team_member_search"
+        android:background="@color/jandi_tab_underline"/>
+
+    <RelativeLayout
+        android:id="@+id/vg_team_member_toggled"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:visibility="gone">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/jandi_tab_underline"/>
+
+        <View
+            android:id="@+id/space_team_member_toggled_space"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:id="@+id/tv_team_member_toggled_invite"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/space_team_member_toggled_space"
+            android:gravity="center"
+            android:text="xx명 선택"
+            android:textColor="@color/jandi_create_topic"
+            android:textSize="@dimen/jandi_text_size_medium"/>
+
+        <TextView
+            android:id="@+id/tv_team_member_toggled_unselect_all"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/space_team_member_toggled_space"
+            android:gravity="center"
+            android:text="@string/jandi_cancel_all"
+            android:textColor="@color/jandi_text"
+            android:textSize="@dimen/jandi_text_size_medium"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/vg_team_member_search_recent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignTop="@+id/viewpager_team_member_search"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/lv_team_member_search_recent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -34,6 +35,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.ExpandableTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.updated.UpdatedTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.EntityMenuDialogFragment_;
@@ -48,7 +50,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderS
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderSettingActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.JoinableTopicListActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.BackPressConsumer;
-import com.tosslab.jandi.app.ui.maintab.tabs.util.fab.FloatingActionButtonController;
+import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionButtonProvider;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.SearchActivity;
@@ -61,7 +63,6 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
@@ -74,7 +75,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
@@ -89,10 +89,8 @@ import rx.Observable;
  * Created by tee on 15. 8. 26..
  */
 @EFragment(R.layout.fragment_joined_topic_list)
-@OptionsMenu(R.menu.main_activity_menu)
 public class MainTopicListFragment extends Fragment
-        implements MainTopicListPresenter.View,
-        FloatingActionButtonController, BackPressConsumer, ListScroller {
+        implements MainTopicListPresenter.View, BackPressConsumer, ListScroller {
 
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
     private static final int MOVE_MESSAGE_ACTIVITY = 702;
@@ -151,6 +149,7 @@ public class MainTopicListFragment extends Fragment
 
     @AfterViews
     void initViews() {
+        setHasOptionsMenu(true);
         lvMainTopic.setLayoutManager(layoutManager);
         initUpdatedTopicAdapter();
         mainTopicListPresenter.onLoadList();
@@ -246,7 +245,17 @@ public class MainTopicListFragment extends Fragment
                 });
     }
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
 
+        menu.clear();
+
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainTabActivity) {
+            activity.getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+        }
+    }
     @OptionsItem(R.id.action_main_search)
     void onSearchOptionSelect() {
         startActivity(new Intent(getActivity(), SearchActivity.class));
@@ -294,7 +303,6 @@ public class MainTopicListFragment extends Fragment
 
     @Override
     public void setUpdatedItems(List<Topic> topics) {
-        LogUtil.d("MainTopicListFragment.setUpdatedItems()");
         updatedTopicAdapter.setItems(topics);
         updatedTopicAdapter.notifyDataSetChanged();
     }
@@ -462,7 +470,6 @@ public class MainTopicListFragment extends Fragment
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setFolderExpansion() {
         List<FolderExpand> folderExpands = mainTopicListPresenter.onGetFolderExpands();
-        LogUtil.e(folderExpands.size() + "");
         if (expandableTopicAdapter.getGroupCount() > 1 && folderExpands != null && !folderExpands.isEmpty()) {
             int groupCount = expandableTopicAdapter.getGroupCount();
             HashMap<Long, Boolean> folderExpandMap = new HashMap<>();
@@ -590,8 +597,6 @@ public class MainTopicListFragment extends Fragment
         if (selectedEntity <= 0) {
             return;
         }
-
-        LogUtil.d("TopicList", "selectedEntity = " + selectedEntity);
 
         int groupPosition = -1;
         int childPosition = 0;
@@ -729,19 +734,38 @@ public class MainTopicListFragment extends Fragment
     }
 
     @Override
-    public void scrollToTop() {
-        lvMainTopic.scrollToPosition(0);
-    }
-
-    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
 
-        if (!isVisibleToUser) {
+        if (isVisibleToUser) {
+            setFloatingActionButtonIfExists();
+        } else {
             if (floatingActionMenu != null) {
                 floatingActionMenu.setVisibility(false);
             }
         }
+    }
+
+    private void setFloatingActionButtonIfExists() {
+        if (getActivity() == null || !(getActivity() instanceof FloatingActionButtonProvider)) {
+            return;
+        }
+        View btnFab = ((FloatingActionButtonProvider) getActivity()).provideFloatingActionButton();
+        if (btnFab != null) {
+            btnFab.setOnClickListener(v -> {
+                if (floatingActionMenu == null) {
+                    return;
+                }
+                floatingActionMenu.setVisibility(true);
+                floatingActionMenu.setupButtonLocation(btnFab);
+                floatingActionMenu.open();
+            });
+        }
+    }
+
+    @Override
+    public void scrollToTop() {
+        lvMainTopic.scrollToPosition(0);
     }
 
     @Override
@@ -753,20 +777,5 @@ public class MainTopicListFragment extends Fragment
         }
 
         return false;
-    }
-
-    @Override
-    public void onFloatingActionButtonProvided(View fabButton) {
-        LogUtil.i("tony", "onFloatingActionButtonProvided");
-
-        fabButton.setOnClickListener(v -> {
-            LogUtil.e("tony", "getact ? " + (getActivity() != null));
-            if (floatingActionMenu == null) {
-                return;
-            }
-            floatingActionMenu.setVisibility(true);
-            floatingActionMenu.setupButtonLocation(fabButton);
-            floatingActionMenu.open();
-        });
     }
 }

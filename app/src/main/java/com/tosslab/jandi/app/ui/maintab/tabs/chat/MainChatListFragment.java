@@ -7,8 +7,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Menu;
 import android.view.View;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
@@ -23,13 +25,13 @@ import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
-import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
-import com.tosslab.jandi.app.ui.maintab.tabs.util.fab.FloatingActionButtonController;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.adapter.MainChatListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresenterImpl;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.to.ChatItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.EntityMenuDialogFragment_;
+import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionButtonProvider;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
@@ -46,7 +48,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
@@ -55,9 +56,8 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 
 @EFragment(R.layout.fragment_main_chat_list)
-@OptionsMenu(R.menu.main_activity_menu)
 public class MainChatListFragment extends Fragment
-        implements MainChatListPresenter.View, FloatingActionButtonController, ListScroller {
+        implements MainChatListPresenter.View, ListScroller {
 
     @Bean(MainChatListPresenterImpl.class)
     MainChatListPresenter mainChatListPresenter;
@@ -82,6 +82,7 @@ public class MainChatListFragment extends Fragment
 
     @AfterViews
     void initViews() {
+        setHasOptionsMenu(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         lvChat.setLayoutManager(layoutManager);
         lvChat.addItemDecoration(new SimpleDividerItemDecoration());
@@ -249,7 +250,6 @@ public class MainChatListFragment extends Fragment
     }
 
     public void onEvent(MessagePushEvent event) {
-
         if (!foreground) {
             return;
         }
@@ -281,6 +281,18 @@ public class MainChatListFragment extends Fragment
         mainChatListPresenter.onReloadChatList();
     }
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        menu.clear();
+
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainTabActivity) {
+            activity.getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+        }
+    }
+
     @OptionsItem(R.id.action_main_search)
     void onSearchOptionSelect() {
         startActivity(new Intent(getActivity(), SearchActivity.class));
@@ -310,8 +322,12 @@ public class MainChatListFragment extends Fragment
 
     @Click(R.id.btn_chat_list_no_messages)
     void chooseUser() {
-        EntityChooseActivity_.intent(getActivity())
-                .start();
+
+        startActivity(Henson.with(getActivity())
+                .gotoTeamMemberSearchActivity()
+                .isSelectMode(true)
+                .build());
+
         getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.SelectTeamMember_EmptyData);
@@ -323,11 +339,26 @@ public class MainChatListFragment extends Fragment
     }
 
     @Override
-    public void onFloatingActionButtonProvided(View fabButton) {
-        fabButton.setOnClickListener(v -> {
-            chooseUser();
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.SelectTeamMember);
-        });
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (isVisibleToUser) {
+            setFloatingActionButtonIfExists();
+        }
+    }
+
+    private void setFloatingActionButtonIfExists() {
+        if (getActivity() == null || !(getActivity() instanceof FloatingActionButtonProvider)) {
+            return;
+        }
+        View btnFab = ((FloatingActionButtonProvider) getActivity()).provideFloatingActionButton();
+        if (btnFab != null) {
+            btnFab.setOnClickListener(v -> {
+                chooseUser();
+                AnalyticsUtil.sendEvent(
+                        AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.SelectTeamMember);
+            });
+        }
     }
 
 }

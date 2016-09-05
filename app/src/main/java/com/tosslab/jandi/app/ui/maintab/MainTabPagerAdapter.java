@@ -45,7 +45,4 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter {
         return titles.get(position);
     }
 
-    public interface OnItemFocused {
-        void onItemFocused(boolean focused);
-    }
 }
