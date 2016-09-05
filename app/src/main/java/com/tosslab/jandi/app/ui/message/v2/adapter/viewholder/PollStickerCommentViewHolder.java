@@ -17,7 +17,7 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 
 import rx.android.schedulers.AndroidSchedulers;
 
-public class PollStickerCommentViewHolder extends BaseCommentViewHolder {
+public class PollStickerCommentViewHolder extends BaseCommentViewHolder implements HighlightView {
 
     private ViewGroup vgPoll;
     private ImageView vPollIcon;
@@ -243,7 +243,7 @@ public class PollStickerCommentViewHolder extends BaseCommentViewHolder {
     }
 
     @Override
-    public View getItemContentView() {
+    public View getHighlightView() {
         return vgProfileNestedCommentSticker;
     }
 

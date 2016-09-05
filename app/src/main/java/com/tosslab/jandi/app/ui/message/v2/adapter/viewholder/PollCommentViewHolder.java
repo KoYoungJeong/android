@@ -29,7 +29,7 @@ import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 import rx.android.schedulers.AndroidSchedulers;
 
-public class PollCommentViewHolder extends BaseCommentViewHolder {
+public class PollCommentViewHolder extends BaseCommentViewHolder implements HighlightView {
 
     private ViewGroup vgPoll;
     private ImageView vPollIcon;
@@ -320,7 +320,7 @@ public class PollCommentViewHolder extends BaseCommentViewHolder {
     }
 
     @Override
-    public View getItemContentView() {
+    public View getHighlightView() {
         return vgProfileNestedComment;
     }
 

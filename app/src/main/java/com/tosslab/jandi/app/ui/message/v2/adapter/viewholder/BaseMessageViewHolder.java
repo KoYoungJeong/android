@@ -67,10 +67,6 @@ public abstract class BaseMessageViewHolder implements BodyViewHolder {
         this.hasTopMargin = hasTopMargin;
     }
 
-    public android.view.View getItemContentView() {
-        return null;
-    }
-
     @Override
     public void setLastReadViewVisible(long currentLinkId, long lastReadLinkId) {
         if (vgMessageLastRead != null) {

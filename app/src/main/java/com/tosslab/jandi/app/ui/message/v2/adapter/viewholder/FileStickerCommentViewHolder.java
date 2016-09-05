@@ -30,7 +30,7 @@ import java.util.Collection;
 
 import rx.android.schedulers.AndroidSchedulers;
 
-public class FileStickerCommentViewHolder extends BaseCommentViewHolder {
+public class FileStickerCommentViewHolder extends BaseCommentViewHolder implements HighlightView {
 
     private ViewGroup vgMessageCommonFile;
     private ImageView ivMessageCommonFile;
@@ -368,7 +368,7 @@ public class FileStickerCommentViewHolder extends BaseCommentViewHolder {
     }
 
     @Override
-    public View getItemContentView() {
+    public View getHighlightView() {
         return vgProfileNestedCommentSticker;
     }
 

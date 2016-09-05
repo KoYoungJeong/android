@@ -18,10 +18,9 @@ import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BaseCommentViewHolder;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BaseMessageViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.HighlightView;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.TypeUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
@@ -171,18 +170,11 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
         bodyViewHolder.bindData(item, teamId, roomId, entityId);
 
         if (item.id == lastMarker &&
-                (bodyViewHolder instanceof BaseMessageViewHolder
-                        || bodyViewHolder instanceof BaseCommentViewHolder)) {
+                bodyViewHolder instanceof HighlightView) {
 
-            View view = null;
+            View view = ((HighlightView) bodyViewHolder).getHighlightView();
 
-            if (bodyViewHolder instanceof BaseMessageViewHolder) {
-                view = ((BaseMessageViewHolder) bodyViewHolder).getItemContentView();
-            } else if (bodyViewHolder instanceof BaseCommentViewHolder) {
-                view = ((BaseCommentViewHolder) bodyViewHolder).getItemContentView();
-            }
-
-            if (markerAnimState == AnimState.Idle) {
+            if (view != null && markerAnimState == AnimState.Idle) {
                 final View contentView = view;
                 Drawable originBackground = view.getBackground();
                 Integer startBackgroundColor = 0;

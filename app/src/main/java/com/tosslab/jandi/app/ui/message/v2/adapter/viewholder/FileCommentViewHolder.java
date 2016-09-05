@@ -39,7 +39,7 @@ import java.util.Collection;
 
 import rx.android.schedulers.AndroidSchedulers;
 
-public class FileCommentViewHolder extends BaseCommentViewHolder {
+public class FileCommentViewHolder extends BaseCommentViewHolder implements HighlightView {
 
     private ImageView ivMessageCommonFile;
     private TextView tvFileUploaderName;
@@ -443,7 +443,7 @@ public class FileCommentViewHolder extends BaseCommentViewHolder {
     }
 
     @Override
-    public View getItemContentView() {
+    public View getHighlightView() {
         return vgProfileNestedComment;
     }
 
