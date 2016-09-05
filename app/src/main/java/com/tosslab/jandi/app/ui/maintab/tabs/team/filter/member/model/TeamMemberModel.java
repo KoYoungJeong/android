@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.domain.TeamMembe
 import rx.Observable;
 
 public class TeamMemberModel {
+
     public Observable<TeamMemberItem> getFilteredUser(String keyword, boolean selectMode, long roomId) {
         return Observable.from(TeamInfoLoader.getInstance().getUserList())
                 .filter(User::isEnabled)
@@ -19,6 +20,11 @@ public class TeamMemberModel {
                 .filter(user -> {
                     if (!selectMode || roomId < 0) {
                         return true;
+                    }
+
+                    // 멀티 셀렉트 모드인 경우 봇은 제외
+                    if (roomId > 0 && user.isBot()) {
+                        return false;
                     }
 
                     Room room = TeamInfoLoader.getInstance().getRoom(roomId);
