@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
@@ -31,7 +31,7 @@ public class StarredMessageProfileBinder {
         return new StarredMessageProfileBinder(tvUserName, ivUserProfile);
     }
 
-    public void bind(User writer) {
+    public void bind(Member writer) {
         boolean isBot = TeamInfoLoader.getInstance().isBot(writer.getId());
         boolean isJandiBot = TeamInfoLoader.getInstance().isJandiBot(writer.getId());
 
