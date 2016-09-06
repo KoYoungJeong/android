@@ -156,6 +156,7 @@ public class StickerViewModel {
                     lastClickedTime = System.currentTimeMillis();
                 });
         vgStickerItems.setAdapter(adapter);
+
         vgStickerItems.setCurrentItem(adapter.getActualCount() * StickerViewPagerAdapter.PAGE_MULTIPLE / 2);
         viewPagerIndicator.setCurrentPosition(0);
         viewPagerIndicator.setIndicatorCount(adapter.getActualCount());
@@ -169,6 +170,7 @@ public class StickerViewModel {
                 }
             }
         });
+
     }
 
     public boolean isDoubleTap(long lastClickedTime) {

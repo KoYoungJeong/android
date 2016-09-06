@@ -45,7 +45,11 @@ class StickerViewPagerAdapter extends PagerAdapter {
         if (stickers == null) {
             return 0;
         }
-        return getActualCount() * PAGE_MULTIPLE;
+        int actualCount = getActualCount();
+        if (actualCount == 1) {
+            return actualCount;
+        }
+        return actualCount * PAGE_MULTIPLE;
     }
 
     public int getActualCount() {
