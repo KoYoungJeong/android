@@ -77,13 +77,8 @@ public class ProfileUtil {
         } else {
             ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(25f);
             ivProfile.setLayoutParams(ivProfileLayoutParams);
-            if (entity.isEnabled()) {
-                ImageUtil.loadProfileImage(
-                        ivProfile, entity.getPhotoUrl(), R.drawable.profile_img);
-            } else {
-                ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_43);
-            }
+            ImageUtil.loadProfileImage(
+                    ivProfile, entity.getPhotoUrl(), R.drawable.profile_img);
         }
 
         if (entity.isEnabled()) {
