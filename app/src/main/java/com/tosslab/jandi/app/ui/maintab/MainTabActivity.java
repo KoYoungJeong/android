@@ -12,10 +12,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
@@ -52,13 +55,14 @@ import com.tosslab.jandi.app.ui.maintab.tabs.mypage.MypageTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.TeamTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.TopicTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.BackPressConsumer;
-import com.tosslab.jandi.app.ui.maintab.tabs.util.TabFactory;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionButtonProvider;
+import com.tosslab.jandi.app.ui.maintab.tabs.util.TabFactory;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -73,6 +77,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.schedulers.Schedulers;
@@ -115,6 +120,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     @Bind(R.id.page_main_tab)
     ViewPager viewPager;
 
+    @Bind(R.id.vg_main_tab_navigation_wrapper)
+    View vgNavigationWrapper;
+
     @Inject
     MainTabPresenter mainTabPresenter;
 
@@ -130,6 +138,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     private TabView tabChat;
     private TabView tabMyPage;
     private MainTabPagerAdapter tabPagerAdapter;
+    private int navigationDirection;
     private InvitationDialogExecutor invitationDialogExecutor;
 
     @Override
@@ -149,6 +158,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         ButterKnife.bind(this);
 
         initSelectedEntity();
+
+        initNavigationPosition();
 
         initToolbars();
 
@@ -338,12 +349,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     @OnClick(R.id.btn_main_tab_menu)
     @Override
     public void openNavigation() {
-        drawerLayout.openDrawer(Gravity.LEFT);
+        drawerLayout.openDrawer(navigationDirection);
     }
 
     @Override
     public void closeNavigation() {
-        drawerLayout.closeDrawer(Gravity.LEFT);
+        drawerLayout.closeDrawer(navigationDirection);
     }
 
     public void onEventMainThread(NavigationBadgeEvent event) {
@@ -521,8 +532,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout != null && drawerLayout.isDrawerOpen(Gravity.LEFT)) {
-            drawerLayout.closeDrawer(Gravity.LEFT);
+        if (drawerLayout != null && drawerLayout.isDrawerOpen(navigationDirection)) {
+            drawerLayout.closeDrawer(navigationDirection);
             return;
         }
 
@@ -554,5 +565,91 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             e.printStackTrace();
         }
         return null;
+    }
+
+    // Easter Egg
+    @OnLongClick(R.id.btn_main_tab_menu)
+    boolean navigationEasterEggOpen() {
+        int navigationPosition = JandiPreference.getNavigationPosition();
+        if (navigationPosition == -1) {
+            navigationPosition = Gravity.LEFT;
+        }
+
+        final int[] check = new int[]{navigationPosition};
+
+        View root = LayoutInflater.from(this).inflate(R.layout.dialog_setup_navigation, null);
+        RadioButton radioLeft =
+                ((AppCompatRadioButton) root.findViewById(R.id.radio_setup_navigation_left));
+        RadioButton radioRight =
+                ((AppCompatRadioButton) root.findViewById(R.id.radio_setup_navigation_right));
+        radioLeft.setChecked(navigationPosition == Gravity.LEFT);
+        radioRight.setChecked(navigationPosition == Gravity.RIGHT);
+
+        root.findViewById(R.id.btn_setup_navigation_left).setOnClickListener(v -> {
+            radioLeft.setChecked(true);
+            radioRight.setChecked(false);
+            check[0] = Gravity.LEFT;
+        });
+        root.findViewById(R.id.btn_setup_navigation_right).setOnClickListener(v -> {
+            radioRight.setChecked(true);
+            radioLeft.setChecked(false);
+            check[0] = Gravity.RIGHT;
+        });
+
+        new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_280)
+                .setTitle("네비게이션 위치")
+                .setView(root)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
+                    JandiPreference.setNavigationPosition(check[0]);
+                    initNavigationPosition();
+                })
+                .create().show();
+        return true;
+    }
+
+    // Easter Egg
+    private void initNavigationPosition() {
+        int gravity = JandiPreference.getNavigationPosition();
+        if (gravity == -1) {
+            gravity = Gravity.LEFT;
+            JandiPreference.setNavigationPosition(gravity);
+        }
+
+        navigationDirection = gravity;
+
+        DrawerLayout.LayoutParams params =
+                ((DrawerLayout.LayoutParams) vgNavigationWrapper.getLayoutParams());
+        if (params.gravity != navigationDirection) {
+            params.gravity = navigationDirection;
+            vgNavigationWrapper.setLayoutParams(params);
+        }
+
+        ViewGroup parent = (ViewGroup) badgeOverFlowMenu.getParent();
+        if (navigationDirection == Gravity.LEFT) {
+            parent.removeView(badgeOverFlowMenu);
+
+            ViewGroup.LayoutParams layoutParams = badgeOverFlowMenu.getLayoutParams();
+            layoutParams.width = (int) UiUtils.getPixelFromDp(72f);
+
+            parent.addView(badgeOverFlowMenu, 0, layoutParams);
+
+            ViewGroup.MarginLayoutParams toolbarLp = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
+            toolbarLp.leftMargin = 0;
+
+            toolbar.setLayoutParams(toolbarLp);
+        } else {
+            parent.removeView(badgeOverFlowMenu);
+
+            ViewGroup.LayoutParams layoutParams = badgeOverFlowMenu.getLayoutParams();
+            layoutParams.width = (int) UiUtils.getPixelFromDp(56f);
+
+            parent.addView(badgeOverFlowMenu, layoutParams);
+
+            ViewGroup.MarginLayoutParams toolbarLp = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
+            toolbarLp.leftMargin = (int) UiUtils.getPixelFromDp(16f);
+
+            toolbar.setLayoutParams(toolbarLp);
+        }
     }
 }

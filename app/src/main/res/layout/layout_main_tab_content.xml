@@ -15,27 +15,35 @@
             android:layout_height="wrap_content"
             app:elevation="0dp">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar_main_tab"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:contentInsetStart="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 app:layout_scrollFlags="scroll|snap|enterAlways">
 
                 <com.tosslab.jandi.app.ui.maintab.navigation.widget.BadgeOverFlowMenu
                     android:id="@+id/btn_main_tab_menu"
                     android:layout_width="72dp"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent"
+                    android:background="@color/jandi_primary_color"/>
 
-                <TextView
-                    android:id="@+id/tv_main_tab_title"
-                    style="@style/ToolbarText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:singleLine="true"/>
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar_main_tab"
+                    android:layout_width="0dp"
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_weight="1"
+                    app:contentInsetStart="0dp">
 
-            </android.support.v7.widget.Toolbar>
+                    <TextView
+                        android:id="@+id/tv_main_tab_title"
+                        style="@style/ToolbarText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"/>
+
+                </android.support.v7.widget.Toolbar>
+            </LinearLayout>
 
         </android.support.design.widget.AppBarLayout>
 

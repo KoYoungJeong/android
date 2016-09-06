@@ -9,12 +9,18 @@
 
     <include layout="@layout/layout_main_tab_content"/>
 
-    <fragment
-        android:id="@+id/fragment_navigation"
-        class="com.tosslab.jandi.app.ui.maintab.navigation.NavigationFragment"
+    <FrameLayout
+        android:id="@+id/vg_main_tab_navigation_wrapper"
         android:layout_width="@dimen/jandi_main_tab_navigation_width"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        tools:layout="@layout/fragment_navigation"/>
+        android:layout_gravity="start">
+
+        <fragment
+            android:id="@+id/fragment_navigation"
+            class="com.tosslab.jandi.app.ui.maintab.navigation.NavigationFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/fragment_navigation"/>
+    </FrameLayout>
 
 </android.support.v4.widget.DrawerLayout>

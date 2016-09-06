@@ -38,6 +38,10 @@ public class BadgeOverFlowMenu extends FrameLayout {
                 .inflate(R.layout.layout_main_tab_overflow_menu, this, true);
         tvBadge = (TextView) root.findViewById(R.id.tv_badge);
 
+        if (isInEditMode()) {
+            return;
+        }
+
         setMinimumWidth((int) UiUtils.getPixelFromDp(72));
     }
 
