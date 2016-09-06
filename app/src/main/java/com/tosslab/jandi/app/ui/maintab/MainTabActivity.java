@@ -138,6 +138,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     private TabView tabChat;
     private TabView tabMyPage;
     private MainTabPagerAdapter tabPagerAdapter;
+    private InvitationDialogExecutor invitationDialogExecutor;
     private int navigationDirection;
     private InvitationDialogExecutor invitationDialogExecutor;
 
