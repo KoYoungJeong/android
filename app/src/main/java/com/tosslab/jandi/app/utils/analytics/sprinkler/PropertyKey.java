@@ -18,7 +18,9 @@ public class PropertyKey {
     public static final String ScreenView = "p27";
     public static final String MemberCount = "p39";
     public static final String PollId = "p46";
-    public static final String PollCommentId = "p26";
-    public static final String PollItemId = "p47";
+    public static final String HasAllMention = "p47";
+    public static final String StarredType = "p48";
+    public static final String MentionCount = "p49";
+    public static final String StickerId = "p53";
 
 }

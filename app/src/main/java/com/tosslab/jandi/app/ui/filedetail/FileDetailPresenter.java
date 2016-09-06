@@ -165,27 +165,49 @@ public class FileDetailPresenter {
                                          String stickerId, String comment,
                                          List<MentionObject> mentions) {
         try {
-            fileDetailModel.sendMessageCommentWithSticker(
+            long messageId = fileDetailModel.sendMessageCommentWithSticker(
                     fileId, stickerGroupId, stickerId, comment, mentions);
 
             retrieveFileDetail(fileId, false);
 
             view.scrollToLastComment();
+
+            StringBuilder stickerIdStringBuilder = new StringBuilder(String.valueOf(stickerGroupId));
+            stickerIdStringBuilder.append("-");
+            stickerIdStringBuilder.append(stickerId);
+
+            fileDetailModel.trackFileStickerCommentPostSuccess(messageId,
+                    fileId,
+                    stickerIdStringBuilder.toString(),
+                    mentions.size(),
+                    fileDetailModel.hasAllMention(comment, mentions));
+
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
+            if (e instanceof RetrofitException) {
+                fileDetailModel.trackFileCommentPostFail(((RetrofitException) e).getResponseCode());
+            }
         }
     }
 
     @Background(serial = "file_detail_background")
     public void onSendComment(long fileId, String message, List<MentionObject> mentions) {
+        boolean hasAllMention = fileDetailModel.hasAllMention(message, mentions);
+
         try {
-            fileDetailModel.sendMessageComment(fileId, message, mentions);
+            long messageId = fileDetailModel.sendMessageComment(fileId, message, mentions);
 
             retrieveFileDetail(fileId, false);
 
             view.scrollToLastComment();
+
+            fileDetailModel.trackFileCommentPostSuccess(messageId, fileId, mentions.size(), hasAllMention);
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
+
+            if (e instanceof RetrofitException) {
+                fileDetailModel.trackFileCommentPostFail(((RetrofitException) e).getResponseCode());
+            }
         }
     }
 
@@ -197,10 +219,10 @@ public class FileDetailPresenter {
         long teamId = AccountRepository.getRepository().getSelectedTeamId();
         try {
             if (starred) {
-                fileDetailModel.registStarredMessage(teamId, fileId);
+                fileDetailModel.registStarredFile(teamId, fileId);
                 view.showStarredSuccessToast();
             } else {
-                fileDetailModel.unregistStarredMessage(teamId, fileId);
+                fileDetailModel.unregistStarredFile(teamId, fileId);
                 view.showUnstarredSuccessToast();
             }
             view.setFilesStarredState(starred);
@@ -221,7 +243,6 @@ public class FileDetailPresenter {
                 fileDetailModel.unregistStarredMessage(teamId, messageId);
                 view.showCommentUnStarredSuccessToast();
             }
-
             view.modifyCommentStarredState(messageId, starred);
 
             EventBus.getDefault().post(new StarredInfoChangeEvent());
@@ -474,7 +495,7 @@ public class FileDetailPresenter {
             } else {
                 fileDetailModel.deleteComment(messageId, feedbackId);
             }
-
+            fileDetailModel.trackFileCommentDeleteSuccess(messageId);
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
@@ -484,7 +505,9 @@ public class FileDetailPresenter {
                 view.addComment(adapterPosition, comment);
                 view.notifyDataSetChanged();
             }
-
+            if (e instanceof RetrofitException) {
+                fileDetailModel.trackFileCommentDeleteFail(((RetrofitException) e).getResponseCode());
+            }
         }
     }
 
@@ -504,10 +527,17 @@ public class FileDetailPresenter {
             view.dismissProgress();
 
             view.setExternalLinkToClipboard();
+
+            fileDetailModel.trackCreatePublicLinkSuccess(fileId);
+
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
             view.dismissProgress();
             view.showUnexpectedErrorToast();
+            if (e instanceof RetrofitException) {
+                RetrofitException e1 = (RetrofitException) e;
+                fileDetailModel.trackCreatePublicLinkFail(e1.getResponseCode());
+            }
         }
     }
 
@@ -525,12 +555,20 @@ public class FileDetailPresenter {
             view.dismissProgress();
 
             view.showDisableExternalLinkSuccessToast();
+
+            fileDetailModel.trackDisablePublicLinkSuccess(fileId);
+
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
             view.dismissProgress();
             view.showUnexpectedErrorToast();
+            if (e instanceof RetrofitException) {
+                RetrofitException e1 = (RetrofitException) e;
+                fileDetailModel.trackDisablePublicLinkFail(e1.getResponseCode());
+            }
         }
     }
+
 
     public void onTopicDeleted(long entityId,
                                Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities) {

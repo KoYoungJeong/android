@@ -11,5 +11,7 @@ public enum EventCategory {
     SystemRelatedEvent,
     TopicRelatedEvent,
     ButtonTouchEvent,
-    PollEvent;
+    PollEvent,
+    StarredEvent,
+    PublicLinkEvent,
 }
