@@ -4,7 +4,6 @@ package com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.dagger;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberDataModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.ToggleCollector;
-import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.model.TeamMemberModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.presenter.TeamMemberPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.presenter.TeamMemberPresenterImpl;
 
@@ -44,11 +43,6 @@ public class TeamMemberModule {
     @Provides
     ToggleCollector provideToggleCollector() {
         return toggleCollector;
-    }
-
-    @Provides
-    TeamMemberModel provideTeamMemberModel() {
-        return new TeamMemberModel();
     }
 
     @Provides

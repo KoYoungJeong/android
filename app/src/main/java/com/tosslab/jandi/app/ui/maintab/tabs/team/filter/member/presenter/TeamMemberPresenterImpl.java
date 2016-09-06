@@ -10,11 +10,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.InvitationSuccessEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.local.orm.repositories.search.MemberRecentKeywordRepository;
-import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
-import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
-import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberDataModel;
@@ -31,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import dagger.Lazy;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscription;
@@ -43,10 +37,8 @@ import rx.subjects.BehaviorSubject;
 public class TeamMemberPresenterImpl implements TeamMemberPresenter {
 
     private final View view;
-    private final TeamMemberModel teamMemberModel;
+    TeamMemberModel teamMemberModel;
     private final TeamMemberDataModel teamMemberDataModel;
-    private final Lazy<ChannelApi> channelApi;
-    private final Lazy<GroupApi> groupApi;
     private final HighlightSpannable highlightSpan;
     private boolean selectMode;
 
@@ -61,14 +53,10 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
     public TeamMemberPresenterImpl(View view,
                                    TeamMemberModel teamMemberModel,
                                    TeamMemberDataModel teamMemberDataModel,
-                                   Lazy<ChannelApi> channelApi,
-                                   Lazy<GroupApi> groupApi,
                                    ToggleCollector toggledIds) {
         this.view = view;
         this.teamMemberModel = teamMemberModel;
         this.teamMemberDataModel = teamMemberDataModel;
-        this.channelApi = channelApi;
-        this.groupApi = groupApi;
         this.toggledIds = toggledIds;
 
         int highlighteColor = JandiApplication.getContext().getResources().getColor(R.color.rgb_00abe8);
@@ -81,6 +69,7 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
         filterSubscription = filterSubject
                 .throttleLast(100, TimeUnit.MILLISECONDS)
                 .onBackpressureBuffer()
+                .distinctUntilChanged()
                 .observeOn(Schedulers.io())
                 .map(String::toLowerCase)
                 .concatMap(it -> teamMemberModel.getFilteredUser(it, selectMode, roomId)
@@ -96,7 +85,7 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                         view.showEmptyView(filterSubject.getValue());
                     }
                     view.refreshDataView();
-                });
+                }, Throwable::printStackTrace);
 
     }
 
@@ -241,22 +230,8 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
     @Override
     public void inviteToggle() {
         view.showPrgoress();
-        Observable.defer(() -> {
-            List<Long> userIds = toggledIds.getIds();
-            long teamId = TeamInfoLoader.getInstance().getTeamId();
-            ResCommon resCommon;
-            try {
-                if (TeamInfoLoader.getInstance().isPublicTopic(roomId)) {
-                    resCommon = channelApi.get().invitePublicTopic(roomId, new ReqInviteTopicUsers(userIds, teamId));
-                } else {
-                    resCommon = groupApi.get().inviteGroup(roomId, new ReqInviteTopicUsers(userIds, teamId));
-                }
-                return Observable.just(resCommon);
-            } catch (RetrofitException e) {
-                return Observable.error(e);
-            }
-
-        }).subscribeOn(Schedulers.io())
+        teamMemberModel.deferInvite(toggledIds, roomId)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
                     TopicRepository.getInstance().addMember(roomId, toggledIds.getIds());
