@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -14,31 +13,23 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.dynamicl10n.FormatParam;
 import com.tosslab.jandi.app.network.models.dynamicl10n.PollFinished;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.ui.poll.util.PollBinder;
 import com.tosslab.jandi.app.ui.poll.util.PollUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UiUtils;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
-import java.util.Collection;
-
-import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
-public class PollCommentViewHolder extends BaseCommentViewHolder {
+public class PollCommentViewHolder extends BaseCommentViewHolder implements HighlightView {
 
     private ViewGroup vgPoll;
     private ImageView vPollIcon;
@@ -326,6 +317,11 @@ public class PollCommentViewHolder extends BaseCommentViewHolder {
 
     protected void setHasFlatTop(boolean hasFlatTop) {
         this.hasFlatTop = hasFlatTop;
+    }
+
+    @Override
+    public View getHighlightView() {
+        return vgProfileNestedComment;
     }
 
     public static class Builder extends BaseViewHolderBuilder {

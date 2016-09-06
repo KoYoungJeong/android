@@ -304,6 +304,7 @@
     <color name="rgb_f0f0f0">#FFF0F0F0</color>
     <color name="rgb_f6f6f6">#FFF6F6F6</color>
     <color name="rgb_eeeeee">#FFEEEEEE</color>
+    <color name="rgb_fffad1">#FFFFFAD1</color>
 
     <color name="jandi_web_button_retry_background_selected">#FFE0E0E0</color>
     <color name="jandi_web_button_retry_background">#FFFFFFFF</color>
