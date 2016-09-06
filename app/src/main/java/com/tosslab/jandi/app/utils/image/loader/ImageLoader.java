@@ -48,11 +48,6 @@ public class ImageLoader {
     private RequestListener<Uri, GlideDrawable> listener;
     private Uri uri;
 
-    private ProgressStarted progressStarted;
-    private ProgressDownloading progressDownloading;
-    private ProgressCompleted progressCompleted;
-    private ProgressPresent progressPresent;
-
     private WeakReference<Fragment> fragment;
 
     ImageLoader() {
@@ -74,38 +69,6 @@ public class ImageLoader {
         }
 
         Glide.with(context).load(resId).into(imageView);
-    }
-
-    public ImageLoader progress(ProgressStarted progressStarted,
-                                ProgressDownloading progressDownloading,
-                                ProgressCompleted progressCompleted,
-                                ProgressPresent progressPresent) {
-        this.progressStarted = progressStarted;
-        this.progressDownloading = progressDownloading;
-        this.progressCompleted = progressCompleted;
-        this.progressPresent = progressPresent;
-
-        return this;
-    }
-
-    public ImageLoader progressStarted(ProgressStarted progressStarted) {
-        this.progressStarted = progressStarted;
-        return this;
-    }
-
-    public ImageLoader progressDownloading(ProgressDownloading progressDownloading) {
-        this.progressDownloading = progressDownloading;
-        return this;
-    }
-
-    public ImageLoader progressCompleted(ProgressCompleted progressCompleted) {
-        this.progressCompleted = progressCompleted;
-        return this;
-    }
-
-    public ImageLoader progressPresent(ProgressPresent progressPresent) {
-        this.progressPresent = progressPresent;
-        return this;
     }
 
     public ImageLoader backgroundColor(int color) {
@@ -206,7 +169,11 @@ public class ImageLoader {
     }
 
     @SuppressWarnings("unchecked")
-    public void intoWithProgress(ImageView imageView) {
+    public void intoWithProgress(ImageView imageView,
+                                 ProgressStarted progressStarted,
+                                 ProgressDownloading progressDownloading,
+                                 ProgressCompleted progressCompleted,
+                                 ProgressPresent progressPresent) {
         DrawableRequestBuilder<Uri> request = getRequestBuilder(imageView);
         if (request == null) return;
 

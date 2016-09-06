@@ -125,7 +125,8 @@ public class PhotoViewFragment extends Fragment {
                     })
                     .fragment(this)
                     .uri(originalUri)
-                    .progress(() -> Observable.just(0)
+                    .intoWithProgress(photoView,
+                            () -> Observable.just(0)
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(it -> {
                                         progressBar.setMax(100);
@@ -140,8 +141,7 @@ public class PhotoViewFragment extends Fragment {
                                         tvPercentage.setText(String.format("%d %%", progress));
                                     }),
                             null,
-                            this::hideProgress)
-                    .intoWithProgress(photoView);
+                            this::hideProgress);
         }
     }
 
@@ -204,7 +204,7 @@ public class PhotoViewFragment extends Fragment {
                         return true;
                     }
                 })
-                .progress(() -> Observable.just(0)
+                .intoWithProgress(photoView, () -> Observable.just(0)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(it -> {
                                     progressBar.setMax(100);
@@ -219,8 +219,7 @@ public class PhotoViewFragment extends Fragment {
                                     tvPercentage.setText(String.format("%d %%", progress));
                                 }),
                         null,
-                        this::hideProgress)
-                .intoWithProgress(photoView);
+                        this::hideProgress);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
