@@ -65,7 +65,6 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.TabView;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
@@ -138,7 +137,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     private TabView tabChat;
     private TabView tabMyPage;
     private MainTabPagerAdapter tabPagerAdapter;
-    private InvitationDialogExecutor invitationDialogExecutor;
     private int navigationDirection;
     private InvitationDialogExecutor invitationDialogExecutor;
 
