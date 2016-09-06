@@ -50,6 +50,8 @@ import java.util.concurrent.Executors;
 import java.util.logging.LogManager;
 
 import io.fabric.sdk.android.Fabric;
+import io.intercom.android.sdk.Intercom;
+import io.intercom.android.sdk.logger.IntercomLogger;
 import okhttp3.OkHttpClient;
 
 /**
@@ -99,6 +101,8 @@ public class JandiApplication extends MultiDexApplication {
         JandiApplication.setContext(this);
         FacebookSdk.sdkInitialize(this);
 
+        initIntercom();
+
         initParse();
 
         // Set AndroidAnnotations Background pool
@@ -120,6 +124,17 @@ public class JandiApplication extends MultiDexApplication {
         migrationParsePush();
 
         logBaidu();
+    }
+
+    protected void initIntercom() {
+
+        if (!BuildConfig.APPLICATION_ID.contains(".dev")) {
+
+            Intercom.initialize(this, "android_sdk-40917d53dc07205e1515f909a14a94752d410f70", "yt1d5jat");
+            Intercom.setLogLevel(IntercomLogger.VERBOSE);
+        } else {
+            Intercom.initialize(this, "android_sdk-1dc44febffdbbc7fab963de6f5e093f672cba0a1", "xjjmliv4");
+        }
     }
 
     private void logBaidu() {

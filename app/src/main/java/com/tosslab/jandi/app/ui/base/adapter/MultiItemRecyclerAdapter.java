@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.base.adapter;
 
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
@@ -62,6 +63,14 @@ public abstract class MultiItemRecyclerAdapter extends RecyclerView.Adapter<Base
     public synchronized void setRows(List<Row<?>> rows) {
         this.rows.clear();
         this.rows.addAll(rows);
+    }
+
+    @Nullable
+    public Row getRow(int position) {
+        if (position >= 0 && rows.size() > position) {
+            return rows.get(position);
+        }
+        return null;
     }
 
     public synchronized void addRows(int position, List<Row<?>> rows) {

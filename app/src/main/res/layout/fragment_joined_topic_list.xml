@@ -10,7 +10,15 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/vg_main_topic_order"
         android:background="@color/white"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"/>
+
+    <com.tosslab.jandi.app.views.FloatingActionMenu
+        android:id="@+id/vg_fab_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="?attr/actionBarSize"/>
 
     <RelativeLayout
         android:id="@+id/vg_main_topic_order"
@@ -33,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="3dp"
                 android:duplicateParentState="true"
-                android:src="@drawable/topic_list_folder" />
+                android:src="@drawable/topic_list_folder"/>
 
             <TextView
                 android:id="@+id/tv_main_topic_order_title"
@@ -41,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/jandi_sort_folder"
                 android:textColor="@color/jandi_text_light"
-                android:textSize="@dimen/jandi_text_size_small" />
+                android:textSize="@dimen/jandi_text_size_small"/>
         </LinearLayout>
 
 
@@ -49,7 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_alignParentBottom="true"
-            android:background="@color/jandi_main_topic_order_divider" />
+            android:background="@color/jandi_main_topic_order_divider"/>
     </RelativeLayout>
 
 </RelativeLayout>

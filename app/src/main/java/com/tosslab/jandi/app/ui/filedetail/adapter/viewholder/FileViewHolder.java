@@ -39,7 +39,7 @@ import rx.Observable;
  * <p>
  * 파일의 기본 정보 (올린 사람, 시간, 타입, 확장자, 사이즈 등등) 등을 "고정적으로" 그린다.
  * 파일의 형태에 따라 컨텐츠 영역을 다르게 보여주어야 하는데,
- * 이 클래스를 상속 후 #addContentView 안에서 컨텐츠 레이아웃을 add 한 후 구현한다.
+ * 이 클래스를 상속 후 #addContentView 안에서 컨텐츠 레이아웃을 addToggledUser 한 후 구현한다.
  */
 public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMessage> {
 

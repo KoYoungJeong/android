@@ -1,22 +1,22 @@
 {
   "project_info": {
-    "project_id": "live-jandi-push",
     "project_number": "252549028791",
-    "name": "Live Jandi Push"
+    "project_id": "live-jandi-push"
   },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:252549028791:android:211c9649ff8283d8",
-        "client_id": "android:com.tosslab.jandi.app",
-        "client_type": 1,
         "android_client_info": {
-          "package_name": "com.tosslab.jandi.app",
-          "certificate_hash": []
+          "package_name": "com.tosslab.jandi.app"
         }
       },
       "oauth_client": [],
-      "api_key": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnu_x5EouUkSOAeqmEVOPDoG1G57TtI8A"
+        }
+      ],
       "services": {
         "analytics_service": {
           "status": 2,
@@ -24,16 +24,9 @@
             "tracking_id": "UA-53634725-3"
           }
         },
-        "cloud_messaging_service": {
-          "status": 2,
-          "apns_config": []
-        },
         "appinvite_service": {
           "status": 1,
           "other_platform_oauth_client": []
-        },
-        "google_signin_service": {
-          "status": 1
         },
         "ads_service": {
           "status": 1
@@ -41,6 +34,5 @@
       }
     }
   ],
-  "client_info": [],
-  "ARTIFACT_VERSION": "1"
+  "configuration_version": "1"
 }

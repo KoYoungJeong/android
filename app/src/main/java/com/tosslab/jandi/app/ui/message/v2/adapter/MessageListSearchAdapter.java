@@ -100,7 +100,7 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
                         originLink.status = "archived";
                         messages.remove(link);
                     }
-                    // if cannot find same object, will be add to list.
+                    // if cannot find same object, will be addToggledUser to list.
                 } else {
                     if (searchedPosition >= 0) {
                         links.remove(searchedPosition);

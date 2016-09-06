@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -8,10 +9,10 @@
         android:id="@+id/vg_starred_list_tab"
         android:layout_width="match_parent"
         android:layout_height="@dimen/jandi_star_tab_default_size"
-        android:background="@drawable/bg_search_tab"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:weightSum="2">
+        android:weightSum="2"
+        app:layout_collapseMode="pin">
 
         <TextView
             android:id="@+id/btn_starred_list_all"

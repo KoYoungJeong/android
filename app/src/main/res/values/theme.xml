@@ -22,6 +22,9 @@
 
     </style>
 
+    <style name="JandiTheme.NavigationDrawer">
+    </style>
+
     <style name="JandiTheme.Widget" />
 
     <style name="JandiTheme.Widget.TextView" parent="android:Widget.TextView"></style>

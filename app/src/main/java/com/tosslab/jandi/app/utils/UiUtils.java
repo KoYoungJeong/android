@@ -5,6 +5,8 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 
 import com.tosslab.jandi.app.JandiApplication;
 
@@ -35,6 +37,27 @@ public class UiUtils {
 
         ta.recycle();
         return drawable;
+    }
+
+    public static int getActionBarHeight() {
+        int actionBarHeight = 0;
+        TypedValue tv = new TypedValue();
+        Context context = JandiApplication.getContext();
+        if (context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+            DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, displayMetrics);
+        }
+        return actionBarHeight;
+    }
+
+    public static int getStatusBarHeight() {
+        int statusBarHeight = 0;
+        Resources resources = JandiApplication.getContext().getResources();
+        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            statusBarHeight = resources.getDimensionPixelSize(resourceId);
+        }
+        return statusBarHeight;
     }
 
     public interface KeyboardHandler {

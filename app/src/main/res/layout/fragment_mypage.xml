@@ -1,58 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/vg_refresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/lv_mypage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingTop="147dp"/>
-    </android.support.v4.widget.SwipeRefreshLayout>
-
-    <include
-        android:id="@+id/vg_mypage_profile"
-        layout="@layout/layout_mypage_my_profile"/>
-
-    <ProgressBar
-        android:id="@+id/progress_mypage_more_loading"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/bg_circle_white"
-        android:indeterminate="true"/>
-
-    <ProgressBar
-        android:id="@+id/progress_mypage"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_centerInParent="true"
-        android:indeterminate="true"
-        android:indeterminateDrawable="@drawable/progress_refresh_animation"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/v_mypage_empty_mentions"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager_mypage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/vg_mypage_profile"
-        android:layout_marginLeft="48dp"
-        android:layout_marginRight="48dp"
-        android:gravity="center"
-        android:lineSpacingExtra="3dp"
-        android:text="@string/jandi_mentions_are_empty"
-        android:textColor="@color/jandi_text"
-        android:textSize="16sp"
-        android:visibility="gone"/>
+        android:layout_below="@+id/tab_mypage"
+        android:background="@android:color/white"/>
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab_mypage"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/jandi_primary_color"
+        android:fillViewport="true"
+        app:layout_collapseMode="pin"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@android:color/white"
+        app:tabIndicatorHeight="2dp"
+        app:tabMaxWidth="0dp"
+        app:tabMode="fixed"
+        app:tabPaddingEnd="0dp"
+        app:tabPaddingStart="0dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignBottom="@id/tab_mypage"
+        android:background="@color/rgb_e5e5e5"/>
 
 </RelativeLayout>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/group_main_tab_setting">
+        <item android:id="@+id/nav_setting_notification" android:icon="@drawable/side_bar_notifications" android:title="@string/jandi_setting_notification"/>
+        <item android:id="@+id/nav_setting_orientation" android:icon="@drawable/side_bar_rotation" android:title="@string/jandi_screen_orientation" android:visible="false"/>
+        <item android:id="@+id/nav_setting_passcode" android:icon="@drawable/side_bar_lock" android:title="@string/jandi_set_passcode"/>
+        <item android:id="@+id/nav_setting_account" android:icon="@drawable/side_bar_setting" android:title="@string/jandi_setting_account"/>
+    </group>
+
+    <group android:id="@+id/group_main_tab_privacy">
+        <item android:id="@+id/nav_term_of_service" android:title="@string/jandi_term_of_service"/>
+        <item android:id="@+id/nav_privacy_policy" android:title="@string/jandi_privacy_policy"/>
+        <item android:id="@+id/nav_help" android:title="@string/jandi_help"/>
+        <item android:id="@+id/nav_1_on_1" android:title="@string/jandi_1_on_1_support"/>
+    </group>
+
+    <group android:id="@+id/group_main_tab_authenticate">
+        <item android:id="@+id/nav_sign_out" android:title="@string/jandi_setting_sign_out"/>
+    </group>
+
+</menu>

@@ -49,6 +49,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/et_name_change"
-        android:background="@color/jandi_e5e5e5" />
+        android:background="@color/rgb_e5e5e5" />
 
 </RelativeLayout>

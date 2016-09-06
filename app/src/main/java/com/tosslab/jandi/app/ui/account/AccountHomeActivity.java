@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
@@ -27,7 +28,6 @@ import com.tosslab.jandi.app.ui.account.dagger.AccountHomeModule;
 import com.tosslab.jandi.app.ui.account.dagger.DaggerAccountHomeComponent;
 import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
 import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
@@ -37,11 +37,11 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.views.AccountPendingTeamRowView;
 import com.tosslab.jandi.app.views.AccountTeamRowView;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.List;
@@ -287,9 +287,10 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
         JandiSocketService.stopService(AccountHomeActivity.this);
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
-        MainTabActivity_.intent(AccountHomeActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+        startActivity(Henson.with(this)
+                .gotoMainTabActivity()
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
         finish();
     }

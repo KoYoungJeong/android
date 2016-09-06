@@ -4,13 +4,19 @@ rootProject.allprojects { project ->
         project.afterEvaluate {
 
             repositories {
-                jcenter()
+
                 maven {
                     url 'https://maven.fabric.io/public'
                 }
                 maven {
                     url 'http://nx.jandi.io:8081/nexus/content/repositories/thirdparty/'
                 }
+                maven {
+                    url 'https://dl.bintray.com/intercom/intercom-maven'
+                }
+
+                jcenter()
+
             }
 
             dependencies {
@@ -87,6 +93,9 @@ rootProject.allprojects { project ->
                 // newrelic
                 compile rootProject.ext.dependecies.libraries.newrelic
 
+                // intercom
+                compile rootProject.ext.dependecies.libraries.intercom
+
                 // Retrofit
                 compile rootProject.ext.dependecies.libraries.retrofit2
                 compile rootProject.ext.dependecies.libraries.okhttp3
@@ -114,6 +123,8 @@ rootProject.allprojects { project ->
                 androidTestApt rootProject.ext.dependecies.libraries.dagger2Apt
 
             }
+
+            project.apply(plugin : 'com.google.gms.google-services')
         }
     }
 }

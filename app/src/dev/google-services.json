@@ -1,22 +1,22 @@
 {
   "project_info": {
-    "project_id": "dev-jandi-push",
     "project_number": "648623146882",
-    "name": "Dev Jandi Push"
+    "project_id": "dev-jandi-push"
   },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:648623146882:android:f490d2ecb3fc9398",
-        "client_id": "android:com.tosslab.jandi.app.dev",
-        "client_type": 1,
         "android_client_info": {
-          "package_name": "com.tosslab.jandi.app.dev",
-          "certificate_hash": []
+          "package_name": "com.tosslab.jandi.app.dev"
         }
       },
       "oauth_client": [],
-      "api_key": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD89-26lgiyh51wM7FlVsy4p8bzoOZ2GR0"
+        }
+      ],
       "services": {
         "analytics_service": {
           "status": 2,
@@ -24,16 +24,9 @@
             "tracking_id": "UA-29745379-2"
           }
         },
-        "cloud_messaging_service": {
-          "status": 2,
-          "apns_config": []
-        },
         "appinvite_service": {
           "status": 1,
           "other_platform_oauth_client": []
-        },
-        "google_signin_service": {
-          "status": 1
         },
         "ads_service": {
           "status": 1
@@ -41,6 +34,5 @@
       }
     }
   ],
-  "client_info": [],
-  "ARTIFACT_VERSION": "1"
+  "configuration_version": "1"
 }

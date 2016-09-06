@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="@color/rgb_fafafa"
+    android:orientation="horizontal">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@drawable/folder_shadow"/>
+
+    <TextView
+        android:id="@+id/btn_team_pending_invite_ignore"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="8dp"
+        android:layout_toLeftOf="@+id/btn_team_pending_invite_accept"
+        android:gravity="center"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:text="@string/jandi_team_select_ignore"
+        android:textColor="@color/jandi_text_light"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/btn_team_pending_invite_accept"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="8dp"
+        android:gravity="center"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:text="@string/jandi_team_select_accept"
+        android:textColor="@color/rgb_00ace9"
+        android:textSize="14sp"/>
+
+</RelativeLayout>
+

@@ -16,6 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:singleLine="true"
         android:layout_marginBottom="7dp"
         android:textColor="@color/text_color_main_tab"
         android:textSize="11dp"/>
