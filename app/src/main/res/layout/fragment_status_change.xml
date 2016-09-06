@@ -13,44 +13,57 @@
         app:navigationIcon="@drawable/actionbar_icon_back"
         app:title="@string/jandi_profile_status_message" />
 
-    <EditText
-        android:id="@+id/et_status_change"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/toolbar_status_change"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
-        android:background="@null"
-        android:imeOptions="actionDone"
-        android:lineSpacingExtra="2dp"
-        android:maxLength="60"
-        android:minHeight="32dp"
-        android:hint="@string/jandi_enter_your_status_message"
-        android:scrollHorizontally="true"
-        android:scrollbars="horizontal"
-        android:textColor="@color/jandi_text"
-        android:textSize="@dimen/jandi_text_size_large" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar_status_change">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <View
-        android:id="@+id/tv_status_change_divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_alignLeft="@+id/et_status_change"
-        android:layout_alignRight="@+id/et_status_change"
-        android:layout_below="@+id/et_status_change"
-        android:layout_marginBottom="8dp"
-        android:background="@color/jandi_line_gray" />
+            <EditText
+                android:id="@+id/et_status_change"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:background="@null"
+                android:hint="@string/jandi_enter_your_status_message"
+                android:imeOptions="actionDone"
+                android:lineSpacingExtra="2dp"
+                android:maxLength="60"
+                android:minHeight="32dp"
+                android:paddingTop="16dp"
+                android:scrollHorizontally="true"
+                android:scrollbars="horizontal"
+                android:textColor="@color/jandi_text"
+                android:textSize="@dimen/jandi_text_size_large" />
 
-    <TextView
-        android:id="@+id/tv_status_change_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/tv_status_change_divider"
-        android:layout_below="@+id/tv_status_change_divider"
-        android:gravity="center"
-        android:text="0/60" />
+            <View
+                android:id="@+id/tv_status_change_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignLeft="@+id/et_status_change"
+                android:layout_alignRight="@+id/et_status_change"
+                android:layout_below="@+id/et_status_change"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/jandi_line_gray" />
+
+            <TextView
+                android:id="@+id/tv_status_change_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@+id/tv_status_change_divider"
+                android:layout_below="@+id/tv_status_change_divider"
+                android:gravity="center"
+                android:text="0/60"
+                android:textColor="@color/jandi_text_light"
+                android:textSize="12sp" />
+        </RelativeLayout>
+    </ScrollView>
 
 </RelativeLayout>
