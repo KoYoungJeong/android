@@ -19,8 +19,8 @@ import rx.Observable;
 import setup.BaseInitUtil;
 
 import static com.jayway.awaitility.Awaitility.await;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -94,7 +94,7 @@ public class TextSharePresenterImplTest {
         doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
-        }).when(mockView).moveEntity(any(), any(), any());
+        }).when(mockView).moveEntity(anyLong(), anyLong(), anyInt());
 
         textSharePresenter.teamId = TeamInfoLoader.getInstance().getTeamId();
         textSharePresenter.roomId = TeamInfoLoader.getInstance().getDefaultTopicId();

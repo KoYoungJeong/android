@@ -158,7 +158,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                     if (imageFiles.size() > 0) {
                         view.addFileInfos(0, imageFiles);
                     }
-                });
+                }, Throwable::printStackTrace);
     }
 
     @Override

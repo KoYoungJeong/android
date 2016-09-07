@@ -161,15 +161,15 @@ public class AccountHomePresenterImplTest {
         doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
-        }).when(viewMock).dismissProgressWheel();
+        }).when(viewMock).moveSelectedTeam();
 
         long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
         accountHomePresenter.onJoinedTeamSelect(selectedTeamId);
 
         Awaitility.await().until(() -> finish[0]);
 
-        verify(viewMock, times(1)).dismissProgressWheel();
-        verify(viewMock, times(1)).moveSelectedTeam();
+        verify(viewMock).dismissProgressWheel();
+        verify(viewMock).moveSelectedTeam();
 
     }
 

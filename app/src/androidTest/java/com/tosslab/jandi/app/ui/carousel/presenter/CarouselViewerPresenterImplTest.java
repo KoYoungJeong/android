@@ -27,10 +27,10 @@ import org.mockito.stubbing.Answer;
 
 import java.util.List;
 
-import dagger.Component;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import dagger.Component;
 import rx.Observable;
 import rx.observers.TestSubscriber;
 import setup.BaseInitUtil;
@@ -40,15 +40,12 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.anyList;
-import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(AndroidJUnit4.class)
 public class CarouselViewerPresenterImplTest {
@@ -120,7 +117,7 @@ public class CarouselViewerPresenterImplTest {
         doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
-        }).when(mockView).addFileInfos(anyList());
+        }).when(mockView).initCarouselInfo(any());
 
         presenter.onInitImageFiles(roomId, lastImageMessageId);
 
