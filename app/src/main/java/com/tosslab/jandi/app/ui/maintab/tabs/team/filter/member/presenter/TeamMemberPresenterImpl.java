@@ -190,6 +190,14 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
     @Override
     public void addToggledUser(long[] users) {
 
+        for (long user : users) {
+            int position = teamMemberDataModel.findItemOfEntityId(user);
+            if (position >= 0) {
+                teamMemberDataModel.getItem(position).getChatChooseItem().setIsChooseItem(true);
+                toggledIds.addId(user);
+            }
+        }
+
         view.refreshDataView();
         view.updateToggledUser(toggledIds.count());
     }

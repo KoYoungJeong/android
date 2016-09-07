@@ -8,11 +8,16 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.disabled.presenter.DisabledEntityChoosePresenter;
 import com.tosslab.jandi.app.ui.entities.disabled.presenter.DisabledEntityChoosePresenterImpl;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -22,6 +27,8 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 @EActivity(R.layout.activity_disabled_entity_choose)
 public class DisabledEntityChooseActivity extends BaseAppCompatActivity implements DisabledEntityChoosePresenter.View {
@@ -52,6 +59,18 @@ public class DisabledEntityChooseActivity extends BaseAppCompatActivity implemen
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
+
+    @Override
     public void setDisabledMembers(List<ChatChooseItem> disabledMembers) {
         adapter.clear();
         adapter.addAll(disabledMembers);
@@ -69,6 +88,17 @@ public class DisabledEntityChooseActivity extends BaseAppCompatActivity implemen
             actionBar.setIcon(
                     new ColorDrawable(getResources().getColor(android.R.color.transparent)));
         }
+    }
+
+    public void onEventMainThread(ShowProfileEvent event) {
+        MemberProfileActivity_.intent(DisabledEntityChooseActivity.this)
+                .memberId(event.userId)
+                .from(MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
+                .start();
+
+        AnalyticsValue.Action action = AnalyticsUtil.getProfileAction(event.userId, event.from);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamMembers, action);
     }
 
     @OptionsItem(android.R.id.home)

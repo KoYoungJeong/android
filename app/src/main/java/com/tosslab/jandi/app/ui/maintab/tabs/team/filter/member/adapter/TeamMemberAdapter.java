@@ -241,12 +241,12 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         @Override
         public void onBindView(TeamMemberItem item) {
+            setIsTeamMemberList(true);
             bindView(item.getChatChooseItem());
             cbUserSelected.setFocusable(false);
             cbUserSelected.setFocusableInTouchMode(false);
             cbUserSelected.setClickable(false);
             cbUserSelected.setOnClickListener(null);
-            setIsTeamMemberList(true);
             tvName.setText(item.getNameOfSpan(), TextView.BufferType.SPANNABLE);
         }
     }

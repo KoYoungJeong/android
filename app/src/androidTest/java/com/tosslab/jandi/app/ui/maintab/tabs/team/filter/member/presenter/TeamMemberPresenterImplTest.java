@@ -37,6 +37,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -152,6 +153,7 @@ public class TeamMemberPresenterImplTest {
     @Test
     public void addToggledUser() throws Exception {
         presenter.addToggledUser(new long[]{1, 2, 3});
+        verify(collector, times(3)).addId(anyLong());
         verify(view).refreshDataView();
         verify(view).updateToggledUser(eq(0));
     }
