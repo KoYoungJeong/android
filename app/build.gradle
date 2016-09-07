@@ -10,6 +10,7 @@ apply from: 'apk-name-changer.gradle'
 apply plugin: 'checkstyle'
 apply plugin: 'pmd'
 apply from: 'ci-tasks.gradle'
+//apply from: 'test-coverage.gradle'
 
 configurations {
     apt
@@ -29,10 +30,10 @@ android {
 
     defaultConfig {
         applicationId 'com.tosslab.jandi.app'
-        minSdkVersion 15
+        minSdkVersion 14
         targetSdkVersion 23
         versionCode 201
-        versionName '2.4.0'
+        versionName '2.3.1'
 
         // for Ui Testing
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -44,6 +45,7 @@ android {
 
         debug {
             debuggable true
+            testCoverageEnabled = rootProject.hasProperty("report_coverage") && rootProject.property("report_coverage")
         }
 
         release {
