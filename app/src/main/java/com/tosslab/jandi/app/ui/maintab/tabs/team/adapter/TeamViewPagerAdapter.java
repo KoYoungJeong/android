@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.DeptJobFragment;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.TeamMemberFragment;
@@ -41,7 +40,7 @@ public class TeamViewPagerAdapter extends FragmentPagerAdapter {
         super(fm);
         this.context = context;
         fragments = new ArrayList<>(TEAM_TITLES.length);
-        initFragments(isSelectMode , hasHeader, roomId);
+        initFragments(isSelectMode, hasHeader, roomId);
 
         for (int idx = 0; idx < fragments.size(); idx++) {
             Fragment fragment = fragments.get(idx);
@@ -70,7 +69,7 @@ public class TeamViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return JandiApplication.getContext().getResources().getString(TEAM_TITLES[position]);
+        return context.getResources().getString(TEAM_TITLES[position]);
     }
 
     @Override
