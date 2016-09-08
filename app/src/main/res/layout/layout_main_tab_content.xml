@@ -25,7 +25,9 @@
                     android:id="@+id/btn_main_tab_menu"
                     android:layout_width="72dp"
                     android:layout_height="match_parent"
-                    android:background="@color/jandi_primary_color"/>
+                    android:background="@color/jandi_primary_color"
+                    android:clickable="true"
+                    android:longClickable="true"/>
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar_main_tab"

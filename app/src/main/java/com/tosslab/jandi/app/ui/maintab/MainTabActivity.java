@@ -12,13 +12,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
@@ -62,6 +60,7 @@ import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.LongPressListener;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -76,7 +75,6 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnLongClick;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.schedulers.Schedulers;
@@ -158,7 +156,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
         initSelectedEntity();
 
-        initNavigationPosition();
+        // Easter Egg
+        initNavigationEasterEgg();
 
         initToolbars();
 
@@ -343,6 +342,17 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         } else if (tabInfo instanceof MypageTabInfo) {
             tabMyPage = tabView;
         }
+    }
+
+    private void initNavigationEasterEgg() {
+        initNavigationPosition();
+
+        badgeOverFlowMenu.setOnTouchListener(new LongPressListener() {
+            @Override
+            public void onLongPressed() {
+                navigationEasterEggOpen();
+            }
+        });
     }
 
     @OnClick(R.id.btn_main_tab_menu)
@@ -567,8 +577,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     }
 
     // Easter Egg
-    @OnLongClick(R.id.btn_main_tab_menu)
-    boolean navigationEasterEggOpen() {
+    private void navigationEasterEggOpen() {
         int navigationPosition = JandiPreference.getNavigationPosition();
         if (navigationPosition == -1) {
             navigationPosition = Gravity.LEFT;
@@ -577,26 +586,23 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         final int[] check = new int[]{navigationPosition};
 
         View root = LayoutInflater.from(this).inflate(R.layout.dialog_setup_navigation, null);
-        RadioButton radioLeft =
-                ((AppCompatRadioButton) root.findViewById(R.id.radio_setup_navigation_left));
-        RadioButton radioRight =
-                ((AppCompatRadioButton) root.findViewById(R.id.radio_setup_navigation_right));
-        radioLeft.setChecked(navigationPosition == Gravity.LEFT);
-        radioRight.setChecked(navigationPosition == Gravity.RIGHT);
+        View radioLeft = root.findViewById(R.id.radio_setup_navigation_left);
+        View radioRight = root.findViewById(R.id.radio_setup_navigation_right);
+        radioLeft.setSelected(navigationPosition == Gravity.LEFT);
+        radioRight.setSelected(navigationPosition == Gravity.RIGHT);
 
         root.findViewById(R.id.btn_setup_navigation_left).setOnClickListener(v -> {
-            radioLeft.setChecked(true);
-            radioRight.setChecked(false);
+            radioLeft.setSelected(true);
+            radioRight.setSelected(false);
             check[0] = Gravity.LEFT;
         });
         root.findViewById(R.id.btn_setup_navigation_right).setOnClickListener(v -> {
-            radioRight.setChecked(true);
-            radioLeft.setChecked(false);
+            radioRight.setSelected(true);
+            radioLeft.setSelected(false);
             check[0] = Gravity.RIGHT;
         });
 
         new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_280)
-                .setTitle("네비게이션 위치")
                 .setView(root)
                 .setNegativeButton(R.string.jandi_cancel, null)
                 .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
@@ -604,7 +610,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                     initNavigationPosition();
                 })
                 .create().show();
-        return true;
     }
 
     // Easter Egg
@@ -628,10 +633,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         if (navigationDirection == Gravity.LEFT) {
             parent.removeView(badgeOverFlowMenu);
 
-            ViewGroup.LayoutParams layoutParams = badgeOverFlowMenu.getLayoutParams();
-            layoutParams.width = (int) UiUtils.getPixelFromDp(72f);
-
-            parent.addView(badgeOverFlowMenu, 0, layoutParams);
+            parent.addView(badgeOverFlowMenu, 0);
 
             ViewGroup.MarginLayoutParams toolbarLp = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
             toolbarLp.leftMargin = 0;
@@ -640,10 +642,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         } else {
             parent.removeView(badgeOverFlowMenu);
 
-            ViewGroup.LayoutParams layoutParams = badgeOverFlowMenu.getLayoutParams();
-            layoutParams.width = (int) UiUtils.getPixelFromDp(56f);
-
-            parent.addView(badgeOverFlowMenu, layoutParams);
+            parent.addView(badgeOverFlowMenu);
 
             ViewGroup.MarginLayoutParams toolbarLp = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
             toolbarLp.leftMargin = (int) UiUtils.getPixelFromDp(16f);
