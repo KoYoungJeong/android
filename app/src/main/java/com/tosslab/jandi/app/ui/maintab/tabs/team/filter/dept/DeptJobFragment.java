@@ -21,6 +21,8 @@ import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
+import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobDataView;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobHeaderADapter;
@@ -33,12 +35,12 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearch
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.ToggledUserView;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, KeywordObservable {
@@ -132,6 +134,8 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
         });
 
         deptJobPresenter.onCreate();
+
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -162,7 +166,17 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
     @Override
     public void onDestroy() {
         deptJobPresenter.onDestroy();
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+
+    public void onEvent(MemberStarredEvent event) {
+        deptJobPresenter.onRefresh();
+    }
+
+    public void onEvent(ProfileChangeEvent event) {
+        deptJobPresenter.onRefresh();
     }
 
     @Override

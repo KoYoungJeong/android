@@ -20,6 +20,8 @@ import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
+import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity;
 import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberAdapter;
@@ -42,6 +44,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.View, KeywordObservable, OnToggledUser {
@@ -126,7 +129,11 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
 
             presenter.onItemClick(position);
         });
+
+        EventBus.getDefault().register(this);
     }
+
+
 
     @Override
     public void moveDisabledMembers() {
@@ -149,7 +156,16 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     @Override
     public void onDestroy() {
         presenter.onDestroy();
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+    public void onEvent(MemberStarredEvent event) {
+        presenter.onRefresh();
+    }
+
+    public void onEvent(ProfileChangeEvent event) {
+        presenter.onRefresh();
     }
 
     @Override

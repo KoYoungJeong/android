@@ -10,12 +10,14 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemb
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.ToggleCollector;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.domain.TeamMemberItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -37,6 +39,7 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
 
     @Override
     public void onCreate() {
+
         Observable.from(TeamInfoLoader.getInstance().getUserList())
                 .filter(User::isEnabled)
                 .filter(user -> {
@@ -53,10 +56,12 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
                     teamMemberItem.setNameOfSpan(user1.getName());
                     return teamMemberItem;
                 })
-                .subscribe(it -> {
-                    teamMemberDataModel.add(it);
+                .collect((Func0<ArrayList<TeamMemberItem>>) ArrayList::new, List::add)
+                .subscribe((users) -> {
+                    teamMemberDataModel.clear();
+                    teamMemberDataModel.addAll(users);
                     view.refreshDataView();
-                });
+                }, Throwable::printStackTrace);
     }
 
     private Func1<? super User, Boolean> filterKeyword(int type, String keyword) {
@@ -107,6 +112,11 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
         }
 
         view.comeWithResult(ids);
+    }
+
+    @Override
+    public void onRefresh() {
+        onCreate();
     }
 
     public void setTypeAndKeyword(int type, String keyword) {

@@ -27,9 +27,9 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
     final DeptJobModel deptJobModel;
     View view;
     DeptJobDataModel deptJobDataModel;
-    private int type;
     BehaviorSubject<String> deptJobSubject;
     CompositeSubscription subscription;
+    private int type;
 
     @Inject
     public DeptJobPresenterImpl(View view, DeptJobDataModel deptJobDataModel, DeptJobModel deptJobModel) {
@@ -47,8 +47,7 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
     public void onCreate() {
         deptJobSubject = BehaviorSubject.create("");
         Observable<String> searchObservable = deptJobSubject.onBackpressureBuffer()
-                .throttleLast(100, TimeUnit.MILLISECONDS)
-                .distinctUntilChanged();
+                .throttleLast(100, TimeUnit.MILLISECONDS);
 
 
         subscription.add(searchObservable.filter(it -> type == DeptJobFragment.EXTRA_TYPE_DEPT)
@@ -132,5 +131,10 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
         if (value.length() > 0) {
             MemberRecentKeywordRepository.getInstance().upsertKeyword(value);
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        deptJobSubject.onNext(deptJobSubject.getValue());
     }
 }

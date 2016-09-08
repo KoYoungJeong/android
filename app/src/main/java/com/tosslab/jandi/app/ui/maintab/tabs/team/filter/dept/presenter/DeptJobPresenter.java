@@ -12,6 +12,8 @@ public interface DeptJobPresenter {
 
     void onItemClick(int position);
 
+    void onRefresh();
+
     interface View {
         void refreshDataView();
 

@@ -69,7 +69,6 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
         filterSubscription = filterSubject
                 .throttleLast(100, TimeUnit.MILLISECONDS)
                 .onBackpressureBuffer()
-                .distinctUntilChanged()
                 .observeOn(Schedulers.io())
                 .map(String::toLowerCase)
                 .concatMap(it -> teamMemberModel.getFilteredUser(it, selectMode, roomId)
@@ -253,6 +252,11 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                     view.showFailToInvitation();
                 });
 
+    }
+
+    @Override
+    public void onRefresh() {
+        filterSubject.onNext(filterSubject.getValue());
     }
 
     @Override

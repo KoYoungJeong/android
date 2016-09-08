@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
+import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.deptgroup.dagger.DaggerDeptJobGroupComponent;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.deptgroup.dagger.DeptJobGroupModule;
@@ -28,6 +30,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 
 public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJobGroupPresenter.View {
 
@@ -95,6 +98,22 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
         });
 
         presenter.onCreate();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
+
+    public void onEvent(MemberStarredEvent event) {
+        presenter.onRefresh();
+    }
+
+    public void onEvent(ProfileChangeEvent event) {
+        presenter.onRefresh();
     }
 
     private void initActionbar() {

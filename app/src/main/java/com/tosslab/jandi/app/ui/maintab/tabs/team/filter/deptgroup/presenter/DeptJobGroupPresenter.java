@@ -10,6 +10,8 @@ public interface DeptJobGroupPresenter {
 
     void onAddClick();
 
+    void onRefresh();
+
     interface View {
         void refreshDataView();
 
