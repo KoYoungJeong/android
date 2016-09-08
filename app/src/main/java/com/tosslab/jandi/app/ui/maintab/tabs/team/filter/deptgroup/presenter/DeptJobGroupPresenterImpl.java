@@ -20,12 +20,12 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
-    private final View view;
-    private final TeamMemberDataModel teamMemberDataModel;
+    final View view;
+    final TeamMemberDataModel teamMemberDataModel;
+    final ToggleCollector toggledUser;
     private int type;
     private String keyword;
     private boolean selectMode;
-    private ToggleCollector toggledUser;
     private boolean pickMode;
 
     @Inject
@@ -69,11 +69,6 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
                         && user.getDivision().contains(keyword);
             }
         };
-    }
-
-    @Override
-    public void onDestroy() {
-
     }
 
     @Override

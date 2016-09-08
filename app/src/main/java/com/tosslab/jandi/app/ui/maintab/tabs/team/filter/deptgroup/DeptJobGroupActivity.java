@@ -67,7 +67,6 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     TextView tvAdded;
 
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,12 +113,6 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     }
 
     @Override
-    protected void onDestroy() {
-        presenter.onDestroy();
-        super.onDestroy();
-    }
-
-    @Override
     public void refreshDataView() {
         teamMemberDataView.refresh();
     }
@@ -159,7 +152,7 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     }
 
     @OnClick(R.id.tv_dept_job_group_toggled_unselect_all)
-    void onUnselectClick(){
+    void onUnselectClick() {
         presenter.onUnselectClick();
     }
 

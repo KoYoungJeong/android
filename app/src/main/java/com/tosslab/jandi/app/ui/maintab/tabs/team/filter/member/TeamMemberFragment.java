@@ -71,7 +71,7 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     long roomId = -1;
 
     private TeamMemberDataView teamMemberDataView;
-    private ProgressWheel progressWheel;
+    ProgressWheel progressWheel;
 
     public static Fragment create(Context context, boolean selectMode, boolean hasHeader, long roomId) {
         Bundle args = new Bundle();
