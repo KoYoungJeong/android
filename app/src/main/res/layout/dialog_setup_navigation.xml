@@ -28,8 +28,8 @@
             android:layout_marginLeft="24dp"
             android:layout_weight="1"
             android:text="Left"
-            android:textColor="@color/jandi_text"
-            android:textSize="@dimen/jandi_text_size_larger_3"/>
+            android:textColor="@color/message_controller_popup_text_color"
+            android:textSize="@dimen/jandi_text_size_larger_2"/>
 
         <ImageView
             android:id="@+id/radio_setup_navigation_left"
@@ -56,8 +56,8 @@
             android:layout_marginLeft="24dp"
             android:layout_weight="1"
             android:text="Right"
-            android:textColor="@color/jandi_text"
-            android:textSize="@dimen/jandi_text_size_larger_3"/>
+            android:textColor="@color/message_controller_popup_text_color"
+            android:textSize="@dimen/jandi_text_size_larger_2"/>
 
         <ImageView
             android:id="@+id/radio_setup_navigation_right"
