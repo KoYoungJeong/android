@@ -161,15 +161,15 @@ public class AccountHomePresenterImplTest {
         doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
-        }).when(viewMock).dismissProgressWheel();
+        }).when(viewMock).moveSelectedTeam();
 
         long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
         accountHomePresenter.onJoinedTeamSelect(selectedTeamId);
 
         Awaitility.await().until(() -> finish[0]);
 
-        verify(viewMock, times(1)).dismissProgressWheel();
-        verify(viewMock, times(1)).moveSelectedTeam();
+        verify(viewMock).dismissProgressWheel();
+        verify(viewMock).moveSelectedTeam();
 
     }
 
@@ -230,9 +230,9 @@ public class AccountHomePresenterImplTest {
 //    @Test
 //    public void testOnTeamCreateAcceptResult() throws Exception {
 //
-//        final boolean[] finish = {false};
+//        final boolean[] successToInvitation = {false};
 //        doAnswer(invocationOnMock -> {
-//            finish[0] = true;
+//            successToInvitation[0] = true;
 //            return invocationOnMock;
 //        }).when(viewMock).dismissProgressWheel();
 //
@@ -240,7 +240,7 @@ public class AccountHomePresenterImplTest {
 //        accountHomePresenter.onTeamCreateAcceptResult();
 //
 //        // Then
-//        Awaitility.await().until(() -> finish[0]);
+//        Awaitility.await().until(() -> successToInvitation[0]);
 //        verify(viewMock, times(1)).dismissProgressWheel();
 //        verify(viewMock, times(1)).moveSelectedTeam(eq(true));
 //

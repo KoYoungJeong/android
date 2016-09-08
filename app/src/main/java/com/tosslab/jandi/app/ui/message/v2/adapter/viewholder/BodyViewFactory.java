@@ -30,7 +30,7 @@ public class BodyViewFactory {
 
         BaseViewHolderBuilder builder;
 
-        // Setting View TYPE
+        // Setting View EXTRA_TYPE
         if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_POLL)) {
             builder = new PollViewHolder.Builder();
 

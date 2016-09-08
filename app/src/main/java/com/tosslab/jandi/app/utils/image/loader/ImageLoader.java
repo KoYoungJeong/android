@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.ImageView;
@@ -20,8 +21,11 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.ViewPropertyAnimation;
 import com.crashlytics.android.Crashlytics;
+import com.tosslab.jandi.app.utils.image.ProgressTarget;
 import com.tosslab.jandi.app.utils.image.target.DynamicImageViewTarget;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Created by tonyjs on 15. 12. 21..
@@ -43,6 +47,8 @@ public class ImageLoader {
     private boolean blockNetworking = false;
     private RequestListener<Uri, GlideDrawable> listener;
     private Uri uri;
+
+    private WeakReference<Fragment> fragment;
 
     ImageLoader() {
     }
@@ -77,6 +83,11 @@ public class ImageLoader {
     public ImageLoader placeHolder(int placeHolder, ImageView.ScaleType scaleType) {
         this.placeHolder = placeHolder;
         this.placeHolderScaleType = scaleType;
+        return this;
+    }
+
+    public ImageLoader fragment(Fragment fragment) {
+        this.fragment = new WeakReference<>(fragment);
         return this;
     }
 
@@ -146,28 +157,93 @@ public class ImageLoader {
 
     @SuppressWarnings("unchecked")
     public void into(ImageView imageView) {
-        Context context = getAvailableContext(imageView);
-        if (context == null) {
-            return;
+        DrawableRequestBuilder<Uri> request = getRequestBuilder(imageView);
+        if (request == null) return;
+
+        request.listener(listener)
+                .into(DynamicImageViewTarget.newBuilder()
+                        .placeHolderScaleType(placeHolderScaleType)
+                        .actualImageScaleType(actualImageScaleType)
+                        .errorScaleType(errorScaleType)
+                        .build(imageView));
+    }
+
+    @SuppressWarnings("unchecked")
+    public void intoWithProgress(ImageView imageView,
+                                 ProgressStarted progressStarted,
+                                 ProgressDownloading progressDownloading,
+                                 ProgressCompleted progressCompleted,
+                                 ProgressPresent progressPresent) {
+        DrawableRequestBuilder<Uri> request = getRequestBuilder(imageView);
+        if (request == null) return;
+
+
+        request.listener(listener)
+                .into(new ProgressTarget<String, GlideDrawable>(uri.toString(), DynamicImageViewTarget.newBuilder()
+                        .placeHolderScaleType(placeHolderScaleType)
+                        .actualImageScaleType(actualImageScaleType)
+                        .errorScaleType(errorScaleType)
+                        .build(imageView)) {
+                    @Override
+                    protected void onConnecting() {
+                        if (progressStarted != null) {
+                            progressStarted.onStart();
+                        }
+                    }
+
+                    @Override
+                    protected void onDownloading(long bytesRead, long expectedLength) {
+                        if (progressDownloading != null) {
+                            progressDownloading.onDownloading(((int) (bytesRead * 100 / expectedLength)));
+                        }
+                    }
+
+                    @Override
+                    protected void onDownloaded() {
+                        if (progressCompleted != null) {
+                            progressCompleted.onCompleted();
+                        }
+                    }
+
+                    @Override
+                    protected void onDelivered() {
+                        if (progressPresent != null) {
+                            progressPresent.onPresent();
+                        }
+                    }
+                });
+    }
+
+    @Nullable
+    protected DrawableRequestBuilder<Uri> getRequestBuilder(ImageView imageView) {
+
+
+        DrawableRequestBuilder<Uri> request;
+        try {
+            if (this.fragment != null && this.fragment.get() != null) {
+                request = getRequest(this.fragment.get());
+            } else {
+                Context context = getAvailableContext(imageView);
+                if (context == null) {
+                    return null;
+                }
+                request = getRequest(context);
+            }
+        } catch (Exception e) {
+            LogUtil.e(Log.getStackTraceString(e));
+            String log = String.format("ImageLoader.getRequest Exception : %s", Log.getStackTraceString(e));
+            Crashlytics.getInstance().core.log(log);
+            return null;
         }
 
         if (backgroundColor != Integer.MAX_VALUE) {
             imageView.setBackgroundColor(backgroundColor);
         }
 
-        DrawableRequestBuilder<Uri> request = null;
-        try {
-            request = getRequest(context);
-        } catch (Exception e) {
-            LogUtil.e(Log.getStackTraceString(e));
-            String log = String.format("ImageLoader.getRequest Exception : %s", Log.getStackTraceString(e));
-            Crashlytics.getInstance().core.log(log);
-            return;
-        }
 
         request.fitCenter();
 
-        request.diskCacheStrategy(DiskCacheStrategy.ALL);
+        request.diskCacheStrategy(DiskCacheStrategy.SOURCE);
 
         if (placeHolderDrawable != null) {
             request.placeholder(placeHolderDrawable);
@@ -194,15 +270,10 @@ public class ImageLoader {
                         .setDuration(300);
             });
         }
-
-        request.listener(listener)
-                .into(DynamicImageViewTarget.newBuilder()
-                        .placeHolderScaleType(placeHolderScaleType)
-                        .actualImageScaleType(actualImageScaleType)
-                        .errorScaleType(errorScaleType)
-                        .build(imageView));
+        return request;
     }
 
+    @Nullable
     private DrawableTypeRequest<Uri> getRequest(Context context) throws Exception {
         if (blockNetworking) {
             return Glide.with(context)
@@ -211,6 +282,18 @@ public class ImageLoader {
                     .load(uri);
         } else {
             return Glide.with(context).load(uri);
+        }
+    }
+
+    @Nullable
+    private DrawableTypeRequest<Uri> getRequest(Fragment fragment) throws Exception {
+        if (blockNetworking) {
+            return Glide.with(fragment)
+                    // cache 되어 있는지 확인하기 위해 네트워킹 작업이 실행되면 exception 발생시킨다.
+                    .using(new ThrowIOExceptionStreamLoader<Uri>())
+                    .load(uri);
+        } else {
+            return Glide.with(fragment).load(uri);
         }
     }
 
@@ -237,4 +320,19 @@ public class ImageLoader {
         return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && activity.isDestroyed());
     }
 
+    public interface ProgressStarted {
+        void onStart();
+    }
+
+    public interface ProgressDownloading {
+        void onDownloading(int progress);
+    }
+
+    public interface ProgressCompleted {
+        void onCompleted();
+    }
+
+    public interface ProgressPresent {
+        void onPresent();
+    }
 }

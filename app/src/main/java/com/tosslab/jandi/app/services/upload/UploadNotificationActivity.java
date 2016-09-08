@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
@@ -11,7 +12,6 @@ import com.tosslab.jandi.app.services.upload.dagger.DaggerUploadNotificationComp
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 
 import javax.inject.Inject;
@@ -83,10 +83,11 @@ public class UploadNotificationActivity extends BaseAppCompatActivity {
     }
 
     private void moveToRoom(long teamId, long entityId) {
-        MainTabActivity_.intent(UploadNotificationActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .fromPush(true)
-                .start();
+
+        startActivity(Henson.with(this)
+                .gotoMainTabActivity()
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
         int entityType;
 

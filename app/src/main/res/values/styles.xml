@@ -6,8 +6,7 @@
         <item name="android:windowExitAnimation">@anim/popup_hide</item>
     </style>
 
-    <style name="ProgressWheel"
-        parent="@android:style/Theme.Dialog">
+    <style name="ProgressWheel" parent="@android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsFloating">true</item>
@@ -34,10 +33,9 @@
         <item name="pstsDeactivateTextColor">@color/jandi_text_light</item>
     </style>
 
-    <style name="JandiStyle"/>
+    <style name="JandiStyle" />
 
-    <style name="JandiStyle.Button.Dynamic"
-        parent="JandiStyle">
+    <style name="JandiStyle.Button.Dynamic" parent="JandiStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">42dp</item>
         <item name="android:textColor">@color/text_color_white_all</item>
@@ -47,8 +45,7 @@
     <!-- 파일 리스트의 상단 카테고리 탭 -->
     <style name="JandiFileListCategoryTab"></style>
     <!-- 각 탭의 레이아웃 -->
-    <style name="JandiFileListCategoryTab.Layout"
-        parent="JandiFileListCategoryTab">
+    <style name="JandiFileListCategoryTab.Layout" parent="JandiFileListCategoryTab">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
@@ -57,8 +54,7 @@
         <item name="android:paddingRight">4dp</item>
     </style>
     <!-- 타이틀 텍스트 -->
-    <style name="JandiFileListCategoryTab.Text"
-        parent="JandiFileListCategoryTab">
+    <style name="JandiFileListCategoryTab.Text" parent="JandiFileListCategoryTab">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:singleLine">true</item>
@@ -71,8 +67,7 @@
         <item name="android:gravity">center</item>
     </style>
     <!-- 탭과 탭 사이의 경계선 -->
-    <style name="JandiFileListCategoryTab.Border"
-        parent="JandiFileListCategoryTab">
+    <style name="JandiFileListCategoryTab.Border" parent="JandiFileListCategoryTab">
         <item name="android:layout_width">0.5dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_marginTop">8dp</item>
@@ -93,8 +88,7 @@
 
     <style name="JandiTutorial"></style>
 
-    <style name="JandiTutorial.Button"
-        parent="JandiTutorial">
+    <style name="JandiTutorial.Button" parent="JandiTutorial">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">48dp</item>
         <item name="android:textColor">@color/text_color_white_all</item>
@@ -103,16 +97,14 @@
         <item name="android:textSize">14dp</item>
     </style>
 
-    <style name="JandiTutorial.Button.Dynamic"
-        parent="JandiTutorial">
+    <style name="JandiTutorial.Button.Dynamic" parent="JandiTutorial">
         <item name="android:layout_width">84dp</item>
         <item name="android:layout_height">88dp</item>
         <item name="android:textColor">@color/text_color_white_all</item>
         <item name="android:textSize">14dp</item>
         <item name="android:background">@drawable/jandi_btn_dynamic_selector_v2</item>
     </style>
-    <!-- 튜토리얼 페이지 안의 이메일 주소 창 --><style name="JandiTutorial.EditText"
-    parent="JandiTutorial">
+    <!-- 튜토리얼 페이지 안의 이메일 주소 창 --><style name="JandiTutorial.EditText" parent="JandiTutorial">
     <item name="android:layout_height">42dp</item>
     <item name="android:singleLine">true</item>
     <item name="android:inputType">textEmailAddress</item>
@@ -127,16 +119,14 @@
     <item name="android:textSize">14dp</item>
 </style>
 
-    <style name="JandiTutorial.EditText.Dialog"
-        parent="JandiTutorial">
+    <style name="JandiTutorial.EditText.Dialog" parent="JandiTutorial">
         <item name="android:layout_height">42dp</item>
         <item name="android:singleLine">true</item>
         <item name="android:inputType">textEmailAddress</item>
         <item name="android:hint">@string/jandi_profile_email</item>
         <item name="android:background">@drawable/edtxt_messages_input</item>
     </style>
-    <!-- 튜토리얼 페이지의 아래에 위치한 버튼 스타일 --><style name="JandiToturial.Indicator"
-    parent="JandiTutorial">
+    <!-- 튜토리얼 페이지의 아래에 위치한 버튼 스타일 --><style name="JandiToturial.Indicator" parent="JandiTutorial">
     <item name="android:layout_width">6dp</item>
     <item name="android:layout_height">6dp</item>
     <item name="android:layout_margin">4dp</item>
@@ -145,8 +135,7 @@
     <item name="android:background">@drawable/jandi_tutorial_bottom_button</item>
 </style>
 
-    <style name="JandiTutorial.TitleText"
-        parent="JandiTutorial">
+    <style name="JandiTutorial.TitleText" parent="JandiTutorial">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/jandi_text</item>
@@ -154,8 +143,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="JandiTutorial.Text"
-        parent="JandiTutorial">
+    <style name="JandiTutorial.Text" parent="JandiTutorial">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/jandi_text</item>
@@ -163,18 +151,16 @@
         <item name="android:lineSpacingExtra">3dip</item>
     </style>
 
-    <style name="JandiSignIn.Text"
-        parent="JandiTutorial">
+    <style name="JandiSignIn.Text" parent="JandiTutorial">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/jandi_sign_in_text</item>
         <item name="android:textSize">14dp</item>
     </style>
 
-    <style name="JandiSignUp"/>
+    <style name="JandiSignUp" />
 
-    <style name="JandiSignUp.EditText"
-        parent="JandiSignUp">
+    <style name="JandiSignUp.EditText" parent="JandiSignUp">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">40dp</item>
         <item name="android:layout_marginLeft">24dp</item>
@@ -184,8 +170,7 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
-    <style name="JandiSignUp.Valid"
-        parent="JandiSignUp">
+    <style name="JandiSignUp.Valid" parent="JandiSignUp">
         <item name="android:textColor">@color/jandi_password_strength_weak</item>
         <item name="android:layout_marginRight">24dp</item>
         <item name="android:textSize">20sp</item>
@@ -194,8 +179,7 @@
         <item name="android:visibility">invisible</item>
     </style>
 
-    <style name="JandiSignUp.LabelText"
-        parent="JandiSignUp">
+    <style name="JandiSignUp.LabelText" parent="JandiSignUp">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginLeft">8dp</item>
@@ -205,16 +189,14 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="JandiSignUp.LabelText.Bold"
-        parent="JandiSignUp.LabelText">
+    <style name="JandiSignUp.LabelText.Bold" parent="JandiSignUp.LabelText">
         <item name="android:layout_marginLeft">24dp</item>
         <item name="android:layout_height">40dp</item>
         <item name="android:textColor">@color/jandi_text</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="JandiSignUp.Border.Horizontal"
-        parent="JandiSignUp">
+    <style name="JandiSignUp.Border.Horizontal" parent="JandiSignUp">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">0.5dp</item>
         <item name="android:background">@color/jandi_profile_bg</item>
@@ -250,23 +232,19 @@
         <item name="android:scaleType">center</item>
     </style>
 
-    <style name="JandiChat.ActionButton.Keyboard"
-        parent="JandiChat.ActionButton">
+    <style name="JandiChat.ActionButton.Keyboard" parent="JandiChat.ActionButton">
         <item name="android:src">@drawable/chat_icon_keypad</item>
     </style>
 
-    <style name="JandiChat.ActionButton.Sticker"
-        parent="JandiChat.ActionButton">
+    <style name="JandiChat.ActionButton.Sticker" parent="JandiChat.ActionButton">
         <item name="android:src">@drawable/chat_icon_emoticon</item>
     </style>
 
-    <style name="JandiChat.ActionButton.Mention"
-        parent="JandiChat.ActionButton">
+    <style name="JandiChat.ActionButton.Mention" parent="JandiChat.ActionButton">
         <item name="android:src">@drawable/chat_mention</item>
     </style>
 
-    <style name="JandiChat.ActionButton.Upload"
-        parent="JandiChat.ActionButton">
+    <style name="JandiChat.ActionButton.Upload" parent="JandiChat.ActionButton">
         <item name="android:src">@drawable/chat_icon_upload</item>
     </style>
 
@@ -279,8 +257,7 @@
         <item name="android:layout_marginBottom">4dp</item>
     </style>
 
-    <style name="JandiChat.EditText"
-        parent="JandiChat">
+    <style name="JandiChat.EditText" parent="JandiChat">
         <item name="android:textSize">14dp</item>
         <item name="android:textColorHint">@color/jandi_messages_input_hint</item>
         <item name="android:lines">4</item>
@@ -297,8 +274,7 @@
         <item name="android:textCursorDrawable">@null</item>
     </style>
 
-    <style name="JandiChat.Button"
-        parent="JandiChat">
+    <style name="JandiChat.Button" parent="JandiChat">
         <item name="android:enabled">false</item>
         <item name="android:layout_width">55dp</item>
         <item name="android:layout_marginTop">4dp</item>
@@ -311,8 +287,7 @@
 
     <style name="JandiTeam"></style>
 
-    <style name="JandiTeam.EditText"
-        parent="JandiTeam">
+    <style name="JandiTeam.EditText" parent="JandiTeam">
         <item name="android:layout_height">40dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:textColor">@color/jandi_text</item>
@@ -326,8 +301,7 @@
         <item name="android:imeOptions">actionNext</item>
     </style>
 
-    <style name="JandiTeam.TextView.Explain"
-        parent="JandiTeam">
+    <style name="JandiTeam.TextView.Explain" parent="JandiTeam">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:textColor">@color/jandi_text_medium</item>
@@ -337,8 +311,7 @@
         <item name="android:textSize">13sp</item>
     </style>
 
-    <style name="JandiTeam.TextView.Title"
-        parent="JandiTeam">
+    <style name="JandiTeam.TextView.Title" parent="JandiTeam">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:textColor">@color/jandi_text_medium</item>
@@ -347,10 +320,9 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="JandiTopic"/>
+    <style name="JandiTopic" />
 
-    <style name="JandiTopic.Create.TextView.Title"
-        parent="JandiTopic">
+    <style name="JandiTopic.Create.TextView.Title" parent="JandiTopic">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginLeft">16dp</item>
@@ -359,8 +331,7 @@
         <item name="android:textColor">@color/text_color_setting_check_title</item>
     </style>
 
-    <style name="JandiTopic.Create.TextView.Input"
-        parent="JandiTopic">
+    <style name="JandiTopic.Create.TextView.Input" parent="JandiTopic">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColorHint">@color/jandi_message_search_item_topic_txt_color_sub
@@ -372,8 +343,7 @@
         <item name="android:background">@drawable/bg_topic_create_input</item>
     </style>
 
-    <style name="JandiTopic.Create.TextView.TextCount"
-        parent="JandiTopic">
+    <style name="JandiTopic.Create.TextView.TextCount" parent="JandiTopic">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginRight">16dp</item>
@@ -385,10 +355,9 @@
     </style>
 
 
-    <style name="JandiMemberProfile"/>
+    <style name="JandiMemberProfile" />
 
-    <style name="JandiMemberProfile.Layout.Default"
-        parent="JandiMemberProfile">
+    <style name="JandiMemberProfile.Layout.Default" parent="JandiMemberProfile">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@color/white</item>
@@ -400,22 +369,21 @@
 
     <style name="JandiMemberProfile.Profile" parent="JandiMemberProfile">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">72dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingRight">16dp</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingTop">18dp</item>
+        <item name="android:paddingBottom">18dp</item>
+        <item name="android:lineSpacingExtra">2dp</item>
         <item name="gap">4dp</item>
         <item name="textColorContent">@color/jandi_text_medium</item>
         <item name="textColorTitle">@color/jandi_member_profile_user_name</item>
-        <item name="textContentSingleline">true</item>
         <item name="textSizeContent">@dimen/jandi_text_size_medium</item>
         <item name="textSizeTitle">@dimen/jandi_text_size_large</item>
         <item name="android:background">?android:attr/selectableItemBackground</item>
     </style>
 
-    <style name="JandiMemberProfile.Layout.Sub"
-        parent="JandiMemberProfile">
+    <style name="JandiMemberProfile.Layout.Sub" parent="JandiMemberProfile">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@color/white</item>
@@ -423,8 +391,7 @@
         <item name="android:paddingRight">16dp</item>
     </style>
 
-    <style name="JandiMemberProfile.TextView.Sub"
-        parent="JandiMemberProfile">
+    <style name="JandiMemberProfile.TextView.Sub" parent="JandiMemberProfile">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@color/white</item>
@@ -436,8 +403,7 @@
 
     </style>
 
-    <style name="JandiMemberProfile.TextView.Default"
-        parent="JandiMemberProfile">
+    <style name="JandiMemberProfile.TextView.Default" parent="JandiMemberProfile">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@color/white</item>
@@ -450,52 +416,46 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="Jandi.Default.ActionBar"
-        parent="@style/Widget.AppCompat.Toolbar">
+    <style name="Jandi.Default.ActionBar" parent="@style/Widget.AppCompat.Toolbar">
         <item name="android:background">?attr/colorPrimary</item>
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="titleTextAppearance">@style/ToolbarText</item>
     </style>
 
 
-    <style name="Jandi.Default.AutoCompleteTextViewStyle"
-        parent="@style/Widget.AppCompat.AutoCompleteTextView">
+    <style name="Jandi.Default.AutoCompleteTextViewStyle" parent="@style/Widget.AppCompat.AutoCompleteTextView">
         <item name="android:popupBackground">@drawable/mention_popup</item>
     </style>
 
 
-    <style name="ToolbarText"
-        parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+    <style name="ToolbarText" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">20dp</item>
     </style>
 
-    <style name="JandiSticker"/>
+    <style name="JandiSticker" />
 
-    <style name="JandiSticker.Group"
-        parent="JandiSticker">
+    <style name="JandiSticker.Group" parent="JandiSticker">
         <item name="android:layout_width">63dp</item>
         <item name="android:layout_height">50dp</item>
         <item name="android:scaleType">centerInside</item>
         <item name="android:background">@drawable/bg_sticker_group</item>
     </style>
 
-    <style name="ImageCarousel"/>
+    <style name="ImageCarousel" />
 
-    <style name="ImageCarousel.Toolbar"
-        parent="Widget.AppCompat.Toolbar">
+    <style name="ImageCarousel.Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="titleTextAppearance">@style/ToolbarText</item>
     </style>
 
-    <style name="ImageCarousel.Title"
-        parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+    <style name="ImageCarousel.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/jandi_text_white</item>
         <item name="android:textSize">17sp</item>
     </style>
 
-    <style name="JandiTopicDetail"/>
+    <style name="JandiTopicDetail" />
 
     <style name="JandiTopicDetail.Layout">
         <item name="android:paddingTop">8dp</item>
@@ -504,16 +464,16 @@
         <item name="android:paddingRight">16dp</item>
     </style>
 
-    <style name="JandiMainShare"/>
+    <style name="JandiMainShare" />
 
     <style name="JandiMainShare.Content">
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:layout_marginRight">16dp</item>
     </style>
 
-    <style name="JandiSignUpVerify"/>
+    <style name="JandiSignUpVerify" />
 
-    <style name="JandiSignUpVerify.Code"/>
+    <style name="JandiSignUpVerify.Code" />
 
     <style name="JandiSignUpVerify.Code.Layout">
         <item name="android:layout_width">match_parent</item>
@@ -536,7 +496,7 @@
         <item name="android:textSize">40sp</item>
     </style>
 
-    <style name="JandiSettingPrivacy"/>
+    <style name="JandiSettingPrivacy" />
 
     <style name="JandiSettingPrivacy.ViewGroup">
         <item name="android:layout_width">match_parent</item>
@@ -554,7 +514,7 @@
         <item name="android:background">@color/jandi_file_search_item_divider</item>
     </style>
 
-    <style name="JandiMore"/>
+    <style name="JandiMore" />
 
     <style name="JandiMore.Setting">
         <item name="android:layout_height">43dp</item>
@@ -564,7 +524,7 @@
         <item name="android:paddingRight">17dp</item>
     </style>
 
-    <style name="JandiIntegration"/>
+    <style name="JandiIntegration" />
 
     <style name="JandiIntegration.Sub">
         <item name="android:layout_height">wrap_content</item>
@@ -590,7 +550,7 @@
         <item name="android:textColor">@color/jandi_text_messages_integration_image</item>
     </style>
 
-    <style name="JandiSettings"/>
+    <style name="JandiSettings" />
 
     <style name="JandiSettings.Group">
         <item name="android:layout_height">wrap_content</item>
@@ -651,8 +611,7 @@
         <item name="android:background">@color/account_home_divide_line</item>
     </style>
 
-    <style name="FloatingEditTextTheme"
-        parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="FloatingEditTextTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:textColorHint">#61000000</item>
         <item name="android:textSize">16sp</item>
         <item name="colorControlActivated">#61000000</item>
@@ -660,8 +619,7 @@
         <item name="colorControlNormal">#1e000000</item>
     </style>
 
-    <style name="CreatePollEditText"
-        parent="Theme.AppCompat.Light">
+    <style name="CreatePollEditText" parent="Theme.AppCompat.Light">
         <item name="android:textColorHint">@color/jandi_line_gray</item>
         <item name="android:layout_height">48dp</item>
         <item name="android:textSize">16sp</item>
@@ -671,10 +629,13 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
-    <style name="DayTextAppearance"
-        parent="TextAppearance.MaterialCalendarWidget.Date">
+    <style name="DayTextAppearance" parent="TextAppearance.MaterialCalendarWidget.Date">
         <item name="android:textColor">@drawable/text_color_day</item>
         <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TeamTabTextApprearance" parent="@android:style/TextAppearance">
+        <item name="android:textSize">14sp</item>
     </style>
 
 </resources>

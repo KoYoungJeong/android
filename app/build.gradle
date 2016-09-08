@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
-apply plugin: 'com.google.gms.google-services'
 
 apply plugin: 'android-apt'     // Android-Annotation
 apply plugin: 'me.tatarka.retrolambda'  //RetroLamda
@@ -11,6 +10,7 @@ apply from: 'apk-name-changer.gradle'
 apply plugin: 'checkstyle'
 apply plugin: 'pmd'
 apply from: 'ci-tasks.gradle'
+//apply from: 'test-coverage.gradle'
 
 configurations {
     apt
@@ -30,7 +30,7 @@ android {
 
     defaultConfig {
         applicationId 'com.tosslab.jandi.app'
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 23
         versionCode 201
         versionName '2.3.1'
@@ -45,7 +45,7 @@ android {
 
         debug {
             debuggable true
-            testCoverageEnabled = true
+            testCoverageEnabled = rootProject.hasProperty("report_coverage") && rootProject.property("report_coverage")
         }
 
         release {

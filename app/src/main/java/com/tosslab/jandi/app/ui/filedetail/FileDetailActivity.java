@@ -72,7 +72,7 @@ import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity_;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity_;
-import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
+import com.tosslab.jandi.app.ui.maintab.tabs.file.FileListFragment;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;

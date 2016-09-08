@@ -1,34 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/jandi_text_white"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/layout_search_bar"
+        android:id="@+id/actionbar_team_info"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:visibility="visible" />
+        app:navigationIcon="@drawable/actionbar_icon_back"
+        app:title="@string/team_info" />
 
+    <com.tosslab.jandi.app.views.profile.ProfileLabelView
+        android:id="@+id/label_team_info_name"
+        style="@style/JandiMemberProfile.Profile"
+        android:layout_below="@+id/actionbar_team_info"
+        app:textTitle="@string/jandi_name" />
 
-    <ListView
-        android:id="@+id/list_team_users"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/layout_search_bar"
-        android:background="@color/jandi_text_white"
-        android:choiceMode="none"
-        android:fillViewport="true"
-        android:transcriptMode="normal" />
+        android:layout_height="1dp"
+        android:layout_alignBottom="@+id/label_team_info_name"
+        android:background="@color/jandi_d1d1d1" />
+
+    <com.tosslab.jandi.app.views.profile.ProfileLabelView
+        android:id="@+id/label_team_info_url"
+        style="@style/JandiMemberProfile.Profile"
+        android:layout_below="@+id/label_team_info_name"
+        app:textTitle="URL" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignBottom="@+id/label_team_info_url"
+        android:background="@color/jandi_d1d1d1" />
+
+    <com.tosslab.jandi.app.views.profile.ProfileLabelView
+        android:id="@+id/label_team_info_admin"
+        style="@style/JandiMemberProfile.Profile"
+        android:layout_below="@+id/label_team_info_url"
+        app:textTitle="@string/jandi_team_admin" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignBottom="@+id/label_team_info_admin"
+        android:background="@color/jandi_d1d1d1" />
+
+    <com.tosslab.jandi.app.views.profile.ProfileLabelView
+        android:id="@+id/label_team_info_member_count"
+        style="@style/JandiMemberProfile.Profile"
+        android:layout_below="@+id/label_team_info_admin"
+        app:textTitle="@string/jandi_total_count_of_member" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignBottom="@+id/label_team_info_member_count"
+        android:background="@color/jandi_d1d1d1" />
+
 
     <TextView
-        android:id="@+id/btn_invitation_tooltipBase"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
+        android:id="@+id/btn_team_info_invite"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_below="@+id/label_team_info_member_count"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"
+        android:background="@drawable/bg_round_blue_rect"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:gravity="center"
+        android:text="@string/jandi_invite_to_team_for_member"
+        android:textColor="@color/white"
+        android:textSize="@dimen/jandi_text_size_large" />
+
+    <TextView
+        android:id="@+id/tv_team_info_app_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="60dp"
-        android:layout_marginRight="60dp"
-        android:background="@android:color/transparent" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp" />
+
 </RelativeLayout>

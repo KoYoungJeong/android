@@ -11,11 +11,11 @@ public class SprinklerEvents {
             "e6",
             new String[]{PropertyKey.ResponseSuccess, PropertyKey.AutoSignIn, PropertyKey.ErrorCode});
 
-    public static Event SendAccountVerificationMail = Event.create(EventCategory.AccountRelatedEvent.name(),
+    public static final Event SendAccountVerificationMail = Event.create(EventCategory.AccountRelatedEvent.name(),
             "e9",
             new String[]{PropertyKey.ResponseSuccess, PropertyKey.Email, PropertyKey.ErrorCode});
 
-    public static Event ResendAccountVerificationMail = Event.create(EventCategory.AccountRelatedEvent.name(),
+    public static final Event ResendAccountVerificationMail = Event.create(EventCategory.AccountRelatedEvent.name(),
             "e10",
             new String[]{PropertyKey.ResponseSuccess, PropertyKey.Email, PropertyKey.ErrorCode});
 
@@ -71,9 +71,17 @@ public class SprinklerEvents {
             "e43",
             new String[]{PropertyKey.ResponseSuccess, PropertyKey.SearchKeyword, PropertyKey.ErrorCode});
 
-    public static final Event MessagePost = Event.create(EventCategory.FileRelatedEvent.name(),
+    public static final Event MessagePost = Event.create(EventCategory.MessageRelatedEvent.name(),
             "e44",
-            new String[]{PropertyKey.ResponseSuccess, PropertyKey.ErrorCode});
+            new String[]{PropertyKey.ResponseSuccess,
+                    PropertyKey.ErrorCode,
+                    PropertyKey.MentionCount,
+                    PropertyKey.HasAllMention,
+                    PropertyKey.MessageId,
+                    PropertyKey.StickerId,
+                    PropertyKey.FileId,
+                    PropertyKey.PollId
+            });
 
     public static final Event MessageKeywordSearch = Event.create(EventCategory.MessageRelatedEvent.name(),
             "e45",
@@ -158,20 +166,46 @@ public class SprinklerEvents {
                     PropertyKey.TeamId,
                     PropertyKey.PollId});
 
-    public static final Event PollCommentCreated = Event.create(EventCategory.PollEvent.name(),
-            "e65",
-            new String[]{PropertyKey.ResponseSuccess,
-                    PropertyKey.ErrorCode,
-                    PropertyKey.MessageId});
-
-    public static final Event PollCommentDeleted = Event.create(EventCategory.PollEvent.name(),
-            "e66",
-            new String[]{PropertyKey.ResponseSuccess,
-                    PropertyKey.ErrorCode,
-                    PropertyKey.MessageId});
-
     public static final Event ButtonTouch = Event.create(EventCategory.ButtonTouchEvent.name(),
             "",
             new String[]{});
+
+    public static final Event Starred = Event.create(EventCategory.StarredEvent.name(),
+            "e67",
+            new String[]{
+                    PropertyKey.ResponseSuccess,
+                    PropertyKey.ErrorCode,
+                    PropertyKey.StarredType,
+                    PropertyKey.MessageId,
+                    PropertyKey.FileId,
+                    PropertyKey.PollId
+            });
+
+    public static final Event UnStarred = Event.create(EventCategory.StarredEvent.name(),
+            "e68",
+            new String[]{
+                    PropertyKey.ResponseSuccess,
+                    PropertyKey.ErrorCode,
+                    PropertyKey.StarredType,
+                    PropertyKey.MessageId,
+                    PropertyKey.FileId,
+                    PropertyKey.PollId
+            });
+
+    public static final Event PublicLinkCreated = Event.create(EventCategory.PublicLinkEvent.name(),
+            "e69",
+            new String[]{
+                    PropertyKey.ResponseSuccess,
+                    PropertyKey.ErrorCode,
+                    PropertyKey.FileId
+            });
+
+    public static final Event PublicLinkDeleted = Event.create(EventCategory.PublicLinkEvent.name(),
+            "e70",
+            new String[]{
+                    PropertyKey.ResponseSuccess,
+                    PropertyKey.ErrorCode,
+                    PropertyKey.FileId
+            });
 
 }

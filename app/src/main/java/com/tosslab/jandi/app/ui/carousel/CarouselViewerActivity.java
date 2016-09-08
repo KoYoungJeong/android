@@ -42,6 +42,7 @@ import com.tosslab.jandi.app.permissions.Check;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.carousel.component.DaggerCarouselViewerComponent;
@@ -372,7 +373,14 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     private long[] getSharedEntitiesArray(List<Long> sharedEntities) {
         long[] sharedEntitiesArray = new long[sharedEntities.size()];
         for (int i = 0; i < sharedEntitiesArray.length; i++) {
-            sharedEntitiesArray[i] = sharedEntities.get(i);
+            // 기존 FileSharedEntityChooseActivity가 DM ID정보를 User 정보로 가지고 있기 때문에 변환해 주어야 함
+            if (TeamInfoLoader.getInstance().isChat(sharedEntities.get(i))) {
+                DirectMessageRoom directMessageRoom =
+                        TeamInfoLoader.getInstance().getChat(sharedEntities.get(i));
+                sharedEntitiesArray[i] = directMessageRoom.getCompanionId();
+            } else {
+                sharedEntitiesArray[i] = sharedEntities.get(i);
+            }
         }
         return sharedEntitiesArray;
     }

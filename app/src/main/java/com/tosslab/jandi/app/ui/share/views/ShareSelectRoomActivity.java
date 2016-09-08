@@ -220,7 +220,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
 
                             return StringCompareUtil.compare(lhsName, rhsName);
                         })
-//                        .collect((Func0<ArrayList<ExpandRoomData>>) ArrayList::new, ArrayList::add)
+//                        .collect((Func0<ArrayList<ExpandRoomData>>) ArrayList::new, ArrayList::addToggledUser)
                         .toBlocking()
                         .first();
 

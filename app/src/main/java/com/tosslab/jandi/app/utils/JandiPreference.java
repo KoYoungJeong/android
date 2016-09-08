@@ -55,6 +55,7 @@ public class JandiPreference {
     private static final String PREF_VERSION_CODE_STAMP = "version_code_stamp";
     private static final String PREF_EMAIL_AUTH_SEND_TIME = "email_auth_send_time";
 
+    private static final String PREF_NAVIGATION_POSITION = "navigation_position";
 
     public static boolean isAleadyShowCoachMarkTopic(Context context) {
         if (!getSharedPreferences().getBoolean(PREF_COACH_MARK_TOPIC, false)) {
@@ -395,6 +396,18 @@ public class JandiPreference {
     public static long getEmailAuthSendTime() {
         return getSharedPreferences()
                 .getLong(PREF_EMAIL_AUTH_SEND_TIME, -1);
+    }
+
+    public static int getNavigationPosition() {
+        return getSharedPreferences()
+                .getInt(PREF_NAVIGATION_POSITION, -1);
+    }
+
+    public static void setNavigationPosition(int gravity) {
+        getSharedPreferences()
+                .edit()
+                .putInt(PREF_NAVIGATION_POSITION, gravity)
+                .commit();
     }
 
 }

@@ -6,7 +6,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,7 +20,6 @@ import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.views.controller.AutoProgressUpdateController;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -29,6 +27,8 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import uk.co.senab.photoview.PhotoView;
 
 /**
@@ -58,7 +58,6 @@ public class PhotoViewFragment extends Fragment {
     View btnTapToViewOriginal;
     private CarouselViewerActivity.OnCarouselImageClickListener carouselImageClickListener;
     private OnSwipeExitListener onSwipeExitListener;
-    private AutoProgressUpdateController autoProgressUpdateController;
 
     @Override
     public void onAttach(Activity activity) {
@@ -102,11 +101,6 @@ public class PhotoViewFragment extends Fragment {
             return;
         }
 
-        autoProgressUpdateController = new AutoProgressUpdateController();
-        autoProgressUpdateController.setPercentageTextView(tvPercentage);
-        autoProgressUpdateController.setProgressBar(progressBar);
-        autoProgressUpdateController.start();
-
         if (!TextUtils.isEmpty(thumbUrl)) {
 
             loadImage(Uri.parse(thumbUrl));
@@ -121,27 +115,33 @@ public class PhotoViewFragment extends Fragment {
                     .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
 
                         @Override
-                        public boolean onResourceReady(GlideDrawable glideDrawable,
-                                                       Uri model, Target<GlideDrawable> target,
-                                                       boolean isFromMemoryCache,
-                                                       boolean isFirstResource) {
-                            hideProgress();
-                            return false;
-                        }
-
-                        @Override
                         public boolean onException(Exception e, Uri model,
                                                    Target<GlideDrawable> target,
                                                    boolean isFirstResource) {
-                            hideProgress();
-
                             // cache 가 되어 있지 않음
                             showTapToView(originalUri);
                             return true;
                         }
                     })
+                    .fragment(this)
                     .uri(originalUri)
-                    .into(photoView);
+                    .intoWithProgress(photoView,
+                            () -> Observable.just(0)
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(it -> {
+                                        progressBar.setMax(100);
+                                        progressBar.setProgress(it);
+                                        tvPercentage.setText("0 %");
+                                    }),
+                            progress -> Observable.just(progress)
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(it -> {
+                                        progressBar.setMax(100);
+                                        progressBar.setProgress(it);
+                                        tvPercentage.setText(String.format("%d %%", progress));
+                                    }),
+                            null,
+                            this::hideProgress);
         }
     }
 
@@ -154,12 +154,6 @@ public class PhotoViewFragment extends Fragment {
             btnTapToViewOriginal.setVisibility(View.GONE);
 
             vgProgress.setVisibility(View.VISIBLE);
-
-            autoProgressUpdateController = new AutoProgressUpdateController();
-            autoProgressUpdateController.setPercentageTextView(tvPercentage);
-            autoProgressUpdateController.setProgressBar(progressBar);
-
-            autoProgressUpdateController.start();
 
             loadImage(originalUri);
         });
@@ -195,50 +189,42 @@ public class PhotoViewFragment extends Fragment {
         }
         vgProgress.setVisibility(View.GONE);
 
-        if (autoProgressUpdateController != null) {
-            autoProgressUpdateController.cancel();
-            autoProgressUpdateController = null;
-        }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void loadImage(Uri uri) {
         ImageLoader.newInstance()
                 .uri(uri)
+                .fragment(this)
                 .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, Uri model, Target<GlideDrawable> target,
                                                boolean isFirstResource) {
-                        LogUtil.e(TAG, Log.getStackTraceString(e));
-                        hideProgress();
-
                         showError();
                         return true;
                     }
-
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource,
-                                                   Uri model, Target<GlideDrawable> target,
-                                                   boolean isFromMemoryCache,
-                                                   boolean isFirstResource) {
-                        hideProgress();
-                        return false;
-                    }
                 })
-                .into(photoView);
+                .intoWithProgress(photoView, () -> Observable.just(0)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(it -> {
+                                    progressBar.setMax(100);
+                                    progressBar.setProgress(it);
+                                    tvPercentage.setText("0 %");
+                                }),
+                        progress -> Observable.just(progress)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(it -> {
+                                    progressBar.setMax(100);
+                                    progressBar.setProgress(it);
+                                    tvPercentage.setText(String.format("%d %%", progress));
+                                }),
+                        null,
+                        this::hideProgress);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void showError() {
         ImageLoader.loadFromResources(photoView, R.drawable.file_noimage);
-    }
-
-    @Override
-    public void onDestroyView() {
-        if (autoProgressUpdateController != null) {
-            autoProgressUpdateController.cancel();
-        }
-        super.onDestroyView();
     }
 
     public void setOnCarouselImageClickListener(

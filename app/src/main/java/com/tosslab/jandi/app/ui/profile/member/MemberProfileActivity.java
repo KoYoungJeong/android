@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -41,8 +42,7 @@ import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
-import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
+import com.tosslab.jandi.app.ui.maintab.tabs.mypage.MypageTabInfo;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.dagger.DaggerMemberProfileComponent;
 import com.tosslab.jandi.app.ui.profile.member.model.InactivedMemberProfileLoader;
@@ -757,10 +757,11 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     private void startStarMentionListActivity() {
-        MainTabActivity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .tabIndex(MainTabPagerAdapter.TAB_MYPAGE)
-                .start();
+        startActivity(Henson.with(this)
+                .gotoMainTabActivity()
+                .tabIndex(MypageTabInfo.INDEX)
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
     @Click(R.id.tv_member_profile_email)

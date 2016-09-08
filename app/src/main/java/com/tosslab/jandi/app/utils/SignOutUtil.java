@@ -6,6 +6,8 @@ import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.parse.PushUtil;
 
+import io.intercom.android.sdk.Intercom;
+
 public class SignOutUtil {
     public static void removeSignData() {
         JandiPreference.signOut(JandiApplication.getContext());
@@ -16,6 +18,8 @@ public class SignOutUtil {
         TeamInfoLoader instance = TeamInfoLoader.getInstance();
         instance = null;
         TokenUtil.clearTokenInfo();
+
+        Intercom.client().reset();
 
     }
 

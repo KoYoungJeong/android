@@ -70,9 +70,9 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                             long teamId = AccountRepository.getRepository().getSelectedTeamId();
                             try {
                                 if (starred) {
-                                    fileDetailModel.registStarredMessage(teamId, fileId);
+                                    fileDetailModel.registStarredFile(teamId, fileId);
                                 } else {
-                                    fileDetailModel.unregistStarredMessage(teamId, fileId);
+                                    fileDetailModel.unregistStarredFile(teamId, fileId);
                                 }
                                 return Observable.just(fileStarredInfo);
                             } catch (Exception e) {
@@ -158,7 +158,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                     if (imageFiles.size() > 0) {
                         view.addFileInfos(0, imageFiles);
                     }
-                });
+                }, Throwable::printStackTrace);
     }
 
     @Override
@@ -268,8 +268,10 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
             try {
                 ResMessages.FileMessage fileMessage =
                         fileDetailModel.enableExternalLink(teamId, fileMessageId);
+                fileDetailModel.trackCreatePublicLinkSuccess(fileMessageId);
                 subscriber.onNext(fileMessage);
             } catch (RetrofitException e) {
+                fileDetailModel.trackCreatePublicLinkFail(e.getResponseCode());
                 subscriber.onError(e);
             }
             subscriber.onCompleted();
@@ -301,8 +303,10 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
             try {
                 ResMessages.FileMessage fileMessage =
                         fileDetailModel.disableExternalLink(teamId, fileMessageId);
+                fileDetailModel.trackDisablePublicLinkSuccess(fileMessageId);
                 subscriber.onNext(fileMessage);
             } catch (RetrofitException e) {
+                fileDetailModel.trackDisablePublicLinkFail(e.getResponseCode());
                 subscriber.onError(e);
             }
             subscriber.onCompleted();

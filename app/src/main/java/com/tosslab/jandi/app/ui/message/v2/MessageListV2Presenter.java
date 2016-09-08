@@ -736,7 +736,6 @@ public class MessageListV2Presenter {
 
             StickerInfo reqStickerInfo = new StickerInfo(stickerInfo);
             SendingMessage sendingMessage = new SendingMessage(localId, "", reqStickerInfo, new ArrayList<>());
-
             SendingMessageContainer messageQueue = new SendingMessageContainer(sendingMessage);
 
             addQueue(messageQueue);

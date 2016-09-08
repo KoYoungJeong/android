@@ -8,7 +8,8 @@ def checkValidProperties() {
         println "set up to gradle.propeties -> \"inhouse_version\""
 
         println "Properties Valid Check Fail"
-        throw new IllegalArgumentException("need properties [\"inhouse_version\"]");
+        println ("need properties [\"inhouse_version\"]");
+        project.setProperty("inhouse_version", 1)
     }
 
 

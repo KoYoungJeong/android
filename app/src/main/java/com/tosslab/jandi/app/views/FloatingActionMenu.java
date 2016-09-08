@@ -1,7 +1,9 @@
 package com.tosslab.jandi.app.views;
 
+import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -22,6 +24,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.UiUtils;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +43,6 @@ public class FloatingActionMenu extends FrameLayout {
     RelativeLayout rootView;
     private int buttonCnt = 0;
 
-    private ImageView btMenu;
     private ImageView btMenuIcon;
 
     private List<View> vgItems;
@@ -79,7 +82,8 @@ public class FloatingActionMenu extends FrameLayout {
 
     private void init() {
         rootView = new RelativeLayout(getContext());
-
+        rootView.setVisibility(View.GONE);
+        rootView.setBackgroundResource(R.color.jandi_transparent_black_50p);
         rootView.setOnTouchListener((v, event) -> {
             if (FloatingActionMenu.this.isOpened()) {
                 FloatingActionMenu.this.close();
@@ -88,19 +92,12 @@ public class FloatingActionMenu extends FrameLayout {
             return false;
         });
 
+        View decorView = ((Activity) getContext()).getWindow().getDecorView();
+        ViewGroup window = (ViewGroup) decorView.getRootView();
         LayoutParams params = new LayoutParams
                 (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         rootView.setLayoutParams(params);
-        addView(rootView);
-
-        btMenu = new ImageView(getContext());
-        RelativeLayout.LayoutParams menuParams =
-                new RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT);
-        menuParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        menuParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        menuParams.setMargins(0, dpToPx(7), dpToPx(20), dpToPx(20));
+        window.addView(rootView);
 
         btMenuIcon = new ImageView(getContext());
         RelativeLayout.LayoutParams menuIconParams =
@@ -109,27 +106,17 @@ public class FloatingActionMenu extends FrameLayout {
                         ViewGroup.LayoutParams.WRAP_CONTENT);
         menuIconParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         menuIconParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        menuIconParams.setMargins(0, dpToPx(7), dpToPx(24), dpToPx(24));
 
-        rootView.addView(btMenu, menuParams);
-        rootView.addView(btMenuIcon, menuIconParams);
-
-        btMenu.setClickable(true);
-        btMenu.setImageResource(R.drawable.chat_bg_fab);
-        btMenu.setId(R.id.fab_menu_button);
-
-        btMenuIcon.setImageResource(R.drawable.chat_fab_icon);
+        btMenuIcon.setClickable(true);
+        btMenuIcon.setId(R.id.fab_menu_button);
+        btMenuIcon.setImageResource(R.drawable.btn_chat_fab);
+        this.rootView.addView(btMenuIcon, menuIconParams);
 
         vgItems = new ArrayList<>();
         btItems = new ArrayList<>();
         tvItems = new ArrayList<>();
 
         setOnMenuButtonClicked();
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
@@ -212,7 +199,7 @@ public class FloatingActionMenu extends FrameLayout {
 
     private void setOnMenuButtonClicked() {
         setOnMenuAnimation();
-        btMenu.setOnClickListener(v -> {
+        btMenuIcon.setOnClickListener(v -> {
             if (isOpened) {
                 close();
             } else {
@@ -224,13 +211,11 @@ public class FloatingActionMenu extends FrameLayout {
     public void open() {
         showMenu();
         showMenuItems();
-        setBackground(isOpened);
     }
 
     public void close() {
         dismissMenu();
         dismissMenuItems();
-        setBackground(isOpened);
     }
 
     private void showMenu() {
@@ -273,6 +258,13 @@ public class FloatingActionMenu extends FrameLayout {
 
         openAnimatorSet.setDuration(ANIMATION_DURATION);
         closeAnimatorSet.setDuration(ANIMATION_DURATION);
+
+        closeAnimatorSet.addListener(new SimpleEndAnimatorListener() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                setVisibility(false);
+            }
+        });
     }
 
     private void showMenuItems() {
@@ -330,14 +322,6 @@ public class FloatingActionMenu extends FrameLayout {
         }
     }
 
-    private void setBackground(boolean isOpened) {
-        if (isOpened) {
-            rootView.setBackgroundResource(R.color.jandi_transparent_black_50p);
-        } else {
-            rootView.setBackgroundResource(R.color.transparent);
-        }
-    }
-
     private int dpToPx(int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 dp, getResources().getDisplayMetrics());
@@ -345,6 +329,20 @@ public class FloatingActionMenu extends FrameLayout {
 
     public boolean isOpened() {
         return isOpened;
+    }
+
+    public void setVisibility(boolean show) {
+        rootView.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    public void setupButtonLocation(View fabButton) {
+        post(() -> {
+            MarginLayoutParams layoutParams = (MarginLayoutParams) btMenuIcon.getLayoutParams();
+            layoutParams.rightMargin = rootView.getMeasuredWidth() - fabButton.getRight();
+            layoutParams.bottomMargin = rootView.getMeasuredHeight() - fabButton.getBottom()
+                    - UiUtils.getStatusBarHeight();
+            btMenuIcon.setLayoutParams(layoutParams);
+        });
     }
 
     public interface OnButtonClickListener {

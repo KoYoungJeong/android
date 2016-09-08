@@ -54,7 +54,8 @@ public class MentionControlViewModelTest {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws Throwable {
+        rule.runOnUiThread(this::init);
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
     }
@@ -67,8 +68,6 @@ public class MentionControlViewModelTest {
 
     @Test
     public void testSetUpMention() throws Throwable {
-
-        rule.runOnUiThread(this::init);
 
         {
             rule.runOnUiThread(() -> mentionControlViewModel.setUpMention("hahahah"));
@@ -109,8 +108,6 @@ public class MentionControlViewModelTest {
 
     @Test
     public void testMentionedMemberHighlightInEditText() throws Exception {
-
-        rule.getActivity().runOnUiThread(this::init);
 
         rule.getActivity().runOnUiThread(() -> {
             User user = Observable.from(TeamInfoLoader.getInstance().getUserList())

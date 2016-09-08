@@ -47,6 +47,7 @@ public class FileUploadPreviewFragment extends Fragment {
             Uri uri = UriUtil.getFileUri(realFilePath);
 
             ImageLoader.newInstance()
+                    .fragment(this)
                     .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
                     .placeHolder(R.drawable.file_icon_img_198, ImageView.ScaleType.CENTER)
                     .uri(uri)

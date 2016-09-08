@@ -27,7 +27,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.maintab.topic.views.joinabletopiclist.view.TopicInfoDialog;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.view.TopicInfoDialog;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.ui.search.file.adapter.SearchQueryAdapter;

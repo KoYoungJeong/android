@@ -13,10 +13,11 @@
     <color name="jandi_disable_user_color">#D7D7D7</color>
     <color name="jandi_transparent_white_90p">#E5FFFFFF</color>
     <color name="jandi_transparent_white_75p">#DDFFFFFF</color>
+    <color name="jandi_transparent_white_70p">#B2FFFFFF</color>
     <color name="jandi_transparent_white_50p">#7FFFFFFF</color>
     <color name="jandi_transparent_white_40p">#66FFFFFF</color>
     <color name="jandi_transparent_white_30p">#4CFFFFFF</color>
-    <color name="jandi_transparent_white_1f">#1FFFFFFF</color>
+    <color name="jandi_transparent_white_20p">#33FFFFFF</color>
     <color name="jandi_transparent_black_50p">#7F000000</color>
     <color name="jandi_transparent_black_60p">#99000000</color>
     <color name="jandi_transparent_black_15p">#26000000</color>
@@ -40,7 +41,6 @@
     <color name="jandi_color_d9d9d9">#FFd9d9d9</color>
 
     <color name="jandi_d1d1d1">#FFD1D1D1</color>
-    <color name="jandi_e5e5e5">#FFe5e5e5</color>
 
 
     <color name="jandi_badge_point_color">#FFFF5B49</color>
@@ -56,7 +56,7 @@
     <color name="jandi_border_gray">#999999</color>
     <color name="jandi_border_green">#31C08A</color>
     <color name="jandi_inactive_button">#B4B4B4</color>
-    <color name="jandi_intro_edittext_bg">#e5e5e5</color>
+    <color name="jandi_intro_edittext_bg">@color/rgb_e5e5e5</color>
     <color name="jandi_text_topic_detail_content">#FF6E6E6E</color>
 
     <color name="jandi_border_gray_light">#939393</color>
@@ -95,13 +95,13 @@
     <color name="jandi_sign_in_button_default">#144a66</color>
     <color name="jandi_sign_in_button_tab">#082a3b</color>
     <color name="jandi_sign_in_under_line">#000000</color>
-    <!-- Main Tab -->
+    <!-- Main TabInfo -->
     <color name="jandi_tab_background">@color/jandi_primary_color</color>
     <color name="jandi_tab_text_active">@color/white</color>
     <color name="jandi_tab_text_inactive">#FF496c82</color>
     <color name="jandi_tab_indicator">#a3d7c3</color>
-    <color name="jandi_tab_underline">#e5e5e5</color>
-    <color name="jandi_entities_divider">#E5E5E5</color>
+    <color name="jandi_tab_underline">@color/rgb_e5e5e5</color>
+    <color name="jandi_entities_divider">@color/rgb_e5e5e5</color>
     <color name="jandi_entities_bg">@color/rgb_f0f0f0</color>
     <color name="jandi_more_bg">#FFF2F2F2</color>
     <color name="jandi_more_bottom_bg">#FFF4F4F4</color>
@@ -139,7 +139,7 @@
     <color name="jandi_messages_big_size_image_view_bg">#FFC5E1D6</color>
     <color name="jandi_messages_50_black_file_size">#80000000</color>
     <color name="jandi_messages_blue_background">#FFF0F9FC</color>
-    <color name="jandi_text_messages_integration_image">#FF00ACE9</color>
+    <color name="jandi_text_messages_integration_image">@color/rgb_00ace9</color>
 
     <!-- Main panel -->
     <color name="jandi_messages_bottom_bg">#FFFFFF</color>
@@ -292,18 +292,22 @@
     <color name="button_text_color">#ff00abe8</color>
     <color name="button_text_color_dim">#7600abe8</color>
 
-    <color name="rgb_00abe8_30">#4C00ABE8</color>
+    <color name="rgb_000000_20">#33000000</color>
     <color name="rgb_0081b8">#FF0081B8</color>
-    <color name="rgb_fafafa">#FFFAFAFA</color>
+    <color name="rgb_00abe8_30">#4C00ABE8</color>
     <color name="rgb_00abe8">#FF00ABE8</color>
-    <color name="rgb_d9d9d9">#FFD9D9D9</color>
-    <color name="rgb_dd2c00">#FFDD2C00</color>
+    <color name="rgb_00ace9">#FF00ACE9</color>
+    <color name="rgb_11456b">#FF11456B</color>
     <color name="rgb_b3b3b3">#FFB3B3B3</color>
     <color name="rgb_cccccc">#FFCCCCCC</color>
-    <color name="rgb_11456b">#FF11456B</color>
+    <color name="rgb_d9d9d9">#FFD9D9D9</color>
+    <color name="rgb_dd2c00">#FFDD2C00</color>
+    <color name="rgb_e5e5e5">#FFE5E5E5</color>
     <color name="rgb_f0f0f0">#FFF0F0F0</color>
     <color name="rgb_f6f6f6">#FFF6F6F6</color>
+    <color name="rgb_fafafa">#FFFAFAFA</color>
     <color name="rgb_eeeeee">#FFEEEEEE</color>
+    <color name="rgb_fffad1">#FFFFFAD1</color>
 
     <color name="jandi_web_button_retry_background_selected">#FFE0E0E0</color>
     <color name="jandi_web_button_retry_background">#FFFFFFFF</color>

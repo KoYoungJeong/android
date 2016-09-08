@@ -14,11 +14,10 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHo
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.ui.poll.util.PollBinder;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import rx.android.schedulers.AndroidSchedulers;
 
-public class PollStickerCommentViewHolder extends BaseCommentViewHolder {
+public class PollStickerCommentViewHolder extends BaseCommentViewHolder implements HighlightView {
 
     private ViewGroup vgPoll;
     private ImageView vPollIcon;
@@ -242,6 +241,12 @@ public class PollStickerCommentViewHolder extends BaseCommentViewHolder {
     public void setHasFlatTop(boolean hasFlatTop) {
         this.hasFlatTop = hasFlatTop;
     }
+
+    @Override
+    public View getHighlightView() {
+        return vgProfileNestedCommentSticker;
+    }
+
 
     public static class Builder extends BaseViewHolderBuilder {
 

@@ -79,12 +79,14 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
                     }
                 })
                 .doOnNext(teamList -> {
-                    Observable.from(teamList)
-                            .map(Team::getUnread)
-                            .reduce((prev, current) -> prev + current)
-                            .subscribe(total -> {
-                                BadgeUtils.setBadge(JandiApplication.getContext(), total);
-                            });
+                    if (!teamList.isEmpty()) {
+                        Observable.from(teamList)
+                                .map(Team::getUnread)
+                                .reduce((prev, current) -> prev + current)
+                                .subscribe(total -> {
+                                    BadgeUtils.setBadge(JandiApplication.getContext(), total);
+                                });
+                    }
                 })
                 .map(it -> Pair.create(it, accountHomeModel.getSelectedTeamInfo()))
                 .observeOn(AndroidSchedulers.mainThread())

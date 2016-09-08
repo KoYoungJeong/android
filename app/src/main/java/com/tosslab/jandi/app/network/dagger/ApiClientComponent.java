@@ -7,11 +7,11 @@ import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.interfaces.actions.OpenAction;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.maintab.chat.model.MainChatListModel;
-import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
-import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.EntityMenuDialogModel;
-import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
-import com.tosslab.jandi.app.ui.maintab.topic.views.folderlist.model.TopicFolderSettingModel;
+import com.tosslab.jandi.app.ui.maintab.tabs.chat.model.MainChatListModel;
+import com.tosslab.jandi.app.ui.maintab.tabs.file.model.FileListModel;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.model.EntityMenuDialogModel;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.model.TopicFolderSettingModel;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
@@ -54,14 +54,13 @@ public interface ApiClientComponent {
 
     void inject(MembersModel membersModel);
 
-    void inject(TopicFolderSettingModel topicFolderSettingModel);
-
     void inject(MainTopicModel mainTopicModel);
-
-    void inject(com.tosslab.jandi.app.ui.maintab.topic.dialog.model.TopicFolderSettingModel topicFolderSettingModel);
 
     void inject(InvitationDialogExecutor invitationDialogExecutor);
 
     void inject(AnnouncementModel announcementModel);
 
+    void inject(TopicFolderSettingModel topicFolderSettingModel);
+
+    void inject(com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.model.TopicFolderSettingModel topicFolderSettingModel);
 }

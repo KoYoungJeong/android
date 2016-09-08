@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
+import com.tosslab.jandi.app.ui.maintab.tabs.file.FileListFragment;
 import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment_;
 
 /**

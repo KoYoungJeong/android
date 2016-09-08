@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/vg_main_tab_tabs_container">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/vg_appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:elevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_scrollFlags="scroll|snap|enterAlways">
+
+                <com.tosslab.jandi.app.ui.maintab.navigation.widget.BadgeOverFlowMenu
+                    android:id="@+id/btn_main_tab_menu"
+                    android:layout_width="72dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/jandi_primary_color"
+                    android:clickable="true"
+                    android:longClickable="true"/>
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar_main_tab"
+                    android:layout_width="0dp"
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_weight="1"
+                    app:contentInsetStart="0dp">
+
+                    <TextView
+                        android:id="@+id/tv_main_tab_title"
+                        style="@style/ToolbarText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"/>
+
+                </android.support.v7.widget.Toolbar>
+            </LinearLayout>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/page_main_tab"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <View
+                android:id="@+id/v_main_tab_top_shadow"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@drawable/jandi_gradient_team_member_search_divider"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/vg_main_offline"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/jandi_network_disconnect_height"
+                    android:background="@color/jandi_black_bf"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:visibility="gone">
+
+                    <include layout="@layout/layout_network_offline"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/vg_main_synchronize"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/jandi_network_disconnect_height"
+                    android:background="@color/jandi_black_bf"
+                    android:gravity="center"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:visibility="gone">
+
+                    <include layout="@layout/layout_in_synchronize"/>
+                </LinearLayout>
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_above="@+id/vg_main_tab_tabs_container"
+        android:background="@drawable/menu_shadow"/>
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/vg_main_tab_tabs_container"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentBottom="true"
+        android:background="@color/jandi_main_tab_background"
+        android:fillViewport="true"
+        app:tabGravity="fill"
+        app:tabIndicatorHeight="0dp"
+        app:tabMaxWidth="0dp"
+        app:tabMode="fixed"
+        app:tabPaddingEnd="0dp"
+        app:tabPaddingStart="0dp"/>
+
+    <ImageView
+        android:id="@+id/btn_main_tab_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/vg_main_tab_tabs_container"
+        android:layout_alignParentRight="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/btn_chat_fab"/>
+
+</RelativeLayout>

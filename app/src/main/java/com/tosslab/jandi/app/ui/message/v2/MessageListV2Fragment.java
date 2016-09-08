@@ -981,6 +981,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             } else {
                 Uri uri = Uri.parse(user.getPhotoUrl());
                 ImageLoader.newInstance()
+                        .fragment(this)
                         .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
                         .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
                         .transformation(new JandiProfileTransform(ivPreviewProfile.getContext(),

@@ -69,6 +69,7 @@ public class CarouselViewerActivityTest {
         Intent startIntent = new Intent();
         startIntent.putExtra("roomId", roomId);
         startIntent.putExtra("startMessageId", latestFileId);
+        startIntent.putExtra("mode", CarouselViewerActivity.CAROUSEL_MODE);
         rule.launchActivity(startIntent);
         activity = rule.getActivity();
 

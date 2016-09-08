@@ -1,0 +1,5 @@
+android.applicationVariants.all { variant ->
+    println variant.name + " : " + variant.buildType.testCoverageEnabled
+    if (variant.name.startsWith('qa') && variant.buildType.debuggable) {
+    }
+}

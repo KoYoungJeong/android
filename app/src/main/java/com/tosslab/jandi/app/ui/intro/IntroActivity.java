@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
@@ -17,7 +18,6 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.dagger.DaggerIntroComponent;
 import com.tosslab.jandi.app.ui.intro.dagger.IntroModule;
 import com.tosslab.jandi.app.ui.intro.presenter.IntroActivityPresenter;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.sign.SignHomeActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
@@ -99,11 +99,11 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     public void moveToMainActivity() {
         EventBus.getDefault().unregister(this);
 
-        Intent intent = MainTabActivity_.intent(IntroActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        | Intent.FLAG_ACTIVITY_NEW_TASK).get();
-
-        startActivity(intent);
+        startActivity(Henson.with(this)
+                .gotoMainTabActivity()
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        | Intent.FLAG_ACTIVITY_NEW_TASK));
         finish();
     }
 

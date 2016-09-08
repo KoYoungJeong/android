@@ -62,7 +62,7 @@ import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.domain.SocketStart;
 import com.tosslab.jandi.app.services.socket.model.SocketEventHistoryUpdator;
 import com.tosslab.jandi.app.services.socket.model.SocketEventVersionModel;
-import com.tosslab.jandi.app.services.socket.to.MessageOfOtherTeamEvent;
+import com.tosslab.jandi.app.services.socket.to.MessageReadEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementUpdatedEvent;
@@ -206,7 +206,7 @@ public class JandiSocketServiceModel {
                 .throttleWithTimeout(500, TimeUnit.MILLISECONDS)
                 .subscribe(event -> {
 
-                    postEvent(new MessageOfOtherTeamEvent());
+                    postEvent(new MessageReadEvent(event.getTeamId()));
                     postEvent(new RetrieveTopicListEvent());
 
                 }, throwable -> LogUtil.d(throwable.getMessage()));

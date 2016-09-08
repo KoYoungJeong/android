@@ -20,7 +20,7 @@ import android.widget.ImageView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
+import com.tosslab.jandi.app.ui.maintab.tabs.file.FileListFragment;
 import com.tosslab.jandi.app.ui.search.file.adapter.SearchQueryAdapter;
 import com.tosslab.jandi.app.ui.search.file.dagger.DaggerFileSearchComponent;
 import com.tosslab.jandi.app.ui.search.file.dagger.FileSearchModule;

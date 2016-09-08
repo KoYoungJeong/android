@@ -231,8 +231,7 @@
 	<string name="jandi_explain_global_push_off">"앱의 알림 설정이 꺼져 있습니다. 더보기 > 설정에서 알림을 켜야 알림을 받을 수 있습니다."</string>
 	<string name="jandi_explain_invite">"메세지 검색이 가능한 업무용 메신저 잔디는 
 팀원 모두와 함께 사용해야 그 진가가 발휘됩니다.
-지금 바로 멤버들을 초대하세요.
-"</string>
+지금 바로 멤버들을 초대하세요."</string>
 	<string name="jandi_explain_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 	<string name="jandi_export">"내보내기"</string>
 	<string name="jandi_export_to_app">"다음 앱으로 파일 내보내기"</string>
@@ -325,6 +324,7 @@
 	<string name="jandi_invite_line">"라인으로 보내기"</string>
 	<string name="jandi_invite_many_people_explain">"100명 이상의 멤버를 초대하시나요?저희에게 직접 연락 부탁드립니다: support@tosslab.com"</string>
 	<string name="jandi_invite_member">"멤버 초대하기"</string>
+	<string name="jandi_invite_member_count">"%d명 초대하기"</string>
 	<string name="jandi_invite_member_to_topic">"토픽에 멤버 초대하기"</string>
 	<string name="jandi_invite_succes_copy_link">"초대 링크가 클립보드에 복사되었습니다. 초대를 원하시는 멤버에게 이 링크를 보내세요!"</string>
 	<string name="jandi_invite_succes_send">"아래 주소로 초대장이 성공적으로 전송되었습니다."</string>

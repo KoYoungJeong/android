@@ -325,6 +325,7 @@ To change this setting, go to Team Settings > Invitation Settings."</string>
 	<string name="jandi_invite_line">"LINE"</string>
 	<string name="jandi_invite_many_people_explain">"Inviting over 100 members? Contact us at support@tosslab.com"</string>
 	<string name="jandi_invite_member">"Invite Members"</string>
+	<string name="jandi_invite_member_count">"Invite %d Members"</string>
 	<string name="jandi_invite_member_to_topic">"Invite Members"</string>
 	<string name="jandi_invite_succes_copy_link">"The team invitation link has been copied to your clipboard. Use it to invite others to your team."</string>
 	<string name="jandi_invite_succes_send">"Invitations have been sent to:"</string>
@@ -399,8 +400,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_mypage">"My Page"</string>
 	<string name="jandi_name">"Name"</string>
 	<string name="jandi_name_in_jandi">"Account Name"</string>
-	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic.
-"</string>
+	<string name="jandi_need_to_assign_topic_owner">"You are the topic administrator. You need to designate a member to transfer the topic admin permission to before you leave this topic."</string>
 	<string name="jandi_new_department">"New Department"</string>
 	<string name="jandi_new_job_title">"New Job Title"</string>
 	<string name="jandi_new_team_name">"New Team Name"</string>

@@ -275,4 +275,8 @@ public class JandiPushReceiverModel {
             notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
         }
     }
+
+    public void removeNotificationAll() {
+        notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
+    }
 }

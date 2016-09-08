@@ -1,99 +1,101 @@
 ext.dependecies = [
         libraries   : [
 
-                multidex                    : 'com.android.support:multidex:1.0.1',
+                multidex                         : 'com.android.support:multidex:1.0.1',
 
-                sprinklrAndroid             : 'com.tosslab.jandi.lib:sprinkler-android:1.5', // 로컬 : project(':sprinkler-android')
-                photoView                   : 'com.tosslab.jandi.lib:photoview-expand:1.1',
-                imageZoomCrop               : 'com.tosslab.jandi.lib:android-image-zoom-crop:1.1',
+                sprinklrAndroid                  : 'com.tosslab.jandi.lib:sprinkler-android:1.5', // 로컬 : project(':sprinkler-android')
+                photoView                        : 'com.tosslab.jandi.lib:photoview-expand:1.1',
+                imageZoomCrop                    : 'com.tosslab.jandi.lib:android-image-zoom-crop:1.1',
 
-                androidAnnotationApt        : 'org.androidannotations:androidannotations:3.3.2',
-                androidAnnotation           : 'org.androidannotations:androidannotations-api:3.3.2',
+                androidAnnotationApt             : 'org.androidannotations:androidannotations:3.3.2',
+                androidAnnotation                : 'org.androidannotations:androidannotations-api:3.3.2',
 
-                butterknife                 : 'com.jakewharton:butterknife:7.0.1',
-                dagger2Apt                  : 'com.google.dagger:dagger-compiler:2.0.2',
-                dagger2                     : 'com.google.dagger:dagger:2.0.2',
-                jsr250                      : 'javax.annotation:jsr250-api:1.0',
+                butterknife                      : 'com.jakewharton:butterknife:7.0.1',
+                dagger2Apt                       : 'com.google.dagger:dagger-compiler:2.0.2',
+                dagger2                          : 'com.google.dagger:dagger:2.0.2',
+                jsr250                           : 'javax.annotation:jsr250-api:1.0',
 
-                dart                        : 'com.f2prateek.dart:dart:2.0.+',
-                dart_processor              : 'com.f2prateek.dart:dart-processor:2.0.+',
+                dart                             : 'com.f2prateek.dart:dart:2.0.+',
+                dart_processor                   : 'com.f2prateek.dart:dart-processor:2.0.+',
 
-                henson                      : 'com.f2prateek.dart:henson:2.0.+',
-                henson_processor            : 'com.f2prateek.dart:henson-processor:2.0.+',
+                henson                           : 'com.f2prateek.dart:henson:2.0.+',
+                henson_processor                 : 'com.f2prateek.dart:henson-processor:2.0.+',
 
-                googleAnalytics             : 'com.google.android.gms:play-services-analytics:8.3.0',
-                gcm                         : 'com.google.android.gms:play-services-gcm:8.3.0',
+                googleAnalytics                  : 'com.google.android.gms:play-services-analytics:9.4.0',
+                gcm                              : 'com.google.android.gms:play-services-gcm:9.4.0',
 
-                support_appcompat           : 'com.android.support:appcompat-v7:23.4.0',
-                support_v4                  : 'com.android.support:support-v4:23.4.0',
-                support_v13                 : 'com.android.support:support-v13:23.4.0',
-                support_recyclerview        : 'com.android.support:recyclerview-v7:23.4.0',
-                support_cardview            : 'com.android.support:cardview-v7:23.4.0',
-                support_annotation          : 'com.android.support:support-annotations:23.4.0',
-                support_design              : 'com.android.support:design:23.4.0',
+                support_appcompat                : 'com.android.support:appcompat-v7:23.4.0',
+                support_v4                       : 'com.android.support:support-v4:23.4.0',
+                support_v13                      : 'com.android.support:support-v13:23.4.0',
+                support_recyclerview             : 'com.android.support:recyclerview-v7:23.4.0',
+                support_cardview                 : 'com.android.support:cardview-v7:23.4.0',
+                support_annotation               : 'com.android.support:support-annotations:23.4.0',
+                support_design                   : 'com.android.support:design:23.4.0',
 
-                supertoast                  : 'com.github.johnpersano:supertoasts:1.3.4@aar',
-                recyclerview_stickyheader   : 'com.eowise:recyclerview-stickyheaders:0.5.2@aar',
-                shortcutbadger              : 'me.leolin:ShortcutBadger:1.1.3@aar',
+                supertoast                       : 'com.github.johnpersano:supertoasts:1.3.4@aar',
+                recyclerview_stickyheader        : 'com.eowise:recyclerview-stickyheaders:0.5.2@aar',
+                shortcutbadger                   : 'me.leolin:ShortcutBadger:1.1.3@aar',
 
-                eventbus                    : 'de.greenrobot:eventbus:2.4.+',
+                eventbus                         : 'de.greenrobot:eventbus:2.4.+',
 
-                socketio                    : 'io.socket:socket.io-client:0.7.+',
+                socketio                         : 'io.socket:socket.io-client:0.7.+',
 
-                glide_okhttp                : 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar',
-                glide_transformation        : 'jp.wasabeef:glide-transformations:2.0.1',
+                glide_okhttp                     : 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar',
+                glide_transformation             : 'jp.wasabeef:glide-transformations:2.0.1',
 
-                ormlite                     : 'com.j256.ormlite:ormlite-android:4.+',
-                parse                       : 'com.parse:parse-android:1.10.0',
+                ormlite                          : 'com.j256.ormlite:ormlite-android:4.+',
+                parse                            : 'com.parse:parse-android:1.10.0',
 
-                rxandroid                   : 'io.reactivex:rxandroid:1.2.+',
-                rxjava                      : 'io.reactivex:rxjava:1.1.+',
+                rxandroid                        : 'io.reactivex:rxandroid:1.2.+',
+                rxjava                           : 'io.reactivex:rxjava:1.1.+',
 
-                facebook                    : 'com.facebook.android:facebook-android-sdk:4.5.+',
+                facebook                         : 'com.facebook.android:facebook-android-sdk:4.5.+',
 
-                crashlytics                 : 'com.crashlytics.sdk.android:crashlytics:2.4.0@aar',
+                crashlytics                      : 'com.crashlytics.sdk.android:crashlytics:2.4.0@aar',
 
                 // Calendar View
-                material_calendarview       : 'com.prolificinteractive:material-calendarview:1.4.0',
+                material_calendarview            : 'com.prolificinteractive:material-calendarview:1.4.0',
 
                 // Joda time
-                joda_time                   : 'net.danlew:android.joda:2.9.4',
+                joda_time                        : 'net.danlew:android.joda:2.9.4',
 
                 //Retrofit
-                retrofit2                   : 'com.squareup.retrofit2:retrofit:2.0.0',
-                retrofit2_gson              : 'com.squareup.retrofit2:converter-gson:2.0.0',
-                okhttp3                     : 'com.squareup.okhttp3:okhttp:3.2.0',
-                okhttp3_ws                  : 'com.squareup.okhttp3:okhttp-ws:3.2.0',
-                jackson                     : 'com.fasterxml.jackson.core:jackson-databind:2.7.2',
-                okhttp3_logging             : 'com.squareup.okhttp3:logging-interceptor:3.2.0',
+                retrofit2                        : 'com.squareup.retrofit2:retrofit:2.0.0',
+                retrofit2_gson                   : 'com.squareup.retrofit2:converter-gson:2.0.0',
+                okhttp3                          : 'com.squareup.okhttp3:okhttp:3.2.0',
+                okhttp3_ws                       : 'com.squareup.okhttp3:okhttp-ws:3.2.0',
+                jackson                          : 'com.fasterxml.jackson.core:jackson-databind:2.7.2',
+                okhttp3_logging                  : 'com.squareup.okhttp3:logging-interceptor:3.2.0',
 
-                stetho_okhttp3              : 'com.facebook.stetho:stetho-okhttp3:1.3.1',
+                stetho_okhttp3                   : 'com.facebook.stetho:stetho-okhttp3:1.3.1',
 
                 // newrelic
-                newrelic                    : 'com.newrelic.agent.android:android-agent:4.273.4',
+                newrelic                         : 'com.newrelic.agent.android:android-agent:4.273.4',
 
-                retrolambda                 : 'net.orfjackal.retrolambda:retrolambda:2.3.0',
+                retrolambda                      : 'net.orfjackal.retrolambda:retrolambda:2.3.0',
 
-                testrunner                  : 'com.android.support.test:runner:0.5',
-                testrule                    : 'com.android.support.test:rules:0.5',
-                espresso_core               : 'com.android.support.test.espresso:espresso-core:2.2.2',
-                espresso_intent             : 'com.android.support.test.espresso:espresso-intents:2.2.2',
-                dexmaker_mockito            : 'com.crittercism.dexmaker:dexmaker-mockito:1.4',
-                dexmaker_dx                 : 'com.crittercism.dexmaker:dexmaker-dx:1.4',
-                mockito                     : 'org.mockito:mockito-core:1.10.19',
-                awaitility                  : 'com.jayway.awaitility:awaitility:1.7.+',
-                assertj_android             : 'com.squareup.assertj:assertj-android:1.1.1',
-                assertj_android_support     : 'com.squareup.assertj:assertj-android-support-v4:1.1.1@aar',
-                assertj_android_appcompat   : 'com.squareup.assertj:assertj-android-appcompat-v7:1.1.1@aar',
-                assertj_android_recyclerview: 'com.squareup.assertj:assertj-android-recyclerview-v7:1.1.1@aar',
+                intercom                         : 'io.intercom.android:intercom-sdk-base:3.+',
+
+                testrunner                       : 'com.android.support.test:runner:0.5',
+                testrule                         : 'com.android.support.test:rules:0.5',
+                espresso_core                    : 'com.android.support.test.espresso:espresso-core:2.2.2',
+                espresso_intent                  : 'com.android.support.test.espresso:espresso-intents:2.2.2',
+                dexmaker_mockito                 : 'com.crittercism.dexmaker:dexmaker-mockito:1.4',
+                dexmaker_dx                      : 'com.crittercism.dexmaker:dexmaker-dx:1.4',
+                mockito                          : 'org.mockito:mockito-core:1.10.19',
+                awaitility                       : 'com.jayway.awaitility:awaitility:1.7.+',
+                assertj_android                  : 'com.squareup.assertj:assertj-android:1.1.1',
+                assertj_android_support          : 'com.squareup.assertj:assertj-android-support-v4:1.1.1@aar',
+                assertj_android_appcompat        : 'com.squareup.assertj:assertj-android-appcompat-v7:1.1.1@aar',
+                assertj_android_recyclerview     : 'com.squareup.assertj:assertj-android-recyclerview-v7:1.1.1@aar',
                 timehop_stickyheader_recyclerview: 'com.timehop.stickyheadersrecyclerview:library:0.4.3@aar'
         ],
 
         buildscripts: [
-                android             : 'com.android.tools.build:gradle:2.1.2',
+                android             : 'com.android.tools.build:gradle:2.1.3',
                 fabric              : 'io.fabric.tools:gradle:1.+',
                 android_apt         : 'com.neenbedankt.gradle.plugins:android-apt:1.8',
-                google_services     : 'com.google.gms:google-services:2.0.0',
+                google_services     : 'com.google.gms:google-services:3.0.0',
                 retrolambda         : 'me.tatarka:gradle-retrolambda:3.2.5',
                 android_maven_gradle: 'com.github.dcendents:android-maven-gradle-plugin:1.4',
                 dexcount_gradle     : 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.5.5'

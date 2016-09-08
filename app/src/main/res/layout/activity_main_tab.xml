@@ -1,116 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout android:id="@+id/drawer_main_tab"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/layout_search_bar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize">
+    <include layout="@layout/layout_main_tab_content"/>
 
-        <com.tosslab.jandi.app.views.FixedLinearLayout
-            android:id="@+id/btn_main_tab_show_another_team"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingRight="16dp">
-
-            <TextView
-                android:id="@+id/tv_main_tab_title"
-                style="@style/ToolbarText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:singleLine="true" />
-
-            <FrameLayout
-                android:id="@+id/v_main_tab_metaphor_another_team"
-                android:layout_width="wrap_content"
-                android:layout_height="14dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8dp"
-                android:visibility="gone">
-
-                <View
-                    android:layout_width="15dp"
-                    android:layout_height="14dp"
-                    android:background="@drawable/team_arrow_down_white" />
-
-                <View
-                    android:id="@+id/v_main_tab_metaphor_another_team_has_message"
-                    android:layout_width="15dp"
-                    android:layout_height="14dp"
-                    android:alpha="0"
-                    android:background="@drawable/team_arrow_down_red" />
-            </FrameLayout>
-        </com.tosslab.jandi.app.views.FixedLinearLayout>
-
-    </android.support.v7.widget.Toolbar>
-
-    <com.tosslab.jandi.app.views.PagerSlidingTabStrip
-        android:id="@+id/sliding_tabs"
-        style="@style/PagerSlidingTabStrip"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentBottom="true"/>
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager_main_tab"
-        android:layout_width="match_parent"
+    <FrameLayout
+        android:id="@+id/vg_main_tab_navigation_wrapper"
+        android:layout_width="@dimen/jandi_main_tab_navigation_width"
         android:layout_height="match_parent"
-        android:layout_above="@+id/sliding_tabs"
-        android:layout_below="@id/layout_search_bar"/>
+        android:layout_gravity="start">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/layout_search_bar">
-
-        <LinearLayout
-            android:id="@+id/vg_main_offline"
+        <fragment
+            android:id="@+id/fragment_navigation"
+            class="com.tosslab.jandi.app.ui.maintab.navigation.NavigationFragment"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/jandi_network_disconnect_height"
-            android:background="@color/jandi_black_bf"
-            android:gravity="center_vertical"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:visibility="gone">
+            android:layout_height="match_parent"
+            tools:layout="@layout/fragment_navigation"/>
+    </FrameLayout>
 
-            <include layout="@layout/layout_network_offline" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/vg_main_synchronize"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/jandi_network_disconnect_height"
-            android:background="@color/jandi_black_bf"
-            android:gravity="center"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:visibility="gone">
-
-            <include layout="@layout/layout_in_synchronize" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_above="@id/sliding_tabs"
-        android:background="@drawable/menu_shadow"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_below="@id/layout_search_bar"
-        android:background="@drawable/jandi_gradient_team_member_search_divider"/>
-
-    <com.tosslab.jandi.app.views.FloatingActionMenu
-        android:id="@+id/vg_fab_menu"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/sliding_tabs"/>
-
-</RelativeLayout>
+</android.support.v4.widget.DrawerLayout>

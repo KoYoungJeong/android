@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:text="Menu align"
+        android:textColor="@color/message_controller_popup_text_color"
+        android:textSize="@dimen/jandi_text_size_larger_3"/>
+
+    <LinearLayout
+        android:id="@+id/btn_setup_navigation_left"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="24dp"
+            android:layout_weight="1"
+            android:text="Left"
+            android:textColor="@color/message_controller_popup_text_color"
+            android:textSize="@dimen/jandi_text_size_larger_2"/>
+
+        <ImageView
+            android:id="@+id/radio_setup_navigation_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="30dp"
+            android:src="@drawable/btn_radio_selector"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/btn_setup_navigation_right"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="24dp"
+            android:layout_weight="1"
+            android:text="Right"
+            android:textColor="@color/message_controller_popup_text_color"
+            android:textSize="@dimen/jandi_text_size_larger_2"/>
+
+        <ImageView
+            android:id="@+id/radio_setup_navigation_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="30dp"
+            android:src="@drawable/btn_radio_selector"/>
+
+    </LinearLayout>
+
+</LinearLayout>

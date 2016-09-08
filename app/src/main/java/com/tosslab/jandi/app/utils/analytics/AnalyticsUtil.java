@@ -22,7 +22,6 @@ public class AnalyticsUtil {
     }
 
     public static void sendScreenName(String screenName) {
-
         if (BuildConfig.DEBUG) return;
 
         try {
@@ -32,7 +31,6 @@ public class AnalyticsUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public static void sendEvent(String category, String action, String label) {

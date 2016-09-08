@@ -67,6 +67,15 @@ public class ColoredToast {
         superToast.show();
     }
 
+    public static void showWarning(int resId) {
+        SuperToast superToast = new SuperToast(JandiApplication.getContext());
+        superToast.setText(JandiApplication.getContext().getString(resId));
+        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
+        superToast.setBackground(SuperToast.Background.ORANGE);
+        superToast.setTextColor(Color.WHITE);
+        superToast.show();
+    }
+
     public static void showError(String message) {
         SuperToast superToast = new SuperToast(JandiApplication.getContext());
         superToast.setText(message);

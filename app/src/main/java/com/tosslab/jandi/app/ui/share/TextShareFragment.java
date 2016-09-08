@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.johnpersano.supertoasts.SuperToast;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
@@ -21,7 +22,6 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.share.presenter.text.TextSharePresenter;
 import com.tosslab.jandi.app.ui.share.presenter.text.TextSharePresenterImpl;
@@ -246,9 +246,10 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveEntity(long teamId, long roomId, int roomType) {
-        MainTabActivity_.intent(getActivity())
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+        startActivity(Henson.with(getActivity())
+                .gotoMainTabActivity()
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
         MessageListV2Activity_.intent(getActivity())
                 .teamId(teamId)

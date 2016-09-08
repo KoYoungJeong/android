@@ -9,7 +9,7 @@ public class Team {
     private final long memberId;
     private final String name;
     private final String teamDomain;
-    private final int unread;
+    private int unread;
     private Status status;
     private boolean isSelected;
     private String userEmail;
@@ -115,6 +115,10 @@ public class Team {
 
     public int getUnread() {
         return unread;
+    }
+
+    public void setUnread(int unread) {
+        this.unread = unread;
     }
 
     public enum Status {

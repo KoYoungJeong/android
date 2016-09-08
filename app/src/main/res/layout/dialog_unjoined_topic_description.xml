@@ -28,7 +28,7 @@
         <com.tosslab.jandi.app.views.FixedLinearLayout
             android:id="@+id/vg_unjoin_topic_desc_member"
             android:layout_width="match_parent"
-            android:layout_height="16.77dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">

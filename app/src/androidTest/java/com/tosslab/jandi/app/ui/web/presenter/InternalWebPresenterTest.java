@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -47,6 +48,7 @@ public class InternalWebPresenterTest {
         Assert.assertTrue(url.contains("http://"));
     }
 
+    @Ignore
     @Test
     public void testSendMessage() throws RetrofitException {
         // 본 테스트는 MessageManipulator에 대한 테스트가 완전하다고 가정하에 작성

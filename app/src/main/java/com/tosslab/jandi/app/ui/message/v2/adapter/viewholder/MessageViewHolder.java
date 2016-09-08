@@ -25,7 +25,7 @@ import com.tosslab.jandi.app.utils.UiUtils;
 
 import rx.android.schedulers.AndroidSchedulers;
 
-public class MessageViewHolder extends BaseMessageViewHolder {
+public class MessageViewHolder extends BaseMessageViewHolder implements HighlightView {
 
     protected Context context;
 
@@ -205,8 +205,12 @@ public class MessageViewHolder extends BaseMessageViewHolder {
         tvMessage.setOnLongClickListener(itemLongClickListener);
     }
 
-    public static class Builder extends BaseViewHolderBuilder {
+    @Override
+    public View getHighlightView() {
+        return tvMessage;
+    }
 
+    public static class Builder extends BaseViewHolderBuilder {
         public MessageViewHolder build() {
             MessageViewHolder messageViewHolder = new MessageViewHolder();
             messageViewHolder.setHasOnlyBadge(hasOnlyBadge);

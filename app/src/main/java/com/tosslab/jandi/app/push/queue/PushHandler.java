@@ -85,4 +85,9 @@ public class PushHandler {
     public void removeNotificationIfNeed(long roomId) {
         jandiPushReceiverModel.removeNotificationIfNeed(roomId);
     }
+
+    public void removeNotificationAll() {
+        jandiPushReceiverModel.removeNotificationAll();
+    }
+
 }

@@ -16,6 +16,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.github.johnpersano.supertoasts.SuperToast;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
@@ -26,7 +27,6 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.share.model.ScrollViewHelper;
 import com.tosslab.jandi.app.ui.share.presenter.image.ImageSharePresenter;
@@ -173,6 +173,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
             ivShareImage.setVisibility(View.VISIBLE);
 
             ImageLoader.newInstance()
+                    .fragment(this)
                     .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
                     .uri(Uri.fromFile(file))
                     .into(ivShareImage);
@@ -257,9 +258,10 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     @Override
     public void moveEntity(long teamId, long entityId, int entityType) {
 
-        MainTabActivity_.intent(getActivity())
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+        startActivity(Henson.with(getActivity())
+                .gotoMainTabActivity()
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
         MessageListV2Activity_.intent(getActivity())
                 .teamId(teamId)

@@ -38,7 +38,8 @@ public class DummyMessageViewHolder implements BodyViewHolder {
     private TextView tvUnreadCount;
     private TextView tvTime;
 
-    private DummyMessageViewHolder() { }
+    private DummyMessageViewHolder() {
+    }
 
     @Override
     public void initView(View rootView) {

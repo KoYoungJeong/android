@@ -260,8 +260,7 @@
 	<string name="jandi_file_share_action">"分享"</string>
 	<string name="jandi_file_size_large_error">"無法上傳大於300MB的檔案"</string>
 	<string name="jandi_file_upload_finish">"檔案已成功上傳"</string>
-	<string name="jandi_file_upload_go_topic">"
-點擊進入JANDI瀏覽"</string>
+	<string name="jandi_file_upload_go_topic">"點擊進入JANDI瀏覽"</string>
 	<string name="jandi_file_upload_state">"上傳檔案中 (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"檔案上傳成功"</string>
 	<string name="jandi_file_uploading">"上傳"</string>
@@ -325,6 +324,7 @@
 	<string name="jandi_invite_line">"LINE"</string>
 	<string name="jandi_invite_many_people_explain">"想邀請超過100位成員？讓我們來協助你！support@tosslab.com"</string>
 	<string name="jandi_invite_member">"邀請成員"</string>
+	<string name="jandi_invite_member_count">"%d 成員邀請"</string>
 	<string name="jandi_invite_member_to_topic">"邀請成員至此議題"</string>
 	<string name="jandi_invite_succes_copy_link">"成員邀請的連結已複製到剪貼簿"</string>
 	<string name="jandi_invite_succes_send">"邀請信發送至："</string>
