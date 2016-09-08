@@ -140,7 +140,7 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
             vgToggled.setVisibility(View.VISIBLE);
         }
 
-        tvAdded.setText(String.format("%d명 추가하기", count));
+        tvAdded.setText(getString(R.string.jandi_invite_member_count, count));
     }
 
     @Override

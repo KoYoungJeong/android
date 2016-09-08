@@ -324,6 +324,7 @@
 	<string name="jandi_invite_line">"LINE"</string>
 	<string name="jandi_invite_many_people_explain">"100人以上のメンバーを追加したいですか？サポートにご連絡はこちらまで support@tosslab.com"</string>
 	<string name="jandi_invite_member">"メンバーを招待する"</string>
+	<string name="jandi_invite_member_count">"%d名を招待する"</string>
 	<string name="jandi_invite_member_to_topic">"トピックにメンバー招待"</string>
 	<string name="jandi_invite_succes_copy_link">"あなたのチームへの招待リンクがコピーされました。チームに招待したい人に送りましょう"</string>
 	<string name="jandi_invite_succes_send">"招待メールが以下のアドレスに正常に送信されました"</string>
