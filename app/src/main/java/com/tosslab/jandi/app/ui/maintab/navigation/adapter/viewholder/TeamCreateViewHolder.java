@@ -3,10 +3,12 @@ package com.tosslab.jandi.app.ui.maintab.navigation.adapter.viewholder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
@@ -15,6 +17,10 @@ import butterknife.ButterKnife;
 public class TeamCreateViewHolder extends BaseViewHolder<Object> {
 
     private final OnRequestTeamCreateListener onRequestTeamCreateListener;
+
+    @Bind(R.id.btn_team_create)
+    TextView tvTeamCreate;
+
 
     private TeamCreateViewHolder(View itemView, OnRequestTeamCreateListener onRequestTeamCreateListener) {
         super(itemView);
@@ -32,7 +38,7 @@ public class TeamCreateViewHolder extends BaseViewHolder<Object> {
     @Override
     public void onBindView(Object o) {
         if (onRequestTeamCreateListener != null) {
-            itemView.setOnClickListener(v -> onRequestTeamCreateListener.onRequestTeamCreate());
+            tvTeamCreate.setOnClickListener(v -> onRequestTeamCreateListener.onRequestTeamCreate());
         }
     }
 
