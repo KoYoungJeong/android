@@ -115,6 +115,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                         .count(),
                 Observable.from(teams)
                         .filter(team -> team.getStatus() == Team.Status.JOINED)
+                        .filter(team -> team.getTeamId() != TeamInfoLoader.getInstance().getTeamId())
                         .map(Team::getUnread)
                         .reduce((prev, current) -> prev + current),
                 (pendingTeams, unreadCount) -> {
