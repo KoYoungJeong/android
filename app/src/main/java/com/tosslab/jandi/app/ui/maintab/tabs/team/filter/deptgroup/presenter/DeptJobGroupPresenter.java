@@ -4,8 +4,6 @@ package com.tosslab.jandi.app.ui.maintab.tabs.team.filter.deptgroup.presenter;
 public interface DeptJobGroupPresenter {
     void onCreate();
 
-    void onDestroy();
-
     void onMemberClick(int position);
 
     void onUnselectClick();

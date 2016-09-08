@@ -324,6 +324,7 @@
 	<string name="jandi_invite_line">"라인으로 보내기"</string>
 	<string name="jandi_invite_many_people_explain">"100명 이상의 멤버를 초대하시나요?저희에게 직접 연락 부탁드립니다: support@tosslab.com"</string>
 	<string name="jandi_invite_member">"멤버 초대하기"</string>
+	<string name="jandi_invite_member_count">"%d명 초대하기"</string>
 	<string name="jandi_invite_member_to_topic">"토픽에 멤버 초대하기"</string>
 	<string name="jandi_invite_succes_copy_link">"초대 링크가 클립보드에 복사되었습니다. 초대를 원하시는 멤버에게 이 링크를 보내세요!"</string>
 	<string name="jandi_invite_succes_send">"아래 주소로 초대장이 성공적으로 전송되었습니다."</string>

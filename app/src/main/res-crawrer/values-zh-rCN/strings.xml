@@ -324,6 +324,7 @@
 	<string name="jandi_invite_line">"LINE"</string>
 	<string name="jandi_invite_many_people_explain">"想邀请超过100位成员？让我们来协助你！ support@tosslab.com"</string>
 	<string name="jandi_invite_member">"邀請成員"</string>
+	<string name="jandi_invite_member_count">"%d 成员邀请"</string>
 	<string name="jandi_invite_member_to_topic">"邀请成员至此议题"</string>
 	<string name="jandi_invite_succes_copy_link">"成员邀请的链接已复制到剪贴簿"</string>
 	<string name="jandi_invite_succes_send">"邀请信发送至："</string>

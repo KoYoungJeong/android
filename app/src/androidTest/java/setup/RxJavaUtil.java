@@ -11,9 +11,9 @@ public class RxJavaUtil {
 
     public static void threadHook() {
         RxJavaHooks.reset();
-        RxJavaHooks.setOnIOScheduler(scheduler -> Schedulers.immediate());
-
         RxAndroidPlugins.getInstance().reset();
+
+        RxJavaHooks.setOnIOScheduler(scheduler -> Schedulers.immediate());
         RxAndroidPlugins.getInstance().registerSchedulersHook(new RxAndroidSchedulersHook() {
             @Override
             public Scheduler getMainThreadScheduler() {

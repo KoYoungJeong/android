@@ -67,7 +67,6 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     TextView tvAdded;
 
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,12 +113,6 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     }
 
     @Override
-    protected void onDestroy() {
-        presenter.onDestroy();
-        super.onDestroy();
-    }
-
-    @Override
     public void refreshDataView() {
         teamMemberDataView.refresh();
     }
@@ -147,7 +140,7 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
             vgToggled.setVisibility(View.VISIBLE);
         }
 
-        tvAdded.setText(String.format("%d명 추가하기", count));
+        tvAdded.setText(getString(R.string.jandi_invite_member_count, count));
     }
 
     @Override
@@ -159,7 +152,7 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     }
 
     @OnClick(R.id.tv_dept_job_group_toggled_unselect_all)
-    void onUnselectClick(){
+    void onUnselectClick() {
         presenter.onUnselectClick();
     }
 
