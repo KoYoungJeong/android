@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.dto.MentionMessage;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -136,7 +137,8 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
         if (!isJandiBot && !isBot) {
             ImageUtil.loadProfileImage(ivProfile, mentionMessage.getWriterProfileUrl(), R.drawable.profile_img);
 
-            if (TeamInfoLoader.getInstance().getUser(mentionMessage.getWriterId()).isEnabled()) {
+            User user = TeamInfoLoader.getInstance().getUser(mentionMessage.getWriterId());
+            if (user != null && user.isEnabled()) {
                 vProfileCover.setBackgroundColor(Color.TRANSPARENT);
 
                 tvWriter.setTextColor(resources.getColor(R.color.jandi_star_mention_item_name_content_text));

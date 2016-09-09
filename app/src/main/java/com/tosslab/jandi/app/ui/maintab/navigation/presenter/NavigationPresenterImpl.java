@@ -355,7 +355,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
 
                     Intercom.client().updateUser(attr);
                     Intercom.client().setInAppMessageVisibility(Intercom.Visibility.GONE);
-                });
+                }, it -> {});
 
 
     }
