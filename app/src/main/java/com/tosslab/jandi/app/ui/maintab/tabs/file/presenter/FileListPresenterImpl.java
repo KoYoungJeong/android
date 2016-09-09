@@ -88,7 +88,7 @@ public class FileListPresenterImpl implements FileListPresenter {
                         })
                         .throttleLast(100, TimeUnit.MILLISECONDS)
                         .onBackpressureBuffer()
-                        .filter(it -> !inSearchActivity || (!TextUtils.isEmpty(it.getKeyword()) && it.getKeyword().length() >= 2))
+                        .filter(it -> !inSearchActivity || TextUtils.isEmpty(it.getKeyword()) || it.getKeyword().length() >= 2)
                         .observeOn(AndroidSchedulers.mainThread())
                         .doOnNext(it -> {
                             if (it.getPage() > 1) {
