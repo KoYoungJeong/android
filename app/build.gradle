@@ -46,8 +46,6 @@ android {
         debug {
             debuggable true
             testCoverageEnabled = report_coverage.toBoolean()
-            println "report_coverage = $report_coverage"
-            println "testCoverageEnabled = $testCoverageEnabled"
         }
 
         release {
