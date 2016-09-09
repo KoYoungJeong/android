@@ -108,6 +108,11 @@ public class NavigationPresenterImpl implements NavigationPresenter {
 
     }
 
+    @Override
+    public void initBadgeCount() {
+        initBadgeCount(navigationDataModel.getTeams());
+    }
+
     private void initBadgeCount(List<Team> teams) {
         Observable.combineLatest(
                 Observable.from(teams)
@@ -118,9 +123,10 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                         .filter(team -> team.getTeamId() != TeamInfoLoader.getInstance().getTeamId())
                         .map(Team::getUnread)
                         .reduce((prev, current) -> prev + current),
-                (pendingTeams, unreadCount) -> {
+                Observable.just(Intercom.client().getUnreadConversationCount()),
+                (pendingTeams, unreadCount, intercomCount) -> {
                     BadgeUtils.setBadge(JandiApplication.getContext(), unreadCount);
-                    return pendingTeams + unreadCount;
+                    return pendingTeams + unreadCount + intercomCount;
                 })
                 .subscribe(total -> {
                     EventBus.getDefault().post(new NavigationBadgeEvent(total));

@@ -12,6 +12,8 @@ public interface NavigationPresenter {
 
     void initializeTeamInitializeQueue();
 
+    void initBadgeCount();
+
     void onInitializeTeams();
 
     void onTeamJoinAction(long teamId);
