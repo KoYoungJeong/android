@@ -5,7 +5,9 @@ rootProject.buildscript.repositories {
 }
 
 rootProject.buildscript.dependencies {
-    classpath rootProject.ext.dependecies.buildscripts.google_services
+    classpath(rootProject.ext.dependecies.buildscripts.google_services) {
+        exclude group: 'org.jacoco'
+    }
     classpath rootProject.ext.dependecies.buildscripts.android
     classpath rootProject.ext.dependecies.buildscripts.fabric
     classpath rootProject.ext.dependecies.buildscripts.android_apt

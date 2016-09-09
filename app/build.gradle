@@ -155,9 +155,6 @@ android {
             events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
         }
     }
-    jacoco {
-        version = '0.7.4.201502262128'
-    }
 }
 
 project.gradle.taskGraph.whenReady {
