@@ -410,7 +410,7 @@
 	<string name="jandi_no_preview_push_message">"你收到一則新訊息"</string>
 	<string name="jandi_no_recent_stickers">"無最近使用的貼圖"</string>
 	<string name="jandi_no_search_history">"沒有搜尋紀錄"</string>
-	<string name="jandi_no_search_result">"找不到符合條件的內容"</string>
+	<string name="jandi_no_search_result">"找不到相關的內容"</string>
 	<string name="jandi_no_topic_to_join">"沒有可加入的議題"</string>
 	<string name="jandi_normally_topic_messages">"議題訊息"</string>
 	<string name="jandi_not_in_topic">"你已離開此議題"</string>
@@ -663,6 +663,7 @@
 	<string name="jandi_tutorial_topic_message">"在您選擇的議題跟團隊裏的同仁聯絡，無論是專案上的協作或僅是閑談。當您需要更多隱私，就邀請特定成員到私人議題或直接私訊成員。"</string>
 	<string name="jandi_tutorial_welcome">"歡迎使用"</string>
 	<string name="jandi_tutorial_welcome_message">"JANDI讓工作變簡單、愉快。我們將你對通訊軟體的要求與雲端存儲的需求結合，並放在你的手掌上。"</string>
+	<string name="jandi_undefined_member">"尚未設定簡介的成員"</string>
 	<string name="jandi_unpinned_message">"已取消標示"</string>
 	<string name="jandi_unread_messages_below">"以下為未讀訊息"</string>
 	<string name="jandi_unshare_succeed">"%s已被取消分享"</string>

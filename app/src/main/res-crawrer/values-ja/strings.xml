@@ -414,7 +414,7 @@
 	<string name="jandi_no_preview_push_message">"新着メッセージがあります。"</string>
 	<string name="jandi_no_recent_stickers">"最近利用したスタンプがありません"</string>
 	<string name="jandi_no_search_history">"検索履歴がありません。"</string>
-	<string name="jandi_no_search_result">"一致するファイルがありません"</string>
+	<string name="jandi_no_search_result">"一致するメッセージがありません。"</string>
 	<string name="jandi_no_topic_to_join">"参加できるトピックがありません"</string>
 	<string name="jandi_normally_topic_messages">"トピックメッセージ"</string>
 	<string name="jandi_not_in_topic">"既にこのトピックから退出したか退出されました。"</string>
@@ -669,6 +669,7 @@
 	<string name="jandi_tutorial_welcome_message">"私達のミッションは、皆様のワークライフをもっとシンプルに、生産的に、そして楽しくすることです。
 
 私達は、メッセージアプリやクラウドストレージの強力で優れた機能を融合し、一つのコミュニケーションツールとして提供しています。"</string>
+	<string name="jandi_undefined_member">"設定していないメンバー一覧"</string>
 	<string name="jandi_unpinned_message">"スターなし"</string>
 	<string name="jandi_unread_messages_below">"ここから未読メッセージ"</string>
 	<string name="jandi_unshare_succeed">"%sが非共有にされました"</string>

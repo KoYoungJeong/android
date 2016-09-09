@@ -3,6 +3,8 @@ package com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.presenter;
 import android.text.TextUtils;
 import android.util.Pair;
 
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.search.MemberRecentKeywordRepository;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
@@ -25,6 +27,7 @@ import rx.subscriptions.CompositeSubscription;
 public class DeptJobPresenterImpl implements DeptJobPresenter {
 
     final DeptJobModel deptJobModel;
+    private final String undefinedMember;
     View view;
     DeptJobDataModel deptJobDataModel;
     BehaviorSubject<String> deptJobSubject;
@@ -37,6 +40,7 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
         this.deptJobDataModel = deptJobDataModel;
         this.deptJobModel = deptJobModel;
         subscription = new CompositeSubscription();
+        undefinedMember = JandiApplication.getContext().getString(R.string.jandi_undefined_member);
     }
 
     public void setType(int type) {
@@ -55,8 +59,14 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
                 .observeOn(Schedulers.io())
                 .concatMap(it -> Observable.from(TeamInfoLoader.getInstance().getUserList())
                         .filter(User::isEnabled)
-                        .filter(user -> !TextUtils.isEmpty(user.getDivision()))
-                        .map(User::getDivision)
+                        .map((user) -> {
+                            if (!TextUtils.isEmpty(user.getDivision())) {
+
+                                return user.getDivision();
+                            } else {
+                                return undefinedMember;
+                            }
+                        })
                         .compose(deptJobModel.containFilter(it))
                         .distinct()
                         .toSortedList(StringCompareUtil::compare)
@@ -71,8 +81,13 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
                 .observeOn(Schedulers.io())
                 .concatMap(it -> Observable.from(TeamInfoLoader.getInstance().getUserList())
                         .filter(User::isEnabled)
-                        .filter(user -> !TextUtils.isEmpty(user.getPosition()))
-                        .map(User::getPosition)
+                        .map((user) -> {
+                            if (!TextUtils.isEmpty(user.getPosition())) {
+                                return user.getPosition();
+                            } else {
+                                return undefinedMember;
+                            }
+                        })
                         .compose(deptJobModel.containFilter(it))
                         .distinct()
                         .toSortedList(StringCompareUtil::compare)

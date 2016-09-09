@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.maintab.tabs.team.filter.deptgroup.presenter;
 
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
@@ -25,6 +27,7 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
     final View view;
     final TeamMemberDataModel teamMemberDataModel;
     final ToggleCollector toggledUser;
+    private final String undefinedMember;
     private int type;
     private String keyword;
     private boolean selectMode;
@@ -35,6 +38,7 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
         this.view = view;
         this.teamMemberDataModel = teamMemberDataModel;
         this.toggledUser = toggledUser;
+        undefinedMember = JandiApplication.getContext().getString(R.string.jandi_undefined_member);
     }
 
     @Override
@@ -67,11 +71,18 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
     private Func1<? super User, Boolean> filterKeyword(int type, String keyword) {
         return user -> {
             if (type == DeptJobFragment.EXTRA_TYPE_JOB) {
-                return !TextUtils.isEmpty(user.getPosition())
-                        && user.getPosition().contains(keyword);
+                if (!TextUtils.isEmpty(user.getPosition())) {
+                    return user.getPosition().contains(keyword);
+                } else {
+                    return TextUtils.equals(keyword, undefinedMember);
+                }
             } else {
-                return !TextUtils.isEmpty(user.getDivision())
-                        && user.getDivision().contains(keyword);
+                if (!TextUtils.isEmpty(user.getDivision())) {
+
+                    return user.getDivision().contains(keyword);
+                } else {
+                    return TextUtils.equals(keyword, undefinedMember);
+                }
             }
         };
     }
