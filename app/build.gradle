@@ -45,7 +45,8 @@ android {
 
         debug {
             debuggable true
-            testCoverageEnabled = report_coverage.toBoolean()
+            testCoverageEnabled = project.hasProperty("report_coverage") && report_coverage.toBoolean()
+            println "testCoverageEnabled = $testCoverageEnabled"
         }
 
         release {
