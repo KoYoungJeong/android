@@ -51,13 +51,13 @@ public class FileUploadApi {
         }
         MultipartBody.Part userFilePart = MultipartBody.Part.createFormData("userFile", file.getName(), fileBody);
 
-        return RetrofitBuilder.getInstance().create(Api.class)
+        return RetrofitBuilder.getInstanceOfFileUpload().create(Api.class)
                 .upload(titlePart, entityPart, permissionPart, teamIdPart, commentPart, mentionsPart, userFilePart);
     }
 
     public interface Api {
 
-        @POST("file")
+        @POST("inner-api/file")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         @Multipart
         Call<ResUploadedFile> upload(@Part MultipartBody.Part title,
