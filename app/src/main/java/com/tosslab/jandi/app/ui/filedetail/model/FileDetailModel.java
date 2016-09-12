@@ -366,6 +366,7 @@ public class FileDetailModel {
                 .event(SprinklerEvents.Starred)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "file")
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.FileId, fileId)
                 .build());
@@ -376,16 +377,29 @@ public class FileDetailModel {
                 .event(SprinklerEvents.Starred)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "comment")
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.MessageId, commentId)
                 .build());
     }
 
-    public void trackStarredFail(int errorCode) {
+    public void trackStarredCommentFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(SprinklerEvents.Starred)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "comment")
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
+    }
+
+    public void trackStarredFileFail(int errorCode) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.Starred)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "file")
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)
                 .build());
@@ -396,6 +410,7 @@ public class FileDetailModel {
                 .event(SprinklerEvents.UnStarred)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "file")
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.FileId, fileId)
                 .build());
@@ -406,16 +421,28 @@ public class FileDetailModel {
                 .event(SprinklerEvents.UnStarred)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "comment")
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.MessageId, commentId)
                 .build());
     }
 
-    public void trackUnStarredFail(int errorCode) {
+    public void trackUnStarredCommentFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(SprinklerEvents.UnStarred)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "comment")
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
+    }
+    public void trackUnStarredFileFail(int errorCode) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.UnStarred)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "file")
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)
                 .build());
@@ -448,7 +475,7 @@ public class FileDetailModel {
             trackStarredCommentSuccess(messageId);
         } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
-            trackStarredFail(e.getResponseCode());
+            trackStarredCommentFail(e.getResponseCode());
         }
     }
 
@@ -459,7 +486,7 @@ public class FileDetailModel {
             trackUnStarredCommentSuccess(messageId);
         } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
-            trackUnStarredFail(e.getResponseCode());
+            trackUnStarredCommentFail(e.getResponseCode());
         }
     }
 
@@ -470,7 +497,7 @@ public class FileDetailModel {
             trackStarredFileSuccess(fileId);
         } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
-            trackStarredFail(e.getResponseCode());
+            trackStarredFileFail(e.getResponseCode());
         }
     }
 
@@ -481,7 +508,7 @@ public class FileDetailModel {
             trackUnStarredFileSuccess(fileId);
         } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
-            trackUnStarredFail(e.getResponseCode());
+            trackUnStarredFileFail(e.getResponseCode());
         }
     }
 

@@ -390,6 +390,7 @@ public class PollDetailModel {
                 .event(SprinklerEvents.Starred)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "poll")
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.PollId, pollId)
                 .build());
@@ -400,16 +401,29 @@ public class PollDetailModel {
                 .event(SprinklerEvents.Starred)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "comment")
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.MessageId, commentId)
                 .build());
     }
 
-    public void trackStarredFail(int errorCode) {
+    public void trackStarredPollFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(SprinklerEvents.Starred)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "poll")
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
+    }
+
+    public void trackStarredCommentFail(int errorCode) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.Starred)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "comment")
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)
                 .build());
@@ -420,6 +434,7 @@ public class PollDetailModel {
                 .event(SprinklerEvents.UnStarred)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "poll")
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.PollId, pollId)
                 .build());
@@ -430,16 +445,28 @@ public class PollDetailModel {
                 .event(SprinklerEvents.UnStarred)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "comment")
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.MessageId, commentId)
                 .build());
     }
 
-    public void trackUnStarredFail(int errorCode) {
+    public void trackUnStarredPollFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(SprinklerEvents.UnStarred)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "poll")
+                .property(PropertyKey.ResponseSuccess, false)
+                .property(PropertyKey.ErrorCode, errorCode)
+                .build());
+    }
+    public void trackUnStarredCommentFail(int errorCode) {
+        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
+                .event(SprinklerEvents.UnStarred)
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "comment")
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)
                 .build());

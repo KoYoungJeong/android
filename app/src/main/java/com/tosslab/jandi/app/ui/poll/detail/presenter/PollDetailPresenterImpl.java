@@ -135,9 +135,9 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                                     return Observable.just(pair);
                                 } catch (RetrofitException e) {
                                     if (futureStar) {
-                                        pollDetailModel.trackStarredFail(e.getResponseCode());
+                                        pollDetailModel.trackStarredPollFail(e.getResponseCode());
                                     } else {
-                                        pollDetailModel.trackUnStarredFail(e.getResponseCode());
+                                        pollDetailModel.trackUnStarredPollFail(e.getResponseCode());
                                     }
                                     return Observable.error(e);
                                 }
@@ -432,7 +432,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                 }, e -> {
                     LogUtil.e(TAG, Log.getStackTraceString(e));
                     if (e instanceof RetrofitException) {
-                        pollDetailModel.trackUnStarredFail(((RetrofitException) e).getResponseCode());
+                        pollDetailModel.trackUnStarredCommentFail(((RetrofitException) e).getResponseCode());
                     }
                 });
     }
@@ -455,7 +455,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                 }, e -> {
                     LogUtil.e(TAG, Log.getStackTraceString(e));
                     if (e instanceof RetrofitException) {
-                        pollDetailModel.trackStarredFail(((RetrofitException) e).getResponseCode());
+                        pollDetailModel.trackStarredCommentFail(((RetrofitException) e).getResponseCode());
                     }
                 });
     }

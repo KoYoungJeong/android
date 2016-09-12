@@ -417,6 +417,7 @@ public class MessageListModel {
                 .event(SprinklerEvents.Starred)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "message")
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.MessageId, messageId)
                 .build());
@@ -427,6 +428,7 @@ public class MessageListModel {
                 .event(SprinklerEvents.Starred)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "message")
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)
                 .build());
@@ -437,6 +439,7 @@ public class MessageListModel {
                 .event(SprinklerEvents.UnStarred)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "message")
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.MessageId, messageId)
                 .build());
@@ -447,6 +450,7 @@ public class MessageListModel {
                 .event(SprinklerEvents.UnStarred)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.StarredType, "message")
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)
                 .build());
