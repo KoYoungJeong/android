@@ -488,12 +488,12 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
             }
 
             if (e instanceof RetrofitException) {
-                pollDetailModel.trackPollCommentDeleteFail(((RetrofitException) e).getResponseCode());
+                pollDetailModel.trackPollCommentDeleteFail(((RetrofitException) e).getResponseCode(), messageId, feedbackId);
             }
         };
 
         if (messageType == MessageItem.TYPE_STICKER_COMMNET) {
-            deleteStickerComment(messageType, messageId, errorAction);
+            deleteStickerComment(messageType, messageId, feedbackId, errorAction);
         } else {
             deleteComment(messageId, feedbackId, errorAction);
         }
@@ -505,16 +505,16 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
-                    pollDetailModel.trackPollCommentDeleteSuccess(messageId);
+                    pollDetailModel.trackPollCommentDeleteSuccess(messageId, feedbackId);
                 }, errorAction);
     }
 
-    void deleteStickerComment(int messageType, long messageId, Action1<Throwable> errorAction) {
+    void deleteStickerComment(int messageType, long messageId, long feedbackId, Action1<Throwable> errorAction) {
         pollDetailModel.getStickerCommentDeleteObservable(messageId, messageType)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
-                    pollDetailModel.trackPollCommentDeleteSuccess(messageId);
+                    pollDetailModel.trackPollCommentDeleteSuccess(messageId, feedbackId);
                 }, errorAction);
     }
 

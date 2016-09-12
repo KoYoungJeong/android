@@ -365,21 +365,24 @@ public class PollDetailModel {
                 .build());
     }
 
-    public void trackPollCommentDeleteSuccess(long pollId) {
+    public void trackPollCommentDeleteSuccess(long messageId, long feedbackId) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(SprinklerEvents.MessageDelete)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.PollId, pollId)
+                .property(PropertyKey.PollId, feedbackId)
+                .property(PropertyKey.MessageId, messageId)
                 .build());
     }
 
-    public void trackPollCommentDeleteFail(int errorCode) {
+    public void trackPollCommentDeleteFail(int errorCode, long messageId, long feedbackId) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(SprinklerEvents.MessageDelete)
                 .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                .property(PropertyKey.MessageId, messageId)
+                .property(PropertyKey.PollId, feedbackId)
                 .property(PropertyKey.ResponseSuccess, false)
                 .property(PropertyKey.ErrorCode, errorCode)
                 .build());
@@ -461,6 +464,7 @@ public class PollDetailModel {
                 .property(PropertyKey.ErrorCode, errorCode)
                 .build());
     }
+
     public void trackUnStarredCommentFail(int errorCode) {
         AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
                 .event(SprinklerEvents.UnStarred)
