@@ -165,7 +165,7 @@ public class FileDetailPresenter {
                                          String stickerId, String comment,
                                          List<MentionObject> mentions) {
         try {
-            long messageId = fileDetailModel.sendMessageCommentWithSticker(
+            List<ResMessages.Link> links = fileDetailModel.sendMessageCommentWithSticker(
                     fileId, stickerGroupId, stickerId, comment, mentions);
 
             retrieveFileDetail(fileId, false);
@@ -176,11 +176,13 @@ public class FileDetailPresenter {
             stickerIdStringBuilder.append("-");
             stickerIdStringBuilder.append(stickerId);
 
-            fileDetailModel.trackFileStickerCommentPostSuccess(messageId,
-                    fileId,
-                    stickerIdStringBuilder.toString(),
-                    mentions.size(),
-                    fileDetailModel.hasAllMention(comment, mentions));
+            for (ResMessages.Link link : links) {
+                fileDetailModel.trackFileStickerCommentPostSuccess(link.messageId,
+                        fileId,
+                        stickerIdStringBuilder.toString(),
+                        mentions.size(),
+                        fileDetailModel.hasAllMention(comment, mentions));
+            }
 
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
