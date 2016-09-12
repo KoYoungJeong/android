@@ -18,6 +18,7 @@ public class InitializeInfoConverter implements Converter<InitialInfo, InitialIn
     @Override
     public InitialInfo convert(InitialInfo value) {
         value.setTeamId(value.getTeam().getId());
+        long myId = value.getSelf().getId();
         Collection<Folder> folders = value.getFolders();
         if (folders != null && !folders.isEmpty()) {
             for (Folder folder : folders) {
@@ -75,7 +76,11 @@ public class InitializeInfoConverter implements Converter<InitialInfo, InitialIn
         if (humans != null && !humans.isEmpty()) {
             for (Human human : humans) {
                 human.setInitialInfo(value);
+                if (human.getId() == myId) {
+                    human.setIsStarred(false);
+                }
             }
+
         }
 
         Collection<Bot> bots = value.getBots();
