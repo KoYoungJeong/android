@@ -13,7 +13,7 @@ import java.lang.ref.WeakReference;
 public abstract class LongPressListener implements View.OnTouchListener {
 
     private static final int CONSUME_LONG_PRESS = 1;
-    private static final int DEFAULT_PRESS_TIMEOUT = 5000;
+    private static final int DEFAULT_PRESS_TIMEOUT = 3000;
     private long pressTimeOut;
     private LongPressHandler handler;
 
