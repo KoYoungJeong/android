@@ -16,32 +16,28 @@
 
 package com.tosslab.jandi.app.push.gcm.receiver;
 
-import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.android.gms.gcm.GcmListenerService;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 import com.tosslab.jandi.app.push.receiver.JandiPushIntentService;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-public class GcmPushReceiver extends GcmListenerService {
+import java.util.Map;
 
+public class GcmPushReceiver extends FirebaseMessagingService {
+
+    public static final String KEY_CUSTOM_CONTENT = "custom_content";
     private static final String TAG = "GcmPushReceiver";
 
     @Override
-    public void onMessageReceived(String from, Bundle data) {
-        LogUtil.i(TAG, "onMessageReceived");
-        String dataPayload = data.getString("data");
-        if (!TextUtils.isEmpty(dataPayload)) {
-            // Old type Push
-            return;
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+        super.onMessageReceived(remoteMessage);
+        Map<String, String> data = remoteMessage.getData();
+
+        Log.d(TAG, "onMessageReceived() called with: remoteMessage = [" + data.toString() + "]");
+        if (data.containsKey(KEY_CUSTOM_CONTENT)) {
+            String customContent = data.get(KEY_CUSTOM_CONTENT);
+            JandiPushIntentService.startService(GcmPushReceiver.this, customContent);
         }
-
-        Log.d(TAG, "called with: " + "from = [" + from + "], data = [" + data + "]");
-
-        String customContent = data.getString("custom_content");
-        JandiPushIntentService.startService(GcmPushReceiver.this, customContent);
-
     }
-
 }
