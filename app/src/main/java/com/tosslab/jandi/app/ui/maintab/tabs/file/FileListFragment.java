@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +23,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -52,7 +55,6 @@ import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
-import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.SearchedFilesAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.SearchedFilesAdapterView;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.controller.SearchSelectorViewController;
@@ -130,7 +132,17 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     private SearchSelectorViewController searchSelectorViewController;
     private FileUploadController filePickerViewModel;
 
-    private long entityId = -1;
+    @Nullable
+    @InjectExtra
+    long entityId = -1;
+
+    @Nullable
+    @InjectExtra
+    long writerId = -1;
+
+    @Nullable
+    @InjectExtra
+    String fileType = "all";
 
     private SearchedFilesAdapterView searchedFilesAdapterView;
     private FileSearchActivity.OnSearchItemSelect onSearchItemSelect;
@@ -141,6 +153,14 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
     public void setOnSearchItemSelect(FileSearchActivity.OnSearchItemSelect onSearchItemSelect) {
         this.onSearchItemSelect = onSearchItemSelect;
+    }
+
+    public static FileListFragment create(Context context, long entityId, long writerId, String fileType) {
+        Bundle bundle = new Bundle();
+        bundle.putString("fileType", fileType);
+        bundle.putLong("entityId", entityId);
+        bundle.putLong("writerId", writerId);
+        return (FileListFragment) Fragment.instantiate(context, FileListFragment.class.getName(), bundle);
     }
 
     @Override
@@ -159,13 +179,13 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            entityId = bundle.getLong(PARAM_ENTITY_ID, -1);
-        }
+        Dart.inject(this, bundle);
+
         DaggerFileListComponent.builder()
                 .fileListModule(new FileListModule(this, entityId, isInSearchActivity()))
                 .build()
                 .inject(this);
+
         filePickerViewModel = MainFileUploadControllerImpl_.getInstance_(getContext());
         EventBus.getDefault().register(this);
     }
@@ -210,6 +230,21 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
         if (isInSearchActivity() && isSearchLayoutFirst) {
             initSearchLayoutIfFirst();
+        }
+
+        if (entityId > 0) {
+            fileListPresenter.onEntitySelection(entityId, "");
+            searchSelectorViewController.setCurrentEntity(entityId);
+        }
+
+        if (writerId > 0) {
+            fileListPresenter.onMemberSelection(writerId, "");
+            searchSelectorViewController.setCurrentMember(writerId);
+        }
+
+        if (!TextUtils.equals(fileType, "all")) {
+            fileListPresenter.onFileTypeSelection(fileType, "");
+            searchSelectorViewController.setCurrentFileType(fileType);
         }
 
     }
@@ -383,7 +418,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_main_search) {
-            FileSearchActivity.start(getActivity(), -1);
+            fileListPresenter.onMoveFileSearch();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -531,6 +566,11 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
         }
+    }
+
+    @Override
+    public void moveFileSearch(long entity, long writer, String type) {
+        FileSearchActivity.start(getActivity(), entity, writer, type);
     }
 
     @Override

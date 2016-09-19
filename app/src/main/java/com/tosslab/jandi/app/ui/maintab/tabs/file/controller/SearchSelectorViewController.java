@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.tabs.file.controller;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -304,4 +305,23 @@ public class SearchSelectorViewController {
         textVew.setCompoundDrawablesWithIntrinsicBounds(null, null, rightDrawable, null);
     }
 
+    public void setCurrentEntity(long entityId) {
+        String name = TeamInfoLoader.getInstance().getName(entityId);
+
+        if (!TextUtils.isEmpty(name)) {
+            tvFileListWhere.setText(name);
+        }
+    }
+
+    public void setCurrentMember(long writerId) {
+        String name = TeamInfoLoader.getInstance().getName(writerId);
+        tvFileListWhom.setText(name);
+    }
+
+    public void setCurrentFileType(String fileType) {
+        int titleResId = CategorizedMenuOfFileType.findTitleResIdFromQuery(fileType);
+        if (titleResId > 0) {
+            tvFileListType.setText(titleResId);
+        }
+    }
 }
