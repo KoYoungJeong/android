@@ -626,8 +626,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             }
         });
 
-        stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendMessage());
-
         stickerViewModel.setType(isInDirectMessage()
                 ? StickerViewModel.TYPE_MESSAGE : StickerViewModel.TYPE_TOPIC);
     }

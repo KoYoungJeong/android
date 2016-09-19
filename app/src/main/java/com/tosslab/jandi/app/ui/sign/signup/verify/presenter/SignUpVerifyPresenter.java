@@ -61,7 +61,6 @@ public class SignUpVerifyPresenter {
             model.trackSignUpFailAndFlush(errCode);
             switch (errCode) {
                 case EXPIRED_VERIFICATION_CODE:
-
                     view.showExpiredVerificationCode();
                     break;
                 case INVALIDATE_VERIFICATION_CODE:
