@@ -26,15 +26,15 @@ import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
-import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
-import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
-import com.tosslab.jandi.app.events.poll.PollDataChangedEvent;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
 import com.tosslab.jandi.app.events.entities.MoveSharedEntityEvent;
+import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
+import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
+import com.tosslab.jandi.app.events.poll.PollDataChangedEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.local.orm.domain.ReadyCommentForPoll;
 import com.tosslab.jandi.app.local.orm.repositories.ReadyCommentForPollRepository;
@@ -405,24 +405,21 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     private void initStickers() {
         stickerViewModel.setOnStickerClick((groupId, stickerId) -> {
             StickerInfo oldSticker = stickerInfo;
-            stickerInfo = new StickerInfo();
-            stickerInfo.setStickerGroupId(groupId);
-            stickerInfo.setStickerId(stickerId);
-            vgStickerPreview.setVisibility(View.VISIBLE);
-
-            if (oldSticker.getStickerGroupId() != stickerInfo.getStickerGroupId()
-                    || !TextUtils.equals(oldSticker.getStickerId(), stickerInfo.getStickerId())) {
-
+            if (oldSticker.getStickerGroupId() == groupId
+                    && oldSticker.getStickerId().equals(stickerId)) {
+                sendComment();
+            } else {
+                stickerInfo = new StickerInfo();
+                stickerInfo.setStickerGroupId(groupId);
+                stickerInfo.setStickerId(stickerId);
+                vgStickerPreview.setVisibility(View.VISIBLE);
                 StickerManager.getInstance()
                         .loadStickerDefaultOption(ivStickerPreview,
                                 stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+                setCommentSendButtonEnabled();
+                sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Select);
             }
-            setCommentSendButtonEnabled();
-
-            sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Select);
         });
-
-        stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendComment());
         stickerViewModel.setType(StickerViewModel.TYPE_FILE_DETAIL);
     }
 
