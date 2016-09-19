@@ -97,12 +97,20 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
     @Override
     protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
+        unregistEvent();
         super.onDestroy();
+    }
+
+    synchronized private void unregistEvent() {
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
     }
 
     @Override
     public void moveToMainActivity() {
+
+        unregistEvent();
 
         startActivity(Henson.with(this)
                 .gotoMainTabActivity()

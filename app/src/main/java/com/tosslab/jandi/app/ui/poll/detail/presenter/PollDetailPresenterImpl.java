@@ -364,7 +364,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                                 messageId,
                                 pollId,
                                 stickerIdStringBuilder.toString(),
-                                mentions.size(),
+                                0,
                                 pollDetailModel.hasAllMention(message, mentions));
 
                     }

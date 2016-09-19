@@ -182,7 +182,7 @@ public class FileDetailPresenter {
                     fileDetailModel.trackFileStickerCommentPostSuccess(link.messageId,
                             fileId,
                             stickerIdStringBuilder.toString(),
-                            mentions.size(),
+                            0,
                             fileDetailModel.hasAllMention(comment, mentions));
                 } else {
                     fileDetailModel.trackFileCommentPostSuccess(link.messageId,
