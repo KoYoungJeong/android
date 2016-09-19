@@ -177,11 +177,19 @@ public class FileDetailPresenter {
             stickerIdStringBuilder.append(stickerId);
 
             for (ResMessages.Link link : links) {
-                fileDetailModel.trackFileStickerCommentPostSuccess(link.messageId,
-                        fileId,
-                        stickerIdStringBuilder.toString(),
-                        mentions.size(),
-                        fileDetailModel.hasAllMention(comment, mentions));
+                if (link.message instanceof ResMessages.CommentStickerMessage) {
+
+                    fileDetailModel.trackFileStickerCommentPostSuccess(link.messageId,
+                            fileId,
+                            stickerIdStringBuilder.toString(),
+                            mentions.size(),
+                            fileDetailModel.hasAllMention(comment, mentions));
+                } else {
+                    fileDetailModel.trackFileCommentPostSuccess(link.messageId,
+                            fileId,
+                            mentions.size(),
+                            fileDetailModel.hasAllMention(comment, mentions));
+                }
             }
 
         } catch (Exception e) {
