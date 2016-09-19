@@ -172,9 +172,9 @@ public class FileDetailPresenter {
                                          String stickerId, String comment,
                                          List<MentionObject> mentions) {
         try {
-            long messageId = fileDetailModel.sendMessageCommentWithSticker(
+            List<ResMessages.Link> messageLink = fileDetailModel.sendMessageCommentWithSticker(
                     fileId, stickerGroupId, stickerId, comment, mentions);
-
+            long messageId = messageLink.get(0).message.id;
             retrieveFileDetail(fileId, false);
 
             view.scrollToLastComment();

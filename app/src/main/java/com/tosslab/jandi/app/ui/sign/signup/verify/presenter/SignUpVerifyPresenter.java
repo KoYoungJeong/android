@@ -102,7 +102,7 @@ public class SignUpVerifyPresenter {
             view.clearVerifyCode();
         } catch (RetrofitException e) {
             e.printStackTrace();
-            SprinklrResendVerificationEmail.trackFail(e.getResponseCode());
+            SprinklrResendVerificationEmail.sendFailLog(e.getResponseCode());
             view.hideProgress();
             view.showErrorToast(context.getResources().getString(R.string.err_network));
         }

@@ -166,19 +166,10 @@ public class FileDetailModel {
         }
     }
 
-    public long sendMessageCommentWithSticker(long fileId, long stickerGroupId, String stickerId, String comment, List<MentionObject> mentions) throws RetrofitException {
-        try {
-            long teamId = AccountRepository.getRepository().getSelectedTeamId();
-            ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerGroupId, stickerId, teamId, fileId, "", comment, mentions);
-            ResCommon resCommon = stickerApi.get().sendStickerComment(reqSendSticker);
-            return resCommon.id;
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return -1;
+    public List<ResMessages.Link> sendMessageCommentWithSticker(long fileId, long stickerGroupId, String stickerId, String comment, List<MentionObject> mentions) throws RetrofitException {
+        long teamId = AccountRepository.getRepository().getSelectedTeamId();
+        ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerGroupId, stickerId, teamId, fileId, "", comment, mentions);
+        return stickerApi.get().sendStickerComment(reqSendSticker);
     }
 
     public boolean hasAllMention(String message, List<MentionObject> mentions) {

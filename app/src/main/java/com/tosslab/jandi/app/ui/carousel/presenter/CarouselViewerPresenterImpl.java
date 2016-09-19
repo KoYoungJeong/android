@@ -313,7 +313,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 // fileDetailModel.trackDisablePublicLinkSuccess(fileMessageId);
                 subscriber.onNext(fileMessage);
             } catch (RetrofitException e) {
-                SprinklrPublicLinkDeleted.trackFail(e.getResponseCode());
+                SprinklrPublicLinkDeleted.sendFailLog(e.getResponseCode());
                 subscriber.onError(e);
             }
             subscriber.onCompleted();
