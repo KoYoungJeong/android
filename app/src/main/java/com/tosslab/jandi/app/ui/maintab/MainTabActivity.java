@@ -380,16 +380,25 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
     public void onEventMainThread(TopicBadgeEvent event) {
         int count = event.getCount();
+        if (count > 999) {
+            count = 999;
+        }
         setTopicBadge(count);
     }
 
     public void onEventMainThread(ChatBadgeEvent event) {
         int count = event.getCount();
+        if (count > 999) {
+            count = 999;
+        }
         setChatBadge(count);
     }
 
     public void onEventMainThread(RefreshPollBadgeCountEvent event) {
         int count = event.getBadgeCount();
+        if (count > 999) {
+            count = 999;
+        }
         setMypageBadge(count);
     }
 

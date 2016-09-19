@@ -84,8 +84,11 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             viewHolder.ivFavorite.setVisibility(View.INVISIBLE);
         }
 
-        viewHolder.tvBadgeCount.setText(String.valueOf(item.getUnread()));
-
+        if (item.getUnread() > 999) {
+            viewHolder.tvBadgeCount.setText(String.valueOf(999));
+        } else {
+            viewHolder.tvBadgeCount.setText(String.valueOf(item.getUnread()));
+        }
         if (item.getUnread() <= 0) {
             viewHolder.tvBadgeCount.setVisibility(View.INVISIBLE);
         } else {
