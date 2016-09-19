@@ -6,6 +6,7 @@ import com.baidu.android.pushservice.PushMessageReceiver;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.push.PushTokenRegister;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.List;
 
@@ -41,6 +42,7 @@ public class BaiduRegistrationReceiver extends PushMessageReceiver {
     public void onBind(Context context, int errorCode, String appid,
                        String userId, String channelId, String requestId) {
 
+        LogUtil.d(TAG, "onBind() called with: errorCode = [" + errorCode + "], appid = [" + appid + "], userId = [" + userId + "], channelId = [" + channelId + "], requestId = [" + requestId + "]");
         if (errorCode == 0) {
             // channelId = push key
             PushTokenRepository.getInstance().upsertPushToken(new PushToken("baidu", channelId));
