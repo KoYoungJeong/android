@@ -308,20 +308,32 @@ public class SearchSelectorViewController {
     public void setCurrentEntity(long entityId) {
         String name = TeamInfoLoader.getInstance().getName(entityId);
 
-        if (!TextUtils.isEmpty(name)) {
+        if (entityId < 0) {
+            tvFileListWhere.setText(R.string.jandi_search_category_everywhere);
+        } else if (!TextUtils.isEmpty(name)) {
             tvFileListWhere.setText(name);
         }
     }
 
     public void setCurrentMember(long writerId) {
-        String name = TeamInfoLoader.getInstance().getName(writerId);
-        tvFileListWhom.setText(name);
+        String name;
+
+        if (writerId < 0) {
+            tvFileListWhom.setText(R.string.jandi_search_category_everyone);
+        } else if (TeamInfoLoader.getInstance().getMyId() == writerId) {
+            tvFileListWhom.setText(R.string.jandi_my_files);
+        } else {
+            name = TeamInfoLoader.getInstance().getName(writerId);
+            tvFileListWhom.setText(name);
+        }
     }
 
     public void setCurrentFileType(String fileType) {
         int titleResId = CategorizedMenuOfFileType.findTitleResIdFromQuery(fileType);
         if (titleResId > 0) {
             tvFileListType.setText(titleResId);
+        } else {
+            tvFileListType.setText(R.string.jandi_file_category_all);
         }
     }
 }

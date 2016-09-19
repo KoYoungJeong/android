@@ -662,9 +662,6 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     }
 
     public void onEventMainThread(CategorizedMenuOfFileType event) {
-        if (!isForeground) {
-            return;
-        }
         if (onSearchText != null) {
             fileListPresenter.onFileTypeSelection(
                     event.getServerQuery(), onSearchText.getSearchText());
@@ -672,12 +669,14 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
             fileListPresenter.onFileTypeSelection(
                     event.getServerQuery(), null);
         }
+
+        if (!isForeground) {
+            searchSelectorViewController.setCurrentFileType(event.getServerQuery());
+        }
+
     }
 
     public void onEventMainThread(CategorizingAsOwner event) {
-        if (!isForeground) {
-            return;
-        }
         if (onSearchText != null) {
             fileListPresenter.onMemberSelection(
                     event.userId, onSearchText.getSearchText());
@@ -685,12 +684,13 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
             fileListPresenter.onMemberSelection(
                     event.userId, null);
         }
+
+        if (!isForeground) {
+            searchSelectorViewController.setCurrentMember(event.userId);
+        }
     }
 
     public void onEventMainThread(CategorizingAsEntity event) {
-        if (!isForeground) {
-            return;
-        }
         if (onSearchText != null) {
             fileListPresenter.onEntitySelection(
                     event.sharedEntityId, onSearchText.getSearchText());
@@ -698,6 +698,11 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
             fileListPresenter.onEntitySelection(
                     event.sharedEntityId, null);
         }
+
+        if (!isForeground) {
+            searchSelectorViewController.setCurrentEntity(event.sharedEntityId);
+        }
+
     }
 
     public void onEventMainThread(FileCreatedEvent event) {
