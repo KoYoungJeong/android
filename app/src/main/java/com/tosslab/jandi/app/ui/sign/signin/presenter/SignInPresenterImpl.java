@@ -8,6 +8,8 @@ import com.tosslab.jandi.app.ui.sign.signin.model.SignInModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrSignIn;
 import com.tosslab.jandi.app.utils.parse.PushUtil;
 
 import javax.inject.Inject;
@@ -102,14 +104,14 @@ public class SignInPresenterImpl implements SignInPresenter {
                                     view.showErrorInvalidEmailOrPassword();
                                     break;
                             }
-                            model.trackSignInFail(JandiConstants.NetworkError.DATA_NOT_FOUND);
+                            SprinklrSignIn.sendFailLog(JandiConstants.NetworkError.DATA_NOT_FOUND);
                         } catch (Exception e) {
                             view.showNetworkErrorToast();
-                            model.trackSignInFail(JandiConstants.NetworkError.BAD_REQUEST);
+                            SprinklrSignIn.sendFailLog(JandiConstants.NetworkError.BAD_REQUEST);
                         }
                     } else {
                         view.showNetworkErrorToast();
-                        model.trackSignInFail(JandiConstants.NetworkError.BAD_REQUEST);
+                        SprinklrSignIn.sendFailLog(JandiConstants.NetworkError.BAD_REQUEST);
                     }
                 });
     }
@@ -129,7 +131,8 @@ public class SignInPresenterImpl implements SignInPresenter {
                     model.subscribePush(accessToken.getDeviceId());
                     JandiPreference.setFirstLogin(JandiApplication.getContext());
 
-                    model.trackSignInSuccess();
+                    SprinklrSignIn.sendLog(false, false);
+                    AnalyticsUtil.flushSprinkler();
                 }).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     view.dismissProgressDialog();

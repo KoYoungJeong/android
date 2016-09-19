@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.FileDetailRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
@@ -28,17 +27,14 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrStarred;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrUnstarred;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
@@ -185,242 +181,6 @@ public class FileDetailModel {
         return -1;
     }
 
-    public void trackFileShareSuccess(long topicId, long fileId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.FileShare)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.TopicId, topicId)
-                .property(PropertyKey.FileId, fileId)
-                .build());
-
-    }
-
-    public void trackFileShareFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.FileShare)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-
-    }
-
-    public void trackFileUnShareSuccess(long topicId, long fileId) {
-
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.FileUnShare)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.TopicId, topicId)
-                .property(PropertyKey.FileId, fileId)
-                .build());
-
-    }
-
-    public void trackFileUnShareFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.FileUnShare)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-    }
-
-    public void trackFileDeleteSuccess(long topicId, long fileId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.FileDelete)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.TopicId, topicId)
-                .property(PropertyKey.FileId, fileId)
-                .build());
-    }
-
-    public void trackFileDeleteFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.FileDelete)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-    }
-
-    public void trackFileCommentPostSuccess(long messageId,
-                                            long fileId,
-                                            int mentionCount,
-                                            boolean hasAllMention) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.MessagePost)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.MentionCount, mentionCount)
-                .property(PropertyKey.HasAllMention, hasAllMention)
-                .property(PropertyKey.FileId, fileId)
-                .property(PropertyKey.MessageId, messageId)
-                .build());
-    }
-
-    public void trackFileStickerCommentPostSuccess(long messageId,
-                                                   long fileId,
-                                                   String stickerId,
-                                                   long mentionCount,
-                                                   boolean hasAllMention) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.MessagePost)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.StickerId, stickerId)
-                .property(PropertyKey.MentionCount, mentionCount)
-                .property(PropertyKey.HasAllMention, hasAllMention)
-                .property(PropertyKey.FileId, fileId)
-                .property(PropertyKey.MessageId, messageId)
-                .build());
-    }
-
-
-    public void trackFileCommentPostFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.MessagePost)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-    }
-
-    public void trackFileCommentDeleteSuccess(long messageId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.MessageDelete)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.MessageId, messageId)
-                .build());
-    }
-
-    public void trackFileCommentDeleteFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.MessageDelete)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-    }
-
-    public void trackCreatePublicLinkSuccess(long fileId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.PublicLinkCreated)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.FileId, fileId)
-                .build()
-        );
-    }
-
-    public void trackDisablePublicLinkSuccess(long fileId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.PublicLinkDeleted)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.FileId, fileId)
-                .build()
-        );
-    }
-
-    public void trackCreatePublicLinkFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.PublicLinkCreated)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build()
-        );
-    }
-
-    public void trackDisablePublicLinkFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.PublicLinkDeleted)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build()
-        );
-    }
-
-    public void trackStarredFileSuccess(long fileId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.Starred)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.FileId, fileId)
-                .build());
-    }
-
-    public void trackStarredCommentSuccess(long commentId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.Starred)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.MessageId, commentId)
-                .build());
-    }
-
-    public void trackStarredFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.Starred)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-    }
-
-    public void trackUnStarredFileSuccess(long fileId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.UnStarred)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.FileId, fileId)
-                .build());
-    }
-
-    public void trackUnStarredCommentSuccess(long commentId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.UnStarred)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.MessageId, commentId)
-                .build());
-    }
-
-    public void trackUnStarredFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.UnStarred)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-    }
-
     public boolean hasAllMention(String message, List<MentionObject> mentions) {
         return Observable.from(mentions)
                 .takeFirst(mentionObject -> {
@@ -445,10 +205,10 @@ public class FileDetailModel {
         try {
             messageApi.get().registStarredMessage(teamId, messageId, new ReqNull());
             MessageRepository.getRepository().updateStarred(messageId, true);
-            trackStarredCommentSuccess(messageId);
+            SprinklrStarred.sendLogWithCommentId(messageId);
         } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
-            trackStarredFail(e.getResponseCode());
+            SprinklrStarred.sendFailLog(e.getResponseCode());
         }
     }
 
@@ -456,10 +216,10 @@ public class FileDetailModel {
         try {
             messageApi.get().unregistStarredMessage(teamId, messageId);
             MessageRepository.getRepository().updateStarred(messageId, false);
-            trackUnStarredCommentSuccess(messageId);
+            SprinklrUnstarred.sendLogWithCommentId(messageId);
         } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
-            trackUnStarredFail(e.getResponseCode());
+            SprinklrUnstarred.sendFailLog(e.getResponseCode());
         }
     }
 
@@ -467,10 +227,10 @@ public class FileDetailModel {
         try {
             messageApi.get().registStarredMessage(teamId, fileId, new ReqNull());
             MessageRepository.getRepository().updateStarred(fileId, true);
-            trackStarredFileSuccess(fileId);
+            SprinklrStarred.sendLogWithFileId(fileId);
         } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
-            trackStarredFail(e.getResponseCode());
+            SprinklrStarred.sendFailLog(e.getResponseCode());
         }
     }
 
@@ -478,10 +238,10 @@ public class FileDetailModel {
         try {
             messageApi.get().unregistStarredMessage(teamId, fileId);
             MessageRepository.getRepository().updateStarred(fileId, false);
-            trackUnStarredFileSuccess(fileId);
+            SprinklrUnstarred.sendLogWithFileId(fileId);
         } catch (RetrofitException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
-            trackUnStarredFail(e.getResponseCode());
+            SprinklrUnstarred.sendFailLog(e.getResponseCode());
         }
     }
 

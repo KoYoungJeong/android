@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.poll.detail.presenter;
 import android.util.Log;
 import android.util.Pair;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
@@ -18,13 +17,15 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.model.PollDetailDataModel;
 import com.tosslab.jandi.app.ui.poll.detail.model.PollDetailModel;
-import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrMessageDelete;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrMessagePost;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrPollDeleted;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrPollFinished;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrPollVoted;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrStarred;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrUnstarred;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.Collection;
 import java.util.List;
@@ -127,17 +128,17 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                                 try {
                                     if (futureStar) {
                                         pollDetailModel.starPoll(messageId);
-                                        pollDetailModel.trackStarredPollSuccess(messageId);
+                                        SprinklrStarred.sendLogWithPollId(messageId);
                                     } else {
                                         pollDetailModel.unStarPoll(messageId);
-                                        pollDetailModel.trackUnStarredPollSuccess(messageId);
+                                        SprinklrUnstarred.sendLogWithPollId(messageId);
                                     }
                                     return Observable.just(pair);
                                 } catch (RetrofitException e) {
                                     if (futureStar) {
-                                        pollDetailModel.trackStarredFail(e.getResponseCode());
+                                        SprinklrStarred.sendFailLog(e.getResponseCode());
                                     } else {
-                                        pollDetailModel.trackUnStarredFail(e.getResponseCode());
+                                        SprinklrUnstarred.sendFailLog(e.getResponseCode());
                                     }
                                     return Observable.error(e);
                                 }
@@ -242,16 +243,11 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
 
                     pollDetailView.initPollDetailExtras(poll);
 
-                    AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                            .event(SprinklerEvents.PollVoted)
-                            .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                            .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                            .property(PropertyKey.ResponseSuccess, true)
-                            .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
-                            .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
-                            .property(PropertyKey.TopicId, poll.getTopicId())
-                            .property(PropertyKey.PollId, pollId)
-                            .build());
+                    SprinklrPollVoted.sendLog(TeamInfoLoader.getInstance().getMyId(),
+                            pollId,
+                            TeamInfoLoader.getInstance().getTeamId(),
+                            poll.getTopicId());
+
                 }, t -> {
                     pollDetailView.dismissProgress();
 
@@ -260,18 +256,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
 
                     if (t instanceof RetrofitException) {
                         RetrofitException e = (RetrofitException) t;
-                        Poll poll = pollDetailDataModel.getPoll();
-                        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                                .event(SprinklerEvents.PollVoted)
-                                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                                .property(PropertyKey.ResponseSuccess, false)
-                                .property(PropertyKey.ErrorCode, e.getStatusCode())
-                                .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
-                                .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
-                                .property(PropertyKey.TopicId, poll.getTopicId())
-                                .property(PropertyKey.PollId, pollId)
-                                .build());
+                        SprinklrPollVoted.sendFailLog(e.getResponseCode());
                     }
                 });
     }
@@ -327,7 +312,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(resPollCommentCreated -> {
-                    pollDetailModel.trackPollCommentPostSuccess(
+                    SprinklrMessagePost.sendLogWithPollComment(
                             resPollCommentCreated.getLinkComment().messageId,
                             pollId,
                             mentions.size(),
@@ -337,7 +322,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
                     if (throwable instanceof RetrofitException) {
                         RetrofitException e = (RetrofitException) throwable;
-                        pollDetailModel.trackPollCommentPostFail(e.getResponseCode());
+                        SprinklrMessagePost.trackFail(e.getResponseCode());
                     }
                 });
     }
@@ -364,10 +349,10 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                         messageId = resPollCommentCreated.getLinkComment().messageId;
                     }
 
-                    pollDetailModel.trackPollStickerCommentPostSuccess(
+                    SprinklrMessagePost.sendLogWithStickerPoll(
                             messageId,
-                            pollId,
                             stickerIdStringBuilder.toString(),
+                            pollId,
                             mentions.size(),
                             pollDetailModel.hasAllMention(message, mentions));
 
@@ -375,7 +360,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
                     if (throwable instanceof RetrofitException) {
                         RetrofitException e = (RetrofitException) throwable;
-                        pollDetailModel.trackPollCommentPostFail(e.getResponseCode());
+                        SprinklrMessagePost.trackFail(e.getResponseCode());
                     }
 
                 });
@@ -428,11 +413,11 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     pollDetailView.notifyDataSetChanged();
                     pollDetailView.showCommentUnStarredSuccessToast();
                     EventBus.getDefault().post(new StarredInfoChangeEvent());
-                    pollDetailModel.trackUnStarredCommentSuccess(messageId);
+                    SprinklrUnstarred.sendLogWithCommentId(messageId);
                 }, e -> {
                     LogUtil.e(TAG, Log.getStackTraceString(e));
                     if (e instanceof RetrofitException) {
-                        pollDetailModel.trackUnStarredFail(((RetrofitException) e).getResponseCode());
+                        SprinklrUnstarred.sendFailLog(((RetrofitException) e).getResponseCode());
                     }
                 });
     }
@@ -451,11 +436,11 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
 
                     pollDetailView.showCommentStarredSuccessToast();
                     EventBus.getDefault().post(new StarredInfoChangeEvent());
-                    pollDetailModel.trackStarredCommentSuccess(messageId);
+                    SprinklrStarred.sendLogWithCommentId(messageId);
                 }, e -> {
                     LogUtil.e(TAG, Log.getStackTraceString(e));
                     if (e instanceof RetrofitException) {
-                        pollDetailModel.trackStarredFail(((RetrofitException) e).getResponseCode());
+                        SprinklrStarred.sendFailLog(((RetrofitException) e).getResponseCode());
                     }
                 });
     }
@@ -488,7 +473,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
             }
 
             if (e instanceof RetrofitException) {
-                pollDetailModel.trackPollCommentDeleteFail(((RetrofitException) e).getResponseCode());
+                SprinklrMessageDelete.sendFailLog(((RetrofitException) e).getResponseCode());
             }
         };
 
@@ -505,7 +490,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
-                    pollDetailModel.trackPollCommentDeleteSuccess(messageId);
+                    SprinklrMessageDelete.sendLog(messageId);
                 }, errorAction);
     }
 
@@ -514,7 +499,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
-                    pollDetailModel.trackPollCommentDeleteSuccess(messageId);
+                    SprinklrMessageDelete.sendLog(messageId);
                 }, errorAction);
     }
 
@@ -537,45 +522,23 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     pollDetailView.showPollDeleteSuccessToast();
                     pollDetailView.finish();
 
-                    FutureTrack.Builder trackBuilder = new FutureTrack.Builder()
-                            .event(SprinklerEvents.PollDeleted)
-                            .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                            .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                            .property(PropertyKey.ResponseSuccess, true)
-                            .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
-                            .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId());
-
                     Poll poll = resDeletePoll.getLinkMessage().poll;
                     long topicId = poll != null ? poll.getTopicId() : -1;
 
-                    if (topicId > 0) {
-                        trackBuilder.property(PropertyKey.TopicId, topicId);
-                    }
+                    SprinklrPollDeleted.sendLog(TeamInfoLoader.getInstance().getMyId(),
+                            pollId,
+                            TeamInfoLoader.getInstance().getTeamId(),
+                            topicId);
 
-                    trackBuilder.property(PropertyKey.PollId, pollId);
-
-                    AnalyticsUtil.trackSprinkler(trackBuilder.build());
                 }, e -> {
                     pollDetailView.dismissProgress();
 
                     LogUtil.e(TAG, Log.getStackTraceString(e));
                     pollDetailView.showUnExpectedErrorToast();
 
-                    Poll poll = pollDetailDataModel.getPoll();
-
                     if (e instanceof RetrofitException) {
                         RetrofitException e1 = (RetrofitException) e;
-                        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                                .event(SprinklerEvents.PollDeleted)
-                                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                                .property(PropertyKey.ResponseSuccess, false)
-                                .property(PropertyKey.ErrorCode, e1.getStatusCode())
-                                .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
-                                .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
-                                .property(PropertyKey.TopicId, poll.getTopicId())
-                                .property(PropertyKey.PollId, pollId)
-                                .build());
+                        SprinklrPollDeleted.sendFailLog(e1.getResponseCode());
                     }
 
                 });
@@ -612,16 +575,12 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
 
                     pollDetailView.initPollDetailExtras(poll);
 
-                    AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                            .event(SprinklerEvents.PollFinished)
-                            .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                            .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                            .property(PropertyKey.ResponseSuccess, true)
-                            .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
-                            .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
-                            .property(PropertyKey.TopicId, poll.getTopicId())
-                            .property(PropertyKey.PollId, pollId)
-                            .build());
+                    SprinklrPollFinished.sendLog(
+                            TeamInfoLoader.getInstance().getMyId(),
+                            pollId,
+                            TeamInfoLoader.getInstance().getTeamId(),
+                            poll.getTopicId());
+
                 }, e -> {
                     pollDetailView.dismissProgress();
 
@@ -629,18 +588,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                     pollDetailView.showUnExpectedErrorToast();
                     if (e instanceof RetrofitException) {
                         RetrofitException e1 = (RetrofitException) e;
-                        Poll poll = pollDetailDataModel.getPoll();
-                        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                                .event(SprinklerEvents.PollFinished)
-                                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                                .property(PropertyKey.ResponseSuccess, false)
-                                .property(PropertyKey.ErrorCode, e1.getStatusCode())
-                                .property(PropertyKey.TeamId, TeamInfoLoader.getInstance().getTeamId())
-                                .property(PropertyKey.TopicId, poll.getTopicId())
-                                .property(PropertyKey.MemberId, TeamInfoLoader.getInstance().getMyId())
-                                .property(PropertyKey.PollId, pollId)
-                                .build());
+                        SprinklrPollFinished.sendFailLog(e1.getResponseCode());
                     }
                 });
     }

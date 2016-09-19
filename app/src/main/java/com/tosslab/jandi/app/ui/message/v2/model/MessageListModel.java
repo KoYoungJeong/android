@@ -45,13 +45,11 @@ import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.poll.util.PollUtil;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.UiUtils;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrMessagePost;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrStarred;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrUnstarred;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
@@ -202,12 +200,13 @@ public class MessageListModel {
                 ReqStickerMessage reqStickerMessage = (ReqStickerMessage) reqMessage;
                 String stickerId =
                         reqStickerMessage.getStickerGroupId() + "-" + reqStickerMessage.getStickerId();
-                trackStickerMessagePostSuccess(link.messageId, stickerId);
+                SprinklrMessagePost.sendLogWithSticker(link.messageId, stickerId);
             } else if (reqMessage instanceof ReqTextMessage) {
                 ReqTextMessage reqTextMessage = (ReqTextMessage) reqMessage;
                 List<MentionObject> mentions = reqTextMessage.getMentions();
-                trackMessagePostSuccess(
-                        link.messageId, mentions.size(), hasAllMention(reqTextMessage.getText(), mentions));
+                SprinklrMessagePost.sendLogWithMessage(link.messageId,
+                        mentions.size(),
+                        hasAllMention(reqTextMessage.getText(), mentions));
             }
             return link;
 
@@ -219,9 +218,9 @@ public class MessageListModel {
             int errorCode = e.getStatusCode();
 
             if (reqMessage instanceof ReqStickerMessage) {
-                trackStickerMessagePostFail(errorCode);
+                SprinklrMessagePost.trackFail(errorCode);
             } else if (reqMessage instanceof ReqTextMessage) {
-                trackMessagePostFail(errorCode);
+                SprinklrMessagePost.trackFail(errorCode);
             }
 
             return null;
@@ -231,7 +230,7 @@ public class MessageListModel {
             SendMessageRepository.getRepository().updateSendMessageStatus(
                     localId, SendMessage.Status.FAIL);
 
-            trackMessagePostFail(-1);
+            SprinklrMessagePost.trackFail(-1);
             return null;
 
         }
@@ -346,120 +345,14 @@ public class MessageListModel {
         RoomMarkerRepository.getInstance().upsertRoomMarker(roomId, myId, lastLinkId);
     }
 
-    private void trackMessagePostSuccess(long messageId, int mentionCount, boolean hasAllMention) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.MessagePost)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.MentionCount, mentionCount)
-                .property(PropertyKey.HasAllMention, hasAllMention)
-                .property(PropertyKey.MessageId, messageId)
-                .build());
-    }
-
-    private void trackMessagePostFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.MessagePost)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-    }
-
-    private void trackStickerMessagePostSuccess(long messageId, String stickerId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.MessagePost)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.StickerId, stickerId)
-                .property(PropertyKey.MessageId, messageId)
-                .property(PropertyKey.MentionCount, 0)
-                .property(PropertyKey.HasAllMention, false)
-                .build());
-    }
-
-    private void trackStickerMessagePostFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.MessagePost)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-    }
-
-    public void trackMessageDeleteSuccess(long messageId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.MessageDelete)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.MessageId, messageId)
-                .build());
-
-    }
-
-    public void trackMessageDeleteFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.MessageDelete)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-    }
-
-    public void trackStarredMessageSuccess(long messageId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.Starred)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.MessageId, messageId)
-                .build());
-    }
-
-    public void trackStarredMessageFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.Starred)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-    }
-
-    public void trackUnStarredMessageSuccess(long messageId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.UnStarred)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.MessageId, messageId)
-                .build());
-    }
-
-    public void trackUnStarredMessageFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.UnStarred)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-    }
-
     public void registStarredMessage(long teamId, long messageId) throws RetrofitException {
         try {
             messageApi.get().registStarredMessage(teamId, messageId, new ReqNull());
             MessageRepository.getRepository().updateStarred(messageId, true);
-            trackStarredMessageSuccess(messageId);
+            SprinklrStarred.sendLogWithMessageId(messageId);
         } catch (RetrofitException e) {
             e.printStackTrace();
-            trackStarredMessageFail(e.getResponseCode());
+            SprinklrStarred.sendFailLog(e.getResponseCode());
             throw e;
         }
     }
@@ -468,10 +361,10 @@ public class MessageListModel {
         try {
             messageApi.get().unregistStarredMessage(teamId, messageId);
             MessageRepository.getRepository().updateStarred(messageId, false);
-            trackUnStarredMessageSuccess(messageId);
+            SprinklrUnstarred.sendLogWithMessageId(messageId);
         } catch (RetrofitException e) {
             e.printStackTrace();
-            trackUnStarredMessageFail(e.getResponseCode());
+            SprinklrUnstarred.sendFailLog(e.getResponseCode());
             throw e;
         }
     }

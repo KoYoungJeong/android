@@ -39,6 +39,7 @@ import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageRepositoryModel;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrMessageDelete;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
@@ -877,15 +878,14 @@ public class MessageListV2Presenter {
             }
 
 
-            messageListModel.trackMessageDeleteSuccess(messageId);
+            SprinklrMessageDelete.sendLog(messageId);
 
         } catch (RetrofitException e) {
             view.dismissProgressWheel();
-            int errorCode = e.getStatusCode();
-            messageListModel.trackMessageDeleteFail(errorCode);
+            SprinklrMessageDelete.sendFailLog(e.getResponseCode());
         } catch (Exception e) {
             view.dismissProgressWheel();
-            messageListModel.trackMessageDeleteFail(-1);
+            SprinklrMessageDelete.sendFailLog(-1);
         }
 
     }
@@ -946,7 +946,6 @@ public class MessageListV2Presenter {
             } catch (RetrofitException e) {
                 return Observable.error(e);
             }
-
         })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

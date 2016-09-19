@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.message.detail.model;
 
-import android.content.Context;
 import android.preference.PreferenceManager;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -13,11 +12,6 @@ import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
-import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.List;
 
@@ -35,7 +29,8 @@ public class TopicDetailModel {
     @Inject
     public TopicDetailModel(Lazy<RoomsApi> roomsApi) {
         this.roomsApi = roomsApi;
-        this.entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());;
+        this.entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
+        ;
     }
 
     public TopicRoom getTopic(long entityId) {
@@ -89,26 +84,6 @@ public class TopicDetailModel {
         }
     }
 
-    public void trackTopicDeleteSuccess(long entityId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.TopicDelete)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.TopicId, entityId)
-                .build());
-    }
-
-    public void trackTopicDeleteFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.TopicDelete)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-    }
-
     public void modifyTopicName(int entityType, long entityId, String inputName) throws RetrofitException {
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
             entityClientManager.modifyChannelName(entityId, inputName);
@@ -124,70 +99,6 @@ public class TopicDetailModel {
 
     public boolean isPushOn(long entityId) {
         return TeamInfoLoader.getInstance().getTopic(entityId).isPushSubscribe();
-    }
-
-    public void trackChangingEntityName(Context context, long entityId, int entityType) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.TopicNameChange)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.TopicId, entityId)
-                .build());
-
-    }
-
-    public void trackChangingEntityNameFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.TopicNameChange)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.TopicId, errorCode)
-                .build());
-
-    }
-
-    public void trackTopicStarSuccess(long topicId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.TopicStar)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.TopicId, topicId)
-                .build());
-    }
-
-    public void trackTopicUnStarSuccess(long topicId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.TopicUnStar)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.TopicId, topicId)
-                .build());
-
-    }
-
-    public void trackTopicStarFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.TopicStar)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-    }
-
-    public void trackTopicUnStarFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.TopicUnStar)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-
     }
 
     public boolean isDefaultTopic(long entityId) {

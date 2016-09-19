@@ -11,6 +11,8 @@ import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrSignIn;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.PushUtil;
@@ -180,7 +182,8 @@ public class IntroActivityPresenter {
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
-                    model.trackAutoSignInSuccessAndFlush(true);
+                    SprinklrSignIn.sendLog(true, true);
+                    AnalyticsUtil.flushSprinkler();
                     view.moveToMainActivity();
                 }, t -> {
                 });
@@ -189,8 +192,8 @@ public class IntroActivityPresenter {
         hasTeamObservable.filter(it -> !it)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
-                    model.trackAutoSignInSuccessAndFlush(false);
-
+                    SprinklrSignIn.sendLog(false, true);
+                    AnalyticsUtil.flushSprinkler();
                     view.moveTeamSelectActivity();
                 });
     }

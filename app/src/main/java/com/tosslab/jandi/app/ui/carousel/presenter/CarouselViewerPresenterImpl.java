@@ -17,6 +17,11 @@ import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailPresenter;
 import com.tosslab.jandi.app.ui.filedetail.domain.FileStarredInfo;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrFileDelete;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrFileShare;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrFileUnshare;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrPublicLinkCreated;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrPublicLinkDeleted;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.io.File;
@@ -232,6 +237,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
         Observable.create(subscriber -> {
             try {
                 fileDetailModel.deleteFile(fileMessageId);
+                SprinklrFileDelete.sendLog(-1, fileMessageId);
                 subscriber.onNext(new Object());
             } catch (RetrofitException e) {
                 subscriber.onError(e);
@@ -247,9 +253,9 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
                     if (e instanceof RetrofitException) {
                         int errorCode = ((RetrofitException) e).getStatusCode();
-                        fileDetailModel.trackFileDeleteFail(errorCode);
+                        SprinklrFileDelete.sendFailLog(errorCode);
                     } else {
-                        fileDetailModel.trackFileDeleteFail(-1);
+                        SprinklrFileDelete.sendFailLog(-1);
                     }
 
                     view.dismissProgress();
@@ -268,10 +274,10 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
             try {
                 ResMessages.FileMessage fileMessage =
                         fileDetailModel.enableExternalLink(teamId, fileMessageId);
-                fileDetailModel.trackCreatePublicLinkSuccess(fileMessageId);
+                SprinklrPublicLinkCreated.sendLog(fileMessageId);
                 subscriber.onNext(fileMessage);
             } catch (RetrofitException e) {
-                fileDetailModel.trackCreatePublicLinkFail(e.getResponseCode());
+                SprinklrPublicLinkCreated.sendFailLog(e.getResponseCode());
                 subscriber.onError(e);
             }
             subscriber.onCompleted();
@@ -303,10 +309,11 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
             try {
                 ResMessages.FileMessage fileMessage =
                         fileDetailModel.disableExternalLink(teamId, fileMessageId);
-                fileDetailModel.trackDisablePublicLinkSuccess(fileMessageId);
+                SprinklrPublicLinkDeleted.sendLog(fileMessageId);
+// fileDetailModel.trackDisablePublicLinkSuccess(fileMessageId);
                 subscriber.onNext(fileMessage);
             } catch (RetrofitException e) {
-                fileDetailModel.trackDisablePublicLinkFail(e.getResponseCode());
+                SprinklrPublicLinkDeleted.trackFail(e.getResponseCode());
                 subscriber.onError(e);
             }
             subscriber.onCompleted();
@@ -344,7 +351,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
-                    fileDetailModel.trackFileShareSuccess(entityId, fileMessageId);
+                    SprinklrFileShare.sendLog(entityId, fileMessageId);
 
                     List<Long> sharedEntities = carouselFileInfo.getSharedEntities();
                     sharedEntities.add(entityId);
@@ -359,10 +366,9 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                     LogUtil.e(Log.getStackTraceString(e));
 
                     if (e instanceof RetrofitException) {
-                        int errorCode = ((RetrofitException) e).getStatusCode();
-                        fileDetailModel.trackFileShareFail(errorCode);
+                        SprinklrFileShare.sendFailLog(((RetrofitException) e).getResponseCode());
                     } else {
-                        fileDetailModel.trackFileShareFail(-1);
+                        SprinklrFileShare.sendFailLog(-1);
                     }
 
                     view.dismissProgress();
@@ -388,7 +394,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
-                    fileDetailModel.trackFileShareSuccess(entityId, fileMessageId);
+                    SprinklrFileUnshare.sendLog(entityId, fileMessageId);
 
                     List<Long> sharedEntities = carouselFileInfo.getSharedEntities();
                     Long sharedEntityId = Observable.from(sharedEntities)
@@ -410,9 +416,9 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
                     if (e instanceof RetrofitException) {
                         int errorCode = ((RetrofitException) e).getStatusCode();
-                        fileDetailModel.trackFileUnShareFail(errorCode);
+                        SprinklrFileUnshare.sendFailLog(errorCode);
                     } else {
-                        fileDetailModel.trackFileUnShareFail(-1);
+                        SprinklrFileUnshare.sendFailLog(-1);
                     }
 
                     view.dismissProgress();

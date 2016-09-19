@@ -20,6 +20,10 @@ import com.tosslab.jandi.app.ui.message.detail.model.LeaveViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.TopicDetailModel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrTopicDelete;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrTopicNameChange;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrTopicStar;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrTopicUnStar;
 
 import javax.inject.Inject;
 
@@ -114,7 +118,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.Off);
                         } else {
                             topicDetailModel.updateTopicStatus(entityId, true);
-                            topicDetailModel.trackTopicStarSuccess(entityId);
+                            SprinklrTopicStar.sendLog(entityId);
                             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.On);
                         }
                         TopicRepository.getInstance().updateStarred(entityId, !isStarred);
@@ -139,9 +143,9 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                         RetrofitException e = (RetrofitException) t;
                         int errorCode = e.getStatusCode();
                         if (topicDetailModel.isStarred(entityId)) {
-                            topicDetailModel.trackTopicUnStarFail(errorCode);
+                            SprinklrTopicUnStar.sendFailLog(errorCode);
                         } else {
-                            topicDetailModel.trackTopicStarFail(errorCode);
+                            SprinklrTopicStar.sendFailLog(errorCode);
                         }
                     }
                 });
@@ -191,7 +195,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                     try {
                         int entityType = topicDetailModel.getEntityType(entityId);
                         topicDetailModel.deleteTopic(entityId, entityType);
-                        topicDetailModel.trackTopicDeleteSuccess(entityId);
+                        SprinklrTopicDelete.sendLog(entityId);
                         return Observable.just(entityid);
                     } catch (RetrofitException e) {
                         return Observable.error(e);
@@ -208,9 +212,9 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                     if (t instanceof RetrofitException) {
                         RetrofitException e = (RetrofitException) t;
                         int errorCode = e.getStatusCode();
-                        topicDetailModel.trackTopicDeleteFail(errorCode);
+                        SprinklrTopicDelete.sendFailLog(errorCode);
                     } else {
-                        topicDetailModel.trackTopicDeleteFail(-1);
+                        SprinklrTopicDelete.sendFailLog(-1);
                     }
                 });
     }
@@ -242,7 +246,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                 .doOnNext(it -> {
                     TopicRepository.getInstance().updateName(entityId, topicName);
                     TeamInfoLoader.getInstance().refresh();
-                    topicDetailModel.trackChangingEntityName(context, entityId, entityType);
+                    SprinklrTopicNameChange.sendLog(entityId);
                     EventBus.getDefault().post(new TopicInfoUpdateEvent(entityId));
                 })
                 .subscribeOn(Schedulers.io())
@@ -256,15 +260,14 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                         RetrofitException e = (RetrofitException) t;
                         int errorCode = e.getStatusCode();
 
-                        topicDetailModel.trackChangingEntityNameFail(errorCode);
-
+                        SprinklrTopicNameChange.sendFailLog(errorCode);
                         if (errorCode == JandiConstants.NetworkError.DUPLICATED_NAME) {
                             view.showFailToast(context.getString(R.string.err_entity_duplicated_name));
                         } else {
                             view.showFailToast(context.getString(R.string.err_entity_modify));
                         }
                     } else {
-                        topicDetailModel.trackChangingEntityNameFail(-1);
+                        SprinklrTopicNameChange.sendFailLog(-1);
                         view.showFailToast(context.getString(R.string.err_entity_modify));
                     }
                 });

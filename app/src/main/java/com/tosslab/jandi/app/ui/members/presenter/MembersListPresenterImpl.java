@@ -22,15 +22,12 @@ import com.tosslab.jandi.app.ui.members.model.MembersModel;
 import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrTopicMemberInvite;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -234,15 +231,15 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
             TeamInfoLoader.getInstance().refresh();
             EventBus.getDefault().post(new InvitationSuccessEvent());
-            trackTopicMemberInviteSuccess(invitedUsers.size(), entityId);
+            SprinklrTopicMemberInvite.sendLog(entityId, invitedUsers.size());
             view.showInviteSucceed(invitedUsers.size());
         } catch (RetrofitException e) {
             int errorCode = e.getStatusCode();
-            trackTopicMemberInviteFail(errorCode);
+            SprinklrTopicMemberInvite.sendFailLog(errorCode);
             LogUtil.e("fail to invite entity");
             view.showInviteFailed(JandiApplication.getContext().getString(R.string.err_entity_invite));
         } catch (Exception e) {
-            trackTopicMemberInviteFail(-1);
+            SprinklrTopicMemberInvite.sendFailLog(-1);
             view.showInviteFailed(JandiApplication.getContext().getString(R.string.err_entity_invite));
         }
     }
@@ -335,28 +332,6 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
             view.setResultAndFinish(-1);
         }
-    }
-
-    private void trackTopicMemberInviteSuccess(int memberCount, long entityId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.TopicMemberInvite)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.TopicId, entityId)
-                .property(PropertyKey.MemberCount, memberCount)
-                .build());
-    }
-
-    private void trackTopicMemberInviteFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.TopicMemberInvite)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-
     }
 
     public void setView(View view) {

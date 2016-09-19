@@ -36,16 +36,13 @@ import com.tosslab.jandi.app.ui.selector.room.RoomSelector;
 import com.tosslab.jandi.app.ui.selector.room.RoomSelectorImpl;
 import com.tosslab.jandi.app.ui.selector.user.UserSelector;
 import com.tosslab.jandi.app.ui.selector.user.UserSelectorImpl;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -105,12 +102,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
     @AfterViews
     void initObject() {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.ScreenView)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_SEARCH)
-                .build());
+        SprinklrScreenView.sendLog(ScreenViewProperty.MESSAGE_SEARCH);
 
         messageSearchPresenter.setView(this);
 
