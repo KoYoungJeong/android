@@ -267,7 +267,7 @@ public class TeamInfoLoader {
     }
 
     private Observable<Human> getUserObservable() {
-        return Observable.from(initialInfo.getMembers());
+        return execute(() -> Observable.from(initialInfo.getMembers()));
     }
 
     public List<User> getUserList() {
@@ -478,16 +478,16 @@ public class TeamInfoLoader {
     }
 
     public long getDefaultTopicId() {
-        return getTopicObservable()
+        return execute(() -> getTopicObservable()
                 .takeFirst(Topic::isDefault)
                 .map(Topic::getId)
                 .defaultIfEmpty(-1L)
                 .toBlocking()
-                .first();
+                .first());
     }
 
     public User getUser(long memberId) {
-        return users.get(memberId);
+        return execute(() -> users.get(memberId));
     }
 
     public boolean isTopic(long id) {
@@ -554,22 +554,18 @@ public class TeamInfoLoader {
     }
 
     public String getInvitationUrl() {
-        return execute(() -> {
-            return team.getInvitationUrl();
-        });
+        return execute(() -> team.getInvitationUrl());
     }
 
     public String getInvitationStatus() {
-        return execute(() -> {
-            return team.getInvitationStatus();
-        });
+        return execute(() -> team.getInvitationStatus());
     }
 
     public int getPollBadge() {
-        return pollBadge;
+        return execute(() -> pollBadge);
     }
 
-    public void setPollBadge(int pollBadge) {
+    private void setPollBadge(int pollBadge) {
         this.pollBadge = pollBadge;
     }
 
