@@ -127,7 +127,6 @@ public class FileUploadManager {
                                         }
                                     }, t -> {
                                     }, () -> {
-
                                     }));
                     lastRequest = request;
 

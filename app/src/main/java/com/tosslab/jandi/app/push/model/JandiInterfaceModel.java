@@ -30,7 +30,6 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
 
 public class JandiInterfaceModel {
@@ -100,12 +99,8 @@ public class JandiInterfaceModel {
         try {
             long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             InitialInfo initializeInfo = startApi.get().getInitializeInfo(selectedTeamId);
-            TeamInfoLoader.getInstance().refresh(initializeInfo);
-            Observable.just(initializeInfo)
-                    .observeOn(Schedulers.io())
-                    .subscribe(o -> {
-                        InitialInfoRepository.getInstance().upsertInitialInfo(o);
-                    });
+            InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+            TeamInfoLoader.getInstance().refresh();
             refreshPollList(selectedTeamId);
             JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
             return true;
@@ -126,6 +121,12 @@ public class JandiInterfaceModel {
     public long getEntityInfo(long roomId, String roomType) {
 
         long entityId = -1L;
+
+        try {
+            TeamInfoLoader.getInstance().getMyId();
+        } catch (Exception e) {
+            getEntityInfo();
+        }
 
 
         if (!isKnowRoomType(roomType)) {

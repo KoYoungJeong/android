@@ -13,16 +13,27 @@ import retrofit2.Retrofit;
 public class RetrofitBuilder {
 
     private static RetrofitBuilder retrofitBuilder;
+    private static RetrofitBuilder fileUploadRetrofitBuilder;
+    private final String url;
 
     private Retrofit retrofit;
 
-    private RetrofitBuilder() {}
+    private RetrofitBuilder(String url) {
+        this.url = url;
+    }
 
     synchronized public static RetrofitBuilder getInstance() {
         if (retrofitBuilder == null) {
-            retrofitBuilder = new RetrofitBuilder();
+            retrofitBuilder = new RetrofitBuilder(JandiConstantsForFlavors.SERVICE_INNER_API_URL);
         }
         return retrofitBuilder;
+    }
+
+    synchronized public static RetrofitBuilder getInstanceOfFileUpload() {
+        if (fileUploadRetrofitBuilder == null) {
+            fileUploadRetrofitBuilder = new RetrofitBuilder(JandiConstantsForFlavors.SERVICE_FILE_UPLOAD_URL);
+        }
+        return fileUploadRetrofitBuilder;
     }
 
     private Retrofit getRestAdapter() {
@@ -37,7 +48,7 @@ public class RetrofitBuilder {
     private Retrofit initRetrofit() {
 
         Retrofit.Builder retofitBuilder = new Retrofit.Builder()
-                .baseUrl(JandiConstantsForFlavors.SERVICE_INNER_API_URL)
+                .baseUrl(url)
                 .addConverterFactory(JacksonConverter.create());
 
         OkHttpClient okHttpClient = JandiApplication.getOkHttpClient();

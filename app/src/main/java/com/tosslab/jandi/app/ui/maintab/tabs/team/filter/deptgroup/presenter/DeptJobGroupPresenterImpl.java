@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.maintab.tabs.team.filter.deptgroup.presenter;
 
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
@@ -10,22 +12,25 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemb
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.ToggleCollector;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.domain.TeamMemberItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
-    private final View view;
-    private final TeamMemberDataModel teamMemberDataModel;
+    final View view;
+    final TeamMemberDataModel teamMemberDataModel;
+    final ToggleCollector toggledUser;
+    private final String undefinedMember;
     private int type;
     private String keyword;
     private boolean selectMode;
-    private ToggleCollector toggledUser;
     private boolean pickMode;
 
     @Inject
@@ -33,10 +38,12 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
         this.view = view;
         this.teamMemberDataModel = teamMemberDataModel;
         this.toggledUser = toggledUser;
+        undefinedMember = JandiApplication.getContext().getString(R.string.jandi_undefined_member);
     }
 
     @Override
     public void onCreate() {
+
         Observable.from(TeamInfoLoader.getInstance().getUserList())
                 .filter(User::isEnabled)
                 .filter(user -> {
@@ -53,27 +60,31 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
                     teamMemberItem.setNameOfSpan(user1.getName());
                     return teamMemberItem;
                 })
-                .subscribe(it -> {
-                    teamMemberDataModel.add(it);
+                .collect((Func0<ArrayList<TeamMemberItem>>) ArrayList::new, List::add)
+                .subscribe((users) -> {
+                    teamMemberDataModel.clear();
+                    teamMemberDataModel.addAll(users);
                     view.refreshDataView();
-                });
+                }, Throwable::printStackTrace);
     }
 
     private Func1<? super User, Boolean> filterKeyword(int type, String keyword) {
         return user -> {
             if (type == DeptJobFragment.EXTRA_TYPE_JOB) {
-                return !TextUtils.isEmpty(user.getPosition())
-                        && user.getPosition().contains(keyword);
+                if (!TextUtils.isEmpty(user.getPosition())) {
+                    return user.getPosition().contains(keyword);
+                } else {
+                    return TextUtils.equals(keyword, undefinedMember);
+                }
             } else {
-                return !TextUtils.isEmpty(user.getDivision())
-                        && user.getDivision().contains(keyword);
+                if (!TextUtils.isEmpty(user.getDivision())) {
+
+                    return user.getDivision().contains(keyword);
+                } else {
+                    return TextUtils.equals(keyword, undefinedMember);
+                }
             }
         };
-    }
-
-    @Override
-    public void onDestroy() {
-
     }
 
     @Override
@@ -112,6 +123,11 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
         }
 
         view.comeWithResult(ids);
+    }
+
+    @Override
+    public void onRefresh() {
+        onCreate();
     }
 
     public void setTypeAndKeyword(int type, String keyword) {

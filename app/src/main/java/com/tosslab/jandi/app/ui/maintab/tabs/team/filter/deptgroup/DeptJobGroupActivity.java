@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
+import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.deptgroup.dagger.DaggerDeptJobGroupComponent;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.deptgroup.dagger.DeptJobGroupModule;
@@ -28,6 +30,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 
 public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJobGroupPresenter.View {
 
@@ -67,7 +70,6 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     TextView tvAdded;
 
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +98,22 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
         });
 
         presenter.onCreate();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
+
+    public void onEvent(MemberStarredEvent event) {
+        presenter.onRefresh();
+    }
+
+    public void onEvent(ProfileChangeEvent event) {
+        presenter.onRefresh();
     }
 
     private void initActionbar() {
@@ -111,12 +129,6 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
             finish();
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onDestroy() {
-        presenter.onDestroy();
-        super.onDestroy();
     }
 
     @Override
@@ -147,7 +159,7 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
             vgToggled.setVisibility(View.VISIBLE);
         }
 
-        tvAdded.setText(String.format("%d명 추가하기", count));
+        tvAdded.setText(getString(R.string.jandi_invite_member_count, count));
     }
 
     @Override
@@ -159,7 +171,7 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     }
 
     @OnClick(R.id.tv_dept_job_group_toggled_unselect_all)
-    void onUnselectClick(){
+    void onUnselectClick() {
         presenter.onUnselectClick();
     }
 

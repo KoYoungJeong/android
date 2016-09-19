@@ -227,7 +227,6 @@ public class NavigationAdapter extends MultiItemRecyclerAdapter
             Team target = getItem(i);
             if (target.getTeamId() == team.getTeamId()) {
                 remove(i);
-                break;
             }
         }
     }

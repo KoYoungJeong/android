@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.WebhookBot;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.HighlightView;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.UnreadCountUtil;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.util.IntegrationBotUtil;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
@@ -35,7 +36,7 @@ import java.util.Iterator;
 
 import rx.android.schedulers.AndroidSchedulers;
 
-public class IntegrationBotViewHolder implements BodyViewHolder {
+public class IntegrationBotViewHolder implements BodyViewHolder, HighlightView {
 
     private static final String TAG = "IntegrationBotViewHolder";
     private ImageView ivProfile;
@@ -261,6 +262,11 @@ public class IntegrationBotViewHolder implements BodyViewHolder {
         }
 
         return isEmpty;
+    }
+
+    @Override
+    public View getHighlightView() {
+        return tvMessage;
     }
 
     public static class Builder extends BaseViewHolderBuilder {

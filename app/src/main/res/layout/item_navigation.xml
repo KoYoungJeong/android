@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:gravity="center"
+    android:gravity="center_vertical"
     android:background="?android:attr/selectableItemBackground"
     android:orientation="horizontal"
     android:paddingLeft="16dp"
@@ -19,7 +19,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:singleLine="true"
+        android:layout_weight="1"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textColor="@color/jandi_text"
         android:textSize="14dp"/>
+
+    <TextView
+        android:id="@+id/tv_team_unread_badge"
+        style="@style/JandiMainTabBadge.Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:layout_marginTop="0dp"/>
 
 </LinearLayout>

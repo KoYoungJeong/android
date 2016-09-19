@@ -21,6 +21,8 @@ public interface TeamMemberPresenter {
 
     void inviteToggle();
 
+    void onRefresh();
+
     interface View {
 
         void moveDisabledMembers();

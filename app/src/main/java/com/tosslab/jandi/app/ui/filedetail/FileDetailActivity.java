@@ -754,6 +754,10 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     public void onEvent(ShowProfileEvent event) {
+        if (!isForeground) {
+            return;
+        }
+
         long userEntityId = event.userId;
 
         MemberProfileActivity_.intent(this)

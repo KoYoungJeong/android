@@ -5,7 +5,10 @@ import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -24,7 +27,7 @@ public class StickerApi extends ApiTemplate<StickerApi.Api> {
         return call(() -> getApi().sendSticker(reqSendSticker));
     }
 
-    public ResCommon sendStickerComment(ReqSendSticker reqSendSticker) throws RetrofitException {
+    public List<ResMessages.Link> sendStickerComment(ReqSendSticker reqSendSticker) throws RetrofitException {
         return call(() -> getApi().sendStickerComment(reqSendSticker));
     }
 
@@ -44,8 +47,8 @@ public class StickerApi extends ApiTemplate<StickerApi.Api> {
         Call<ResCommon> sendSticker(@Body ReqSendSticker reqSendSticker);
 
         @POST("stickers/comment")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResCommon> sendStickerComment(@Body ReqSendSticker reqSendSticker);
+        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+        Call<List<ResMessages.Link>> sendStickerComment(@Body ReqSendSticker reqSendSticker);
 
         @HTTP(path = "stickers/comments/{commentId}", method = "DELETE", hasBody = true)
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)

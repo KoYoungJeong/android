@@ -324,6 +324,7 @@
 	<string name="jandi_invite_line">"LINE"</string>
 	<string name="jandi_invite_many_people_explain">"想邀请超过100位成员？让我们来协助你！ support@tosslab.com"</string>
 	<string name="jandi_invite_member">"邀請成員"</string>
+	<string name="jandi_invite_member_count">"%d 成员邀请"</string>
 	<string name="jandi_invite_member_to_topic">"邀请成员至此议题"</string>
 	<string name="jandi_invite_succes_copy_link">"成员邀请的链接已复制到剪贴簿"</string>
 	<string name="jandi_invite_succes_send">"邀请信发送至："</string>
@@ -409,7 +410,7 @@
 	<string name="jandi_no_preview_push_message">"你收到一则新信息"</string>
 	<string name="jandi_no_recent_stickers">"无最近使用的贴图"</string>
 	<string name="jandi_no_search_history">"没有搜寻纪录"</string>
-	<string name="jandi_no_search_result">"找不到符合条件的内容"</string>
+	<string name="jandi_no_search_result">"找不到相关的内容"</string>
 	<string name="jandi_no_topic_to_join">"没有可加入的议题"</string>
 	<string name="jandi_normally_topic_messages">"议题信息"</string>
 	<string name="jandi_not_in_topic">"你已离开此议题"</string>
@@ -662,6 +663,7 @@
 	<string name="jandi_tutorial_topic_message">"在您选择的议题跟团队里的同仁联络，无论是项目上的协作或仅是闲谈。 当您需要更多隐私，就邀请特定成员到私人议题或直接私信成员。"</string>
 	<string name="jandi_tutorial_welcome">"欢迎使用"</string>
 	<string name="jandi_tutorial_welcome_message">"JANDI让工作变简单、愉快。 我们将你对通讯软件的要求与云端存储的需求结合，并放在你的手掌上。"</string>
+	<string name="jandi_undefined_member">"尚未设定简介的成员"</string>
 	<string name="jandi_unpinned_message">"已取消标示"</string>
 	<string name="jandi_unread_messages_below">"以下为未读信息"</string>
 	<string name="jandi_unshare_succeed">"%s已被取消分享"</string>

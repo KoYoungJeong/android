@@ -92,7 +92,11 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         holder.showHalfDivider();
                     }
                 } else {
-                    holder.showFullDivider();
+                    if (isSameStarredToNext(position)) {
+                        holder.showHalfDivider();
+                    } else {
+                        holder.showFullDivider();
+                    }
                 }
             }
 
@@ -103,6 +107,15 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
         });
 
+    }
+
+    private boolean isSameStarredToNext(int position) {
+        if (position >= getItemCount() - 1) {
+            return false;
+        } else {
+            return getItem(position).getChatChooseItem().isStarred()
+                    && getItem(position + 1).getChatChooseItem().isStarred();
+        }
     }
 
     private boolean isSameFirstCharacterToNext(int position) {

@@ -76,6 +76,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import io.intercom.android.sdk.Intercom;
+import io.intercom.android.sdk.UnreadConversationCountListener;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
 /**
@@ -109,6 +110,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
     private ProgressWheel progressWheel;
     private KnockListener usageInformationKnockListener;
+    private UnreadConversationCountListener intercomUnreadCountListener;
 
     @Nullable
     @Override
@@ -135,8 +137,20 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         initUsageInformationKnockListener();
 
         navigationPresenter.onInitIntercom();
+
+        Intercom.client().addUnreadConversationCountListener(intercomUnreadCountListener = count -> {
+            notifyDataSetChanged();
+            navigationPresenter.initBadgeCount();
+        });
     }
 
+    @Override
+    public void onDestroy() {
+        if (intercomUnreadCountListener != null) {
+            Intercom.client().removeUnreadConversationCountListener(intercomUnreadCountListener);
+        }
+        super.onDestroy();
+    }
 
     void initNavigations() {
         navigationPresenter.onInitUserProfile();

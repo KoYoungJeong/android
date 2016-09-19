@@ -37,13 +37,12 @@ import rx.subjects.BehaviorSubject;
 public class TeamMemberPresenterImpl implements TeamMemberPresenter {
 
     private final View view;
-    TeamMemberModel teamMemberModel;
     private final TeamMemberDataModel teamMemberDataModel;
     private final HighlightSpannable highlightSpan;
-    private boolean selectMode;
-
+    TeamMemberModel teamMemberModel;
     BehaviorSubject<String> filterSubject;
     Subscription filterSubscription;
+    private boolean selectMode;
     private long roomId = -1;
 
     private ToggleCollector toggledIds;
@@ -69,7 +68,6 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
         filterSubscription = filterSubject
                 .throttleLast(100, TimeUnit.MILLISECONDS)
                 .onBackpressureBuffer()
-                .distinctUntilChanged()
                 .observeOn(Schedulers.io())
                 .map(String::toLowerCase)
                 .concatMap(it -> teamMemberModel.getFilteredUser(it, selectMode, roomId)
@@ -120,6 +118,7 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
     }
 
     private Observable.Transformer<? super TeamMemberItem, ? extends List<TeamMemberItem>> sort() {
+        final long myId = TeamInfoLoader.getInstance().getMyId();
         return userObservable -> userObservable.toSortedList((entity, entity2) -> {
 
                     if (entity instanceof TeamDisabledMemberItem) {
@@ -131,9 +130,11 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                     if (selectMode) {
                         return StringCompareUtil.compare(entity.getName(), entity2.getName());
                     } else {
-                        if (entity.getChatChooseItem().isStarred()) {
+                        if (entity.getChatChooseItem().isStarred()
+                                && entity.getChatChooseItem().getEntityId() != myId) {
                             return -1;
-                        } else if (entity2.getChatChooseItem().isStarred()) {
+                        } else if (entity2.getChatChooseItem().isStarred()
+                                && entity2.getChatChooseItem().getEntityId() != myId) {
                             return 1;
                         } else {
                             return StringCompareUtil.compare(entity.getName(), entity2.getName());
@@ -253,6 +254,11 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                     view.showFailToInvitation();
                 });
 
+    }
+
+    @Override
+    public void onRefresh() {
+        filterSubject.onNext(filterSubject.getValue());
     }
 
     @Override

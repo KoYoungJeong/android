@@ -339,7 +339,7 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
             vgToggled.setVisibility(View.VISIBLE);
         }
 
-        tvInvite.setText(String.format("%d명 초대하기", count));
+        tvInvite.setText(getString(R.string.jandi_invite_member_count, count));
     }
 
     @Override

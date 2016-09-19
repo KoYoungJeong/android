@@ -325,6 +325,7 @@ To change this setting, go to Team Settings > Invitation Settings."</string>
 	<string name="jandi_invite_line">"LINE"</string>
 	<string name="jandi_invite_many_people_explain">"Inviting over 100 members? Contact us at support@tosslab.com"</string>
 	<string name="jandi_invite_member">"Invite Members"</string>
+	<string name="jandi_invite_member_count">"Invite %d Members"</string>
 	<string name="jandi_invite_member_to_topic">"Invite Members"</string>
 	<string name="jandi_invite_succes_copy_link">"The team invitation link has been copied to your clipboard. Use it to invite others to your team."</string>
 	<string name="jandi_invite_succes_send">"Invitations have been sent to:"</string>
@@ -411,7 +412,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_no_preview_push_message">"You received a new message."</string>
 	<string name="jandi_no_recent_stickers">"No Recent Stickers"</string>
 	<string name="jandi_no_search_history">"No recent search history."</string>
-	<string name="jandi_no_search_result">"No files found matching"</string>
+	<string name="jandi_no_search_result">"Message not found"</string>
 	<string name="jandi_no_topic_to_join">"No topics to join"</string>
 	<string name="jandi_normally_topic_messages">"Topic messages"</string>
 	<string name="jandi_not_in_topic">"You have left or been removed from this topic."</string>
@@ -666,6 +667,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_tutorial_welcome_message">"Our mission is to make your working life simpler, more productive, and more enjoyable, starting with collaboration. 
 
 We combined everything you love about messaging apps and cloud storage with powerful search functionality, and put it in the palm of your hand."</string>
+	<string name="jandi_undefined_member">"Unidentified Members"</string>
 	<string name="jandi_unpinned_message">"Unstarred"</string>
 	<string name="jandi_unread_messages_below">"Unread messages below"</string>
 	<string name="jandi_unshare_succeed">"%s has been unshared"</string>
