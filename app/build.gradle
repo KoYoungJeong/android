@@ -88,6 +88,7 @@ android {
         }
 
         main.res.srcDirs += 'src/main/res-crawrer'
+        main.res.srcDirs += 'src/main/res-anim'
         main.java.srcDirs += 'src/main/java-push'
     }
 
