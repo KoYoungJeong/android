@@ -34,7 +34,6 @@ import com.tosslab.jandi.app.network.models.dynamicl10n.PollFinished;
 import com.tosslab.jandi.app.network.models.messages.ReqMessage;
 import com.tosslab.jandi.app.network.models.messages.ReqStickerMessage;
 import com.tosslab.jandi.app.network.models.messages.ReqTextMessage;
-import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -378,17 +377,12 @@ public class MessageListModel {
     }
 
     public long getLastReadLinkId(long roomId) {
-        long myId = TeamInfoLoader.getInstance().getMyId();
         Room room = TeamInfoLoader.getInstance().getRoom(roomId);
         if (room == null || room.getMarkers() == null || room.getMarkers().isEmpty()) {
             return -1;
         }
-        return Observable.from(room.getMarkers())
-                .filter(messageMarker -> messageMarker.getMemberId() == myId)
-                .map(Marker::getReadLinkId)
-                .firstOrDefault(-1L)
-                .toBlocking()
-                .first();
+
+        return room.getReadLinkId();
     }
 
     public void sortByTime(List<ResMessages.Link> records) {

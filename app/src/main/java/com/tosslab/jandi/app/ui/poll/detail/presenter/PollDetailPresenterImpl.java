@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.poll.detail.presenter;
 import android.util.Log;
 import android.util.Pair;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
@@ -26,6 +27,7 @@ import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrStarred;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrUnstarred;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
+import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.Collection;
 import java.util.List;

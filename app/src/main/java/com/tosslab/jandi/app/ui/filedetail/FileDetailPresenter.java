@@ -172,9 +172,9 @@ public class FileDetailPresenter {
                                          String stickerId, String comment,
                                          List<MentionObject> mentions) {
         try {
-            List<ResMessages.Link> messageLink = fileDetailModel.sendMessageCommentWithSticker(
+            List<ResMessages.Link> links = fileDetailModel.sendMessageCommentWithSticker(
                     fileId, stickerGroupId, stickerId, comment, mentions);
-            long messageId = messageLink.get(0).message.id;
+
             retrieveFileDetail(fileId, false);
 
             view.scrollToLastComment();
@@ -183,9 +183,11 @@ public class FileDetailPresenter {
             stickerIdStringBuilder.append("-");
             stickerIdStringBuilder.append(stickerId);
 
-            SprinklrMessagePost.sendLogWithStickerFile(
-                    messageId, stickerIdStringBuilder.toString(), fileId,
-                    mentions.size(), fileDetailModel.hasAllMention(comment, mentions));
+            for (ResMessages.Link link : links) {
+                SprinklrMessagePost.sendLogWithStickerFile(
+                        link.messageId, stickerIdStringBuilder.toString(), fileId,
+                        mentions.size(), fileDetailModel.hasAllMention(comment, mentions));
+            }
 
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
