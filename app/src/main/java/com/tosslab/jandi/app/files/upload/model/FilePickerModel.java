@@ -183,7 +183,8 @@ public class FilePickerModel {
                         progressDialog.setMax(100);
                         progressDialog.setProgress(progress);
                     }
-                }, t -> {}, () -> {
+                }, t -> {
+                }, () -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
@@ -221,6 +222,5 @@ public class FilePickerModel {
     public ArrayList<String> getFilePathsFromInnerGallery(Intent intent) {
         return intent.getStringArrayListExtra(ImageAlbumActivity.EXTRA_DATAS);
     }
-
 
 }

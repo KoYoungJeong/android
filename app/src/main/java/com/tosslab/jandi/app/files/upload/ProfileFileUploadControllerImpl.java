@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
@@ -147,6 +148,7 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
     @Background
     void uploadProfileImage(Activity activity, File profileFile) {
         showProgressWheel(activity);
+        File convertedProfileFile = ImageUtil.convertProfileFile(profileFile);
         try {
             Human human = filePickerModel.uploadProfilePhoto(profileFile);
             String photoUrl = human.getPhotoUrl();
@@ -154,14 +156,14 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
             HumanRepository.getInstance().updatePhotoUrl(myId, photoUrl);
             TeamInfoLoader.getInstance().refresh();
             successPhotoUpload(activity.getApplicationContext());
-
             dismissProgressWheel();
-
         } catch (RetrofitException e) {
             e.printStackTrace();
             dismissProgressWheel();
             LogUtil.e("uploadFileDone: FAILED", e);
             failPhotoUpload(activity.getApplicationContext());
+        } finally {
+            convertedProfileFile.delete();
         }
     }
 
