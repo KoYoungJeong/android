@@ -184,9 +184,15 @@ public class FileDetailPresenter {
             stickerIdStringBuilder.append(stickerId);
 
             for (ResMessages.Link link : links) {
-                SprinklrMessagePost.sendLogWithStickerFile(
-                        link.messageId, stickerIdStringBuilder.toString(), fileId,
-                        mentions.size(), fileDetailModel.hasAllMention(comment, mentions));
+                if (link.message instanceof ResMessages.CommentStickerMessage) {
+                    SprinklrMessagePost.sendLogWithStickerFile(
+                            link.messageId, stickerIdStringBuilder.toString(), fileId
+                    );
+                } else {
+                    SprinklrMessagePost.sendLogWithFileComment(
+                            link.messageId,  fileId,
+                            mentions.size(), fileDetailModel.hasAllMention(comment, mentions));
+                }
             }
 
         } catch (Exception e) {

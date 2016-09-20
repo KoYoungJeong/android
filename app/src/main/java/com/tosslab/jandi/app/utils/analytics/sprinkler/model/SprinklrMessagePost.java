@@ -67,13 +67,11 @@ public class SprinklrMessagePost extends MainSprinklrModel
 
     public static void sendLogWithStickerFile(long messageId,
                                               String stickerId,
-                                              long fileId,
-                                              int mentionCount,
-                                              boolean hasAllMention) {
+                                              long fileId) {
         new SprinklrMessagePost()
                 .setMessageId(messageId)
-                .setMentionCount(mentionCount)
-                .setHasAllMention(hasAllMention)
+                .setMentionCount(0)
+                .setHasAllMention(false)
                 .setStickerId(stickerId)
                 .setFileId(fileId)
                 .sendSuccess();
@@ -81,13 +79,11 @@ public class SprinklrMessagePost extends MainSprinklrModel
 
     public static void sendLogWithStickerPoll(long messageId,
                                               String stickerId,
-                                              long pollId,
-                                              int mentionCount,
-                                              boolean hasAllMention) {
+                                              long pollId) {
         new SprinklrMessagePost()
                 .setMessageId(messageId)
-                .setMentionCount(mentionCount)
-                .setHasAllMention(hasAllMention)
+                .setMentionCount(0)
+                .setHasAllMention(false)
                 .setStickerId(stickerId)
                 .setPollId(pollId)
                 .sendSuccess();
