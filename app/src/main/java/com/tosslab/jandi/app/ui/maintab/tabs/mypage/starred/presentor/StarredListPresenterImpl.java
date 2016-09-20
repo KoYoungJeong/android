@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.model.StarredListDataModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.model.StarredListModel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -67,10 +66,14 @@ public class StarredListPresenterImpl implements StarredListPresenter {
                     }
                 }, e -> {
                     LogUtil.e(e.getMessage());
-                    starredListDataModel.clear();
-                    starredListView.notifyDataSetChanged();
-                    starredListView.showEmptyLayout();
-                    isInInitializing = false;
+                    try {
+                        starredListDataModel.clear();
+                        starredListView.notifyDataSetChanged();
+                        starredListView.showEmptyLayout();
+                        isInInitializing = false;
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
                 });
     }
 
@@ -96,7 +99,11 @@ public class StarredListPresenterImpl implements StarredListPresenter {
 
                     starredListView.setHasMore(hasMore);
                 }, e -> {
-                    starredListView.hideMoreProgress();
+                    try {
+                        starredListView.hideMoreProgress();
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
                 });
     }
 
