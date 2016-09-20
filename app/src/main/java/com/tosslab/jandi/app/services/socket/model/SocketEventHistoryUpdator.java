@@ -153,8 +153,6 @@ public class SocketEventHistoryUpdator {
                 JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
                 EventBus.getDefault().post(new RetrieveTopicListEvent());
                 EventBus.getDefault().post(new ChatListRefreshEvent());
-
-                refreshPollList(teamId);
                 EventBus.getDefault().post(new RequestRefreshPollBadgeCountEvent(teamId));
 
                 eventHistory = eventsApi.get().getEventHistory(socketConnectedLastTime, userId, 1);
@@ -340,30 +338,6 @@ public class SocketEventHistoryUpdator {
     private void upsertPollVotedStatus(Poll poll) {
         PollRepository.getInstance().upsertPollVoteStatus(poll);
     }
-
-
-    private void refreshPollList(long teamId) {
-        try {
-            PollRepository.getInstance().clearAll();
-
-            ResPollList resPollList = pollApi.get().getPollList(teamId, 50);
-            List<Poll> onGoing = resPollList.getOnGoing();
-            if (onGoing == null) {
-                onGoing = new ArrayList<>();
-            }
-            List<Poll> finished = resPollList.getFinished();
-            if (finished == null) {
-                finished = new ArrayList<>();
-            }
-            Observable.merge(Observable.from(onGoing), Observable.from(finished))
-                    .toList()
-                    .subscribe(polls -> PollRepository.getInstance().upsertPollList(polls),
-                            Throwable::printStackTrace);
-        } catch (RetrofitException retrofitError) {
-            retrofitError.printStackTrace();
-        }
-    }
-
 
     public interface EventPost {
         void post(Object o);

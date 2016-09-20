@@ -7,7 +7,7 @@ public class RetrofitException extends Exception {
     private final String rawBody;
 
     private RetrofitException(int statusCode, Throwable e) {
-        super(e);
+        super("Network Exception", e);
         this.statusCode = statusCode;
         this.responseCode = statusCode * 100;
         this.responseMessage = "";
@@ -15,7 +15,7 @@ public class RetrofitException extends Exception {
     }
 
     private RetrofitException(int statusCode, int responseCode, String responseMessage, String rawBody, Throwable e) {
-        super(e);
+        super("Network Exception", e);
         this.statusCode = statusCode;
         this.responseCode = responseCode;
         this.responseMessage = responseMessage;

@@ -360,16 +360,24 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
 
                     if (resPollCommentCreated.getLinkSticker() != null) {
                         messageId = resPollCommentCreated.getLinkSticker().messageId;
-                    } else {
+                        pollDetailModel.trackPollStickerCommentPostSuccess(
+                                messageId,
+                                pollId,
+                                stickerIdStringBuilder.toString(),
+                                0,
+                                pollDetailModel.hasAllMention(message, mentions));
+
+                    }
+                    if (resPollCommentCreated.getLinkComment() != null){
                         messageId = resPollCommentCreated.getLinkComment().messageId;
+                        pollDetailModel.trackPollCommentPostSuccess(
+                                messageId,
+                                pollId,
+                                mentions.size(),
+                                pollDetailModel.hasAllMention(message, mentions));
+
                     }
 
-                    pollDetailModel.trackPollStickerCommentPostSuccess(
-                            messageId,
-                            pollId,
-                            stickerIdStringBuilder.toString(),
-                            mentions.size(),
-                            pollDetailModel.hasAllMention(message, mentions));
 
                 }, throwable -> {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
