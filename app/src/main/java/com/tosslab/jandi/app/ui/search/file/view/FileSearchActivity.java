@@ -17,6 +17,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -45,7 +48,18 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
 
     private static final int SPEECH_REQUEST_CODE = 201;
     public SearchQueryAdapter searchQueryAdapter;
+
+    @Nullable
+    @InjectExtra
     long entityId = -1;
+
+    @Nullable
+    @InjectExtra
+    long writerId = -1;
+
+    @Nullable
+    @InjectExtra
+    String fileType = "all";
 
     @Bind(R.id.iv_search_mic)
     ImageView ivMic;
@@ -67,9 +81,19 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
     private boolean isForeground;
 
     public static void start(Context context, long entityId) {
-        Intent intent = new Intent(context, FileSearchActivity.class);
-        intent.putExtra(FileListFragment.PARAM_ENTITY_ID, entityId);
-        context.startActivity(intent);
+        context.startActivity(Henson.with(context)
+                .gotoFileSearchActivity()
+                .entityId(entityId)
+                .build());
+    }
+
+    public static void start(Context context, long entityId, long writerId, String fileType) {
+        context.startActivity(Henson.with(context)
+                .gotoFileSearchActivity()
+                .entityId(entityId)
+                .writerId(writerId)
+                .fileType(fileType)
+                .build());
     }
 
     @Override
@@ -78,6 +102,7 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
         setContentView(R.layout.activity_search);
 
         ButterKnife.bind(this);
+        Dart.inject(this);
         DaggerFileSearchComponent.builder()
                 .fileSearchModule(new FileSearchModule(this))
                 .build()
@@ -99,9 +124,7 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
                 64,
                 resources.getDisplayMetrics());
 
-        if (getIntent() != null) {
-            entityId = getIntent().getLongExtra(FileListFragment.PARAM_ENTITY_ID, -1);
-        }
+
 
         addFragments();
         initSearchSelectView();
@@ -118,10 +141,7 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
         if (fileListFragment != null) {
             return;
         }
-        Bundle bundle = new Bundle();
-        bundle.putLong(FileListFragment.PARAM_ENTITY_ID, entityId);
-        fileListFragment = new FileListFragment();
-        fileListFragment.setArguments(bundle);
+        fileListFragment = FileListFragment.create(this, entityId, writerId, fileType);
 
         fragmentTransaction.add(R.id.layout_search_content,
                 fileListFragment, FileListFragment.class.getName());

@@ -243,10 +243,10 @@ public class FileListPresenterImpl implements FileListPresenter {
     }
 
     @Override
-    public void onFileTypeSelection(String query, String searchText) {
+    public void onFileTypeSelection(String fileTypeQuery, String searchText) {
         searchedFilesAdapterModel.clearList();
         view.justRefresh();
-        fileTypeSubject.onNext(query);
+        fileTypeSubject.onNext(fileTypeQuery);
         pageSubject.onNext(1);
         endDateSubject.onNext(new Date());
     }
@@ -359,5 +359,14 @@ public class FileListPresenterImpl implements FileListPresenter {
                     view.showWarningToast(message);
                 });
 
+    }
+
+    @Override
+    public void onMoveFileSearch() {
+        long entity = entitySubject.getValue();
+        long writer = writerSubject.getValue();
+        String type = fileTypeSubject.getValue();
+
+        view.moveFileSearch(entity, writer, type);
     }
 }
