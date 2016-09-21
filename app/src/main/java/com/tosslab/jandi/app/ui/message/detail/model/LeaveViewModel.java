@@ -12,12 +12,8 @@ import com.tosslab.jandi.app.network.client.chat.ChatApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrTopicLeave;
 
 import javax.inject.Inject;
 
@@ -87,7 +83,7 @@ public class LeaveViewModel {
                             long memberId = TeamInfoLoader.getInstance().getMyId();
                             chatApi.get().deleteChat(memberId, entityid);
                         }
-                        trackTopicLeaveSuccess(entityid);
+                        SprinklrTopicLeave.sendLog(entityId);
                         return Observable.just(entityid);
                     } catch (RetrofitException e) {
                         return Observable.error(e);
@@ -101,37 +97,15 @@ public class LeaveViewModel {
                     if (t instanceof RetrofitException) {
                         RetrofitException e = (RetrofitException) t;
                         int errorCode = e.getStatusCode();
-                        trackTopicLeaveFail(errorCode);
+                        SprinklrTopicLeave.sendFailLog(errorCode);
                         e.printStackTrace();
                         leaveEntityFailed(JandiApplication.getContext().getString(R.string.err_entity_leave));
                     } else {
-                        trackTopicLeaveFail(-1);
+                        SprinklrTopicLeave.sendFailLog(-1);
                         t.printStackTrace();
                         leaveEntityFailed(JandiApplication.getContext().getString(R.string.err_entity_leave));
                     }
                 });
-    }
-
-    private void trackTopicLeaveSuccess(long entityId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.TopicLeave)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.TopicId, entityId)
-                .build());
-
-    }
-
-    private void trackTopicLeaveFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.TopicLeave)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-
     }
 
     void leaveEntityFailed(String errMessage) {

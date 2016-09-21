@@ -1,9 +1,7 @@
 package com.tosslab.jandi.app.ui.account.model;
 
-import android.content.Context;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
@@ -23,10 +21,6 @@ import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -174,41 +168,6 @@ public class AccountHomeModel {
 
     public boolean checkAccount() {
         return AccountRepository.getRepository().getAccountInfo() != null;
-    }
-
-    public void trackLaunchTeamSuccess(long teamId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.LaunchTeam)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.TeamId, teamId)
-                .build());
-    }
-
-    public void trackLaunchTeamFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.LaunchTeam)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-    }
-
-    public void trackChangeAccountNameSuccess(Context context, String accountId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.ChangeAccountName)
-                .accountId(accountId)
-                .property(PropertyKey.ResponseSuccess, true)
-                .build());
-    }
-
-    public void trackChangeAccountNameFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.ChangeAccountName)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
     }
 
     public void refreshPollList(long teamId) {

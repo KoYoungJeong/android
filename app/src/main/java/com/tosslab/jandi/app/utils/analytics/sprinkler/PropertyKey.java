@@ -4,7 +4,6 @@ package com.tosslab.jandi.app.utils.analytics.sprinkler;
  * Created by tonyjs on 15. 7. 22..
  */
 public class PropertyKey {
-
     public static final String ResponseSuccess = "p13";
     public static final String ErrorCode = "p14";
     public static final String AutoSignIn = "p25";
@@ -22,5 +21,4 @@ public class PropertyKey {
     public static final String StarredType = "p48";
     public static final String MentionCount = "p49";
     public static final String StickerId = "p53";
-
 }

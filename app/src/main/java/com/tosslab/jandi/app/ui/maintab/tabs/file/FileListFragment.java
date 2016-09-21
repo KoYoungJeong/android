@@ -71,6 +71,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
@@ -272,13 +273,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
     private void setListView() {
         if (getActivity() instanceof FileSearchActivity) {
-            AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                    .event(SprinklerEvents.ScreenView)
-                    .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                    .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                    .property(PropertyKey.ScreenView, ScreenViewProperty.FILE_SEARCH)
-                    .build());
-
+            SprinklrScreenView.sendLog(ScreenViewProperty.FILE_SEARCH);
             AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.FilesSearch);
         }
 

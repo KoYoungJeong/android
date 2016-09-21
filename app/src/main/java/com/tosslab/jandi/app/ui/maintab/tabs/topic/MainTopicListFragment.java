@@ -63,6 +63,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
@@ -126,12 +127,7 @@ public class MainTopicListFragment extends Fragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.ScreenView)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_PANEL)
-                .build());
+        SprinklrScreenView.sendLog(ScreenViewProperty.MESSAGE_PANEL);
 
         layoutManager = new LinearLayoutManager(getActivity());
 

@@ -166,10 +166,6 @@ public class SprinklerEvents {
                     PropertyKey.TeamId,
                     PropertyKey.PollId});
 
-    public static final Event ButtonTouch = Event.create(EventCategory.ButtonTouchEvent.name(),
-            "",
-            new String[]{});
-
     public static final Event Starred = Event.create(EventCategory.StarredEvent.name(),
             "e67",
             new String[]{

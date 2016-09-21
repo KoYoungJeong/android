@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.team.create.teaminfo.model;
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
@@ -19,10 +18,6 @@ import com.tosslab.jandi.app.network.models.validation.ResValidation;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,26 +92,6 @@ public class InsertTeamInfoModel {
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
         TeamInfoLoader.getInstance().refresh();
-    }
-
-    public void trackCreateTeamSuccess(long teamId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.CreateTeam)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.TeamId, teamId)
-                .build());
-
-    }
-
-    public void trackCreateTeamFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.CreateTeam)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-
     }
 
     public void updateEntityInfo(final long teamId) throws RetrofitException {

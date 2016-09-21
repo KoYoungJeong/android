@@ -26,11 +26,9 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -106,10 +104,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
 
     @AfterViews
     void init() {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.ScreenView)
-                .property(PropertyKey.ScreenView, ScreenViewProperty.CONFIRM_VERIFICATION_NUMBER)
-                .build());
+        SprinklrScreenView.sendLog(ScreenViewProperty.CONFIRM_VERIFICATION_NUMBER);
 
         setUpActionBar();
 
@@ -267,7 +262,6 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         final long permitEmailSendTermMillis = 15 * 1000;
         if (JandiPreference.getEmailAuthSendTime() + permitEmailSendTermMillis < System.currentTimeMillis()) {
             presenter.requestNewVerificationCode(email);
-
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.CodeVerification,
                     AnalyticsValue.Action.Resend);
             JandiPreference.setEmailAuthSendTime();

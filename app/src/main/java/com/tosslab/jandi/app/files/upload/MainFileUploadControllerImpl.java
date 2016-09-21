@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.network.models.ResUploadedFile;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrFileUpload;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -144,9 +145,9 @@ public class MainFileUploadControllerImpl implements FileUploadController {
             ResUploadedFile result = filePickerModel.uploadFile(uploadProgress, realFilePath, isPublicTopic, title, entityId, comment);
             LogUtil.e("Upload Success : " + result);
             showSuccessToast(context, context.getString(R.string.jandi_file_upload_succeed));
-            filePickerModel.trackUploadingFile(entityId, result.getMessageId());
+            SprinklrFileUpload.sendLog(entityId, result.getMessageId());
         } catch (Exception e) {
-            filePickerModel.trackUploadingFileFail(-1);
+            SprinklrFileUpload.sendFailLog(-1);
             LogUtil.e("Upload Error : ", e);
             showFailToast(context, context.getString(R.string.err_file_upload_failed));
         } finally {
