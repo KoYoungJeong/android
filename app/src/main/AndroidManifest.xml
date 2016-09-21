@@ -268,6 +268,10 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"/>
 
+        <service
+            android:name=".services.keep.KeepService"
+            android:label="@string/app_name" />
+
         <service android:name="com.parse.PushService"/>
 
 
