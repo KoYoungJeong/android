@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 
@@ -34,6 +33,7 @@ import rx.android.schedulers.AndroidSchedulers;
 public class IntroActivity extends BaseAppCompatActivity implements IntroActivityPresenter.View {
 
     private static final String EXTRA_START_FOR_INVITE = "startForInvite";
+    private static final int ANIM_DELAY = 300;
     boolean startForInvite = false;
 
     @Bind(R.id.iv_jandi_icon)
@@ -75,10 +75,9 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
         splashDrawable = ((AnimationDrawable) ivJandiIcon.getDrawable());
         animStartTime = System.currentTimeMillis();
         Observable.just(true)
-                .delay(500, TimeUnit.MILLISECONDS)
+                .delay(ANIM_DELAY, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
-                    ivJandiIcon.setVisibility(View.VISIBLE);
                     splashDrawable.start();
                 });
     }
@@ -127,8 +126,17 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
             return;
         }
 
+        int densityDpi = getResources().getConfiguration().densityDpi;
+
+        long animTime;
+        if (densityDpi < 480) {
+            animTime = 1500;
+        } else {
+            animTime = 2000;
+        }
+
         Observable.just(true)
-                .delay(2000 + animStartTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+                .delay(animTime + ANIM_DELAY + animStartTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
                     startActivity(intent);
