@@ -101,6 +101,7 @@ android {
             'META-INF/NOTICE',
             'NOTICE',
             'asm-license.txt',
+            '.readme',
             'META-INF/NOTICE.txt',
             'META-INF/notice.txt',
             'META-INF/ASL2.0',
@@ -140,7 +141,6 @@ android {
 
     dexOptions {
         javaMaxHeapSize "2g"
-        incremental true
         maxProcessCount Math.max(1, ((int) (Runtime.getRuntime().availableProcessors() / 2)))
     }
 
