@@ -16,6 +16,7 @@ import com.facebook.FacebookSdk;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.parse.Parse;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
@@ -95,6 +96,7 @@ public class JandiApplication extends MultiDexApplication {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
         StethoInitializer.init(this);
+        FirebaseAnalytics.getInstance(this);
 
         addLogConfigIfDebug();
 

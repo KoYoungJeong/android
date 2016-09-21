@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
@@ -15,8 +16,10 @@ import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 public class AnalyticsUtil {
 
-    public static final String FACEBOOK_ACTION = "action";
-    public static final String FACEBOOK_LABEL = "label";
+    public static final String KEY_ACTION = "action";
+    public static final String KEY_LABEL = "label";
+    private static final String KEY_ADWORDS = "Adwords_";
+    public static final String KEY_CONVERSION_ID = "conversionId";
 
     private AnalyticsUtil() {
     }
@@ -31,6 +34,7 @@ public class AnalyticsUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     public static void sendEvent(String category, String action, String label) {
@@ -46,11 +50,17 @@ public class AnalyticsUtil {
             e.printStackTrace();
         }
 
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_ACTION, action);
+        bundle.putString(KEY_LABEL, label);
+
+        FirebaseAnalytics.getInstance(JandiApplication.getContext()).logEvent(category, bundle);
+
         try {
             Bundle parameters = new Bundle();
-            parameters.putString(FACEBOOK_ACTION, action);
+            parameters.putString(KEY_ACTION, action);
             if (!TextUtils.isEmpty(label)) {
-                parameters.putString(FACEBOOK_LABEL, label);
+                parameters.putString(KEY_LABEL, label);
             }
             AppEventsLogger.newLogger(JandiApplication.getContext())
                     .logEvent(category, parameters);
@@ -110,5 +120,14 @@ public class AnalyticsUtil {
     public static void flushSprinkler() {
         Sprinkler.with(JandiApplication.getContext())
                 .flush();
+    }
+
+    public static void sendConversion(String key, String conversionId, String label) {
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_CONVERSION_ID, conversionId);
+        bundle.putString(KEY_LABEL, label);
+
+        FirebaseAnalytics.getInstance(JandiApplication.getContext())
+                .logEvent(KEY_ADWORDS + key, bundle);
     }
 }

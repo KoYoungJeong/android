@@ -16,8 +16,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.ads.conversiontracking.AdWordsConversionReporter;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -28,10 +26,10 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
@@ -239,9 +237,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     @Override
     public void moveToAccountHome() {
 
-        AdWordsConversionReporter.reportWithConversionId(JandiApplication.getContext(),
-                "957512006", "M3MOCM6ij2MQxvLJyAM", "0.00", true);
-
+        AnalyticsUtil.sendConversion("Android_signup", "957512006", "M3MOCM6ij2MQxvLJyAM");
 
         AccountHomeActivity.startActivity(this, true);
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
