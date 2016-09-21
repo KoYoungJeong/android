@@ -18,20 +18,16 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.dagger.DaggerInsertTeamInfoComponent;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.dagger.InsertTeamInfoModule;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.presenter.InsertTeamInfoPresenter;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 
 import javax.inject.Inject;
 
@@ -103,11 +99,7 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
         teamInsertInfoPresenter.checkEmailInfo();
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.CreateaTeam);
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.ScreenView)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_CREATE)
-                .build());
+        SprinklrScreenView.sendLog(ScreenViewProperty.TEAM_CREATE);
     }
 
     @Override

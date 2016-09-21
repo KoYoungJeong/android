@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
@@ -24,16 +23,14 @@ import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.settings.privacy.SettingPrivacyActivity_;
 import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
 import com.tosslab.jandi.app.ui.term.TermActivity;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrSignOut;
 import com.tosslab.jandi.app.views.settings.SettingsBodyView;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.Arrays;
 
@@ -244,18 +241,9 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
     }
 
     public void onEvent(SignOutEvent event) {
-        trackSignOut();
+        SprinklrSignOut.sendLog();
+        AnalyticsUtil.flushSprinkler();
         settingsPresenter.startSignOut();
     }
-
-    private void trackSignOut() {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.SignOut)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .build());
-        AnalyticsUtil.flushSprinkler();
-    }
-
 
 }

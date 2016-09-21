@@ -36,6 +36,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
@@ -126,12 +127,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     void initViews() {
         vEmptyTeamMember.setVisibility(View.GONE);
 
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.ScreenView)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_MEMBER)
-                .build());
+        SprinklrScreenView.sendLog(ScreenViewProperty.TEAM_MEMBER);
 
         AnalyticsUtil.sendScreenName(getScreen());
 

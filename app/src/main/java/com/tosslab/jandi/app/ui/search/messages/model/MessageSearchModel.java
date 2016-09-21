@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.search.messages.model;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -11,17 +10,10 @@ import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.search.messages.adapter.strategy.TextStrategy;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
-import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,35 +101,6 @@ public class MessageSearchModel {
 
     public String getEntityName(long entityId) {
         return TeamInfoLoader.getInstance().getName(entityId);
-    }
-
-    public void trackMessageKeywordSearchSuccess(String keyword) {
-
-        try {
-            keyword = URLEncoder.encode(keyword, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.MessageKeywordSearch)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.SearchKeyword, keyword)
-                .build());
-
-    }
-
-    public void trackMessageKeywordSearchFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.MessageKeywordSearch)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-
     }
 
     public long getRoomId(long entityId) {

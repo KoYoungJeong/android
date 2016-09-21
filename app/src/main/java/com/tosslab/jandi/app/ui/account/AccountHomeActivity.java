@@ -17,7 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.Henson;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
@@ -31,18 +30,15 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
 import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.app.views.AccountPendingTeamRowView;
 import com.tosslab.jandi.app.views.AccountTeamRowView;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.List;
 
@@ -105,13 +101,10 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
     }
 
     void initView() {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.ScreenView)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .property(PropertyKey.ScreenView, ScreenViewProperty.ACCOUNT_HOME)
-                .build());
+        SprinklrScreenView.sendLog(ScreenViewProperty.ACCOUNT_HOME);
 
         progressWheel = new ProgressWheel(AccountHomeActivity.this);
+
         setUpActionBar();
 
         accountHomePresenter.onInitialize(shouldRefreshAccountInfo);
@@ -120,13 +113,11 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
     }
 
     private void setUpActionBar() {
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.jadi_account_home);
-
     }
 
     @Override

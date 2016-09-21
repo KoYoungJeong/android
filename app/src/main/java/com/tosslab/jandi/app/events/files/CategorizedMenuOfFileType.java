@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.events.files;
 
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.R;
 
 /**
@@ -49,6 +51,15 @@ public class CategorizedMenuOfFileType {
 
     public CategorizedMenuOfFileType(int type) {
         this.type = type;
+    }
+
+    public static int findTitleResIdFromQuery(String query) {
+        for (int idx = 0, size = stringQueryList.length; idx < size; idx++) {
+            if (TextUtils.equals(query, stringQueryList[idx])) {
+                return stringTitleResourceList[idx];
+            }
+        }
+        return -1;
     }
 
     public String getServerQuery() {

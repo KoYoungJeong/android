@@ -16,18 +16,39 @@
 
 package com.tosslab.jandi.app.push.gcm.register;
 
-import android.content.Intent;
+import android.util.Log;
 
-import com.google.android.gms.iid.InstanceIDListenerService;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
+import com.tosslab.jandi.app.network.models.PushToken;
+import com.tosslab.jandi.app.push.PushTokenRegister;
 
-public class GcmRegistrationRefreshListenerService extends InstanceIDListenerService {
+import java.io.IOException;
 
-    private static final String TAG = GcmRegistrationRefreshListenerService.class.getSimpleName();
+public class GcmRegistrationRefreshListenerService extends FirebaseInstanceIdService {
+
+    private static final String[] TOPICS = {"global"};
+    private static final String TAG = "GcmRegistrationRefreshL";
 
     @Override
     public void onTokenRefresh() {
         // Fetch updated Instance ID token and notify our app's server of any changes (if applicable).
-        Intent intent = new Intent(this, GcmRegistrationIntentService.class);
-        startService(intent);
+        try {
+            String token = FirebaseInstanceId.getInstance().getToken();
+            Log.d(TAG, "onTokenRefresh() called Token : " + token);
+            subscribeTopics(token);
+            PushTokenRepository.getInstance().upsertPushToken(new PushToken("gcm", token));
+            PushTokenRegister.getInstance().updateToken();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void subscribeTopics(String token) throws IOException {
+        for (String topic : TOPICS) {
+            FirebaseMessaging.getInstance().subscribeToTopic(topic);
+        }
     }
 }

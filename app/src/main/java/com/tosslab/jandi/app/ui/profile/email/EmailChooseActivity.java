@@ -19,6 +19,8 @@ import com.tosslab.jandi.app.ui.profile.email.model.EmailChooseModel;
 import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrChangeAccountPrimaryEmail;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrRequestVerificationEmail;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -85,13 +87,12 @@ public class EmailChooseActivity extends BaseAppCompatActivity {
             ResAccountInfo resAccountInfo = emailChooseModel.updatePrimaryEmail(selectedEmail);
             AccountRepository.getRepository().upsertUserEmail(resAccountInfo.getEmails());
 
-            String accountId = resAccountInfo.getId();
-            emailChooseModel.trackChangeAccountEmailSuccess(accountId);
+            SprinklrChangeAccountPrimaryEmail.sendLog(emailChooseModel.getPrimaryEmail());
 
             emailChoosePresenter.finishWithResultOK();
         } catch (RetrofitException e) {
             int errorCode = e.getStatusCode();
-            emailChooseModel.trackChangeAccountEmailFail(errorCode);
+            SprinklrChangeAccountPrimaryEmail.trackFail(errorCode);
             e.printStackTrace();
             emailChoosePresenter.showFailToast(getString(R.string.err_network));
         } finally {
@@ -223,7 +224,7 @@ public class EmailChooseActivity extends BaseAppCompatActivity {
             ResAccountInfo resAccountInfo = emailChooseModel.requestNewEmail(email);
             AccountRepository.getRepository().upsertUserEmail(resAccountInfo.getEmails());
 
-            emailChooseModel.trackRequestVerifyEmailSuccess();
+            SprinklrRequestVerificationEmail.sendLog(email);
 
             emailChoosePresenter.refreshEmails(emailChooseModel.getAccountEmails());
             emailChoosePresenter.showSuccessToast(getString(R.string.sent_auth_email));
@@ -231,7 +232,7 @@ public class EmailChooseActivity extends BaseAppCompatActivity {
             e.printStackTrace();
 
             int errorCode = e.getResponseCode();
-            emailChooseModel.trackRequestVerifyEmailFail(errorCode);
+            SprinklrRequestVerificationEmail.sendFailLog(errorCode);
 
             String errorMessage = getString(R.string.err_team_creation_failed);
             if (errorCode == 40001) {

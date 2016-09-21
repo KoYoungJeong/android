@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.SearchedFilesAdapterModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.model.FileListModel;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrFileKeywordSearch;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -106,7 +107,7 @@ public class FileListPresenterImpl implements FileListPresenter {
                         .map(it -> {
                             try {
                                 ResSearch results = fileListModel.getResults(it);
-                                fileListModel.trackFileKeywordSearchSuccess(it.getKeyword());
+                                SprinklrFileKeywordSearch.sendLog(it.getKeyword());
                                 return Pair.create(it, results.getRecords());
                             } catch (RetrofitException e) {
                                 e.printStackTrace();
@@ -127,10 +128,10 @@ public class FileListPresenterImpl implements FileListPresenter {
                             if (t instanceof RetrofitException) {
                                 RetrofitException e1 = (RetrofitException) t;
                                 int errorCode = e1.getStatusCode();
-                                fileListModel.trackFileKeywordSearchFail(errorCode);
+                                SprinklrFileKeywordSearch.sendFailLog(errorCode);
                                 view.searchFailed(R.string.err_file_search);
                             } else {
-                                fileListModel.trackFileKeywordSearchFail(-1);
+                                SprinklrFileKeywordSearch.sendFailLog(-1);
                                 view.searchFailed(R.string.err_file_search);
                             }
                         }));
@@ -243,10 +244,10 @@ public class FileListPresenterImpl implements FileListPresenter {
     }
 
     @Override
-    public void onFileTypeSelection(String query, String searchText) {
+    public void onFileTypeSelection(String fileTypeQuery, String searchText) {
         searchedFilesAdapterModel.clearList();
         view.justRefresh();
-        fileTypeSubject.onNext(query);
+        fileTypeSubject.onNext(fileTypeQuery);
         pageSubject.onNext(1);
         endDateSubject.onNext(new Date());
     }
@@ -359,5 +360,14 @@ public class FileListPresenterImpl implements FileListPresenter {
                     view.showWarningToast(message);
                 });
 
+    }
+
+    @Override
+    public void onMoveFileSearch() {
+        long entity = entitySubject.getValue();
+        long writer = writerSubject.getValue();
+        String type = fileTypeSubject.getValue();
+
+        view.moveFileSearch(entity, writer, type);
     }
 }

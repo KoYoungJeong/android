@@ -16,10 +16,6 @@ import com.tosslab.jandi.app.ui.sign.signup.verify.exception.VerifyNetworkExcept
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -79,25 +75,6 @@ public class SignUpVerifyModel {
         AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
 
         JandiPreference.setFirstLogin(JandiApplication.getContext());
-
-    }
-
-    public void trackSignUpSuccessAndFlush(ResAccountInfo accountInfo) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.SignUp)
-                .accountId(accountInfo.getId())
-                .property(PropertyKey.ResponseSuccess, true)
-                .build());
-        AnalyticsUtil.flushSprinkler();
-    }
-
-    public void trackSignUpFailAndFlush(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.SignUp)
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-        AnalyticsUtil.flushSprinkler();
 
     }
 

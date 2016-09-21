@@ -1,10 +1,10 @@
 package com.tosslab.jandi.app.ui.sign.signup.presenter;
 
-import com.google.ads.conversiontracking.AdWordsConversionReporter;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.ui.sign.signup.model.SignUpModel;
 import com.tosslab.jandi.app.utils.LanguageUtil;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrVerificationMail;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 
 import javax.inject.Inject;
 
@@ -83,9 +83,8 @@ public class SignUpPresenterImpl implements SignUpPresenter {
         Observable.create(subscriber -> {
             try {
                 model.requestSignUp(email, password, name, lang);
-                model.trackSendEmailSuccess(email);
-                AdWordsConversionReporter.reportWithConversionId(JandiApplication.getContext(),
-                        "957512006", "fVnsCMKD_GEQxvLJyAM", "0.00", true);
+                AnalyticsUtil.sendConversion("Android_Account mail send", "957512006", "fVnsCMKD_GEQxvLJyAM");
+                SprinklrVerificationMail.sendLog(email);
                 subscriber.onNext(new Object());
             } catch (RetrofitException e) {
                 subscriber.onError(e);
@@ -107,7 +106,7 @@ public class SignUpPresenterImpl implements SignUpPresenter {
                     } else {
                         view.showNetworkErrorToast();
                     }
-                    model.trackSendEmailFail(exception.getResponseCode());
+                    SprinklrVerificationMail.sendFailLog(((RetrofitException) e).getResponseCode());
                 });
     }
 

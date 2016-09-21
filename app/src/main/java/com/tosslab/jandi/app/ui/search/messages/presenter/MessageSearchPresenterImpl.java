@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.network.models.ReqMessageSearchQeury;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.search.messages.model.MessageSearchModel;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrMessageKeywordSearch;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -78,7 +79,7 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
             view.setQueryResult(query, resMessageSearch.getQueryCursor().getTotalCount());
             view.addSearchResult(searchResults);
 
-            messageSearchModel.trackMessageKeywordSearchSuccess(query);
+            SprinklrMessageKeywordSearch.sendLog(query);
 
             if (resMessageSearch.getQueryCursor().getRecordCount() >= ITEM_PER_PAGE) {
                 view.setOnLoadingReady();
@@ -87,7 +88,7 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
             }
         } catch (RetrofitException e) {
             int errorCode = e.getStatusCode();
-            messageSearchModel.trackMessageKeywordSearchFail(errorCode);
+            SprinklrMessageKeywordSearch.trackFail(errorCode);
             e.printStackTrace();
         }
 

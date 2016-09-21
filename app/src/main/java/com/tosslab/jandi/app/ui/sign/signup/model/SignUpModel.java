@@ -28,22 +28,6 @@ public class SignUpModel {
         return signUpApi.get().signUpAccount(signUpInfo);
     }
 
-    public void trackSendEmailSuccess(String email) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.SendAccountVerificationMail)
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.Email, email)
-                .build());
-    }
-
-    public void trackSendEmailFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.SendAccountVerificationMail)
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-    }
-
     public boolean isValidEmailFormat(String email) {
         return !FormatConverter.isInvalidEmailString(email);
     }

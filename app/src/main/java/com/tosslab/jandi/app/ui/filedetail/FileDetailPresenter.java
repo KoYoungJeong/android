@@ -20,6 +20,13 @@ import com.tosslab.jandi.app.services.download.DownloadService;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.filedetail.domain.FileStarredInfo;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrFileDelete;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrFileShare;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrFileUnshare;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrMessageDelete;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrMessagePost;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrPublicLinkCreated;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrPublicLinkDeleted;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
@@ -178,24 +185,20 @@ public class FileDetailPresenter {
 
             for (ResMessages.Link link : links) {
                 if (link.message instanceof ResMessages.CommentStickerMessage) {
-
-                    fileDetailModel.trackFileStickerCommentPostSuccess(link.messageId,
-                            fileId,
-                            stickerIdStringBuilder.toString(),
-                            0,
-                            fileDetailModel.hasAllMention(comment, mentions));
+                    SprinklrMessagePost.sendLogWithStickerFile(
+                            link.messageId, stickerIdStringBuilder.toString(), fileId
+                    );
                 } else {
-                    fileDetailModel.trackFileCommentPostSuccess(link.messageId,
-                            fileId,
-                            mentions.size(),
-                            fileDetailModel.hasAllMention(comment, mentions));
+                    SprinklrMessagePost.sendLogWithFileComment(
+                            link.messageId,  fileId,
+                            mentions.size(), fileDetailModel.hasAllMention(comment, mentions));
                 }
             }
 
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
             if (e instanceof RetrofitException) {
-                fileDetailModel.trackFileCommentPostFail(((RetrofitException) e).getResponseCode());
+                SprinklrMessagePost.trackFail(((RetrofitException) e).getResponseCode());
             }
         }
     }
@@ -211,12 +214,13 @@ public class FileDetailPresenter {
 
             view.scrollToLastComment();
 
-            fileDetailModel.trackFileCommentPostSuccess(messageId, fileId, mentions.size(), hasAllMention);
+            SprinklrMessagePost.sendLogWithFileComment(
+                    messageId, fileId, mentions.size(), hasAllMention);
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
             if (e instanceof RetrofitException) {
-                fileDetailModel.trackFileCommentPostFail(((RetrofitException) e).getResponseCode());
+                SprinklrMessagePost.trackFail(((RetrofitException) e).getResponseCode());
             }
         }
     }
@@ -398,7 +402,7 @@ public class FileDetailPresenter {
             // FIXME "왜 share/unshare 후 entity 갱신이 있지"
 //            fileDetailModel.refreshEntity();
 
-            fileDetailModel.trackFileShareSuccess(entityId, fileId);
+            SprinklrFileShare.sendLog(entityId, fileId);
 
             retrieveFileDetail(fileId, false);
 
@@ -409,13 +413,13 @@ public class FileDetailPresenter {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
             int errorCode = e.getStatusCode();
-            fileDetailModel.trackFileShareFail(errorCode);
+            SprinklrFileShare.sendFailLog(errorCode);
             view.dismissProgress();
             view.showShareErrorToast();
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
-            fileDetailModel.trackFileShareFail(-1);
+            SprinklrFileShare.sendFailLog(-1);
             view.dismissProgress();
             view.showShareErrorToast();
         }
@@ -429,7 +433,7 @@ public class FileDetailPresenter {
 
 //            fileDetailModel.refreshEntity();
 
-            fileDetailModel.trackFileUnShareSuccess(entityId, fileId);
+            SprinklrFileUnshare.sendLog(entityId, fileId);
 
             retrieveFileDetail(fileId, false);
 
@@ -440,13 +444,13 @@ public class FileDetailPresenter {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
             int errorCode = e.getStatusCode();
-            fileDetailModel.trackFileUnShareFail(errorCode);
+            SprinklrFileUnshare.sendFailLog(errorCode);
             view.dismissProgress();
             view.showUnshareErrorToast();
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
-            fileDetailModel.trackFileUnShareFail(-1);
+            SprinklrFileUnshare.sendFailLog(-1);
             view.dismissProgress();
             view.showUnshareErrorToast();
         }
@@ -458,7 +462,7 @@ public class FileDetailPresenter {
         try {
             fileDetailModel.deleteFile(fileId);
 
-            fileDetailModel.trackFileDeleteSuccess(topicId, fileId);
+            SprinklrFileDelete.sendLog(topicId, fileId);
 
             view.dismissProgress();
 
@@ -469,14 +473,14 @@ public class FileDetailPresenter {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
             int errorCode = e.getStatusCode();
-            fileDetailModel.trackFileDeleteFail(errorCode);
+            SprinklrFileDelete.sendFailLog(errorCode);
 
             view.dismissProgress();
             view.showDeleteErrorToast();
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
-            fileDetailModel.trackFileDeleteFail(-1);
+            SprinklrFileDelete.sendFailLog(-1);
             view.dismissProgress();
             view.showDeleteErrorToast();
         }
@@ -505,7 +509,7 @@ public class FileDetailPresenter {
             } else {
                 fileDetailModel.deleteComment(messageId, feedbackId);
             }
-            fileDetailModel.trackFileCommentDeleteSuccess(messageId);
+            SprinklrMessageDelete.sendLog(messageId);
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
 
@@ -516,7 +520,7 @@ public class FileDetailPresenter {
                 view.notifyDataSetChanged();
             }
             if (e instanceof RetrofitException) {
-                fileDetailModel.trackFileCommentDeleteFail(((RetrofitException) e).getResponseCode());
+                SprinklrMessageDelete.sendFailLog(((RetrofitException) e).getResponseCode());
             }
         }
     }
@@ -538,15 +542,14 @@ public class FileDetailPresenter {
 
             view.setExternalLinkToClipboard();
 
-            fileDetailModel.trackCreatePublicLinkSuccess(fileId);
+            SprinklrPublicLinkCreated.sendLog(fileId);
 
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
             view.dismissProgress();
             view.showUnexpectedErrorToast();
             if (e instanceof RetrofitException) {
-                RetrofitException e1 = (RetrofitException) e;
-                fileDetailModel.trackCreatePublicLinkFail(e1.getResponseCode());
+                SprinklrPublicLinkCreated.sendFailLog(((RetrofitException) e).getResponseCode());
             }
         }
     }
@@ -566,15 +569,14 @@ public class FileDetailPresenter {
 
             view.showDisableExternalLinkSuccessToast();
 
-            fileDetailModel.trackDisablePublicLinkSuccess(fileId);
+            SprinklrPublicLinkDeleted.sendLog(fileId);
 
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
             view.dismissProgress();
             view.showUnexpectedErrorToast();
             if (e instanceof RetrofitException) {
-                RetrofitException e1 = (RetrofitException) e;
-                fileDetailModel.trackDisablePublicLinkFail(e1.getResponseCode());
+                SprinklrPublicLinkDeleted.sendFailLog(((RetrofitException) e).getResponseCode());
             }
         }
     }

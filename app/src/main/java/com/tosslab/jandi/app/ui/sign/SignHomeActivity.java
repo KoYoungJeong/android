@@ -38,6 +38,8 @@ public class SignHomeActivity extends BaseAppCompatActivity {
 
         SignUpActivity.startActivity(SignHomeActivity.this, null);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.StartPage, AnalyticsValue.Action.SignUp);
+        AnalyticsUtil.sendConversion("Android_Register", "957512006", "l9F-CIeql2MQxvLJyAM");
+
     }
 
     @OnClick(R.id.vg_sign_in)

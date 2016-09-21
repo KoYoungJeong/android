@@ -168,6 +168,8 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
     @OnClick(R.id.btn_sign_up)
     void onClickSignUpButton() {
         SignUpActivity.startActivity(SignInActivity.this, etEmail.getText().toString());
+        AnalyticsUtil.sendConversion("Android_Register", "957512006", "l9F-CIeql2MQxvLJyAM");
+
     }
 
     @OnClick(R.id.tv_forget_password)

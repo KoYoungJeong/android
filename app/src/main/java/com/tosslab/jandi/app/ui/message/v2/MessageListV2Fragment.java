@@ -151,6 +151,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
@@ -562,12 +563,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         int screenView = entityType == JandiConstants.TYPE_PUBLIC_TOPIC
                 ? ScreenViewProperty.PUBLIC_TOPIC : ScreenViewProperty.PRIVATE_TOPIC;
 
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.ScreenView)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ScreenView, screenView)
-                .build());
+        SprinklrScreenView.sendLog(screenView);
 
         AnalyticsValue.Screen screen = isInDirectMessage()
                 ? AnalyticsValue.Screen.Message : AnalyticsValue.Screen.TopicChat;

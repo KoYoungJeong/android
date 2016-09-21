@@ -21,7 +21,7 @@
         android:layout_weight="1"
         android:ellipsize="end"
         android:singleLine="true"
-        android:text="팀 리스트"
+        android:text="@string/jandi_team_list"
         android:textColor="@color/jandi_text"
         android:textSize="15dp"/>
 

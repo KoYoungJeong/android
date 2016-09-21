@@ -46,7 +46,6 @@ rootProject.allprojects { project ->
 
                 // Google
                 compile rootProject.ext.dependecies.libraries.googleAnalytics
-                compile rootProject.ext.dependecies.libraries.gcm
                 compile rootProject.ext.dependecies.libraries.support_appcompat
                 compile rootProject.ext.dependecies.libraries.support_v4
                 compile rootProject.ext.dependecies.libraries.support_v13
@@ -54,6 +53,10 @@ rootProject.allprojects { project ->
                 compile rootProject.ext.dependecies.libraries.support_cardview
                 compile rootProject.ext.dependecies.libraries.support_annotation
                 compile rootProject.ext.dependecies.libraries.support_design
+
+                // firebase
+                compile rootProject.ext.dependecies.libraries.firebase_core
+                compile rootProject.ext.dependecies.libraries.firebase_fcm
 
                 // UI
                 compile rootProject.ext.dependecies.libraries.supertoast
