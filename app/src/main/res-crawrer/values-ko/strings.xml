@@ -268,7 +268,7 @@
 	<string name="jandi_finished">"종료됨"</string>
 	<string name="jandi_folder_alread_has_name">"이미 존재하는 이름입니다"</string>
 	<string name="jandi_folder_ask_delete">"폴더를 정말 삭제하시겠습니까?
-(폴더를 삭제해도 해당 폴더내 토픽틀은 사라지지 않습니다.)"</string>
+(폴더를 삭제해도 해당 폴더내 토픽들은 사라지지 않습니다.)"</string>
 	<string name="jandi_folder_choose">"이동할 폴더를 선택해주세요."</string>
 	<string name="jandi_folder_delete">"폴더 삭제"</string>
 	<string name="jandi_folder_has_been_move_to">"토픽을 %s 폴더로 이동했습니다."</string>
@@ -620,6 +620,7 @@
 	<string name="jandi_team_domain">"팀 도메인"</string>
 	<string name="jandi_team_info">"팀 정보"</string>
 	<string name="jandi_team_join_fail">"팀 가입에 실패하였습니다."</string>
+	<string name="jandi_team_list">"팀 리스트"</string>
 	<string name="jandi_team_member">"팀 멤버"</string>
 	<string name="jandi_team_member_count_with_format">"팀원(%d)"</string>
 	<string name="jandi_team_name">"팀 이름"</string>

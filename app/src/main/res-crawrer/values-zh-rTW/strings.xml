@@ -498,10 +498,10 @@
 	<string name="jandi_sdcard_storage_mounted">"連接記憶卡"</string>
 	<string name="jandi_sdcard_storage_unmounted">"解除連接記憶卡"</string>
 	<string name="jandi_search_all_member">"所有成員"</string>
-	<string name="jandi_search_all_room">"所有討論"</string>
+	<string name="jandi_search_all_room">"所有討論空間 "</string>
 	<string name="jandi_search_available_length_of_keyword">"輸入的關鍵字需一個字符以上"</string>
 	<string name="jandi_search_category_everyone">"<b>所有成員</b>"</string>
-	<string name="jandi_search_category_everywhere">"<b>所有討論</b>"</string>
+	<string name="jandi_search_category_everywhere">"<b>所有討論空間 </b>"</string>
 	<string name="jandi_search_history">"最近搜尋紀錄"</string>
 	<string name="jandi_search_ing">"<![CDATA[搜尋 <b><font color=#404040>%s</font></b>...]]>"</string>
 	<string name="jandi_search_loading">"搜尋中"</string>
@@ -614,6 +614,7 @@
 	<string name="jandi_team_domain">"團隊網域"</string>
 	<string name="jandi_team_info">"團隊"</string>
 	<string name="jandi_team_join_fail">"處理過程中發生錯誤。請再試一次。"</string>
+	<string name="jandi_team_list">"團隊列表"</string>
 	<string name="jandi_team_member">"團隊成員"</string>
 	<string name="jandi_team_member_count_with_format">"成員(%d)"</string>
 	<string name="jandi_team_name">"團隊名稱"</string>

@@ -502,10 +502,10 @@
 	<string name="jandi_sdcard_storage_mounted">"SDカードをマウントしました"</string>
 	<string name="jandi_sdcard_storage_unmounted">"SDカードのマウントを解除しました"</string>
 	<string name="jandi_search_all_member">"全員"</string>
-	<string name="jandi_search_all_room">"全トピック"</string>
+	<string name="jandi_search_all_room">"全てのトークルーム"</string>
 	<string name="jandi_search_available_length_of_keyword">"検索キーワードは２文字以上で入力してください。"</string>
 	<string name="jandi_search_category_everyone">"<b>全員</b>"</string>
-	<string name="jandi_search_category_everywhere">"<b>全トピック</b>"</string>
+	<string name="jandi_search_category_everywhere">"<b>全てのトークルーム</b>"</string>
 	<string name="jandi_search_history">"最近の検索"</string>
 	<string name="jandi_search_ing">"<![CDATA[<b><font color=#404040>%s</font></b>を検索しています]]>"</string>
 	<string name="jandi_search_loading">"検索中です。"</string>
@@ -618,6 +618,7 @@
 	<string name="jandi_team_domain">"チームドメイン"</string>
 	<string name="jandi_team_info">"チーム"</string>
 	<string name="jandi_team_join_fail">"チーム参加の際にエラーが発生しました。もう一度お試しください"</string>
+	<string name="jandi_team_list">"チームリスト"</string>
 	<string name="jandi_team_member">"チームメンバー"</string>
 	<string name="jandi_team_member_count_with_format">"メンバー(%d)"</string>
 	<string name="jandi_team_name">"チーム名"</string>

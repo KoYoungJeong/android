@@ -33,6 +33,8 @@ public class JandiConstantsForFlavors {
     public static final String SOCKET_ROOT_URL =
             SERVICE_PROTOCOL + "://" + SOCKET_DOMAIN + ":" + SERVICE_PORT + "/";
 
+    public static final String INTERCOM_API_KEY = "android_sdk-1dc44febffdbbc7fab963de6f5e093f672cba0a1";
+    public static final String INTERCOM_API_ID = "xjjmliv4";
 
     public static class Push {
 

@@ -547,7 +547,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_sign_in_block">"<u>Sign In</u>"</string>
 	<string name="jandi_sign_in_ids_explain">"Choose an email address where we should send all of your JANDI related emails. Add other email addresses to assign to specific teams."</string>
 	<string name="jandi_sign_out_message">"Are you sure you want to sign out?"</string>
-	<string name="jandi_sign_up_now">"eg"</string>
+	<string name="jandi_sign_up_now">"It seems you are not registered yet. Would you like to sign up now?"</string>
 	<string name="jandi_signup_agree_all">"Accept all of JANDI's usage policies"</string>
 	<string name="jandi_signup_agree_pp">"I have reviewed and agree to the <u><b>Privacy Policy</b></u>"</string>
 	<string name="jandi_signup_agree_tos">"I have reviewed and agree to the<u><b> Terms of Service</b></u>"</string>
@@ -616,6 +616,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_team_domain">"Team Domain"</string>
 	<string name="jandi_team_info">"Team"</string>
 	<string name="jandi_team_join_fail">"There was an issue processing your invitation and joining the team. Please try again."</string>
+	<string name="jandi_team_list">"Team List"</string>
 	<string name="jandi_team_member">"Team Members"</string>
 	<string name="jandi_team_member_count_with_format">"Members(%d)"</string>
 	<string name="jandi_team_name">"Team Name"</string>
