@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
@@ -58,6 +59,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionButtonProvider;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.TabFactory;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -183,6 +185,14 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         });
 
         KeepService.start(this);
+        initFirebaseUserProperties();
+    }
+
+    private void initFirebaseUserProperties() {
+        FirebaseAnalytics.getInstance(this)
+                .setUserProperty("accountId", AccountUtil.getAccountId(this));
+        FirebaseAnalytics.getInstance(this)
+                .setUserProperty("memberId", String.valueOf(AccountUtil.getMemberId(this)));
     }
 
     private void initSelectedEntity() {
