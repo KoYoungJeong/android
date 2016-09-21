@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
@@ -17,20 +16,15 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.parse.Parse;
-import com.parse.ParseInstallation;
-import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.network.SimpleApiRequester;
 import com.tosslab.jandi.app.network.client.platform.PlatformApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
 import com.tosslab.jandi.app.network.manager.okhttp.OkHttpClientFactory;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
-import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceCloser;
-import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.utils.ApplicationActivateDetector;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -45,7 +39,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.logging.LogManager;
@@ -105,8 +98,6 @@ public class JandiApplication extends MultiDexApplication {
 
         initIntercom();
 
-        initParse();
-
         // Set AndroidAnnotations Background pool
         BackgroundExecutor.setExecutor(
                 Executors.newScheduledThreadPool(PoolableRequestApiExecutor.MAX_POOL_SIZE));
@@ -122,8 +113,6 @@ public class JandiApplication extends MultiDexApplication {
         registerScreenOffReceiver();
 
         initRetrofitBuilder();
-
-        migrationParsePush();
 
         logBaidu();
     }
@@ -141,38 +130,6 @@ public class JandiApplication extends MultiDexApplication {
 
     private void logBaidu() {
         PushSettings.enableDebugMode(this, LogUtil.LOG);
-    }
-
-    private void migrationParsePush() {
-        List<PushToken> pushTokenList = PushTokenRepository.getInstance().getPushTokenList();
-        String refreshToken = TokenUtil.getRefreshToken();
-        if (!TextUtils.isEmpty(refreshToken) && !pushTokenList.isEmpty()) {
-            return;
-        }
-
-        ParseInstallation currentInstallation = ParseInstallation.getCurrentInstallation();
-        if (currentInstallation.containsKey("activate")) {
-            boolean isParsePushOff = "off".equals(currentInstallation.getString("activate"));
-            if (isParsePushOff) {
-                PreferenceManager.getDefaultSharedPreferences(this)
-                        .edit()
-                        .putBoolean(Settings.SETTING_PUSH_AUTO_ALARM, false)
-                        .commit();
-            }
-        }
-    }
-
-    void initParse() {
-
-        // For Parse Push Notification
-        if (BuildConfig.DEBUG) {
-            Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
-        }
-
-        Parse.initialize(this,
-                JandiConstantsForFlavors.PARSE_APPLICATION_ID,
-                JandiConstantsForFlavors.PARSE_CLIENT_KEY);
-
     }
 
     private void initRetrofitBuilder() {

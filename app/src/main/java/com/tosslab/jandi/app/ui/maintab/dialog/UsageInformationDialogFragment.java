@@ -12,10 +12,11 @@ import android.text.SpannableStringBuilder;
 import android.util.Pair;
 import android.view.WindowManager;
 
-import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
+import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -85,8 +86,19 @@ public class UsageInformationDialogFragment extends DialogFragment {
         userInfos.add(new Pair<>("Account ID",
                 String.valueOf(AccountUtil.getAccountId(JandiApplication.getContext()))));
 
-        userInfos.add(new Pair<>("Device Token",
-                String.valueOf(ParseInstallation.getCurrentInstallation().get("deviceToken"))));
+        List<PushToken> pushTokenList = PushTokenRepository.getInstance().getPushTokenList();
+        StringBuilder builder = new StringBuilder();
+        boolean first = true;
+        for (PushToken pushToken : pushTokenList) {
+            if (first) {
+                first = false;
+            } else {
+                builder.append("\n");
+            }
+            builder.append(pushToken.getService()).append(" : ").append(pushToken.getToken());
+        }
+
+        userInfos.add(new Pair<>("Device Token", builder.toString()));
 
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         Observable.from(userInfos)
