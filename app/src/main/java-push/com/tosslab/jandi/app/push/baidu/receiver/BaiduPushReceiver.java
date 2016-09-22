@@ -41,7 +41,10 @@ public class BaiduPushReceiver extends PushServiceReceiver {
             super.onReceive(context, intent);
         }
 
-        abortBroadcast();
+        try {
+            abortBroadcast();
+        } catch (Exception e) {
+        }
     }
 
     private void sendNotificationService(Context context, PublicMsg publicMsg) {
