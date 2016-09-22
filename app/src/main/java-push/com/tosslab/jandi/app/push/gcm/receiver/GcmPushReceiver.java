@@ -18,7 +18,6 @@ package com.tosslab.jandi.app.push.gcm.receiver;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
 import com.tosslab.jandi.app.push.receiver.JandiPushIntentService;
@@ -37,7 +36,7 @@ public class GcmPushReceiver extends GcmListenerService {
             return;
         }
 
-        Log.d(TAG, "called with: " + "from = [" + from + "], data = [" + data + "]");
+        LogUtil.d(TAG, "called with: " + "from = [" + from + "], data = [" + data + "]");
 
         String customContent = data.getString("custom_content");
         JandiPushIntentService.startService(GcmPushReceiver.this, customContent);

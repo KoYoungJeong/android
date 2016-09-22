@@ -10,6 +10,7 @@ import com.baidu.android.pushservice.message.PublicMsg;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tosslab.jandi.app.push.receiver.JandiPushIntentService;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Map;
 
@@ -21,6 +22,7 @@ public class BaiduPushReceiver extends PushServiceReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (TextUtils.equals(intent.getAction(), "com.baidu.android.pushservice.action.notification.SHOW")) {
+            LogUtil.d(TAG, "onReceive()");
             String pushServicePackageName = intent.getStringExtra("pushService_package_name");
             String serviceName = intent.getStringExtra("service_name");
             Parcelable publicMsgParcelable = intent.getParcelableExtra("public_msg");
