@@ -32,6 +32,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import rx.Completable;
+import rx.android.schedulers.AndroidSchedulers;
+
 public class MentionControlViewModel {
     public static final Pattern MENTION_PATTERN = Pattern.compile("(?:@)([^\\u2063]+)(?:\\u2063)(\\d+)(?:\\u2063)");
     public static final Pattern MENTION_PATTERN_FOR_SEARCH = Pattern.compile("(?:(?:^|\\s)([@\\uff20]((?:[^@\\uff20]){0,30})))$");
@@ -168,7 +171,6 @@ public class MentionControlViewModel {
                 mentions.add(mentionInfo);
             }
 
-
         }
 
         return new ResultMentionsVO(builder.toString(), mentions);
@@ -179,8 +181,6 @@ public class MentionControlViewModel {
 
         this.etMessage = (AutoCompleteTextView) editText;
 
-        addTextWatcher(editText);
-
         searchMemberModel = SearchMemberModel_.getInstance_(activity);
 
         refreshSelectableMembers(teamId, roomIds);
@@ -188,10 +188,13 @@ public class MentionControlViewModel {
         List<SearchedItemVO> users = searchMemberModel.getUserSearchByName("");
         mentionMemberListAdapter = new MentionMemberListAdapter(activity, users);
 
-        etMessage.setAdapter(mentionMemberListAdapter);
-        etMessage.setDropDownBackgroundResource(R.drawable.mention_popup);
-        etMessage.setThreshold(1);
-
+        Completable.fromAction(() -> {
+            etMessage.setAdapter(mentionMemberListAdapter);
+            etMessage.setDropDownBackgroundResource(R.drawable.mention_popup);
+            etMessage.setThreshold(1);
+            addTextWatcher(editText);
+        }).subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 
     public void setOnMentionShowingListener(OnMentionShowingListener onMentionShowingListener) {

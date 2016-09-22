@@ -20,9 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.functions.Action1;
-import rx.functions.Func0;
 import rx.functions.Func2;
-import rx.schedulers.Schedulers;
 
 @EBean
 public class SearchMemberModel {
@@ -61,22 +59,14 @@ public class SearchMemberModel {
 
         TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance(teamId);
 
-        List<User> usersWithoutMe = Observable.from(teamInfoLoader.getUserList())
-                .filter(user -> user.getId() != teamInfoLoader.getMyId())
-                .toList()
-                .toBlocking()
-                .first();
+        long myId = teamInfoLoader.getMyId();
 
         Observable.from(topicIds)
                 .flatMap(topicId -> Observable.from(teamInfoLoader.getTopic(topicId).getMembers()))
-                .collect((Func0<ArrayList<Long>>) ArrayList::new, (members, memberId) -> {
-                    if (!members.contains(memberId)) {
-                        members.add(memberId);
-                    }
-                })
-                .flatMap(Observable::from)
-                .flatMap(memberId -> Observable.from(usersWithoutMe)
-                        .filter(entity -> !TextUtils.isEmpty(entity.getName()) && entity.getId() == memberId))
+                .filter(it -> it != myId)
+                .distinct()
+                .map(memberId -> TeamInfoLoader.getInstance().getUser(memberId))
+                .filter(it -> !TextUtils.isEmpty(it.getName()))
                 .map(entity -> new SearchedItemVO().setName(entity.getName())
                         .setId(entity.getId())
                         .setType(SearchType.member.name())
@@ -84,11 +74,10 @@ public class SearchMemberModel {
                         .setInactive(entity.isInactive())
                         .setEnabled(entity.isEnabled())
                         .setStarred(teamInfoLoader.isStarredUser(entity.getId())))
-                .collect(() -> selectableMembersLinkedHashMap,
-                        (selectableMembersLinkedHashMap, searchedItem) ->
-                                selectableMembersLinkedHashMap.put(searchedItem.getId(), searchedItem))
-                .subscribeOn(Schedulers.computation())
-                .subscribe(map -> {
+                .subscribe(searchedItem -> {
+                    selectableMembersLinkedHashMap.put(searchedItem.getId(), searchedItem);
+                }, Throwable::printStackTrace, () -> {
+
                     if (TextUtils.equals(mentionType, MentionControlViewModel.MENTION_TYPE_MESSAGE)) {
                         SearchedItemVO searchedItemForAll = new SearchedItemVO();
                         searchedItemForAll
@@ -115,12 +104,11 @@ public class SearchMemberModel {
                     }
 
                     EventBus.getDefault().post(new MentionableMembersRefreshEvent());
-
-                }, Throwable::printStackTrace, () -> {
                     if (action != null) {
                         action.call(selectableMembersLinkedHashMap);
                     }
                 });
+
     }
 
     public Map<Long, SearchedItemVO> getAllSelectableMembers() {
