@@ -21,6 +21,7 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.tosslab.jandi.app.push.receiver.JandiPushIntentService;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class GcmPushReceiver extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         Map<String, String> data = remoteMessage.getData();
 
-        Log.d(TAG, "onMessageReceived() called with: remoteMessage = [" + data.toString() + "]");
+        LogUtil.d(TAG, "onMessageReceived() called with: remoteMessage = [" + data.toString() + "]");
         if (data.containsKey(KEY_CUSTOM_CONTENT)) {
             String customContent = data.get(KEY_CUSTOM_CONTENT);
             JandiPushIntentService.startService(GcmPushReceiver.this, customContent);
