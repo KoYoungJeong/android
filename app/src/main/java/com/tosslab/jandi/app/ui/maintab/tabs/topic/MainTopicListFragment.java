@@ -50,7 +50,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderS
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderSettingActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.JoinableTopicListActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.BackPressConsumer;
-import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionButtonProvider;
+import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionBarDetector;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.SearchActivity;
@@ -90,7 +90,7 @@ import rx.Observable;
  */
 @EFragment(R.layout.fragment_joined_topic_list)
 public class MainTopicListFragment extends Fragment
-        implements MainTopicListPresenter.View, BackPressConsumer, ListScroller {
+        implements MainTopicListPresenter.View, BackPressConsumer, ListScroller, FloatingActionBarDetector {
 
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
     private static final int MOVE_MESSAGE_ACTIVITY = 702;
@@ -256,6 +256,7 @@ public class MainTopicListFragment extends Fragment
             activity.getMenuInflater().inflate(R.menu.main_activity_menu, menu);
         }
     }
+
     @OptionsItem(R.id.action_main_search)
     void onSearchOptionSelect() {
         startActivity(new Intent(getActivity(), SearchActivity.class));
@@ -737,29 +738,10 @@ public class MainTopicListFragment extends Fragment
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
 
-        if (isVisibleToUser) {
-            setFloatingActionButtonIfExists();
-        } else {
+        if (!isVisibleToUser) {
             if (floatingActionMenu != null) {
                 floatingActionMenu.setVisibility(false);
             }
-        }
-    }
-
-    private void setFloatingActionButtonIfExists() {
-        if (getActivity() == null || !(getActivity() instanceof FloatingActionButtonProvider)) {
-            return;
-        }
-        View btnFab = ((FloatingActionButtonProvider) getActivity()).provideFloatingActionButton();
-        if (btnFab != null) {
-            btnFab.setOnClickListener(v -> {
-                if (floatingActionMenu == null) {
-                    return;
-                }
-                floatingActionMenu.setVisibility(true);
-                floatingActionMenu.setupButtonLocation(btnFab);
-                floatingActionMenu.open();
-            });
         }
     }
 
@@ -777,5 +759,19 @@ public class MainTopicListFragment extends Fragment
         }
 
         return false;
+    }
+
+    @Override
+    public void onDetectFloatAction(View btnFab) {
+        if (btnFab != null) {
+            btnFab.setOnClickListener(v -> {
+                if (floatingActionMenu == null) {
+                    return;
+                }
+                floatingActionMenu.setVisibility(true);
+                floatingActionMenu.setupButtonLocation(btnFab);
+                floatingActionMenu.open();
+            });
+        }
     }
 }
