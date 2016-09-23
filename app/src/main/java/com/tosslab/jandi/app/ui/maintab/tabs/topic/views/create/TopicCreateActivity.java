@@ -174,7 +174,7 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
         new AlertDialog.Builder(TopicCreateActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setTitle(R.string.jandi_is_topic_required)
                 .setNegativeButton(R.string.jandi_cancel, null)
-                .setItems(items, (dialog, which) -> {
+                .setSingleChoiceItems(items, isPublicTopic ? 0 : 1, (dialog, which) -> {
                     switch (which) {
                         case 0:
                             isPublicTopic = true;
@@ -185,6 +185,7 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
                     }
                     setUpPublicSubTitle(isPublicTopic);
                     setTopicType(isPublicTopic);
+                    dialog.dismiss();
                 })
                 .create()
                 .show();
