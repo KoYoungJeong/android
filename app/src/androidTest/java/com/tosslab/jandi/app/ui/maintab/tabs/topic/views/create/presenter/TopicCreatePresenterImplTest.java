@@ -3,10 +3,10 @@ package com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.presenter;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.dagger.TopicCreateModule;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -17,6 +17,9 @@ import org.mockito.Mockito;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
+import dagger.Component;
 import setup.BaseInitUtil;
 
 import static org.mockito.Matchers.anyBoolean;
@@ -34,7 +37,8 @@ import static org.mockito.Mockito.verify;
 @RunWith(AndroidJUnit4.class)
 public class TopicCreatePresenterImplTest {
 
-    private TopicCreatePresenter topicCreatePresenter;
+    @Inject
+    TopicCreatePresenter topicCreatePresenter;
     private TopicCreatePresenter.View mockView;
 
     @BeforeClass
@@ -49,10 +53,18 @@ public class TopicCreatePresenterImplTest {
 
     @Before
     public void setUp() throws Exception {
-        topicCreatePresenter = TopicCreatePresenterImpl_.getInstance_(JandiApplication.getContext());
         mockView = Mockito.mock(TopicCreatePresenter.View.class);
 
-        topicCreatePresenter.setView(mockView);
+        DaggerTopicCreatePresenterImplTest_TestComponent.builder()
+                .topicCreateModule(new TopicCreateModule(mockView))
+                .build()
+                .inject(this);
+
+    }
+
+    @Component(modules = TopicCreateModule.class)
+    interface TestComponent {
+        void inject(TopicCreatePresenterImplTest test);
     }
 
     @Test

@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
@@ -13,76 +15,81 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.dagger.DaggerTopicCreateComponent;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.dagger.TopicCreateModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.presenter.TopicCreatePresenter;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.presenter.TopicCreatePresenterImpl;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.OptionsMenuItem;
-import org.androidannotations.annotations.TextChange;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
+import javax.inject.Inject;
 
-@EActivity(R.layout.activity_topic_create)
-@OptionsMenu(R.menu.add_topic_text)
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnTextChanged;
+
 public class TopicCreateActivity extends BaseAppCompatActivity implements TopicCreatePresenter.View {
 
     public static final int TITLE_MAX_LENGTH = 60;
     public static final int DESCRIPTION_MAX_LENGTH = 300;
 
-    @Extra
+    @Nullable
+    @InjectExtra
     String expectTopicName;
 
-    @Bean(TopicCreatePresenterImpl.class)
+    @Inject
     TopicCreatePresenter topicCreatePresenter;
 
-    @OptionsMenuItem(R.id.action_add_topic)
     MenuItem menuCreatTopic;
 
-    @ViewById(R.id.et_topic_create_title)
+    @Bind(R.id.et_topic_create_title)
     EditText tvTitle;
 
-    @ViewById(R.id.et_topic_create_description)
+    @Bind(R.id.et_topic_create_description)
     EditText tvTopicDescription;
 
-    @ViewById(R.id.tv_topic_create_name_count)
+    @Bind(R.id.tv_topic_create_name_count)
     TextView tvTitleCount;
 
-    @ViewById(R.id.tv_topic_create_description_count)
+    @Bind(R.id.tv_topic_create_description_count)
     TextView tvDescriptionCount;
 
-    @ViewById(R.id.tv_topic_create_is_public)
+    @Bind(R.id.tv_topic_create_is_public)
     TextView tvPublicSubTitle;
 
-    @ViewById(R.id.vg_topic_create_autojoin)
+    @Bind(R.id.vg_topic_create_autojoin)
     ViewGroup vgAutojoin;
 
-    @ViewById(R.id.switch_topic_create_auto_join)
+    @Bind(R.id.switch_topic_create_auto_join)
     SwitchCompat switchAutojoin;
 
     ProgressWheel progressWheel;
     boolean lastAutoJoin;
     boolean isPublicTopic = true;
 
-    @AfterInject
-    void initObject() {
-        topicCreatePresenter.setView(this);
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_topic_create);
+
+        ButterKnife.bind(this);
+        Dart.inject(this);
+        DaggerTopicCreateComponent.builder()
+                .topicCreateModule(new TopicCreateModule(this))
+                .build()
+                .inject(this);
+
+        initViews();
     }
 
-    @AfterViews
+
     void initViews() {
         setupActionBar();
         setTopicType(true);
@@ -110,28 +117,38 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
 
     }
 
-    @OptionsItem(android.R.id.home)
-    void onHomeOptionClick() {
-        finish();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        onTitleTextChange(tvTitle);
+        menu.clear();
+        getMenuInflater().inflate(R.menu.add_topic_text, menu);
+
+        menuCreatTopic = menu.findItem(R.id.action_add_topic);
+        onTitleTextChange(tvTitle.getText());
         return true;
     }
 
-    @TextChange(R.id.et_topic_create_title)
-    void onTitleTextChange(TextView textView) {
-        // NullPointer 가 될 수 있음...?
-        setTitleCount(textView.length());
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.action_add_topic:
+                onCreateTopicItemSelected();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @OnTextChanged(R.id.et_topic_create_title)
+    void onTitleTextChange(CharSequence text) {
+        setTitleCount(text.length());
 
         if (menuCreatTopic == null) {
             return;
         }
 
-        CharSequence text = textView.getText();
         if (TextUtils.isEmpty(text) || TextUtils.getTrimmedLength(text) <= 0) {
             menuCreatTopic.setEnabled(false);
         } else {
@@ -140,12 +157,11 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
 
     }
 
-    @TextChange(R.id.et_topic_create_description)
-    void onDescriptionTextChange(TextView textView) {
-        setDescriptionCount(textView.length());
+    @OnTextChanged(R.id.et_topic_create_description)
+    void onDescriptionTextChange(CharSequence text) {
+        setDescriptionCount(text.length());
     }
 
-    @OptionsItem(R.id.action_add_topic)
     void onCreateTopicItemSelected() {
         String topicTitle = getTopicTitle();
         String topicDescriptionText = getTopicDescriptionText();
@@ -155,7 +171,7 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
         topicCreatePresenter.onCreateTopic(topicTitle, topicDescriptionText, publicSelected, isAutojoin);
     }
 
-    @Click(R.id.vg_topic_create_autojoin)
+    @OnClick(R.id.vg_topic_create_autojoin)
     void onAutojoinClick() {
         if (isPublicTopic) {
             switchAutojoin.setChecked(!switchAutojoin.isChecked());
@@ -163,7 +179,7 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
         }
     }
 
-    @Click(R.id.vg_topic_create_is_public)
+    @OnClick(R.id.vg_topic_create_is_public)
     void onPublicClick() {
 
         String[] items = {
@@ -216,7 +232,6 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
         return tvTitle.getText().toString();
     }
 
-    @UiThread
     @Override
     public void showProgressWheel() {
         if (progressWheel != null && !progressWheel.isShowing()) {
@@ -224,7 +239,6 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
         }
     }
 
-    @UiThread
     @Override
     public void dismissProgressWheel() {
         if (progressWheel != null && progressWheel.isShowing()) {
@@ -232,14 +246,12 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
         }
     }
 
-    @UiThread
     @Override
     public void createTopicFailed(int err_entity_duplicated_name) {
         ColoredToast.showError(TopicCreateActivity.this.getString(err_entity_duplicated_name));
 
     }
 
-    @UiThread
     @Override
     public void createTopicSuccess(long teamId, long entityId, String topicTitle, boolean publicSelected) {
 
@@ -264,7 +276,6 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
 
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showCheckNetworkDialog() {
         AlertUtil.showCheckNetworkDialog(TopicCreateActivity.this, null);

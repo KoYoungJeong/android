@@ -7,8 +7,6 @@ public interface TopicCreatePresenter {
 
     void onCreateTopic(String topicTitle, String topicDescriptionText, boolean isPublic, boolean isAutojoin);
 
-    void setView(View view);
-
     interface View {
 
         void showCheckNetworkDialog();
