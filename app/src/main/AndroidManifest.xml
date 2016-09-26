@@ -181,7 +181,7 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity
-            android:name=".ui.message.detail.edit.TopicDescriptionEditActivity_"
+            android:name=".ui.message.detail.edit.TopicDescriptionEditActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
