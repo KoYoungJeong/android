@@ -95,16 +95,16 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitialInfo, Long> {
 
     private void upsertChats(long teamId, Collection<Chat> chats) throws SQLException {
         Dao<Chat, ?> dao = DaoManager.createDao(getConnectionSource(), Chat.class);
-        DeleteBuilder<Chat, ?> topicDeleteBuilder = dao.deleteBuilder();
-        topicDeleteBuilder.where()
+        DeleteBuilder<Chat, ?> chatDeleteBuilder = dao.deleteBuilder();
+        chatDeleteBuilder.where()
                 .eq("initialInfo_id", teamId);
-        topicDeleteBuilder.delete();
+        chatDeleteBuilder.delete();
 
         if (chats != null && !chats.isEmpty()) {
             try {
                 dao.callBatchTasks(() -> {
-                    for (Chat topic : chats) {
-                        dao.create(topic);
+                    for (Chat chat : chats) {
+                        dao.create(chat);
                     }
                     return null;
                 });

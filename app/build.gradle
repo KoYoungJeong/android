@@ -61,7 +61,7 @@ android {
         dev {       // demo version
             applicationId 'com.tosslab.jandi.app.dev'
             versionName(defaultConfig.versionName + ".dev." + inhouse_version)
-            minSdkVersion 21
+            minSdkVersion 18
         }
 
         qa {       // demo version

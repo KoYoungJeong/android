@@ -33,8 +33,6 @@ import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
-import com.tosslab.jandi.app.services.socket.JandiSocketService;
-import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.MessageReadEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
@@ -350,11 +348,12 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
     @Override
     public void moveToSelectTeam() {
-        JandiSocketService.stopService(getActivity());
-        getActivity().sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
+//        JandiSocketService.stopService(getActivity());
+//        getActivity().sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
 
         startActivity(Henson.with(getActivity())
                 .gotoMainTabActivity()
+                .isLoadInitialInfo(true)
                 .build()
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 

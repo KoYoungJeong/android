@@ -53,7 +53,7 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
                     return true;
                 })
                 .filter(filterKeyword(type, keyword))
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map((user1) -> {
                     TeamMemberItem teamMemberItem = new TeamMemberItem(user1, keyword);

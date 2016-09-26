@@ -21,6 +21,8 @@ public interface MainTabPresenter {
 
     void onCheckIfNOtShowInvitePopup();
 
+    void refreshInitialInfo();
+
     interface View {
         void showInvitePopup();
 

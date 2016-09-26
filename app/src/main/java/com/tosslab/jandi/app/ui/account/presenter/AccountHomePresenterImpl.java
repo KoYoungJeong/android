@@ -121,7 +121,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
                     JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
                     accountHomeModel.trackLaunchTeamSuccess(teamId);
                 })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
                     view.dismissProgressWheel();

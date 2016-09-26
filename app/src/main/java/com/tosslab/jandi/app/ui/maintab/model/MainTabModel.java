@@ -1,14 +1,16 @@
 package com.tosslab.jandi.app.ui.maintab.model;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.main.ConfigApi;
+import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResConfig;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.team.room.TopicRoom;
-import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
@@ -21,9 +23,11 @@ import rx.Observable;
 public class MainTabModel {
 
     private final Lazy<ConfigApi> configApi;
+    private final Lazy<StartApi> startApi;
 
-    public MainTabModel(Lazy<ConfigApi> configApi) {
+    public MainTabModel(Lazy<ConfigApi> configApi, Lazy<StartApi> startApi) {
         this.configApi = configApi;
+        this.startApi = startApi;
     }
 
     public int getTopicBadgeCount() {
@@ -72,6 +76,22 @@ public class MainTabModel {
             } else {
                 return Observable.empty();
             }
+        });
+    }
+
+    public Observable<Object> getRefreshEntityInfoObservable() {
+        return Observable.create(subscriber -> {
+            try {
+                InitialInfo initializeInfo = startApi.get().getInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
+                InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+                JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
+            } catch (Exception error) {
+                subscriber.onError(error);
+                return;
+            }
+            TeamInfoLoader.getInstance().refresh();
+            subscriber.onNext(new Object());
+            subscriber.onCompleted();
         });
     }
 

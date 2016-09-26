@@ -22,7 +22,6 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.services.socket.JandiSocketServiceModel;
@@ -54,6 +53,7 @@ import javax.inject.Inject;
 import dagger.Lazy;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 public class SocketEventHistoryUpdator {
 
@@ -136,7 +136,6 @@ public class SocketEventHistoryUpdator {
 
     Observable<EventHistoryInfo> checkEventHistory(long socketConnectedLastTime, JandiRestarter restarterPost) {
         return Observable.defer(() -> {
-
             if (System.currentTimeMillis() - socketConnectedLastTime > 1000 * 60 * 60 * 24 * 7) {
                 InitialInfoRepository.getInstance().clear();
                 restartJandi(restarterPost);
@@ -173,7 +172,8 @@ public class SocketEventHistoryUpdator {
                 restartJandi(restarterPost);
                 return Observable.empty();
             }
-        }).doOnNext(it -> LogUtil.d(TAG, "Sorted start : " + new Date().toString()))
+        }).subscribeOn(Schedulers.newThread())
+                .doOnNext(it -> LogUtil.d(TAG, "Sorted start : " + new Date().toString()))
                 .concatMap(resEventHistory -> Observable.from(resEventHistory.getRecords()))
                 .filter(SocketEventVersionModel::validVersion);
     }

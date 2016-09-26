@@ -163,7 +163,7 @@ public class TeamInfoLoader {
         topicRooms.clear();
 
         getTopicObservable()
-                .map(TopicRoom::new)
+                .map(topic1 -> new TopicRoom(topic1))
                 .subscribe(topic -> {
                     topicRooms.put(topic.getId(), topic);
                     rooms.add(topic);
@@ -576,4 +576,5 @@ public class TeamInfoLoader {
     interface Call1 {
         void execute();
     }
+
 }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -63,6 +64,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
@@ -256,6 +258,7 @@ public class MainTopicListFragment extends Fragment
             activity.getMenuInflater().inflate(R.menu.main_activity_menu, menu);
         }
     }
+
     @OptionsItem(R.id.action_main_search)
     void onSearchOptionSelect() {
         startActivity(new Intent(getActivity(), SearchActivity.class));

@@ -68,7 +68,7 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
         filterSubscription = filterSubject
                 .throttleLast(100, TimeUnit.MILLISECONDS)
                 .onBackpressureBuffer()
-                .observeOn(Schedulers.io())
+                .observeOn(Schedulers.newThread())
                 .map(String::toLowerCase)
                 .concatMap(it -> teamMemberModel.getFilteredUser(it, selectMode, roomId)
                         .compose(sort())
@@ -240,7 +240,7 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
     public void inviteToggle() {
         view.showPrgoress();
         teamMemberModel.deferInvite(toggledIds, roomId)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
                     TopicRepository.getInstance().addMember(roomId, toggledIds.getIds());

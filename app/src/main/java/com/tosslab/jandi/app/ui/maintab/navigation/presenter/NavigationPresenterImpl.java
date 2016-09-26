@@ -151,7 +151,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
 
         navigationView.showProgressWheel();
         navigationModel.getUpdateEntityInfoObservable(teamId)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     navigationView.dismissProgressWheel();
@@ -355,7 +355,8 @@ public class NavigationPresenterImpl implements NavigationPresenter {
 
                     Intercom.client().updateUser(attr);
                     Intercom.client().setInAppMessageVisibility(Intercom.Visibility.GONE);
-                }, it -> {});
+                }, it -> {
+                });
 
 
     }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -52,7 +53,6 @@ import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
-import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.SearchedFilesAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.SearchedFilesAdapterView;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.controller.SearchSelectorViewController;
@@ -194,11 +194,13 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+
+
         searchSelectorViewController = new SearchSelectorViewController(
                 getContext(), tvFileListWhere, tvFileListWhom, tvFileListType);
 
-        String entityName = TeamInfoLoader.getInstance()
-                .getName(entityId);
+        String entityName = TeamInfoLoader.getInstance().getName(entityId);
 
         searchSelectorViewController.setCurrentEntityNameText(entityName);
 

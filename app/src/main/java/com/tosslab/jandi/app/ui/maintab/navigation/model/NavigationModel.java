@@ -111,17 +111,22 @@ public class NavigationModel {
 
     public Observable<Object> getUpdateEntityInfoObservable(final long teamId) {
         return Observable.create(subscriber -> {
-            try {
-                AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
-                InitialInfo initializeInfo = startApi.get().getInitializeInfo(teamId);
-                InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
-                JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
-                MessageRepository.getRepository().deleteAllLink();
-                TeamInfoLoader.getInstance().refresh();
-                subscriber.onNext(new Object());
-            } catch (Exception error) {
-                subscriber.onError(error);
+            AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
+
+            if (!InitialInfoRepository.getInstance().hasInitialInfo(teamId)) {
+                try {
+                    InitialInfo initializeInfo = startApi.get().getInitializeInfo(teamId);
+                    InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+                    JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
+                } catch (Exception error) {
+                    subscriber.onError(error);
+                    return;
+                }
             }
+
+            MessageRepository.getRepository().deleteAllLink();
+            TeamInfoLoader.getInstance().refresh();
+            subscriber.onNext(new Object());
             subscriber.onCompleted();
         });
     }
