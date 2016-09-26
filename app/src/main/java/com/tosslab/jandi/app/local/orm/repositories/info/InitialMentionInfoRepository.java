@@ -4,7 +4,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.sql.SQLException;
 
@@ -57,7 +56,6 @@ public class InitialMentionInfoRepository extends LockExecutorTemplate {
     }
 
     public boolean clearUnreadCount() {
-        LogUtil.e("tony", "clearUnreadCount");
         return execute(() -> {
             try {
                 Dao<InitialInfo.Mention, Long> dao = getDao(InitialInfo.Mention.class);
