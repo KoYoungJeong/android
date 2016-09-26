@@ -32,6 +32,11 @@ public class StarredMessageProfileBinder {
     }
 
     public void bind(Member writer) {
+
+        if (writer == null) {
+            return;
+        }
+
         boolean isBot = TeamInfoLoader.getInstance().isBot(writer.getId());
         boolean isJandiBot = TeamInfoLoader.getInstance().isJandiBot(writer.getId());
 

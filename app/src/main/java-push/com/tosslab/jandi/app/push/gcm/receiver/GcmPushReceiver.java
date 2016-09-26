@@ -16,6 +16,8 @@
 
 package com.tosslab.jandi.app.push.gcm.receiver;
 
+import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;

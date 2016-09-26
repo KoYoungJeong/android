@@ -55,7 +55,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.mypage.MypageTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.TeamTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.TopicTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.BackPressConsumer;
-import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionButtonProvider;
+import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionBarDetector;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.TabFactory;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
@@ -86,7 +86,7 @@ import rx.schedulers.Schedulers;
  * Created by justinygchoi on 2014. 8. 11..
  */
 public class MainTabActivity extends BaseAppCompatActivity implements MainTabPresenter.View,
-        NavigationFragment.NavigationOwner, FloatingActionButtonProvider {
+        NavigationFragment.NavigationOwner {
 
     @Bind(R.id.toolbar_main_tab)
     Toolbar toolbar;
@@ -298,6 +298,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 super.onTabSelected(tab);
 
                 int position = tab.getPosition();
+
+                Fragment item = tabPagerAdapter.getItem(viewPager.getCurrentItem());
+                if (item instanceof FloatingActionBarDetector) {
+                    ((FloatingActionBarDetector) item).onDetectFloatAction(btnFab);
+                }
+
                 tvTitle.setText(tab.getText());
                 boolean withoutShadow = position == MypageTabInfo.INDEX || position == TeamTabInfo.INDEX;
                 vTopShadow.setVisibility(withoutShadow ? View.GONE : View.VISIBLE);
@@ -568,12 +574,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         }
 
         super.onBackPressed();
-    }
-
-    @Nullable
-    @Override
-    public View provideFloatingActionButton() {
-        return btnFab;
     }
 
     @Nullable
