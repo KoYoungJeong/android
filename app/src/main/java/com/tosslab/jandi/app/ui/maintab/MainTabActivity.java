@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.NavigationBadgeEvent;
+import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
 import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
@@ -277,7 +278,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     private void initTabBadges() {
         mainTabPresenter.onInitTopicBadge();
         mainTabPresenter.onInitChatBadge();
-        mainTabPresenter.onInitMyPageBadge();
+        mainTabPresenter.onInitMyPageBadge(true);
     }
 
     private void initTabs() {
@@ -310,6 +311,10 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 btnFab.setVisibility(isFABController ? View.VISIBLE : View.GONE);
 
                 JandiPreference.setLastSelectedTab(position);
+
+                if (position == MypageTabInfo.INDEX) {
+                    mainTabPresenter.onInitMyPageBadge(false);
+                }
             }
 
             @Override
@@ -405,9 +410,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         setChatBadge(count);
     }
 
-    public void onEventMainThread(RefreshPollBadgeCountEvent event) {
-        int count = event.getBadgeCount();
-        setMypageBadge(count);
+    public void onEventMainThread(RefreshMypageBadgeCountEvent event) {
+        mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() != MypageTabInfo.INDEX);
     }
 
     public void onEventMainThread(TeamInfoChangeEvent event) {

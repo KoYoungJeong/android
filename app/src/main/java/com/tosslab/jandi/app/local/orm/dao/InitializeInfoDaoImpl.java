@@ -35,6 +35,11 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitialInfo, Long> {
             dao.createOrUpdate(data.getPoll());
         }
 
+        if (data.getMention() != null) {
+            Dao<InitialInfo.Mention, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.Mention.class);
+            dao.createOrUpdate(data.getMention());
+        }
+
         if (data.getTeam() != null) {
             Dao<Team, ?> dao = DaoManager.createDao(getConnectionSource(), Team.class);
             dao.createOrUpdate(data.getTeam());
@@ -168,6 +173,11 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitialInfo, Long> {
         if (data.getPoll() != null) {
             Dao<InitialInfo.Poll, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.Poll.class);
             dao.update(data.getPoll());
+        }
+
+        if (data.getMention() != null) {
+            Dao<InitialInfo.Mention, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.Mention.class);
+            dao.update(data.getMention());
         }
 
         if (data.getTeam() != null) {

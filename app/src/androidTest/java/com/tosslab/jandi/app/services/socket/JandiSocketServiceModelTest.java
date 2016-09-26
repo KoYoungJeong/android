@@ -701,7 +701,7 @@ public class JandiSocketServiceModelTest {
         SocketMessageCreatedEvent.Data data = new SocketMessageCreatedEvent.Data();
         data.setLinkMessage(link);
         event.setData(data);
-        model.onMessageCreated(event);
+        model.onMessageCreated(event, false);
 
         assertThat(accept).isTrue();
     }

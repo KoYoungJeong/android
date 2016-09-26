@@ -8,22 +8,22 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.messages.MentionMessageEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.MentionListAdapter;
+import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.MentionListHeaderAdapter;
+import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.view.MentionListDataView;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.component.DaggerMentionListComponent;
-import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.dto.MentionMessage;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.module.MentionListModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.presenter.MentionListPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.view.MentionListView;
@@ -34,15 +34,11 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by tonyjs on 16. 3. 17..
@@ -51,6 +47,9 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
 
     @Inject
     MentionListPresenter presenter;
+
+    @Inject
+    MentionListDataView mentionListDataView;
 
     @Bind(R.id.vg_refresh)
     SwipeRefreshLayout vgRefresh;
@@ -67,23 +66,10 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
     @Bind(R.id.v_empty_mentions)
     View vEmptyLayout;
 
-    private MentionListAdapter adapter;
+    @Bind(R.id.vg_mypage_mention_root)
+    ViewGroup vgRoot;
 
     private MentionMessageMoreRequestHandler moreRequestHandler;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        injectComponent();
-    }
-
-    private void injectComponent() {
-        DaggerMentionListComponent.builder()
-                .mentionListModule(new MentionListModule(this))
-                .build()
-                .inject(this);
-    }
 
     @Nullable
     @Override
@@ -98,12 +84,21 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
         ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
 
-        initSwipeRefreshLayout();
+        MentionListAdapter adapter = new MentionListAdapter();
+        injectComponent(adapter);
 
-        initMentionListView();
+        initMentionListView(adapter);
+        initSwipeRefreshLayout();
         initMoreLoadingProgress();
 
         presenter.onInitializeMyPage(false);
+    }
+
+    private void injectComponent(MentionListAdapter adapter) {
+        DaggerMentionListComponent.builder()
+                .mentionListModule(new MentionListModule(adapter, this))
+                .build()
+                .inject(this);
     }
 
     private void initSwipeRefreshLayout() {
@@ -120,15 +115,22 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
         });
     }
 
-    private void initMentionListView() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getBaseContext());
+    private void initMentionListView(final MentionListAdapter adapter) {
+        final LinearLayoutManager layoutManager =
+                new LinearLayoutManager(getActivity().getBaseContext());
         lvMyPage.setLayoutManager(layoutManager);
 
-        adapter = new MentionListAdapter();
+        adapter.setHasStableIds(true);
+        lvMyPage.addItemDecoration(new StickyHeadersBuilder()
+                .setAdapter(adapter)
+                .setSticky(true)
+                .setRecyclerView(lvMyPage)
+                .setStickyHeadersAdapter(new MentionListHeaderAdapter(adapter), false)
+                .build());
+
         moreRequestHandler = new MentionMessageMoreRequestHandler();
         adapter.setOnLoadMoreCallback(moreRequestHandler);
         lvMyPage.setAdapter(adapter);
-
         adapter.setOnMentionClickListener(mention -> {
             presenter.onClickMention(mention);
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.ChooseMention);
@@ -162,8 +164,8 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
         });
     }
 
-    public void onEvent(SocketMessageCreatedEvent event) {
-        ResMessages.Link link = event.getData().getLinkMessage();
+    public void onEvent(MentionMessageEvent event) {
+        ResMessages.Link link = event.getLink();
         if (link.message == null) {
             return;
         }
@@ -172,15 +174,7 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
     }
 
     public void onEvent(SocketMessageDeletedEvent event) {
-        Observable.just(event.getData().getLinkId())
-                .map(linkId -> adapter.indexOfLink(linkId))
-                .filter(index -> index >= 0)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(index -> {
-                    adapter.remove(index);
-                    adapter.notifyDataSetChanged();
-                });
-
+        presenter.removeMentionedMessage(event.getData().getLinkId());
     }
 
     @Override
@@ -213,16 +207,6 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
             return;
         }
         vEmptyLayout.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void clearMentions() {
-        adapter.clear();
-    }
-
-    @Override
-    public void addMentions(List<MentionMessage> mentions) {
-        adapter.addAll(mentions);
     }
 
     @Override
@@ -277,7 +261,7 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
 
     @Override
     public void notifyDataSetChanged() {
-        adapter.notifyDataSetChanged();
+        mentionListDataView.notifyDataSetChanged();
     }
 
     @Override
@@ -287,7 +271,7 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
 
     @Override
     public void clearLoadMoreOffset() {
-        adapter.clearLoadMoreOffset();
+        mentionListDataView.clearLoadMoreOffset();
     }
 
     @Override
@@ -296,13 +280,6 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
             return;
         }
         vEmptyLayout.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void addNewMention(MentionMessage mentionMessages) {
-        if (adapter.indexOfLink(mentionMessages.getLinkId()) < 0) {
-            adapter.add(0, mentionMessages);
-        }
     }
 
     @Override
@@ -315,7 +292,7 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
             return;
         }
 
-        presenter.reInitializeIfEmpty(adapter.getItemCount() <= 0);
+        presenter.reInitializeIfEmpty();
     }
 
     private boolean isFinishing() {

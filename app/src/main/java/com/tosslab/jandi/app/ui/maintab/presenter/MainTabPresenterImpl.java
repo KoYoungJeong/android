@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.maintab.presenter;
 
 import android.util.Log;
 
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialMentionInfoRepository;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.model.MainTabModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -40,8 +42,15 @@ public class MainTabPresenterImpl implements MainTabPresenter {
     }
 
     @Override
-    public void onInitMyPageBadge() {
-        int myPageBadgeCount = mainTabModel.getMyPageBadgeCount();
+    public void onInitMyPageBadge(boolean withUnreadMention) {
+        int myPageBadgeCount = mainTabModel.getPollBadgeCount();
+
+        if (withUnreadMention) {
+            myPageBadgeCount += mainTabModel.getUnreadMentionCount();
+        } else {
+            InitialMentionInfoRepository.getInstance().clearUnreadCount();
+            TeamInfoLoader.getInstance().refreshMention();
+        }
         mainTabView.setMypageBadge(myPageBadgeCount);
     }
 

@@ -13,5 +13,7 @@ public interface MentionListPresenter {
 
     void addMentionedMessage(ResMessages.Link link);
 
-    void reInitializeIfEmpty(boolean isEmpty);
+    void reInitializeIfEmpty();
+
+    void removeMentionedMessage(long linkId);
 }

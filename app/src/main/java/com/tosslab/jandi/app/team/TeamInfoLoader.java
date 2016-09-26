@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialMentionInfoRepository;
 import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
@@ -37,7 +38,6 @@ public class TeamInfoLoader {
     private Lock lock;
     private InitialInfo initialInfo;
 
-
     private List<TopicFolder> topicFolders;
 
     private List<Room> rooms;
@@ -51,6 +51,7 @@ public class TeamInfoLoader {
     private User me;
     private Team team;
     private User jandiBot;
+    private InitialInfo.Mention mention;
 
     private int pollBadge;
 
@@ -132,6 +133,18 @@ public class TeamInfoLoader {
         setUpMe();
         setUpTopicFolders();
         setUpPollBadge();
+        setUpMention();
+    }
+
+    private void setUpMention() {
+        this.mention = initialInfo.getMention();
+    }
+
+    public void refreshMention() {
+        execute(() -> {
+            InitialInfo.Mention newMention = InitialMentionInfoRepository.getInstance().getMention();
+            initialInfo.setMention(this.mention = newMention);
+        });
     }
 
     private void setUpPollBadge() {
@@ -567,6 +580,10 @@ public class TeamInfoLoader {
 
     private void setPollBadge(int pollBadge) {
         this.pollBadge = pollBadge;
+    }
+
+    public InitialInfo.Mention getMention() {
+        return execute(() -> mention);
     }
 
     interface Call0<T> {
