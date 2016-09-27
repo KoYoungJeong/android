@@ -124,18 +124,10 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             String fileUrl = ImageUtil.getImageFileUrl(item.getProfileUrl());
             boolean jandiBot = TeamInfoLoader.getInstance().isJandiBot(item.getEntityId());
 
-            ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
-            if (!jandiBot) {
-                layoutParams.height = layoutParams.width;
-            } else {
-                layoutParams.height = layoutParams.width * 5 / 4;
-            }
-            ivIcon.setLayoutParams(layoutParams);
-
             SpannableStringBuilder name = new SpannableStringBuilder();
             if (jandiBot) {
                 ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                ImageLoader.loadFromResources(ivIcon, R.drawable.bot_32x40);
+                ImageLoader.loadFromResources(ivIcon, R.drawable.logotype_80);
                 name.append(item.getName());
             } else {
 

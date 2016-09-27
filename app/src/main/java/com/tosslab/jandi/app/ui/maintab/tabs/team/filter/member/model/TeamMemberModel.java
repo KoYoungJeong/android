@@ -40,7 +40,8 @@ public class TeamMemberModel {
                 .filter(user -> user.getName().toLowerCase().contains(keyword))
                 .filter(user -> {
                     if (!selectMode && roomId < 0) {
-                        return true;
+                        // bot 아닌 것만 통과
+                        return !user.isBot();
                     }
 
                     if (user.getId() == TeamInfoLoader.getInstance().getMyId()) {

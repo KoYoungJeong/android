@@ -13,10 +13,10 @@
         <ImageView
             android:id="@+id/iv_message_user_profile"
             android:layout_width="@dimen/jandi_messages_profile_size"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/jandi_messages_profile_size"
             android:layout_marginLeft="7dp"
             android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
-            android:src="@drawable/bot_32x40" />
+            android:src="@drawable/logotype_80" />
         <!-- 기본 표시 레이어 -->
 
         <LinearLayout

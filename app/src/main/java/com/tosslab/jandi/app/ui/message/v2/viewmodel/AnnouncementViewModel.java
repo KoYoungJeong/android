@@ -134,7 +134,7 @@ public class AnnouncementViewModel {
         if (isBot) {
             if (isJandiBot) {
                 ivAnnouncementUser.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                ImageLoader.loadFromResources(ivAnnouncementUser, R.drawable.bot_80x100);
+                ImageLoader.loadFromResources(ivAnnouncementUser, R.drawable.logotype_80);
             } else {
                 ImageLoader.newInstance()
                         .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)

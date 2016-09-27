@@ -21,7 +21,6 @@ import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.dto.MentionMessage;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
@@ -120,18 +119,6 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
 
         boolean isBot = TeamInfoLoader.getInstance().isBot(mentionMessage.getWriterId());
         boolean isJandiBot = TeamInfoLoader.getInstance().isJandiBot(mentionMessage.getWriterId());
-        ViewGroup.MarginLayoutParams layoutParams =
-                (ViewGroup.MarginLayoutParams) ivProfile.getLayoutParams();
-
-        if (!isJandiBot) {
-            layoutParams.topMargin = topMarginForIvProfile;
-            layoutParams.height = (int) UiUtils.getPixelFromDp(44f);
-        } else {
-            layoutParams.height = layoutParams.width * 5 / 4;
-            layoutParams.topMargin = topMarginForIvProfile - layoutParams.width / 4;
-        }
-
-        ivProfile.setLayoutParams(layoutParams);
 
         Resources resources = tvWriter.getResources();
         if (!isJandiBot && !isBot) {
@@ -160,7 +147,7 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
         if (isJandiBot) {
 
             ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            ImageLoader.loadFromResources(ivProfile, R.drawable.bot_80x100);
+            ImageLoader.loadFromResources(ivProfile, R.drawable.logotype_80);
 
         } else {
             ImageLoader.newInstance()
