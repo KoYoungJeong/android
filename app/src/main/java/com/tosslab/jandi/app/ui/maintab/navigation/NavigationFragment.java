@@ -348,15 +348,12 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
     @Override
     public void moveToSelectTeam() {
-//        JandiSocketService.stopService(getActivity());
-//        getActivity().sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
-
         startActivity(Henson.with(getActivity())
                 .gotoMainTabActivity()
                 .isLoadInitialInfo(true)
                 .build()
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-
+        getActivity().overridePendingTransition(0, 0);
         getActivity().finish();
     }
 
