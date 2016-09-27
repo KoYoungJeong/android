@@ -28,7 +28,7 @@ public class JandiBotProfileLoader implements ProfileLoader {
 
     @Override
     public void setDescription(TextView tvProfileDescription, Member member) {
-        tvProfileDescription.setText(R.string.jandi_bot_status);
+        tvProfileDescription.setText(R.string.common_profilemodal_jandi_botstatus);
     }
 
     @Override
