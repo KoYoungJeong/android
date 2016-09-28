@@ -5,4 +5,4 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tabView:tabIcon="@drawable/jandi_tab_selector_file"
-    tabView:tabTitle="@string/jandi_tab_file"/>
+    tabView:tabTitle="@string/jandi_starred_files"/>

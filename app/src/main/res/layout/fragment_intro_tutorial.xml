@@ -58,8 +58,7 @@
                 <TextView
                     android:id="@+id/txt_tutorial_message"
                     style="@style/JandiTutorial.Text"
-                    android:layout_marginBottom="18dp"
-                    android:text="@string/jandi_tutorial_welcome_message" />
+                    android:layout_marginBottom="18dp" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

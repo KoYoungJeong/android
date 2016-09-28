@@ -489,7 +489,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                             }));
             vgProfileTeamButtons.addView(
                     getButton(R.drawable.icon_profile_message,
-                            getString(R.string.jandi_member_profile_dm), (v) -> {
+                            getString(R.string.jandi_1_1_message), (v) -> {
                                 long teamId = TeamInfoLoader.getInstance().getTeamId();
                                 long entityId = member.getId();
                                 startMessageListActivity(teamId, entityId);
@@ -518,7 +518,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
             vgProfileTeamButtons.addView(
                     getButton(R.drawable.icon_profile_message,
-                            getString(R.string.jandi_member_profile_dm), (v) -> {
+                            getString(R.string.jandi_1_1_message), (v) -> {
                                 long teamId = TeamInfoLoader.getInstance().getTeamId();
                                 long entityId = member.getId();
                                 startMessageListActivity(teamId, entityId);
