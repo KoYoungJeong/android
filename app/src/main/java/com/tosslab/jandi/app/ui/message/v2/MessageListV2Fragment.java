@@ -123,7 +123,7 @@ import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MainMessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapterView;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
-import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
+import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog;
 import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
 import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
@@ -1091,10 +1091,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     private void showDummyMessageDialog(DummyMessageLink dummyMessageLink) {
         long localId = dummyMessageLink.getLocalId();
-        DummyMessageDialog_.builder()
-                .localId(localId)
-                .build()
-                .show(getActivity().getFragmentManager(), "dialog");
+        DummyMessageDialog.showDialog(getChildFragmentManager(), localId);
     }
 
     private void showPreviewForUploadPhoto(int requestCode, Intent intent) {
