@@ -81,7 +81,7 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="@string/jandi_user_default_email"
+                    android:text="@string/jandi_signup_input_email"
                     android:textColor="@color/white"
                     android:textSize="14sp" />
 
@@ -93,7 +93,7 @@
                     android:layout_below="@+id/txt_account_main_id_title"
                     android:layout_centerVertical="true"
                     android:layout_marginTop="6dp"
-                    android:text="@string/jandi_sign_in_ids_explain"
+                    android:text="@string/jandi_setting_account_email_info"
                     android:textColor="@color/white"
                     android:textSize="14sp" />
 

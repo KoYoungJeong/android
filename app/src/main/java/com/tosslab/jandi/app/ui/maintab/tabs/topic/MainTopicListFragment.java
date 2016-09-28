@@ -54,20 +54,16 @@ import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionBarDetector;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.SearchActivity;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -685,7 +681,7 @@ public class MainTopicListFragment extends Fragment
 
             TextView tvTitle = (TextView) rootView.findViewById(R.id.tv_popup_title);
             EditText etInput = (EditText) rootView.findViewById(R.id.et_dialog_input_text);
-            etInput.setHint(R.string.jandi_title_name);
+            etInput.setHint(R.string.jandi_entity_create_entity_name);
             tvTitle.setText(R.string.jandi_folder_insert_name);
 
             builder.setView(rootView)
