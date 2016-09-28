@@ -583,7 +583,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @Override
     public void showUnstarredSuccessToast() {
-        showToast(getString(R.string.jandi_unpinned_message), false /* isError */);
+        showToast(getString(R.string.jandi_message_no_starred), false /* isError */);
     }
 
     @Override
@@ -593,7 +593,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @Override
     public void showCommentUnStarredSuccessToast() {
-        showToast(getString(R.string.jandi_unpinned_message), true /* isError */);
+        showToast(getString(R.string.jandi_message_no_starred), true /* isError */);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -657,7 +657,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             }
         }
 
-        String title = getString(R.string.jandi_tab_file);
+        String title = getString(R.string.jandi_starred_files);
         ResMessages.FileMessage fileMessage = getFileMessageFromAdapter();
         if (fileMessage != null && fileMessage.content != null) {
             title = fileMessage.content.title;
