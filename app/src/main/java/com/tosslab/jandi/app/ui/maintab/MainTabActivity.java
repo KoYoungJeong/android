@@ -188,9 +188,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             EventBus.getDefault().register(this);
         });
 
-        if (isLoadInitialInfo) {
-            mainTabPresenter.refreshInitialInfo();
-        }
+//        if (isLoadInitialInfo) {
+//            mainTabPresenter.refreshInitialInfo();
+//        }
 
         initFirebaseUserProperties();
     }

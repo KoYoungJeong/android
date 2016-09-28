@@ -109,8 +109,8 @@ public class NavigationModel {
         return teams;
     }
 
-    public Observable<Object> getUpdateEntityInfoObservable(final long teamId) {
-        return Observable.create(subscriber -> {
+    public Observable<Boolean> getUpdateEntityInfoObservable(final long teamId) {
+        return Observable.defer(() -> {
             AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
             if (!InitialInfoRepository.getInstance().hasInitialInfo(teamId)) {
@@ -119,15 +119,14 @@ public class NavigationModel {
                     InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
                     JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
                 } catch (Exception error) {
-                    subscriber.onError(error);
-                    return;
+                    return Observable.error(error);
+
                 }
             }
 
             MessageRepository.getRepository().deleteAllLink();
             TeamInfoLoader.getInstance().refresh();
-            subscriber.onNext(new Object());
-            subscriber.onCompleted();
+            return Observable.just(true);
         });
     }
 

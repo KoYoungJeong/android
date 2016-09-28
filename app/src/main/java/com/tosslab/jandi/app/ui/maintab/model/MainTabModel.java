@@ -80,18 +80,16 @@ public class MainTabModel {
     }
 
     public Observable<Object> getRefreshEntityInfoObservable() {
-        return Observable.create(subscriber -> {
+        return Observable.defer(() -> {
             try {
                 InitialInfo initializeInfo = startApi.get().getInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
                 InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
                 JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
             } catch (Exception error) {
-                subscriber.onError(error);
-                return;
+                return Observable.error(error);
             }
             TeamInfoLoader.getInstance().refresh();
-            subscriber.onNext(new Object());
-            subscriber.onCompleted();
+            return Observable.just(true);
         });
     }
 

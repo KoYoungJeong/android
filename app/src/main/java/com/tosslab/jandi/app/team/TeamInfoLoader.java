@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.team;
 
-import android.os.SystemClock;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -19,7 +18,6 @@ import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -128,25 +126,12 @@ public class TeamInfoLoader {
     }
 
     private void setUp() {
-        long pre = SystemClock.currentThreadTimeMillis();
         setUpTeam();
-        long post1 = SystemClock.currentThreadTimeMillis();
-        LogUtil.e("timeDistanceLoadTeam", String.valueOf(post1 - pre));
         setUpRooms();
-        long post2 = SystemClock.currentThreadTimeMillis();
-        LogUtil.e("timeDistanceLoadRoom", String.valueOf(post2 - post1));
         setUpMembers();
-        long post3 = SystemClock.currentThreadTimeMillis();
-        LogUtil.e("timeDistanceLoadMember", String.valueOf(post3 - post2));
         setUpMe();
-        long post4 = SystemClock.currentThreadTimeMillis();
-        LogUtil.e("timeDistanceLoadMe", String.valueOf(post4 - post3));
         setUpTopicFolders();
-        long post5 = SystemClock.currentThreadTimeMillis();
-        LogUtil.e("timeDistanceLoadFolder", String.valueOf(post5 - post4));
         setUpPollBadge();
-        long post6 = SystemClock.currentThreadTimeMillis();
-        LogUtil.e("timeDistanceLoadPollBadge", String.valueOf(post6 - post5));
     }
 
     private void setUpPollBadge() {
@@ -178,23 +163,17 @@ public class TeamInfoLoader {
         topicRooms.clear();
 
         getTopicObservable()
-                .map(topic1 -> new TopicRoom(topic1))
+                .map(TopicRoom::new)
                 .subscribe(topic -> {
-                    long pre = SystemClock.currentThreadTimeMillis();
                     topicRooms.put(topic.getId(), topic);
                     rooms.add(topic);
-                    long post1 = SystemClock.currentThreadTimeMillis();
-                    LogUtil.e("setTopicRoom", String.valueOf(post1 - pre));
                 });
 
         getChatObservable()
                 .map(DirectMessageRoom::new)
                 .subscribe(chatRoom -> {
-                    long pre = SystemClock.currentThreadTimeMillis();
                     chatRooms.put(chatRoom.getId(), chatRoom);
                     rooms.add(chatRoom);
-                    long post1 = SystemClock.currentThreadTimeMillis();
-                    LogUtil.e("setDM", String.valueOf(post1 - pre));
                 });
     }
 
