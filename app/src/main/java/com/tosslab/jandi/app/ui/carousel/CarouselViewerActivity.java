@@ -554,7 +554,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
 
     @Override
     public void showUnstarredSuccessToast() {
-        ColoredToast.show(getString(R.string.jandi_unpinned_message));
+        ColoredToast.show(getString(R.string.jandi_message_no_starred));
     }
 
     private void setUpToolbar() {

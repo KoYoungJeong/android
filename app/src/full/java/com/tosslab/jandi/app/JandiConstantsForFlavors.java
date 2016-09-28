@@ -19,6 +19,10 @@ public class JandiConstantsForFlavors {
     public static final String PARSE_APPLICATION_ID = "8vjqkTLaLNaebx5uAHJhcFsJ4gPuFdgymnlYbQMs";
     public static final String PARSE_CLIENT_KEY = "RxyMePFGh2shwjMJ0lBIjHvWix4JRh1VEk64AyKi";
 
+    public static final String INTERCOM_API_KEY = "android_sdk-40917d53dc07205e1515f909a14a94752d410f70";
+    public static final String INTERCOM_API_ID = "yt1d5jat";
+
+
     public static class Push {
         public static final String GCM_SENDER_ID = "252549028791";
         public static final String BAIDU_API_KEY = "dkDbCUo6nyYsXGD8cPxjcXVe";

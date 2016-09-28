@@ -42,7 +42,7 @@
         <Preference
             android:defaultValue="true"
             android:key="setting_pp"
-            android:title="@string/jandi_privacy_policy" />
+            android:title="@string/jandi_pp" />
     </PreferenceCategory>
 
     <PreferenceCategory

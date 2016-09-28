@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.utils.parse;
 
-import android.content.Intent;
 import android.util.Log;
 
 import com.baidu.android.pushservice.PushConstants;
@@ -9,7 +8,6 @@ import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.push.gcm.register.GcmRegistrationIntentService;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
@@ -21,9 +19,6 @@ public class PushUtil {
     public static final String PARSE_CHANNELS = "channels";
 
     public static void registPush() {
-        Intent service = new Intent(JandiApplication.getContext(), GcmRegistrationIntentService.class);
-        JandiApplication.getContext().startService(service);
-
         PushManager.startWork(JandiApplication.getContext(),
                 PushConstants.LOGIN_TYPE_API_KEY,
                 JandiConstantsForFlavors.Push.BAIDU_API_KEY);

@@ -196,7 +196,7 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
     @Override
     public void showUnStarSuccessToast() {
-        ColoredToast.show(R.string.jandi_unpinned_message);
+        ColoredToast.show(R.string.jandi_message_no_starred);
     }
 
     @Override

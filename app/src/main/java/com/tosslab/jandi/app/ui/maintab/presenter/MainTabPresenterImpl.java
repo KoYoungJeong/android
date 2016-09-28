@@ -47,8 +47,8 @@ public class MainTabPresenterImpl implements MainTabPresenter {
 
     @Override
     public void onCheckIfNotLatestVersion(Action0 completeAction) {
+        completeAction.call();
         if (!NetworkCheckUtil.isConnected()) {
-            completeAction.call();
             return;
         }
 
@@ -68,10 +68,10 @@ public class MainTabPresenterImpl implements MainTabPresenter {
                         }
                     }
 
-                    completeAction.call();
+//                    completeAction.call();
                 }, t -> {
                     LogUtil.e(Log.getStackTraceString(t));
-                    completeAction.call();
+//                    completeAction.call();
                 });
     }
 

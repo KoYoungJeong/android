@@ -8,7 +8,7 @@
         android:id="@+id/menu_overflow"
         android:icon="@drawable/actionbar_icon_moremenu"
         android:showAsAction="always"
-        android:title="@string/jandi_tab_more"
+        android:title="@string/jandi_action_more"
         app:showAsAction="always">
         <menu>
             <item

@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
@@ -53,10 +54,11 @@ import com.tosslab.jandi.app.ui.maintab.tabs.mypage.MypageTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.TeamTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.TopicTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.BackPressConsumer;
-import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionButtonProvider;
+import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionBarDetector;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.TabFactory;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -83,7 +85,7 @@ import rx.schedulers.Schedulers;
  * Created by justinygchoi on 2014. 8. 11..
  */
 public class MainTabActivity extends BaseAppCompatActivity implements MainTabPresenter.View,
-        NavigationFragment.NavigationOwner, FloatingActionButtonProvider {
+        NavigationFragment.NavigationOwner {
 
     @Bind(R.id.toolbar_main_tab)
     Toolbar toolbar;
@@ -189,6 +191,15 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         if (isLoadInitialInfo) {
             mainTabPresenter.refreshInitialInfo();
         }
+
+        initFirebaseUserProperties();
+    }
+
+    private void initFirebaseUserProperties() {
+        FirebaseAnalytics.getInstance(this)
+                .setUserProperty("accountId", AccountUtil.getAccountId(this));
+        FirebaseAnalytics.getInstance(this)
+                .setUserProperty("memberId", String.valueOf(AccountUtil.getMemberId(this)));
     }
 
     private void initSelectedEntity() {
@@ -293,6 +304,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 super.onTabSelected(tab);
 
                 int position = tab.getPosition();
+
+                Fragment item = tabPagerAdapter.getItem(viewPager.getCurrentItem());
+                if (item instanceof FloatingActionBarDetector) {
+                    ((FloatingActionBarDetector) item).onDetectFloatAction(btnFab);
+                }
+
                 tvTitle.setText(tab.getText());
                 boolean withoutShadow = position == MypageTabInfo.INDEX || position == TeamTabInfo.INDEX;
                 vTopShadow.setVisibility(withoutShadow ? View.GONE : View.VISIBLE);
@@ -563,12 +580,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         }
 
         super.onBackPressed();
-    }
-
-    @Nullable
-    @Override
-    public View provideFloatingActionButton() {
-        return btnFab;
     }
 
     @Nullable

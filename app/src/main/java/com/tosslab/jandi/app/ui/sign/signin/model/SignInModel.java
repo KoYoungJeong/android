@@ -19,10 +19,6 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import dagger.Lazy;
 
@@ -78,24 +74,6 @@ public class SignInModel {
 
     public boolean isEmptyPassword(String password) {
         return TextUtils.isEmpty(password);
-    }
-
-    public void trackSignInSuccess() {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.SignIn)
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.AutoSignIn, false)
-                .build());
-        AnalyticsUtil.flushSprinkler();
-    }
-
-    public void trackSignInFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.SignIn)
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
-        AnalyticsUtil.flushSprinkler();
     }
 
     public void subscribePush(String deviceId) {

@@ -13,11 +13,7 @@ import com.tosslab.jandi.app.local.orm.repositories.DownloadRepository;
 import com.tosslab.jandi.app.network.file.FileDownloadApi;
 import com.tosslab.jandi.app.services.download.domain.DownloadFileInfo;
 import com.tosslab.jandi.app.services.download.model.DownloadModel;
-import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrFileDownload;
 
 import java.io.File;
 import java.util.List;
@@ -118,7 +114,8 @@ public class DownloadController {
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(it -> {
                                 view.notifyProgress(it, 100, notificationId, progressNotificationBuilder);
-                            }, t -> {}));
+                            }, t -> {
+                            }));
 
 
             String name = file.getName();
@@ -133,10 +130,7 @@ public class DownloadController {
             Intent openFileViewerIntent = getFileViewerIntent(file, downloadFileInfo.getFileType());
             view.notifyComplete(downloadFileInfo.getFileName(), notificationId, openFileViewerIntent);
 
-            trackFileDownloadSuccess(downloadFileInfo.getFileId(),
-                    downloadFileInfo.getFileType(),
-                    downloadFileInfo.getFileExt(),
-                    (int) file.length());
+            SprinklrFileDownload.sendLog(downloadFileInfo.getFileId());
         } catch (Exception e) {
             DownloadModel.logDownloadException(e);
             view.cancelNotification(notificationId);
@@ -144,6 +138,7 @@ public class DownloadController {
             if (!(e.getCause() instanceof CancellationException)) {
                 view.showErrorToast(R.string.err_download);
             }
+            SprinklrFileDownload.sendFailLog(-1);
 
         }
 
@@ -178,17 +173,6 @@ public class DownloadController {
         downloadTask = null;
         view.unRegisterNetworkChangeReceiver();
         view.setLastNotificationTime(0);
-    }
-
-    void trackFileDownloadSuccess(long fileId, String fileType, String fileExt, int fileSize) {
-        Context context = JandiApplication.getContext();
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.FileDownload)
-                .accountId(AccountUtil.getAccountId(context))
-                .memberId(AccountUtil.getMemberId(context))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.FileId, fileId)
-                .build());
     }
 
     private Intent getFileViewerIntent(File file, String fileType) {

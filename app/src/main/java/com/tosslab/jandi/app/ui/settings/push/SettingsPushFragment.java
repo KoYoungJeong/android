@@ -217,7 +217,7 @@ public class SettingsPushFragment extends Fragment {
     }
 
     private void setSoundOnSummary(boolean checked) {
-        sbcvSound.setSummary(checked ? R.string.jandi_on : R.string.jandi_off);
+        sbcvSound.setSummary(checked ? R.string.jandi_auto_join_on : R.string.jandi_auto_join_off);
     }
 
     @OnClick(R.id.vg_settings_push_sound_sub_topic_message)

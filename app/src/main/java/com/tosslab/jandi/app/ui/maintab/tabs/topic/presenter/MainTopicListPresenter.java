@@ -156,7 +156,36 @@ public class MainTopicListPresenter {
     }
 
     public List<FolderExpand> onGetFolderExpands() {
-        return FolderRepository.getInstance().getFolderExpands();
+        List<FolderExpand> folderExpands = FolderRepository.getInstance().getFolderExpands();
+        if (folderExpands == null || folderExpands.isEmpty()) {
+            List<TopicFolder> topicFolders = TeamInfoLoader.getInstance().getTopicFolders();
+            if (topicFolders != null && topicFolders.size() == 1) {
+                List<TopicRoom> rooms = topicFolders.get(0).getRooms();
+                if (rooms != null && rooms.size() == 1) {
+                    if (rooms.get(0).getId() == TeamInfoLoader.getInstance().getDefaultTopicId()
+                            && TeamInfoLoader.getInstance().getTopicList().size() <= 4) {
+                        /*
+                        폴더 설정이 없고
+                        폴더가 1개
+                        폴더 내 토픽이 1개
+                        토픽이 Default 토픽
+                        토픽이 총 4개이하 인 경우
+                        folderExpands 가 open 으로 설정
+                         */
+                        FolderExpand folderExpand = new FolderExpand();
+                        folderExpand.setExpand(true);
+                        long folderId = topicFolders.get(0).getId();
+                        folderExpand.setFolderId(folderId);
+                        folderExpand.setTeamId(TeamInfoLoader.getInstance().getTeamId());
+                        folderExpands = Arrays.asList(folderExpand);
+
+                        FolderRepository.getInstance().upsertFolderExpands(folderId, true);
+
+                    }
+                }
+            }
+        }
+        return folderExpands;
     }
 
     @Background

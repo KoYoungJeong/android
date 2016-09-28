@@ -15,6 +15,8 @@ import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrChangeAccountName;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrLaunchTeam;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.util.ArrayList;
@@ -119,7 +121,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
                     TeamInfoLoader.getInstance().refresh();
                     accountHomeModel.refreshPollList(teamId);
                     JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
-                    accountHomeModel.trackLaunchTeamSuccess(teamId);
+                    SprinklrLaunchTeam.sendLog(teamId);
                 })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -129,9 +131,9 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
                 }, t -> {
                     if (t instanceof RetrofitException) {
                         RetrofitException t1 = (RetrofitException) t;
-                        accountHomeModel.trackLaunchTeamFail(t1.getResponseCode());
+                        SprinklrLaunchTeam.sendFailLog(t1.getResponseCode());
                     } else {
-                        accountHomeModel.trackLaunchTeamFail(-1);
+                        SprinklrLaunchTeam.sendFailLog(-1);
                     }
                     view.dismissProgressWheel();
                 });
@@ -159,7 +161,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             }
         })
                 .doOnNext(resAccountInfo -> {
-                    accountHomeModel.trackChangeAccountNameSuccess(JandiApplication.getContext(), resAccountInfo.getId());
+                    SprinklrChangeAccountName.sendSuccessLog();
                     AccountRepository.getRepository().updateAccountName(resAccountInfo.getName());
                 })
                 .subscribeOn(Schedulers.io())
@@ -176,7 +178,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
                         RetrofitException e = (RetrofitException) t;
                         int errorCode = e.getResponseCode();
 
-                        accountHomeModel.trackChangeAccountNameFail(errorCode);
+                        SprinklrChangeAccountName.sendFailLog(e.getResponseCode());
 
                         if (e.getStatusCode() >= 500) {
                             String message = JandiApplication.getContext()
@@ -184,7 +186,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
                             view.showErrorToast(message);
                         }
                     } else {
-                        accountHomeModel.trackChangeAccountNameFail(-1);
+                        SprinklrChangeAccountName.sendFailLog(-1);
                     }
                 });
     }

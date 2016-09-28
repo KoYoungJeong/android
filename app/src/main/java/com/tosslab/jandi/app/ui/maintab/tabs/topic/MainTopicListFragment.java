@@ -51,24 +51,21 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderS
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderSettingActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.JoinableTopicListActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.BackPressConsumer;
-import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionButtonProvider;
+import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionBarDetector;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.SearchActivity;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -92,7 +89,7 @@ import rx.Observable;
  */
 @EFragment(R.layout.fragment_joined_topic_list)
 public class MainTopicListFragment extends Fragment
-        implements MainTopicListPresenter.View, BackPressConsumer, ListScroller {
+        implements MainTopicListPresenter.View, BackPressConsumer, ListScroller, FloatingActionBarDetector {
 
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
     private static final int MOVE_MESSAGE_ACTIVITY = 702;
@@ -128,12 +125,7 @@ public class MainTopicListFragment extends Fragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.ScreenView)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_PANEL)
-                .build());
+        SprinklrScreenView.sendLog(ScreenViewProperty.MESSAGE_PANEL);
 
         layoutManager = new LinearLayoutManager(getActivity());
 
@@ -691,7 +683,7 @@ public class MainTopicListFragment extends Fragment
 
             TextView tvTitle = (TextView) rootView.findViewById(R.id.tv_popup_title);
             EditText etInput = (EditText) rootView.findViewById(R.id.et_dialog_input_text);
-            etInput.setHint(R.string.jandi_title_name);
+            etInput.setHint(R.string.jandi_entity_create_entity_name);
             tvTitle.setText(R.string.jandi_folder_insert_name);
 
             builder.setView(rootView)
@@ -740,29 +732,10 @@ public class MainTopicListFragment extends Fragment
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
 
-        if (isVisibleToUser) {
-            setFloatingActionButtonIfExists();
-        } else {
+        if (!isVisibleToUser) {
             if (floatingActionMenu != null) {
                 floatingActionMenu.setVisibility(false);
             }
-        }
-    }
-
-    private void setFloatingActionButtonIfExists() {
-        if (getActivity() == null || !(getActivity() instanceof FloatingActionButtonProvider)) {
-            return;
-        }
-        View btnFab = ((FloatingActionButtonProvider) getActivity()).provideFloatingActionButton();
-        if (btnFab != null) {
-            btnFab.setOnClickListener(v -> {
-                if (floatingActionMenu == null) {
-                    return;
-                }
-                floatingActionMenu.setVisibility(true);
-                floatingActionMenu.setupButtonLocation(btnFab);
-                floatingActionMenu.open();
-            });
         }
     }
 
@@ -780,5 +753,19 @@ public class MainTopicListFragment extends Fragment
         }
 
         return false;
+    }
+
+    @Override
+    public void onDetectFloatAction(View btnFab) {
+        if (btnFab != null) {
+            btnFab.setOnClickListener(v -> {
+                if (floatingActionMenu == null) {
+                    return;
+                }
+                floatingActionMenu.setVisibility(true);
+                floatingActionMenu.setupButtonLocation(btnFab);
+                floatingActionMenu.open();
+            });
+        }
     }
 }

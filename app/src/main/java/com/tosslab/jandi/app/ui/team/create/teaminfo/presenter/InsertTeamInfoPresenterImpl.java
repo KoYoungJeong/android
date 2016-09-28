@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.validation.ResValidation;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.model.InsertTeamInfoModel;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrCreateTeam;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.util.List;
@@ -75,7 +76,7 @@ public class InsertTeamInfoPresenterImpl implements InsertTeamInfoPresenter {
                 long teamId = newTeam.getInviteTeam().getTeamId();
                 teamInsertInfoModel.updateEntityInfo(teamId);
                 teamInsertInfoModel.updateTeamInfo(teamId);
-                teamInsertInfoModel.trackCreateTeamSuccess(teamId);
+                SprinklrCreateTeam.sendLog(teamId);
                 subscriber.onNext(new Object());
             } catch (RetrofitException e) {
                 subscriber.onError(e);
@@ -92,7 +93,7 @@ public class InsertTeamInfoPresenterImpl implements InsertTeamInfoPresenter {
                         RetrofitException e = (RetrofitException) e1;
                         e.printStackTrace();
                         int errorCode = e.getStatusCode();
-                        teamInsertInfoModel.trackCreateTeamFail(errorCode);
+                        SprinklrCreateTeam.sendFailLog(e.getResponseCode());
                         if (errorCode >= 500) {
                             view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
                             return;
