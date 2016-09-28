@@ -27,6 +27,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -74,10 +75,10 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
         splashDrawable = ((AnimationDrawable) ivJandiIcon.getDrawable());
         animStartTime = System.currentTimeMillis();
-        Observable.just(true)
+        Completable.fromAction(Completable::complete)
                 .delay(ANIM_DELAY, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(it -> {
+                .subscribe(() -> {
                     splashDrawable.start();
                 });
     }
@@ -126,14 +127,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
             return;
         }
 
-        int densityDpi = getResources().getConfiguration().densityDpi;
-
-        long animTime;
-        if (densityDpi < 480) {
-            animTime = 1500;
-        } else {
-            animTime = 2000;
-        }
+        long animTime = 1600;
 
         Observable.just(true)
                 .delay(animTime + ANIM_DELAY + animStartTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
