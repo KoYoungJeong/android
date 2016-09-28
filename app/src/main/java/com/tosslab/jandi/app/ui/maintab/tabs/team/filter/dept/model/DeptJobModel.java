@@ -9,6 +9,7 @@ import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.domain.DeptJob;
 import com.tosslab.jandi.app.utils.FirstCharacterUtil;
 import com.tosslab.jandi.app.views.spannable.HighlightSpannable;
 
@@ -30,26 +31,22 @@ public class DeptJobModel {
         highlightSpan = new HighlightSpannable(Color.TRANSPARENT, highlighteColor);
     }
 
-    public Observable.Transformer<? super List<String>, ? extends List<CharSequence>> textToSpan(final String it) {
-        return observable -> observable.concatMap(new Func1<List<String>, Observable<? extends List<CharSequence>>>() {
+    public Observable.Transformer<? super Pair<String, Integer>, DeptJob> textToSpan(final String it) {
+        return observable -> observable.map(new Func1<Pair<String, Integer>, DeptJob>() {
             @Override
-            public Observable<? extends ArrayList<CharSequence>> call(List<String> its) {
+            public DeptJob call(Pair<String, Integer> its) {
                 if (TextUtils.isEmpty(it)) {
-                    return Observable.just(new ArrayList<CharSequence>(its));
+                    return DeptJob.create(its.first, FirstCharacterUtil.firstCharacter(its.first), its.second);
                 } else {
-                    return Observable.from(its)
-                            .map(text -> {
-
-                                int index = text.toLowerCase().indexOf(it.toLowerCase());
-                                if (index >= 0) {
-                                    SpannableStringBuilder builder = new SpannableStringBuilder(text);
-                                    builder.setSpan(highlightSpan, index, index + it.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                    return builder;
-                                } else {
-                                    return text;
-                                }
-                            })
-                            .collect(ArrayList::new, List::add);
+                    String text = its.first;
+                    int index = text.toLowerCase().indexOf(it.toLowerCase());
+                    if (index >= 0) {
+                        SpannableStringBuilder builder = new SpannableStringBuilder(text);
+                        builder.setSpan(highlightSpan, index, index + it.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        return DeptJob.create(builder, FirstCharacterUtil.firstCharacter(text), its.second);
+                    } else {
+                        return DeptJob.create(its.first, FirstCharacterUtil.firstCharacter(text), its.second);
+                    }
                 }
             }
         });

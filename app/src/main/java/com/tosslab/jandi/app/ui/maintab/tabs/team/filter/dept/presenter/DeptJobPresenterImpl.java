@@ -10,9 +10,11 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.DeptJobFragment;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobDataModel;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.domain.DeptJob;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.model.DeptJobModel;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -20,6 +22,7 @@ import javax.inject.Inject;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
 import rx.subscriptions.CompositeSubscription;
@@ -68,11 +71,17 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
                             }
                         })
                         .compose(deptJobModel.containFilter(it))
-                        .distinct()
-                        .toSortedList(StringCompareUtil::compare)
-                        .compose(deptJobModel.textToSpan(it)))
+                        .collect((Func0<HashMap<String, Integer>>) HashMap::new, (map, s) -> {
+                            if (map.containsKey(s)) {
+                                map.put(s, map.get(s) + 1);
+                            } else {
+                                map.put(s, 1);
+                            }
+                        })
+                        .flatMap(map -> Observable.from(map.keySet()).map(it2 -> Pair.create(it2, map.get(it2))))
+                        .compose(deptJobModel.textToSpan(it))
+                        .toSortedList((deptJob, deptJob2) -> StringCompareUtil.compare(deptJob.getName().toString(), deptJob2.getName().toString())))
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(deptJobModel.dataMap())
                 .subscribe(this::addDatas));
 
 
@@ -89,17 +98,23 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
                             }
                         })
                         .compose(deptJobModel.containFilter(it))
-                        .distinct()
-                        .toSortedList(StringCompareUtil::compare)
-                        .compose(deptJobModel.textToSpan(it)))
+                        .collect((Func0<HashMap<String, Integer>>) HashMap::new, (map, s) -> {
+                            if (map.containsKey(s)) {
+                                map.put(s, map.get(s) + 1);
+                            } else {
+                                map.put(s, 1);
+                            }
+                        })
+                        .flatMap(map -> Observable.from(map.keySet()).map(it2 -> Pair.create(it2, map.get(it2))))
+                        .compose(deptJobModel.textToSpan(it))
+                        .toSortedList((deptJob, deptJob2) -> StringCompareUtil.compare(deptJob.getName().toString(), deptJob2.getName().toString())))
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(deptJobModel.dataMap())
                 .subscribe(this::addDatas));
 
     }
 
 
-    protected void addDatas(List<Pair<CharSequence, String>> its) {
+    protected void addDatas(List<DeptJob> its) {
         deptJobDataModel.clear();
         if (!its.isEmpty()) {
             view.dismissEmptyView();
