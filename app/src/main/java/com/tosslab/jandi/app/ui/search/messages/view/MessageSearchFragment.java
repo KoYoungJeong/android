@@ -405,7 +405,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     @Override
     public void showInvalidateEntityToast() {
         Resources resource = JandiApplication.getContext().getResources();
-        ColoredToast.show(resource.getString(R.string.jandi_topic_was_removed));
+        ColoredToast.show(resource.getString(R.string.jandi_starmention_no_longer_in_topic));
     }
 
     @Override

@@ -3,6 +3,8 @@
 	<string name="app_name">"JANDI"</string>
 	<string name="comment">"Comment"</string>
 	<string name="common_accthome_createteam">"Create a new team"</string>
+	<string name="common_accthome_createteamguide">"You are currently not part of any team.
+Tap on the 'Create a new team' button below to experience JANDI."</string>
 	<string name="common_createteam_toaccthome">"Go to Account Home"</string>
 	<string name="common_profilemodal_jandi_botstatus">"Hello. I'm JANDI"</string>
 	<string name="common_signup_codeverification">"A verification code has been sent to your email address above.
@@ -55,7 +57,7 @@ Please enter the verification code."</string>
 	<string name="err_team_creation_failed">"Email could not be sent"</string>
 	<string name="err_unshare">"File could not be unshared"</string>
 	<string name="err_unsupported_file_type">"There is no installed app that supports %1$s"</string>
-	<string name="exclamation_mark">"?"</string>
+	<string name="exclamation_mark">"!"</string>
 	<string name="fail_to_create_team">"Team creation not completed"</string>
 	<string name="file_upload_comment">"Comments (Optional)"</string>
 	<string name="jadi_account_home">"Account Home"</string>

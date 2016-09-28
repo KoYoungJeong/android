@@ -3,6 +3,8 @@
 	<string name="app_name">"JANDI"</string>
 	<string name="comment">"コメント"</string>
 	<string name="common_accthome_createteam">"新しいチーム作成"</string>
+	<string name="common_accthome_createteamguide">"参加中のチームがありません。
+下の「新しいチーム作成」をタッチし、JANDIを体験してみてください。"</string>
 	<string name="common_createteam_toaccthome">"JANDIホームに戻る"</string>
 	<string name="common_profilemodal_jandi_botstatus">"こんにちは、JANDIと言います。"</string>
 	<string name="common_signup_codeverification">"上記のメールアドレスに認証コードを送信しました。
@@ -55,7 +57,7 @@
 	<string name="err_team_creation_failed">"メールが送信できませんでした"</string>
 	<string name="err_unshare">"ファイルが非共有にできませんでした"</string>
 	<string name="err_unsupported_file_type">"%1$s このファイルを開くためのアプリケーションがインストールされていません"</string>
-	<string name="exclamation_mark">"に委譲しますか?"</string>
+	<string name="exclamation_mark">"!"</string>
 	<string name="fail_to_create_team">"チームが作成できませんでした"</string>
 	<string name="file_upload_comment">"コメント(任意)"</string>
 	<string name="jadi_account_home">"アカウントホーム"</string>

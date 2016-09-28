@@ -3,6 +3,8 @@
 	<string name="app_name">"JANDI"</string>
 	<string name="comment">"留言"</string>
 	<string name="common_accthome_createteam">"建立新的團隊"</string>
+	<string name="common_accthome_createteamguide">"尚未加入任何團隊
+點擊以下的「建立新的團隊」，開始體驗 JANDI 的高效率團隊通訊。"</string>
 	<string name="common_createteam_toaccthome">"前往帳號首頁"</string>
 	<string name="common_profilemodal_jandi_botstatus">"你好，我是JANDI！"</string>
 	<string name="common_signup_codeverification">"驗證碼已寄送到以上的電子郵箱，請輸入驗證碼完成認證"</string>
@@ -54,7 +56,7 @@
 	<string name="err_team_creation_failed">"電子郵件無法送出"</string>
 	<string name="err_unshare">"檔案無法取消分享"</string>
 	<string name="err_unsupported_file_type">"沒有安裝的應用程式可以支援%1$s"</string>
-	<string name="exclamation_mark">"?"</string>
+	<string name="exclamation_mark">"!"</string>
 	<string name="fail_to_create_team">"团队未完成建立"</string>
 	<string name="file_upload_comment">"留言（非必要）"</string>
 	<string name="jadi_account_home">"帳號首頁"</string>

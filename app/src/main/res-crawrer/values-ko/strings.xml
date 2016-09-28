@@ -3,6 +3,8 @@
 	<string name="app_name">"JANDI"</string>
 	<string name="comment">"댓글"</string>
 	<string name="common_accthome_createteam">"새로운 팀 생성"</string>
+	<string name="common_accthome_createteamguide">"아직 가입한 팀이 없습니다.
+아래 새로운 팀 생성을 터치하여 잔디를 경험해 보세요"</string>
 	<string name="common_createteam_toaccthome">"잔디 메인으로 가기"</string>
 	<string name="common_profilemodal_jandi_botstatus">"안녕하세요? JANDI입니다. "</string>
 	<string name="common_signup_codeverification">"위 이메일로 인증번호를 발송했습니다.
@@ -55,7 +57,7 @@
 	<string name="err_team_creation_failed">"메일 전송에 실패했습니다"</string>
 	<string name="err_unshare">"공유 해제에 실패했습니다. 다시 시도해 주세요"</string>
 	<string name="err_unsupported_file_type">"%1$s 을 확인할 수 있는 앱이 설치되지 않았습니다"</string>
-	<string name="exclamation_mark">"님을 토픽 관리자로 지정하시겠습니까?"</string>
+	<string name="exclamation_mark">"!"</string>
 	<string name="fail_to_create_team">"팀생성에 실패하였습니다"</string>
 	<string name="file_upload_comment">"댓글 (선택 사항)"</string>
 	<string name="jadi_account_home">"잔디 메인"</string>

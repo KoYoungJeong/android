@@ -30,7 +30,7 @@
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
         android:background="@drawable/bg_default_edittext"
-        android:hint="@string/jandi_profile_email"
+        android:hint="@string/jandi_member_profile_email"
         android:imeOptions="actionDone"
         android:inputType="textEmailAddress"
         android:maxLines="1"

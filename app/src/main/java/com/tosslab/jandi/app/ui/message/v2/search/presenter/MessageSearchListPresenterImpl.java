@@ -408,7 +408,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     public void unregistStarredMessage(long teamId, long messageId) {
         try {
             messageListModel.unregistStarredMessage(teamId, messageId);
-            view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_unpinned_message));
+            view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_message_no_starred));
             view.modifyStarredInfo(messageId, false);
             EventBus.getDefault().post(new StarredInfoChangeEvent());
         } catch (RetrofitException e) {
