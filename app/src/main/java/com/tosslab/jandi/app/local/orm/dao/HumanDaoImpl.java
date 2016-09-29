@@ -30,7 +30,7 @@ public class HumanDaoImpl extends BaseDaoImpl<Human, Long> {
     private void createProfile(Human.Profile profile) throws SQLException {
         if (profile != null) {
             Dao<Human.Profile, ?> dao = DaoManager.createDao(getConnectionSource(), Human.Profile.class);
-            dao.createIfNotExists(profile);
+            dao.createOrUpdate(profile);
         }
     }
 }

@@ -18,7 +18,7 @@
 
         <TextView
             style="@style/JandiTeam.TextView.Title"
-            android:text="@string/jandi_team_info" />
+            android:text="@string/team_info" />
 
         <EditText
             android:id="@+id/et_team_detail_info_team_name"

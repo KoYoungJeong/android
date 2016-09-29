@@ -27,7 +27,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/jandi_title_name"
+                    android:text="@string/jandi_entity_create_entity_name"
                     android:textColor="@color/text_color_setting_check_title"
                     android:textSize="@dimen/jandi_text_size_large" />
 
@@ -99,7 +99,7 @@
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@+id/iv_topic_detail_member_count"
                     android:layout_weight="1"
-                    android:text="@string/jandi_topic_paricipants"
+                    android:text="@string/jandi_participants"
                     android:textColor="@color/text_color_setting_check_title"
                     android:textSize="@dimen/jandi_text_size_large" />
 
@@ -146,7 +146,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/jandi_invite_member_to_topic"
+                    android:text="@string/jandi_invite_member"
                     android:textColor="@color/text_color_setting_check_title"
                     android:textSize="@dimen/jandi_text_size_large" />
 
@@ -309,7 +309,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/jandi_starred"
+                    android:text="@string/jandi_starred_stars"
                     android:textColor="@color/text_color_setting_check_title"
                     android:textSize="@dimen/jandi_text_size_large" />
 
@@ -341,7 +341,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/jandi_topic_leave"
+                    android:text="@string/jandi_action_leave"
                     android:textColor="@color/text_color_setting_check_title"
                     android:textSize="@dimen/jandi_text_size_large" />
 
@@ -366,7 +366,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/jandi_topic_delete"
+                    android:text="@string/jandi_action_delete"
                     android:textColor="@color/text_color_setting_check_title"
                     android:textSize="@dimen/jandi_text_size_large" />
 

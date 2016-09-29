@@ -135,7 +135,9 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
 
         deptJobPresenter.onCreate();
 
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
@@ -166,7 +168,9 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
     @Override
     public void onDestroy() {
         deptJobPresenter.onDestroy();
-        EventBus.getDefault().unregister(this);
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
         super.onDestroy();
     }
 

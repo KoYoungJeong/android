@@ -138,7 +138,7 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
 
             ActionBar actionBar = getSupportActionBar();
             if (roomId > 0) {
-                actionBar.setTitle(R.string.jandi_invite_member_to_topic);
+                actionBar.setTitle(R.string.jandi_invite_member);
             } else {
                 actionBar.setTitle(R.string.jandi_choose_1_1_member);
             }

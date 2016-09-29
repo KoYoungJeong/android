@@ -129,8 +129,9 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
 
             presenter.onItemClick(position);
         });
-
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
 
@@ -156,7 +157,9 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     @Override
     public void onDestroy() {
         presenter.onDestroy();
-        EventBus.getDefault().unregister(this);
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
         super.onDestroy();
     }
 

@@ -254,7 +254,7 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
     @Override
     public void showErrorInvalidEmail() {
         etLayoutEmail.setErrorEnabled(true);
-        etLayoutEmail.setError(getString(R.string.jandi_err_invalid_email));
+        etLayoutEmail.setError(getString(R.string.err_login_invalid_id));
 
         startBounceAnimation(etLayoutEmail.getChildAt(etLayoutEmail.getChildCount() - 1));
     }
@@ -262,7 +262,7 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
     @Override
     public void showErrorDuplicationEmail() {
         etLayoutEmail.setErrorEnabled(true);
-        etLayoutEmail.setError(getString(R.string.jandi_duplicate_email));
+        etLayoutEmail.setError(getString(R.string.err_email_exists));
 
         startBounceAnimation(etLayoutEmail.getChildAt(etLayoutEmail.getChildCount() - 1));
     }
@@ -376,7 +376,7 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
     }
 
     private void makeTermClickableMessage() {
-        String tos = getString(R.string.jandi_tos);
+        String tos = getString(R.string.jandi_tos_and_pp);
         String pp = getString(R.string.jandi_pp);
         String termMessage = getString(R.string.jandi_tab_tos_and_pp, tos, pp);
 

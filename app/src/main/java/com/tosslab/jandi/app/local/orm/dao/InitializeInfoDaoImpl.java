@@ -52,14 +52,15 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitialInfo, Long> {
 
     private void upsertFolders(long teamId, Collection<Folder> folders) throws SQLException {
         Dao<Folder, ?> dao = DaoManager.createDao(getConnectionSource(), Folder.class);
-        DeleteBuilder<Folder, ?> folderDeleteBuilder = dao.deleteBuilder();
-        folderDeleteBuilder.where()
-                .eq("initialInfo_id", teamId);
-        folderDeleteBuilder.delete();
+
         if (folders != null && !folders.isEmpty()) {
 
             try {
                 dao.callBatchTasks(() -> {
+                    DeleteBuilder<Folder, ?> folderDeleteBuilder = dao.deleteBuilder();
+                    folderDeleteBuilder.where()
+                            .eq("initialInfo_id", teamId);
+                    folderDeleteBuilder.delete();
                     for (Folder folder : folders) {
                         dao.create(folder);
                     }
@@ -74,14 +75,15 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitialInfo, Long> {
 
     private void upsertTopics(long teamId, Collection<Topic> topics) throws SQLException {
         Dao<Topic, ?> dao = DaoManager.createDao(getConnectionSource(), Topic.class);
-        DeleteBuilder<Topic, ?> topicDeleteBuilder = dao.deleteBuilder();
-        topicDeleteBuilder.where()
-                .eq("initialInfo_id", teamId);
-        topicDeleteBuilder.delete();
+
 
         if (topics != null && !topics.isEmpty()) {
             try {
                 dao.callBatchTasks(() -> {
+                    DeleteBuilder<Topic, ?> topicDeleteBuilder = dao.deleteBuilder();
+                    topicDeleteBuilder.where()
+                            .eq("initialInfo_id", teamId);
+                    topicDeleteBuilder.delete();
                     for (Topic topic : topics) {
                         dao.create(topic);
                     }
@@ -95,16 +97,17 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitialInfo, Long> {
 
     private void upsertChats(long teamId, Collection<Chat> chats) throws SQLException {
         Dao<Chat, ?> dao = DaoManager.createDao(getConnectionSource(), Chat.class);
-        DeleteBuilder<Chat, ?> topicDeleteBuilder = dao.deleteBuilder();
-        topicDeleteBuilder.where()
-                .eq("initialInfo_id", teamId);
-        topicDeleteBuilder.delete();
 
         if (chats != null && !chats.isEmpty()) {
             try {
                 dao.callBatchTasks(() -> {
-                    for (Chat topic : chats) {
-                        dao.create(topic);
+                    DeleteBuilder<Chat, ?> chatDeleteBuilder = dao.deleteBuilder();
+                    chatDeleteBuilder.where()
+                            .eq("initialInfo_id", teamId);
+                    chatDeleteBuilder.delete();
+
+                    for (Chat chat : chats) {
+                        dao.create(chat);
                     }
                     return null;
                 });
@@ -116,14 +119,14 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitialInfo, Long> {
 
     private void upsertHumans(long teamId, Collection<Human> humans) throws SQLException {
         Dao<Human, ?> dao = DaoManager.createDao(getConnectionSource(), Human.class);
-        DeleteBuilder<Human, ?> topicDeleteBuilder = dao.deleteBuilder();
-        topicDeleteBuilder.where()
-                .eq("initialInfo_id", teamId);
-        topicDeleteBuilder.delete();
 
         if (humans != null && !humans.isEmpty()) {
             try {
                 dao.callBatchTasks(() -> {
+                    DeleteBuilder<Human, ?> topicDeleteBuilder = dao.deleteBuilder();
+                    topicDeleteBuilder.where()
+                            .eq("initialInfo_id", teamId);
+                    topicDeleteBuilder.delete();
                     for (Human topic : humans) {
                         dao.create(topic);
                     }
@@ -137,14 +140,14 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitialInfo, Long> {
 
     private void upsertBots(long teamId, Collection<Bot> bots) throws SQLException {
         Dao<Bot, ?> dao = DaoManager.createDao(getConnectionSource(), Bot.class);
-        DeleteBuilder<Bot, ?> topicDeleteBuilder = dao.deleteBuilder();
-        topicDeleteBuilder.where()
-                .eq("initialInfo_id", teamId);
-        topicDeleteBuilder.delete();
 
         if (bots != null && !bots.isEmpty()) {
             try {
                 dao.callBatchTasks(() -> {
+                    DeleteBuilder<Bot, ?> topicDeleteBuilder = dao.deleteBuilder();
+                    topicDeleteBuilder.where()
+                            .eq("initialInfo_id", teamId);
+                    topicDeleteBuilder.delete();
                     for (Bot topic : bots) {
                         dao.create(topic);
                     }

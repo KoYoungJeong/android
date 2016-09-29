@@ -47,7 +47,7 @@
 
                 <TextView
                     style="@style/JandiSettings.Header.Text"
-                    android:text="@string/jandi_user_default_email" />
+                    android:text="@string/jandi_signup_input_email" />
 
                 <com.tosslab.jandi.app.views.settings.SettingsBodyView
                     android:id="@+id/vg_settin_account_email"

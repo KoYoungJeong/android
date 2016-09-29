@@ -26,15 +26,15 @@ import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
-import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
-import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
-import com.tosslab.jandi.app.events.poll.PollDataChangedEvent;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
 import com.tosslab.jandi.app.events.entities.MoveSharedEntityEvent;
+import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
+import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
+import com.tosslab.jandi.app.events.poll.PollDataChangedEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.local.orm.domain.ReadyCommentForPoll;
 import com.tosslab.jandi.app.local.orm.repositories.ReadyCommentForPollRepository;
@@ -846,7 +846,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
 
     @Override
     public void showCommentUnStarredSuccessToast() {
-        ColoredToast.show(R.string.jandi_unpinned_message);
+        ColoredToast.show(R.string.jandi_message_no_starred);
     }
 
     @Override

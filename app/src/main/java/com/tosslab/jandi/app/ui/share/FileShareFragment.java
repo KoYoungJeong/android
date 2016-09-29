@@ -258,7 +258,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     @Override
     public void moveEntity(long teamId, long entityId, int entityType) {
 
-        if (getActivity() != null) {
+        if (getActivity() == null) {
             return;
         }
         startActivity(Henson.with(getActivity())
