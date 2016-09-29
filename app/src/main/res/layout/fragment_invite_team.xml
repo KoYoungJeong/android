@@ -34,7 +34,7 @@
         android:gravity="center"
         android:paddingLeft="11dp"
         android:paddingRight="11dp"
-        android:text="@string/jandi_invite_to_team"
+        android:text="@string/jandi_action_invite"
         android:textColor="@color/white" />
 
     <ImageView

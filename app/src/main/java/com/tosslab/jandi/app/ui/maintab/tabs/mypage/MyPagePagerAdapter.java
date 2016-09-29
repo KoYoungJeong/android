@@ -9,8 +9,8 @@ import android.util.SparseArray;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.MentionListFragment;
-import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.StarredListFragment;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.PollListFragment;
+import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.StarredListFragment;
 
 /**
  * Created by tonyjs on 2016. 8. 19..
@@ -46,7 +46,7 @@ public class MyPagePagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return resources.getString(R.string.jandi_mention_mentions);
             case 1:
-                return resources.getString(R.string.jandi_starred_star);
+                return resources.getString(R.string.jandi_starred_stars);
             case 2:
                 return resources.getString(R.string.jandi_poll);
         }

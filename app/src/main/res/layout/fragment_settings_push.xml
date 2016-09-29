@@ -26,7 +26,7 @@
             android:id="@+id/vg_settings_push_sound"
             style="@style/JandiSettings.Body"
             app:sbvChcked="true"
-            app:sbvSummary="@string/jandi_on"
+            app:sbvSummary="@string/jandi_auto_join_on"
             app:sbvTitle="@string/jandi_sounds" />
 
         <LinearLayout
@@ -40,7 +40,7 @@
                 android:id="@+id/vg_settings_push_sound_sub_topic_message"
                 style="@style/JandiSettings.Body"
                 app:sbvChcked="true"
-                app:sbvSummary="@string/jandi_on"
+                app:sbvSummary="@string/jandi_auto_join_on"
                 app:sbvSummaryColor="@color/text_color_setting_summary_notification_sound"
                 app:sbvTitle="@string/jandi_normally_topic_messages" />
 
@@ -49,16 +49,16 @@
                 android:id="@+id/vg_settings_push_sound_sub_direct_message"
                 style="@style/JandiSettings.Body"
                 app:sbvChcked="true"
-                app:sbvSummary="@string/jandi_on"
+                app:sbvSummary="@string/jandi_auto_join_on"
                 app:sbvSummaryColor="@color/text_color_setting_summary_notification_sound"
-                app:sbvTitle="@string/jandi_member_profile_dm" />
+                app:sbvTitle="@string/jandi_1_1_message" />
 
 
             <com.tosslab.jandi.app.views.settings.SettingsBodyView
                 android:id="@+id/vg_settings_push_sound_sub_mentions"
                 style="@style/JandiSettings.Body"
                 app:sbvChcked="true"
-                app:sbvSummary="@string/jandi_on"
+                app:sbvSummary="@string/jandi_auto_join_on"
                 app:sbvSummaryColor="@color/text_color_setting_summary_notification_sound"
                 app:sbvTitle="@string/jandi_mention_mentions" />
         </LinearLayout>

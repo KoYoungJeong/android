@@ -6,6 +6,6 @@
         android:id="@+id/action_entity_more"
         android:icon="@drawable/actionbar_icon_menu"
         android:showAsAction="always"
-        android:title="@string/jandi_tab_more"
+        android:title="@string/jandi_action_more"
         app:showAsAction="always" />
 </menu>
