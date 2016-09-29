@@ -94,5 +94,7 @@ public interface PollDetailPresenter {
         void showPollItemParticipants(long pollId, Poll.Item item);
 
         void showPollDeleteSuccessToast();
+
+        void showInvalidPollToast();
     }
 }
