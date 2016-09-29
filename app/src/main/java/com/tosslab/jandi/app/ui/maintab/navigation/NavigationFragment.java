@@ -123,7 +123,9 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
 
         NavigationAdapter navigationAdapter = new NavigationAdapter();
         injectComponent(navigationAdapter);
@@ -510,7 +512,9 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
     @Override
     public void onDestroyView() {
-        EventBus.getDefault().unregister(this);
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
         navigationPresenter.clearTeamInitializeQueue();
         navigationPresenter.clearBadgeCountingQueue();
         super.onDestroyView();

@@ -95,7 +95,9 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
         starredListPresenter.onInitializeStarredList(starredType);
 
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     void injectComponent(StarredListAdapter starredListAdapter) {
@@ -298,7 +300,9 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
     @Override
     public void onDestroyView() {
-        EventBus.getDefault().unregister(this);
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
         super.onDestroyView();
     }
 

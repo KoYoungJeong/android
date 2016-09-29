@@ -137,7 +137,6 @@ public class SocketEventHistoryUpdator {
     Observable<EventHistoryInfo> checkEventHistory(long socketConnectedLastTime, JandiRestarter restarterPost) {
         return Observable.defer(() -> {
             if (System.currentTimeMillis() - socketConnectedLastTime > 1000 * 60 * 60 * 24 * 7) {
-                InitialInfoRepository.getInstance().clear();
                 restartJandi(restarterPost);
                 return Observable.empty();
             }
@@ -168,7 +167,6 @@ public class SocketEventHistoryUpdator {
 
             } catch (RetrofitException e) {
                 e.printStackTrace();
-                InitialInfoRepository.getInstance().clear();
                 restartJandi(restarterPost);
                 return Observable.empty();
             }

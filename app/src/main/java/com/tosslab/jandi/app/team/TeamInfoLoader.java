@@ -96,7 +96,7 @@ public class TeamInfoLoader {
      * @param teamId 정보가 필요한 팀 ID
      * @return 팀 정보
      */
-    public static TeamInfoLoader getInstance(long teamId) {
+    synchronized public static TeamInfoLoader getInstance(long teamId) {
         return new TeamInfoLoader(teamId);
     }
 

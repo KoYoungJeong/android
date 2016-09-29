@@ -199,6 +199,9 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveIntro() {
+        if (getActivity() == null) {
+            return;
+        }
         IntroActivity.startActivity(getActivity(), false);
 
         finishOnUiThread();
@@ -246,6 +249,9 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveEntity(long teamId, long roomId, int roomType) {
+        if (getActivity() == null) {
+            return;
+        }
         startActivity(Henson.with(getActivity())
                 .gotoMainTabActivity()
                 .build()
