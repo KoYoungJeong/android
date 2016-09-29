@@ -29,15 +29,15 @@ public class InitialInfo {
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Poll poll;
 
-    @ForeignCollectionField
+    @ForeignCollectionField(eager = true)
     private Collection<Folder> folders;
-    @ForeignCollectionField
+    @ForeignCollectionField(eager = true)
     private Collection<Topic> topics;
-    @ForeignCollectionField
+    @ForeignCollectionField(eager = true)
     private Collection<Chat> chats;
-    @ForeignCollectionField
+    @ForeignCollectionField(eager = true)
     private Collection<Human> members;
-    @ForeignCollectionField
+    @ForeignCollectionField(eager = true)
     private Collection<Bot> bots;
 
     @DatabaseField
