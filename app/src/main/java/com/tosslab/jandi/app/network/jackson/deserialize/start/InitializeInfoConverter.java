@@ -76,6 +76,9 @@ public class InitializeInfoConverter implements Converter<InitialInfo, InitialIn
         if (humans != null && !humans.isEmpty()) {
             for (Human human : humans) {
                 human.setInitialInfo(value);
+                if (human.getProfile() != null) {
+                    human.getProfile().set_id(human.getId());
+                }
                 if (human.getId() == myId) {
                     human.setIsStarred(false);
                 }

@@ -129,7 +129,7 @@ public class Human {
     @DatabaseTable(tableName = "initial_info_human_profile")
     public static class Profile {
         @JsonIgnore
-        @DatabaseField(generatedId = true)
+        @DatabaseField(id = true)
         private long _id;
         @DatabaseField
         private String email;
@@ -194,6 +194,10 @@ public class Human {
 
         public long get_id() {
             return _id;
+        }
+
+        public void set_id(long _id) {
+            this._id = _id;
         }
     }
 }

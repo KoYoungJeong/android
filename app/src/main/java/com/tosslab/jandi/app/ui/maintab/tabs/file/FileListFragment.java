@@ -52,7 +52,6 @@ import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
-import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.SearchedFilesAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.SearchedFilesAdapterView;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.controller.SearchSelectorViewController;
@@ -167,7 +166,9 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
                 .build()
                 .inject(this);
         filePickerViewModel = MainFileUploadControllerImpl_.getInstance_(getContext());
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
@@ -184,7 +185,9 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
     @Override
     public void onDestroy() {
-        EventBus.getDefault().unregister(this);
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
         fileListPresenter.onDestory();
         super.onDestroy();
     }

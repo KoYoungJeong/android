@@ -122,7 +122,8 @@ public class IntroActivityModel {
 
         if (hasInitInfo) {
             try {
-                return TeamInfoLoader.getInstance().getTeamId() > 0;
+                return TeamInfoLoader.getInstance().getTeamId() > 0
+                        && TeamInfoLoader.getInstance().getMyId() > 0;
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
