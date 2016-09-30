@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
@@ -35,10 +37,13 @@ import com.tosslab.jandi.app.events.socket.EventUpdateInProgress;
 import com.tosslab.jandi.app.events.socket.EventUpdateStart;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
+import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.push.PushInterfaceActivity;
+import com.tosslab.jandi.app.push.PushTokenRegister;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -191,6 +196,14 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 .setUserProperty("accountId", AccountUtil.getAccountId(this));
         FirebaseAnalytics.getInstance(this)
                 .setUserProperty("memberId", String.valueOf(AccountUtil.getMemberId(this)));
+
+        if (!PushTokenRepository.getInstance().hasGcmPushToken()) {
+            String token = FirebaseInstanceId.getInstance().getToken();
+            if (!TextUtils.isEmpty(token)) {
+                PushTokenRepository.getInstance().upsertPushToken(new PushToken("gcm", token));
+                PushTokenRegister.getInstance().updateToken();
+            }
+        }
     }
 
     private void initSelectedEntity() {

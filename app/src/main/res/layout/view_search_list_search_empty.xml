@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="27dp"
-        android:text="@string/jandi_cannot_find_search_result_old"
+        android:text="@string/err_file_search"
         android:textColor="#999999"
         android:textSize="14sp" />
 </LinearLayout>

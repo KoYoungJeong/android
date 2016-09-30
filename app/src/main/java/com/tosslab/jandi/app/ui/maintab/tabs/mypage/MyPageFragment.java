@@ -99,7 +99,9 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View {
         tabLayout.addTab(tabLayout.newTab()
                 .setCustomView(pollTab));
 
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     private void injectComponent() {
@@ -153,7 +155,9 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View {
 
     @Override
     public void onDestroyView() {
-        EventBus.getDefault().unregister(this);
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
         super.onDestroyView();
     }
 }

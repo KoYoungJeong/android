@@ -12,12 +12,12 @@ import android.widget.ProgressBar;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
-import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.adapter.PollListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.adapter.view.PollListDataView;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.component.DaggerPollListComponent;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.module.PollListModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.presenter.PollListPresenter;
+import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -74,12 +74,16 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
 
         initPollList();
 
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
     public void onDestroyView() {
-        EventBus.getDefault().unregister(this);
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
         super.onDestroyView();
     }
 

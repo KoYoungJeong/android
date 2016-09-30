@@ -119,7 +119,7 @@ public class InvitationViewModel {
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
         dialog.setTitle(R.string.title_cdp_invite);
         dialog.setView(view);
-        dialog.setPositiveButton(R.string.menu_entity_invite, (dialogInterface, i) -> {
+        dialog.setPositiveButton(R.string.jandi_action_invite, (dialogInterface, i) -> {
             List<Long> selectedCdp = adapter.getSelectedUserIds();
             if (selectedCdp != null && !selectedCdp.isEmpty()) {
                 inviteInBackground(context, selectedCdp, entityId);

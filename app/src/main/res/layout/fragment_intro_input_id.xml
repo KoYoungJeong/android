@@ -68,7 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:text="@string/jandi_forgot_password"
+                android:text="@string/jandi_forget_password_block"
                 android:textColor="@color/jandi_sign_in_edit_text"
                 android:textSize="11dp" />
 

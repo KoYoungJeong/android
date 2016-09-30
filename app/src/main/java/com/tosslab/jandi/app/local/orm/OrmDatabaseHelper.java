@@ -423,7 +423,9 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(getConnectionSource(), BadgeCount.class);
 
         clearTable(getConnectionSource(), ResAccessToken.class);
-        clearTable(getConnectionSource(), PushToken.class);
+
+        // exception.
+//        clearTable(getConnectionSource(), PushToken.class);
         clearTable(getConnectionSource(), PushHistory.class);
 
         clearTable(getConnectionSource(), InitialInfo.class);

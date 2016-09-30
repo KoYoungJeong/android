@@ -11,7 +11,7 @@
         android:layout_height="?attr/actionBarSize"
         android:visibility="visible"
         app:navigationIcon="@drawable/actionbar_icon_back"
-        app:title="@string/jandi_name" />
+        app:title="@string/jandi_entity_create_entity_name" />
 
     <EditText
         android:id="@+id/et_name_change"

@@ -108,7 +108,7 @@
     <item name="android:layout_height">42dp</item>
     <item name="android:singleLine">true</item>
     <item name="android:inputType">textEmailAddress</item>
-    <item name="android:hint">@string/jandi_profile_email</item>
+    <item name="android:hint">@string/jandi_member_profile_email</item>
     <item name="android:background">@drawable/jandi_intro_edittext</item>
     <item name="android:paddingBottom">11dp</item>
     <item name="android:paddingLeft">8dp</item>
@@ -123,7 +123,7 @@
         <item name="android:layout_height">42dp</item>
         <item name="android:singleLine">true</item>
         <item name="android:inputType">textEmailAddress</item>
-        <item name="android:hint">@string/jandi_profile_email</item>
+        <item name="android:hint">@string/jandi_member_profile_email</item>
         <item name="android:background">@drawable/edtxt_messages_input</item>
     </style>
     <!-- 튜토리얼 페이지의 아래에 위치한 버튼 스타일 --><style name="JandiToturial.Indicator" parent="JandiTutorial">

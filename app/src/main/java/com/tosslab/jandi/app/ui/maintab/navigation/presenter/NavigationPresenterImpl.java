@@ -124,10 +124,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                         .map(Team::getUnread)
                         .reduce((prev, current) -> prev + current),
                 Observable.just(Intercom.client().getUnreadConversationCount()),
-                (pendingTeams, unreadCount, intercomCount) -> {
-                    BadgeUtils.setBadge(JandiApplication.getContext(), unreadCount);
-                    return pendingTeams + unreadCount + intercomCount;
-                })
+                (pendingTeams, unreadCount, intercomCount) -> pendingTeams + unreadCount + intercomCount)
                 .subscribe(total -> {
                     EventBus.getDefault().post(new NavigationBadgeEvent(total));
                 }, t -> {

@@ -6,6 +6,6 @@
         android:id="@+id/action_invitation"
         android:orderInCategory="100"
         android:showAsAction="always"
-        android:title="@string/jandi_invitation"
+        android:title="@string/jandi_action_invite"
         app:showAsAction="always" />
 </menu>

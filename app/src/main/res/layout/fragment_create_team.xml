@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="29dp"
             android:gravity="center_horizontal"
-            android:text="@string/jandi_profile_welcome"
+            android:text="@string/jandi_coach_mark_topic_list_welcome"
             android:textColor="@color/dark_gray"
             android:textSize="25dp" />
 

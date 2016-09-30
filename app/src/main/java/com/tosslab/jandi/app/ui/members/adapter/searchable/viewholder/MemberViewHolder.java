@@ -251,7 +251,7 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         Resources resources = tvOwnerBadge.getResources();
 
         tvOwnerBadge.setText(isTeamMemberList
-                ? resources.getString(R.string.jandi_team_owner)
+                ? resources.getString(R.string.jandi_team_owner_with_format)
                 : resources.getString(R.string.jandi_topic_owner));
 
         tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
