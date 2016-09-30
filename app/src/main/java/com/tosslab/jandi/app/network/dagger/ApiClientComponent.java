@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.network.dagger;
 
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
-import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenterImpl;
 import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.interfaces.actions.OpenAction;
@@ -29,8 +28,6 @@ public interface ApiClientComponent {
     void inject(EntityClientManager injector);
 
     void inject(SignUpVerifyModel signUpVerifyModel);
-
-    void inject(AccountHomePresenterImpl accountHomePresenter);
 
     void inject(OpenAction openAction);
 
