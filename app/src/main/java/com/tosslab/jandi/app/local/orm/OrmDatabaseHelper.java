@@ -78,7 +78,9 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_ADD_STARTAPI_POLL_INFO = 20;
     private static final int DATABASE_VERSION_ADD_STARTAPI_POLL_INFO_HOT_FIX = 21;
     private static final int DATABASE_VERSION_MEMBER_FILTER = 22;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_MEMBER_FILTER;
+    private static final int DATABASE_VERSION_ACCOUNT_INFO_ADD_EMAIL_FIELD = 23;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_ACCOUNT_INFO_ADD_EMAIL_FIELD;
+
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -343,6 +345,10 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_MEMBER_FILTER, () -> {
                         createTable(connectionSource, MemberRecentKeyword.class);
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_ACCOUNT_INFO_ADD_EMAIL_FIELD, () -> {
+                        dropTable(connectionSource, ResAccountInfo.class);
+                        createTable(connectionSource, ResAccountInfo.class);
                     }));
 
 

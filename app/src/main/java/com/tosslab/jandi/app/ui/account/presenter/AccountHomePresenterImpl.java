@@ -105,7 +105,6 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @Override
     public void onJoinedTeamSelect(long teamId) {
-
         view.showProgressWheel();
         Observable.defer(() -> {
             accountHomeModel.updateSelectTeam(teamId);

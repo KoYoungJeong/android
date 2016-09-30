@@ -74,7 +74,7 @@ public class StatusChangeFragmentTest {
     @Test
     public void setUser() throws Throwable {
         User user = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
-        rule.runOnUiThread(() -> fragment.setUser(user));
+        rule.runOnUiThread(() -> fragment.setContent(user.getStatusMessage()));
 
         assertThat(fragment.etStatus).hasTextString(user.getStatusMessage());
     }

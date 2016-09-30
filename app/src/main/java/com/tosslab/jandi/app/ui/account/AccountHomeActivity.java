@@ -282,6 +282,7 @@ public class AccountHomeActivity extends BaseAppCompatActivity implements Accoun
                 .gotoMainTabActivity()
                 .build()
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        overridePendingTransition(0, 0);
 
         finish();
     }

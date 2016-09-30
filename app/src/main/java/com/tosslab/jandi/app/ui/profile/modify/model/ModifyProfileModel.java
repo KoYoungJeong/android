@@ -37,7 +37,6 @@ public class ModifyProfileModel {
     }
 
     public String[] getAccountEmails() {
-
         List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
 
         Iterator<String> confirmedEmails = Observable.from(userEmails)
@@ -61,8 +60,6 @@ public class ModifyProfileModel {
         }
 
         return emailArray;
-
-
     }
 
     public void updateProfileEmail(String email) throws RetrofitException {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.tosslab.jandi.app"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.tosslab.jandi.app">
 
     <application
         android:name=".JandiApplication"
@@ -14,30 +14,30 @@
 
         <meta-data
             android:name="com.tosslab.jandi.app.utils.image.JandiGlideModule"
-            android:value="GlideModule"/>
+            android:value="GlideModule" />
 
         <!--삼성폰 멀티윈도우-->
         <meta-data
             android:name="com.samsung.android.sdk.multiwindow.enable"
-            android:value="true"/>
+            android:value="true" />
         <meta-data
             android:name="com.sec.android.multiwindow.STYLE"
-            android:value="fixedRatio"/>
+            android:value="fixedRatio" />
         <meta-data
             android:name="com.sec.android.support.multiwindow"
-            android:value="true"/>
+            android:value="true" />
 
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version"/>
+            android:value="@integer/google_play_services_version" />
 
         <meta-data
             android:name="com.mixpanel.android.MPConfig.FlushInterval"
-            android:value="1000"/>
+            android:value="1000" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
+            android:value="@string/facebook_app_id" />
 
         <!-- temp comment for protect ANR (Play-Service-Base : 6.5.87 issue
         <meta-data
@@ -50,7 +50,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_signup_verify_title"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".ui.intro.IntroActivity"
@@ -59,10 +59,10 @@
             android:logo="@drawable/jandi_symbol_launcher"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
 
             </intent-filter>
         </activity>
@@ -71,21 +71,21 @@
             android:name=".ui.profile.modify.property.namestatus.view.NameStatusActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".services.upload.UploadNotificationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
-            android:theme="@style/JandiTheme.PushIntro"/>
+            android:theme="@style/JandiTheme.PushIntro" />
 
         <activity
             android:name=".ui.account.AccountHomeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_select_team"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustUnspecified"/>
+            android:windowSoftInputMode="adjustUnspecified" />
 
         <!--android:theme="@style/JandiTheme.NavigationDrawer"-->
         <activity
@@ -93,187 +93,187 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="fullUser"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".ui.message.v2.MessageListV2Activity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="fullUser"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".ui.filedetail.FileDetailActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_file_detail"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".ui.fileexplorer.FileExplorerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_title_activity_file_explorer"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.settings.main.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_settings"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.settings.push.SettingPushActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_setting_push"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.settings.privacy.SettingPrivacyActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.settings.account.SettingAccountActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.profile.modify.view.ModifyProfileActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_profile_actionb"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.invites.email.InviteByEmailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/menu_entity_invite"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name=".ui.entities.EntityChooseActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".ui.carousel.CarouselViewerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="fullUser"
-            android:theme="@style/JandiTheme.CarouselViewer"/>
+            android:theme="@style/JandiTheme.CarouselViewer" />
 
         <activity
             android:name=".ui.photo.PhotoViewActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/JandiTheme.ActionBarOverlay"/>
+            android:theme="@style/JandiTheme.ActionBarOverlay" />
 
         <activity
             android:name=".ui.term.TermActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.maintab.tabs.topic.views.create.TopicCreateActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_create_channel"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".ui.message.detail.edit.TopicDescriptionEditActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".ui.message.detail.TopicDetailActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.profile.email.EmailChooseActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_choose_email"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.members.MembersListActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_topic_paricipants"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.members.search.MemberSearchActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysVisible"/>
+            android:windowSoftInputMode="stateAlwaysVisible" />
 
         <activity
             android:name=".ui.file.upload.preview.FileUploadPreviewActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity
             android:name=".ui.album.imagealbum.ImageAlbumActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.search.file.view.FileSearchActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_topic_paricipants"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.poll.detail.PollDetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".ui.poll.create.PollCreateActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".ui.poll.participants.PollParticipantsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
             android:name=".ui.web.InternalWebActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="jandi-internal-web"/>
+                <data android:scheme="jandi-internal-web" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".ui.profile.member.MemberProfileActivity_"
             android:screenOrientation="fullUser"
-            android:theme="@style/Jandi.NoTitle"/>
+            android:theme="@style/Jandi.NoTitle" />
 
         <activity
             android:name=".ui.maintab.tabs.team.filter.deptgroup.DeptJobGroupActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
-        <service android:name="com.parse.PushService"/>
+        <service android:name="com.parse.PushService" />
 
 
         <receiver android:name=".push.receiver.JandiBroadcastReceiver">
             <intent-filter>
-                <action android:name="com.tosslab.jandi.app.push"/>
+                <action android:name="com.tosslab.jandi.app.push" />
             </intent-filter>
         </receiver>
 
@@ -283,9 +283,9 @@
             android:name="com.parse.ParsePushBroadcastReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.parse.push.intent.RECEIVE"/>
-                <action android:name="com.parse.push.intent.OPEN"/>
-                <action android:name="com.parse.push.intent.DELETE"/>
+                <action android:name="com.parse.push.intent.RECEIVE" />
+                <action android:name="com.parse.push.intent.OPEN" />
+                <action android:name="com.parse.push.intent.DELETE" />
             </intent-filter>
         </receiver>
 
@@ -293,30 +293,28 @@
             android:name="com.parse.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
-                <category android:name="${applicationId}"/>
+                <category android:name="${applicationId}" />
             </intent-filter>
         </receiver>
 
         <receiver android:name=".push.legacy.ParsePushBroadCastReceiver">
             <intent-filter>
-                <action android:name="com.tosslab.jandi.app.Push"/>
+                <action android:name="com.tosslab.jandi.app.Push" />
             </intent-filter>
         </receiver>
         <!--EOF Parse-->
 
         <!-- GCM -->
-        <service
-            android:name=".push.gcm.receiver.GcmPushReceiver">
+        <service android:name=".push.gcm.receiver.GcmPushReceiver">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <service
-            android:name=".push.gcm.register.GcmRegistrationRefreshListenerService">
+        <service android:name=".push.gcm.register.GcmRegistrationRefreshListenerService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
@@ -326,17 +324,17 @@
         <!--Baidu Push-->
         <receiver android:name=".push.baidu.receiver.BaiduPushReceiver">
             <intent-filter android:priority="1000">
-                <action android:name="com.baidu.android.pushservice.action.notification.SHOW"/>
+                <action android:name="com.baidu.android.pushservice.action.notification.SHOW" />
             </intent-filter>
         </receiver>
 
         <receiver android:name=".push.baidu.register.BaiduRegistrationReceiver">
             <intent-filter>
                 <!-- 接收push消息 -->
-                <action android:name="com.baidu.android.pushservice.action.MESSAGE"/>
+                <action android:name="com.baidu.android.pushservice.action.MESSAGE" />
                 <!-- 接收bind,unbind,fetch,delete等反馈消息 -->
-                <action android:name="com.baidu.android.pushservice.action.RECEIVE"/>
-                <action android:name="com.baidu.android.pushservice.action.notification.CLICK"/>
+                <action android:name="com.baidu.android.pushservice.action.RECEIVE" />
+                <action android:name="com.baidu.android.pushservice.action.notification.CLICK" />
             </intent-filter>
         </receiver>
 
@@ -344,14 +342,14 @@
             android:name="com.baidu.android.pushservice.PushServiceReceiver"
             android:process=":bdservice_v1">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
-                <action android:name="com.baidu.android.pushservice.action.notification.SHOW"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="com.baidu.android.pushservice.action.notification.SHOW" />
                 <action android:name="com.baidu.android.pushservice.action.media.CLICK" />
-                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
-                <action android:name="android.intent.action.USER_PRESENT"/>
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
             </intent-filter>
         </receiver>
 
@@ -359,12 +357,12 @@
             android:name="com.baidu.android.pushservice.RegistrationReceiver"
             android:process=":bdservice_v1">
             <intent-filter>
-                <action android:name="com.baidu.android.pushservice.action.METHOD"/>
-                <action android:name="com.baidu.android.pushservice.action.BIND_SYNC"/>
+                <action android:name="com.baidu.android.pushservice.action.METHOD" />
+                <action android:name="com.baidu.android.pushservice.action.BIND_SYNC" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
-                <data android:scheme="package"/>
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <data android:scheme="package" />
             </intent-filter>
         </receiver>
 
@@ -373,12 +371,12 @@
             android:exported="true"
             android:process=":bdservice_v1">
             <intent-filter>
-                <action android:name="com.baidu.android.pushservice.action.PUSH_SERVICE"/>
+                <action android:name="com.baidu.android.pushservice.action.PUSH_SERVICE" />
             </intent-filter>
         </service>
         <service
             android:name="com.baidu.android.pushservice.CommandService"
-            android:exported="true"/>
+            android:exported="true" />
 
         <provider
             android:name="com.baidu.android.pushservice.PushInfoProvider"
@@ -395,12 +393,12 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="tosslabjandi"/>
+                <data android:scheme="tosslabjandi" />
             </intent-filter>
         </activity>
 
@@ -408,7 +406,7 @@
             android:name=".push.PushInterfaceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/JandiTheme.PushIntro"/>
+            android:theme="@style/JandiTheme.PushIntro" />
 
         <activity
             android:name=".ui.share.MainShareActivity_"
@@ -417,14 +415,14 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
-                <action android:name="android.intent.action.SEND"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="*/*"/>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.SEND_MULTIPLE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="*/*"/>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
 
@@ -435,8 +433,8 @@
             android:screenOrientation="portrait">
 
             <intent-filter>
-                <action android:name="andorid.intent.action.VIEW"/>
-                <action android:name="android.intent.category.DEFAULT"/>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
@@ -448,8 +446,8 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
 
             <intent-filter>
-                <action android:name="andorid.intent.action.VIEW"/>
-                <action android:name="android.intent.category.DEFAULT"/>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
@@ -460,8 +458,8 @@
             android:screenOrientation="portrait">
 
             <intent-filter>
-                <action android:name="andorid.intent.action.VIEW"/>
-                <action android:name="android.intent.category.DEFAULT"/>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
@@ -471,8 +469,8 @@
             android:label="@string/jandi_share_to_jandi"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="andorid.intent.action.VIEW"/>
-                <action android:name="android.intent.category.DEFAULT"/>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
@@ -482,8 +480,8 @@
             android:label="@string/jandi_title_cdp_to_be_shared"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="andorid.intent.action.VIEW"/>
-                <action android:name="android.intent.category.DEFAULT"/>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
@@ -493,23 +491,23 @@
             android:label="@string/jandi_title_cdp_to_be_unshared"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="andorid.intent.action.VIEW"/>
-                <action android:name="android.intent.category.DEFAULT"/>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".ui.passcode.PassCodeActivity_"
-            android:screenOrientation="fullUser"/>
+            android:screenOrientation="fullUser" />
 
-        <activity android:name=".ui.web.PageNotFoundActivity"/>
+        <activity android:name=".ui.web.PageNotFoundActivity" />
 
         <activity
             android:name=".ui.profile.defaultimage.ProfileImageSelectorActivity_"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="andorid.intent.action.VIEW"/>
-                <action android:name="android.intent.category.DEFAULT"/>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
@@ -518,99 +516,114 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="andorid.intent.action.VIEW"/>
-                <action android:name="android.intent.category.DEFAULT"/>
+                <action android:name="andorid.intent.action.VIEW" />
+                <action android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".dummy.JandiDummyActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity
             android:name=".ui.entities.disabled.view.DisabledEntityChooseActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_disabled_members"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.profile.insert.InsertProfileActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.sign.SignHomeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.sign.signin.SignInActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_action_login"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible"/>
+            android:windowSoftInputMode="stateVisible" />
 
         <activity
             android:name=".ui.sign.signup.SignUpActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_signup_title"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible"/>
+            android:windowSoftInputMode="stateVisible" />
 
         <activity
             android:name=".ui.team.create.CreateTeamActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.profile.modify.property.dept.DeptPositionActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.search.filter.member.MemberFilterActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.search.filter.room.RoomFilterActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.search.main.SearchActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.maintab.tabs.team.info.TeamInfoActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
 
-        <service android:name=".services.socket.JandiSocketService"/>
+        <activity
+            android:name=".ui.team.select.TeamSelectListActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.team.create.CreateTeamForNewAccountActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.profile.account.SettingAccountProfileActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+
+        <service android:name=".services.socket.JandiSocketService" />
 
         <receiver
             android:name=".services.socket.monitor.SocketServiceStarter"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.tosslab.jandi.app.services.SOCKET_SERVICE_RESTART"/>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <action android:name="com.tosslab.jandi.app.services.SOCKET_SERVICE_RESTART" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".services.upload.UploadStopBroadcastReceiver"/>
+        <receiver android:name=".services.upload.UploadStopBroadcastReceiver" />
 
         <receiver android:name=".dummy.JandiDummyReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
             </intent-filter>
         </receiver>
 
@@ -619,106 +632,108 @@
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
 
         <!-- Google Play Analytics -->
-        <receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+        <receiver
+            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
             </intent-filter>
         </receiver>
-        <service android:name="com.google.android.gms.analytics.AnalyticsService"
+        <service
+            android:name="com.google.android.gms.analytics.AnalyticsService"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
 
         <!-- Google Play Campaign Measurement -->
-        <service android:name="com.google.android.gms.analytics.CampaignTrackingService"/>
+        <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
 
         <receiver
             android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
             android:exported="true"
             android:permission="android.permission.INSTALL_PACKAGES">
             <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER"/>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
 
-<!--
-        <receiver
-            android:name="com.google.ads.conversiontracking.InstallReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER"/>
-            </intent-filter>
-        </receiver>
--->
+        <!--
+                <receiver
+                    android:name="com.google.ads.conversiontracking.InstallReceiver"
+                    android:exported="true">
+                    <intent-filter>
+                        <action android:name="com.android.vending.INSTALL_REFERRER"/>
+                    </intent-filter>
+                </receiver>
+        -->
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="24a73214fd9000841e8d34390de55bdfd4150668"/>
+            android:value="24a73214fd9000841e8d34390de55bdfd4150668" />
 
         <!-- Push Intent Service -->
-        <service android:name=".push.receiver.JandiPushIntentService"/>
+        <service android:name=".push.receiver.JandiPushIntentService" />
 
         <!-- Log Out Service -->
-        <service android:name=".services.SignOutService"/>
+        <service android:name=".services.SignOutService" />
 
         <!-- Download Service -->
-        <service android:name=".services.download.DownloadService"/>
+        <service android:name=".services.download.DownloadService" />
 
-        <service android:name="com.tosslab.jandi.lib.sprinkler.service.SprinklerService"/>
+        <service android:name="com.tosslab.jandi.lib.sprinkler.service.SprinklerService" />
 
         <!-- Process start Intent Service -->
-        <service android:name=".dummy.JandiProcessStartService"/>
+        <service android:name=".dummy.JandiProcessStartService" />
 
         <receiver android:name=".services.download.receiver.DownloadStopProxyBroadcastReceiver">
             <intent-filter>
-                <action android:name="com.tosslab.jandi.app.download.service.proxy.receiver"/>
+                <action android:name="com.tosslab.jandi.app.download.service.proxy.receiver" />
             </intent-filter>
         </receiver>
 
         <receiver android:name=".services.download.receiver.DownloadStopBroadcastReceiver">
             <intent-filter>
-                <action android:name="com.tosslab.jandi.app.download.service.stop"/>
+                <action android:name="com.tosslab.jandi.app.download.service.stop" />
             </intent-filter>
         </receiver>
 
         <!-- Download File Open Receiver -->
         <receiver android:name=".services.download.FileOpenDelegator">
             <intent-filter>
-                <action android:name="com.tosslab.jandi.app.FileOpen"/>
+                <action android:name="com.tosslab.jandi.app.FileOpen" />
             </intent-filter>
         </receiver>
 
     </application>
 
     <!--for samsung or sony device to show badge-->
-    <uses-permission android:name="com.sec.android.provider.badge.permission.READ"/>
-    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE"/>
-    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE"/>
+    <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
+    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" />
+    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
 
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
-    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
 
     <!--baidu-->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER"/>
-    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER" />
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
 
     <uses-permission android:name="baidu.push.permission.WRITE_PUSHINFOPROVIDER.${applicationId}" />
 
@@ -728,20 +743,20 @@
 
     <permission
         android:name="${applicationId}.permission.C2D_MESSAGE"
-        android:protectionLevel="signature"/>
+        android:protectionLevel="signature" />
 
-    <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE"/>
+    <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE" />
 
     <uses-feature
         android:name="android.hardware.telephony"
-        android:required="false"/>
+        android:required="false" />
 
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <!-- for download manager addCompletedDownload-->
-    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION"/>
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
 
-    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
 
 </manifest>
 

@@ -11,11 +11,12 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 
 public class NameStatusActivity extends BaseAppCompatActivity {
 
-    public static final int EXTRA_TYPE_NAME = 1;
-    public static final int EXTRA_TYPE_STATUS = 2;
+    public static final int EXTRA_TYPE_NAME_FOR_TEAM_PROFILE = 1;
+    public static final int EXTRA_TYPE_NAME_FOR_MAIN_ACCOUNT = 2;
+    public static final int EXTRA_TYPE_STATUS = 3;
 
     @InjectExtra
-    int type = EXTRA_TYPE_NAME;
+    int type = EXTRA_TYPE_NAME_FOR_TEAM_PROFILE;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -24,8 +25,16 @@ public class NameStatusActivity extends BaseAppCompatActivity {
         Dart.inject(this);
 
         Fragment fragment;
-        if (type == EXTRA_TYPE_NAME) {
+        if (type == EXTRA_TYPE_NAME_FOR_TEAM_PROFILE) {
             fragment = Fragment.instantiate(this, NameChangeFragment.class.getName());
+            Bundle bundle = new Bundle();
+            bundle.putInt(NameChangeFragment.NAME_CHANGE_MODE, NameChangeFragment.MODE_FROM_TEAM_PROFILE);
+            fragment.setArguments(bundle);
+        } else if (type == EXTRA_TYPE_NAME_FOR_MAIN_ACCOUNT) {
+            fragment = Fragment.instantiate(this, NameChangeFragment.class.getName());
+            Bundle bundle = new Bundle();
+            bundle.putInt(NameChangeFragment.NAME_CHANGE_MODE, NameChangeFragment.MODE_FROM_MAIN_ACCOUNT);
+            fragment.setArguments(bundle);
         } else {
             fragment = Fragment.instantiate(this, StatusChangeFragment.class.getName());
         }

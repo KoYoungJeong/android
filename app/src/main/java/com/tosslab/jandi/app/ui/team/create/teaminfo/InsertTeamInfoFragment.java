@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.team.create.teaminfo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,10 +16,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.services.socket.JandiSocketService;
+import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.dagger.DaggerInsertTeamInfoComponent;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.dagger.InsertTeamInfoModule;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.presenter.InsertTeamInfoPresenter;
@@ -41,6 +46,10 @@ import butterknife.OnClick;
 
 public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPresenter.View {
 
+    public static final String MODE = "mode";
+    public static final int MODE_FROM_MAIN_LIST = 0x01;
+    public static final int MODE_FROM_ACCOUNT_HOME = 0x02;
+
     @Inject
     InsertTeamInfoPresenter teamInsertInfoPresenter;
 
@@ -62,6 +71,20 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
     @Bind(R.id.tv_team_domain_insert_error)
     TextView tvTeamDomainInsertError;
 
+    @Bind(R.id.vg_button_type1)
+    ViewGroup vgButtonType1;
+
+    @Bind(R.id.vg_button_type2)
+    ViewGroup vgButtonType2;
+
+    @Bind(R.id.iv_team_create_done)
+    ImageView ivTeamCreateDone;
+
+    @Bind(R.id.tv_team_create_done)
+    TextView tvTeamCreateDone;
+
+    private int mode = MODE_FROM_MAIN_LIST;
+
     private boolean isInsertTeamNamePositiveLength = false;
     private boolean isShownTeamDomainError = false;
     private ProgressWheel progressWheel;
@@ -82,6 +105,46 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
                 .insertTeamInfoModule(new InsertTeamInfoModule(this))
                 .build()
                 .inject(this);
+    }
+
+    private void setActiveDoneButton() {
+        if (mode != MODE_FROM_ACCOUNT_HOME) {
+            return;
+        }
+
+        boolean active;
+
+        if (etInsertTeamDomain.getText().length() > 0 &&
+                etInsertTeamName.getText().length() > 0) {
+            active = true;
+        } else {
+            active = false;
+        }
+
+        if (active) {
+            ivTeamCreateDone.setImageResource(R.drawable.icon_profile_check_active);
+            tvTeamCreateDone.setTextColor(0xff00a4e6);
+        } else {
+            ivTeamCreateDone.setImageResource(R.drawable.icon_profile_check_inactive);
+            tvTeamCreateDone.setTextColor(0xff999999);
+        }
+    }
+
+    private void setMode() {
+        mode = getArguments().getInt(MODE);
+        if (mode == MODE_FROM_MAIN_LIST) {
+            vgButtonType1.setVisibility(View.VISIBLE);
+            vgButtonType2.setVisibility(View.GONE);
+        } else {
+            vgButtonType1.setVisibility(View.GONE);
+            vgButtonType2.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setMode();
     }
 
     @Override
@@ -165,9 +228,23 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
 
     @OnClick(R.id.iv_team_create_next)
     void onClickTeamCreateNext() {
+        createTeam();
+    }
+
+    @OnClick(R.id.iv_team_create_done)
+    void onClickTeamCreateDone() {
+        createTeam();
+    }
+
+    private void createTeam() {
         String teamName = etInsertTeamName.getText().toString().trim();
         String teamDomain = etInsertTeamDomain.getText().toString().trim();
-        teamInsertInfoPresenter.createTeam(teamName, teamDomain.toLowerCase());
+        teamInsertInfoPresenter.createTeam(teamName, teamDomain.toLowerCase(), mode);
+    }
+
+    @OnClick(R.id.tv_go_to_main_button)
+    void onCLickGoToMain() {
+        finish();
     }
 
     @Override
@@ -213,6 +290,7 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
 
             @Override
             public void afterTextChanged(Editable editable) {
+                setActiveDoneButton();
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) etInsertTeamName.getLayoutParams();
 
                 int margin = (int) TypedValue.applyDimension(
@@ -268,6 +346,7 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
 
             @Override
             public void afterTextChanged(Editable editable) {
+                setActiveDoneButton();
                 if (isShownTeamDomainError) {
                     hideTeamDomainError();
                 }
@@ -278,6 +357,22 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
     @Override
     public void onMoveInsertProfilePage() {
         onChangePageClickListener.onClickMoveInsertProfileFirstPage();
+    }
+
+    @Override
+    public void onMoveMainTabActivity() {
+        JandiSocketService.stopService(getContext());
+        getContext().sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
+
+        startActivity(Henson.with(getContext())
+                .gotoMainTabActivity()
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        getActivity().overridePendingTransition(0, 0);
+
+        finish();
     }
 
     public interface OnChangePageClickListener {

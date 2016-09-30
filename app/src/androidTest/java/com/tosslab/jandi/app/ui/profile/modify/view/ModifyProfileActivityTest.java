@@ -79,7 +79,7 @@ public class ModifyProfileActivityTest {
     public void testEditName() throws Throwable {
         rule.runOnUiThread(() -> activity.editName());
         intending(IntentMatchers.hasComponent(NameStatusActivity.class.getName()));
-        intending(IntentMatchers.hasExtra("type", NameStatusActivity.EXTRA_TYPE_NAME));
+        intending(IntentMatchers.hasExtra("type", NameStatusActivity.EXTRA_TYPE_NAME_FOR_TEAM_PROFILE));
     }
 
     @Test

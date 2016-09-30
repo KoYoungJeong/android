@@ -13,12 +13,12 @@ import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
-import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.dagger.DaggerIntroComponent;
 import com.tosslab.jandi.app.ui.intro.dagger.IntroModule;
 import com.tosslab.jandi.app.ui.intro.presenter.IntroActivityPresenter;
 import com.tosslab.jandi.app.ui.sign.SignHomeActivity;
+import com.tosslab.jandi.app.ui.team.select.TeamSelectListActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -84,7 +84,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
     @Override
     public void moveTeamSelectActivity() {
-        Intent intent = AccountHomeActivity.getActivity(IntroActivity.this, false);
+        Intent intent = new Intent(this, TeamSelectListActivity.class);
         startActivity(intent);
         finish();
     }
@@ -117,6 +117,8 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                 .build()
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                         | Intent.FLAG_ACTIVITY_NEW_TASK));
+        overridePendingTransition(0, 0);
+
         finish();
     }
 

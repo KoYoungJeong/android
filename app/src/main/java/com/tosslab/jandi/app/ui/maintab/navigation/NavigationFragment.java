@@ -357,6 +357,8 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                 .build()
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
+        getActivity().overridePendingTransition(0, 0);
+
         getActivity().finish();
     }
 

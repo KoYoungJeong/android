@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.validation.ResValidation;
+import com.tosslab.jandi.app.ui.team.create.teaminfo.InsertTeamInfoFragment;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.model.InsertTeamInfoModel;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrCreateTeam;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -44,7 +45,7 @@ public class InsertTeamInfoPresenterImpl implements InsertTeamInfoPresenter {
     }
 
     @Override
-    public void createTeam(String teamName, String teamDomain) {
+    public void createTeam(String teamName, String teamDomain, int mode) {
 
         if (!NetworkCheckUtil.isConnected()) {
             view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
@@ -86,7 +87,13 @@ public class InsertTeamInfoPresenterImpl implements InsertTeamInfoPresenter {
                 .doOnSubscribe(() -> view.showProgressWheel())
                 .doOnUnsubscribe(() -> view.dismissProgressWheel())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(o -> view.onMoveInsertProfilePage())
+                .doOnNext(o -> {
+                    if (mode == InsertTeamInfoFragment.MODE_FROM_MAIN_LIST) {
+                        view.onMoveInsertProfilePage();
+                    } else {
+                        view.onMoveMainTabActivity();
+                    }
+                })
                 .subscribe(o -> {
                 }, e1 -> {
                     if (e1 instanceof RetrofitException) {

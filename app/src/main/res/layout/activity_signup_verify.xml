@@ -65,10 +65,20 @@
             </RelativeLayout>
 
             <TextView
+                android:id="@+id/tv_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:gravity="center"
+                android:text="email@email.com"
+                android:textColor="@color/dark_gray"
+                android:textSize="17sp" />
+
+            <TextView
                 android:id="@+id/tv_signup_verify_explain"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="17dp"
+                android:layout_marginTop="14dp"
                 android:gravity="center"
                 android:lineSpacingExtra="6dp"
                 android:text="@string/jandi_signup_verification_code"
