@@ -3,11 +3,11 @@
 	<string name="app_name">"JANDI"</string>
 	<string name="comment">"留言"</string>
 	<string name="common_accthome_createteam">"建立新的团队"</string>
-	<string name="common_accthome_createteamguide">"尚未加入任何团队
-点击以下的「建立新的团队」，开始体验 JANDI 的高效率团队通讯。"</string>
+	<string name="common_accthome_createteamguide">"尚未加入任何团队\n点击以下的「建立新的团队」\n开始体验 JANDI 的高效率团队通讯。"</string>
 	<string name="common_createteam_toaccthome">"前往帐户首页"</string>
+	<string name="common_hamburger_teamadmin">"团队管理员"</string>
 	<string name="common_profilemodal_jandi_botstatus">"你好，我是JANDI！"</string>
-	<string name="common_signup_codeverification">"验证码已寄送到以上的电子邮箱，请输入验证码完成认证"</string>
+	<string name="common_signup_codeverification">"验证码已寄送到以上的电子邮箱，\n请输入验证码完成认证"</string>
 	<string name="err_delete_file">"文件无法删除"</string>
 	<string name="err_download">"文件无法下载"</string>
 	<string name="err_email_exists">"这电子邮件已被注冊"</string>
@@ -56,7 +56,7 @@
 	<string name="err_team_creation_failed">"电子邮件无法送出"</string>
 	<string name="err_unshare">"文件无法取消分享"</string>
 	<string name="err_unsupported_file_type">"没有安装的应用程序可以支持%1$s"</string>
-	<string name="exclamation_mark">"!"</string>
+	<string name="exclamation_mark">"?"</string>
 	<string name="fail_to_create_team">"團隊未完成建立"</string>
 	<string name="file_upload_comment">"留言（非必要）"</string>
 	<string name="jadi_account_home">"账号首页"</string>
@@ -643,6 +643,7 @@
 	<string name="menu_camera">"从相机上传"</string>
 	<string name="menu_gallery">"从照片集上传"</string>
 	<string name="modify_message">"编辑信息"</string>
+	<string name="mypage_mention_newmentionalert">"有人提及你"</string>
 	<string name="primary_email_info_msg">"所有与您JANDI帐号相关的电子邮件将寄送到主要电子邮件地址。您可以增加其它电子邮件地址到您的帐号并且指定为某个团队专属电子邮件地址。 (请注意电子邮件地址皆需事先被确认)"</string>
 	<string name="sent_auth_email">"电子邮件已寄送至您的邮箱，请点击内建链接进行帐户验证。"</string>
 	<string name="sent_auth_email_short">"电子邮件已经成功寄出。 请查看您的邮箱"</string>
@@ -652,6 +653,7 @@
 	<string name="title_file_detail">"叙述"</string>
 	<string name="title_file_upload">"上传文件"</string>
 	<string name="today">"今天"</string>
+	<string name="topic_topicchat_mentionall">"@all (议题成员)"</string>
 	<string name="url">"URL"</string>
 	<string name="warn_all_users_are_already_invited">"所有的团队成员已加入此议题"</string>
 	<string name="warn_messages_empty">"现在没有信息"</string>

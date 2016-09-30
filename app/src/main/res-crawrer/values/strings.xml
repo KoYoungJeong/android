@@ -3,12 +3,11 @@
 	<string name="app_name">"JANDI"</string>
 	<string name="comment">"Comment"</string>
 	<string name="common_accthome_createteam">"Create a new team"</string>
-	<string name="common_accthome_createteamguide">"You are currently not part of any team.
-Tap on the 'Create a new team' button below to experience JANDI."</string>
+	<string name="common_accthome_createteamguide">"You are currently not part of any team.\nTap on the 'Create a new team' button below\nto experience JANDI."</string>
 	<string name="common_createteam_toaccthome">"Go to Account Home"</string>
+	<string name="common_hamburger_teamadmin">"Team admin"</string>
 	<string name="common_profilemodal_jandi_botstatus">"Hello. I'm JANDI"</string>
-	<string name="common_signup_codeverification">"A verification code has been sent to your email address above.
-Please enter the verification code."</string>
+	<string name="common_signup_codeverification">"A verification code has been sent to your email address above.\nPlease enter the verification code."</string>
 	<string name="err_delete_file">"File could not be deleted"</string>
 	<string name="err_download">"File could not be downloaded"</string>
 	<string name="err_email_exists">"That email is already registered"</string>
@@ -57,7 +56,7 @@ Please enter the verification code."</string>
 	<string name="err_team_creation_failed">"Email could not be sent"</string>
 	<string name="err_unshare">"File could not be unshared"</string>
 	<string name="err_unsupported_file_type">"There is no installed app that supports %1$s"</string>
-	<string name="exclamation_mark">"!"</string>
+	<string name="exclamation_mark">"?"</string>
 	<string name="fail_to_create_team">"Team creation not completed"</string>
 	<string name="file_upload_comment">"Comments (Optional)"</string>
 	<string name="jadi_account_home">"Account Home"</string>
@@ -645,6 +644,7 @@ Please enter the verification code."</string>
 	<string name="menu_camera">"Upload from Camera"</string>
 	<string name="menu_gallery">"Upload from Gallery"</string>
 	<string name="modify_message">"Edit message"</string>
+	<string name="mypage_mention_newmentionalert">"New Mention"</string>
 	<string name="primary_email_info_msg">"Choose an email address where we should send all of your JANDI related emails. To assign email addresses to specific teams, please refer to the Profile menu."</string>
 	<string name="sent_auth_email">"An email has been sent to your inbox. Please follow the link provided to verify your account and sign in."</string>
 	<string name="sent_auth_email_short">"An email has been sent to your inbox. Please follow the link provided to verify your account and complete the registration process."</string>
@@ -654,6 +654,7 @@ Please enter the verification code."</string>
 	<string name="title_file_detail">"Description"</string>
 	<string name="title_file_upload">"Upload File"</string>
 	<string name="today">"Today"</string>
+	<string name="topic_topicchat_mentionall">"@all (topic members)"</string>
 	<string name="url">"URL"</string>
 	<string name="warn_all_users_are_already_invited">"All of your team members are in this topic"</string>
 	<string name="warn_messages_empty">"There are no messages"</string>

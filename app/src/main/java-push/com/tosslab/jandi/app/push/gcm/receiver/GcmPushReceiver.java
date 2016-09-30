@@ -16,8 +16,6 @@
 
 package com.tosslab.jandi.app.push.gcm.receiver;
 
-import android.util.Log;
-
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.tosslab.jandi.app.push.receiver.JandiPushIntentService;
@@ -32,7 +30,6 @@ public class GcmPushReceiver extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        super.onMessageReceived(remoteMessage);
         Map<String, String> data = remoteMessage.getData();
 
         LogUtil.d(TAG, "onMessageReceived() called with: remoteMessage = [" + data.toString() + "]");

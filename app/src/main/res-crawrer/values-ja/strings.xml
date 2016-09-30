@@ -3,12 +3,11 @@
 	<string name="app_name">"JANDI"</string>
 	<string name="comment">"コメント"</string>
 	<string name="common_accthome_createteam">"新しいチーム作成"</string>
-	<string name="common_accthome_createteamguide">"参加中のチームがありません。
-下の「新しいチーム作成」をタッチし、JANDIを体験してみてください。"</string>
+	<string name="common_accthome_createteamguide">"参加中のチームがありません。\n下の「新しいチーム作成」をタッチし、\nJANDIを体験してみてください。"</string>
 	<string name="common_createteam_toaccthome">"JANDIホームに戻る"</string>
+	<string name="common_hamburger_teamadmin">"チームの管理者"</string>
 	<string name="common_profilemodal_jandi_botstatus">"こんにちは、JANDIと言います。"</string>
-	<string name="common_signup_codeverification">"上記のメールアドレスに認証コードを送信しました。
-認証コードを入力してください。"</string>
+	<string name="common_signup_codeverification">"上記のメールアドレスに認証コードを送信しました。\n認証コードを入力してください。"</string>
 	<string name="err_delete_file">"ファイルが削除できませんでした"</string>
 	<string name="err_download">"ファイルがダウンロードできませんでした"</string>
 	<string name="err_email_exists">"そのメールアドレスは既に使用されています"</string>
@@ -57,7 +56,7 @@
 	<string name="err_team_creation_failed">"メールが送信できませんでした"</string>
 	<string name="err_unshare">"ファイルが非共有にできませんでした"</string>
 	<string name="err_unsupported_file_type">"%1$s このファイルを開くためのアプリケーションがインストールされていません"</string>
-	<string name="exclamation_mark">"!"</string>
+	<string name="exclamation_mark">"に委譲しますか?"</string>
 	<string name="fail_to_create_team">"チームが作成できませんでした"</string>
 	<string name="file_upload_comment">"コメント(任意)"</string>
 	<string name="jadi_account_home">"アカウントホーム"</string>
@@ -650,6 +649,7 @@
 	<string name="menu_camera">"カメラからアップロード"</string>
 	<string name="menu_gallery">"ギャラリーからアップロード"</string>
 	<string name="modify_message">"メッセージを編集する"</string>
+	<string name="mypage_mention_newmentionalert">"新しいメンション"</string>
 	<string name="primary_email_info_msg">"あなたのJANDIのアカウントに登録されたプライマリメールアドレスにメールが送られます。メールアドレスは先に認証される必要があります。"</string>
 	<string name="sent_auth_email">"メールを確認して、メールの中の登録ボタンから登録してください。"</string>
 	<string name="sent_auth_email_short">"メールが送信されました。 メールを確認してください"</string>
@@ -659,6 +659,7 @@
 	<string name="title_file_detail">"説明"</string>
 	<string name="title_file_upload">"ファイルをアップロード"</string>
 	<string name="today">"今日"</string>
+	<string name="topic_topicchat_mentionall">"@all（トピック内）"</string>
 	<string name="url">"URL"</string>
 	<string name="warn_all_users_are_already_invited">"既にメンバー全員がこのトピックに参加しています"</string>
 	<string name="warn_messages_empty">"メッセージはありません"</string>
