@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
@@ -61,6 +63,9 @@ public class TeamSelectListActivity extends BaseAppCompatActivity implements Tea
 
     ProgressWheel progressWheel;
 
+    @InjectExtra
+    boolean shouldRefreshAccountInfo = true;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,15 +77,20 @@ public class TeamSelectListActivity extends BaseAppCompatActivity implements Tea
                 .build()
                 .inject(this);
         ButterKnife.bind(this);
+        Dart.inject(this);
         lvTeamList.setLayoutManager(new LinearLayoutManager(this,
                 RecyclerView.VERTICAL, false));
         lvTeamList.setAdapter(teamSelectListAdapter);
         bindListeners();
-        teamSelectListPresenter.initTeamDatas(true);
+        teamSelectListPresenter.initTeamDatas(true, shouldRefreshAccountInfo);
         progressWheel = new ProgressWheel(this);
-        teamSelectListPresenter.setUserEmailInfo();
-
         setEditButton();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        teamSelectListPresenter.setUserEmailInfo();
     }
 
     private void setEditButton() {

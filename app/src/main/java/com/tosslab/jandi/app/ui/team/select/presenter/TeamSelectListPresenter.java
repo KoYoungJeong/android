@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.ui.team.select.to.Team;
 
 public interface TeamSelectListPresenter {
 
-    void initTeamDatas(boolean firstEntered);
+    void initTeamDatas(boolean firstEntered, boolean shouldRefreshAccountInfo);
 
     void onEnterSelectedTeam(long teamId);
 

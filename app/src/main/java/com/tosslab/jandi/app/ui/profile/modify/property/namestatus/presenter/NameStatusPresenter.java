@@ -82,7 +82,7 @@ public class NameStatusPresenter {
             try {
                 ResAccountInfo resAccountInfo =
                         accountProfileApi.get().changeName(new ReqProfileName(newName));
-                AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+                AccountRepository.getRepository().updateAccountName(resAccountInfo.getName());
             } catch (RetrofitException e) {
                 e.printStackTrace();
             }

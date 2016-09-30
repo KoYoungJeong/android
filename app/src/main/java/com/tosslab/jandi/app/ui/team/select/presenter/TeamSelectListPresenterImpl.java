@@ -42,7 +42,7 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
     }
 
     @Override
-    public void initTeamDatas(boolean firstEntered) {
+    public void initTeamDatas(boolean firstEntered, boolean shouldRefreshAccountInfo) {
         Observable.defer(() -> {
             List<Team> teams = new ArrayList<>();
             try {
@@ -55,6 +55,9 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(teams -> {
+                    if (shouldRefreshAccountInfo) {
+                        model.refreshAccountInfo();
+                    }
                     // create team 밖에 없을 때
                     if (teams.size() == 1) {
                         view.showEmptyList();
@@ -151,7 +154,7 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(team -> {
                     view.dismissProgressWheel();
-                    initTeamDatas(false);
+                    initTeamDatas(false, false);
                 }, t -> {
                     view.dismissProgressWheel();
                     if (t instanceof RetrofitException) {
@@ -159,7 +162,7 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
                         if (showErrorToast) {
                             view.showErrorToast(getJoinErrorMessage(selectedTeam, e));
                         }
-                        initTeamDatas(false);
+                        initTeamDatas(false, false);
                     }
                 });
 

@@ -42,6 +42,16 @@ public class TeamSelectListModel {
         this.startApi = startApi;
     }
 
+    public void refreshAccountInfo() {
+        try {
+            ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
+            AccountUtil.removeDuplicatedTeams(resAccountInfo);
+            AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+        } catch (RetrofitException retrofitError) {
+            retrofitError.printStackTrace();
+        }
+    }
+
     public ResTeamDetailInfo acceptOrDeclineInvite(String invitationId, String type) throws RetrofitException {
 
         ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();

@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.sign.signup.verify;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -17,11 +16,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.sign.signup.verify.presenter.SignUpVerifyPresenter;
 import com.tosslab.jandi.app.ui.sign.signup.verify.view.SignUpVerifyView;
-import com.tosslab.jandi.app.ui.team.select.TeamSelectListActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -240,11 +239,11 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
 
         AnalyticsUtil.sendConversion("Android_signup", "957512006", "M3MOCM6ij2MQxvLJyAM");
 
-        Intent intent = new Intent(this, TeamSelectListActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        startActivity(Henson.with(this)
+                .gotoTeamSelectListActivity()
+                .shouldRefreshAccountInfo(false)
+                .build());
+
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
         finish();
     }

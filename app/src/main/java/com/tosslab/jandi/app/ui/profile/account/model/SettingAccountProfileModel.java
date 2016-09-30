@@ -78,7 +78,7 @@ public class SettingAccountProfileModel {
         try {
             ResAccountInfo resAccountInfo =
                     accountProfileApi.get().changePrimaryEmail(new ReqAccountEmail(email));
-            AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+            AccountRepository.getRepository().upsertUserEmail(resAccountInfo.getEmails());
         } catch (RetrofitException e) {
             e.printStackTrace();
         }

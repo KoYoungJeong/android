@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.profile.ForgotPasswordEvent;
@@ -27,7 +28,6 @@ import com.tosslab.jandi.app.ui.sign.signin.dagger.DaggerSignInComponent;
 import com.tosslab.jandi.app.ui.sign.signin.dagger.SignInModule;
 import com.tosslab.jandi.app.ui.sign.signin.presenter.SignInPresenter;
 import com.tosslab.jandi.app.ui.sign.signup.SignUpActivity;
-import com.tosslab.jandi.app.ui.team.select.TeamSelectListActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.UiUtils;
@@ -313,11 +313,12 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
 
     @Override
     public void moveToTeamSelectionActivity(String myEmailId) {
-        Intent intent = new Intent(this, TeamSelectListActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        startActivity(Henson.with(this)
+                .gotoTeamSelectListActivity()
+                .shouldRefreshAccountInfo(false)
+                .build().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TOP));
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
         finish();
     }
