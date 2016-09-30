@@ -65,7 +65,7 @@
                 android:gravity="center"
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
-                android:text="@string/jandi_team_owner_with_format"
+                android:text="@string/common_hamburger_teamadmin"
                 android:textColor="@android:color/white"
                 android:textSize="11dp"
                 android:visibility="gone"/>

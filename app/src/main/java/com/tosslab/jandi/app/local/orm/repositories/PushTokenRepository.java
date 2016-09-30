@@ -52,6 +52,22 @@ public class PushTokenRepository extends LockExecutorTemplate {
         });
     }
 
+    public boolean hasGcmPushToken() {
+        return execute(() -> {
+            try {
+                Dao<PushToken, Object> dao = getDao(PushToken.class);
+                return dao.queryBuilder()
+                        .where()
+                        .eq("service","gcm")
+                        .countOf() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        });
+    }
+
     public boolean deletePushToken() {
         return execute(() -> {
             try {
