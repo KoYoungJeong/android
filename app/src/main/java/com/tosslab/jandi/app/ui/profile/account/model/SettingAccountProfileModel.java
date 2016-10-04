@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,15 +56,12 @@ public class SettingAccountProfileModel {
     public String[] getAccountEmails() {
         List<ResAccountInfo.UserEmail> userEmails =
                 AccountRepository.getRepository().getAccountEmails();
-        Iterator<String> confirmedEmails = Observable.from(userEmails)
-                .filter(userEmail -> TextUtils.equals(userEmail.getStatus(), "confirmed"))
-                .map(ResAccountInfo.UserEmail::getId)
-                .toBlocking()
-                .getIterator();
         List<String> emails = new ArrayList<String>();
-        while (confirmedEmails.hasNext()) {
-            emails.add(confirmedEmails.next());
-        }
+        Observable.from(userEmails)
+                .filter(userEmail -> TextUtils.equals(userEmail.getStatus(), "confirmed"))
+                .subscribe(userEmail -> {
+                    emails.add(userEmail.getId());
+                });
         int size = emails.size();
         String[] emailArray = new String[size];
         for (int idx = 0; idx < size; idx++) {
