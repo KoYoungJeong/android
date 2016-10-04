@@ -58,7 +58,7 @@
                     android:layout_height="wrap_content"
                     android:layout_above="@id/tv_login_email"
                     android:layout_marginTop="4dp"
-                    android:text="로그인 됨"
+                    android:text="@string/common_accthome_loggedin"
                     android:textColor="@color/white"
                     android:textSize="14sp" />
 
@@ -80,7 +80,7 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:text="가입한 팀 리스트"
+                android:text="@string/common_accthome_joinedteamlist"
                 android:textColor="@color/jandi_border_gray"
                 android:textSize="14sp" />
 

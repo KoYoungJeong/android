@@ -75,7 +75,7 @@ public class SettingAccountProfileActivity extends BaseAppCompatActivity impleme
         // Set up the action bar.
         ActionBar actionBar = getSupportActionBar();
         toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
-        actionBar.setTitle(R.string.jandi_setting_notification);
+        actionBar.setTitle(R.string.common_accthome_jandiacct);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
