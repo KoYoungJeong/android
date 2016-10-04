@@ -92,7 +92,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="@string/jandi_announcement_delete_question"
+                    android:text="@string/jandi_announcement_delete"
                     android:textColor="@color/jandi_primary_color"
                     android:textSize="14sp" />
 
