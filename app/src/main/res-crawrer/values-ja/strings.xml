@@ -5,8 +5,8 @@
 	<string name="common_accthome_createteam">"新しいチーム作成"</string>
 	<string name="common_accthome_createteamguide">"参加中のチームがありません。\n下の「新しいチーム作成」をタッチし、\nJANDIを体験してみてください。"</string>
 	<string name="common_accthome_jandiacct">"JANDIアカウント"</string>
-	<string name="common_accthome_joinedteamlist">"ログイン完了"</string>
-	<string name="common_accthome_loggedin">"参加中のチーム一覧"</string>
+	<string name="common_accthome_joinedteamlist">"参加中のチーム一覧"</string>
+	<string name="common_accthome_loggedin">"ログイン完了"</string>
 	<string name="common_createteam_toaccthome">"JANDIホームに戻る"</string>
 	<string name="common_hamburger_teamadmin">"チームの管理者"</string>
 	<string name="common_profilemodal_jandi_botstatus">"こんにちは、JANDIと言います。"</string>

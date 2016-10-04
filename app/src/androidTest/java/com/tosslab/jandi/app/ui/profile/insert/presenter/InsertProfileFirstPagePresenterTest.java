@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.profile.insert.presenter;
 
+import android.support.test.runner.AndroidJUnit4;
+
 import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
@@ -9,6 +11,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 
@@ -25,6 +28,7 @@ import static org.mockito.Mockito.verify;
 /**
  * Created by tee on 16. 3. 17..
  */
+@RunWith(AndroidJUnit4.class)
 public class InsertProfileFirstPagePresenterTest {
 
     @Inject

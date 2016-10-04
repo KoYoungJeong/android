@@ -5,8 +5,8 @@
 	<string name="common_accthome_createteam">"새로운 팀 생성"</string>
 	<string name="common_accthome_createteamguide">"아직 가입한 팀이 없습니다.\n아래 새로운 팀 생성을 터치하여 \n잔디를 경험해 보세요"</string>
 	<string name="common_accthome_jandiacct">"잔디계정"</string>
-	<string name="common_accthome_joinedteamlist">"로그인됨"</string>
-	<string name="common_accthome_loggedin">"가입한 팀 리스트"</string>
+	<string name="common_accthome_joinedteamlist">"가입한 팀 리스트"</string>
+	<string name="common_accthome_loggedin">"로그인됨"</string>
 	<string name="common_createteam_toaccthome">"잔디 메인으로 가기"</string>
 	<string name="common_hamburger_teamadmin">"팀 관리자"</string>
 	<string name="common_profilemodal_jandi_botstatus">"안녕하세요? JANDI입니다. "</string>

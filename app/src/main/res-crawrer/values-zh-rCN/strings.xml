@@ -5,8 +5,8 @@
 	<string name="common_accthome_createteam">"建立新的团队"</string>
 	<string name="common_accthome_createteamguide">"尚未加入任何团队\n点击以下的「建立新的团队」\n开始体验 JANDI 的高效率团队通讯。"</string>
 	<string name="common_accthome_jandiacct">"JANDI 账户"</string>
-	<string name="common_accthome_joinedteamlist">"已登录"</string>
-	<string name="common_accthome_loggedin">"团队列表"</string>
+	<string name="common_accthome_joinedteamlist">"团队列表"</string>
+	<string name="common_accthome_loggedin">"已登录"</string>
 	<string name="common_createteam_toaccthome">"前往帐户首页"</string>
 	<string name="common_hamburger_teamadmin">"团队管理员"</string>
 	<string name="common_profilemodal_jandi_botstatus">"你好，我是JANDI！"</string>

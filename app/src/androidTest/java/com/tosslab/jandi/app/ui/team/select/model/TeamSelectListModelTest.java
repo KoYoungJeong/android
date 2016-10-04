@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.team.select.model;
 
+import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -18,6 +19,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.List;
 
@@ -37,6 +39,8 @@ import static org.hamcrest.Matchers.notNullValue;
 /**
  * Created by tee on 2016. 10. 4..
  */
+
+@RunWith(AndroidJUnit4.class)
 public class TeamSelectListModelTest {
 
     @Inject
