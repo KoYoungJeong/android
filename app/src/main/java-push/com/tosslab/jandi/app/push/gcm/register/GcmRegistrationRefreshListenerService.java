@@ -38,7 +38,7 @@ public class GcmRegistrationRefreshListenerService extends FirebaseInstanceIdSer
         try {
             String token = FirebaseInstanceId.getInstance().getToken();
             Log.d(TAG, "onTokenRefresh() called Token : " + token);
-            subscribeTopics(token);
+            subscribeTopics();
             PushTokenRepository.getInstance().upsertPushToken(new PushToken("gcm", token));
             PushTokenRegister.getInstance().updateToken();
         } catch (IOException e) {
@@ -46,7 +46,7 @@ public class GcmRegistrationRefreshListenerService extends FirebaseInstanceIdSer
         }
     }
 
-    private void subscribeTopics(String token) throws IOException {
+    private void subscribeTopics() throws IOException {
         for (String topic : TOPICS) {
             FirebaseMessaging.getInstance().subscribeToTopic(topic);
         }

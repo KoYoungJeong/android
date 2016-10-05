@@ -8,11 +8,11 @@ import com.tosslab.jandi.app.network.client.account.devices.DeviceApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
-import com.tosslab.jandi.app.network.manager.token.TokenRequestManager;
 import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqPushToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -60,6 +60,7 @@ public class PushTokenRegister {
                         List<PushToken> pushTokenList = PushTokenRepository.getInstance().getPushTokenList();
                         ReqPushToken reqPushToken = new ReqPushToken(pushTokenList);
                         deviceApi.get().updatePushToken(deviceId, reqPushToken);
+                        JandiPreference.setLatestPushTokenUpdate(System.currentTimeMillis());
                     } catch (Exception e) {
                         LogUtil.e(TAG, Log.getStackTraceString(e));
                     }
