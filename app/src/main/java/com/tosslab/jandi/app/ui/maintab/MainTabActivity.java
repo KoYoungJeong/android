@@ -189,11 +189,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         });
 
         initFirebaseUserProperties();
-        // 최근 하루 동안 푸시 토큰을 업로드 한 적이 없으면 업로드 하도록 함
-        if (System.currentTimeMillis() - JandiPreference.getLatestPushTokenUpdate() > 1000 * 60 * 60 * 24) {
-            JandiPreference.setLatestPushTokenUpdate(System.currentTimeMillis());
-            PushTokenRegister.getInstance().updateToken();
-        }
     }
 
     private void initFirebaseUserProperties() {
@@ -202,12 +197,14 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         FirebaseAnalytics.getInstance(this)
                 .setUserProperty("memberId", String.valueOf(AccountUtil.getMemberId(this)));
 
-        if (!PushTokenRepository.getInstance().hasGcmPushToken()) {
-            String token = FirebaseInstanceId.getInstance().getToken();
-            if (!TextUtils.isEmpty(token)) {
-                PushTokenRepository.getInstance().upsertPushToken(new PushToken("gcm", token));
-            }
-        }
+        Observable.defer(() -> {
+            return Observable.just(FirebaseInstanceId.getInstance().getToken());
+        }).subscribeOn(Schedulers.io())
+                .filter(it -> !TextUtils.isEmpty(it))
+                .subscribe(token -> {
+                    PushTokenRepository.getInstance().upsertPushToken(new PushToken("gcm", token));
+                    PushTokenRegister.getInstance().updateToken();
+                });
     }
 
     private void initSelectedEntity() {
