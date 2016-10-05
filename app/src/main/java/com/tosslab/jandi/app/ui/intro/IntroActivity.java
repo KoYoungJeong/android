@@ -85,7 +85,9 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     @Override
     public void moveTeamSelectActivity() {
         Intent intent = AccountHomeActivity.getActivity(IntroActivity.this, false);
-        startActivity(intent);
+        if (!isFinishing()) {
+            startActivity(intent);
+        }
         finish();
     }
 
@@ -111,13 +113,14 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     public void moveToMainActivity() {
 
         unregistEvent();
-
-        startActivity(Henson.with(this)
-                .gotoMainTabActivity()
-                .build()
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        | Intent.FLAG_ACTIVITY_NEW_TASK));
-        finish();
+        if (!isFinishing()) {
+            startActivity(Henson.with(this)
+                    .gotoMainTabActivity()
+                    .build()
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                            | Intent.FLAG_ACTIVITY_NEW_TASK));
+            finish();
+        }
     }
 
     @Override
@@ -145,7 +148,9 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                             return;
                         }
 
-                        startActivity(intent);
+                        if (!isFinishing()) {
+                            startActivity(intent);
+                        }
                         overridePendingTransition(0, 0);
                         finish();
                     }
