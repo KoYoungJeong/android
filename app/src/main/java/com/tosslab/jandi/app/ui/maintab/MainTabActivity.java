@@ -13,7 +13,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,11 +38,9 @@ import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
-import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.push.PushInterfaceActivity;
-import com.tosslab.jandi.app.push.PushTokenRegister;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -75,6 +72,7 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.TabView;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -83,6 +81,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
@@ -197,14 +196,17 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         FirebaseAnalytics.getInstance(this)
                 .setUserProperty("memberId", String.valueOf(AccountUtil.getMemberId(this)));
 
-        Observable.defer(() -> {
-            return Observable.just(FirebaseInstanceId.getInstance().getToken());
-        }).subscribeOn(Schedulers.io())
-                .filter(it -> !TextUtils.isEmpty(it))
-                .subscribe(token -> {
-                    PushTokenRepository.getInstance().upsertPushToken(new PushToken("gcm", token));
-                    PushTokenRegister.getInstance().updateToken();
-                });
+        Completable.fromCallable(() -> {
+            try {
+                FirebaseInstanceId.getInstance().deleteInstanceId();
+                PushTokenRepository.getInstance().deleteGcmToken();
+                FirebaseInstanceId.getInstance().getToken();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return Completable.complete();
+        }).subscribeOn(Schedulers.newThread())
+                .subscribe();
     }
 
     private void initSelectedEntity() {
