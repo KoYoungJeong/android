@@ -153,6 +153,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="9dp"
                 android:layout_marginRight="9dp"
+                android:focusableInTouchMode="false"
+                android:focusable="false"
                 android:clickable="false" />
 
         </LinearLayout>

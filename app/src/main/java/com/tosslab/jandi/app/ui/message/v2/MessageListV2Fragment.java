@@ -41,6 +41,7 @@ import android.widget.TextView;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
 import com.github.johnpersano.supertoasts.SuperToast;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -114,8 +115,6 @@ import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.members.MembersListActivity;
-import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -1706,11 +1705,14 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         if (!isForeground) {
             return;
         }
-        MembersListActivity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .entityId(entityId)
-                .type(MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC)
-                .start();
+        startActivity(Henson.with(getActivity())
+                .gotoTeamMemberSearchActivity()
+                .isSelectMode(true)
+                .room_id(entityId)
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.InviteTeamMembers);
     }
 
     public void onEvent(RequestFileUploadEvent event) {
