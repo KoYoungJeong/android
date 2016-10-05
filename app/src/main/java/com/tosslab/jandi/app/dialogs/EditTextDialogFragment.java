@@ -360,7 +360,7 @@ public class EditTextDialogFragment extends DialogFragment {
             case ACTION_NEW_EMAIL:
                 return R.string.jandi_member_profile_email;
             default:
-                return R.string.jandi_empty;
+                return R.string.jandi_default_space;
         }
     }
 
