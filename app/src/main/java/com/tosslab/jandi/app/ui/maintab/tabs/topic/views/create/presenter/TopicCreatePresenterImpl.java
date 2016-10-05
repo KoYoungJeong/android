@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.model.TopicCreateModel;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrTopicCreate;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
@@ -47,21 +48,21 @@ public class TopicCreatePresenterImpl implements TopicCreatePresenter {
             EventBus.getDefault().post(new RetrieveTopicListEvent());
 
             long teamId = TeamInfoLoader.getInstance().getTeamId();
-            topicCreateModel.trackTopicCreateSuccess(topic.getId());
+            SprinklrTopicCreate.sendLog(topic.getId());
 
             view.dismissProgressWheel();
             view.createTopicSuccess(teamId, topic.getId(), topicTitle, isPublic);
         } catch (RetrofitException e) {
             view.dismissProgressWheel();
             int errorCode = e.getResponseCode();
-            topicCreateModel.trackTopicCreateFail(errorCode);
+            SprinklrTopicCreate.sendFailLog(errorCode);
             if (e.getStatusCode() == JandiConstants.NetworkError.DUPLICATED_NAME) {
                 view.createTopicFailed(R.string.err_entity_duplicated_name);
             } else {
                 view.createTopicFailed(R.string.err_entity_create);
             }
         } catch (Exception e) {
-            topicCreateModel.trackTopicCreateFail(-1);
+            SprinklrTopicCreate.sendFailLog(-1);
             view.dismissProgressWheel();
             view.createTopicFailed(R.string.err_entity_create);
         }

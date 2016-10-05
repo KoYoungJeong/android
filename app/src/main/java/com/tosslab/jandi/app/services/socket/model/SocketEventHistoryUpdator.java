@@ -22,7 +22,6 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.services.socket.JandiSocketServiceModel;
@@ -138,7 +137,6 @@ public class SocketEventHistoryUpdator {
         return Observable.defer(() -> {
 
             if (System.currentTimeMillis() - socketConnectedLastTime > 1000 * 60 * 60 * 24 * 7) {
-                InitialInfoRepository.getInstance().clear();
                 restartJandi(restarterPost);
                 return Observable.empty();
             }
@@ -153,8 +151,6 @@ public class SocketEventHistoryUpdator {
                 JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
                 EventBus.getDefault().post(new RetrieveTopicListEvent());
                 EventBus.getDefault().post(new ChatListRefreshEvent());
-
-                refreshPollList(teamId);
                 EventBus.getDefault().post(new RequestRefreshPollBadgeCountEvent(teamId));
 
                 eventHistory = eventsApi.get().getEventHistory(socketConnectedLastTime, userId, 1);
@@ -171,7 +167,6 @@ public class SocketEventHistoryUpdator {
 
             } catch (RetrofitException e) {
                 e.printStackTrace();
-                InitialInfoRepository.getInstance().clear();
                 restartJandi(restarterPost);
                 return Observable.empty();
             }
@@ -340,30 +335,6 @@ public class SocketEventHistoryUpdator {
     private void upsertPollVotedStatus(Poll poll) {
         PollRepository.getInstance().upsertPollVoteStatus(poll);
     }
-
-
-    private void refreshPollList(long teamId) {
-        try {
-            PollRepository.getInstance().clearAll();
-
-            ResPollList resPollList = pollApi.get().getPollList(teamId, 50);
-            List<Poll> onGoing = resPollList.getOnGoing();
-            if (onGoing == null) {
-                onGoing = new ArrayList<>();
-            }
-            List<Poll> finished = resPollList.getFinished();
-            if (finished == null) {
-                finished = new ArrayList<>();
-            }
-            Observable.merge(Observable.from(onGoing), Observable.from(finished))
-                    .toList()
-                    .subscribe(polls -> PollRepository.getInstance().upsertPollList(polls),
-                            Throwable::printStackTrace);
-        } catch (RetrofitException retrofitError) {
-            retrofitError.printStackTrace();
-        }
-    }
-
 
     public interface EventPost {
         void post(Object o);

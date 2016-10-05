@@ -135,7 +135,6 @@ import com.tosslab.jandi.app.ui.poll.create.PollCreateActivity;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -148,9 +147,8 @@ import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
@@ -161,7 +159,6 @@ import com.tosslab.jandi.app.views.SoftInputDetectLinearLayout;
 import com.tosslab.jandi.app.views.controller.SoftInputAreaController;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.spannable.JandiURLSpan;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -562,12 +559,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         int screenView = entityType == JandiConstants.TYPE_PUBLIC_TOPIC
                 ? ScreenViewProperty.PUBLIC_TOPIC : ScreenViewProperty.PRIVATE_TOPIC;
 
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.ScreenView)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ScreenView, screenView)
-                .build());
+        SprinklrScreenView.sendLog(screenView);
 
         AnalyticsValue.Screen screen = isInDirectMessage()
                 ? AnalyticsValue.Screen.Message : AnalyticsValue.Screen.TopicChat;
@@ -1929,7 +1921,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @Override
     public void showMessageUnStarSuccessToast() {
         String msg = JandiApplication.getContext()
-                .getResources().getString(R.string.jandi_unpinned_message);
+                .getResources().getString(R.string.jandi_message_no_starred);
 
         showToast(msg, false /* isError */);
     }

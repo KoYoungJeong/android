@@ -2,6 +2,12 @@
 <resources>
 	<string name="app_name">"JANDI"</string>
 	<string name="comment">"Comment"</string>
+	<string name="common_accthome_createteam">"Create a new team"</string>
+	<string name="common_accthome_createteamguide">"You are currently not part of any team.\nTap on the 'Create a new team' button below\nto experience JANDI."</string>
+	<string name="common_createteam_toaccthome">"Go to Account Home"</string>
+	<string name="common_hamburger_teamadmin">"Team admin"</string>
+	<string name="common_profilemodal_jandi_botstatus">"Hello. I'm JANDI"</string>
+	<string name="common_signup_codeverification">"A verification code has been sent to your email address above.\nPlease enter the verification code."</string>
 	<string name="err_delete_file">"File could not be deleted"</string>
 	<string name="err_download">"File could not be downloaded"</string>
 	<string name="err_email_exists">"That email is already registered"</string>
@@ -50,7 +56,7 @@
 	<string name="err_team_creation_failed">"Email could not be sent"</string>
 	<string name="err_unshare">"File could not be unshared"</string>
 	<string name="err_unsupported_file_type">"There is no installed app that supports %1$s"</string>
-	<string name="exclamation_mark">"!"</string>
+	<string name="exclamation_mark">"?"</string>
 	<string name="fail_to_create_team">"Team creation not completed"</string>
 	<string name="file_upload_comment">"Comments (Optional)"</string>
 	<string name="jadi_account_home">"Account Home"</string>
@@ -66,7 +72,7 @@
 	<string name="jandi_action_download">"Download"</string>
 	<string name="jandi_action_invite">"Invite"</string>
 	<string name="jandi_action_leave">"Leave"</string>
-	<string name="jandi_action_login">"Sign in"</string>
+	<string name="jandi_action_login">"Sign In"</string>
 	<string name="jandi_action_menu_message_copy">"Copy"</string>
 	<string name="jandi_action_more">"More"</string>
 	<string name="jandi_action_poll_delete">"Delete This Poll"</string>
@@ -80,7 +86,7 @@
 	<string name="jandi_action_unshare">"Unshare"</string>
 	<string name="jandi_action_update">"Update"</string>
 	<string name="jandi_add">"Add"</string>
-	<string name="jandi_add_an_email_address">"Add an Email Address"</string>
+	<string name="jandi_add_an_email_address">"Add an email address"</string>
 	<string name="jandi_add_to_contacts">"Add to contacts"</string>
 	<string name="jandi_alert_already_topic_owenr">"You are already the admin of this topic"</string>
 	<string name="jandi_all_of_topic_members">"@all (topic members)"</string>
@@ -107,10 +113,10 @@
 	<string name="jandi_assign">"Transfer"</string>
 	<string name="jandi_assign_topic_owner">"Transfer the topic admin permission"</string>
 	<string name="jandi_assign_topic_owner_desc">"Topic admin holds permissions as below:
-- Changing the topic name/descripiton
-- Deleting the topic
-- Forcing quit topic participants
-- Pausing/Deleting JANDI Connect integrations"</string>
+  - Changing the topic name/descripiton
+  - Deleting the topic
+  - Forcing quit topic participants
+  - Pausing/Deleting JANDI Connect integrations"</string>
 	<string name="jandi_auto_join_cannot_be_default_topic">"You cannot turn off auto invitation for the default topic."</string>
 	<string name="jandi_auto_join_cannot_be_private_topic">"Auto invitation is only available in public topics."</string>
 	<string name="jandi_auto_join_explain">"Invite all new members to this topic"</string>
@@ -123,14 +129,14 @@
 	<string name="jandi_bot_role">"I deliver messages from JANDI Connect and essential notifications from our customer experience team"</string>
 	<string name="jandi_bot_status">"Hello. I'm Mr. J."</string>
 	<string name="jandi_browse_other_topics">"Browse and join topic."</string>
-	<string name="jandi_browse_team">"Browse team "</string>
+	<string name="jandi_browse_team">"Browse team"</string>
 	<string name="jandi_call_acess_permission">"Provide us with access to your Phone to call directly from JANDI"</string>
 	<string name="jandi_cancel">"Cancel"</string>
 	<string name="jandi_cancel_all">"Cancel All"</string>
 	<string name="jandi_cancel_invitation">"Cancel Invitation"</string>
 	<string name="jandi_canceled">"Canceled"</string>
 	<string name="jandi_cannot_connect_service_try_again">"JANDI appears to be currently unavailable. Please try again soon. Sorry for any inconvenience!"</string>
-	<string name="jandi_cannot_find_messages">"No messages found matching : "</string>
+	<string name="jandi_cannot_find_messages">"No messages found matching :"</string>
 	<string name="jandi_cannot_find_search_result_1">"Your file drawer is empty."</string>
 	<string name="jandi_cannot_find_search_result_2">"Upload and share files directly into any conversation."</string>
 	<string name="jandi_cannot_find_search_result_old">"No files found"</string>
@@ -207,12 +213,12 @@
 	<string name="jandi_duedate">"Ends at"</string>
 	<string name="jandi_duedate_cannotbe_past_time">"You cannot set an end date which has passed"</string>
 	<string name="jandi_duplicate_email">"That email is already registered"</string>
-	<string name="jandi_empty">""</string>
+	<string name="jandi_empty">"0.0"</string>
 	<string name="jandi_empty_participants">"There were no participants."</string>
 	<string name="jandi_empty_subject">"Title field is required."</string>
 	<string name="jandi_enable_external_link">"Create public link"</string>
 	<string name="jandi_enter_name">"Please enter your name"</string>
-	<string name="jandi_enter_new_passcode">"Enter New Passcode "</string>
+	<string name="jandi_enter_new_passcode">"Enter New Passcode"</string>
 	<string name="jandi_enter_passcode">"Enter your password"</string>
 	<string name="jandi_enter_phone_number">"Please enter your phone number"</string>
 	<string name="jandi_enter_your_dept">"Enter your Department"</string>
@@ -224,14 +230,14 @@
 	<string name="jandi_err_input_email">"Please enter your email address"</string>
 	<string name="jandi_err_input_password">"Please enter your password."</string>
 	<string name="jandi_err_invalid_email">"Email address is not valid"</string>
-	<string name="jandi_err_unexpected">"There was an unexpected error. "</string>
+	<string name="jandi_err_unexpected">"There was an unexpected error."</string>
 	<string name="jandi_error_web_token">"We encountered an issue during sign in. Please try again."</string>
 	<string name="jandi_exceeded_max_text_length">"You can enter up to 5,000 characters"</string>
 	<string name="jandi_expired_invitation_link">"This invitation has expired. Please request a new invitation from the team member who invited you."</string>
 	<string name="jandi_explain_global_push_off">"JANDI app push notification is disabled. Turn on notification in More > Settings to receive notification."</string>
 	<string name="jandi_explain_invite">"JANDI is an enterprise messaging and collaboration platform
-that unites your team together to work better. 
-Let's starting inviting your members now."</string>
+  that unites your team together to work better. 
+  Let's starting inviting your members now."</string>
 	<string name="jandi_explain_topic_description">"Description (optional)"</string>
 	<string name="jandi_export">"Export"</string>
 	<string name="jandi_export_to_app">"Export file using..."</string>
@@ -263,12 +269,12 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_file_upload_go_topic">"Tap to view on JANDI"</string>
 	<string name="jandi_file_upload_state">"Uploading files (%1$s/%2$s)"</string>
 	<string name="jandi_file_upload_succeed">"file upload successful"</string>
-	<string name="jandi_file_uploading">"uploading..."</string>
+	<string name="jandi_file_uploading">"Uploading..."</string>
 	<string name="jandi_fingerprint_cannot_do_temporary">"Fingerprint lock temporary disabled"</string>
 	<string name="jandi_finished">"Ended"</string>
 	<string name="jandi_folder_alread_has_name">"That name is already taken"</string>
 	<string name="jandi_folder_ask_delete">"Are you sure you want to delete this folder?
-(Topics inside a folder are preserved even if the folder is deleted.)"</string>
+  (Topics inside a folder are preserved even if the folder is deleted.)"</string>
 	<string name="jandi_folder_choose">"Choose a folder"</string>
 	<string name="jandi_folder_delete">"Delete this folder"</string>
 	<string name="jandi_folder_has_been_move_to">"The topic has been moved to %s folder."</string>
@@ -281,7 +287,7 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_folder_removed">"The folder has been removed."</string>
 	<string name="jandi_folder_rename">"Rename"</string>
 	<string name="jandi_folder_renamed">"The folder has been renamed."</string>
-	<string name="jandi_forget_password">"Forgot your password?"</string>
+	<string name="jandi_forget_password">"Forgot Your Password?"</string>
 	<string name="jandi_forget_password_block">"<u>Forgot your password?</u>"</string>
 	<string name="jandi_forgot_password">"<u>Forgot Your Password?</u>"</string>
 	<string name="jandi_go_to_latest">"Go to the most recent messages"</string>
@@ -297,7 +303,7 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_hi_apk_store">"Hi Apk Store"</string>
 	<string name="jandi_image_deleted">"This image has been deleted"</string>
 	<string name="jandi_image_too_big">"Image is too big to display."</string>
-	<string name="jandi_incorrect_passcode">"Passcode Does Not Match"</string>
+	<string name="jandi_incorrect_passcode">"Passcode does not match"</string>
 	<string name="jandi_info">"JANDI Information"</string>
 	<string name="jandi_input_enough_items">"Please add at least 2 choices."</string>
 	<string name="jandi_input_password">"Input your password for selected team"</string>
@@ -311,8 +317,7 @@ Let's starting inviting your members now."</string>
 	<string name="jandi_insert_team_domain">"Set up your Team Domain"</string>
 	<string name="jandi_insert_team_name">"Set up your Team Name"</string>
 	<string name="jandi_invitation">"Invite"</string>
-	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. 
-To change this setting, go to Team Settings > Invitation Settings."</string>
+	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. To change this setting, go to Team Settings > Invitation Settings."</string>
 	<string name="jandi_invitation_help">"Invite other team members to JANDI!"</string>
 	<string name="jandi_invitation_succeed">"Invitation has been sent"</string>
 	<string name="jandi_invite_app_not_installed">"The app is not installed on your device. The invitation link has been copied to the clipboard instead."</string>
@@ -324,7 +329,7 @@ To change this setting, go to Team Settings > Invitation Settings."</string>
 	<string name="jandi_invite_kakao">"KakaoTalk"</string>
 	<string name="jandi_invite_line">"LINE"</string>
 	<string name="jandi_invite_many_people_explain">"Inviting over 100 members? Contact us at support@tosslab.com"</string>
-	<string name="jandi_invite_member">"Invite Members"</string>
+	<string name="jandi_invite_member">"Invite members"</string>
 	<string name="jandi_invite_member_count">"Invite %d Members"</string>
 	<string name="jandi_invite_member_to_topic">"Invite Members"</string>
 	<string name="jandi_invite_succes_copy_link">"The team invitation link has been copied to your clipboard. Use it to invite others to your team."</string>
@@ -336,12 +341,12 @@ To change this setting, go to Team Settings > Invitation Settings."</string>
 	<string name="jandi_invite_wechat">"WeChat"</string>
 	<string name="jandi_invited_topic">"%1$s invited %2$s"</string>
 	<string name="jandi_is_newcomer">"New to JANDI?"</string>
-	<string name="jandi_is_topic_required">"Type*"</string>
+	<string name="jandi_is_topic_required">"Type"</string>
 	<string name="jandi_it_has_no_topic_description">"(There is no topic description)"</string>
 	<string name="jandi_job_title">"Job Titles"</string>
 	<string name="jandi_job_title_list">"All Job Titles"</string>
 	<string name="jandi_join_topic">"Join"</string>
-	<string name="jandi_joined_room">"Joined Rooms "</string>
+	<string name="jandi_joined_room">"Joined Rooms"</string>
 	<string name="jandi_joined_team">"You have already joined %1$s. Please check your team list."</string>
 	<string name="jandi_kicked_message">"You have been removed from %s."</string>
 	<string name="jandi_later">"Later"</string>
@@ -363,10 +368,10 @@ To change this setting, go to Team Settings > Invitation Settings."</string>
 	<string name="jandi_mention_mentions">"Mentions"</string>
 	<string name="jandi_mention_more">"More"</string>
 	<string name="jandi_mention_no_mentions">"You haven't been mentioned by other team members yet. 
-To send a mention, type "@" while inputting a message or comment."</string>
+  To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_mention_push_message">"%s mentioned you"</string>
 	<string name="jandi_mentions_are_empty">"You haven't been mentioned by other team members yet. 
-To send a mention, type "@" while inputting a message or comment."</string>
+ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_menu_room_selection">"Select a room"</string>
 	<string name="jandi_message_ask_about_delete_comment">"Are you sure you want to delete this comment? It cannot be undone."</string>
 	<string name="jandi_message_ask_about_deleting">"Are you sure you want to delete this message? It cannot be undone."</string>
@@ -376,7 +381,7 @@ To send a mention, type "@" while inputting a message or comment."</string>
 	<string name="jandi_message_join_entity">"Joining %1$s"</string>
 	<string name="jandi_message_leave_private_topic">"If you leave this private topic, you will only be able to rejoin if you receive another invitation. Are you sure you want to leave?"</string>
 	<string name="jandi_message_leave_private_topic_when_only_you">"Once you leave the topic, the topic will be deleted.
-Are you sure you want to leave the topic?"</string>
+  Are you sure you want to leave the topic?"</string>
 	<string name="jandi_message_logout">"Signed out"</string>
 	<string name="jandi_message_no_member">"No other members have joined your team. Invite them now to start collaborating."</string>
 	<string name="jandi_message_no_starred">"Unstarred"</string>
@@ -481,7 +486,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_profile_update_succeed">"Profile has been updated"</string>
 	<string name="jandi_profile_welcome">"Welcome!"</string>
 	<string name="jandi_push_no_preview">"No preview"</string>
-	<string name="jandi_push_preview_all_message">"All messages"</string>
+	<string name="jandi_push_preview_all_message">"All Messages"</string>
 	<string name="jandi_push_preview_public_only">"Public topics only"</string>
 	<string name="jandi_question_team_create">"Don't have a team on JANDI yet?"</string>
 	<string name="jandi_r_u_sure_cancel_invitation">"Are you sure you want cancel the invitation?"</string>
@@ -530,10 +535,10 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_setting_general">"General"</string>
 	<string name="jandi_setting_notification">"Notification Settings"</string>
 	<string name="jandi_setting_push">"Notification Preferences"</string>
-	<string name="jandi_setting_push_subscription">"Push notifications"</string>
+	<string name="jandi_setting_push_subscription">"Push Notifications"</string>
 	<string name="jandi_setting_push_subscription_cancel">"Turned off"</string>
 	<string name="jandi_setting_push_subscription_ok">"Turned on"</string>
-	<string name="jandi_setting_sign_out">"Sign out"</string>
+	<string name="jandi_setting_sign_out">"Sign Out"</string>
 	<string name="jandi_setting_summary_led">"Flash LED on incoming notifications"</string>
 	<string name="jandi_setting_summary_vibrate">"Vibrate on incoming notifications"</string>
 	<string name="jandi_settings">"Settings"</string>
@@ -547,7 +552,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_sign_in_block">"<u>Sign In</u>"</string>
 	<string name="jandi_sign_in_ids_explain">"Choose an email address where we should send all of your JANDI related emails. Add other email addresses to assign to specific teams."</string>
 	<string name="jandi_sign_out_message">"Are you sure you want to sign out?"</string>
-	<string name="jandi_sign_up_now">"eg"</string>
+	<string name="jandi_sign_up_now">"It seems you are not registered yet. Would you like to sign up now?"</string>
 	<string name="jandi_signup_agree_all">"Accept all of JANDI's usage policies"</string>
 	<string name="jandi_signup_agree_pp">"I have reviewed and agree to the <u><b>Privacy Policy</b></u>"</string>
 	<string name="jandi_signup_agree_tos">"I have reviewed and agree to the<u><b> Terms of Service</b></u>"</string>
@@ -606,7 +611,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_tab_topic">"Topics"</string>
 	<string name="jandi_tab_tos_and_pp">"By tapping Next, I agree to the \n%1$s and %2$s."</string>
 	<string name="jandi_team">"Team"</string>
-	<string name="jandi_team_admin">"Team Admin"</string>
+	<string name="jandi_team_admin">"Team admin"</string>
 	<string name="jandi_team_create_domain_info">"What web address do you want \nfor your JANDI team?"</string>
 	<string name="jandi_team_create_domain_invalid">"Letters, numbers, and hyphens only."</string>
 	<string name="jandi_team_create_domain_length_invalid">"Use at least 3 characters."</string>
@@ -616,6 +621,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_team_domain">"Team Domain"</string>
 	<string name="jandi_team_info">"Team"</string>
 	<string name="jandi_team_join_fail">"There was an issue processing your invitation and joining the team. Please try again."</string>
+	<string name="jandi_team_list">"Team List"</string>
 	<string name="jandi_team_member">"Team Members"</string>
 	<string name="jandi_team_member_count_with_format">"Members(%d)"</string>
 	<string name="jandi_team_name">"Team Name"</string>
@@ -631,7 +637,7 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_title_activity_file_explorer">"File Explore"</string>
 	<string name="jandi_title_cdp_to_be_shared">"Select where to share in"</string>
 	<string name="jandi_title_cdp_to_be_unshared">"Select where to unshare from"</string>
-	<string name="jandi_title_delete">"Delete Confirmation "</string>
+	<string name="jandi_title_delete">"Delete Confirmation"</string>
 	<string name="jandi_title_message">"Messages"</string>
 	<string name="jandi_title_name">"Name"</string>
 	<string name="jandi_title_name_required">"Name*"</string>
@@ -665,8 +671,8 @@ Are you sure you want to leave the topic?"</string>
 	<string name="jandi_tutorial_topic_message">"Open communication channels across the organization with firm-wide topics. Share industry knowledge with functional topics. And centralize your communications around projects in private dedicated spaces."</string>
 	<string name="jandi_tutorial_welcome">"Welcome to JANDI"</string>
 	<string name="jandi_tutorial_welcome_message">"Our mission is to make your working life simpler, more productive, and more enjoyable, starting with collaboration. 
-
-We combined everything you love about messaging apps and cloud storage with powerful search functionality, and put it in the palm of your hand."</string>
+ 
+ We combined everything you love about messaging apps and cloud storage with powerful search functionality, and put it in the palm of your hand."</string>
 	<string name="jandi_undefined_member">"Unidentified Members"</string>
 	<string name="jandi_unpinned_message">"Unstarred"</string>
 	<string name="jandi_unread_messages_below">"Unread messages below"</string>
@@ -709,6 +715,7 @@ We combined everything you love about messaging apps and cloud storage with powe
 	<string name="menu_entity_leave">"Leave"</string>
 	<string name="menu_gallery">"Upload from Gallery"</string>
 	<string name="modify_message">"Edit message"</string>
+	<string name="mypage_mention_newmentionalert">"New Mention"</string>
 	<string name="primary_email_info_msg">"Choose an email address where we should send all of your JANDI related emails. To assign email addresses to specific teams, please refer to the Profile menu."</string>
 	<string name="sent_auth_email">"An email has been sent to your inbox. Please follow the link provided to verify your account and sign in."</string>
 	<string name="sent_auth_email_short">"An email has been sent to your inbox. Please follow the link provided to verify your account and complete the registration process."</string>
@@ -718,6 +725,7 @@ We combined everything you love about messaging apps and cloud storage with powe
 	<string name="title_file_detail">"Description"</string>
 	<string name="title_file_upload">"Upload File"</string>
 	<string name="today">"Today"</string>
+	<string name="topic_topicchat_mentionall">"@all (topic members)"</string>
 	<string name="url">"URL"</string>
 	<string name="warn_all_users_are_already_invited">"All of your team members are in this topic"</string>
 	<string name="warn_messages_empty">"There are no messages"</string>

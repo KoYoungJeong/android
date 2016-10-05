@@ -31,7 +31,7 @@
         android:gravity="left|center_vertical"
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
-        android:text="@string/jandi_folder_rename"
+        android:text="@string/jandi_folder_renamed"
         android:textColor="@color/message_controller_popup_text_color"
         android:textSize="16sp" />
 

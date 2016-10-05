@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +23,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -52,7 +55,6 @@ import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
-import com.tosslab.jandi.app.ui.maintab.MainTabPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.SearchedFilesAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.SearchedFilesAdapterView;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.controller.SearchSelectorViewController;
@@ -69,6 +71,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
@@ -130,7 +133,17 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     private SearchSelectorViewController searchSelectorViewController;
     private FileUploadController filePickerViewModel;
 
-    private long entityId = -1;
+    @Nullable
+    @InjectExtra
+    long entityId = -1;
+
+    @Nullable
+    @InjectExtra
+    long writerId = -1;
+
+    @Nullable
+    @InjectExtra
+    String fileType = "all";
 
     private SearchedFilesAdapterView searchedFilesAdapterView;
     private FileSearchActivity.OnSearchItemSelect onSearchItemSelect;
@@ -141,6 +154,14 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
     public void setOnSearchItemSelect(FileSearchActivity.OnSearchItemSelect onSearchItemSelect) {
         this.onSearchItemSelect = onSearchItemSelect;
+    }
+
+    public static FileListFragment create(Context context, long entityId, long writerId, String fileType) {
+        Bundle bundle = new Bundle();
+        bundle.putString("fileType", fileType);
+        bundle.putLong("entityId", entityId);
+        bundle.putLong("writerId", writerId);
+        return (FileListFragment) Fragment.instantiate(context, FileListFragment.class.getName(), bundle);
     }
 
     @Override
@@ -159,15 +180,17 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            entityId = bundle.getLong(PARAM_ENTITY_ID, -1);
-        }
+        Dart.inject(this, bundle);
+
         DaggerFileListComponent.builder()
                 .fileListModule(new FileListModule(this, entityId, isInSearchActivity()))
                 .build()
                 .inject(this);
+
         filePickerViewModel = MainFileUploadControllerImpl_.getInstance_(getContext());
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
@@ -184,7 +207,9 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
     @Override
     public void onDestroy() {
-        EventBus.getDefault().unregister(this);
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
         fileListPresenter.onDestory();
         super.onDestroy();
     }
@@ -212,6 +237,21 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
             initSearchLayoutIfFirst();
         }
 
+        if (entityId > 0) {
+            fileListPresenter.onEntitySelection(entityId, "");
+            searchSelectorViewController.setCurrentEntity(entityId);
+        }
+
+        if (writerId > 0) {
+            fileListPresenter.onMemberSelection(writerId, "");
+            searchSelectorViewController.setCurrentMember(writerId);
+        }
+
+        if (!TextUtils.equals(fileType, "all")) {
+            fileListPresenter.onFileTypeSelection(fileType, "");
+            searchSelectorViewController.setCurrentFileType(fileType);
+        }
+
     }
 
     @OnClick(R.id.ly_file_list_where)
@@ -237,13 +277,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
     private void setListView() {
         if (getActivity() instanceof FileSearchActivity) {
-            AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                    .event(SprinklerEvents.ScreenView)
-                    .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                    .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                    .property(PropertyKey.ScreenView, ScreenViewProperty.FILE_SEARCH)
-                    .build());
-
+            SprinklrScreenView.sendLog(ScreenViewProperty.FILE_SEARCH);
             AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.FilesSearch);
         }
 
@@ -383,7 +417,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_main_search) {
-            FileSearchActivity.start(getActivity(), -1);
+            fileListPresenter.onMoveFileSearch();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -534,6 +568,11 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     }
 
     @Override
+    public void moveFileSearch(long entity, long writer, String type) {
+        FileSearchActivity.start(getActivity(), entity, writer, type);
+    }
+
+    @Override
     public void scrollToTop() {
         lvSearchFiles.scrollToPosition(0);
     }
@@ -622,9 +661,6 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     }
 
     public void onEventMainThread(CategorizedMenuOfFileType event) {
-        if (!isForeground) {
-            return;
-        }
         if (onSearchText != null) {
             fileListPresenter.onFileTypeSelection(
                     event.getServerQuery(), onSearchText.getSearchText());
@@ -632,12 +668,14 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
             fileListPresenter.onFileTypeSelection(
                     event.getServerQuery(), null);
         }
+
+        if (!isForeground) {
+            searchSelectorViewController.setCurrentFileType(event.getServerQuery());
+        }
+
     }
 
     public void onEventMainThread(CategorizingAsOwner event) {
-        if (!isForeground) {
-            return;
-        }
         if (onSearchText != null) {
             fileListPresenter.onMemberSelection(
                     event.userId, onSearchText.getSearchText());
@@ -645,12 +683,13 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
             fileListPresenter.onMemberSelection(
                     event.userId, null);
         }
+
+        if (!isForeground) {
+            searchSelectorViewController.setCurrentMember(event.userId);
+        }
     }
 
     public void onEventMainThread(CategorizingAsEntity event) {
-        if (!isForeground) {
-            return;
-        }
         if (onSearchText != null) {
             fileListPresenter.onEntitySelection(
                     event.sharedEntityId, onSearchText.getSearchText());
@@ -658,6 +697,11 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
             fileListPresenter.onEntitySelection(
                     event.sharedEntityId, null);
         }
+
+        if (!isForeground) {
+            searchSelectorViewController.setCurrentEntity(event.sharedEntityId);
+        }
+
     }
 
     public void onEventMainThread(FileCreatedEvent event) {

@@ -56,7 +56,6 @@ import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
 import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.ui.term.TermActivity;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -64,11 +63,10 @@ import com.tosslab.jandi.app.utils.KnockListener;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrSignOut;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.Arrays;
 
@@ -125,7 +123,9 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
 
         NavigationAdapter navigationAdapter = new NavigationAdapter();
         injectComponent(navigationAdapter);
@@ -309,7 +309,8 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                 .setPositiveButton(R.string.jandi_setting_sign_out,
                         (dialog, which) -> {
                             navigationPresenter.onSignOutAction();
-                            trackSignOut();
+                            SprinklrSignOut.sendLog();
+                            AnalyticsUtil.flushSprinkler();
                         })
                 .create().show();
     }
@@ -395,15 +396,6 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         AlertUtil.showConfirmDialog(getActivity(), errorMessage, (dialog, which) -> {
             navigationPresenter.onTeamInviteIgnoreAction(team);
         }, false);
-    }
-
-    private void trackSignOut() {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.SignOut)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .build());
-        AnalyticsUtil.flushSprinkler();
     }
 
     @Override
@@ -519,7 +511,9 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
     @Override
     public void onDestroyView() {
-        EventBus.getDefault().unregister(this);
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
         navigationPresenter.clearTeamInitializeQueue();
         navigationPresenter.clearBadgeCountingQueue();
         super.onDestroyView();

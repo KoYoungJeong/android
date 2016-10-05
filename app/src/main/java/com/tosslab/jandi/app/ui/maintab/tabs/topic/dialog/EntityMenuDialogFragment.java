@@ -149,9 +149,9 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
     public void setStarredButtonText(boolean isStarred) {
         if (isStarred) {
-            btnStarred.setText(R.string.jandi_unstarred);
+            btnStarred.setText(R.string.jandi_starred_unstar);
         } else {
-            btnStarred.setText(R.string.jandi_starred);
+            btnStarred.setText(R.string.jandi_message_starred);
         }
     }
 

@@ -53,7 +53,7 @@ public class PollInfoViewHolder extends BaseViewHolder<Poll> {
 
         tvSubject.setText(poll.getSubject());
         String participants =
-                poll.getVotedCount() + resources.getString(R.string.jandi_poll_participants_ing);
+                poll.getVotedCount() + resources.getString(R.string.jandi_participants);
         tvParticipants.setText(participants);
 
         if (hasDueDate(poll)) {
@@ -90,11 +90,11 @@ public class PollInfoViewHolder extends BaseViewHolder<Poll> {
                 sb.append(resources.getString(R.string.jandi_poll_anonymous));
 
                 if (poll.isMultipleChoice()) {
-                    sb.append(", " + resources.getString(R.string.jandi_poll_multiple_available));
+                    sb.append(", " + resources.getString(R.string.jandi_poll_multiple));
                 }
 
             } else {
-                sb.append(resources.getString(R.string.jandi_poll_multiple_available));
+                sb.append(resources.getString(R.string.jandi_poll_multiple));
             }
 
             tvOptions.setText(sb.toString());

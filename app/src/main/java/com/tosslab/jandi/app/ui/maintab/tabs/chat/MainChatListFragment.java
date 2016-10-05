@@ -31,7 +31,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresente
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresenterImpl;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.to.ChatItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.EntityMenuDialogFragment_;
-import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionButtonProvider;
+import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionBarDetector;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
@@ -57,7 +57,7 @@ import de.greenrobot.event.EventBus;
 
 @EFragment(R.layout.fragment_main_chat_list)
 public class MainChatListFragment extends Fragment
-        implements MainChatListPresenter.View, ListScroller {
+        implements MainChatListPresenter.View, ListScroller, FloatingActionBarDetector {
 
     @Bean(MainChatListPresenterImpl.class)
     MainChatListPresenter mainChatListPresenter;
@@ -102,7 +102,9 @@ public class MainChatListFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
@@ -123,7 +125,9 @@ public class MainChatListFragment extends Fragment
 
     @Override
     public void onDestroy() {
-        EventBus.getDefault().unregister(this);
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
         super.onDestroy();
     }
 
@@ -339,19 +343,7 @@ public class MainChatListFragment extends Fragment
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-
-        if (isVisibleToUser) {
-            setFloatingActionButtonIfExists();
-        }
-    }
-
-    private void setFloatingActionButtonIfExists() {
-        if (getActivity() == null || !(getActivity() instanceof FloatingActionButtonProvider)) {
-            return;
-        }
-        View btnFab = ((FloatingActionButtonProvider) getActivity()).provideFloatingActionButton();
+    public void onDetectFloatAction(View btnFab) {
         if (btnFab != null) {
             btnFab.setOnClickListener(v -> {
                 chooseUser();
@@ -360,5 +352,4 @@ public class MainChatListFragment extends Fragment
             });
         }
     }
-
 }

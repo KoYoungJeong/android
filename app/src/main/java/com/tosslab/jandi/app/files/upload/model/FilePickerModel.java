@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.network.client.profile.ProfileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -21,13 +20,8 @@ import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.profile.defaultimage.ProfileImageSelectorActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
-import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 
@@ -192,27 +186,6 @@ public class FilePickerModel {
                 .execute().body();
 
 
-    }
-
-    public void trackUploadingFile(long entityId, long fileId) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.FileUpload)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, true)
-                .property(PropertyKey.TopicId, entityId)
-                .property(PropertyKey.FileId, fileId)
-                .build());
-    }
-
-    public void trackUploadingFileFail(int errorCode) {
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.FileUpload)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ResponseSuccess, false)
-                .property(PropertyKey.ErrorCode, errorCode)
-                .build());
     }
 
     public Human uploadProfilePhoto(File file) throws RetrofitException {

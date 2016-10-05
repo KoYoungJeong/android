@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -26,6 +27,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 
 public class IntroActivity extends BaseAppCompatActivity implements IntroActivityPresenter.View {
 
@@ -63,6 +65,8 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
         initExtra();
 
+        EventBus.getDefault().register(this);
+
         startOn();
     }
 
@@ -85,8 +89,29 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
         finish();
     }
 
+    public void onEventMainThread(RetrieveTopicListEvent event) {
+        presenter.cancelAll();
+
+        moveToMainActivity();
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregistEvent();
+        super.onDestroy();
+    }
+
+    synchronized private void unregistEvent() {
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
+    }
+
     @Override
     public void moveToMainActivity() {
+
+        unregistEvent();
+
         startActivity(Henson.with(this)
                 .gotoMainTabActivity()
                 .build()

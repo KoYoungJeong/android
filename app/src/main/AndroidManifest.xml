@@ -146,7 +146,7 @@
         <activity
             android:name=".ui.invites.email.InviteByEmailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/menu_entity_invite"
+            android:label="@string/jandi_action_invite"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan"/>
 
@@ -200,7 +200,7 @@
         <activity
             android:name=".ui.members.MembersListActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_topic_paricipants"
+            android:label="@string/jandi_participants"
             android:screenOrientation="portrait"/>
 
         <activity
@@ -223,7 +223,7 @@
         <activity
             android:name=".ui.search.file.view.FileSearchActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_topic_paricipants"
+            android:label="@string/jandi_participants"
             android:screenOrientation="portrait"/>
 
         <activity
@@ -308,37 +308,20 @@
         <!--EOF Parse-->
 
         <!-- GCM -->
-        <receiver
-            android:name="com.google.android.gms.gcm.GcmReceiver"
-            android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-                <category android:name="${applicationId}" />
-            </intent-filter>
-        </receiver>
-
         <service
-            android:name=".push.gcm.receiver.GcmPushReceiver"
-            android:exported="false">
+            android:name=".push.gcm.receiver.GcmPushReceiver">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
         <service
-            android:name=".push.gcm.register.GcmRegistrationRefreshListenerService"
-            android:exported="false">
+            android:name=".push.gcm.register.GcmRegistrationRefreshListenerService">
             <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-
-        <service
-            android:name=".push.gcm.register.GcmRegistrationIntentService"
-            android:exported="false"/>
-        <!-- EOF GCM -->
+        <!-- EOF FCM -->
 
         <!--Baidu Push-->
         <receiver android:name=".push.baidu.receiver.BaiduPushReceiver">
@@ -364,6 +347,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
                 <action android:name="com.baidu.android.pushservice.action.notification.SHOW"/>
+                <action android:name="com.baidu.android.pushservice.action.media.CLICK" />
                 <action android:name="android.intent.action.MEDIA_MOUNTED"/>
                 <action android:name="android.intent.action.USER_PRESENT"/>
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
@@ -395,6 +379,13 @@
         <service
             android:name="com.baidu.android.pushservice.CommandService"
             android:exported="true"/>
+
+        <provider
+            android:name="com.baidu.android.pushservice.PushInfoProvider"
+            android:authorities="${applicationId}.bdpush"
+            android:exported="true"
+            android:protectionLevel="signature"
+            android:writePermission="baidu.push.permission.WRITE_PUSHINFOPROVIDER.${applicationId} " />
 
         <!--EOF Baidu Push-->
 
@@ -562,7 +553,7 @@
         <activity
             android:name=".ui.sign.signup.SignUpActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_signup_title"
+            android:label="@string/jandi_action_start"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateVisible"/>
 
@@ -600,7 +591,7 @@
             android:name=".ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="adjustResize"/>
 
         <service android:name=".services.socket.JandiSocketService"/>
 
@@ -631,6 +622,18 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </receiver>
+
+        <!-- Google Play Analytics -->
+        <receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
+            </intent-filter>
+        </receiver>
+        <service android:name="com.google.android.gms.analytics.AnalyticsService"
+            android:enabled="true"
+            android:exported="false"/>
+
         <!-- Google Play Campaign Measurement -->
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService"/>
 
@@ -643,6 +646,7 @@
             </intent-filter>
         </receiver>
 
+<!--
         <receiver
             android:name="com.google.ads.conversiontracking.InstallReceiver"
             android:exported="true">
@@ -650,6 +654,7 @@
                 <action android:name="com.android.vending.INSTALL_REFERRER"/>
             </intent-filter>
         </receiver>
+-->
 
         <meta-data
             android:name="io.fabric.ApiKey"
@@ -702,7 +707,6 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
     <uses-permission android:name="android.permission.GET_TASKS"/>
 
@@ -715,6 +719,12 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER"/>
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR"/>
+
+    <uses-permission android:name="baidu.push.permission.WRITE_PUSHINFOPROVIDER.${applicationId}" />
+
+    <permission
+        android:name="baidu.push.permission.WRITE_PUSHINFOPROVIDER.${applicationId}"
+        android:protectionLevel="normal" />
 
     <permission
         android:name="${applicationId}.permission.C2D_MESSAGE"

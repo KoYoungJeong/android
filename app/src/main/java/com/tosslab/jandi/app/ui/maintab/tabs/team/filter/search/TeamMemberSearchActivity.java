@@ -98,6 +98,7 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
 
     private TeamViewPagerAdapter adapter;
     private PublishSubject<String> keywordSubject;
+    private InputMethodManager inputManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,6 +106,8 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
         setContentView(R.layout.activity_team_member_search);
 
         ButterKnife.bind(this);
+        inputManager = ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
+
         Dart.inject(this);
         keywordSubject = PublishSubject.create();
 
@@ -118,6 +121,7 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setCurrentItem(position);
 
+
         setUpToolbar();
 
     }
@@ -126,7 +130,7 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
 
         if (!isSelectMode) {
             toolbar.setVisibility(View.GONE);
-            vgSearch.setVisibility(View.VISIBLE);
+            showSearchLayout();
             showRecentKeyword();
         } else {
             setSupportActionBar(toolbar);
@@ -134,11 +138,17 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
 
             ActionBar actionBar = getSupportActionBar();
             if (roomId > 0) {
-                actionBar.setTitle(R.string.jandi_invite_member_to_topic);
+                actionBar.setTitle(R.string.jandi_invite_member);
             } else {
                 actionBar.setTitle(R.string.jandi_choose_1_1_member);
             }
         }
+    }
+
+    private void showSearchLayout() {
+        vgSearch.setVisibility(View.VISIBLE);
+        etSearch.requestFocus();
+        inputManager.showSoftInput(etSearch, 0);
     }
 
     private void showRecentKeyword() {
@@ -175,6 +185,7 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
             MemberRecentSearchKeyword item = (MemberRecentSearchKeyword) adapter.getActualItem(position1);
             etSearch.setText(item.getKeyword());
             etSearch.setSelection(etSearch.length());
+            inputManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
         });
 
         List<MemberRecentKeyword> keywords = MemberRecentKeywordRepository.getInstance().getKeywords();
@@ -210,6 +221,8 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
     boolean onSearchImeAction(int actionId) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
             MemberRecentKeywordRepository.getInstance().upsertKeyword(etSearch.getText().toString());
+            inputManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
+
             return true;
         }
         return false;
@@ -220,7 +233,7 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
 
         switch (item.getItemId()) {
             case R.id.action_search:
-                vgSearch.setVisibility(View.VISIBLE);
+                showSearchLayout();
                 showRecentKeyword();
                 break;
             case R.id.action_select_all:
@@ -270,8 +283,7 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
             etSearch.setText("");
             vgSearch.setVisibility(View.GONE);
             vgRecentSearch.setVisibility(View.GONE);
-            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
+            inputManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
         } else {
             finish();
         }

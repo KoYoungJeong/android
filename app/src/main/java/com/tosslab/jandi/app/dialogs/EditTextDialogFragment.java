@@ -212,10 +212,10 @@ public class EditTextDialogFragment extends DialogFragment {
                 input.setHint(R.string.jandi_enter_phone_number);
                 break;
             case ACTION_MODIFY_PROFILE_DIVISION:
-                input.setHint(R.string.jandi_profile_division_hint);
+                input.setHint(R.string.jandi_profile_division);
                 break;
             case ACTION_MODIFY_PROFILE_POSITION:
-                input.setHint(R.string.jandi_profile_position_hint);
+                input.setHint(R.string.jandi_profile_position);
                 break;
             case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
             case ACTION_MODIFY_PROFILE_MEMBER_NAME:
@@ -224,7 +224,7 @@ public class EditTextDialogFragment extends DialogFragment {
             case ACTION_FORGOT_PASSWORD:
             case ACTION_NEW_EMAIL:
                 input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-                input.setHint(R.string.jandi_user_id);
+                input.setHint(R.string.jandi_member_profile_email);
                 break;
             default:
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -355,12 +355,12 @@ public class EditTextDialogFragment extends DialogFragment {
                 return R.string.jandi_profile_position;
             case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
             case ACTION_MODIFY_PROFILE_MEMBER_NAME:
-                return R.string.jandi_title_name;
+                return R.string.jandi_entity_create_entity_name;
             case ACTION_FORGOT_PASSWORD:
             case ACTION_NEW_EMAIL:
-                return R.string.jandi_user_id;
+                return R.string.jandi_member_profile_email;
             default:
-                return R.string.jandi_empty;
+                return R.string.jandi_default_space;
         }
     }
 

@@ -4,7 +4,6 @@ import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
@@ -14,7 +13,6 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
@@ -28,9 +26,9 @@ import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
-import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrMessageDelete;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
@@ -378,15 +376,15 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
             MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
             view.deleteLinkByMessageId(messageId);
 
-            messageListModel.trackMessageDeleteSuccess(messageId);
+            SprinklrMessageDelete.sendLog(messageId);
 
         } catch (RetrofitException e) {
             LogUtil.e("deleteMessageInBackground : FAILED", e);
             int errorCode = e.getStatusCode();
-            messageListModel.trackMessageDeleteFail(errorCode);
+            SprinklrMessageDelete.sendFailLog(errorCode);
         } catch (Exception e) {
             LogUtil.e("deleteMessageInBackground : FAILED", e);
-            messageListModel.trackMessageDeleteFail(-1);
+            SprinklrMessageDelete.sendFailLog(-1);
         }
         view.dismissProgressWheel();
     }
@@ -410,7 +408,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     public void unregistStarredMessage(long teamId, long messageId) {
         try {
             messageListModel.unregistStarredMessage(teamId, messageId);
-            view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_unpinned_message));
+            view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_message_no_starred));
             view.modifyStarredInfo(messageId, false);
             EventBus.getDefault().post(new StarredInfoChangeEvent());
         } catch (RetrofitException e) {

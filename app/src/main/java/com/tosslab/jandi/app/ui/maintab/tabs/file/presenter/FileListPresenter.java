@@ -24,7 +24,7 @@ public interface FileListPresenter {
 
     void onFileShare(long teamId);
 
-    void onFileTypeSelection(String query, String searchText);
+    void onFileTypeSelection(String fileTypeQuery, String searchText);
 
     void onMemberSelection(long userId, String searchText);
 
@@ -43,6 +43,8 @@ public interface FileListPresenter {
     void onDestory();
 
     void getImageDetail(long fileId);
+
+    void onMoveFileSearch();
 
     interface View {
         void clearListView();
@@ -72,5 +74,7 @@ public interface FileListPresenter {
         void showProgress();
 
         void dismissProgress();
+
+        void moveFileSearch(long entity, long writer, String type);
     }
 }

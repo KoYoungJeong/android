@@ -32,6 +32,8 @@ import com.tosslab.jandi.app.ui.message.detail.model.TopicDetailModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrTopicStar;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrTopicUnStar;
 
 import javax.inject.Inject;
 
@@ -178,7 +180,7 @@ public class ChatDetailFragment extends Fragment {
                 .doOnNext(isStarred -> {
                     try {
                         entityClientManager.disableFavorite(entityId);
-                        topicDetailModel.trackTopicUnStarSuccess(entityId);
+                        SprinklrTopicUnStar.sendLog(entityId);
                         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.Off);
                     } catch (RetrofitException e) {
                         e.printStackTrace();
@@ -195,14 +197,13 @@ public class ChatDetailFragment extends Fragment {
                     try {
                         entityClientManager.enableFavorite(entityId);
                         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.On);
-
-                        topicDetailModel.trackTopicStarSuccess(entityId);
+                        SprinklrTopicStar.sendLog(entityId);
                     } catch (RetrofitException e) {
                         int errorCode = e.getStatusCode();
                         if (TeamInfoLoader.getInstance().isStarredUser(entityId)) {
-                            topicDetailModel.trackTopicUnStarFail(errorCode);
+                            SprinklrTopicUnStar.sendFailLog(errorCode);
                         } else {
-                            topicDetailModel.trackTopicStarFail(errorCode);
+                            SprinklrTopicStar.sendFailLog(errorCode);
                         }
                     }
                 })

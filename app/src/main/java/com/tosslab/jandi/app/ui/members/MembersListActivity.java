@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -28,15 +27,12 @@ import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog_;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -126,12 +122,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     void initViews() {
         vEmptyTeamMember.setVisibility(View.GONE);
 
-        AnalyticsUtil.trackSprinkler(new FutureTrack.Builder()
-                .event(SprinklerEvents.ScreenView)
-                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
-                .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
-                .property(PropertyKey.ScreenView, ScreenViewProperty.TEAM_MEMBER)
-                .build());
+        SprinklrScreenView.sendLog(ScreenViewProperty.TEAM_MEMBER);
 
         AnalyticsUtil.sendScreenName(getScreen());
 
@@ -208,9 +199,9 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         if (type == TYPE_MEMBERS_LIST_TEAM) {
             actionBar.setTitle(R.string.jandi_team_member);
         } else if (type == TYPE_MEMBERS_LIST_TOPIC) {
-            actionBar.setTitle(R.string.jandi_topic_paricipants);
+            actionBar.setTitle(R.string.jandi_participants);
         } else if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
-            actionBar.setTitle(R.string.jandi_invite_member_to_topic);
+            actionBar.setTitle(R.string.jandi_invite_member);
         }
 
     }

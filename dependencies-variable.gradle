@@ -22,7 +22,8 @@ ext.dependecies = [
                 henson_processor                 : 'com.f2prateek.dart:henson-processor:2.0.+',
 
                 googleAnalytics                  : 'com.google.android.gms:play-services-analytics:9.4.0',
-                gcm                              : 'com.google.android.gms:play-services-gcm:9.4.0',
+                firebase_core                    : 'com.google.firebase:firebase-core:9.4.0',
+                firebase_fcm                     : 'com.google.firebase:firebase-messaging:9.4.0',
 
                 support_appcompat                : 'com.android.support:appcompat-v7:24.2.0',
                 support_v4                       : 'com.android.support:support-v4:24.2.0',

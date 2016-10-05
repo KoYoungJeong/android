@@ -9,6 +9,9 @@ import com.tosslab.jandi.app.ui.sign.signup.verify.exception.VerifyNetworkExcept
 import com.tosslab.jandi.app.ui.sign.signup.verify.model.SignUpVerifyModel;
 import com.tosslab.jandi.app.ui.sign.signup.verify.view.SignUpVerifyView;
 import com.tosslab.jandi.app.utils.SignOutUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrResendVerificationEmail;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrSignUp;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
@@ -46,11 +49,12 @@ public class SignUpVerifyPresenter {
             LogUtil.e(accountActivate.toString());
 
             view.hideProgress();
-            view.showToast(context.getResources().getString(R.string.jandi_welcome_message));
+            view.showToast(context.getResources().getString(R.string.jandi_tutorial_welcome));
 
             SignOutUtil.removeSignData();
             model.setAccountInfo(accountActivate);
-            model.trackSignUpSuccessAndFlush(accountActivate.getAccount());
+            SprinklrSignUp.sendLog();
+            AnalyticsUtil.flushSprinkler();
 
             view.moveToAccountHome();
         } catch (VerifyNetworkException e) {
@@ -58,7 +62,9 @@ public class SignUpVerifyPresenter {
 
             LogUtil.d(e.getErrorInfo());
             int errCode = e.errCode;
-            model.trackSignUpFailAndFlush(errCode);
+            SprinklrSignUp.trackFail(e.errCode);
+            AnalyticsUtil.flushSprinkler();
+
             switch (errCode) {
                 case EXPIRED_VERIFICATION_CODE:
 
@@ -86,6 +92,7 @@ public class SignUpVerifyPresenter {
 
         try {
             model.requestNewVerificationCode(email);
+            SprinklrResendVerificationEmail.sendLog(email);
             view.hideProgress();
 
             String successEmailText = context.getResources()
@@ -95,6 +102,7 @@ public class SignUpVerifyPresenter {
             view.clearVerifyCode();
         } catch (RetrofitException e) {
             e.printStackTrace();
+            SprinklrResendVerificationEmail.sendFailLog(e.getResponseCode());
             view.hideProgress();
             view.showErrorToast(context.getResources().getString(R.string.err_network));
         }

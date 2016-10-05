@@ -11,14 +11,19 @@ import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrSignIn;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.PushUtil;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -30,6 +35,7 @@ public class IntroActivityPresenter {
 
     IntroActivityModel model;
     View view;
+    private Subscription timerSubs;
 
     @Inject
     public IntroActivityPresenter(View view, IntroActivityModel model) {
@@ -156,6 +162,11 @@ public class IntroActivityPresenter {
 
         // 팀 정보가 있는 경우
         hasTeamObservable.filter(it -> it)
+                .doOnNext(it ->
+                        timerSubs = Observable.timer(2000, TimeUnit.MILLISECONDS)
+                                .subscribe(a -> {
+                                    view.moveToMainActivity();
+                                }))
                 .doOnNext(it -> PushUtil.registPush())
                 .observeOn(Schedulers.io())
                 .doOnNext(it -> {
@@ -175,13 +186,11 @@ public class IntroActivityPresenter {
                         }
                     }
                     view.startSocketService();
-
-                    TeamInfoLoader.getInstance();
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
-                    model.trackAutoSignInSuccessAndFlush(true);
-                    view.moveToMainActivity();
+                    SprinklrSignIn.sendLog(true, true);
+                    AnalyticsUtil.flushSprinkler();
                 }, t -> {
                 });
 
@@ -189,10 +198,16 @@ public class IntroActivityPresenter {
         hasTeamObservable.filter(it -> !it)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
-                    model.trackAutoSignInSuccessAndFlush(false);
-
+                    SprinklrSignIn.sendLog(false, true);
+                    AnalyticsUtil.flushSprinkler();
                     view.moveTeamSelectActivity();
                 });
+    }
+
+    public void cancelAll() {
+        if (timerSubs != null && !(timerSubs.isUnsubscribed())) {
+            timerSubs.unsubscribe();
+        }
     }
 
     public interface View {

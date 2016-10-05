@@ -16,6 +16,7 @@ import com.facebook.FacebookSdk;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.parse.Parse;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
@@ -95,6 +96,7 @@ public class JandiApplication extends MultiDexApplication {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
         StethoInitializer.init(this);
+        FirebaseAnalytics.getInstance(this);
 
         addLogConfigIfDebug();
 
@@ -128,12 +130,10 @@ public class JandiApplication extends MultiDexApplication {
 
     protected void initIntercom() {
 
-        if (!BuildConfig.APPLICATION_ID.contains(".dev")) {
+        Intercom.initialize(this, JandiConstantsForFlavors.INTERCOM_API_KEY, JandiConstantsForFlavors.INTERCOM_API_ID);
 
-            Intercom.initialize(this, "android_sdk-40917d53dc07205e1515f909a14a94752d410f70", "yt1d5jat");
+        if (BuildConfig.DEBUG) {
             Intercom.setLogLevel(IntercomLogger.VERBOSE);
-        } else {
-            Intercom.initialize(this, "android_sdk-1dc44febffdbbc7fab963de6f5e093f672cba0a1", "xjjmliv4");
         }
     }
 

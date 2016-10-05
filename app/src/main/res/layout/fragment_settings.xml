@@ -72,7 +72,7 @@
             <com.tosslab.jandi.app.views.settings.SettingsBodyView
                 android:id="@+id/vg_settings_main_privacy_policy"
                 style="@style/JandiSettings.Body"
-                app:sbvTitle="@string/jandi_privacy_policy"/>
+                app:sbvTitle="@string/jandi_pp"/>
         </LinearLayout>
 
         <View style="@style/JandiSettings.Divider"/>
