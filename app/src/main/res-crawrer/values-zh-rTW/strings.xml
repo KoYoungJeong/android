@@ -4,6 +4,9 @@
 	<string name="comment">"留言"</string>
 	<string name="common_accthome_createteam">"建立新的團隊"</string>
 	<string name="common_accthome_createteamguide">"尚未加入任何團隊\n點擊以下的「建立新的團隊」\n開始體驗 JANDI 的高效率團隊通訊。"</string>
+	<string name="common_accthome_jandiacct">"JANDI 帳號"</string>
+	<string name="common_accthome_joinedteamlist">"團隊列表"</string>
+	<string name="common_accthome_loggedin">"已登入"</string>
 	<string name="common_createteam_toaccthome">"前往帳號首頁"</string>
 	<string name="common_hamburger_teamadmin">"團隊管理員"</string>
 	<string name="common_profilemodal_jandi_botstatus">"你好，我是JANDI！"</string>
@@ -56,7 +59,7 @@
 	<string name="err_team_creation_failed">"電子郵件無法送出"</string>
 	<string name="err_unshare">"檔案無法取消分享"</string>
 	<string name="err_unsupported_file_type">"沒有安裝的應用程式可以支援%1$s"</string>
-	<string name="exclamation_mark">"?"</string>
+	<string name="exclamation_mark">"!"</string>
 	<string name="fail_to_create_team">"团队未完成建立"</string>
 	<string name="file_upload_comment">"留言（非必要）"</string>
 	<string name="jadi_account_home">"帳號首頁"</string>
@@ -712,6 +715,10 @@
 	<string name="menu_entity_leave">"離開"</string>
 	<string name="menu_gallery">"從照片集上傳"</string>
 	<string name="modify_message">"編輯訊息"</string>
+	<string name="mypage_editprofile_dept">"輸入你的部門"</string>
+	<string name="mypage_editprofile_jobtitle">"輸入你的職位"</string>
+	<string name="mypage_editprofile_phonenumber">"請輸入您的電話號碼"</string>
+	<string name="mypage_editprofile_statusmessage">"輸入你的狀態"</string>
 	<string name="mypage_mention_newmentionalert">"有人提及你\"</string>
 	<string name="primary_email_info_msg">"所有與您JANDI帳號相關的電子郵件將寄送到主要電子郵件地址。您可以增加其它電子郵件地址到您的帳號并且指定爲某個團隊專屬電子郵件地址。(請注意電子郵件地址皆需事先被確認)"</string>
 	<string name="sent_auth_email">"電子郵件已寄送至您的郵箱，請點擊內建連結進行帳戶驗證。"</string>

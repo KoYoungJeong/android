@@ -135,6 +135,10 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     @InjectExtra
     int tabIndex = -1;
 
+    @Nullable
+    @InjectExtra
+    boolean isLoadInitialInfo = false;
+
     private long selectedEntity = -1;
 
     private OfflineLayer offlineLayer;
@@ -149,6 +153,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main_tab);
 
         if (AccountRepository.getRepository().getSelectedTeamInfo() == null) {
@@ -310,9 +315,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         List<TabInfo> tabInfos = TabFactory.getTabs(selectedEntity);
 
         tabPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), tabInfos);
-        viewPager.setOffscreenPageLimit(tabInfos.size());
         viewPager.setAdapter(tabPagerAdapter);
-
+//        viewPager.setOffscreenPageLimit(tabInfos.size());
         setPosition();
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));

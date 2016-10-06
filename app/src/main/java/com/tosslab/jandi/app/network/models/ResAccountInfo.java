@@ -275,6 +275,8 @@ public class ResAccountInfo {
         @DatabaseField
         private long memberId;
         @DatabaseField
+        private String email;
+        @DatabaseField
         private String name;
         @DatabaseField
         @JsonProperty("t_domain")
@@ -341,6 +343,14 @@ public class ResAccountInfo {
 
         public void setStatus(String status) {
             this.status = status;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
         }
 
         @Override

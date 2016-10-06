@@ -5,13 +5,18 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Pair;
 
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.client.profile.ProfileApi;
+import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.view.NameChangeFragment;
 
 import javax.inject.Inject;
 
@@ -27,13 +32,17 @@ public class NameStatusPresenter {
 
     private final View view;
     Lazy<ProfileApi> profileApi;
+    Lazy<AccountProfileApi> accountProfileApi;
     BehaviorSubject<String> nameSubject;
     CompositeSubscription subscription;
 
 
     @Inject
-    public NameStatusPresenter(Lazy<ProfileApi> profileApi, View view) {
+    public NameStatusPresenter(Lazy<ProfileApi> profileApi,
+                               Lazy<AccountProfileApi> accountProfileApi,
+                               View view) {
         this.profileApi = profileApi;
+        this.accountProfileApi = accountProfileApi;
         this.view = view;
 
         nameSubject = BehaviorSubject.create("");
@@ -66,6 +75,23 @@ public class NameStatusPresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(updateFinish());
+    }
+
+    public void updateNameForMainAccount(String newName) {
+        Observable.defer(() -> {
+            try {
+                ResAccountInfo resAccountInfo =
+                        accountProfileApi.get().changeName(new ReqProfileName(newName));
+                AccountRepository.getRepository().updateAccountName(resAccountInfo.getName());
+            } catch (RetrofitException e) {
+                e.printStackTrace();
+            }
+            return Observable.just(0);
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(i -> {
+                    view.successUpdate();
+                });
 
     }
 
@@ -153,8 +179,24 @@ public class NameStatusPresenter {
             return Observable.just(user);
         }).subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(user -> view.setUser(user));
+                .subscribe(user -> {
+                    if (view instanceof NameChangeFragment) {
+                        view.setContent(user.getName());
+                    } else {
+                        view.setContent(user.getStatusMessage());
+                    }
+                });
     }
+
+    public void onInitUserNameForMainAccount() {
+        Observable.defer(() -> {
+            String name = AccountRepository.getRepository().getAccountInfo().getName();
+            return Observable.just(name);
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(name -> view.setContent(name));
+    }
+
 
     public interface View {
         void dismissProgress();
@@ -163,6 +205,6 @@ public class NameStatusPresenter {
 
         void successUpdate();
 
-        void setUser(User user);
+        void setContent(String content);
     }
 }

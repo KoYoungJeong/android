@@ -16,7 +16,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.dagger.DaggerNameStatusComponent;
 import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.dagger.NameStatusModule;
 import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.presenter.NameStatusPresenter;
@@ -138,8 +137,8 @@ public class StatusChangeFragment extends Fragment implements NameStatusPresente
     }
 
     @Override
-    public void setUser(User user) {
-        etStatus.setText(user.getStatusMessage());
-        etStatus.setSelection(etStatus.length());
+    public void setContent(String content) {
+        etStatus.setText(content);
+        etStatus.setSelection(content.length());
     }
 }

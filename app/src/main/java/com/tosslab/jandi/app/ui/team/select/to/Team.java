@@ -17,7 +17,7 @@ public class Team {
 
     private String invitationId;
 
-    private Team(long teamId, long memberId, String name, String teamDomain, Status status, int unread, String invitationId) {
+    private Team(long teamId, long memberId, String email, String name, String teamDomain, Status status, int unread, String invitationId) {
         this.teamId = teamId;
         this.memberId = memberId;
         this.name = name;
@@ -26,21 +26,22 @@ public class Team {
         this.isSelected = false;
         this.unread = unread;
         this.invitationId = invitationId;
+        this.userEmail = email;
     }
 
     public static Team createTeam(ResAccountInfo.UserTeam userTeam) {
-        return new Team(userTeam.getTeamId(), userTeam.getMemberId(), userTeam.getName(), userTeam.getTeamDomain(), Status.JOINED, userTeam.getUnread(), "");
+        return new Team(userTeam.getTeamId(), userTeam.getMemberId(), userTeam.getEmail(), userTeam.getName(), userTeam.getTeamDomain(), Status.JOINED, userTeam.getUnread(), "");
     }
 
     public static Team createTeam(ResPendingTeamInfo resPendingTeamInfo) {
-        Team team = new Team(resPendingTeamInfo.getTeamId(), resPendingTeamInfo.getMemberId(), resPendingTeamInfo.getTeamName(), resPendingTeamInfo.getTeamDomain(), Status.PENDING, -1, resPendingTeamInfo.getId());
+        Team team = new Team(resPendingTeamInfo.getTeamId(), resPendingTeamInfo.getMemberId(), resPendingTeamInfo.getToEmail(), resPendingTeamInfo.getTeamName(), resPendingTeamInfo.getTeamDomain(), Status.PENDING, -1, resPendingTeamInfo.getId());
         team.setUserEmail(resPendingTeamInfo.getToEmail());
         team.setToken(resPendingTeamInfo.getToken());
         return team;
     }
 
     public static Team createEmptyTeam() {
-        return new Team(0, 0, "", "", Status.CREATE, -1, "");
+        return new Team(0, 0, "", "", "", Status.CREATE, -1, "");
     }
 
     public String getUserEmail() {

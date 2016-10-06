@@ -79,8 +79,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_ADD_STARTAPI_POLL_INFO_HOT_FIX = 21;
     private static final int DATABASE_VERSION_MEMBER_FILTER = 22;
     private static final int DATABASE_VERSION_BADGE_AT_MYPAGE = 23;
-
-    private static final int DATABASE_VERSION = DATABASE_VERSION_BADGE_AT_MYPAGE;
+    private static final int DATABASE_VERSION_ACCOUNT_INFO_ADD_EMAIL_FIELD = 24;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_ACCOUNT_INFO_ADD_EMAIL_FIELD;
 
     public OrmLiteSqliteOpenHelper helper;
 
@@ -334,9 +334,9 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                     UpgradeChecker.create(() -> DATABASE_VERSION_ADD_STARTAPI_POLL_INFO_HOT_FIX, () -> {
 
                         try {
-                            Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
+                            Dao<ResAccountInfo.UserTeam, ?> dao = DaoManager.createDao(connectionSource, ResAccountInfo.UserTeam.class);
                             dao.executeRawNoArgs("ALTER TABLE `initial_info_base` ADD COLUMN poll_id INTEGER;");
-                            UpdateBuilder<InitialInfo, ?> updateBuilder = dao.updateBuilder();
+                            UpdateBuilder<ResAccountInfo.UserTeam, ?> updateBuilder = dao.updateBuilder();
                             updateBuilder.updateColumnExpression("poll_id", "1");
                             updateBuilder.update();
 
@@ -361,8 +361,11 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         }
 
                         createTable(connectionSource, InitialInfo.Mention.class);
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_ACCOUNT_INFO_ADD_EMAIL_FIELD, () -> {
+                        Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
+                        dao.executeRawNoArgs("ALTER TABLE `account_teams` ADD COLUMN email VARCHAR;");
                     }));
-
 
             Observable.from(upgradeCheckers)
                     .subscribe(upgradeChecker -> upgradeChecker.run(oldVersion));

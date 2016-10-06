@@ -17,7 +17,7 @@ public interface SignUpVerifyView {
 
     void showErrorToast(String msg);
 
-    void moveToAccountHome();
+    void moveToSelectTeam();
 
     void changeExplainText();
 

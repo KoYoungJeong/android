@@ -181,6 +181,7 @@ public class TeamInfoLoader {
                     topicRooms.put(topic.getId(), topic);
                     rooms.add(topic);
                 });
+
         getChatObservable()
                 .map(DirectMessageRoom::new)
                 .subscribe(chatRoom -> {

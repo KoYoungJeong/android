@@ -8,10 +8,6 @@ import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.PasswordChecker;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import dagger.Lazy;
 
@@ -24,7 +20,7 @@ public class SignUpModel {
     }
 
     public ResCommon requestSignUp(String email, String password, String name, String lang) throws RetrofitException {
-        ReqSignUpInfo signUpInfo = new ReqSignUpInfo(email, password, name, lang);
+        ReqSignUpInfo signUpInfo = new ReqSignUpInfo(email, password, email, lang);
         return signUpApi.get().signUpAccount(signUpInfo);
     }
 
@@ -47,10 +43,6 @@ public class SignUpModel {
     public boolean isValidCharacterPassword(String password) {
         return PasswordChecker.checkStrength(password) >= PasswordChecker.AVERAGE;
 
-    }
-
-    public boolean isEmptyName(String name) {
-        return name.trim().length() <= 0;
     }
 
 }

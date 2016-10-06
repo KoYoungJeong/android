@@ -5,13 +5,13 @@ import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
-import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.dagger.DaggerIntroComponent;
 import com.tosslab.jandi.app.ui.intro.dagger.IntroModule;
@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.ui.sign.SignHomeActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.concurrent.TimeUnit;
 
@@ -91,15 +92,22 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     }
 
     void startOn() {
+        long pre = SystemClock.currentThreadTimeMillis();
         presenter.checkNewVersion(startForInvite);
         JandiPreference.setLastExecutedTime(System.currentTimeMillis());
+        long post = SystemClock.currentThreadTimeMillis();
+        LogUtil.e("delay" + String.valueOf(post - pre));
     }
 
     @Override
     public void moveTeamSelectActivity() {
-        Intent intent = AccountHomeActivity.getActivity(IntroActivity.this, false);
         if (!isFinishing()) {
-            startActivity(intent);
+            startActivity(Henson.with(this)
+                .gotoTeamSelectListActivity()
+                .shouldRefreshAccountInfo(true)
+                .build().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TOP));
         }
         finish();
     }

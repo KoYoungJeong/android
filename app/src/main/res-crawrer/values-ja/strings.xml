@@ -4,6 +4,9 @@
 	<string name="comment">"コメント"</string>
 	<string name="common_accthome_createteam">"新しいチーム作成"</string>
 	<string name="common_accthome_createteamguide">"参加中のチームがありません。\n下の「新しいチーム作成」をタッチし、\nJANDIを体験してみてください。"</string>
+	<string name="common_accthome_jandiacct">"JANDIアカウント"</string>
+	<string name="common_accthome_joinedteamlist">"参加中のチーム一覧"</string>
+	<string name="common_accthome_loggedin">"ログイン完了"</string>
 	<string name="common_createteam_toaccthome">"JANDIホームに戻る"</string>
 	<string name="common_hamburger_teamadmin">"チームの管理者"</string>
 	<string name="common_profilemodal_jandi_botstatus">"こんにちは、JANDIと言います。"</string>
@@ -56,7 +59,7 @@
 	<string name="err_team_creation_failed">"メールが送信できませんでした"</string>
 	<string name="err_unshare">"ファイルが非共有にできませんでした"</string>
 	<string name="err_unsupported_file_type">"%1$s このファイルを開くためのアプリケーションがインストールされていません"</string>
-	<string name="exclamation_mark">"に委譲しますか?"</string>
+	<string name="exclamation_mark">"!"</string>
 	<string name="fail_to_create_team">"チームが作成できませんでした"</string>
 	<string name="file_upload_comment">"コメント(任意)"</string>
 	<string name="jadi_account_home">"アカウントホーム"</string>
@@ -720,6 +723,10 @@
 	<string name="menu_entity_leave">"退出する"</string>
 	<string name="menu_gallery">"ギャラリーからアップロード"</string>
 	<string name="modify_message">"メッセージを編集する"</string>
+	<string name="mypage_editprofile_dept">"部署を入力してください"</string>
+	<string name="mypage_editprofile_jobtitle">"役職を入力してください"</string>
+	<string name="mypage_editprofile_phonenumber">"電話番号を入力してください"</string>
+	<string name="mypage_editprofile_statusmessage">"ステータスメッセージを入力"</string>
 	<string name="mypage_mention_newmentionalert">"新しいメンション"</string>
 	<string name="primary_email_info_msg">"あなたのJANDIのアカウントに登録されたプライマリメールアドレスにメールが送られます。メールアドレスは先に認証される必要があります。"</string>
 	<string name="sent_auth_email">"メールを確認して、メールの中の登録ボタンから登録してください。"</string>

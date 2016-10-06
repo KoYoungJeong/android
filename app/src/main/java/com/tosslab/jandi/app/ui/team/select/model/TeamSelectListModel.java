@@ -1,23 +1,17 @@
-package com.tosslab.jandi.app.ui.account.model;
+package com.tosslab.jandi.app.ui.team.select.model;
 
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
-import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
-import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
-import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
-import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
-import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -28,28 +22,24 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dagger.Lazy;
-import rx.Observable;
 
+/**
+ * Created by tee on 2016. 9. 27..
+ */
 
-public class AccountHomeModel {
+public class TeamSelectListModel {
 
     private Lazy<InvitationApi> invitationApi;
     private Lazy<AccountApi> accountApi;
-    private Lazy<AccountProfileApi> accountProfileApi;
     private Lazy<StartApi> startApi;
-    private Lazy<PollApi> pollApi;
 
     @Inject
-    public AccountHomeModel(Lazy<InvitationApi> invitationApi,
-                            Lazy<AccountApi> accountApi,
-                            Lazy<AccountProfileApi> accountProfileApi,
-                            Lazy<StartApi> startApi,
-                            Lazy<PollApi> pollApi) {
+    public TeamSelectListModel(Lazy<InvitationApi> invitationApi,
+                               Lazy<AccountApi> accountApi,
+                               Lazy<StartApi> startApi) {
         this.invitationApi = invitationApi;
         this.accountApi = accountApi;
-        this.accountProfileApi = accountProfileApi;
         this.startApi = startApi;
-        this.pollApi = pollApi;
     }
 
     public void refreshAccountInfo() {
@@ -72,12 +62,9 @@ public class AccountHomeModel {
 
         ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore = new ReqInvitationAcceptOrIgnore(type);
         return invitationApi.get().acceptOrDeclineInvitation(invitationId, reqInvitationAcceptOrIgnore);
-
     }
 
-
     public List<Team> getTeamInfos() throws RetrofitException {
-
         List<Team> teams = new ArrayList<Team>();
 
         List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
@@ -96,20 +83,6 @@ public class AccountHomeModel {
         return teams;
     }
 
-    private List<Team> convertPedingTeamList(List<ResPendingTeamInfo> pedingTeamInfos) {
-        List<Team> teams = new ArrayList<Team>();
-
-        if (pedingTeamInfos == null) {
-            return teams;
-        }
-
-        for (ResPendingTeamInfo pedingTeamInfo : pedingTeamInfos) {
-            teams.add(Team.createTeam(pedingTeamInfo));
-        }
-
-        return teams;
-    }
-
     private List<Team> convertJoinedTeamList(List<ResAccountInfo.UserTeam> memberships) {
         List<Team> teams = new ArrayList<Team>();
 
@@ -124,8 +97,18 @@ public class AccountHomeModel {
         return teams;
     }
 
-    public ResAccountInfo updateAccountName(String newName) throws RetrofitException {
-        return accountProfileApi.get().changeName(new ReqProfileName(newName));
+    private List<Team> convertPedingTeamList(List<ResPendingTeamInfo> pedingTeamInfos) {
+        List<Team> teams = new ArrayList<Team>();
+
+        if (pedingTeamInfos == null) {
+            return teams;
+        }
+
+        for (ResPendingTeamInfo pedingTeamInfo : pedingTeamInfos) {
+            teams.add(Team.createTeam(pedingTeamInfo));
+        }
+
+        return teams;
     }
 
     public void updateSelectTeam(long teamId) {
@@ -140,21 +123,6 @@ public class AccountHomeModel {
         InitialInfoRepository.getInstance().upsertInitialInfo(entityInfo);
     }
 
-    public ResAccountInfo.UserTeam getSelectedTeamInfo() {
-        return AccountRepository.getRepository().getSelectedTeamInfo();
-    }
-
-    public ResAccountInfo.UserEmail getSelectedEmailInfo() {
-        List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository()
-                .getAccountEmails();
-        for (ResAccountInfo.UserEmail userEmail : userEmails) {
-            if (userEmail.isPrimary()) {
-                return userEmail;
-            }
-        }
-        return null;
-    }
-
     public void updateTeamInfo(long teamId) throws RetrofitException {
         ResAccountInfo resAccountInfo = accountApi.get().getAccountInfo();
         AccountUtil.removeDuplicatedTeams(resAccountInfo);
@@ -162,33 +130,16 @@ public class AccountHomeModel {
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
     }
 
-    public String getAccountName() {
-        return AccountRepository.getRepository().getAccountInfo().getName();
-    }
-
-    public boolean checkAccount() {
-        return AccountRepository.getRepository().getAccountInfo() != null;
-    }
-
-    public void refreshPollList(long teamId) {
-        try {
-            PollRepository.getInstance().clearAll();
-
-            ResPollList resPollList = pollApi.get().getPollList(teamId, 50);
-            List<Poll> onGoing = resPollList.getOnGoing();
-            if (onGoing == null) {
-                onGoing = new ArrayList<>();
+    public String getMyEmail() {
+        List<ResAccountInfo.UserEmail> emails = AccountRepository.getRepository().getAccountEmails();
+        int length = emails.size();
+        String primaryEmail = emails.get(0).getId();
+        for (int i = 0; i < length; i++) {
+            if (emails.get(i).isPrimary()) {
+                primaryEmail = emails.get(i).getId();
             }
-            List<Poll> finished = resPollList.getFinished();
-            if (finished == null) {
-                finished = new ArrayList<>();
-            }
-            Observable.merge(Observable.from(onGoing), Observable.from(finished))
-                    .toList()
-                    .subscribe(polls -> PollRepository.getInstance().upsertPollList(polls),
-                            Throwable::printStackTrace);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        return primaryEmail;
     }
+
 }

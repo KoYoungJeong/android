@@ -18,7 +18,6 @@ import java.util.List;
  */
 public class AccountRepository extends LockExecutorTemplate {
 
-
     private static AccountRepository repository;
 
     synchronized public static AccountRepository getRepository() {
@@ -27,7 +26,6 @@ public class AccountRepository extends LockExecutorTemplate {
         }
         return repository;
     }
-
 
     public boolean upsertAccountAllInfo(ResAccountInfo accountInfo) {
         return execute(() -> {

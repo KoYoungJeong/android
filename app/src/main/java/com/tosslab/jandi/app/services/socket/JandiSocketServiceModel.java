@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.services.socket;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.ChatListRefreshEvent;
@@ -117,7 +118,6 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicUnstarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicUpdatedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -876,7 +876,11 @@ public class JandiSocketServiceModel {
                                     .getString(R.string.jandi_your_access_disabled, team.getName());
                             ColoredToast.showError(teamName);
                             AccountRepository.getRepository().removeSelectedTeamInfo();
-                            AccountHomeActivity.startActivity(JandiApplication.getContext(), true);
+                            JandiApplication.getContext().startActivity(
+                                    Henson.with(JandiApplication.getContext())
+                                            .gotoTeamSelectListActivity()
+                                            .shouldRefreshAccountInfo(true)
+                                            .build());
 
                             InitialInfoRepository.getInstance().removeInitialInfo(data.getTeamId());
                             JandiPreference.setSocketConnectedLastTime(-1);
@@ -917,7 +921,11 @@ public class JandiSocketServiceModel {
                             ColoredToast.showError(deletedTeam);
 
                             AccountRepository.getRepository().removeSelectedTeamInfo();
-                            AccountHomeActivity.startActivity(JandiApplication.getContext(), true);
+                            JandiApplication.getContext().startActivity(
+                                    Henson.with(JandiApplication.getContext())
+                                            .gotoTeamSelectListActivity()
+                                            .shouldRefreshAccountInfo(true)
+                                            .build());
 
                             InitialInfoRepository.getInstance().removeInitialInfo(teamId);
                             JandiPreference.setSocketConnectedLastTime(-1);

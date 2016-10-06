@@ -85,6 +85,13 @@ public class MainTabPresenterImpl implements MainTabPresenter {
     }
 
     @Override
+    public void refreshInitialInfo() {
+        mainTabModel.getRefreshEntityInfoObservable()
+                .subscribeOn(Schedulers.newThread())
+                .subscribe();
+    }
+
+    @Override
     public void onCheckIfNotProfileSetUp() {
         mainTabModel.getMeObservable()
                 .filter(me -> !me.isProfileUpdated())
@@ -92,7 +99,8 @@ public class MainTabPresenterImpl implements MainTabPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(user -> {
                     mainTabView.moveSetProfileActivity();
-                }, t -> {});
+                }, t -> {
+                });
     }
 
     @Override

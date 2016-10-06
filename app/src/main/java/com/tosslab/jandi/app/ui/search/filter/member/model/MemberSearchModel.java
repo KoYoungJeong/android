@@ -76,4 +76,5 @@ public class MemberSearchModel {
 
         return searchedMembers;
     }
+
 }

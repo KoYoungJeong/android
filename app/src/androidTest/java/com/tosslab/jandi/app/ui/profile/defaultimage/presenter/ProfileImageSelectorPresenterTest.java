@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.profile.defaultimage.presenter;
 
 import android.net.Uri;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.JandiApplication;
@@ -11,6 +12,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +27,7 @@ import static org.mockito.Mockito.verify;
 /**
  * Created by tee on 16. 1. 8..
  */
+@RunWith(AndroidJUnit4.class)
 public class ProfileImageSelectorPresenterTest {
 
     private ProfileImageSelectorPresenter profileImageSelectorPresenter;
