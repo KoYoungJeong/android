@@ -197,16 +197,23 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 .setUserProperty("memberId", String.valueOf(AccountUtil.getMemberId(this)));
 
         Completable.fromCallable(() -> {
-            try {
-                FirebaseInstanceId.getInstance().deleteInstanceId();
-                PushTokenRepository.getInstance().deleteGcmToken();
-                FirebaseInstanceId.getInstance().getToken();
-            } catch (IOException e) {
-                e.printStackTrace();
+
+            if ((System.currentTimeMillis() - JandiPreference.getLatestFcmTokenUpdate()) > 1000 * 60 * 60 * 6) {
+                return Completable.complete();
+            } else {
+                return Completable.never();
             }
-            return Completable.complete();
+
         }).subscribeOn(Schedulers.newThread())
-                .subscribe();
+                .subscribe(() -> {
+                    try {
+                        FirebaseInstanceId.getInstance().deleteInstanceId();
+                        PushTokenRepository.getInstance().deleteGcmToken();
+                        FirebaseInstanceId.getInstance().getToken();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }, Throwable::printStackTrace);
     }
 
     private void initSelectedEntity() {

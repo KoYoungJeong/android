@@ -56,6 +56,7 @@ public class JandiPreference {
     private static final String PREF_EMAIL_AUTH_SEND_TIME = "email_auth_send_time";
 
     private static final String PREF_NAVIGATION_POSITION = "navigation_position";
+    public static final String PREF_LATEST_FCM_TOKEN_UPDATE = "latest_fcm_token_update";
 
     public static boolean isAleadyShowCoachMarkTopic(Context context) {
         if (!getSharedPreferences().getBoolean(PREF_COACH_MARK_TOPIC, false)) {
@@ -408,6 +409,16 @@ public class JandiPreference {
                 .edit()
                 .putInt(PREF_NAVIGATION_POSITION, gravity)
                 .commit();
+    }
+
+    public static void setLatestFcmTokenUpdate(long time) {
+        getSharedPreferences().edit()
+                .putLong(PREF_LATEST_FCM_TOKEN_UPDATE, time)
+                .commit();
+    }
+
+    public static long getLatestFcmTokenUpdate() {
+        return getSharedPreferences().getLong(PREF_LATEST_FCM_TOKEN_UPDATE, 0);
     }
 
 }
