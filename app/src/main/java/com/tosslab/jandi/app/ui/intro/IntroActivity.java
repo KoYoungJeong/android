@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 
@@ -21,6 +22,7 @@ import com.tosslab.jandi.app.ui.sign.SignHomeActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import javax.inject.Inject;
 
@@ -77,8 +79,11 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     }
 
     void startOn() {
+        long pre = SystemClock.currentThreadTimeMillis();
         presenter.checkNewVersion(startForInvite);
         JandiPreference.setLastExecutedTime(System.currentTimeMillis());
+        long post = SystemClock.currentThreadTimeMillis();
+        LogUtil.e("delay" + String.valueOf(post - pre));
     }
 
     @Override
@@ -112,7 +117,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
     @Override
     public void moveToMainActivity() {
-
         unregistEvent();
 
         startActivity(Henson.with(this)

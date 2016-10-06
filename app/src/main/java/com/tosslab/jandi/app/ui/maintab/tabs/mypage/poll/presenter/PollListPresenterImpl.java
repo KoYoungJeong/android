@@ -48,7 +48,7 @@ public class PollListPresenterImpl implements PollListPresenter {
 
         pollListView.showProgress();
         pollListModel.getPollListObservable(PollListModel.DEFAULT_REQUEST_ITEM_COUNT)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(resPollList -> {
                     if (resPollList == null) {
@@ -93,7 +93,7 @@ public class PollListPresenterImpl implements PollListPresenter {
                     resPollList.setPollList(polls);
                     return resPollList;
                 })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(resPollList -> {
                     pollListView.dismissProgress();
@@ -125,7 +125,7 @@ public class PollListPresenterImpl implements PollListPresenter {
         int count = PollListModel.DEFAULT_REQUEST_ITEM_COUNT;
         String finishedAt = ISO8601Utils.format(lastItemFinishedAt);
         pollListModel.getPollListObservable(count, finishedAt)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(resPollList -> {
                     if (resPollList == null) {
@@ -191,7 +191,7 @@ public class PollListPresenterImpl implements PollListPresenter {
     private void changePoll(Poll poll) {
         Observable.just(poll)
                 .map(poll1 -> pollListDataModel.getIndexById(poll.getId()))
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(index -> {
                     if (index < 0) {
@@ -209,7 +209,7 @@ public class PollListPresenterImpl implements PollListPresenter {
                     int targetToAddIndex = pollListDataModel.getIndexOfFirstFinishedPoll();
                     return Pair.create(targetToAddIndex, poll1);
                 })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(pair -> {
                     Poll poll1 = pair.second;
