@@ -30,13 +30,13 @@ public class DeptJobHeaderADapter implements StickyHeadersAdapter<DeptJobHeaderA
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
 
-        String second = deptJobDataModel.getItem(position).second;
+        String second = deptJobDataModel.getItem(position).getHeader();
         viewHolder.tvTitle.setText(second);
     }
 
     @Override
     public long getHeaderId(int position) {
-        return deptJobDataModel.getItem(position).second.hashCode();
+        return deptJobDataModel.getItem(position).getHeader().hashCode();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

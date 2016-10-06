@@ -1,18 +1,18 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter;
 
 
-import android.util.Pair;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.domain.DeptJob;
 
 import java.util.List;
 
 public interface DeptJobDataModel {
-    Pair<CharSequence, String> getItem(int position);
+    DeptJob getItem(int position);
 
     int getSize();
 
-    void add(Pair<CharSequence, String> item);
+    void add(DeptJob item);
 
-    void addAll(List<Pair<CharSequence, String>> items);
+    void addAll(List<DeptJob> items);
 
     void clear();
 }
