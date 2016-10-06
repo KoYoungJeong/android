@@ -1538,7 +1538,7 @@ public class JandiSocketServiceModel {
 
     public void onMentionMarkerUpdated(Object object) {
         try {
-            SocketMentionMarkerUpdatedEvent event = getObject(object, SocketMentionMarkerUpdatedEvent.class);
+            SocketMentionMarkerUpdatedEvent event = SocketModelExtractor.getObject(object, SocketMentionMarkerUpdatedEvent.class);
             saveEvent(event);
 
             InitialInfo.Mention mention = InitialMentionInfoRepository.getInstance().getMention();
