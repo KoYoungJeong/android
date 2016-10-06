@@ -74,6 +74,7 @@ public class MentionListModel {
 
         Observable.from(records)
                 .filter(mention -> mention.getMessage() != null)
+                .filter(mentionMessage -> mentionMessage.getRoom().id <= 0 || TeamInfoLoader.getInstance().isRoom(mentionMessage.getRoom().id))
                 .map(mentionMessage -> {
                     User user = TeamInfoLoader.getInstance()
                             .getUser(mentionMessage.getMessage().writerId);

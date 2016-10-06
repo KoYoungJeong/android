@@ -877,6 +877,11 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     }
 
     @Override
+    public void showInvalidPollToast() {
+        ColoredToast.showError(R.string.jandi_starmention_no_longer_in_topic);
+    }
+
+    @Override
     public void showPollParticipants(long pollId) {
         PollParticipantsActivity.startForAllParticipants(this, pollId);
     }
