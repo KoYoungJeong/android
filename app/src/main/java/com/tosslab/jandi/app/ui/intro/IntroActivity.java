@@ -1,9 +1,8 @@
 package com.tosslab.jandi.app.ui.intro;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.WindowManager.LayoutParams;
@@ -11,7 +10,6 @@ import android.widget.ImageView;
 
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -23,15 +21,20 @@ import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import de.greenrobot.event.EventBus;
+import rx.Completable;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 public class IntroActivity extends BaseAppCompatActivity implements IntroActivityPresenter.View {
 
     private static final String EXTRA_START_FOR_INVITE = "startForInvite";
+    private static final int ANIM_DELAY = 300;
     boolean startForInvite = false;
 
     @Bind(R.id.iv_jandi_icon)
@@ -39,6 +42,9 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
     @Inject
     IntroActivityPresenter presenter;
+    private AnimationDrawable splashDrawable;
+
+    private long animStartTime;
 
     public static void startActivity(Context context, boolean startForInvite) {
         Intent intent = new Intent(context, IntroActivity.class);
@@ -53,7 +59,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_intro);
+        setContentView(R.layout.activity_intro_animation);
         setNeedUnLockPassCode(false);
         setShouldReconnectSocketService(false);
 
@@ -65,9 +71,16 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
         initExtra();
 
-        EventBus.getDefault().register(this);
-
         startOn();
+
+        splashDrawable = ((AnimationDrawable) ivJandiIcon.getDrawable());
+        animStartTime = System.currentTimeMillis();
+        Completable.fromAction(Completable::complete)
+                .delay(ANIM_DELAY, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    splashDrawable.start();
+                });
     }
 
     private void initExtra() {
@@ -91,35 +104,15 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
         finish();
     }
 
-    public void onEventMainThread(RetrieveTopicListEvent event) {
-        presenter.cancelAll();
-
-        moveToMainActivity();
-    }
-
-    @Override
-    protected void onDestroy() {
-        unregistEvent();
-        super.onDestroy();
-    }
-
-    synchronized private void unregistEvent() {
-        if (EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().unregister(this);
-        }
-    }
-
     @Override
     public void moveToMainActivity() {
 
-        unregistEvent();
         if (!isFinishing()) {
-            startActivity(Henson.with(this)
-                    .gotoMainTabActivity()
-                    .build()
-                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                            | Intent.FLAG_ACTIVITY_NEW_TASK));
-            finish();
+            startActivityWithAnimationAndFinish(Henson.with(this)
+                .gotoMainTabActivity()
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        | Intent.FLAG_ACTIVITY_NEW_TASK));
         }
     }
 
@@ -138,23 +131,18 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
             return;
         }
 
-        ivJandiIcon.animate()
-                .alpha(0.0f)
-                .setDuration(800)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        if (ApplicationUtil.isActivityDestroyed(IntroActivity.this)) {
-                            return;
-                        }
+        long animTime = 1600;
 
-                        if (!isFinishing()) {
-                            startActivity(intent);
-                        }
-                        overridePendingTransition(0, 0);
-                        finish();
+        Observable.just(true)
+                .delay(animTime + ANIM_DELAY + animStartTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
+                    if (!isFinishing()) {
+                        startActivity(intent);
                     }
-                });
+                    overridePendingTransition(0, 0);
+                    finish();
+                }, Throwable::printStackTrace);
     }
 
     @Override
