@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.messages.AnnouncementUpdatedEvent;
 import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
+import com.tosslab.jandi.app.events.messages.MentionMessageEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
@@ -39,6 +40,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialMentionInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialPollInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.RoomMarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TeamRepository;
@@ -53,6 +55,7 @@ import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
@@ -82,6 +85,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewThumbnailEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberUnstarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberUpdatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMentionMarkerUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
@@ -255,7 +259,7 @@ public class JandiSocketServiceModel {
         messageEventActorMapper.put(SocketFileCommentDeletedEvent.class, this::onFileCommentDeleted);
         messageEventActorMapper.put(SocketMessageDeletedEvent.class, this::onMessageDeleted);
         messageEventActorMapper.put(SocketRoomMarkerEvent.class, this::onRoomMarkerUpdated);
-        messageEventActorMapper.put(SocketMessageCreatedEvent.class, this::onMessageCreated);
+        messageEventActorMapper.put(SocketMessageCreatedEvent.class, o -> onMessageCreated(o, true));
         messageEventActorMapper.put(SocketMessageStarredEvent.class, this::onMessageStarred);
         messageEventActorMapper.put(SocketMessageUnstarredEvent.class, this::onMessageUnstarred);
         messageEventActorMapper.put(SocketLinkPreviewMessageEvent.class, this::onLinkPreviewCreated);
@@ -265,6 +269,7 @@ public class JandiSocketServiceModel {
         messageEventActorMapper.put(SocketPollDeletedEvent.class, this::onPollDeleted);
         messageEventActorMapper.put(SocketPollFinishedEvent.class, this::onPollFinished);
         messageEventActorMapper.put(SocketPollVotedEvent.class, this::onPollVoted);
+        messageEventActorMapper.put(SocketMentionMarkerUpdatedEvent.class, this::onMentionMarkerUpdated);
 
         return messageEventActorMapper;
 
@@ -960,7 +965,7 @@ public class JandiSocketServiceModel {
         }
     }
 
-    public void onMessageCreated(Object object) {
+    public void onMessageCreated(Object object, boolean fromEventHistory) {
         try {
             SocketMessageCreatedEvent event = getObject(object, SocketMessageCreatedEvent.class, true, false);
             saveEvent(event);
@@ -982,6 +987,10 @@ public class JandiSocketServiceModel {
                 doAfterMessageCreated(link);
 
                 postEvent(event);
+
+                if (!(fromEventHistory)) {
+                    handleMessageIfMentionToMe(link);
+                }
             }
 
             if (link.message != null) {
@@ -999,6 +1008,44 @@ public class JandiSocketServiceModel {
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
         }
+    }
+
+    private void handleMessageIfMentionToMe(ResMessages.Link link) {
+        Observable.just(link)
+                .filter(link1 -> {
+                    if (link1.message instanceof ResMessages.TextMessage) {
+                        Collection<MentionObject> mentions = ((ResMessages.TextMessage) link1.message).mentions;
+                        return mentions != null && !mentions.isEmpty();
+                    } else if (link1.message instanceof ResMessages.CommentMessage) {
+                        Collection<MentionObject> mentions = ((ResMessages.CommentMessage) link1.message).mentions;
+                        return mentions != null && !mentions.isEmpty();
+                    } else {
+                        return false;
+                    }
+                })
+                .filter(link1 -> {
+                    Collection<MentionObject> mentions;
+                    if (link1.message instanceof ResMessages.TextMessage) {
+                        mentions = ((ResMessages.TextMessage) link1.message).mentions;
+                    } else {
+                        mentions = ((ResMessages.CommentMessage) link1.message).mentions;
+                    }
+                    return Observable.from(mentions)
+                            .takeFirst(mentionObject ->
+                                    "room".equals(mentionObject.getType())
+                                            || mentionObject.getId() == TeamInfoLoader.getInstance().getMyId())
+                            .map(it -> true)
+                            .toBlocking().firstOrDefault(false);
+                })
+                .subscribe(link1 -> {
+
+                    if (EventBus.getDefault().hasSubscriberForEvent(MentionMessageEvent.class)) {
+                        EventBus.getDefault().post(new MentionMessageEvent(link1));
+                    } else {
+                        InitialMentionInfoRepository.getInstance().increaseUnreadCount();
+                    }
+
+                }, Throwable::printStackTrace);
     }
 
     private void doAfterMessageCreated(ResMessages.Link linkMessage) {
@@ -1520,6 +1567,24 @@ public class JandiSocketServiceModel {
 
     private Poll getPollFromDatabase(long pollId) {
         return PollRepository.getInstance().getPollById(pollId);
+    }
+
+    public void onMentionMarkerUpdated(Object object) {
+        try {
+            SocketMentionMarkerUpdatedEvent event = getObject(object, SocketMentionMarkerUpdatedEvent.class);
+            saveEvent(event);
+
+            InitialInfo.Mention mention = InitialMentionInfoRepository.getInstance().getMention();
+            long lastMentionedMessageId = event == null
+                    ? -1 : event.getData().getLastMentionedMessageId();
+            mention.setLastMentionedMessageId(lastMentionedMessageId);
+            InitialMentionInfoRepository.getInstance().upsertMention(mention);
+            TeamInfoLoader.getInstance().refreshMention();
+
+            JandiPreference.setSocketConnectedLastTime(event.getTs());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public interface Command {

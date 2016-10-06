@@ -78,7 +78,10 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_ADD_STARTAPI_POLL_INFO = 20;
     private static final int DATABASE_VERSION_ADD_STARTAPI_POLL_INFO_HOT_FIX = 21;
     private static final int DATABASE_VERSION_MEMBER_FILTER = 22;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_MEMBER_FILTER;
+    private static final int DATABASE_VERSION_BADGE_AT_MYPAGE = 23;
+
+    private static final int DATABASE_VERSION = DATABASE_VERSION_BADGE_AT_MYPAGE;
+
     public OrmLiteSqliteOpenHelper helper;
 
     public OrmDatabaseHelper(Context context) {
@@ -160,6 +163,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, InitialInfo.class);
             createTable(connectionSource, InitialInfo.Self.class);
             createTable(connectionSource, InitialInfo.Poll.class);
+            createTable(connectionSource, InitialInfo.Mention.class);
             createTable(connectionSource, Team.class);
             createTable(connectionSource, Folder.class);
             createTable(connectionSource, Topic.class);
@@ -343,6 +347,20 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_MEMBER_FILTER, () -> {
                         createTable(connectionSource, MemberRecentKeyword.class);
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_BADGE_AT_MYPAGE, () -> {
+                        try {
+                            Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
+                            dao.executeRawNoArgs("ALTER TABLE `initial_info_base` ADD COLUMN mention_id INTEGER;");
+                            UpdateBuilder<InitialInfo, ?> updateBuilder = dao.updateBuilder();
+                            updateBuilder.updateColumnExpression("mention_id", "1");
+                            updateBuilder.update();
+
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+
+                        createTable(connectionSource, InitialInfo.Mention.class);
                     }));
 
 
@@ -425,6 +443,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(getConnectionSource(), InitialInfo.class);
         clearTable(getConnectionSource(), InitialInfo.Self.class);
         clearTable(getConnectionSource(), InitialInfo.Poll.class);
+        clearTable(getConnectionSource(), InitialInfo.Mention.class);
         clearTable(getConnectionSource(), Team.class);
         clearTable(getConnectionSource(), Folder.class);
         clearTable(getConnectionSource(), Topic.class);

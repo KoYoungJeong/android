@@ -245,7 +245,7 @@ public class JandiSocketService extends Service {
                 jandiSocketServiceModel.onMessageDeleted(objects[0]);
         eventHashMap.put("message_deleted", messageRefreshListener);
         EventListener messageCreatedListener = objects ->
-                jandiSocketServiceModel.onMessageCreated(objects[0]);
+                jandiSocketServiceModel.onMessageCreated(objects[0], false);
         eventHashMap.put("message_created", messageCreatedListener);
 
         EventListener messageStarredListener = objects ->
@@ -315,6 +315,9 @@ public class JandiSocketService extends Service {
         EventListener pollCommentDeletedListener =
                 objects -> jandiSocketServiceModel.onPollCommentDeleted(objects[0]);
         eventHashMap.put("poll_comment_deleted", pollCommentDeletedListener);
+        EventListener mentionMarkerUpdatedListener =
+                objects -> jandiSocketServiceModel.onMentionMarkerUpdated(objects[0]);
+        eventHashMap.put("mention_marker_updated", mentionMarkerUpdatedListener);
 
         eventHashMap.put("ready_to_start", objects -> {
             JandiPreference.setSocketReconnectDelay(0l);
