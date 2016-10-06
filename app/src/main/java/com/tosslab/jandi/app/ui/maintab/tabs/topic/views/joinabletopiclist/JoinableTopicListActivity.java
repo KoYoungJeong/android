@@ -17,13 +17,12 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.Topic;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.TopicCreateActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.adapter.JoinableTopicListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.component.DaggerJoinableTopicListComponent;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.module.JoinableTopicListModule;
@@ -249,10 +248,10 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
         tvCreateTopic.setText(createNewTopic);
 
         btnCreateTopic.setOnClickListener(v -> {
-            TopicCreateActivity_
-                    .intent(this)
+            startActivity(Henson.with(this)
+                    .gotoTopicCreateActivity()
                     .expectTopicName(finalQuery)
-                    .start();
+                    .build());
 
             overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
         });

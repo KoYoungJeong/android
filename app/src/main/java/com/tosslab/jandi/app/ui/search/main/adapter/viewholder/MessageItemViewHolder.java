@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.StrikethroughSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,6 +73,9 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
     @Bind(R.id.v_half_divider)
     View vHalfDivider;
 
+    @Bind(R.id.iv_profile_cover)
+    View vProfileCover;
+
     private OnClickMessageListener onClickMessageListener;
 
     public MessageItemViewHolder(View itemView) {
@@ -109,12 +113,27 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
                 String photoUrl =
                         teamInfoLoader.getUser(searchMessageData.getWriterId()).getPhotoUrl();
                 ImageUtil.loadProfileImage(ivProfile, photoUrl, R.drawable.profile_img);
+
+                if (!writer.isEnabled()) {
+                    vProfileCover.setVisibility(View.VISIBLE);
+                } else {
+                    vProfileCover.setVisibility(View.GONE);
+                }
             }
         }
 
         tvTime.setText(DateTransformator.getTimeString(searchMessageData.getCreatedAt()));
+        String memberName = teamInfoLoader.getMemberName(searchMessageData.getWriterId());
+        if (TeamInfoLoader.getInstance().isEnabled(searchMessageData.getWriterId())) {
+            tvUserName.setText(memberName);
+            tvUserName.setTextColor(tvUserName.getResources().getColor(R.color.jandi_text));
+        } else {
+            SpannableStringBuilder builder = new SpannableStringBuilder(memberName);
+            builder.setSpan(new StrikethroughSpan(), 0, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            tvUserName.setText(builder, TextView.BufferType.SPANNABLE);
+            tvUserName.setTextColor(tvUserName.getResources().getColor(R.color.jandi_text_light));
+        }
 
-        tvUserName.setText(teamInfoLoader.getMemberName(searchMessageData.getWriterId()));
 
         long roomId = searchMessageData.getRoomId();
 

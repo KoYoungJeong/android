@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
 
@@ -21,12 +22,14 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 @RunWith(AndroidJUnit4.class)
 public class TopicCreateActivityTest {
 
     @Rule
-    public ActivityTestRule<TopicCreateActivity_> rule = new ActivityTestRule<TopicCreateActivity_>(TopicCreateActivity_.class);
+    public ActivityTestRule<TopicCreateActivity> rule = new ActivityTestRule<TopicCreateActivity>(TopicCreateActivity.class);
     private TopicCreateActivity activity;
 
     @Before
@@ -36,9 +39,13 @@ public class TopicCreateActivityTest {
     }
 
     @Test
-    public void testOnHomeOptionClick() throws Exception {
+    public void testOnHomeOptionClick() throws Throwable {
 
-        activity.onHomeOptionClick();
+        rule.runOnUiThread(() -> {
+            MenuItem mock = mock(MenuItem.class);
+            doReturn(android.R.id.home).when(mock).getItemId();
+            activity.onOptionsItemSelected(mock);
+        });
 
         assertThat(activity.isFinishing(), is(true));
 

@@ -3,32 +3,46 @@ package com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.model;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
-import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
+import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Topic;
-
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 
-/**
- * Created by Steve SeongUg Jung on 15. 1. 6..
- */
-@EBean
+import dagger.Lazy;
+
+
 public class TopicCreateModel {
 
-    @Bean
-    EntityClientManager entityClientManager;
+
+    private final Lazy<ChannelApi> channelApi;
+    private final Lazy<GroupApi> groupApi;
+
+    @Inject
+    TopicCreateModel(Lazy<ChannelApi> channelApi, Lazy<GroupApi> groupApi) {
+        this.channelApi = channelApi;
+        this.groupApi = groupApi;
+    }
 
     public Topic createTopic(String entityName, boolean publicSelected, String topicDescription, boolean isAutojoin) throws RetrofitException {
+
+        final ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
+        reqCreateTopic.teamId = TeamInfoLoader.getInstance().getTeamId();
+        reqCreateTopic.name = entityName;
+        reqCreateTopic.description = topicDescription;
+        reqCreateTopic.autoJoin = isAutojoin;
+
         if (publicSelected) {
-            return entityClientManager.createPublicTopic(entityName, topicDescription, isAutojoin);
+            return channelApi.get().createChannel(reqCreateTopic.teamId, reqCreateTopic);
         } else {
-            return entityClientManager.createPrivateGroup(entityName, topicDescription, isAutojoin);
+            return groupApi.get().createPrivateGroup(reqCreateTopic.teamId, reqCreateTopic);
         }
 
     }

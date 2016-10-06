@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
@@ -45,7 +46,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.presenter.MainTopicListPresenter;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.TopicCreateActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderSettingActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderSettingActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.JoinableTopicListActivity;
@@ -214,9 +214,9 @@ public class MainTopicListFragment extends Fragment
                 .subscribe(i -> {
                     selectedEntity = -2;
                     setSelectedItem(selectedEntity);
-                    TopicCreateActivity_
-                            .intent(MainTopicListFragment.this)
-                            .start();
+                    startActivity(Henson.with(getActivity())
+                            .gotoTopicCreateActivity()
+                            .build());
                     getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
                             AnalyticsValue.Action.CreateNewTopic);
