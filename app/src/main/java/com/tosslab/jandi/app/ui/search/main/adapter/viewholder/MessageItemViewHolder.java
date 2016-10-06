@@ -106,7 +106,7 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
                     .uri(Uri.parse(webhookBot.getPhotoUrl()))
                     .into(ivProfile);
         } else if (TeamInfoLoader.getInstance().isJandiBot(searchMessageData.getWriterId())) {
-            ivProfile.setImageResource(R.drawable.bot_32x40);
+            ivProfile.setImageResource(R.drawable.logotype_80);
         } else {
             User writer = teamInfoLoader.getUser(searchMessageData.getWriterId());
             if (writer != null) {

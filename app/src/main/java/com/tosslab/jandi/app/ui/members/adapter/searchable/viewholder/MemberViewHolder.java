@@ -5,7 +5,6 @@ import android.graphics.Paint;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -273,11 +272,7 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     }
 
     private void setProfileImage(ChatChooseItem item) {
-        DisplayMetrics displayMetrics = JandiApplication.getContext().getResources().getDisplayMetrics();
         if (!item.isBot()) {
-            ViewGroup.LayoutParams layoutParams = ivProfile.getLayoutParams();
-            layoutParams.height = ivProfile.getResources().getDimensionPixelSize(R.dimen.jandi_entity_item_icon);
-            ivProfile.setLayoutParams(layoutParams);
             if (!item.isInactive()) {
                 ImageUtil.loadProfileImage(ivProfile, item.getPhotoUrl(), R.drawable.profile_img);
             } else {
@@ -285,12 +280,7 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
                 ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_43);
             }
         } else {
-            ViewGroup.LayoutParams layoutParams = ivProfile.getLayoutParams();
-            layoutParams.height = Math.round(
-                    TypedValue.applyDimension(
-                            TypedValue.COMPLEX_UNIT_DIP, 54f, displayMetrics));
-            ivProfile.setLayoutParams(layoutParams);
-            ivProfile.setImageResource(R.drawable.bot_32x40);
+            ivProfile.setImageResource(R.drawable.logotype_80);
         }
     }
 

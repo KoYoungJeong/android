@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.members.search.presenter.base;
+package com.tosslab.jandi.app.ui.search.filter.member.presenter;
 
 /**
  * Created by tonyjs on 16. 4. 7..

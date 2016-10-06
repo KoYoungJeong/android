@@ -85,15 +85,10 @@ public class ProfileBinder {
             return;
         }
 
-        ViewGroup.LayoutParams ivProfileLayoutParams = ivProfile.getLayoutParams();
         if (writer.isBot()) {
-            ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(33f);
-            ivProfile.setLayoutParams(ivProfileLayoutParams);
             ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            ImageLoader.loadFromResources(ivProfile, R.drawable.bot_43x54);
+            ImageLoader.loadFromResources(ivProfile, R.drawable.logotype_80);
         } else {
-            ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(26f);
-            ivProfile.setLayoutParams(ivProfileLayoutParams);
             if (writer.isEnabled()) {
                 ImageUtil.loadProfileImage(
                         ivProfile, writer.getPhotoUrl(), R.drawable.profile_img);

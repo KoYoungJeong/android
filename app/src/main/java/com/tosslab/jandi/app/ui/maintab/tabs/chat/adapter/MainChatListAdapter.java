@@ -135,15 +135,7 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         ImageView ivIcon = viewHolder.ivIcon;
         ivIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
-        ViewGroup.LayoutParams layoutParams = ivIcon.getLayoutParams();
-
         boolean isJandiBot = TeamInfoLoader.getInstance().isJandiBot(item.getEntityId());
-        if (!isJandiBot) {
-            layoutParams.height = layoutParams.width;
-        } else {
-            layoutParams.height = layoutParams.width * 5 / 4;
-        }
-        ivIcon.setLayoutParams(layoutParams);
 
         if (!isJandiBot) {
             if (!item.isInactive()) {
@@ -155,7 +147,7 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         } else {
             ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            ImageLoader.loadFromResources(ivIcon, R.drawable.bot_80x100);
+            ImageLoader.loadFromResources(ivIcon, R.drawable.logotype_80);
         }
 
         if (onRecyclerItemClickListener != null) {

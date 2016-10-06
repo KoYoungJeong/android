@@ -88,21 +88,6 @@ public class SearchMemberModel {
                         selectableMembersLinkedHashMap.put(searchedItemForAll.getId(), searchedItemForAll);
                     }
 
-                    if (selectableMembersLinkedHashMap.size() > 0
-                            && teamInfoLoader.getInstance().hasJandiBot()) {
-                        User botEntity = teamInfoLoader.getInstance().getJandiBot();
-                        if (botEntity.isEnabled()) {
-                            SearchedItemVO jandiBot = new SearchedItemVO();
-                            jandiBot.setId(botEntity.getId())
-                                    .setName(botEntity.getName())
-                                    .setEnabled(true)
-                                    .setStarred(false)
-                                    .setBot(true)
-                                    .setType(SearchType.member.name());
-                            selectableMembersLinkedHashMap.put(jandiBot.getId(), jandiBot);
-                        }
-                    }
-
                     EventBus.getDefault().post(new MentionableMembersRefreshEvent());
                     if (action != null) {
                         action.call(selectableMembersLinkedHashMap);

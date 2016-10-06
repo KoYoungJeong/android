@@ -5,7 +5,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,7 +12,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
-import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
@@ -68,17 +66,11 @@ public class ProfileUtil {
 
         User entity = TeamInfoLoader.getInstance().getUser(fromEntityId);
 
-        ViewGroup.LayoutParams ivProfileLayoutParams = ivProfile.getLayoutParams();
         if (entity.isBot()) {
-            ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(32f);
-            ivProfile.setLayoutParams(ivProfileLayoutParams);
             ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            ImageLoader.loadFromResources(ivProfile, R.drawable.bot_43x54);
+            ImageLoader.loadFromResources(ivProfile, R.drawable.logotype_80);
         } else {
-            ivProfileLayoutParams.height = (int) UiUtils.getPixelFromDp(25f);
-            ivProfile.setLayoutParams(ivProfileLayoutParams);
-            ImageUtil.loadProfileImage(
-                    ivProfile, entity.getPhotoUrl(), R.drawable.profile_img);
+            ImageUtil.loadProfileImage(ivProfile, entity.getPhotoUrl(), R.drawable.profile_img);
         }
 
         if (entity.isEnabled()) {

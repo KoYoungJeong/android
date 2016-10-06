@@ -11,15 +11,14 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.DeptJobFragment;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberDataModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.ToggleCollector;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.domain.TeamMemberItem;
+import com.tosslab.jandi.app.utils.StringCompareUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -60,8 +59,10 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
                     teamMemberItem.setNameOfSpan(user1.getName());
                     return teamMemberItem;
                 })
-                .collect((Func0<ArrayList<TeamMemberItem>>) ArrayList::new, List::add)
-                .subscribe((users) -> {
+                .toSortedList((teamMemberItem, teamMemberItem2) -> {
+                    return StringCompareUtil.compare(teamMemberItem.getName(), teamMemberItem2.getName());
+                })
+                .subscribe(users -> {
                     teamMemberDataModel.clear();
                     teamMemberDataModel.addAll(users);
                     view.refreshDataView();

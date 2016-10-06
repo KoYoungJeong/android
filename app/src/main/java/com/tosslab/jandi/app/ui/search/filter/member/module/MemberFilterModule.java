@@ -4,10 +4,10 @@ import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.ui.members.search.model.MemberSearchModel;
 import com.tosslab.jandi.app.ui.search.filter.member.adapter.SearchableMemberFilterAdapter;
 import com.tosslab.jandi.app.ui.search.filter.member.adapter.model.MemberFilterableDataModel;
 import com.tosslab.jandi.app.ui.search.filter.member.adapter.view.MemberFilterableDataView;
+import com.tosslab.jandi.app.ui.search.filter.member.model.MemberSearchModel;
 import com.tosslab.jandi.app.ui.search.filter.member.presenter.MemberFilterPresenter;
 
 import dagger.Module;
