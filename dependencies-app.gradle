@@ -77,8 +77,6 @@ rootProject.allprojects { project ->
                 // Sliqte ORM
                 compile rootProject.ext.dependecies.libraries.ormlite
 
-                // Analytics & report
-                compile rootProject.ext.dependecies.libraries.parse
                 // RxJava
                 compile rootProject.ext.dependecies.libraries.rxandroid
                 compile rootProject.ext.dependecies.libraries.rxjava
