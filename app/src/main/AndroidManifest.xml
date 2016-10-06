@@ -259,9 +259,6 @@
             android:name=".services.keep.KeepService"
             android:label="@string/app_name" />
 
-        <service android:name="com.parse.PushService"/>
-
-
         <receiver android:name=".push.receiver.JandiBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.tosslab.jandi.app.push" />
